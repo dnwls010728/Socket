@@ -32,3 +32,5 @@ using namespace std;
 #include "..\Thread\ThreadManager.h"
 #include "..\Network\Service.h"
 #include "..\Job\JobQueue.h"
+#include "..\Util\SendBuffer.h"
+#include "..\Util\RecvBuffer.h"
