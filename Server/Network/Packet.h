@@ -3,19 +3,31 @@ class Packet
 {
 protected:
 	virtual BYTE* Serialize() { return nullptr; };
-	virtual Packet* Deserialize() { return nullptr; };
+	virtual void Deserialize() {  };
 };
 
 
-class EnterPacket : public Packet
+class C_EnterPacket : public Packet
 {
 public:
-	EnterPacket();
+	C_EnterPacket();
 protected:
+	
 	virtual BYTE* Serialize() override;
-	virtual Packet* Deserialize() override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 
 private:
 	string _name;
 	string _id;
+};
+
+class S_EnterPacket : public Packet
+{
+public:
+	S_EnterPacket();
+protected:
+	virtual BYTE* Serialize() override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+private:
+	bool _success;
 };

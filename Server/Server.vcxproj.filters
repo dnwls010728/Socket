@@ -90,6 +90,15 @@
     <ClCompile Include="Network\Packet.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="Content\ClientPacketHandler.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\GameSession.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\GameSessionManager.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\mysqlx\common\api.h">
@@ -311,6 +320,15 @@
     </ClInclude>
     <ClInclude Include="Network\Packet.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\ClientPacketHandler.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\GameSession.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\GameSessionManager.h">
+      <Filter>Content</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

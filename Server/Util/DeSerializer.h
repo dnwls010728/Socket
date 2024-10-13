@@ -1,6 +1,7 @@
 #pragma once
 class DeSerializer
 {
+public:
 	template<typename T>
 	static T Deserialize(BYTE* pos, int& currentByte);
 };
@@ -8,6 +9,7 @@ class DeSerializer
 template<typename T>
 inline T DeSerializer::Deserialize(BYTE* pos, int& currentByte)
 {
+	//TODO: Deserialize 중 패킷 불일치 발생 시 로직 처리 
 	uint8_t spliter = pos[currentByte];
 	currentByte++;
 	switch (currentByte) {

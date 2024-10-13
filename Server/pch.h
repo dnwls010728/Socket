@@ -34,3 +34,4 @@ using namespace std;
 #include "..\Job\JobQueue.h"
 #include "..\Util\SendBuffer.h"
 #include "..\Util\RecvBuffer.h"
+#include "..\Network\Packet.h"
