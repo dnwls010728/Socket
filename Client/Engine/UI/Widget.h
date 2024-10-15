@@ -7,16 +7,19 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-enum AnchorPresets
+namespace UI
 {
-    kLeft = (0x01<<0),
-    kRight = (0x01<<1),
-    kTop = (0x01<<2),
-    kBottom = (0x01<<3),
-    kCenter = (0x01<<4),
-    kMiddle = (0x01<<5),
-    kStretch = (0x01<<6)
-};
+    enum AnchorPresets
+    {
+        kLeft = (0x01<<0),
+        kRight = (0x01<<1),
+        kTop = (0x01<<2),
+        kBottom = (0x01<<3),
+        kCenter = (0x01<<4),
+        kMiddle = (0x01<<5),
+        kStretch = (0x01<<6)
+    };
+}
 
 class Widget : public std::enable_shared_from_this<Widget>
 {

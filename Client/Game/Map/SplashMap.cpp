@@ -20,7 +20,7 @@ void SplashMap::Load()
 
     std::shared_ptr<UI::Image> image = std::make_shared<UI::Image>(L"FMODLogo");
     image->SetSize({texture->GetWidth() / 2.f, texture->GetHeight() / 2.f});
-    image->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
+    image->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     image->SetTexture(texture);
 
     Canvas::Get()->AddWidget(image);

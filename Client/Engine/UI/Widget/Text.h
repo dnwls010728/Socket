@@ -1,9 +1,24 @@
 ﻿#pragma once
+#include <DWrite.h>
+
 #include "Math/Color.h"
 #include "UI/Widget.h"
 
 namespace UI
 {
+    enum class TextAnchor
+    {
+        kUpperLeft,
+        kUpperCenter,
+        kUpperRight,
+        kMiddleLeft,
+        kMiddleCenter,
+        kMiddleRight,
+        kLowerLeft,
+        kLowerCenter,
+        kLowerRight
+    };
+    
     class Text : public Widget
     {
         SHADER_CLASS_HELPER(Text)
@@ -15,6 +30,8 @@ namespace UI
         
         virtual void Render() override;
 
+        void SetAlignment(TextAnchor alignment);
+
         inline void SetText(const std::wstring& kText) { text_ = kText; }
         inline void SetColor(const Math::Color& kColor) { color_ = kColor; }
 
@@ -22,6 +39,9 @@ namespace UI
         std::wstring text_;
 
         Math::Color color_;
+
+        DWRITE_TEXT_ALIGNMENT text_alignment_;
+        DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment_;
     
     };
 }

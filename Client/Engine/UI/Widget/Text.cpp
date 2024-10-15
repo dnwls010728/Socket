@@ -8,7 +8,9 @@
 UI::Text::Text(const std::wstring& kName) :
     Widget(kName),
     text_(),
-    color_(Math::Color::White)
+    color_(Math::Color::White),
+    text_alignment_(DWRITE_TEXT_ALIGNMENT_LEADING),
+    paragraph_alignment_(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
 {
 }
 
@@ -23,5 +25,66 @@ void UI::Text::Render()
     Math::Vector2 pivot_position = GetPivotPosition();
     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
-    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, L"Silver24", DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, L"Silver24", text_alignment_, paragraph_alignment_);
+}
+
+void UI::Text::SetAlignment(TextAnchor alignment)
+{
+    switch (alignment)
+    {
+    case TextAnchor::kUpperLeft:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_LEADING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+        }
+        break;
+    case TextAnchor::kUpperCenter:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_CENTER;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+        }
+        break;
+    case TextAnchor::kUpperRight:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_TRAILING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+        }
+        break;
+    case TextAnchor::kMiddleLeft:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_LEADING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
+        }
+        break;
+    case TextAnchor::kMiddleCenter:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_CENTER;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
+        }
+        break;
+    case TextAnchor::kMiddleRight:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_TRAILING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
+        }
+        break;
+    case TextAnchor::kLowerLeft:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_LEADING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_FAR;
+        }
+        break;
+    case TextAnchor::kLowerCenter:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_CENTER;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_FAR;
+        }
+        break;
+    case TextAnchor::kLowerRight:
+        {
+            text_alignment_ = DWRITE_TEXT_ALIGNMENT_TRAILING;
+            paragraph_alignment_ = DWRITE_PARAGRAPH_ALIGNMENT_FAR;
+        }
+        break;
+    }
 }
