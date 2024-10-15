@@ -15,6 +15,9 @@ public:
 
     void AddWidget(const std::shared_ptr<Widget>& kWidget);
 
+    template<std::derived_from<Widget> T>
+    T* AddWidget(const std::wstring& kName);
+
     float GetScaleRatio() const;
 
 private:
@@ -44,3 +47,12 @@ private:
     Widget* focused_widget_;
     
 };
+
+template <std::derived_from<Widget> T>
+T* Canvas::AddWidget(const std::wstring& kName)
+{
+    std::shared_ptr<Widget> widget = std::make_shared<T>(kName);
+    widgets_.push_back(widget);
+
+    return static_cast<T*>(widget.get());
+}
