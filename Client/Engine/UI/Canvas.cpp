@@ -20,11 +20,6 @@ Canvas::Canvas() :
 {
 }
 
-void Canvas::AddWidget(const std::shared_ptr<Widget>& kWidget)
-{
-    widgets_.push_back(kWidget);
-}
-
 float Canvas::GetScaleRatio() const
 {
     const float width_ratio = width_ / static_cast<float>(reference_resolution_width_);

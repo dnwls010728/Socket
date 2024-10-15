@@ -17,13 +17,13 @@ void SplashMap::Load()
 {
     ResourceManager::Get()->Load<UITexture>(L"FMODLogo", L".\\Game_Data\\FMODLogo.png");
     UITexture* texture = ResourceManager::Get()->GetResource<UITexture>(L"FMODLogo");
+    
+    Canvas* canvas = Canvas::Get();
 
-    std::shared_ptr<UI::Image> image = std::make_shared<UI::Image>(L"FMODLogo");
+    UI::Image* image = canvas->AddWidget<UI::Image>(L"FMODLogo");
     image->SetSize({texture->GetWidth() / 2.f, texture->GetHeight() / 2.f});
     image->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     image->SetTexture(texture);
-
-    Canvas::Get()->AddWidget(image);
 
     TimerManager::Get()->SetTimer([]()
     {

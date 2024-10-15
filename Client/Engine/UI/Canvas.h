@@ -13,8 +13,6 @@ public:
     Canvas();
     virtual ~Canvas() override = default;
 
-    void AddWidget(const std::shared_ptr<Widget>& kWidget);
-
     template<std::derived_from<Widget> T>
     T* AddWidget(const std::wstring& kName);
 
