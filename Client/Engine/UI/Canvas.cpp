@@ -41,19 +41,57 @@ void Canvas::OnResize(MathTypes::uint32 width, MathTypes::uint32 height)
 
 void Canvas::OnEvent(const Event& kEvent)
 {
-    const MathTypes::uint32& kType = kEvent.type;
-    
-    if (kType == EventType::kKeyPressed)
+    switch (kEvent.type)
     {
-        if (focused_widget_) focused_widget_->OnKeyEvent(kEvent.key.key_code, true);
-    }
-    else if (kType == EventType::kKeyReleased)
-    {
-        if (focused_widget_) focused_widget_->OnKeyEvent(kEvent.key.key_code, false);
-    }
-    else if (kType == EventType::kText)
-    {
-        if (focused_widget_) focused_widget_->OnCharEvent(kEvent.text.character);
+    case EventType::kKeyPressed:
+        {
+            if (focused_widget_) focused_widget_->OnKeyEvent(kEvent.key.key_code, true);
+        }
+        break;
+    case EventType::kKeyReleased:
+        {
+            if (focused_widget_) focused_widget_->OnKeyEvent(kEvent.key.key_code, false);
+        }
+        break;
+    case EventType::kText:
+        {
+            if (focused_widget_) focused_widget_->OnCharEvent(kEvent.text.character);
+        }
+        break;
+    case EventType::kMousePressed:
+        {
+            if (kEvent.button.button == MouseButton::kLeft)
+            {
+                if (hovered_widget_) hovered_widget_->OnMousePressed();
+            }
+        }
+        break;
+    case EventType::kMouseReleased:
+        {
+            if (kEvent.button.button == MouseButton::kLeft)
+            {
+                if (hovered_widget_)
+                {
+                    if (hovered_widget_ != focused_widget_)
+                    {
+                        if (focused_widget_) focused_widget_->OnBlur();
+                        focused_widget_ = hovered_widget_;
+                        focused_widget_->OnFocus();
+                    }
+
+                    hovered_widget_->OnMouseReleased();
+                }
+                else
+                {
+                    if (focused_widget_)
+                    {
+                        focused_widget_->OnBlur();
+                        focused_widget_ = nullptr;
+                    }
+                }
+            }
+        }
+        break;
     }
 }
 
@@ -94,33 +132,6 @@ void Canvas::Tick(float delta_time)
         if (hovered_widget_) hovered_widget_->OnMouseLeave();
         hovered_widget_ = hovered_widget;
         if (hovered_widget_) hovered_widget->OnMouseHover();
-    }
-
-    if (mouse->GetMouseButtonDown(MouseButton::kLeft))
-    {
-        if (hovered_widget_) hovered_widget_->OnMousePressed();
-    }
-    else if (mouse->GetMouseButtonUp(MouseButton::kLeft))
-    {
-        if (hovered_widget_)
-        {
-            if (hovered_widget_ != focused_widget_)
-            {
-                if (focused_widget_) focused_widget_->OnBlur();
-                focused_widget_ = hovered_widget_;
-                focused_widget_->OnFocus();
-            }
-
-            hovered_widget_->OnMouseReleased();
-        }
-        else
-        {
-            if (focused_widget_)
-            {
-                focused_widget_->OnBlur();
-                focused_widget_ = nullptr;
-            }
-        }
     }
 
     for (const auto& ui : widgets_)

@@ -153,6 +153,7 @@ void Core::MainThread()
                 else if (kType & (EventType::kMousePressed | EventType::kMouseReleased | EventType::kMouseMotion | EventType::kMouseWheel))
                 {
                     Mouse::Get()->OnEvent(event);
+                    Canvas::Get()->OnEvent(event);
                 }
 
                 World::Get()->OnEvent(event);

@@ -2,8 +2,10 @@
 #include <vector>
 #include <rttr/registration>
 
+#include "Event/Events.h"
 #include "Math/Rect.h"
 #include "Math/Vector2.h"
+#include "Misc/DelegateMacros.h"
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
