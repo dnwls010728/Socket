@@ -10,6 +10,7 @@ public:
     PlatformControllerComponent(Actor* owner, const std::wstring& kName);
     virtual ~PlatformControllerComponent() override = default;
 
+protected:
     virtual void TickComponent(float delta_time) override;
 
 private:

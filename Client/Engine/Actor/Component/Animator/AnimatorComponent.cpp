@@ -16,6 +16,39 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     current_clip_ = nullptr;
 }
 
+std::shared_ptr<AnimationClip> AnimatorComponent::AddClip(const std::wstring& kName, int* sprite_idx_arr, int size)
+{
+    std::shared_ptr<AnimationClip> clip = std::make_shared<AnimationClip>();
+
+    for (int i = 0; i < size; i++)
+    {
+        clip->frames_.push_back(sprite_idx_arr[i]);
+    }
+    clips_[kName] = clip;
+
+    return clip;
+}
+
+bool AnimatorComponent::PlayClip(std::wstring clip_name)
+{
+    if (clips_[clip_name] == current_clip_) return false;
+    current_clip_ = clips_[clip_name];
+    is_playing_ = true;
+    timer_ = 0.f;
+    current_index_ = 0;
+    return true;
+}
+
+bool AnimatorComponent::PlayClip(std::shared_ptr<AnimationClip> clip)
+{
+    if (clip == current_clip_) return false;
+    current_clip_ = clip;
+    is_playing_ = true;
+    timer_ = 0.f;
+    current_index_ = 0;
+    return true;
+}
+
 void AnimatorComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
@@ -53,39 +86,6 @@ void AnimatorComponent::TickComponent(float delta_time)
             }
         }
     }
-}
-
-std::shared_ptr<AnimationClip> AnimatorComponent::AddClip(const std::wstring& kName, int* sprite_idx_arr, int size)
-{
-    std::shared_ptr<AnimationClip> clip = std::make_shared<AnimationClip>();
-
-    for (int i = 0; i < size; i++)
-    {
-        clip->frames_.push_back(sprite_idx_arr[i]);
-    }
-    clips_[kName] = clip;
-
-    return clip;
-}
-
-bool AnimatorComponent::PlayClip(std::wstring clip_name)
-{
-    if (clips_[clip_name] == current_clip_) return false;
-    current_clip_ = clips_[clip_name];
-    is_playing_ = true;
-    timer_ = 0.f;
-    current_index_ = 0;
-    return true;
-}
-
-bool AnimatorComponent::PlayClip(std::shared_ptr<AnimationClip> clip)
-{
-    if (clip == current_clip_) return false;
-    current_clip_ = clip;
-    is_playing_ = true;
-    timer_ = 0.f;
-    current_index_ = 0;
-    return true;
 }
 
 RTTR_REGISTRATION

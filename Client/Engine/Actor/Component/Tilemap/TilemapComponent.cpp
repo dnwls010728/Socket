@@ -15,34 +15,6 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void TilemapComponent::InitializeComponent()
-{
-	ActorComponent::InitializeComponent();
-
-	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
-}
-
-void TilemapComponent::UninitializeComponent()
-{
-	ActorComponent::UninitializeComponent();
-
-	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
-}
-
-void TilemapComponent::Render(float alpha)
-{
-	ActorComponent::Render(alpha);
-
-	for (const auto& tilemap_layer : tilemap_layers_)
-	{
-		tilemap_layer->AddShapes(
-			GetOwner()->GetTransform()->GetPosition(),
-			{ 1.f / PPU, 1.f / PPU },
-			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
-		);
-	}
-}
-
 void TilemapComponent::LoadMap(const char* kPath)
 {
 	map_.load(kPath);
@@ -73,6 +45,34 @@ void TilemapComponent::LoadMap(const char* kPath)
 			Math::Vector2 chunk_size = {512.f, 512.f};
 			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, tilemap_texture_, chunk_size));
 		}
+	}
+}
+
+void TilemapComponent::InitializeComponent()
+{
+	ActorComponent::InitializeComponent();
+
+	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
+}
+
+void TilemapComponent::UninitializeComponent()
+{
+	ActorComponent::UninitializeComponent();
+
+	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
+}
+
+void TilemapComponent::Render(float alpha)
+{
+	ActorComponent::Render(alpha);
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->AddShapes(
+			GetOwner()->GetTransform()->GetPosition(),
+			{ 1.f / PPU, 1.f / PPU },
+			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
+		);
 	}
 }
 

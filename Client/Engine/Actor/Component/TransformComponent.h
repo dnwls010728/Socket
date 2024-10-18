@@ -12,8 +12,6 @@ public:
     TransformComponent(Actor* owner, const std::wstring& kName);
     virtual ~TransformComponent() override = default;
 
-    virtual void PhysicsTickComponent(float delta_time) override;
-
     void SetPosition(const Math::Vector2& position);
     void SetAngle(float angle);
     void SetScale(const Math::Vector2& scale);
@@ -26,6 +24,9 @@ public:
     inline Math::Vector2 GetScale() const { return scale_; }
 
     inline float GetAngle() const { return angle_; }
+
+protected:
+    virtual void PhysicsTickComponent(float delta_time) override;
 
 private:
     friend class Actor;

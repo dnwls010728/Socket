@@ -20,14 +20,16 @@ class TilemapComponent : public ActorComponent
     const float PPU = 32.f;
     const MathTypes::uint32 VertexBufferSize = 2048;
     const MathTypes::uint32 IndexBufferSize = 2048 * 6 / 4;
+    
 public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
 
+    void LoadMap(const char* kPath);
+
+protected:
     virtual void InitializeComponent() override;
     virtual void UninitializeComponent() override;
     virtual void Render(float alpha) override;
-
-    void LoadMap(const char* kPath);
 
 private:
     void GeneratePhysics(const tmx::ObjectGroup& object);

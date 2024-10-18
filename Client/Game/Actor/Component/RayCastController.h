@@ -19,11 +19,9 @@ public:
     RayCastController(Actor* owner, const std::wstring& kName);
     virtual ~RayCastController() override = default;
 
+protected:
     virtual void BeginPlay() override;
     
-    inline void SetCollider(class ColliderComponent* collider) { collider_ = collider; }
-
-protected:
     void UpdateRaycastOrigins();
     void CalculateRaySpecing();
     

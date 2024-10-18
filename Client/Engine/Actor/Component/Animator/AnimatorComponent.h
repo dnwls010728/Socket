@@ -17,15 +17,16 @@ public:
     AnimatorComponent(Actor* owner, const std::wstring& kName);
     virtual ~AnimatorComponent() override = default;
 
-    virtual void BeginPlay() override;
-    virtual void TickComponent(float delta_time) override;
-
     std::shared_ptr<AnimationClip> AddClip(const std::wstring& kName, int* sprite_idx_arr, int size);
     inline std::shared_ptr<AnimationClip> GetClip(std::wstring clip_name) { return clips_[clip_name]; }
     inline std::shared_ptr<AnimationClip> GetClip() { return current_clip_; }
     bool PlayClip(std::wstring clip_name);
     bool PlayClip(std::shared_ptr<AnimationClip> clip);
-    bool IsPlaying() { return is_playing_; }
+    inline bool IsPlaying() const { return is_playing_; }
+
+protected:
+    virtual void BeginPlay() override;
+    virtual void TickComponent(float delta_time) override;
 
 private:
     SpriteRendererComponent* sprite_renderer_;

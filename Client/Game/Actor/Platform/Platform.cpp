@@ -34,7 +34,6 @@ Platform::Platform(const std::wstring& kName) :
     collider_->SetSize({2.f, 1.f});
     
     controller_ = AddComponent<PlatformControllerComponent>(L"PlatformController");
-    controller_->SetCollider(collider_);
 }
 
 void Platform::Tick(float delta_time)

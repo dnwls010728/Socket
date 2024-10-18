@@ -13,9 +13,6 @@ public:
     SpriteRendererComponent(Actor* owner, const std::wstring& kName);
     virtual ~SpriteRendererComponent() override = default;
 
-    virtual void InitializeComponent() override;
-    virtual void Render(float alpha) override;
-
     inline void SetSprite(Sprite* sprite) { sprite_ = sprite; }
     inline const Sprite* GetSprite() const { return sprite_; }
 
@@ -30,6 +27,10 @@ public:
 
     inline void SetColor(const Math::Color& color) { color_ = color; }
     inline Math::Color GetColor() const { return color_; }
+
+protected:
+    virtual void InitializeComponent() override;
+    virtual void Render(float alpha) override;
 
 private:
     friend class AnimatorComponent;

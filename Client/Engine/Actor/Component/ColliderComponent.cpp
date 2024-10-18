@@ -14,16 +14,6 @@ ColliderComponent::ColliderComponent(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void ColliderComponent::InitializeComponent()
-{
-    ActorComponent::InitializeComponent();
-    
-    if (!b2Body_IsValid(GetOwner()->body_id_)) GetOwner()->CreateBody();
-    SetShape();
-    
-    SetMaterialIntermal(); // 물리 메테리얼을 설정합니다.
-}
-
 void ColliderComponent::SetOffset(const Math::Vector2& kOffset)
 {
     offset_ = kOffset;
@@ -68,6 +58,16 @@ const Bounds& ColliderComponent::GetBounds()
     bounds.max = {aabb.upperBound.x, aabb.upperBound.y};
 
     return bounds;
+}
+
+void ColliderComponent::InitializeComponent()
+{
+    ActorComponent::InitializeComponent();
+    
+    if (!b2Body_IsValid(GetOwner()->body_id_)) GetOwner()->CreateBody();
+    SetShape();
+    
+    SetMaterialIntermal(); // 물리 메테리얼을 설정합니다.
 }
 
 void ColliderComponent::SetShape()

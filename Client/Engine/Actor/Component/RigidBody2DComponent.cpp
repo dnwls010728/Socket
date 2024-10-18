@@ -18,22 +18,6 @@ RigidBody2DComponent::RigidBody2DComponent(Actor* owner, const std::wstring& kNa
 {
 }
 
-void RigidBody2DComponent::InitializeComponent()
-{
-    ActorComponent::InitializeComponent();
-    
-    if (!b2Body_IsValid(GetOwner()->body_id_)) GetOwner()->CreateBody();
-
-    b2BodyId body_id = GetValidBodyId();
-    
-    SetBodyTypeInternal(body_id); // 강체의 유형을 설정합니다.
-    SetGravityScaleInternal(body_id); // 중력의 크기를 설정합니다.
-    SetSleepModeInternal(body_id); // 강체의 수면 모드를 설정합니다.
-    SetCollisionDetectionModeInternal(body_id); // 충돌 감지 모드를 설정합니다.
-    SetFixedRotationInternal(body_id); // 회전을 고정할지 여부를 설정합니다.
-    SetAutoMassInternal(body_id); // 자동으로 질량을 계산할지 여부를 설정합니다.
-}
-
 void RigidBody2DComponent::SetBodyType(BodyType type)
 {
     body_type_ = type;
@@ -277,6 +261,22 @@ BodyType RigidBody2DComponent::GetBodyType() const
     if (b2Body_GetType(body_id) == b2_kinematicBody) return BodyType::kKinematic;
     if (b2Body_GetType(body_id) == b2_staticBody) return BodyType::kStatic;
     return BodyType::kDynamic;
+}
+
+void RigidBody2DComponent::InitializeComponent()
+{
+    ActorComponent::InitializeComponent();
+    
+    if (!b2Body_IsValid(GetOwner()->body_id_)) GetOwner()->CreateBody();
+
+    b2BodyId body_id = GetValidBodyId();
+    
+    SetBodyTypeInternal(body_id); // 강체의 유형을 설정합니다.
+    SetGravityScaleInternal(body_id); // 중력의 크기를 설정합니다.
+    SetSleepModeInternal(body_id); // 강체의 수면 모드를 설정합니다.
+    SetCollisionDetectionModeInternal(body_id); // 충돌 감지 모드를 설정합니다.
+    SetFixedRotationInternal(body_id); // 회전을 고정할지 여부를 설정합니다.
+    SetAutoMassInternal(body_id); // 자동으로 질량을 계산할지 여부를 설정합니다.
 }
 
 void RigidBody2DComponent::SetBodyTypeInternal(b2BodyId body_id)

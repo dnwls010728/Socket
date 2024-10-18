@@ -211,11 +211,6 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Game\Actor\Capsule.h" />
-    <ClInclude Include="Game\Actor\Character\CharacterBase.h" />
-    <ClInclude Include="Game\Actor\Character\Player\Player.h" />
-    <ClInclude Include="Game\Actor\Character\Player\State\PlayerJumpingState.h" />
-    <ClInclude Include="Game\Actor\Character\Player\State\PlayerStandingState.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
@@ -223,8 +218,6 @@
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\Actor\Platform\Platform.h" />
     <ClInclude Include="Game\Actor\Platform\PlatformControllerComponent.h" />
-    <ClInclude Include="Game\Actor\StateMachine\State.h" />
-    <ClInclude Include="Game\Actor\StateMachine\StateMachine.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
@@ -490,11 +483,6 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Game\Actor\Capsule.cpp" />
-    <ClCompile Include="Game\Actor\Character\CharacterBase.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\Player.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\State\PlayerJumpingState.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\State\PlayerStandingState.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
@@ -502,8 +490,6 @@
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Game\Actor\Platform\Platform.cpp" />
     <ClCompile Include="Game\Actor\Platform\PlatformControllerComponent.cpp" />
-    <ClCompile Include="Game\Actor\StateMachine\State.cpp" />
-    <ClCompile Include="Game\Actor\StateMachine\StateMachine.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />

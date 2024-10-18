@@ -10,6 +10,7 @@ public:
     Platform(const std::wstring& kName);
     virtual ~Platform() override = default;
 
+protected:
     virtual void Tick(float delta_time) override;
 
 private:

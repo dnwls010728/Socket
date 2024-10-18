@@ -15,21 +15,6 @@ TransformComponent::TransformComponent(Actor* owner, const std::wstring& kName) 
 {
 }
 
-void TransformComponent::PhysicsTickComponent(float delta_time)
-{
-    ActorComponent::PhysicsTickComponent(delta_time);
-    
-    b2BodyId  body_id = GetOwner()->body_id_;
-    if (b2Body_IsValid(body_id) && b2Body_GetType(body_id) != b2_staticBody)
-    {
-        const b2Vec2& position = b2Body_GetPosition(body_id);
-        position_ = {position.x, position.y};
-
-        const b2Rot& rotation = b2Body_GetRotation(body_id);
-        angle_ = b2Rot_GetAngle(rotation) * 180.f / MATH_PI;
-    }
-}
-
 void TransformComponent::SetPosition(const Math::Vector2& position)
 {
     position_ = position;
@@ -69,6 +54,21 @@ Math::Vector2 TransformComponent::GetUpVector() const
     const float s = sinf(theta);
 
     return {-s, c};
+}
+
+void TransformComponent::PhysicsTickComponent(float delta_time)
+{
+    ActorComponent::PhysicsTickComponent(delta_time);
+    
+    b2BodyId  body_id = GetOwner()->body_id_;
+    if (b2Body_IsValid(body_id) && b2Body_GetType(body_id) != b2_staticBody)
+    {
+        const b2Vec2& position = b2Body_GetPosition(body_id);
+        position_ = {position.x, position.y};
+
+        const b2Rot& rotation = b2Body_GetRotation(body_id);
+        angle_ = b2Rot_GetAngle(rotation) * 180.f / MATH_PI;
+    }
 }
 
 void TransformComponent::UpdateBody()

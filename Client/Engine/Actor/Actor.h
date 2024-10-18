@@ -22,8 +22,6 @@ public:
     Actor(const std::wstring& kName);
     virtual ~Actor() override = default;
 
-    inline virtual class ColliderComponent* GetCollider() { return nullptr; }
-
     void SetActive(bool is_active);
     void Destroy();
     void SetLifeSpan(float life_span);

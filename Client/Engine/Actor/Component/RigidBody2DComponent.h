@@ -41,8 +41,6 @@ public:
     RigidBody2DComponent(Actor* owner, const std::wstring& kName);
     virtual ~RigidBody2DComponent() override = default;
 
-    virtual void InitializeComponent() override;
-
     void SetBodyType(BodyType type);
     void SetGravityScale(float scale);
     void SetSleepMode(SleepMode mode);
@@ -71,6 +69,9 @@ public:
     bool IsAwake() const;
 
     BodyType GetBodyType() const;
+
+protected:
+    virtual void InitializeComponent() override;
 
 private:
     void SetBodyTypeInternal(b2BodyId body_id);

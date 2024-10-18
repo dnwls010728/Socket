@@ -22,6 +22,8 @@ RayCastController::RayCastController(Actor* owner, const std::wstring& kName) :
 void RayCastController::BeginPlay()
 {
     ActorComponent::BeginPlay();
+
+    collider_ = static_cast<ColliderComponent*>(GetOwner()->GetComponent(ColliderComponent::StaticClass()));    
     
     CalculateRaySpecing();
 }
