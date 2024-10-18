@@ -29,7 +29,7 @@ protected:
     virtual void TickComponent(float delta_time) override;
 
 private:
-    SpriteRendererComponent* sprite_renderer_;
+    SpriteRendererComponent* renderer_;
 
     std::map<std::wstring, std::shared_ptr<AnimationClip>> clips_;
     std::shared_ptr<AnimationClip> current_clip_;

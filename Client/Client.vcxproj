@@ -211,6 +211,7 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Game\Actor\Character\CharacterBase.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
@@ -483,6 +484,7 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Game\Actor\Character\CharacterBase.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />

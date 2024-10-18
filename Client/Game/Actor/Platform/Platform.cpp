@@ -17,7 +17,7 @@ Platform::Platform(const std::wstring& kName) :
 
     GetTransform()->SetScale({2.f, 1.f});
 
-    sprite_renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
+    renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
     
     if (ResourceManager::Get()->Load<Sprite>(L"Square", L".\\Game_Data\\Default\\Square.png"))
     {
@@ -28,12 +28,12 @@ Platform::Platform(const std::wstring& kName) :
     sprite_->Split(1, 1, Sprite::kCenter);
     sprite_->SetFilterMode(FilterMode::kBilinear);
 
-    sprite_renderer_->SetSprite(sprite_);
+    renderer_->SetSprite(sprite_);
     
-    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
+    collider_ = AddComponent<BoxColliderComponent>(L"Collider");
     collider_->SetSize({2.f, 1.f});
     
-    controller_ = AddComponent<PlatformControllerComponent>(L"PlatformController");
+    controller_ = AddComponent<PlatformControllerComponent>(L"Controller");
 }
 
 void Platform::Tick(float delta_time)

@@ -7,7 +7,7 @@
 
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
-    sprite_renderer_(nullptr),
+    renderer_(nullptr),
     clips_(),
     timer_(0.f),
     current_index_(0),
@@ -56,14 +56,14 @@ void AnimatorComponent::BeginPlay()
     ActorComponent* component = GetOwner()->GetComponent(SpriteRendererComponent::StaticClass());
     if (component)
     {
-        sprite_renderer_ = static_cast<SpriteRendererComponent*>(component);
+        renderer_ = static_cast<SpriteRendererComponent*>(component);
     }
 }
 
 void AnimatorComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
-    if (!sprite_renderer_) return;
+    if (!renderer_) return;
 
     if (is_playing_)
     {
@@ -74,7 +74,7 @@ void AnimatorComponent::TickComponent(float delta_time)
             if (current_clip_->is_repeat_ || current_index_ < current_clip_->frames_.size() - 1)
             {
                 current_index_ = (current_index_ + 1) % current_clip_->frames_.size();
-                sprite_renderer_->frame_index_ = current_clip_->frames_[current_index_];
+                renderer_->frame_index_ = current_clip_->frames_[current_index_];
             
                 timer_ -= 1.f / current_clip_->GetFrameRate();
             }

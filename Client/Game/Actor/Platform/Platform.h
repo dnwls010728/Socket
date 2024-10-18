@@ -14,7 +14,7 @@ protected:
     virtual void Tick(float delta_time) override;
 
 private:
-    class SpriteRendererComponent* sprite_renderer_;
+    class SpriteRendererComponent* renderer_;
     class BoxColliderComponent* collider_;
     class PlatformControllerComponent* controller_;
 

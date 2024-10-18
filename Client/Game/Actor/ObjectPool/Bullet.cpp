@@ -13,14 +13,14 @@ Bullet::Bullet(const std::wstring& kName) :
 {
     SetLayer(ActorLayer::kBullet);
     
-    circle_collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
+    circle_collider_ = AddComponent<CircleColliderComponent>(L"Collider");
     circle_collider_->SetRadius(.125f);
     // circle_collider_->SetTrigger(true);
     
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
     rigid_body_->SetCollisionDetectionMode(CollisionDetectionMode::kContinuous);
 
-    sprite_renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
+    renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
     
     if (ResourceManager::Get()->Load<Sprite>(L"Circle", L".\\Game_Data\\Default\\Circle.png"))
     {
@@ -31,7 +31,7 @@ Bullet::Bullet(const std::wstring& kName) :
     sprite_->Split(1, 1, Sprite::kCenter);
     sprite_->SetFilterMode(FilterMode::kBilinear);
 
-    sprite_renderer_->SetSprite(sprite_);
+    renderer_->SetSprite(sprite_);
 
     GetTransform()->SetScale({.25f, .25f});
 }

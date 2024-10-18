@@ -15,7 +15,7 @@ public:
 private:
     class CircleColliderComponent* circle_collider_;
     class RigidBody2DComponent* rigid_body_;
-    class SpriteRendererComponent* sprite_renderer_;
+    class SpriteRendererComponent* renderer_;
 
     class Sprite* sprite_;
     
