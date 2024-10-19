@@ -188,6 +188,9 @@
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Include\rttr\policy.cpp" />
+    <ClCompile Include="SocketSession.cpp" />
+    <ClCompile Include="SendBuffer.cpp" />
+    <ClCompile Include="RecvBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -691,6 +694,9 @@
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
+    <ClInclude Include="SocketSession.h" />
+    <ClInclude Include="SendBuffer.h" />
+    <ClInclude Include="RecvBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">

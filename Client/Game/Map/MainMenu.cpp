@@ -46,6 +46,7 @@ void MainMenu::Load()
     start_button->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
     start_button->on_click.Add([]()
     {
+
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 

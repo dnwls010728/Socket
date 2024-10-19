@@ -4,6 +4,9 @@
 
 #include "Math/MathTypes.h"
 
+using BYTE = unsigned char;
+
+
 // 현재 헤더파일에 있는 타입들은 프로젝트에 종속적인 타입들입니다.
 enum class ActorTag : MathTypes::uint64
 {
