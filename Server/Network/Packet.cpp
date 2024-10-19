@@ -1,35 +1,56 @@
 #include "pch.h"
 #include "Packet.h"
-#include "..\Util\DeSerializer.h";
+#include "..\Util\DeSerializer.h"
+#include "..\Util\Serializer.h"
+#include "..\Content\ClientPacketHandler.h"
 C_EnterPacket::C_EnterPacket()
 {
 }
 
-BYTE* C_EnterPacket::Serialize()
+BYTE* C_EnterPacket::Serialize(BYTE* buffer)
 {
-	return nullptr;
+	int currentByte = 0;
+	Serializer::Serialize(buffer, _name, currentByte);
+	Serializer::Serialize(buffer, _id, currentByte);
+	return buffer;
 }
 
 void C_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
-	auto packet = DeSerializer::Deserialize<C_EnterPacket>(buffer, currentByte);
-	_name = packet._name;
-	_id = packet._id;
+	
+	DeSerializer::Deserialize(buffer, currentByte,_name);
+	DeSerializer::Deserialize(buffer, currentByte,_id);
+}
+
+uint16_t C_EnterPacket::GetSize()
+{
+	uint16_t ret = 0;
+	ret += Serializer::GetPacketSize(_name);
+	ret += Serializer::GetPacketSize(_id);
+	return ret;
 }
 
 S_EnterPacket::S_EnterPacket()
 {
+	
 }
 
-BYTE* S_EnterPacket::Serialize()
+BYTE* S_EnterPacket::Serialize(BYTE* buffer)
 {
-	return nullptr;
+	
+	int currentByte = 0;
+	Serializer::Serialize(buffer, _success, currentByte);
+	return buffer;
 }
 
 void S_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
-	auto packet = DeSerializer::Deserialize<S_EnterPacket>(buffer, currentByte);
-	_success = packet._success;
+	DeSerializer::Deserialize(buffer, currentByte,_success);
+}
+
+uint16_t S_EnterPacket::GetSize()
+{
+	return Serializer::GetPacketSize(_success);
 }

@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 
 using PacketHandlerFunc = function<void(const shared_ptr<PacketSession>&, BYTE*, int32_t)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
@@ -32,10 +32,25 @@ public:
 
 private:
 	template<typename PacketType, typename ProcessFunc>
-	static bool HandlePacket(ProcessFunc func, const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len) 
+	static void HandlePacket(ProcessFunc func, const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len) 
 	{
 		PacketType pkt;
 		pkt.Deserialize(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 		return func(session, pkt);
+	}
+
+	template<typename T>
+	static shared_ptr<SendBuffer> MakeSendBuffer(T& pkt, uint16_t pktId)
+	{
+		const uint16_t dataSize = pkt.GetSize();
+		const uint16_t packetSize = dataSize + sizeof(PacketHeader);
+		shared_ptr<SendBuffer> sendBuffer = GSendBufferManager->Open(packetSize);
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
+		header->size = packetSize;
+		pkt.Serialize(reinterpret_cast<BYTE*>(&header[1]));
+		header->id = pktId;
+		sendBuffer->Close(packetSize);
+
+		return sendBuffer;
 	}
 };

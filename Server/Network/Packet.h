@@ -2,8 +2,9 @@
 class Packet
 {
 protected:
-	virtual BYTE* Serialize() { return nullptr; };
-	virtual void Deserialize() {  };
+	virtual BYTE* Serialize(BYTE* buffer) { return nullptr; };
+	virtual void Deserialize(BYTE* buffer, int32_t len) {  };
+	virtual uint16_t GetSize() { return 0; };
 };
 
 
@@ -11,10 +12,10 @@ class C_EnterPacket : public Packet
 {
 public:
 	C_EnterPacket();
-protected:
 	
-	virtual BYTE* Serialize() override;
+	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
 
 private:
 	string _name;
@@ -25,9 +26,9 @@ class S_EnterPacket : public Packet
 {
 public:
 	S_EnterPacket();
-protected:
-	virtual BYTE* Serialize() override;
+	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
 private:
-	bool _success;
+	uint8_t _success;
 };

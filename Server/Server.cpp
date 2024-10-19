@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 
-#include "..\Content\GameSession.h";
+#include "..\Content\GameSession.h"
 #include "..\Content\ClientPacketHandler.h"
-
+#include "..\Network\Service.h"
 enum
 {
     WORKER_TICK = 64
@@ -22,7 +22,7 @@ int main()
     ClientPacketHandler::Init();
 
 
-    shared_ptr<ServerService> service = make_shared<ServerSerivce>(
+    shared_ptr<ServerService> service = make_shared<ServerService>(
         NetworkConnector(L"127.0.0.1", 7777),
         make_shared<IocpCore>(),
         static_cast<SessionFactory>(make_shared<GameSession>),
