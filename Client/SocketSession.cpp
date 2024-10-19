@@ -10,7 +10,7 @@
 #include <ws2tcpip.h>
 #include <atomic>
 #pragma comment(lib,"ws2_32.lib")
-
+SocketSession* GSocketSession = new SocketSession();
 SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE)
 {
 	WSADATA wsaData;

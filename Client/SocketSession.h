@@ -6,7 +6,7 @@
 #include <vector>
 #include <thread>
 #define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 9000
+#define SERVER_PORT 7777
 #define BUFFER_SIZE 1024
 
 struct PacketHeader
@@ -110,3 +110,4 @@ private:
 	std::vector<std::thread> _workers;
 };
 
+extern SocketSession* GSocketSession;
