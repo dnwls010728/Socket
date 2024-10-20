@@ -1,4 +1,5 @@
 #pragma once
+
 class IocpObject : public enable_shared_from_this<IocpObject>
 {
 public:

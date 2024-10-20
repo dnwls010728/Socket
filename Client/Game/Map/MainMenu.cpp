@@ -9,7 +9,7 @@
 #include "UI/Widget/Text.h"
 #include "UI/Widget/TextBox.h"
 #include "Windows/WindowsWindow.h"
-
+#include "..\SocketSession.h"
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
 {
@@ -44,6 +44,7 @@ void MainMenu::Load()
     start_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     start_button->on_click.Add([]()
     {
+            GSocketSession->Connect();
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 

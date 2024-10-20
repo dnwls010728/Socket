@@ -23,7 +23,7 @@ void Service::CloseService()
 	_sessionCount = 0;
 }
 
-void Service::Broadcast(shared_ptr<BYTE*> buffer)
+void Service::Broadcast(shared_ptr<SendBuffer> buffer)
 {
 	WRITE_LOCK;
 	for (const auto& session : _sessions)

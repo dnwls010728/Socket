@@ -4,6 +4,7 @@
 #include "IocpCore.h"
 #include "IocpEvent.h"
 #include "NetworkConnector.h"
+#include "..\Util\RecvBuffer.h"
 enum
 {
 	BUFFER_SIZE = 0x10000, //64KB
@@ -24,7 +25,7 @@ public:
 	virtual ~Session();
 
 public:
-	void Send(shared_ptr<BYTE*> buffer);
+	void Send(shared_ptr<SendBuffer> buffer);
 	bool Connect();
 	void Disconnect(const WCHAR* cause);
 
@@ -70,9 +71,9 @@ private:
 private:
 	USE_LOCK;
 
-	BYTE* _recvBuffer;
+	RecvBuffer _recvBuffer;
 
-	queue < shared_ptr<BYTE*>> _sendQueue;
+	queue < shared_ptr<SendBuffer>> _sendQueue;
 	atomic<bool> _sendRegistered = false;
 
 private:

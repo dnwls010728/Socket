@@ -25,7 +25,7 @@ public:
 	virtual void		CloseService();
 	void				SetSessionFactory(SessionFactory func) { _sessionFactory = func; }
 
-	void				Broadcast(shared_ptr<BYTE*> buffer);
+	void				Broadcast(shared_ptr<SendBuffer> buffer);
 	shared_ptr<Session>			CreateSession();
 	void				AddSession(shared_ptr<Session> session);
 	void				ReleaseSession(shared_ptr<Session> session);

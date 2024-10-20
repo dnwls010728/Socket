@@ -137,6 +137,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Content\ClientPacketHandler.cpp" />
+    <ClCompile Include="Content\GameSession.cpp" />
+    <ClCompile Include="Content\GameSessionManager.cpp" />
     <ClCompile Include="Job\GlobalQueue.cpp" />
     <ClCompile Include="Job\Job.cpp" />
     <ClCompile Include="Job\JobQueue.cpp" />
@@ -145,20 +148,29 @@
     <ClCompile Include="Network\IocpEvent.cpp" />
     <ClCompile Include="Network\Listener.cpp" />
     <ClCompile Include="Network\NetworkConnector.cpp" />
+    <ClCompile Include="Network\Packet.cpp" />
     <ClCompile Include="Network\Service.cpp" />
     <ClCompile Include="Network\Session.cpp" />
     <ClCompile Include="Network\SocketUtils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Thread\Lock.cpp" />
     <ClCompile Include="Thread\ThreadManager.cpp" />
     <ClCompile Include="Util\CoreGlobal.cpp" />
     <ClCompile Include="Util\CoreTLS.cpp" />
+    <ClCompile Include="Util\DeSerializer.cpp" />
     <ClCompile Include="Util\LockQueue.cpp" />
+    <ClCompile Include="Util\RecvBuffer.cpp" />
+    <ClCompile Include="Util\SendBuffer.cpp" />
+    <ClCompile Include="Util\Serializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Content\ClientPacketHandler.h" />
+    <ClInclude Include="Content\GameSession.h" />
+    <ClInclude Include="Content\GameSessionManager.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
@@ -218,6 +230,7 @@
     <ClInclude Include="Network\IocpEvent.h" />
     <ClInclude Include="Network\Listener.h" />
     <ClInclude Include="Network\NetworkConnector.h" />
+    <ClInclude Include="Network\Packet.h" />
     <ClInclude Include="Network\Service.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Network\SocketUtils.h" />
@@ -227,7 +240,11 @@
     <ClInclude Include="Util\CoreGlobal.h" />
     <ClInclude Include="Util\CoreMacro.h" />
     <ClInclude Include="Util\CoreTLS.h" />
+    <ClInclude Include="Util\DeSerializer.h" />
     <ClInclude Include="Util\LockQueue.h" />
+    <ClInclude Include="Util\RecvBuffer.h" />
+    <ClInclude Include="Util\SendBuffer.h" />
+    <ClInclude Include="Util\Serializer.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Debug\libcrypto-3-x64.dll" />
