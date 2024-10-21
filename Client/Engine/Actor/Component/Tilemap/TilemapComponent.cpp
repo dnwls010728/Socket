@@ -24,11 +24,9 @@ void TilemapComponent::LoadMap(const char* kPath)
 	
 	const auto& tilesets = map_.getTilesets();
 	std::wstring tileset_path = std::wstring(tilesets[0].getImagePath().begin(), tilesets[0].getImagePath().end());
-	
-	if (ResourceManager::Get()->Load<Texture>(L"Tileset", tileset_path))
-	{
-		tilemap_texture_ = ResourceManager::Get()->GetResource<Texture>(L"Tileset");
-	}
+	tileset_path = tileset_path.substr(10);
+
+	tilemap_texture_ = ResourceManager::Get()->Load<Texture>(tileset_path);
 	
 	const auto& layers = map_.getLayers();
 	for (const auto& layer : layers)

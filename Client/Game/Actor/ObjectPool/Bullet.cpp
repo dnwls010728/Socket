@@ -21,12 +21,9 @@ Bullet::Bullet(const std::wstring& kName) :
     rigid_body_->SetCollisionDetectionMode(CollisionDetectionMode::kContinuous);
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
-    
-    if (ResourceManager::Get()->Load<Sprite>(L"Circle", L".\\Game_Data\\Default\\Circle.png"))
-    {
-        sprite_ = ResourceManager::Get()->GetResource<Sprite>(L"Circle");
-        sprite_->SetPPU(256);
-    }
+
+    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
+    sprite_->SetPPU(256);
 
     sprite_->Split(1, 1, Sprite::kCenter);
     sprite_->SetFilterMode(FilterMode::kBilinear);

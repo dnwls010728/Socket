@@ -18,12 +18,9 @@ Platform::Platform(const std::wstring& kName) :
     GetTransform()->SetScale({2.f, 1.f});
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
-    
-    if (ResourceManager::Get()->Load<Sprite>(L"Square", L".\\Content\\Sprites\\Default\\Square.png"))
-    {
-        sprite_ = ResourceManager::Get()->GetResource<Sprite>(L"Square");
-        sprite_->SetPPU(256);
-    }
+
+    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Square.png");
+    sprite_->SetPPU(256);
 
     sprite_->Split(1, 1, Sprite::kCenter);
     sprite_->SetFilterMode(FilterMode::kBilinear);

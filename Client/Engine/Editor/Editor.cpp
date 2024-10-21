@@ -16,10 +16,10 @@ Editor::Editor() :
     show_sprite_editor_(false),
     sprite_(nullptr)
 {
-    if (ResourceManager::Get()->Load<Sprite>(L"PlayerSheet", L".\\Game_Data\\PlayerSheet.png"))
-    {
-        sprite_ = ResourceManager::Get()->GetResource<Sprite>(L"PlayerSheet");
-    }
+    // if (ResourceManager::Get()->Load<Sprite>(L"PlayerSheet", L".\\Game_Data\\PlayerSheet.png"))
+    // {
+    //     sprite_ = ResourceManager::Get()->GetResource<Sprite>(L"PlayerSheet");
+    // }
 }
 
 void Editor::Tick(float delta_time)
