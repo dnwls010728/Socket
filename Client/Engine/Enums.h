@@ -2,8 +2,7 @@
 
 enum class LevelType : MathTypes::uint64
 {
-    kSplash = 0,
-    kMainMenu,
+    kMainMenu = 0,
     kDefault,
     kEnd
 };

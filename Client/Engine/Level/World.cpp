@@ -6,7 +6,6 @@
 #include "box2d/box2d.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
-#include "Map/SplashMap.h"
 #include "Time/TimerManager.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowsWindow.h"
@@ -84,11 +83,10 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
     
-    AddLevel<SplashMap>(LevelType::kSplash, L"Splash");
     AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
     
-    OpenLevel(LevelType::kSplash);
+    OpenLevel(LevelType::kMainMenu);
 }
 
 void World::OpenLevel(LevelType type)

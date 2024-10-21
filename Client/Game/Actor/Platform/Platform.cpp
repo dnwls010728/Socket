@@ -19,7 +19,7 @@ Platform::Platform(const std::wstring& kName) :
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
     
-    if (ResourceManager::Get()->Load<Sprite>(L"Square", L".\\Game_Data\\Default\\Square.png"))
+    if (ResourceManager::Get()->Load<Sprite>(L"Square", L".\\Content\\Sprites\\Default\\Square.png"))
     {
         sprite_ = ResourceManager::Get()->GetResource<Sprite>(L"Square");
         sprite_->SetPPU(256);

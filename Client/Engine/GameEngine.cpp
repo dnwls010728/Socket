@@ -49,7 +49,7 @@ void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     
     ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.Fonts->AddFontFromFileTTF(".\\Game_Data\\NanumBarunGothic.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
+    io.Fonts->AddFontFromFileTTF(".\\Content\\Fonts\\NanumBarunGothic.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
     io.FontDefault = io.Fonts->Fonts[0];
 
     ImGui::StyleColorsDark();
