@@ -24,7 +24,7 @@ namespace UI
         virtual void Render() override;
         virtual void OnFocus() override;
         virtual void OnBlur() override;
-        virtual void OnKeyEvent(MathTypes::uint16 key_code, bool is_pressed) override;
+        virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) override;
         virtual void OnCharEvent(wchar_t character) override;
 
         inline void SetContentType(ContentType content_type) { content_type_ = content_type; }

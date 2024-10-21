@@ -59,7 +59,7 @@ struct MouseWheelEvent
 
 union Event
 {
-    MathTypes::uint32 type;
+    Type::uint32 type;
     WindowEvent window;
     KeyboardEvent key;
     TextEvent text;

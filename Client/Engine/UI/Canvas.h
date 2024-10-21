@@ -25,17 +25,17 @@ private:
     friend class World;
     friend class Widget;
     
-    void OnResize(MathTypes::uint32 width, MathTypes::uint32 height);
+    void OnResize(Type::uint32 width, Type::uint32 height);
     void OnEvent(const Event& kEvent);
     void BeginPlay();
     void Tick(float delta_time);
     void Render();
     void Clear();
 
-    MathTypes::uint32 width_;
-    MathTypes::uint32 height_;
-    MathTypes::uint32 reference_resolution_width_;
-    MathTypes::uint32 reference_resolution_height_;
+    Type::uint32 width_;
+    Type::uint32 height_;
+    Type::uint32 reference_resolution_width_;
+    Type::uint32 reference_resolution_height_;
 
     float match_mode_;
 

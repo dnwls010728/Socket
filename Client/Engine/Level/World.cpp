@@ -91,7 +91,7 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 
 void World::OpenLevel(LevelType type)
 {
-    pending_level_ = levels_[static_cast<MathTypes::uint64>(type)].get();
+    pending_level_ = levels_[static_cast<Type::uint64>(type)].get();
 }
 
 void World::PhysicsTick(float delta_time)
@@ -235,7 +235,7 @@ void World::TransitionLevel()
 void World::ProcessCollisionEvents()
 {
     b2ContactEvents events = b2World_GetContactEvents(World::Get()->world_id_);
-    for (MathTypes::uint32 i = 0; i < events.beginCount; ++i)
+    for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2ContactBeginTouchEvent event = events.beginEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
@@ -250,7 +250,7 @@ void World::ProcessCollisionEvents()
         actor_b->OnCollisionEnter(actor_a);
     }
 
-    for (MathTypes::uint32 i = 0; i < events.endCount; ++i)
+    for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2ContactEndTouchEvent event = events.endEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
@@ -269,7 +269,7 @@ void World::ProcessCollisionEvents()
 void World::ProcessTriggerEvents()
 {
     b2SensorEvents events = b2World_GetSensorEvents(World::Get()->world_id_);
-    for (MathTypes::uint32 i = 0; i < events.beginCount; ++i)
+    for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2SensorBeginTouchEvent event = events.beginEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);
@@ -283,7 +283,7 @@ void World::ProcessTriggerEvents()
         actor_b->OnTriggerEnter(actor_a);
     }
     
-    for (MathTypes::uint32 i = 0; i < events.endCount; ++i)
+    for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2SensorEndTouchEvent event = events.endEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);

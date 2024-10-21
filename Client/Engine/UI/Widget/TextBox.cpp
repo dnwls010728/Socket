@@ -102,7 +102,7 @@ void UI::TextBox::OnBlur()
     show_cursor_ = false;
 }
 
-void UI::TextBox::OnKeyEvent(MathTypes::uint16 key_code, bool is_pressed)
+void UI::TextBox::OnKeyEvent(Type::uint16 key_code, bool is_pressed)
 {
     Widget::OnKeyEvent(key_code, is_pressed);
 

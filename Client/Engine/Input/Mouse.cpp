@@ -31,7 +31,7 @@ bool Mouse::GetMouseButtonUp(MouseButton button) const
 
 void Mouse::OnEvent(const Event& kEvent)
 {
-    const MathTypes::uint32& kType = kEvent.type;
+    const Type::uint32& kType = kEvent.type;
     if (kType == EventType::kMouseMotion)
     {
         const MouseMotionEvent& kMotion = kEvent.motion;

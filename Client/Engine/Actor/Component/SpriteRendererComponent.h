@@ -16,8 +16,8 @@ public:
     inline void SetSprite(Sprite* sprite) { sprite_ = sprite; }
     inline const Sprite* GetSprite() const { return sprite_; }
 
-    inline void SetFrameIndex(MathTypes::uint32 frame_index) { frame_index_ = frame_index; }
-    inline MathTypes::uint32 GetFrameIndex() const { return frame_index_; }
+    inline void SetFrameIndex(Type::uint32 frame_index) { frame_index_ = frame_index; }
+    inline Type::uint32 GetFrameIndex() const { return frame_index_; }
 
     inline void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
     inline bool GetFlipX() const { return flip_x_; }
@@ -38,7 +38,7 @@ private:
     std::shared_ptr<class Shape> shape_;
     Sprite* sprite_;
 
-    MathTypes::uint32 frame_index_;
+    Type::uint32 frame_index_;
 
     bool flip_x_;
     bool flip_y_;

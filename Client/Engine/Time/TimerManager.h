@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Singleton.h"
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 #include "Misc/DelegateMacros.h"
 #include "Misc/Function.h"
 
@@ -17,7 +17,7 @@ timers_.push_back(data); \
 return data.handle;
 #pragma endregion
 
-enum class TimerStatus : MathTypes::uint8
+enum class TimerStatus : Type::uint8
 {
     Active,
     Paused,

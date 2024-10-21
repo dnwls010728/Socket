@@ -4,7 +4,7 @@
 #include "Object.h"
 #include "Misc/EngineMacros.h"
 
-enum class EndPlayReason : MathTypes::uint64;
+enum class EndPlayReason : Type::uint64;
 class ActorComponent : public Object
 {
     SHADER_CLASS_HELPER(ActorComponent)

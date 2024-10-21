@@ -175,13 +175,13 @@
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
     <ClInclude Include="Engine\Math\Math.h" />
-    <ClInclude Include="Engine\Math\MathTypes.h" />
     <ClInclude Include="Engine\Math\Rect.h" />
     <ClInclude Include="Engine\Math\Vector2.h" />
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
+    <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Object.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Resource\Resource.h" />

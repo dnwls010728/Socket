@@ -17,12 +17,12 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
     
-    void Split(MathTypes::uint32 cols, MathTypes::uint32 rows, Math::Vector2 pivot);
+    void Split(Type::uint32 cols, Type::uint32 rows, Math::Vector2 pivot);
 
-    inline void SetPPU(MathTypes::uint32 ppu) { ppu_ = ppu; }
+    inline void SetPPU(Type::uint32 ppu) { ppu_ = ppu; }
     
     inline const std::vector<SpriteFrame>& GetFrames() const { return frames_; }
-    inline MathTypes::uint32 GetPPU() const { return ppu_; }
+    inline Type::uint32 GetPPU() const { return ppu_; }
 
     static const Math::Vector2 kCenter;
     static const Math::Vector2 kTopLeft;
@@ -37,6 +37,6 @@ public:
 private:
     std::vector<SpriteFrame> frames_;
 
-    MathTypes::uint32 ppu_;
+    Type::uint32 ppu_;
     
 };

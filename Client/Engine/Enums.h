@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-enum class LevelType : MathTypes::uint64
+enum class LevelType : Type::uint64
 {
     kMainMenu = 0,
     kDefault,
     kEnd
 };
 
-enum class EndPlayReason : MathTypes::uint64
+enum class EndPlayReason : Type::uint64
 {
     kDestroyed,
     kLevelTransition,

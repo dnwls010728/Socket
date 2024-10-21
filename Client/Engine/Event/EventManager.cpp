@@ -20,7 +20,7 @@ bool EventManager::PollEvent(Event& event)
     return true;
 }
 
-bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result)
+bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
 {
     if (message == WM_SIZE)
     {
@@ -44,12 +44,12 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         WORD key_code = LOWORD(wParam);
         WORD key_flags = HIWORD(lParam);
         
-        MathTypes::uint32 scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
+        Type::uint32 scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
 
         bool is_released = (key_flags & KF_UP) == KF_UP;
         bool is_repeat = (key_flags & KF_REPEAT) == KF_REPEAT;
 
-        MathTypes::uint32 type = 0;
+        Type::uint32 type = 0;
         if (!is_released) type = EventType::kKeyPressed;
         else type = EventType::kKeyReleased;
 
@@ -81,7 +81,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
     {
         bool is_pressed = false;
         MouseButton mouse_button = MouseButton::kLeft;
-        MathTypes::uint32 type = 0;
+        Type::uint32 type = 0;
         
         if ((wParam & MK_LBUTTON))
         {

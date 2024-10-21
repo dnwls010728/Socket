@@ -6,7 +6,7 @@
 #include "Input/Mouse.h"
 #include "Math/Rect.h"
 
-MathTypes::uint32 Widget::next_z_index_ = 0;
+Type::uint32 Widget::next_z_index_ = 0;
 
 Widget::Widget(const std::wstring& kName) :
     name_(kName),
@@ -34,8 +34,8 @@ void Widget::SetPosition(const Math::Vector2& kPosition)
 void Widget::SetPositionScreen(const Math::Vector2& kPosition)
 {
     Canvas* canvas = Canvas::Get();
-    const MathTypes::uint32 canvas_width = canvas->width_;
-    const MathTypes::uint32 canvas_height = canvas->height_;
+    const Type::uint32 canvas_width = canvas->width_;
+    const Type::uint32 canvas_height = canvas->height_;
 
     const float scale_ratio = canvas->GetScaleRatio();
 
@@ -77,7 +77,7 @@ void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kA
     UpdateRect();
 }
 
-void Widget::SetAnchorPreset(MathTypes::uint16 anchor, bool match_pivot)
+void Widget::SetAnchorPreset(Type::uint16 anchor, bool match_pivot)
 {
     if ((anchor & UI::AnchorPresets::kLeft) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
     else if ((anchor & UI::AnchorPresets::kRight) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
@@ -142,8 +142,8 @@ void Widget::OnBlur()
 
 void Widget::UpdateRect()
 {
-    MathTypes::uint32 parent_width = 0;
-    MathTypes::uint32 parent_height = 0;
+    Type::uint32 parent_width = 0;
+    Type::uint32 parent_height = 0;
     Math::Vector2 parent_position = {0.f, 0.f};
 
     Canvas* canvas = Canvas::Get();

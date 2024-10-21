@@ -28,7 +28,7 @@ float Canvas::GetScaleRatio() const
     return width_ratio * (1.f - match_mode_) + height_ratio * match_mode_;
 }
 
-void Canvas::OnResize(MathTypes::uint32 width, MathTypes::uint32 height)
+void Canvas::OnResize(Type::uint32 width, Type::uint32 height)
 {
     width_ = width;
     height_ = height;

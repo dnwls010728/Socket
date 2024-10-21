@@ -38,13 +38,13 @@ private:
     void Clear();
     
     std::vector<DefaultVertex> polygon_vertices_;
-    std::vector<MathTypes::uint32> polygon_indices_;
+    std::vector<Type::uint32> polygon_indices_;
 
     std::vector<DefaultVertex> circle_vertices_;
-    std::vector<MathTypes::uint32> circle_indices_;
+    std::vector<Type::uint32> circle_indices_;
     
     std::vector<DefaultVertex> capsule_vertices_;
-    std::vector<MathTypes::uint32> capsule_indices_;
+    std::vector<Type::uint32> capsule_indices_;
     
     std::vector<DefaultVertex> segment_vertices_;
     

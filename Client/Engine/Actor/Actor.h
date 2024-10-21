@@ -10,7 +10,7 @@ class Actor;
 
 DECLARE_DELEGATE(ContactSignature, Actor*);
 
-enum class EndPlayReason : MathTypes::uint64;
+enum class EndPlayReason : Type::uint64;
 class TransformComponent;
 
 class Actor : public Object

@@ -22,7 +22,7 @@ public:
 
     void SetLoop(bool is_loop);
 
-    MathTypes::uint32 GetLength() const;
+    Type::uint32 GetLength() const;
 
     AudioFormat GetFormat() const;
 

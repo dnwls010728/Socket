@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "Singleton.h"
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 #include "Math/Vector2.h"
 
 union Event;

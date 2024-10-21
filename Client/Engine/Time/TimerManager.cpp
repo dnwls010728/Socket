@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "TimerManager.h"
 
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 
 TimerManager::TimerManager() :
     internal_time_(0.f)
@@ -26,8 +26,8 @@ void TimerManager::Tick(float delta_time)
         {
             timer.status = TimerStatus::Executing;
         
-            MathTypes::uint32 cell_count = timer.loop ? static_cast<int>(trunc(internal_time_ - timer.expire_time) / timer.rate) + 1 : 1;
-            for (MathTypes::uint32 i = 0; i < cell_count; ++i)
+            Type::uint32 cell_count = timer.loop ? static_cast<int>(trunc(internal_time_ - timer.expire_time) / timer.rate) + 1 : 1;
+            for (Type::uint32 i = 0; i < cell_count; ++i)
             {
                 timer.callback();
             }

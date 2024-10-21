@@ -65,7 +65,7 @@ void Core::Init(WindowsApplication* application)
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result)
+bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
     if (EventManager::Get()->ProcessMessage(hWnd, message, wParam, lParam, handler_result)) return true;
@@ -133,7 +133,7 @@ void Core::MainThread()
             Event event;
             while (event_manager->PollEvent(event))
             {
-                const MathTypes::uint32& kType = event.type;
+                const Type::uint32& kType = event.type;
                 if (kType == EventType::kWindowSize)
                 {
                     const WindowEvent& kWindowEvent = event.window;

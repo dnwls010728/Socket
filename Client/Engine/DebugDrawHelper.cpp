@@ -2,6 +2,7 @@
 #include "DebugDrawHelper.h"
 
 #include "Level/World.h"
+#include "Math/Math.h"
 #include "Windows/DX/Shape.h"
 
 DebugDrawHelper::DebugDrawHelper() :

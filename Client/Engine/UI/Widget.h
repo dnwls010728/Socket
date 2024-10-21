@@ -39,7 +39,7 @@ public:
     void SetAnchorMax(const Math::Vector2& kAnchorMax);
     void SetPivot(const Math::Vector2& kPivot);
     void SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax);
-    void SetAnchorPreset(MathTypes::uint16 anchor, bool match_pivot = false);
+    void SetAnchorPreset(Type::uint16 anchor, bool match_pivot = false);
     void AttachToWidget(Widget* parent);
     void DetachFromUI();
     
@@ -59,7 +59,7 @@ protected:
     inline virtual void OnMouseReleased() {}
     inline virtual void OnMouseHover() {}
     inline virtual void OnMouseLeave() {}
-    inline virtual void OnKeyEvent(MathTypes::uint16 key_code, bool is_pressed) {}
+    inline virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) {}
     inline virtual void OnCharEvent(wchar_t character) {}
     inline virtual void BeginPlay() {}
     inline virtual void Tick(float delta_time) {}
@@ -70,7 +70,7 @@ protected:
     
     virtual void UpdateRect();
     
-    static MathTypes::uint32 next_z_index_;
+    static Type::uint32 next_z_index_;
 
     std::wstring name_;
 
@@ -87,7 +87,7 @@ protected:
     Widget* parent_;
     std::vector<Widget*> children_;
 
-    MathTypes::uint32 z_index_;
+    Type::uint32 z_index_;
 
     bool is_focused_;
     

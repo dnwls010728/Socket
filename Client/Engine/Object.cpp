@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Object.h"
 
-MathTypes::uint64 Object::next_instance_id_ = 0;
+Type::uint64 Object::next_instance_id_ = 0;
 
 Object::Object() :
     instance_id_(next_instance_id_++)

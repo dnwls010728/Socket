@@ -15,7 +15,7 @@ union Event;
 class ShapeBatch;
 class Level;
 class Shape;
-enum class LevelType : MathTypes::uint64;
+enum class LevelType : Type::uint64;
 class WindowsWindow;
 
 struct ActorActivation
@@ -96,7 +96,7 @@ private:
     Level* current_level_;
     Level* pending_level_;
     
-    std::shared_ptr<Level> levels_[static_cast<MathTypes::uint64>(LevelType::kEnd)];
+    std::shared_ptr<Level> levels_[static_cast<Type::uint64>(LevelType::kEnd)];
 
     std::queue<std::shared_ptr<Actor>> pending_actors_;
     std::queue<std::shared_ptr<Actor>> pending_destroy_actors_;
@@ -135,6 +135,6 @@ T* World::SpawnActor(const rttr::type& kType, const std::wstring& kName)
 template <std::derived_from<Level> T>
 T* World::AddLevel(LevelType type, std::wstring name)
 {
-    levels_[static_cast<MathTypes::uint64>(type)] = std::make_shared<T>(name);
-    return static_cast<T*>(levels_[static_cast<MathTypes::uint64>(type)].get());
+    levels_[static_cast<Type::uint64>(type)] = std::make_shared<T>(name);
+    return static_cast<T*>(levels_[static_cast<Type::uint64>(type)].get());
 }

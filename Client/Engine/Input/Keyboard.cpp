@@ -50,7 +50,7 @@ bool Keyboard::GetKeyUp(WORD key_code)
 
 void Keyboard::OnEvent(const Event& kEvent)
 {
-	const MathTypes::uint32& kType = kEvent.type;
+	const Type::uint32& kType = kEvent.type;
 
 	if (kType == EventType::kKeyPressed && !kEvent.key.is_repeat ||
 		kType == EventType::kKeyReleased)

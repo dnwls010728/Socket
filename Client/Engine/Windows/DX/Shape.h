@@ -5,7 +5,7 @@
 #include "Vertex.h"
 #include "Math/Bounds.h"
 #include "Math/Color.h"
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 #include "Math/Vector2.h"
 #include "Misc/EngineMacros.h"
 
@@ -27,11 +27,11 @@ public:
     Bounds GetBounds() const;
 
     inline void SetVertices(const std::vector<DefaultVertex>& kVertices) { vertices_ = kVertices; }
-    inline void SetIndices(const std::vector<MathTypes::uint32>& kIndices) { indices_ = kIndices; }
+    inline void SetIndices(const std::vector<Type::uint32>& kIndices) { indices_ = kIndices; }
     inline void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY primitive_topology) { primitive_topology_ = primitive_topology; }
 
     inline const std::vector<DefaultVertex>& GetVertices() const { return vertices_; }
-    inline const std::vector<MathTypes::uint32>& GetIndices() const { return indices_; }
+    inline const std::vector<Type::uint32>& GetIndices() const { return indices_; }
 
     inline const DirectX::XMMATRIX& GetWorldMatrix() const { return world_matrix_; }
 
@@ -64,7 +64,7 @@ protected:
     virtual void UpdateMatrixx();
     
     std::vector<DefaultVertex> vertices_;
-    std::vector<MathTypes::uint32> indices_;
+    std::vector<Type::uint32> indices_;
 
     DirectX::XMMATRIX world_matrix_;
 

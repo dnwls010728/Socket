@@ -170,7 +170,7 @@ bool Renderer::CreateD2DViewport(std::shared_ptr<WindowsWindow> window)
     Viewport* viewport = FindViewport(window.get());
     if (viewport)
     {
-        const MathTypes::uint32 kDPI = GetDpiForWindow(window->GetHWnd());
+        const Type::uint32 kDPI = GetDpiForWindow(window->GetHWnd());
         const D2D1_RENDER_TARGET_PROPERTIES kRenderTargetProperties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -222,8 +222,8 @@ bool Renderer::CreateDepthStencilBuffer(Viewport& viewport)
     return SUCCEEDED(hr);
 }
 
-bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, MathTypes::uint32 width,
-                              MathTypes::uint32 height)
+bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width,
+                              Type::uint32 height)
 {
     Viewport* viewport = FindViewport(kWindow.get());
     if (viewport && (viewport->d3d_viewport.Width != width || viewport->d3d_viewport.Height != height))
@@ -255,7 +255,7 @@ bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Mat
             return false;
 
 #pragma region D2D Resize
-        const MathTypes::uint32 kDPI = GetDpiForWindow(kWindow->GetHWnd());
+        const Type::uint32 kDPI = GetDpiForWindow(kWindow->GetHWnd());
         const D2D1_RENDER_TARGET_PROPERTIES render_target_properties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -429,7 +429,7 @@ void Renderer::EndLayer()
     current_d2d_viewport_->d2d_render_target->PopLayer();
 }
 
-void Renderer::ChangeResolution(WindowsWindow* window, MathTypes::uint32 width, MathTypes::uint32 height, bool is_fullscreen)
+void Renderer::ChangeResolution(WindowsWindow* window, Type::uint32 width, Type::uint32 height, bool is_fullscreen)
 {
     Viewport* viewport = FindViewport(window);
     if (!viewport) return;
@@ -643,7 +643,7 @@ bool Renderer::GetTextAdvances(const std::wstring& kString, const std::wstring& 
     
     std::vector<DWRITE_CLUSTER_METRICS> cluster_metrics;
 
-    MathTypes::uint32 cluster_count = 0;
+    Type::uint32 cluster_count = 0;
     text_layout->GetClusterMetrics(nullptr, 0, &cluster_count);
         
     cluster_metrics.resize(cluster_count);
