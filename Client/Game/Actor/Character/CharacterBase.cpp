@@ -31,6 +31,11 @@ void CharacterBase::Tick(float delta_time)
             velocity_.y += collisions.slope_normal.y * -gravity_ * delta_time;
         else velocity_.y = 0.f;
     }
+
+    if (collisions.below)
+    {
+        velocity_.y = 5.f;
+    }
     
 }
 

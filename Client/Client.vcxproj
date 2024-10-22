@@ -211,6 +211,7 @@
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actor\Character\CharacterBase.h" />
+    <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
@@ -485,6 +486,7 @@
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actor\Character\CharacterBase.cpp" />
+    <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
@@ -596,9 +598,6 @@
     <Content Include="Lib\libtmxlite-s.lib" />
     <Content Include="Lib\rttr_core.dll" />
     <Content Include="Lib\rttr_core.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Game\Actor\Character\Player\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,7 +20,14 @@ Sprite::Sprite() :
 bool Sprite::Load(const std::wstring& kPath)
 {
     if (!Texture::Load(kPath)) return false;
-    
+    frames_.clear();
+
+    SpriteFrame frame;
+    frame.uv_offset = Math::Vector2::Zero();
+    frame.uv_scale = Math::Vector2::One();
+    frame.pivot = kCenter;
+
+    frames_.push_back(frame);
     return true;;
 }
 
