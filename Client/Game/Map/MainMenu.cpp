@@ -44,7 +44,7 @@ void MainMenu::Load()
     start_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     start_button->on_click.Add([]()
     {
-            GSocketSession->Connect();
+        GSocketSession->Connect();
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 

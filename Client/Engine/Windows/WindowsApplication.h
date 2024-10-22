@@ -27,6 +27,7 @@ public:
     void InitWindow(const std::shared_ptr<WindowsWindow>& kWindow, const std::shared_ptr<WindowDefinition>& kDefinition, const std::shared_ptr<WindowsWindow>& kParentWindow);
     void AddMessageHandler(IWindowsMessageHandler& message_handler);
     void RemoveMessageHandler(IWindowsMessageHandler& message_handler);
+    void PumpMessages();
     void Quit();
 
     const std::vector<std::shared_ptr<WindowsWindow>>& GetWindows() const { return windows_; }

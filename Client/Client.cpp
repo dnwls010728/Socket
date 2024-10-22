@@ -22,15 +22,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     Core* core = new Core();
     core->Init(application);
 
-    MSG msg = {};
-    while (msg.message != WM_QUIT)
-    {
-        if (GetMessage(&msg, nullptr, 0, 0))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
+    application->PumpMessages();
 
     SAFE_RELEASE(core);
     SAFE_RELEASE(application);
