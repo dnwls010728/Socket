@@ -60,6 +60,19 @@ void WindowsApplication::RemoveMessageHandler(IWindowsMessageHandler& message_ha
     std::erase(message_handlers_, &message_handler);
 }
 
+void WindowsApplication::PumpMessages()
+{  
+    MSG msg = {};
+    while (msg.message != WM_QUIT)
+    {
+        if (GetMessage(&msg, nullptr, 0, 0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+}
+
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WindowsApplication* application = nullptr;

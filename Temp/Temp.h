@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "GameModule.h"
+#include "EngineModule.h"
 
-class Temp : public GameModule
+class Temp : public EngineModule
 {
 public:
     Temp();
