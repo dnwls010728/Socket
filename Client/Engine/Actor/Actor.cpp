@@ -109,12 +109,22 @@ void Actor::OnEnable()
 {
     is_active_ = true;
     if (b2Body_IsValid(body_id_)) b2Body_Enable(body_id_);
+
+    for (const auto& component : components_)
+    {
+        component->OnEnable();
+    }
 }
 
 void Actor::OnDisable()
 {
     is_active_ = false;
     if (b2Body_IsValid(body_id_)) b2Body_Disable(body_id_);
+
+    for (const auto& component : components_)
+    {
+        component->OnDisable();
+    }
 }
 
 void Actor::SetActive(bool is_active)

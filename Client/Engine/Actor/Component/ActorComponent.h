@@ -29,6 +29,8 @@ protected:
     inline virtual void TickComponent(float delta_time) {}
     inline virtual void PostTickComponent(float delta_time) {}
     inline virtual void Render(float alpha) {}
+    inline virtual void OnEnable() {}
+    inline virtual void OnDisable() {}
     
     Actor* owner_;
     std::wstring name_;

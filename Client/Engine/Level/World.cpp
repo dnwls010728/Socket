@@ -160,16 +160,19 @@ void World::Render(float alpha)
         }
     }
     
-    std::ranges::sort(shapes, Shape::CompareZOrder);
-    
-    shapes_.clear();
-    
     shape_batch_->DrawShapes(window_, shapes);
 }
 
 void World::AddShape(const std::shared_ptr<Shape>& kShape)
 {
     shapes_.push_back(kShape);
+    SortZOrder();
+}
+
+void World::RemoveShape(const std::shared_ptr<Shape>& kShape)
+{
+    std::erase(shapes_, kShape);
+    SortZOrder();
 }
 
 void World::GetActors(const rttr::type& type, std::vector<Actor*>& actors)
@@ -347,6 +350,11 @@ void World::DestroyActors()
 void World::ActivateActor(Actor* actor, bool is_active)
 {
     pending_actor_activation_.push({actor, is_active});
+}
+
+void World::SortZOrder()
+{
+    std::ranges::sort(shapes_, Shape::CompareZOrder);
 }
 
 void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context)

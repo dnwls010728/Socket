@@ -13,6 +13,8 @@ public:
     SpriteRendererComponent(Actor* owner, const std::wstring& kName);
     virtual ~SpriteRendererComponent() override = default;
 
+    void SetZOrder(int z_order);
+
     inline void SetSprite(Sprite* sprite) { sprite_ = sprite; }
     inline const Sprite* GetSprite() const { return sprite_; }
 
@@ -28,9 +30,14 @@ public:
     inline void SetColor(const Math::Color& color) { color_ = color; }
     inline Math::Color GetColor() const { return color_; }
 
+    inline int GetZOrder() const { return z_order_; }
+
 protected:
     virtual void InitializeComponent() override;
+    virtual void UninitializeComponent() override;
     virtual void Render(float alpha) override;
+    virtual void OnEnable() override;
+    virtual void OnDisable() override;
 
 private:
     friend class AnimatorComponent;
@@ -44,5 +51,7 @@ private:
     bool flip_y_;
 
     Math::Color color_;
+
+    int z_order_;
     
 };

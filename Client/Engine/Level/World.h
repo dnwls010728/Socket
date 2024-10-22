@@ -37,6 +37,7 @@ public:
     void PostTick(float delta_time);
     void Render(float alpha);
     void AddShape(const std::shared_ptr<Shape>& kShape);
+    void RemoveShape(const std::shared_ptr<Shape>& kShape);
 
     void GetActors(const rttr::type& type, std::vector<Actor*>& actors);
 
@@ -68,6 +69,7 @@ private:
     friend class Physics2D;
     friend class Level;
     friend class Actor;
+    friend class SpriteRendererComponent;
     friend class TilemapComponent;
     friend class CameraComponent;
     friend class PlayerController;
@@ -81,6 +83,7 @@ private:
     void DestroyActor(Actor* actor);
     void DestroyActors();
     void ActivateActor(Actor* actor, bool is_active);
+    void SortZOrder();
 
     std::shared_ptr<WindowsWindow> window_;
     

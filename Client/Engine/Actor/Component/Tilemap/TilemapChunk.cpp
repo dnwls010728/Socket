@@ -29,13 +29,11 @@ TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, const tmx::Tileset* kTi
     GenerateTiles(kTileset, pos_x, pos_y, kTileSize);
 }
 
-void TilemapChunk::AddShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot)
+void TilemapChunk::UpdateShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot)
 {
     shape_->SetPosition(kPosition);
     shape_->SetScale(kScale);
     shape_->SetPivot(kPivot);
-
-    World::Get()->AddShape(shape_);
 }
 
 int TilemapChunk::GetTileIndex(int x, int y) const
@@ -100,4 +98,6 @@ void TilemapChunk::GenerateTiles(const tmx::Tileset* kTileset, const Type::uint3
     shape_->SetVertices(vertices_);
     shape_->SetIndices(indices_);
     shape_->SetTexture(texture_);
+    
+    World::Get()->AddShape(shape_);
 }

@@ -19,11 +19,11 @@ TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, Tex
     CreateChunks(map, layer, texture, map_tile_size_);
 }
 
-void TilemapLayer::AddShapes(const Math::Vector2& position, const Math::Vector2& scale, const Math::Vector2& pivot)
+void TilemapLayer::UpdateShapes(const Math::Vector2& position, const Math::Vector2& scale, const Math::Vector2& pivot)
 {
     for (const auto& chunk : chunks_)
     {
-        chunk->AddShape(position, scale, pivot);
+        chunk->UpdateShape(position, scale, pivot);
     }
 }
 

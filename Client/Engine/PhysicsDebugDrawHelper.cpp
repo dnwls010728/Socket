@@ -320,10 +320,10 @@ void PhysicsDebugDrawHelper::Clear()
     segment->SetVertices(segment_vertices_);
     segment->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     
-    World::Get()->AddShape(polygon);
-    World::Get()->AddShape(circle);
-    World::Get()->AddShape(capsule);
-    World::Get()->AddShape(segment);
+    // World::Get()->AddShape(polygon);
+    // World::Get()->AddShape(circle);
+    // World::Get()->AddShape(capsule);
+    // World::Get()->AddShape(segment);
     
     polygon_vertices_.clear();
     polygon_indices_.clear();

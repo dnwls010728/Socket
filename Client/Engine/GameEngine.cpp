@@ -14,10 +14,6 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
 
-#ifdef _DEBUG
-#include "Editor/Editor.h"
-#endif
-
 GameEngine::GameEngine() :
     game_window_(nullptr),
     shape_batch_(nullptr),
@@ -62,10 +58,6 @@ void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 void GameEngine::GameLoop(float delta_time)
 {
     StartFrame();
-    
-#ifdef _DEBUG
-    Editor::Get()->Tick(delta_time);
-#endif
     
     World::Get()->TransitionLevel();
     
