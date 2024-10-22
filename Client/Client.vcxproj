@@ -181,7 +181,6 @@
     <ClInclude Include="Engine\Misc\Delegate.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
-    <ClInclude Include="Engine\Object.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Resource\Resource.h" />
     <ClInclude Include="Engine\Resource\ResourceManager.h" />
@@ -461,7 +460,6 @@
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
-    <ClCompile Include="Engine\Object.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Resource\Resource.cpp" />
     <ClCompile Include="Engine\Resource\ResourceManager.cpp" />

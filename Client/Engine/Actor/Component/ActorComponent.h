@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include <memory>
 
-#include "Object.h"
 #include "Misc/EngineMacros.h"
+#include "rttr/registration_friend.h"
 
 enum class EndPlayReason : Type::uint64;
-class ActorComponent : public Object
+class ActorComponent : public std::enable_shared_from_this<ActorComponent>
 {
     SHADER_CLASS_HELPER(ActorComponent)
-    GENERATED_BODY(ActorComponent, Object)
+    GENERATED_BODY(ActorComponent)
     
 public:
     ActorComponent(class Actor* owner, const std::wstring& kName);
-    virtual ~ActorComponent() override = default;
+    virtual ~ActorComponent() = default;
 
     inline Actor* GetOwner() const { return owner_; }
     inline std::wstring GetName() const { return name_; }

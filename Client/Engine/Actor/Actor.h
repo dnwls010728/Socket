@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Object.h"
 #include "box2d/id.h"
 #include "Misc/DelegateMacros.h"
 #include "Misc/EngineMacros.h"
+#include "rttr/registration_friend.h"
 #include "Time/TimerManager.h"
 
 class ActorComponent;
@@ -13,14 +13,14 @@ DECLARE_DELEGATE(ContactSignature, Actor*);
 enum class EndPlayReason : Type::uint64;
 class TransformComponent;
 
-class Actor : public Object
+class Actor : public std::enable_shared_from_this<Actor>
 {
     SHADER_CLASS_HELPER(Actor)
-    GENERATED_BODY(Actor, Object)
+    GENERATED_BODY(Actor)
     
 public:
     Actor(const std::wstring& kName);
-    virtual ~Actor() override = default;
+    virtual ~Actor() = default;
 
     void SetActive(bool is_active);
     void Destroy();
