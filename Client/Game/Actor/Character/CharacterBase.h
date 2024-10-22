@@ -11,6 +11,8 @@ public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
 
+    bool IsGrounded() const;
+
 protected:
     virtual void Tick(float delta_time) override;
     

@@ -16,6 +16,11 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     
 }
 
+bool CharacterBase::IsGrounded() const
+{
+    return controller_->GetCollisions().below;
+}
+
 void CharacterBase::Tick(float delta_time)
 {
     Actor::Tick(delta_time);
@@ -30,11 +35,6 @@ void CharacterBase::Tick(float delta_time)
         if (collisions.sliding_down_max_slope)
             velocity_.y += collisions.slope_normal.y * -gravity_ * delta_time;
         else velocity_.y = 0.f;
-    }
-
-    if (collisions.below)
-    {
-        velocity_.y = 5.f;
     }
     
 }

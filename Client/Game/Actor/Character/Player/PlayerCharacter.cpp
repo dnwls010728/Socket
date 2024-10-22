@@ -3,6 +3,7 @@
 
 #include "Actor/Camera.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Input/Keyboard.h"
 #include "Resource/ResourceManager.h"
 #include "Windows/DX/Sprite.h"
 
@@ -25,6 +26,10 @@ void PlayerCharacter::BeginPlay()
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
+
+    Keyboard* keyboard = Keyboard::Get();
+    const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+    velocity_.x = h * 5.f;
 }
 
 RTTR_REGISTRATION
