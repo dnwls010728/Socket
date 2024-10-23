@@ -117,7 +117,7 @@ void Widget::AttachToWidget(Widget* parent)
     UpdateRect();
 }
 
-void Widget::DetachFromUI()
+void Widget::DetachFromWidget()
 {
     if (!parent_) return;
 

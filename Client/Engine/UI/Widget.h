@@ -41,7 +41,7 @@ public:
     void SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax);
     void SetAnchorPreset(Type::uint16 anchor, bool match_pivot = false);
     void AttachToWidget(Widget* parent);
-    void DetachFromUI();
+    void DetachFromWidget();
     
     Math::Vector2 GetPivotPosition() const;
     
