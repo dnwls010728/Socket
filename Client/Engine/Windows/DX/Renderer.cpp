@@ -579,7 +579,7 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z)
+void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z, bool use_slice9, const Math::Rect& kSlice9Rect)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -587,15 +587,70 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
-
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
     // D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR - Point
     // D2D1_BITMAP_INTERPOLATION_MODE_LINEAR - Bilinear
 
-    d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), rect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+    if (!use_slice9)
+    {
+        const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+    }
+    else
+    {
+        const float kWidth = kBitmap->GetSize().width;
+        const float kHeight = kBitmap->GetSize().height;
+
+        const D2D1_RECT_F kSlice9 = D2D1::RectF(kSlice9Rect.Left(), kSlice9Rect.Top(), kSlice9Rect.width, kSlice9Rect.height);
+
+        // Top Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, 0.f, kSlice9.left, kSlice9.top),
+            D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Left() + kSlice9.left, kRect.Top() + kSlice9.top));
+
+        // Top Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, 0.f, kSlice9.right, kSlice9.top),
+            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Top(), kRect.Right() - (kWidth - kSlice9.right), kRect.Top() + kSlice9.top));
+        
+        // Top Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, 0.f, kWidth, kSlice9.top),
+            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Top(), kRect.Right(), kRect.Top() + kSlice9.top));
+        
+        // Center Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, kSlice9.top, kSlice9.left, kSlice9.bottom),
+            D2D1::RectF(kRect.Left(), kRect.Top() + kSlice9.top, kRect.Left() + kSlice9.left, kRect.Bottom() - (kHeight - kSlice9.bottom)));
+        
+        // Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, kSlice9.top, kSlice9.right, kSlice9.bottom),
+            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Top() + kSlice9.top, kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom() - (kHeight - kSlice9.bottom)));
+        
+        // Center Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, kSlice9.top, kWidth, kSlice9.bottom),
+            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Top() + kSlice9.top, kRect.Right(), kRect.Bottom() - (kHeight - kSlice9.bottom)));
+        
+        // Bottom Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, kSlice9.bottom, kSlice9.left, kHeight),
+            D2D1::RectF(kRect.Left(), kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Left() + kSlice9.left, kRect.Bottom()));
+        
+        // Bottom Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, kSlice9.bottom, kSlice9.right, kHeight),
+            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom()));
+        
+        // Bottom Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, kSlice9.bottom, kWidth, kHeight),
+            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Right(), kRect.Bottom()));
+    }
+    
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
@@ -668,5 +723,10 @@ bool Renderer::CreateBackBufferResources(Microsoft::WRL::ComPtr<IDXGISwapChain>&
 
     hr = d3d_device_->CreateRenderTargetView(back_buffer.Get(), nullptr, d3d_render_target_view.GetAddressOf());
     return SUCCEEDED(hr);
+}
+
+void Renderer::DrawSlice(D2DViewport* d2d_viewport, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const D2D1_RECT_F& kSrcRect, const D2D1_RECT_F& kDestRect)
+{
+    d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kDestRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, kSrcRect);
 }
 

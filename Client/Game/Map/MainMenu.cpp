@@ -10,6 +10,10 @@
 #include "UI/Widget/TextBox.h"
 #include "Windows/WindowsWindow.h"
 #include "..\SocketSession.h"
+#include "Resource/ResourceManager.h"
+#include "UI/Widget/Image.h"
+#include "Windows/DX/UITexture.h"
+
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
 {
@@ -74,6 +78,14 @@ void MainMenu::Load()
     exit_button_text->SetText(L"Exit");
     exit_button_text->SetAlignment(UI::TextAnchor::kMiddleCenter);
     exit_button_text->SetColor(Math::Color::Black);
+
+    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\9SliceSprites-4.jpg");
+    
+    UI::Image* image = canvas->AddWidget<UI::Image>(L"Image");
+    image->SetAnchorPreset(UI::AnchorPresets::kCenter | UI::AnchorPresets::kMiddle, true);
+    image->SetSize({200.f, 200.f});
+    image->SetTexture(texture);
+    image->SetDrawMode(UI::DrawMode::Sliced);
 }
 
 RTTR_REGISTRATION

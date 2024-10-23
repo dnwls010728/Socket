@@ -9,7 +9,8 @@
 
 UI::Image::Image(const std::wstring& kName) :
     Widget(kName),
-    texture_(nullptr)
+    texture_(nullptr),
+    draw_mode_(DrawMode::Simple)
 {
 }
 
@@ -30,5 +31,8 @@ void UI::Image::Render()
         return;
     }
 
-    renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
+    if (draw_mode_ == DrawMode::Simple)
+        renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
+    else if (draw_mode_ == DrawMode::Sliced)
+        renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, {50.f, 50.f, 475.f, 475.f});
 }

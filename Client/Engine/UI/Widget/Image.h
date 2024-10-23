@@ -7,6 +7,12 @@ class UITexture;
 
 namespace UI
 {
+    enum class DrawMode
+    {
+        Simple,
+        Sliced
+    };
+    
     class Image : public Widget
     {
         SHADER_CLASS_HELPER(Image)
@@ -17,12 +23,15 @@ namespace UI
         virtual ~Image() override = default;
 
         inline void SetTexture(UITexture* texture) { texture_ = texture; }
+        inline void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
     protected:
         virtual void Render() override;
 
     private:
         UITexture* texture_;
+
+        DrawMode draw_mode_;
         
     };
 }
