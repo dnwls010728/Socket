@@ -14,20 +14,6 @@ UI::Text::Text(const std::wstring& kName) :
 {
 }
 
-void UI::Text::Render()
-{
-    WindowsWindow* window = World::Get()->GetWindow();
-    if (!window) return;
-
-    Renderer* renderer = Renderer::Get();
-    if (!renderer) return;
-    
-    Math::Vector2 pivot_position = GetPivotPosition();
-    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
-
-    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, L"Silver24", text_alignment_, paragraph_alignment_);
-}
-
 void UI::Text::SetAlignment(TextAnchor alignment)
 {
     switch (alignment)
@@ -87,4 +73,18 @@ void UI::Text::SetAlignment(TextAnchor alignment)
         }
         break;
     }
+}
+
+void UI::Text::Render()
+{
+    WindowsWindow* window = World::Get()->GetWindow();
+    if (!window) return;
+
+    Renderer* renderer = Renderer::Get();
+    if (!renderer) return;
+    
+    Math::Vector2 pivot_position = GetPivotPosition();
+    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+
+    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, L"Silver24", text_alignment_, paragraph_alignment_);
 }

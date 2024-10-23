@@ -32,8 +32,8 @@ public:
     Widget(const std::wstring& kName);
     virtual ~Widget() = default;
 
+    void SetAnchoredPosition(const Math::Vector2& kPosition);
     void SetPosition(const Math::Vector2& kPosition);
-    void SetPositionScreen(const Math::Vector2& kPosition);
     void SetSize(const Math::Vector2& kSize);
     void SetAnchorMin(const Math::Vector2& kAnchorMin);
     void SetAnchorMax(const Math::Vector2& kAnchorMax);

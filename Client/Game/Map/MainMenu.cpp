@@ -21,26 +21,26 @@ void MainMenu::Load()
 
     UI::Text* build = canvas->AddWidget<UI::Text>(L"Build");
     build->SetAnchorPreset(UI::AnchorPresets::kLeft | UI::AnchorPresets::kBottom, true);
-    build->SetPosition({10.f, 0.f});
+    build->SetAnchoredPosition({10.f, 0.f});
     build->SetSize({200.f, 30.f});
     build->SetText(L"Development Build: v0.0.1");
     build->SetAlignment(UI::TextAnchor::kMiddleLeft);
     
     UI::TextBox* tb_id = canvas->AddWidget<UI::TextBox>(L"ID");
-    tb_id->SetPosition({0.f, -45.f});
+    tb_id->SetAnchoredPosition({0.f, -45.f});
     tb_id->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     tb_id->SetSize({200.f, 30.f});
     tb_id->SetPlaceholder(L"ID");
 
     UI::TextBox* tb_pw = canvas->AddWidget<UI::TextBox>(L"Password");
-    tb_pw->SetPosition({0.f, 0.f});
+    tb_pw->SetAnchoredPosition({0.f, 0.f});
     tb_pw->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     tb_pw->SetSize({200.f, 30.f});
     tb_pw->SetPlaceholder(L"Password");
     tb_pw->SetContentType(UI::ContentType::kPassword);
 
     UI::Button* start_button = canvas->AddWidget<UI::Button>(L"Login");
-    start_button->SetPosition({0.f, 45.f});
+    start_button->SetAnchoredPosition({0.f, 45.f});
     start_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     start_button->on_click.Add([]()
     {
@@ -49,7 +49,7 @@ void MainMenu::Load()
     });
 
     UI::Text* button_text = canvas->AddWidget<UI::Text>(L"Login Text");
-    button_text->SetPosition({0.f, 0.f});
+    button_text->SetAnchoredPosition({0.f, 0.f});
     button_text->SetSize({0.f, 0.f});
     button_text->SetAnchorPreset(UI::AnchorPresets::kStretch, true);
     button_text->AttachToWidget(start_button);
@@ -58,7 +58,7 @@ void MainMenu::Load()
     button_text->SetColor(Math::Color::Black);
 
     UI::Button* exit_button = canvas->AddWidget<UI::Button>(L"Exit");
-    exit_button->SetPosition({0.f, 90.f});
+    exit_button->SetAnchoredPosition({0.f, 90.f});
     exit_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     exit_button->on_click.Add([]()
     {
@@ -67,7 +67,7 @@ void MainMenu::Load()
     });
 
     UI::Text* exit_button_text = canvas->AddWidget<UI::Text>(L"Exit Text");
-    exit_button_text->SetPosition({0.f, 0.f});
+    exit_button_text->SetAnchoredPosition({0.f, 0.f});
     exit_button_text->SetSize({0.f, 0.f});
     exit_button_text->SetAnchorPreset(UI::AnchorPresets::kStretch, true);
     exit_button_text->AttachToWidget(exit_button);

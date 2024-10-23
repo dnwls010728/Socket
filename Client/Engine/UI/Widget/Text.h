@@ -27,13 +27,14 @@ namespace UI
     public:
         Text(const std::wstring& kName);
         virtual ~Text() override = default;
-        
-        virtual void Render() override;
 
         void SetAlignment(TextAnchor alignment);
 
         inline void SetText(const std::wstring& kText) { text_ = kText; }
         inline void SetColor(const Math::Color& kColor) { color_ = kColor; }
+
+    protected:
+        virtual void Render() override;
 
     private:
         std::wstring text_;

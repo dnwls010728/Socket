@@ -33,7 +33,7 @@ void WindowsWindow::Init(WindowsApplication* const application, const std::share
     window_style |= WS_OVERLAPPED;
     window_style |= WS_CAPTION;
     window_style |= WS_SYSMENU;
-    // window_style |= WS_THICKFRAME;
+    window_style |= WS_THICKFRAME;
     window_style |= WS_MINIMIZEBOX;
 
     RECT border_rect = {0, 0, 0, 0};

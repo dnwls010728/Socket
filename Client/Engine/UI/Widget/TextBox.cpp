@@ -192,3 +192,10 @@ void UI::TextBox::OnCharEvent(wchar_t character)
         renderer->GetTextAdvances(text, L"Silver24", advances_);
     }
 }
+
+void UI::TextBox::UpdateRect()
+{
+    Widget::UpdateRect();
+
+    text_area_ = rect_;
+}

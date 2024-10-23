@@ -25,13 +25,13 @@ Widget::Widget(const std::wstring& kName) :
     UpdateRect();
 }
 
-void Widget::SetPosition(const Math::Vector2& kPosition)
+void Widget::SetAnchoredPosition(const Math::Vector2& kPosition)
 {
     position_ = kPosition;
     UpdateRect();
 }
 
-void Widget::SetPositionScreen(const Math::Vector2& kPosition)
+void Widget::SetPosition(const Math::Vector2& kPosition)
 {
     Canvas* canvas = Canvas::Get();
     const Type::uint32 canvas_width = canvas->width_;
