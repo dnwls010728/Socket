@@ -62,24 +62,14 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             if (kEvent.button.button == MouseButton::kLeft)
             {
-                if (hovered_widget_) hovered_widget_->OnMousePressed();
-            }
-        }
-        break;
-    case EventType::kMouseReleased:
-        {
-            if (kEvent.button.button == MouseButton::kLeft)
-            {
                 if (hovered_widget_)
                 {
-                    if (hovered_widget_ != focused_widget_)
+                    if (focused_widget_ != hovered_widget_)
                     {
                         if (focused_widget_) focused_widget_->OnBlur();
                         focused_widget_ = hovered_widget_;
                         focused_widget_->OnFocus();
                     }
-
-                    hovered_widget_->OnMouseReleased();
                 }
                 else
                 {
@@ -88,6 +78,22 @@ void Canvas::OnEvent(const Event& kEvent)
                         focused_widget_->OnBlur();
                         focused_widget_ = nullptr;
                     }
+                }
+
+                if (hovered_widget_)
+                {
+                    hovered_widget_->OnMousePressed();
+                }
+            }
+        }
+        break;
+    case EventType::kMouseReleased:
+        {
+            if (kEvent.button.button == MouseButton::kLeft)
+            {
+                if (hovered_widget_ && focused_widget_ == hovered_widget_)
+                {
+                    hovered_widget_->OnMouseReleased();
                 }
             }
         }
