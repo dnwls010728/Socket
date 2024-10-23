@@ -51,48 +51,57 @@ B2_API b2SensorEvents b2World_GetSensorEvents( b2WorldId worldId );
 B2_API b2ContactEvents b2World_GetContactEvents( b2WorldId worldId );
 
 /// Overlap test for all shapes that *potentially* overlap the provided AABB
-B2_API void b2World_OverlapAABB( b2WorldId worldId, b2AABB aabb, b2QueryFilter filter, b2OverlapResultFcn* fcn, void* context );
+B2_API b2TreeStats b2World_OverlapAABB( b2WorldId worldId, b2AABB aabb, b2QueryFilter filter, b2OverlapResultFcn* fcn,
+											  void* context );
 
-/// Overlap test for for all shapes that overlap the provided circle
-B2_API void b2World_OverlapCircle( b2WorldId worldId, const b2Circle* circle, b2Transform transform, b2QueryFilter filter,
-								   b2OverlapResultFcn* fcn, void* context );
+/// Overlap test for for all shapes that overlap the provided point.
+B2_API b2TreeStats b2World_OverlapPoint( b2WorldId worldId, b2Vec2 point, b2Transform transform,
+												b2QueryFilter filter, b2OverlapResultFcn* fcn, void* context );
+
+/// Overlap test for for all shapes that overlap the provided circle. A zero radius may be used for a point query.
+B2_API b2TreeStats b2World_OverlapCircle( b2WorldId worldId, const b2Circle* circle, b2Transform transform,
+												b2QueryFilter filter, b2OverlapResultFcn* fcn, void* context );
 
 /// Overlap test for all shapes that overlap the provided capsule
-B2_API void b2World_OverlapCapsule( b2WorldId worldId, const b2Capsule* capsule, b2Transform transform, b2QueryFilter filter,
-									b2OverlapResultFcn* fcn, void* context );
+B2_API b2TreeStats b2World_OverlapCapsule( b2WorldId worldId, const b2Capsule* capsule, b2Transform transform,
+												 b2QueryFilter filter, b2OverlapResultFcn* fcn, void* context );
 
 /// Overlap test for all shapes that overlap the provided polygon
-B2_API void b2World_OverlapPolygon( b2WorldId worldId, const b2Polygon* polygon, b2Transform transform, b2QueryFilter filter,
-									b2OverlapResultFcn* fcn, void* context );
+B2_API b2TreeStats b2World_OverlapPolygon( b2WorldId worldId, const b2Polygon* polygon, b2Transform transform,
+												 b2QueryFilter filter, b2OverlapResultFcn* fcn, void* context );
 
 /// Cast a ray into the world to collect shapes in the path of the ray.
 /// Your callback function controls whether you get the closest point, any point, or n-points.
 /// The ray-cast ignores shapes that contain the starting point.
+/// @note The callback function may receive shapes in any order
 /// @param worldId The world to cast the ray against
 /// @param origin The start point of the ray
 /// @param translation The translation of the ray from the start point to the end point
 /// @param filter Contains bit flags to filter unwanted shapes from the results
 /// @param fcn A user implemented callback function
 /// @param context A user context that is passed along to the callback function
-/// @note The callback function may receive shapes in any order
-B2_API void b2World_CastRay( b2WorldId worldId, b2Vec2 origin, b2Vec2 translation, b2QueryFilter filter, b2CastResultFcn* fcn,
-							 void* context );
+///	@return traversal performance counters
+B2_API b2TreeStats b2World_CastRay( b2WorldId worldId, b2Vec2 origin, b2Vec2 translation, b2QueryFilter filter,
+										  b2CastResultFcn* fcn, void* context );
 
 /// Cast a ray into the world to collect the closest hit. This is a convenience function.
 /// This is less general than b2World_CastRay() and does not allow for custom filtering.
 B2_API b2RayResult b2World_CastRayClosest( b2WorldId worldId, b2Vec2 origin, b2Vec2 translation, b2QueryFilter filter );
 
 /// Cast a circle through the world. Similar to a cast ray except that a circle is cast instead of a point.
-B2_API void b2World_CastCircle( b2WorldId worldId, const b2Circle* circle, b2Transform originTransform, b2Vec2 translation,
-								b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
+///	@see b2World_CastRay
+B2_API b2TreeStats b2World_CastCircle( b2WorldId worldId, const b2Circle* circle, b2Transform originTransform,
+											 b2Vec2 translation, b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
 
 /// Cast a capsule through the world. Similar to a cast ray except that a capsule is cast instead of a point.
-B2_API void b2World_CastCapsule( b2WorldId worldId, const b2Capsule* capsule, b2Transform originTransform, b2Vec2 translation,
-								 b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
+///	@see b2World_CastRay
+B2_API b2TreeStats b2World_CastCapsule( b2WorldId worldId, const b2Capsule* capsule, b2Transform originTransform,
+											  b2Vec2 translation, b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
 
 /// Cast a polygon through the world. Similar to a cast ray except that a polygon is cast instead of a point.
-B2_API void b2World_CastPolygon( b2WorldId worldId, const b2Polygon* polygon, b2Transform originTransform, b2Vec2 translation,
-								 b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
+///	@see b2World_CastRay
+B2_API b2TreeStats b2World_CastPolygon( b2WorldId worldId, const b2Polygon* polygon, b2Transform originTransform,
+											  b2Vec2 translation, b2QueryFilter filter, b2CastResultFcn* fcn, void* context );
 
 /// Enable/disable sleep. If your application does not need sleeping, you can gain some performance
 /// by disabling sleep completely at the world level.
@@ -180,8 +189,17 @@ B2_API b2Profile b2World_GetProfile( b2WorldId worldId );
 /// Get world counters and sizes
 B2_API b2Counters b2World_GetCounters( b2WorldId worldId );
 
+/// Set the user data pointer.
+B2_API void b2World_SetUserData( b2WorldId worldId, void* userData );
+
+/// Get the user data pointer.
+B2_API void* b2World_GetUserData( b2WorldId worldId );
+
 /// Dump memory stats to box2d_memory.txt
 B2_API void b2World_DumpMemoryStats( b2WorldId worldId );
+
+/// todo testing
+B2_API void b2World_RebuildStaticTree( b2WorldId worldId );
 
 /** @} */
 
@@ -338,13 +356,6 @@ B2_API b2MassData b2Body_GetMassData( b2BodyId bodyId );
 /// You should call this regardless of body type.
 B2_API void b2Body_ApplyMassFromShapes( b2BodyId bodyId );
 
-/// Set the automatic mass setting. Normally this is set in b2BodyDef before creation.
-/// @see b2BodyDef::automaticMass
-B2_API void b2Body_SetAutomaticMass( b2BodyId bodyId, bool automaticMass );
-
-/// Get the automatic mass setting
-B2_API bool b2Body_GetAutomaticMass( b2BodyId bodyId );
-
 /// Adjust the linear damping. Normally this is set in b2BodyDef before creation.
 B2_API void b2Body_SetLinearDamping( b2BodyId bodyId, float linearDamping );
 
@@ -466,8 +477,10 @@ B2_API b2ShapeId b2CreateCapsuleShape( b2BodyId bodyId, const b2ShapeDef* def, c
 /// @return the shape id for accessing the shape
 B2_API b2ShapeId b2CreatePolygonShape( b2BodyId bodyId, const b2ShapeDef* def, const b2Polygon* polygon );
 
-/// Destroy a shape
-B2_API void b2DestroyShape( b2ShapeId shapeId );
+/// Destroy a shape. You may defer the body mass update which can improve performance if several shapes on a
+///	body are destroyed at once.
+///	@see b2Body_ApplyMassFromShapes
+B2_API void b2DestroyShape( b2ShapeId shapeId, bool updateBodyMass );
 
 /// Shape identifier validation. Provides validation for up to 64K allocations.
 B2_API bool b2Shape_IsValid( b2ShapeId id );
@@ -492,9 +505,9 @@ B2_API void b2Shape_SetUserData( b2ShapeId shapeId, void* userData );
 B2_API void* b2Shape_GetUserData( b2ShapeId shapeId );
 
 /// Set the mass density of a shape, typically in kg/m^2.
-/// This will not update the mass properties on the parent body.
+/// This will optionally update the mass properties on the parent body.
 /// @see b2ShapeDef::density, b2Body_ApplyMassFromShapes
-B2_API void b2Shape_SetDensity( b2ShapeId shapeId, float density );
+B2_API void b2Shape_SetDensity( b2ShapeId shapeId, float density, bool updateBodyMass );
 
 /// Get the density of a shape, typically in kg/m^2
 B2_API float b2Shape_GetDensity( b2ShapeId shapeId );
@@ -852,6 +865,21 @@ B2_API float b2MouseJoint_GetMaxForce( b2JointId jointId );
 /**@}*/
 
 /**
+ * @defgroup null_joint Null Joint
+ * @brief Functions for the null joint.
+ *
+ * The null joint is used to disable collision between two bodies. As a side effect of being a joint, it also
+ * keeps the two bodies in the same simulation island.
+ * @{
+ */
+
+/// Create a null joint.
+/// @see b2NullJointDef for details
+B2_API b2JointId b2CreateNullJoint( b2WorldId worldId, const b2NullJointDef* def );
+
+/**@}*/
+
+/**
  * @defgroup prismatic_joint Prismatic Joint
  * @brief A prismatic joint allows for translation along a single axis with no rotation.
  *
@@ -919,6 +947,12 @@ B2_API float b2PrismaticJoint_GetMaxMotorForce( b2JointId jointId );
 
 /// Get the prismatic joint current motor force, typically in newtons
 B2_API float b2PrismaticJoint_GetMotorForce( b2JointId jointId );
+
+/// Get the current joint translation, usually in meters.
+B2_API float b2PrismaticJoint_GetTranslation( b2JointId jointId );
+
+/// Get the current joint translation speed, usually in meters per second.
+B2_API float b2PrismaticJoint_GetSpeed( b2JointId jointId );
 
 /** @} */
 

@@ -86,7 +86,7 @@ void CapsuleColliderComponent::SetTriggerInternal()
     shape_def.filter = b2Shape_GetFilter(shape_id_);
     shape_def.isSensor = is_trigger_;
 
-    b2DestroyShape(shape_id_);
+    b2DestroyShape(shape_id_, true);
     shape_id_ = b2CreateCapsuleShape(GetOwner()->body_id_, &shape_def, &capsule);
 }
 

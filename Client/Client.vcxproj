@@ -222,12 +222,6 @@
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
-    <ClInclude Include="Include\box2d\base.h" />
-    <ClInclude Include="Include\box2d\box2d.h" />
-    <ClInclude Include="Include\box2d\collision.h" />
-    <ClInclude Include="Include\box2d\id.h" />
-    <ClInclude Include="Include\box2d\math_functions.h" />
-    <ClInclude Include="Include\box2d\types.h" />
     <ClInclude Include="Include\DirectXTK\Audio.h" />
     <ClInclude Include="Include\DirectXTK\BufferHelpers.h" />
     <ClInclude Include="Include\DirectXTK\CommonStates.h" />
