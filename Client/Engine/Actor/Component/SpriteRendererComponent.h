@@ -15,22 +15,22 @@ public:
 
     void SetZOrder(int z_order);
 
-    inline void SetSprite(Sprite* sprite) { sprite_ = sprite; }
-    inline const Sprite* GetSprite() const { return sprite_; }
+    FORCEINLINE void SetSprite(Sprite* sprite) { sprite_ = sprite; }
+    FORCEINLINE const Sprite* GetSprite() const { return sprite_; }
 
-    inline void SetFrameIndex(Type::uint32 frame_index) { frame_index_ = frame_index; }
-    inline Type::uint32 GetFrameIndex() const { return frame_index_; }
+    FORCEINLINE void SetFrameIndex(Type::uint32 frame_index) { frame_index_ = frame_index; }
+    FORCEINLINE Type::uint32 GetFrameIndex() const { return frame_index_; }
 
-    inline void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
-    inline bool GetFlipX() const { return flip_x_; }
+    FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
+    FORCEINLINE bool GetFlipX() const { return flip_x_; }
 
-    inline void IsFlipX(bool flip_y) { flip_y_ = flip_y; }
-    inline bool IsFlipY() const { return flip_y_; }
+    FORCEINLINE void IsFlipX(bool flip_y) { flip_y_ = flip_y; }
+    FORCEINLINE bool IsFlipY() const { return flip_y_; }
 
-    inline void SetColor(const Math::Color& color) { color_ = color; }
-    inline Math::Color GetColor() const { return color_; }
+    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
+    FORCEINLINE Math::Color GetColor() const { return color_; }
 
-    inline int GetZOrder() const { return z_order_; }
+    FORCEINLINE int GetZOrder() const { return z_order_; }
 
 protected:
     virtual void InitializeComponent() override;

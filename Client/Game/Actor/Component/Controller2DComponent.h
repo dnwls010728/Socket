@@ -47,7 +47,7 @@ public:
     
     void Move(Math::Vector2 move_amount);
 
-    inline const CollisionInfo& GetCollisions() const { return collisions_; }
+    FORCEINLINE const CollisionInfo& GetCollisions() const { return collisions_; }
 
 private:
     void HorizontalCollisions(Math::Vector2& move_amount);

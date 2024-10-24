@@ -36,18 +36,18 @@ public:
     template <std::derived_from<Actor> T>
     T* SpawnActor(const std::wstring& kName);
     
-    inline void SetTag(ActorTag tag) { tag_ = tag; }
-    inline void SetLayer(ActorLayer layer) { layer_ = layer; }
+    FORCEINLINE void SetTag(ActorTag tag) { tag_ = tag; }
+    FORCEINLINE void SetLayer(ActorLayer layer) { layer_ = layer; }
 
-    inline const std::wstring& GetName() const { return name_; }
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-    inline ActorTag GetTag() const { return tag_; }
-    inline ActorLayer GetLayer() const { return layer_; }
+    FORCEINLINE ActorTag GetTag() const { return tag_; }
+    FORCEINLINE ActorLayer GetLayer() const { return layer_; }
 
-    inline TransformComponent* GetTransform() const { return transform_.get(); }
+    FORCEINLINE TransformComponent* GetTransform() const { return transform_.get(); }
 
-    inline bool IsActive() const { return is_active_; }
-    inline bool IsPendingDeletion() const { return is_pending_destroy_; }
+    FORCEINLINE bool IsActive() const { return is_active_; }
+    FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
     
     ContactSignature on_collision_enter;
     ContactSignature on_collision_exit;
@@ -72,8 +72,8 @@ protected:
     void CreateBody();
     void OnLifeSpanExpired();
 
-    inline virtual void PreInitializeComponents() {}
-    inline virtual void PostInitializeComponents() {}
+    FORCEINLINE virtual void PreInitializeComponents() {}
+    FORCEINLINE virtual void PostInitializeComponents() {}
     
     virtual void BeginPlay();
     virtual void EndPlay(EndPlayReason type);
@@ -132,7 +132,7 @@ T* Actor::SpawnActor(const std::wstring& kName)
     return World::Get()->SpawnActor<T>(kName);
 }
 
-inline bool IsValid(Actor* actor)
+FORCEINLINE bool IsValid(Actor* actor)
 {
     return actor && !actor->IsPendingDeletion();
 }

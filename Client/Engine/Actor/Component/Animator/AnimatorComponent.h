@@ -18,11 +18,11 @@ public:
     virtual ~AnimatorComponent() override = default;
 
     std::shared_ptr<AnimationClip> AddClip(const std::wstring& kName, int* sprite_idx_arr, int size);
-    inline std::shared_ptr<AnimationClip> GetClip(std::wstring clip_name) { return clips_[clip_name]; }
-    inline std::shared_ptr<AnimationClip> GetClip() { return current_clip_; }
+    FORCEINLINE std::shared_ptr<AnimationClip> GetClip(std::wstring clip_name) { return clips_[clip_name]; }
+    FORCEINLINE std::shared_ptr<AnimationClip> GetClip() { return current_clip_; }
     bool PlayClip(std::wstring clip_name);
     bool PlayClip(std::shared_ptr<AnimationClip> clip);
-    inline bool IsPlaying() const { return is_playing_; }
+    FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
 protected:
     virtual void BeginPlay() override;

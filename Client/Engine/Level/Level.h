@@ -29,8 +29,8 @@ public:
     virtual void PostTick(float delta_time);
     virtual void Render(float alpha);
 
-    inline const std::wstring& GetName() const { return name_; }
-    inline bool HasBegunPlay() const { return has_begun_play_; }
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
 
 protected:
     template<std::derived_from<Actor> T>

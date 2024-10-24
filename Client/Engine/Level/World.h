@@ -49,8 +49,8 @@ public:
     template<std::derived_from<Level> T>
     T* AddLevel(LevelType type, std::wstring name);
 
-    inline WindowsWindow* GetWindow() const { return window_.get(); }
-    inline Level* GetLevel() const { return current_level_; }
+    FORCEINLINE WindowsWindow* GetWindow() const { return window_.get(); }
+    FORCEINLINE Level* GetLevel() const { return current_level_; }
 
 private:
     friend void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context);

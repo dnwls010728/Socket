@@ -30,8 +30,8 @@ namespace UI
 
         void SetAlignment(TextAnchor alignment);
 
-        inline void SetText(const std::wstring& kText) { text_ = kText; }
-        inline void SetColor(const Math::Color& kColor) { color_ = kColor; }
+        FORCEINLINE void SetText(const std::wstring& kText) { text_ = kText; }
+        FORCEINLINE void SetColor(const Math::Color& kColor) { color_ = kColor; }
 
     protected:
         virtual void Render() override;

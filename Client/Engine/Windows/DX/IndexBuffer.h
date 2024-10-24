@@ -18,7 +18,7 @@ public:
 
     void Unlock();
     
-    inline ID3D11Buffer* GetResource() const { return buffer_.Get(); }
+    FORCEINLINE ID3D11Buffer* GetResource() const { return buffer_.Get(); }
 
 private:
     Type::uint32 indices_;

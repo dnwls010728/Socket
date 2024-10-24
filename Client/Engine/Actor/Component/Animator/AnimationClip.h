@@ -52,14 +52,14 @@ public:
 
     void DelEvent(int frame);
 
-    inline const std::vector<int>& GetFrames() { return frames_; }
-    inline void AddFrame(int frame_idx) { frames_.push_back(frame_idx); }
+    FORCEINLINE const std::vector<int>& GetFrames() { return frames_; }
+    FORCEINLINE void AddFrame(int frame_idx) { frames_.push_back(frame_idx); }
 
-    inline void SetRepeat(bool is_repeat) { is_repeat_ = is_repeat; }
-    inline bool GetRepeat() const { return is_repeat_; }
+    FORCEINLINE void SetRepeat(bool is_repeat) { is_repeat_ = is_repeat; }
+    FORCEINLINE bool GetRepeat() const { return is_repeat_; }
 
-    inline void SetFrameRate(float frame_per_sec) { frame_rate_ = frame_per_sec; }
-    inline float GetFrameRate() const { return frame_rate_; }
+    FORCEINLINE void SetFrameRate(float frame_per_sec) { frame_rate_ = frame_per_sec; }
+    FORCEINLINE float GetFrameRate() const { return frame_rate_; }
 
 private:
     friend class AnimatorComponent;
