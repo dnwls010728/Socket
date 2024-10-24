@@ -5,8 +5,6 @@
 #include "Widget.h"
 #include "Event/Events.h"
 #include "Input/Mouse.h"
-#include "Widget/Button.h"
-#include "Widget/TextBox.h"
 
 Canvas::Canvas() :
     width_(0.f),
