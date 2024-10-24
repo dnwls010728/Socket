@@ -19,10 +19,10 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
 
-    inline Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
+    FORCEINLINE Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
     
-    inline Type::uint32 GetWidth() const { return width_; }
-    inline Type::uint32 GetHeight() const { return height_; }
+    FORCEINLINE Type::uint32 GetWidth() const { return width_; }
+    FORCEINLINE Type::uint32 GetHeight() const { return height_; }
 
 private:
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;

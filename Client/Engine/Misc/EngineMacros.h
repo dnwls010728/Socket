@@ -46,7 +46,7 @@
     RTTR_REGISTRATION_FRIEND \
     \
     public: \
-        inline static rttr::type StaticClass() \
+        FORCEINLINE static rttr::type StaticClass() \
         { \
             return rttr::type::get<class_name>(); \
         }

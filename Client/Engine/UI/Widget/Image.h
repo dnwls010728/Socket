@@ -22,9 +22,9 @@ namespace UI
         Image(const std::wstring& kName);
         virtual ~Image() override = default;
 
-        inline void SetTexture(UITexture* texture) { texture_ = texture; }
-        inline void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
-        inline void SetSlice9Rect(const Math::Rect& kSlice9Rect) { slice9_rect_ = kSlice9Rect; }
+        FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
+        FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
+        FORCEINLINE void SetSlice9Rect(const Math::Rect& kSlice9Rect) { slice9_rect_ = kSlice9Rect; }
 
     protected:
         virtual void Render() override;

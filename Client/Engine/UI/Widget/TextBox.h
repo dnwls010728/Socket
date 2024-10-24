@@ -19,8 +19,8 @@ namespace UI
         TextBox(const std::wstring& kName);
         virtual ~TextBox() override = default;
 
-        inline void SetContentType(ContentType content_type) { content_type_ = content_type; }
-        inline void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
+        FORCEINLINE void SetContentType(ContentType content_type) { content_type_ = content_type; }
+        FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
 
     protected:
         virtual void BeginPlay() override;

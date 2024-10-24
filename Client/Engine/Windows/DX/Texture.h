@@ -34,17 +34,17 @@ public:
 
     void Bind() const;
 
-    inline Type::uint32 GetWidth() const { return width_; }
-    inline Type::uint32 GetHeight() const { return height_; }
+    FORCEINLINE Type::uint32 GetWidth() const { return width_; }
+    FORCEINLINE Type::uint32 GetHeight() const { return height_; }
 
-    inline const std::vector<DefaultVertex>& GetVertices() const { return vertices_; }
-    inline const std::vector<Type::uint32>& GetIndices() const { return indices_; }
+    FORCEINLINE const std::vector<DefaultVertex>& GetVertices() const { return vertices_; }
+    FORCEINLINE const std::vector<Type::uint32>& GetIndices() const { return indices_; }
 
-    inline WrapMode GetWrapMode() const { return wrap_mode_; }
-    inline void SetWrapMode(WrapMode mode) { wrap_mode_ = mode; }
+    FORCEINLINE WrapMode GetWrapMode() const { return wrap_mode_; }
+    FORCEINLINE void SetWrapMode(WrapMode mode) { wrap_mode_ = mode; }
 
-    inline FilterMode GetFilterMode() const { return filter_mode_; }
-    inline void SetFilterMode(FilterMode mode) { filter_mode_ = mode; }
+    FORCEINLINE FilterMode GetFilterMode() const { return filter_mode_; }
+    FORCEINLINE void SetFilterMode(FilterMode mode) { filter_mode_ = mode; }
 
 protected:
     friend class Editor;

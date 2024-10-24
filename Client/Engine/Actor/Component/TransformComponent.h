@@ -20,10 +20,10 @@ public:
     Math::Vector2 GetRightVector() const;
     Math::Vector2 GetUpVector() const;
 
-    inline Math::Vector2 GetPosition() const { return position_; }
-    inline Math::Vector2 GetScale() const { return scale_; }
+    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+    FORCEINLINE Math::Vector2 GetScale() const { return scale_; }
 
-    inline float GetAngle() const { return angle_; }
+    FORCEINLINE float GetAngle() const { return angle_; }
 
 protected:
     virtual void PhysicsTickComponent(float delta_time) override;

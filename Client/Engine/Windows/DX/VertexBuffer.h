@@ -18,9 +18,9 @@ public:
     
     void Unlock();
 
-    inline Type::uint32 GetBufferSize() const { return buffer_size_; }
+    FORCEINLINE Type::uint32 GetBufferSize() const { return buffer_size_; }
     
-    inline ID3D11Buffer* GetResource() const { return buffer_.Get(); }
+    FORCEINLINE ID3D11Buffer* GetResource() const { return buffer_.Get(); }
 
 private:
     Type::uint32 stride_;

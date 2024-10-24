@@ -69,7 +69,7 @@ public:
     void BeginRTT();
     void EndRTT();
 
-    inline const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
+    FORCEINLINE const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
 
     Viewport* FindViewport(WindowsWindow* window);
     D2DViewport* FindD2DViewport(WindowsWindow* window);
@@ -98,9 +98,9 @@ public:
 
     bool GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
 
-    inline ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
-    inline ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
-    inline Microsoft::WRL::ComPtr<IWICImagingFactory> GetImageFactory() const { return wic_imaging_factory_; }
+    FORCEINLINE ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
+    FORCEINLINE ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
+    FORCEINLINE Microsoft::WRL::ComPtr<IWICImagingFactory> GetImageFactory() const { return wic_imaging_factory_; }
 
 private:
     bool CreateBackBufferResources(Microsoft::WRL::ComPtr<IDXGISwapChain>& dxgi_swap_chain, Microsoft::WRL::ComPtr<ID3D11Texture2D>& back_buffer, Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& d3d_render_target_view);

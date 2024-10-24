@@ -17,7 +17,7 @@ public:
 
     void OnPooledObjectDespawn(PooledObject* pool_actor);
 
-    inline void SetPooledObjectClass(const rttr::type& type) { pooled_object_class_ = type; }
+    FORCEINLINE void SetPooledObjectClass(const rttr::type& type) { pooled_object_class_ = type; }
 
 protected:
     rttr::type pooled_object_class_;

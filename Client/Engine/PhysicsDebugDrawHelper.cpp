@@ -5,7 +5,7 @@
 #include "Level/World.h"
 #include "Windows/DX/Shape.h"
 
-static inline Math::Color MakeRGBA8(b2HexColor color, float alpha)
+FORCEINLINE static Math::Color MakeRGBA8(b2HexColor color, float alpha)
 {
     return {
         static_cast<Type::uint8>((color >> 16) & 0xFF),

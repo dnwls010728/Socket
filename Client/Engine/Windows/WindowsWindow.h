@@ -20,8 +20,8 @@ public:
     void SetWindowFocus();
     void Destroy();
 
-    inline HWND GetHWnd() const { return hWnd_; }
-    inline const WindowDefinition* GetDefinition() const { return definition_.get(); }
+    FORCEINLINE HWND GetHWnd() const { return hWnd_; }
+    FORCEINLINE const WindowDefinition* GetDefinition() const { return definition_.get(); }
 
 private:
     WindowsApplication* application_;

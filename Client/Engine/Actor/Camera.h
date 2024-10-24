@@ -78,9 +78,9 @@ public:
 
     Bounds GetBounds() const;
 
-    inline float GetSize() const { return size_; }
-    inline float GetNearZ() const { return near_z_; }
-    inline float GetFarZ() const { return far_z_; }
+    FORCEINLINE float GetSize() const { return size_; }
+    FORCEINLINE float GetNearZ() const { return near_z_; }
+    FORCEINLINE float GetFarZ() const { return far_z_; }
 
 private:
     friend class Level;

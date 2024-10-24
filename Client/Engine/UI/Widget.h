@@ -45,25 +45,25 @@ public:
     
     Math::Vector2 GetPivotPosition() const;
     
-    inline float GetAngle() const { return angle_; }
+    FORCEINLINE float GetAngle() const { return angle_; }
     
-    inline Widget* GetParent() const { return parent_; }
-    inline const std::vector<Widget*>& GetChildren() const { return children_; }
+    FORCEINLINE Widget* GetParent() const { return parent_; }
+    FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
     
-    inline bool IsFocused() const { return is_focused_; }
+    FORCEINLINE bool IsFocused() const { return is_focused_; }
 
 protected:
     friend class Canvas;
 
-    inline virtual void OnMousePressed() {}
-    inline virtual void OnMouseReleased() {}
-    inline virtual void OnMouseHover() {}
-    inline virtual void OnMouseLeave() {}
-    inline virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) {}
-    inline virtual void OnCharEvent(wchar_t character) {}
-    inline virtual void BeginPlay() {}
-    inline virtual void Tick(float delta_time) {}
-    inline virtual void Render() {}
+    FORCEINLINE virtual void OnMousePressed() {}
+    FORCEINLINE virtual void OnMouseReleased() {}
+    FORCEINLINE virtual void OnMouseHover() {}
+    FORCEINLINE virtual void OnMouseLeave() {}
+    FORCEINLINE virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) {}
+    FORCEINLINE virtual void OnCharEvent(wchar_t character) {}
+    FORCEINLINE virtual void BeginPlay() {}
+    FORCEINLINE virtual void Tick(float delta_time) {}
+    FORCEINLINE virtual void Render() {}
     
     virtual void OnFocus();
     virtual void OnBlur();

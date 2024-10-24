@@ -18,8 +18,8 @@ public:
 
     OnPooledObjectDespawn on_despawn;
 
-    inline void SetPoolIndex(int index) { pool_index_ = index; }
-    inline int GetPoolIndex() const { return pool_index_; }
+    FORCEINLINE void SetPoolIndex(int index) { pool_index_ = index; }
+    FORCEINLINE int GetPoolIndex() const { return pool_index_; }
 
 protected:
     virtual void OnEnable() override;
