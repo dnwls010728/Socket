@@ -13,6 +13,8 @@
 #include "Resource/ResourceManager.h"
 #include "UI/Widget/Image.h"
 #include "Windows/DX/UITexture.h"
+#include "../SocketCore/Packet.h"
+#include "../SocketCore/ServerPacketHandler.h"
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
 {
@@ -50,6 +52,15 @@ void MainMenu::Load()
         if(!GSocketSession->Connect())
         {
             //TODO: 여기서 튕기는 코드 작성 해 주세요
+        }
+        else
+        {
+            C_EnterPacket pkt;
+            pkt.SetId("CLIENT");
+            pkt.SetName("CLIENT");
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+            GSocketSession->Send(sendBuffer);
+            
         }
         World::Get()->OpenLevel(LevelType::kDefault);
     });

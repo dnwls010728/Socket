@@ -2,6 +2,7 @@
 #include "Core.h"
 
 #include "GameEngine.h"
+#include "../SocketCore/SocketEventManager.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
 #include "Input/Keyboard.h"
@@ -158,6 +159,25 @@ void Core::MainThread()
 
                 World::Get()->OnEvent(event);
             }
+
+            //Socket 이벤트 처리
+            SocketEventManager* socket_event_manager = SocketEventManager::Get();
+            SocketEvent socketEvent{};
+
+            while(socket_event_manager->PollEvent(socketEvent))
+            {
+                if(socketEvent.type == S_PKT_ENTER)
+                {
+                    // TODO: 현재 캐릭터에 이름 장착
+                }else if(socketEvent.type == S_PKT_MOVING)
+                {
+                    //TODO: 해당하는 캐릭터의 좌표를 이동
+                }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
+                {
+                    // TODO: 해당하는 캐릭터를 생성
+                }
+            }
+
             
             game_engine_->GameLoop(delta_time_);
             

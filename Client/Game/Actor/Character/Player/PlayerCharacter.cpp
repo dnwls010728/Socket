@@ -42,7 +42,6 @@ void PlayerCharacter::BeginPlay()
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
-
     Keyboard* keyboard = Keyboard::Get();
     const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
     velocity_.x = h * 5.f;

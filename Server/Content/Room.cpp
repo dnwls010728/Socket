@@ -1,0 +1,25 @@
+﻿#include "pch.h"
+#include "Room.h"
+
+shared_ptr<Room> GRoom = make_shared<Room>();
+
+bool Room::Enter(shared_ptr<User> userRef)
+{
+    WRITE_LOCK;
+    users[userRef->userIdentifyId] = userRef;
+    return true;
+}
+
+void Room::Leave(shared_ptr<User> userRef)
+{
+    WRITE_LOCK;
+    users.erase(userRef->userIdentifyId);
+}
+
+void Room::Broadcast(shared_ptr<SendBuffer> sendBufferRef)
+{
+    for(auto& p : users)
+    {
+        p.second->ownerSession.lock()->Send(sendBufferRef);
+    }
+}

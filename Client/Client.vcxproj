@@ -419,6 +419,8 @@
     <ClInclude Include="SocketCore\SendBuffer.h" />
     <ClInclude Include="SocketCore\Serializer.h" />
     <ClInclude Include="SocketCore\ServerPacketHandler.h" />
+    <ClInclude Include="SocketCore\SocketEvent.h" />
+    <ClInclude Include="SocketCore\SocketEventManager.h" />
     <ClInclude Include="SocketCore\SocketSession.h" />
     <ClInclude Include="SocketCore\Util\CoreMacro.h" />
     <ClInclude Include="targetver.h" />
@@ -684,6 +686,8 @@
     </ClCompile>
     <ClCompile Include="SocketCore\Serializer.cpp" />
     <ClCompile Include="SocketCore\ServerPacketHandler.cpp" />
+    <ClCompile Include="SocketCore\SocketEvent.cpp" />
+    <ClCompile Include="SocketCore\SocketEventManager.cpp" />
     <ClCompile Include="SocketCore\SocketSession.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

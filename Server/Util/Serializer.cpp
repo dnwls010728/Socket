@@ -7,7 +7,7 @@ void Serializer::Serialize(BYTE* pos, uint8_t value, int& currentByte)
 {
     pos[currentByte] = 1;
     pos[currentByte+1] = static_cast<BYTE>(value);
-    currentByte += sizeof(value);
+    currentByte += sizeof(value) + 1;
 }
 
 void Serializer::Serialize(BYTE* pos, uint16_t value, int& currentByte)
@@ -15,7 +15,7 @@ void Serializer::Serialize(BYTE* pos, uint16_t value, int& currentByte)
     pos[currentByte] = 2;
     pos[currentByte+1] = static_cast<BYTE>((value >> 0) & 0xFF);
     pos[currentByte+2] = static_cast<BYTE>((value >> 8) & 0xFF);
-    currentByte += sizeof(value);
+    currentByte += sizeof(value) + 1;
 }
 
 void Serializer::Serialize(BYTE* pos, uint32_t value, int& currentByte)

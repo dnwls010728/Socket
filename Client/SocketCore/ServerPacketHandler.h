@@ -3,17 +3,22 @@
 #include <memory>
 #include "Packet.h"
 #include "SocketSession.h"
+
 using PacketHandlerFunc = std::function<void(BYTE*, int32_t)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
-
 enum PacketNumber : uint16_t
 {
     C_PKT_ENTER = 1000,
-    S_PKT_ENTER = 1001
+    S_PKT_ENTER = 1001,
+    C_PKT_MOVING=1002,
+    S_PKT_MOVING=1003,
+    S_PKT_BROADCASTING_ENTER=1004,
 };
 
 void HandleInvalid(BYTE* buf, int32_t len);
 void HandleEnter(S_EnterPacket& pkt);
+void HandleMoving(S_MovingPacket& pkt);
+void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt);
 
 class ServerPacketHandler
 {
@@ -22,7 +27,13 @@ public:
     {
         for(int32_t i=0; i<UINT16_MAX; i++)
             GPacketHandler[i] = HandleInvalid;
-        GPacketHandler[S_PKT_ENTER] = [](BYTE* buffer,int32_t len){return HandlePacket<S_EnterPacket>(HandleEnter,buffer,len);};
+        GPacketHandler[S_PKT_ENTER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterPacket>(HandleEnter,buffer,len);};
+        GPacketHandler[S_PKT_MOVING] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_MovingPacket>(HandleMoving,buffer,len);};
+        GPacketHandler[S_PKT_BROADCASTING_ENTER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_BroadcastingEnterPacket>(HandleBroadcastEnter,buffer,len);};
+        
     }
     static void HandlePacket(BYTE* buffer, int32_t len)
     {
