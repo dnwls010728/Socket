@@ -25,6 +25,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     Core* core = new Core();
     core->Init(application);
 
+    ServerPacketHandler::Init();
     //임시 소켓 테스팅
     if(GSocketSession->Connect())
     {

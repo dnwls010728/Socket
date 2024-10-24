@@ -113,7 +113,7 @@ void SocketSession::ProcessSend(int numOfBytes)
 
 void SocketSession::OnRecvPacket(BYTE* buffer, int len)
 {
-	std::shared_ptr<SocketSession> session = GetSocketSessionRef();
+	//std::shared_ptr<SocketSession> session = GetSocketSessionRef();
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
 	ServerPacketHandler::HandlePacket(buffer, len);
