@@ -49,24 +49,13 @@ public:
     
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
-    
-    FORCEINLINE bool IsFocused() const { return is_focused_; }
 
 protected:
     friend class Canvas;
 
-    FORCEINLINE virtual void OnMousePressed() {}
-    FORCEINLINE virtual void OnMouseReleased() {}
-    FORCEINLINE virtual void OnMouseHover() {}
-    FORCEINLINE virtual void OnMouseLeave() {}
-    FORCEINLINE virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) {}
-    FORCEINLINE virtual void OnCharEvent(wchar_t character) {}
     FORCEINLINE virtual void BeginPlay() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
     FORCEINLINE virtual void Render() {}
-    
-    virtual void OnFocus();
-    virtual void OnBlur();
     
     virtual void UpdateRect();
     
@@ -88,8 +77,5 @@ protected:
     std::vector<Widget*> children_;
 
     Type::uint32 z_index_;
-
-    bool can_interact_;
-    bool is_focused_;
     
 };

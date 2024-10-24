@@ -19,9 +19,7 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
-    z_index_(next_z_index_++),
-    can_interact_(false),
-    is_focused_(false)
+    z_index_(next_z_index_++)
 {
     UpdateRect();
 }
@@ -129,16 +127,6 @@ void Widget::DetachFromWidget()
 Math::Vector2 Widget::GetPivotPosition() const
 {
     return {rect_.x + rect_.width * pivot_.x, rect_.y + rect_.height * (1.f - pivot_.y)};
-}
-
-void Widget::OnFocus()
-{
-    is_focused_ = true;
-}
-
-void Widget::OnBlur()
-{
-    is_focused_ = false;
 }
 
 void Widget::UpdateRect()
