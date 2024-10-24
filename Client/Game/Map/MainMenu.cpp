@@ -9,11 +9,10 @@
 #include "UI/Widget/Text.h"
 #include "UI/Widget/TextBox.h"
 #include "Windows/WindowsWindow.h"
-#include "..\SocketSession.h"
+#include "../SocketCore/SocketSession.h"
 #include "Resource/ResourceManager.h"
 #include "UI/Widget/Image.h"
 #include "Windows/DX/UITexture.h"
-
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
 {
@@ -48,7 +47,10 @@ void MainMenu::Load()
     start_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
     start_button->on_click.Add([]()
     {
-        GSocketSession->Connect();
+        if(!GSocketSession->Connect())
+        {
+            //TODO: 여기서 튕기는 코드 작성 해 주세요
+        }
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 

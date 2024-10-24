@@ -74,7 +74,7 @@ public:
 					continue;
 				}
 
-				//´õ ÀÌ»ó Ã³¸®ÇÒ ·ÎÁ÷ÀÌ ¾øÀ½
+				//ï¿½ï¿½ ï¿½Ì»ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			}
 		}
 	}
@@ -108,6 +108,7 @@ private:
 	std::atomic<bool> _connected = false;
 	SOCKADDR_IN _sockAddr = {};
 	std::vector<std::thread> _workers;
+	IOContext _context;
 };
 
 extern SocketSession* GSocketSession;

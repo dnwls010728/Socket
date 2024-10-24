@@ -10,8 +10,9 @@
 #include <ws2tcpip.h>
 #include <atomic>
 #pragma comment(lib,"ws2_32.lib")
+#include "ServerPacketHandler.h"
 SocketSession* GSocketSession = new SocketSession();
-SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE)
+SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(IOContext{})
 {
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -34,7 +35,10 @@ bool SocketSession::Connect()
 	_sockAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 	_sockAddr.sin_port = htons(SERVER_PORT);
 
-	connect(_socket, (sockaddr*)&_sockAddr, sizeof(_sockAddr));
+	if(connect(_socket, (sockaddr*)&_sockAddr, sizeof(_sockAddr)) == SOCKET_ERROR)
+	{
+		return false;
+	};
 
 	HANDLE hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	CreateIoCompletionPort((HANDLE)_socket, hIocp, 0, 0);
@@ -62,9 +66,16 @@ void SocketSession::Send(std::shared_ptr<SendBuffer> buffer)
 {
 	WSABUF wsaBuf;
 	wsaBuf.buf = reinterpret_cast<char*>(buffer->Buffer());
-	wsaBuf.len = static_cast<long>(sizeof(buffer->WriteSize()));
+	wsaBuf.len = static_cast<long>(buffer->WriteSize());
 	DWORD numOfBytes = 0;
-	::WSASend(_socket, &wsaBuf, 1, &numOfBytes, 0, nullptr, nullptr);
+	if(SOCKET_ERROR == ::WSASend(_socket, &wsaBuf, 1, &numOfBytes, 0, nullptr, nullptr))
+	{
+		int errCode = WSAGetLastError();
+		if(errCode != WSA_IO_PENDING)
+		{
+			std::cout << "Error in WSASend: " << errCode << std::endl;
+		}
+	}
 }
 
 void SocketSession::Disconnect(const char* cause)
@@ -93,7 +104,7 @@ void SocketSession::ProcessRecv(int numOfBytes)
 	DWORD nob = 0;
 	DWORD flags = 0;
 
-	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, &ioContext->overlapped, NULL);
+	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, &ioContext->overlapped, nullptr);
 }
 
 void SocketSession::ProcessSend(int numOfBytes)
@@ -105,7 +116,7 @@ void SocketSession::OnRecvPacket(BYTE* buffer, int len)
 	std::shared_ptr<SocketSession> session = GetSocketSessionRef();
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
-	//ServerPacketSession::HandlePacket(session, buffer, len);
+	ServerPacketHandler::HandlePacket(buffer, len);
 }
 
 void SocketSession::OnConnected()
@@ -120,7 +131,7 @@ int SocketSession::OnRecv(BYTE* buffer, int len)
 	{
 		int dataSize = len - processLen;
 
-		//Çì´õº¸´Ù Å©±â°¡ ÀÛÀº ¿äÃ»Àº ¹«½Ã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (dataSize < sizeof(PacketHeader))
 			break;
 
@@ -138,6 +149,7 @@ int SocketSession::OnRecv(BYTE* buffer, int len)
 
 void SocketSession::OnSend(int len)
 {
+	std::cout<< "Message Send : " << len << std::endl;
 }
 
 void SocketSession::OnDisconnected()

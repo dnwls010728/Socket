@@ -180,7 +180,7 @@ void Session::RegisterSend()
 	{
 		WSABUF wsaBuf;
 		wsaBuf.buf = reinterpret_cast<char*>(buffer->Buffer());
-		wsaBuf.len = static_cast<long>(sizeof(buffer->WriteSize()));
+		wsaBuf.len = static_cast<long>(buffer->WriteSize());
 		wsaBufs.emplace_back(wsaBuf);
 	}
 
@@ -236,14 +236,14 @@ void Session::ProcessRecv(int numOfBytes)
 	}
 
 	int32_t dataSize = _recvBuffer.DataSize();
-	int32_t processLen = OnRecv(_recvBuffer.ReadPos(), dataSize); // ÄÁÅÙÃ÷ ÄÚµå¿¡¼­ ÀçÁ¤ÀÇ
+	int32_t processLen = OnRecv(_recvBuffer.ReadPos(), dataSize); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (processLen < 0 || dataSize < processLen || _recvBuffer.OnRead(processLen) == false)
 	{
 		Disconnect(L"OnRead Overflow");
 		return;
 	}
 
-	// Ä¿¼­ Á¤¸®
+	// Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	_recvBuffer.Clean();
 
 	RegisterRecv();
@@ -300,7 +300,7 @@ int PacketSession::OnRecv(BYTE* buffer, int len)
 	{
 		int dataSize = len - processLen;
 
-		//Çì´õº¸´Ù Å©±â°¡ ÀÛÀº ¿äÃ»Àº ¹«½Ã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (dataSize < sizeof(PacketHeader))
 			break;
 

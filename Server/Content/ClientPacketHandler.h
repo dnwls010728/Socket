@@ -30,7 +30,7 @@ public:
 
 	static shared_ptr<SendBuffer> MakeSendBuffer(S_EnterPacket& pkt) { return MakeSendBuffer(pkt, S_PKT_ENTER); }
 
-private:
+public:
 	template<typename PacketType, typename ProcessFunc>
 	static void HandlePacket(ProcessFunc func, const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len) 
 	{
