@@ -24,6 +24,7 @@ namespace UI
 
         inline void SetTexture(UITexture* texture) { texture_ = texture; }
         inline void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
+        inline void SetSlice9Rect(const Math::Rect& kSlice9Rect) { slice9_rect_ = kSlice9Rect; }
 
     protected:
         virtual void Render() override;
@@ -32,6 +33,8 @@ namespace UI
         UITexture* texture_;
 
         DrawMode draw_mode_;
+
+        Math::Rect slice9_rect_;
         
     };
 }

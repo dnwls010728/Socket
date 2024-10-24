@@ -89,6 +89,7 @@ protected:
 
     Type::uint32 z_index_;
 
+    bool can_interact_;
     bool is_focused_;
     
 };

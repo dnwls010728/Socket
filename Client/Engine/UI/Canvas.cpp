@@ -120,15 +120,11 @@ void Canvas::Tick(float delta_time)
     for (auto it = widgets_.rbegin(); it != widgets_.rend(); ++it)
     {
         Widget* widget = it->get();
-        if (widget->rect_.Contains(mouse_position))
+        if (widget->rect_.Contains(mouse_position) && widget->can_interact_)
         {
-            rttr::type type = rttr::type::get(*widget);
-            if (type.is_derived_from<UI::Button>() || type.is_derived_from<UI::TextBox>())
+            if (!hovered_widget || widget->z_index_ > hovered_widget->z_index_)
             {
-                if (!hovered_widget || widget->z_index_ > hovered_widget->z_index_)
-                {
-                    hovered_widget = widget;
-                }
+                hovered_widget = widget;
             }
         }
     }

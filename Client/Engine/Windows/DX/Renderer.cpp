@@ -410,7 +410,7 @@ void Renderer::BeginLayer(const Math::Rect& kRect)
     Microsoft::WRL::ComPtr<ID2D1Layer> layer;
     current_d2d_viewport_->d2d_render_target->CreateLayer(nullptr, &layer);
 
-    D2D1_RECT_F clipRect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    D2D1_RECT_F clipRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
     current_d2d_viewport_->d2d_render_target->PushLayer(
         D2D1::LayerParameters(
             clipRect,
@@ -496,7 +496,7 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
 
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
     HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
@@ -553,7 +553,7 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
 
     Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName);
 
@@ -595,7 +595,7 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
 
     if (!use_slice9)
     {
-        const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+        const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
         d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
     }
     else
@@ -603,52 +603,52 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
         const float kWidth = kBitmap->GetSize().width;
         const float kHeight = kBitmap->GetSize().height;
 
-        const D2D1_RECT_F kSlice9 = D2D1::RectF(kSlice9Rect.Left(), kSlice9Rect.Top(), kSlice9Rect.width, kSlice9Rect.height);
+        const D2D1_RECT_F kSlice9 = D2D1::RectF(kSlice9Rect.x, kSlice9Rect.y, kSlice9Rect.width, kSlice9Rect.height);
 
         // Top Left
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(0.f, 0.f, kSlice9.left, kSlice9.top),
-            D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Left() + kSlice9.left, kRect.Top() + kSlice9.top));
+            D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MinX() + kSlice9.left, kRect.MinY() + kSlice9.top));
 
         // Top Center
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.left, 0.f, kSlice9.right, kSlice9.top),
-            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Top(), kRect.Right() - (kWidth - kSlice9.right), kRect.Top() + kSlice9.top));
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MinY(), kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY() + kSlice9.top));
         
         // Top Right
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.right, 0.f, kWidth, kSlice9.top),
-            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Top(), kRect.Right(), kRect.Top() + kSlice9.top));
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY(), kRect.MaxX(), kRect.MinY() + kSlice9.top));
         
         // Center Left
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(0.f, kSlice9.top, kSlice9.left, kSlice9.bottom),
-            D2D1::RectF(kRect.Left(), kRect.Top() + kSlice9.top, kRect.Left() + kSlice9.left, kRect.Bottom() - (kHeight - kSlice9.bottom)));
+            D2D1::RectF(kRect.MinX(), kRect.MinY() + kSlice9.top, kRect.MinX() + kSlice9.left, kRect.MaxY() - (kHeight - kSlice9.bottom)));
         
         // Center
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.left, kSlice9.top, kSlice9.right, kSlice9.bottom),
-            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Top() + kSlice9.top, kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom() - (kHeight - kSlice9.bottom)));
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MinY() + kSlice9.top, kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY() - (kHeight - kSlice9.bottom)));
         
         // Center Right
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.right, kSlice9.top, kWidth, kSlice9.bottom),
-            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Top() + kSlice9.top, kRect.Right(), kRect.Bottom() - (kHeight - kSlice9.bottom)));
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY() + kSlice9.top, kRect.MaxX(), kRect.MaxY() - (kHeight - kSlice9.bottom)));
         
         // Bottom Left
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(0.f, kSlice9.bottom, kSlice9.left, kHeight),
-            D2D1::RectF(kRect.Left(), kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Left() + kSlice9.left, kRect.Bottom()));
+            D2D1::RectF(kRect.MinX(), kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MinX() + kSlice9.left, kRect.MaxY()));
         
         // Bottom Center
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.left, kSlice9.bottom, kSlice9.right, kHeight),
-            D2D1::RectF(kRect.Left() + kSlice9.left, kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom()));
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY()));
         
         // Bottom Right
         DrawSlice(d2d_viewport, kBitmap,
             D2D1::RectF(kSlice9.right, kSlice9.bottom, kWidth, kHeight),
-            D2D1::RectF(kRect.Right() - (kWidth - kSlice9.right), kRect.Bottom() - (kHeight - kSlice9.bottom), kRect.Right(), kRect.Bottom()));
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MaxX(), kRect.MaxY()));
     }
     
     d2d_viewport->d2d_render_target->SetTransform(transform);

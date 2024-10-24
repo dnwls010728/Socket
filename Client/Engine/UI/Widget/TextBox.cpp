@@ -16,6 +16,7 @@ UI::TextBox::TextBox(const std::wstring& kName) :
     show_cursor_(false),
     advances_()
 {
+    can_interact_ = true;
 }
 
 void UI::TextBox::BeginPlay()

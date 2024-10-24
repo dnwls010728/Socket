@@ -20,6 +20,7 @@ Widget::Widget(const std::wstring& kName) :
     parent_(nullptr),
     children_(),
     z_index_(next_z_index_++),
+    can_interact_(false),
     is_focused_(false)
 {
     UpdateRect();

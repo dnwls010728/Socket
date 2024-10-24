@@ -11,6 +11,7 @@ UI::Button::Button(const std::wstring& kName) :
     color_(Math::Color::White)
 {
     size_ = {160.f, 30.f};
+    can_interact_ = true;
 }
 
 void UI::Button::OnMousePressed()

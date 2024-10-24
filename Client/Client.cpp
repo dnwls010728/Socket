@@ -2,16 +2,17 @@
 #define _CRTDBG_MAP_ALLOC
 
 #include "Client.h"
-#include "Core.h"
+#include "Engine/Core.h"
 
 #include <crtdbg.h>
 #include <iostream>
 
 #include "resource.h"
 #include "SocketCore/ServerPacketHandler.h"
-#include "Windows/WindowsWindow.h"
+#include "Engine/Windows/WindowsWindow.h"
 #include "SocketCore/SocketSession.h"
 #include "SocketCore/Packet.h"
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 #ifdef _DEBUG
