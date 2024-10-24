@@ -2,9 +2,13 @@
 #include "PlayerCharacter.h"
 
 #include "Actor/Camera.h"
+#include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Input/Keyboard.h"
 #include "Resource/ResourceManager.h"
+#include "UI/Canvas.h"
+#include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -12,8 +16,20 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 {
     sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Capsule.png");
     sprite_->SetPPU(256);
+    sprite_->Split(1, 1, Sprite::kBottom);
 
     renderer_->SetSprite(sprite_);
+    renderer_->SetColor(Math::Color::Black);
+
+    collider_->SetOffset({0.f, 1.f});
+
+#pragma region 닉네임
+    nickname_widget_ = Canvas::Get()->AddWidget<UI::Text>(L"Player Nickname");
+    nickname_widget_->SetSize({200.f, 100.f});
+    nickname_widget_->SetAlignment(UI::TextAnchor::kMiddleCenter);
+    nickname_widget_->SetText(L"Lv. 1 Player");
+#pragma endregion
+    
 }
 
 void PlayerCharacter::BeginPlay()
@@ -30,6 +46,17 @@ void PlayerCharacter::Tick(float delta_time)
     Keyboard* keyboard = Keyboard::Get();
     const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
     velocity_.x = h * 5.f;
+}
+
+void PlayerCharacter::PostTick(float delta_time)
+{
+    CharacterBase::PostTick(delta_time);
+
+    TransformComponent* transform = GetTransform();
+    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(transform->GetPosition());
+
+    nickname_widget_->SetPosition(screen_position);
+    
 }
 
 RTTR_REGISTRATION
