@@ -1,6 +1,6 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "DeSerializer.h"
-
+#include "Util/CoreMacro.h"
 void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint8_t& value)
 {
 	uint8_t spliter = pos[currentByte];
@@ -91,7 +91,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t& value)
 	}
 }
 
-void DeSerializer::Deserialize(BYTE* pos, int& currentByte, string& value)
+void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string& value)
 {
 	uint8_t spliter = pos[currentByte];
 	currentByte++;
@@ -99,7 +99,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, string& value)
 	{
 		uint8_t strLen = static_cast<uint8_t>(pos[currentByte]);
 		currentByte++;
-		value = string(reinterpret_cast<const char*>(pos + currentByte));
+		value = std::string(reinterpret_cast<const char*>(pos + currentByte));
 		currentByte += value.length()+1;
 	}
 	else
