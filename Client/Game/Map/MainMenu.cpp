@@ -56,8 +56,8 @@ void MainMenu::Load()
         else
         {
             C_EnterPacket pkt;
-            pkt.SetId("CLIENT");
-            pkt.SetName("CLIENT");
+            pkt.SetId("Sundaekyung");
+            pkt.SetName("Sundaekyung");
             std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
             GSocketSession->Send(sendBuffer);
             

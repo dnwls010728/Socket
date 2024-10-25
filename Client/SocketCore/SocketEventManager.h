@@ -17,7 +17,6 @@ private:
     friend class Core;
 
     void Clear();
-
     
     std::queue<SocketEvent> eventQueue;
     

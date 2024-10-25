@@ -15,6 +15,8 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
+    FORCEINLINE void SetPacketId(int packetId) { packetId = packetId; }
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float delta_time) override;
@@ -23,5 +25,7 @@ protected:
     class Sprite* sprite_;
 
     UI::Text* nickname_widget_;
+
+    int packet_id_;
     
 };

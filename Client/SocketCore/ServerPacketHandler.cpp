@@ -2,6 +2,8 @@
 #include "ServerPacketHandler.h"
 #include <functional>
 #include <iostream>
+
+#include "SocketEventManager.h"
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
 void HandleInvalid(BYTE* buf, int32_t len)
@@ -12,7 +14,9 @@ void HandleInvalid(BYTE* buf, int32_t len)
 void HandleEnter(S_EnterPacket& pkt)
 {
     std::cout << "Enter Packet" << std::endl;
-    
+    //얘가 로그인 성공을 알리는 response
+    SocketEventManager *socket_event_manager = SocketEventManager::Get();
+    socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER);
 }
 
 void HandleMoving(S_MovingPacket& pkt)
@@ -24,5 +28,5 @@ void HandleMoving(S_MovingPacket& pkt)
 void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt)
 {
     std::cout << "Broadcast Packet" << std::endl;
-    
+    //얘가 모든 유저한테 날아가는 거고
 }

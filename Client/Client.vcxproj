@@ -213,6 +213,7 @@
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
+    <ClInclude Include="Game\Actor\Network\Network.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
@@ -488,6 +489,7 @@
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
+    <ClCompile Include="Game\Actor\Network\Network.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
