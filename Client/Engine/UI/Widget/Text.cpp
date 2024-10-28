@@ -18,6 +18,7 @@ const TextAnchor Text::kLowerRight = TextAnchor::kBottom | TextAnchor::kRight;
 Text::Text(const std::wstring& kName) :
     Widget(kName),
     text_(L"New Text"),
+    font_family_(L"Silver24"),
     text_alignment_(DWRITE_TEXT_ALIGNMENT_LEADING),
     paragraph_alignment_(DWRITE_PARAGRAPH_ALIGNMENT_NEAR),
     color_(Math::Color::White)
@@ -48,7 +49,7 @@ void Text::Render()
     Math::Vector2 pivot_position = GetPivotPosition();
     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
-    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, L"Silver24", text_alignment_, paragraph_alignment_);
+    renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, font_family_, text_alignment_, paragraph_alignment_);
 }
 
 RTTR_REGISTRATION

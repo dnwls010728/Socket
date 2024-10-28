@@ -30,6 +30,9 @@ public:
     FORCEINLINE void SetText(const std::wstring& text) { text_ = text; }
     FORCEINLINE const std::wstring& GetText() const { return text_; }
 
+    FORCEINLINE void SetFontFamily(const std::wstring& font_family) { font_family_ = font_family; }
+    FORCEINLINE const std::wstring& GetFontFamily() const { return font_family_; }
+
     FORCEINLINE void SetColor(Math::Color color) { color_ = color; }
     FORCEINLINE const Math::Color& GetColor() const { return color_; }
 
@@ -48,6 +51,7 @@ protected:
 
 private:
     std::wstring text_;
+    std::wstring font_family_;
 
     DWRITE_TEXT_ALIGNMENT text_alignment_;
     DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment_;
