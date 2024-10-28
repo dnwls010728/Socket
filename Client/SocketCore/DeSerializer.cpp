@@ -52,8 +52,8 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int32_t& value)
 	currentByte++;
 	if (spliter == 4)
 	{
-		value = static_cast<uint8_t>(pos[currentByte]);
-		currentByte += sizeof(uint8_t);
+		value = static_cast<int32_t>(pos[currentByte]);
+		currentByte += sizeof(int32_t);
 	}
 	else
 	{

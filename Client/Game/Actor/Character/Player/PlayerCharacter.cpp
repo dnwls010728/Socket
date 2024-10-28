@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
+#include "../../../../SocketCore/SendBuffer.h"
+#include "../../../../SocketCore/ServerPacketHandler.h"
 #include "Actor/Camera.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -10,6 +12,7 @@
 #include "UI/Canvas.h"
 #include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
+#include "../SocketCore/Packet.h"
 uint32_t currentPlayerId = 0;
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
@@ -46,7 +49,17 @@ void PlayerCharacter::Tick(float delta_time)
     {
         Keyboard* keyboard = Keyboard::Get();
         const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        velocity_.x = h * 5.f;    
+        velocity_.x = h * 5.f;
+        //좌 또는 우로 이동했다면
+        if(h!=0)
+        {
+            
+            C_MovingPacket pkt;
+            pkt._locationX = transform_->GetPosition().x;
+            pkt._locationY = transform_->GetPosition().y;
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+            GSocketSession->Send(sendBuffer);
+        }
     }
     
 }

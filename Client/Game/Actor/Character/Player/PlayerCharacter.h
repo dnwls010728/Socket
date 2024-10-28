@@ -16,7 +16,8 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
-    FORCEINLINE void SetPacketId (int packetId) { packetId = packetId; }
+    FORCEINLINE void SetPacketId (int packetId) { packet_id_ = packetId; }
+    FORCEINLINE int GetPacketId () const { return packet_id_; }
     FORCEINLINE void SetNickname(const std::wstring& kNick)
     {
         nickname_widget_->SetText(kNick);

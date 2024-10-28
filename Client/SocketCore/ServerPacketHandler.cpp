@@ -23,6 +23,9 @@ void HandleEnter(S_EnterPacket& pkt)
 void HandleMoving(S_MovingPacket& pkt)
 {
     std::cout<< "Moving" << std::endl;
+    std::shared_ptr<S_MovingPacket> pktRef = std::make_shared<S_MovingPacket>(pkt);
+    SocketEventManager* socket_event_manager = SocketEventManager::Get();
+    socket_event_manager->RegisterEvent(pktRef,S_PKT_MOVING);
     
 }
 

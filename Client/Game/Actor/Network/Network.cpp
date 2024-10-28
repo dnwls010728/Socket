@@ -3,6 +3,7 @@
 
 #include "../SocketCore/SocketEventManager.h"
 #include "Actor/Character/Player/PlayerCharacter.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Level/World.h"
 
 Network::Network(const std::wstring& kName) :
@@ -22,12 +23,7 @@ void Network::Tick(float deltaTime)
     {
         if(socketEvent.type == S_PKT_ENTER)
         {
-            // TODO: 현재 캐릭터에 이름 장착
-            // 현재 움직이고있는 내 액터를 어캐 찾아야 함?]
-            // 트리오브세이비어마냥 룸이 한개임 ㅋㅋ
-            // 그래서 하나의 룸에 들어가면
-            // 모두가 그 사실을 알 수 있음
-            // 얘가 '내가'들어왔을 때에 실행되는 코드
+            
                     
             PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                     
@@ -36,11 +32,16 @@ void Network::Tick(float deltaTime)
             playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
             player->SetNickname(playerName);
             currentPlayerId = socketEvent.enter.userId;
+            players_.insert({player->GetPacketId(), player});
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {
-            //이 방의 인원이 '움직였을 때'에 실행되는 코드
-            //TODO: 해당하는 캐릭터의 좌표를 이동
+            MovingEvent evt = socketEvent.moving;
+            auto it = players_.find(evt.userId);
+            if (it != players_.end()) {
+                PlayerCharacter* targetPlayer = it->second;
+                targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
+            } 
         }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
             //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음
@@ -50,7 +51,8 @@ void Network::Tick(float deltaTime)
                 player->SetPacketId(socketEvent.broadcastingEnter.userId);
                 std::wstring playerName;
                 playerName.assign(socketEvent.broadcastingEnter.name.begin(),socketEvent.broadcastingEnter.name.end());
-                player->SetNickname(playerName);    
+                player->SetNickname(playerName);
+                players_.insert({player->GetPacketId(), player});
             }
             
         }

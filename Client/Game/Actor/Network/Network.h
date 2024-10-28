@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Actor/Character/Player/PlayerCharacter.h"
 
 class Network : public Actor
 {
@@ -12,5 +13,6 @@ public:
 
 protected:
     virtual void Tick(float deltaTime) override;
-    
+private:
+    std::map<uint32_t, PlayerCharacter*> players_;
 };

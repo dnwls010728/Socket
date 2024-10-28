@@ -10,6 +10,11 @@ class CharacterBase : public Actor
 public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
+    FORCEINLINE void SetVelocity(int32_t x,int32_t y)
+    {
+        velocity_.x=x;
+        velocity_.y=y;
+    }
 
     bool IsGrounded() const;
 
