@@ -9,7 +9,7 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-DECLARE_DELEGATE(OnDragEvent)
+DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
 
 enum class AnchorPreset : Type::uint16
 {

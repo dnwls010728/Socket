@@ -44,6 +44,8 @@ struct MouseButtonEvent
     EventType type;
     bool is_pressed;
     MouseButton button;
+    float x;
+    float y;
 };
 
 struct MouseMotionEvent

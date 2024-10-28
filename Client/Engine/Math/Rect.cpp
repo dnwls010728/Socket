@@ -31,12 +31,12 @@ Math::Rect Math::Rect::Zero()
     return {0.f, 0.f, 0.f, 0.f};
 }
 
-bool Math::Rect::Contains(const Math::Vector2& kPoint) const
+bool Math::Rect::Contains(const Rect& kRect, const Math::Vector2& kPoint)
 {
-    return kPoint.x >= x && kPoint.x <= x + width && kPoint.y >= y && kPoint.y <= y + height;
+    return kPoint.x >= kRect.x && kPoint.x <= kRect.x + kRect.width && kPoint.y >= kRect.y && kPoint.y <= kRect.y + kRect.height;
 }
 
-bool Math::Rect::Overlaps(const Rect& other) const
+bool Math::Rect::Overlaps(const Rect& kRect, const Rect& other)
 {
-    return x < other.MaxX() && MaxX() > other.x && y < other.MaxY() && MaxY() > other.y;
+    return kRect.x < other.x + other.width && kRect.x + kRect.width > other.x && kRect.y < other.y + other.height && kRect.y + kRect.height > other.y;
 }

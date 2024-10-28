@@ -79,6 +79,9 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         message == WM_RBUTTONDOWN || message == WM_RBUTTONUP ||
         message == WM_MBUTTONDOWN || message == WM_MBUTTONUP)
     {
+        const int x = GET_X_LPARAM(lParam);
+        const int y = GET_Y_LPARAM(lParam);
+        
         bool is_pressed = false;
         MouseButton mouse_button = MouseButton::kLeft;
         Type::uint32 type = 0;
@@ -106,6 +109,8 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.type = type;
         event.button.is_pressed = is_pressed;
         event.button.button = mouse_button;
+        event.button.x = static_cast<float>(x);
+        event.button.y = static_cast<float>(y);
 
         events_.push(event);
         return true;

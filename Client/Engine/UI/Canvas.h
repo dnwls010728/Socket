@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "Singleton.h"
+#include "Math/Math.h"
+#include "Math/Vector2.h"
 
 union Event;
 
@@ -40,6 +42,11 @@ private:
     float match_mode_;
 
     std::vector<std::shared_ptr<Widget>> widgets_;
+
+    Widget* hovered_widget_;
+    Widget* dragging_widget_;
+
+    Math::Vector2 previous_mouse_position_;
     
 };
 
