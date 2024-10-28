@@ -179,6 +179,7 @@
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
+    <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />

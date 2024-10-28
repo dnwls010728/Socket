@@ -134,23 +134,23 @@ void Core::MainThread()
             while (event_manager->PollEvent(event))
             {
                 const Type::uint32& kType = event.type;
-                if (kType == EventType::kWindowSize)
+                if (kType == static_cast<Type::uint32>(EventType::kWindowSize))
                 {
                     const WindowEvent& kWindowEvent = event.window;
             
                     Renderer::Get()->ResizeViewport(kWindow, kWindowEvent.data1, kWindowEvent.data2);
                     Canvas::Get()->OnResize(kWindowEvent.data1, kWindowEvent.data2);
                 }
-                else if (kType & (EventType::kKeyPressed | EventType::kKeyReleased))
+                else if (kType & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
                 {
                     Keyboard::Get()->OnEvent(event);
                     Canvas::Get()->OnEvent(event);
                 }
-                else if (kType == EventType::kText)
+                else if (kType == static_cast<Type::uint32>(EventType::kText))
                 {
                     Canvas::Get()->OnEvent(event);
                 }
-                else if (kType & (EventType::kMousePressed | EventType::kMouseReleased | EventType::kMouseMotion | EventType::kMouseWheel))
+                else if (kType & static_cast<Type::uint32>(EventType::kMousePressed | EventType::kMouseReleased | EventType::kMouseMotion | EventType::kMouseWheel))
                 {
                     Mouse::Get()->OnEvent(event);
                     Canvas::Get()->OnEvent(event);

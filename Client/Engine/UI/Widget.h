@@ -9,19 +9,18 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-namespace UI
+enum class AnchorPreset : Type::uint16
 {
-    enum AnchorPresets
-    {
-        kLeft = (0x01<<0),
-        kRight = (0x01<<1),
-        kTop = (0x01<<2),
-        kBottom = (0x01<<3),
-        kCenter = (0x01<<4),
-        kMiddle = (0x01<<5),
-        kStretch = (0x01<<6)
-    };
-}
+    kLeft = (0x01<<0),
+    kRight = (0x01<<1),
+    kTop = (0x01<<2),
+    kBottom = (0x01<<3),
+    kCenter = (0x01<<4),
+    kMiddle = (0x01<<5),
+    kStretch = (0x01<<6)
+};
+
+ENUM_CLASS_FLAGS(AnchorPreset)
 
 class Widget : public std::enable_shared_from_this<Widget>
 {
@@ -39,7 +38,7 @@ public:
     void SetAnchorMax(const Math::Vector2& kAnchorMax);
     void SetPivot(const Math::Vector2& kPivot);
     void SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax);
-    void SetAnchorPreset(Type::uint16 anchor, bool match_pivot = false);
+    void SetAnchorPreset(AnchorPreset anchor, bool match_pivot = false);
     void AttachToWidget(Widget* parent);
     void DetachFromWidget();
     

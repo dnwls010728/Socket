@@ -89,7 +89,7 @@ void Level::OnEvent(const Event& event)
 {
     if (has_begun_play_)
     {
-        if (event.type == EventType::kWindowSize)
+        if (event.type == static_cast<Type::uint32>(EventType::kWindowSize))
         {
             Camera::Get()->UpdateProjectionMatrix();
         }

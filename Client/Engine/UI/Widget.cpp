@@ -76,33 +76,33 @@ void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kA
     UpdateRect();
 }
 
-void Widget::SetAnchorPreset(Type::uint16 anchor, bool match_pivot)
+void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
 {
-    if ((anchor & UI::AnchorPresets::kLeft) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kRight) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kMiddle) && (anchor & UI::AnchorPresets::kCenter)) SetAnchors({.5f, .5f}, {.5f, .5f});
-    else if ((anchor & UI::AnchorPresets::kLeft) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({0.f, 0.f}, {0.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kRight) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({1.f, 0.f}, {1.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({0.f, 1.f}, {1.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kCenter)) SetAnchors({0.f, .5f}, {1.f, .5f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({0.f, 0.f}, {1.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
-    else if (anchor & UI::AnchorPresets::kTop) SetAnchors({.5f, 1.f}, {.5f, 1.f});
-    else if (anchor & UI::AnchorPresets::kLeft) SetAnchors({0.f, .5f}, {0.f, .5f});
-    else if (anchor & UI::AnchorPresets::kRight) SetAnchors({1.f, .5f}, {1.f, .5f});
-    else if (anchor & UI::AnchorPresets::kBottom) SetAnchors({.5f, 0.f}, {.5f, 0.f});
-    else if (anchor & UI::AnchorPresets::kStretch) SetAnchors({0.f, 0.f}, {1.f, 1.f});
+    if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kMiddle | AnchorPreset::kCenter)) SetAnchors({.5f, .5f}, {.5f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kBottom)) SetAnchors({0.f, 0.f}, {0.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kBottom)) SetAnchors({1.f, 0.f}, {1.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kTop)) SetAnchors({0.f, 1.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kCenter)) SetAnchors({0.f, .5f}, {1.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kBottom)) SetAnchors({0.f, 0.f}, {1.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft)) SetAnchors({0.f, .5f}, {0.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight)) SetAnchors({1.f, .5f}, {1.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch)) SetAnchors({0.f, 0.f}, {1.f, 1.f});
 
     if (match_pivot)
     {
-        if (anchor & UI::AnchorPresets::kLeft) pivot_.x = 0.f;
-        else if (anchor & UI::AnchorPresets::kRight) pivot_.x = 1.f;
+        if (EnumHasAnyFlags(anchor, AnchorPreset::kLeft)) pivot_.x = 0.f;
+        else if (EnumHasAnyFlags(anchor, AnchorPreset::kRight)) pivot_.x = 1.f;
         else pivot_.x = .5f;
 
-        if (anchor & UI::AnchorPresets::kTop) pivot_.y = 1.f;
-        else if (anchor & UI::AnchorPresets::kBottom) pivot_.y = 0.f;
+        if (EnumHasAnyFlags(anchor, AnchorPreset::kTop)) pivot_.y = 1.f;
+        else if (EnumHasAnyFlags(anchor, AnchorPreset::kBottom)) pivot_.y = 0.f;
         else pivot_.y = .5f;
 
         UpdateRect();
