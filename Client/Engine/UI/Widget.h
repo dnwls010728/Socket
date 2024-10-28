@@ -10,7 +10,6 @@
 #include "rttr/registration_friend.h"
 
 DECLARE_DELEGATE(OnDragEvent)
-DECLARE_DELEGATE(OnDropEvent)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -51,6 +50,10 @@ public:
     
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
+
+    OnDragEvent on_drag_start;
+    OnDragEvent on_drag;
+    OnDragEvent on_drag_end;
 
 protected:
     friend class Canvas;
