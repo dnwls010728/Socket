@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 
+#include "Misc/EnumClassFlags.h"
 #include "Misc/Type.h"
 
 // 현재 헤더파일에 있는 타입들은 프로젝트에 종속적인 타입들입니다.
@@ -10,13 +11,15 @@ enum class ActorTag : Type::uint64
     kNone,
 };
 
-enum ActorLayer : Type::uint16
+enum class ActorLayer : Type::uint16
 {
     kDefault = (0x01<<0),
     kGround = (0x01<<1),
     kPlayer = (0x01<<2),
     kBullet = (0x01<<3)
 };
+
+ENUM_CLASS_FLAGS(ActorLayer)
 
 class ProjectSettings
 {
@@ -35,11 +38,11 @@ public:
 
     inline static constexpr float kFixedTimeStep = .02f; // 고정 프레임 간격
 
-    inline static const std::map<Type::uint16, Type::uint16> kLayerCollisionMatrix = { // 레이어 충돌 매트릭스
-        {kDefault, kDefault | kGround | kPlayer | kBullet},
-        {kGround, kGround | kDefault | kPlayer | kBullet},
-        {kPlayer, kPlayer | kGround | kDefault},
-        {kBullet, kBullet | kGround | kDefault}
+    inline static const std::map<ActorLayer, ActorLayer> kLayerCollisionMatrix = { // 레이어 충돌 매트릭스
+        {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kBullet},
+        {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kBullet},
+        {ActorLayer::kPlayer, ActorLayer::kPlayer | ActorLayer::kGround | ActorLayer::kDefault},
+        {ActorLayer::kBullet, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault}
     };
     
 };

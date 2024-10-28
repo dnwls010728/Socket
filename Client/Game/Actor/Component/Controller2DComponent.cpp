@@ -41,7 +41,7 @@ void Controller2DComponent::HorizontalCollisions(Math::Vector2& move_amount)
         ray_origin += Math::Vector2::Up() * (horizontal_ray_spacing_ * i);
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, ActorLayer::kGround))
+        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, static_cast<Type::uint16>(static_cast<Type::uint16>(ActorLayer::kGround))))
         {
             float slope_angle = Math::Vector2::Angle(hit_result.normal, Math::Vector2::Up());
             if (i == 0 && slope_angle <= slope_limit_)
@@ -91,7 +91,7 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
         ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i + move_amount.x);
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * dir_y, ray_length, ActorLayer::kGround))
+        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * dir_y, ray_length, static_cast<Type::uint16>(ActorLayer::kGround)))
         {
             move_amount.y = (hit_result.distance - skin_width_) * dir_y;
             ray_length = hit_result.distance;
@@ -113,7 +113,7 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
         Math::Vector2 ray_origin = (dir_x == -1 ? raycast_origins_.bottom_left : raycast_origins_.bottom_right) + Math::Vector2::Up() * move_amount.y;
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, ActorLayer::kGround))
+        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, static_cast<Type::uint16>(ActorLayer::kGround)))
         {
             float slope_angle = Math::Vector2::Angle(hit_result.normal, Math::Vector2::Up());
             if (slope_angle != collisions_.slope_angle)
@@ -144,10 +144,10 @@ void Controller2DComponent::ClimbSlope(Math::Vector2& move_amount, float slope_a
 void Controller2DComponent::DescendSlope(Math::Vector2& move_amount)
 {
     HitResult max_slope_hit_left;
-    bool is_hit_left = Physics2D::RayCast(max_slope_hit_left, raycast_origins_.bottom_left, Math::Vector2::Down(), Math::Abs(move_amount.y) + skin_width_, ActorLayer::kGround);
+    bool is_hit_left = Physics2D::RayCast(max_slope_hit_left, raycast_origins_.bottom_left, Math::Vector2::Down(), Math::Abs(move_amount.y) + skin_width_, static_cast<Type::uint16>(ActorLayer::kGround));
 
     HitResult max_slope_hit_right;
-    bool is_hit_right = Physics2D::RayCast(max_slope_hit_right, raycast_origins_.bottom_right, Math::Vector2::Down(), Math::Abs(move_amount.y) + skin_width_, ActorLayer::kGround);
+    bool is_hit_right = Physics2D::RayCast(max_slope_hit_right, raycast_origins_.bottom_right, Math::Vector2::Down(), Math::Abs(move_amount.y) + skin_width_, static_cast<Type::uint16>(ActorLayer::kGround));
 
     if (is_hit_left ^ is_hit_right)
     {
@@ -161,7 +161,7 @@ void Controller2DComponent::DescendSlope(Math::Vector2& move_amount)
         Math::Vector2 ray_origin = dir_x == -1 ? raycast_origins_.bottom_right : raycast_origins_.bottom_left;
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Down(), FLT_MAX, ActorLayer::kGround))
+        if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Down(), FLT_MAX, static_cast<Type::uint16>(ActorLayer::kGround)))
         {
             float slope_angle = Math::Vector2::Angle(hit_result.normal, Math::Vector2::Up());
         
