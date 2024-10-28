@@ -25,10 +25,11 @@ T* ResourceManager::Load(const std::wstring& kPath)
         Resource* resource = resources_[path].get();
         
         rttr::type type = rttr::type::get<T>();
-        rttr::type resource_type = rttr::type::get(resource);
+        rttr::type component_type = rttr::type::get(resource);
 
-        if (type == resource_type) return static_cast<T*>(resource);
-        return nullptr;
+        //if (component_type.is_derived_from(type))
+            return static_cast<T*>(resource);
+        //return nullptr;
     }
 
     std::unique_ptr<T> resource = std::make_unique<T>();

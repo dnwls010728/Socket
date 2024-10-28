@@ -29,5 +29,7 @@ void HandleMoving(S_MovingPacket& pkt)
 void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt)
 {
     std::cout << "Broadcast Packet" << std::endl;
-    //얘가 모든 유저한테 날아가는 거고
+    std::shared_ptr<S_BroadcastingEnterPacket> pktRef = std::make_shared<S_BroadcastingEnterPacket>(pkt);
+    SocketEventManager* socket_event_manager = SocketEventManager::Get();
+    socket_event_manager->RegisterEvent(pktRef,S_PKT_BROADCASTING_ENTER);
 }

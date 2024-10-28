@@ -10,7 +10,7 @@
 #include "UI/Canvas.h"
 #include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
-
+uint32_t currentPlayerId = 0;
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
 {
@@ -42,9 +42,13 @@ void PlayerCharacter::BeginPlay()
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
-    Keyboard* keyboard = Keyboard::Get();
-    const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-    velocity_.x = h * 5.f;
+    if(packet_id_ == currentPlayerId)
+    {
+        Keyboard* keyboard = Keyboard::Get();
+        const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+        velocity_.x = h * 5.f;    
+    }
+    
 }
 
 void PlayerCharacter::PostTick(float delta_time)

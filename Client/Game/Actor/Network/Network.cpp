@@ -35,6 +35,7 @@ void Network::Tick(float deltaTime)
             std::wstring playerName;
             playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
             player->SetNickname(playerName);
+            currentPlayerId = socketEvent.enter.userId;
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {
@@ -42,8 +43,16 @@ void Network::Tick(float deltaTime)
             //TODO: 해당하는 캐릭터의 좌표를 이동
         }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
-            //누군가가 '들어왔을 때' 실행되는 코드
-            // TODO: 해당하는 캐릭터를 생성
+            //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음
+            if(currentPlayerId != 0)
+            {
+                PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
+                player->SetPacketId(socketEvent.broadcastingEnter.userId);
+                std::wstring playerName;
+                playerName.assign(socketEvent.broadcastingEnter.name.begin(),socketEvent.broadcastingEnter.name.end());
+                player->SetNickname(playerName);    
+            }
+            
         }
     }
 }

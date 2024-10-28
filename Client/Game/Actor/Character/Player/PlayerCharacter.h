@@ -6,7 +6,7 @@ namespace UI
 {
     class Text;
 }
-
+extern uint32_t currentPlayerId;
 class PlayerCharacter : public CharacterBase
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
