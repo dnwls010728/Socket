@@ -53,6 +53,7 @@ public:
 
 	uint8_t _success;
 	uint32_t _userId;
+	string _name;
 };
 
 class C_MovingPacket : public Packet

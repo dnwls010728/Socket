@@ -35,6 +35,7 @@ void HandleEnter(const shared_ptr<PacketSession>& session, C_EnterPacket& pkt)
     S_EnterPacket sendPkt;
     sendPkt.SetSuccess(1);
     sendPkt._userId = user->userIdentifyId;
+    sendPkt._name = user->name;
     auto sendBuffer = ClientPacketHandler::MakeSendBuffer<S_EnterPacket>(sendPkt,S_PKT_ENTER);
     session->Send(sendBuffer);
 

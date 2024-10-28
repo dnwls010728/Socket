@@ -42,6 +42,7 @@ BYTE* S_EnterPacket::Serialize(BYTE* buffer)
 	int currentByte = 0;
 	Serializer::Serialize(buffer, _success, currentByte);
 	Serializer::Serialize(buffer,_userId, currentByte);
+	Serializer::Serialize(buffer,_name, currentByte);
 	return buffer;
 }
 
@@ -50,11 +51,14 @@ void S_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,_success);
 	DeSerializer::Deserialize(buffer, currentByte,_userId);
+	DeSerializer::Deserialize(buffer, currentByte,_name);
 }
 
 uint16_t S_EnterPacket::GetSize()
 {
-	return Serializer::GetPacketSize(_success)+Serializer::GetPacketSize(_userId);
+	return Serializer::GetPacketSize(_success)+
+		Serializer::GetPacketSize(_userId)+
+			Serializer::GetPacketSize(_name);
 }
 
 C_MovingPacket::C_MovingPacket()

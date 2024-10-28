@@ -16,13 +16,14 @@ bool SocketEventManager::PollEvent(SocketEvent& socketEvent)
     return true;
 }
 
-bool SocketEventManager::RegisterEvent(Packet pkt,uint16_t pktId)
+bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16_t pktId)
 {
     if(pktId == S_PKT_ENTER)
     {
-        S_EnterPacket* enterPkt = (S_EnterPacket*)&pkt;
+        S_EnterPacket* enterPkt = (S_EnterPacket*)pkt.get();
         EnterEvent event{};
         event.userId = enterPkt->_userId;
+        event.name = enterPkt->_name;
         SocketEvent socketEvent{};
         socketEvent.type = S_PKT_ENTER;
         socketEvent.enter = event;
@@ -31,7 +32,7 @@ bool SocketEventManager::RegisterEvent(Packet pkt,uint16_t pktId)
     }
     else if(pktId == S_PKT_MOVING)
     {
-        S_MovingPacket* movingPkt = (S_MovingPacket*)&pkt;
+        S_MovingPacket* movingPkt = (S_MovingPacket*)pkt.get();
         MovingEvent event{};
         event.userId = movingPkt->_userId;
         event.locationX = movingPkt->_locationX;
@@ -44,7 +45,7 @@ bool SocketEventManager::RegisterEvent(Packet pkt,uint16_t pktId)
         return true;
     }else if(pktId == S_PKT_BROADCASTING_ENTER)
     {
-        S_BroadcastingEnterPacket* broadcastingEnterPkt = (S_BroadcastingEnterPacket*)&pkt;
+        S_BroadcastingEnterPacket* broadcastingEnterPkt = (S_BroadcastingEnterPacket*)pkt.get();
         BroadcastingEnterEvent event{};
         event.userId = broadcastingEnterPkt->_userId;
         event.name = broadcastingEnterPkt->_name;

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Character/CharacterBase.h"
+#include "UI/Widget/Text.h"
 
 namespace UI
 {
@@ -15,7 +16,11 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
-    FORCEINLINE void SetPacketId(int packetId) { packetId = packetId; }
+    FORCEINLINE void SetPacketId (int packetId) { packetId = packetId; }
+    FORCEINLINE void SetNickname(const std::wstring& kNick)
+    {
+        nickname_widget_->SetText(kNick);
+    }
 
 protected:
     virtual void BeginPlay() override;

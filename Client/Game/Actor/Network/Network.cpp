@@ -32,6 +32,9 @@ void Network::Tick(float deltaTime)
             PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                     
             player->SetPacketId(socketEvent.enter.userId);
+            std::wstring playerName;
+            playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
+            player->SetNickname(playerName);
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {

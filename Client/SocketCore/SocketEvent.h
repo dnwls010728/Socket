@@ -4,7 +4,7 @@ struct EnterEvent
 {
     
     uint32_t userId;
-    
+    std::string name;
 };
 
 struct MovingEvent

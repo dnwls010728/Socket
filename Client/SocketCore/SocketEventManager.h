@@ -11,7 +11,7 @@ public:
     virtual ~SocketEventManager() override = default;
 
     bool PollEvent(SocketEvent& socketEvent);
-    bool RegisterEvent(Packet pkt,uint16_t pktId);
+    bool RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16_t pktId);
 
 private:
     friend class Core;
