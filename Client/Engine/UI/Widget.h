@@ -9,6 +9,9 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
+DECLARE_DELEGATE(OnDragEvent)
+DECLARE_DELEGATE(OnDropEvent)
+
 enum class AnchorPreset : Type::uint16
 {
     kLeft = (0x01<<0),

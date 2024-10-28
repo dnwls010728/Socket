@@ -13,8 +13,8 @@ MainMap::MainMap(const std::wstring& kName) : Level(kName)
 void MainMap::Load()
 {
     Tilemap* tilemap = AddActor<Tilemap>(L"Tilemap");
-    // PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
-    Network* network = AddActor<Network>(L"Network");
+    PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
+    // Network* network = AddActor<Network>(L"Network");
     Platform* platform = AddActor<Platform>(L"Platform");
 }
 

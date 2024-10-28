@@ -5,6 +5,7 @@
 #include "UI/Canvas.h"
 #include "Windows/WindowsWindow.h"
 #include "../SocketCore/SocketSession.h"
+#include "UI/Widget/Text.h"
 #include "Windows/DX/UITexture.h"
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
@@ -13,6 +14,9 @@ MainMenu::MainMenu(const std::wstring& kName) :
 
 void MainMenu::Load()
 {
+    Text* text = Canvas::Get()->AddWidget<Text>(L"Text");
+    text->SetAlignment(Text::kMiddleCenter);
+    text->SetText(L"Hello, World!");
 }
 
 RTTR_REGISTRATION

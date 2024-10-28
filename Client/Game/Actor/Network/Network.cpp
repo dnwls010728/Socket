@@ -29,9 +29,9 @@ void Network::Tick(float deltaTime)
             // 모두가 그 사실을 알 수 있음
             // 얘가 '내가'들어왔을 때에 실행되는 코드
                     
-            PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
+            // PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                     
-            player->SetPacketId(socketEvent.enter.userId);
+            // player->SetPacketId(socketEvent.enter.userId);
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {
