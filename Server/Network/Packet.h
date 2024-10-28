@@ -34,7 +34,7 @@ public:
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
-private:
+
 	std::string _name;
 	std::string _id;
 };
@@ -50,6 +50,55 @@ public:
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
-private:
+
 	uint8_t _success;
+	uint32_t _userId;
+};
+
+class C_MovingPacket : public Packet
+{
+public:
+	C_MovingPacket();
+	~C_MovingPacket() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	int32_t _locationX;
+	int32_t _locationY;
+	
+
+	
+	
+};
+
+class S_MovingPacket : public Packet
+{
+public:
+	S_MovingPacket();
+	~S_MovingPacket() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+
+	uint8_t _success;
+	uint32_t _userId;
+	int32_t _locationX;
+	int32_t _locationY;
+};
+
+class S_BroadcastingEnterPacket : public Packet
+{
+public:
+	S_BroadcastingEnterPacket();
+	~S_BroadcastingEnterPacket() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+
+	uint8_t _success;
+	uint32_t _userId;
+	string _name;
 };

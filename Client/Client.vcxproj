@@ -210,6 +210,7 @@
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
+    <ClInclude Include="Game\Actor\Network\Network.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
@@ -416,6 +417,8 @@
     <ClInclude Include="SocketCore\SendBuffer.h" />
     <ClInclude Include="SocketCore\Serializer.h" />
     <ClInclude Include="SocketCore\ServerPacketHandler.h" />
+    <ClInclude Include="SocketCore\SocketEvent.h" />
+    <ClInclude Include="SocketCore\SocketEventManager.h" />
     <ClInclude Include="SocketCore\SocketSession.h" />
     <ClInclude Include="SocketCore\Util\CoreMacro.h" />
     <ClInclude Include="targetver.h" />
@@ -479,6 +482,7 @@
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
+    <ClCompile Include="Game\Actor\Network\Network.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
@@ -677,6 +681,8 @@
     </ClCompile>
     <ClCompile Include="SocketCore\Serializer.cpp" />
     <ClCompile Include="SocketCore\ServerPacketHandler.cpp" />
+    <ClCompile Include="SocketCore\SocketEvent.cpp" />
+    <ClCompile Include="SocketCore\SocketEventManager.cpp" />
     <ClCompile Include="SocketCore\SocketSession.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

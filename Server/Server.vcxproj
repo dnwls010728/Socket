@@ -140,6 +140,8 @@
     <ClCompile Include="Content\ClientPacketHandler.cpp" />
     <ClCompile Include="Content\GameSession.cpp" />
     <ClCompile Include="Content\GameSessionManager.cpp" />
+    <ClCompile Include="Content\Room.cpp" />
+    <ClCompile Include="Content\User.cpp" />
     <ClCompile Include="Job\GlobalQueue.cpp" />
     <ClCompile Include="Job\Job.cpp" />
     <ClCompile Include="Job\JobQueue.cpp" />
@@ -171,6 +173,8 @@
     <ClInclude Include="Content\ClientPacketHandler.h" />
     <ClInclude Include="Content\GameSession.h" />
     <ClInclude Include="Content\GameSessionManager.h" />
+    <ClInclude Include="Content\Room.h" />
+    <ClInclude Include="Content\User.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />

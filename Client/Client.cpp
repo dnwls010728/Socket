@@ -26,15 +26,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     core->Init(application);
 
     ServerPacketHandler::Init();
-    //임시 소켓 테스팅
+    
+    /*
     if(GSocketSession->Connect())
     {
         C_EnterPacket pkt;
         pkt.SetId("Client");
         pkt.SetName("Client");
-        auto sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
         GSocketSession->Send(sendBuffer);
     };
+    */
     
     application->PumpMessages();
 
