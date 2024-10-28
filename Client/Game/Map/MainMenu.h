@@ -11,5 +11,8 @@ public:
     virtual ~MainMenu() override = default;
 
     virtual void Load() override;
+
+private:
+    class Text* text_;
     
 };

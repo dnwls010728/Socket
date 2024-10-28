@@ -43,8 +43,12 @@ public:
     void SetAnchorPreset(AnchorPreset anchor, bool match_pivot = false);
     void AttachToWidget(Widget* parent);
     void DetachFromWidget();
+
+    Math::Vector2 GetPosition() const;
     
     Math::Vector2 GetPivotPosition() const;
+
+    FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
     
     FORCEINLINE float GetAngle() const { return angle_; }
     

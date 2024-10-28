@@ -124,6 +124,19 @@ void Widget::DetachFromWidget()
     parent_ = nullptr;
 }
 
+Math::Vector2 Widget::GetPosition() const
+{
+    Canvas* canvas = Canvas::Get();
+    const Type::uint32 canvas_width = canvas->width_;
+    const Type::uint32 canvas_height = canvas->height_;
+
+    const float scale_ratio = canvas->GetScaleRatio();
+
+    float x = canvas_width * anchor_min_.x + position_.x * scale_ratio;
+    float y = canvas_height * (1.f - anchor_min_.y) + position_.y * scale_ratio;
+    return {x, y};
+}
+
 Math::Vector2 Widget::GetPivotPosition() const
 {
     return {rect_.x + rect_.width * pivot_.x, rect_.y + rect_.height * (1.f - pivot_.y)};
