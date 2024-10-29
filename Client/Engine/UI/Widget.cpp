@@ -17,7 +17,8 @@ Widget::Widget(const std::wstring& kName) :
     pivot_({.5f, .5f}),
     angle_(0.f),
     parent_(nullptr),
-    children_()
+    children_(),
+    is_ray_cast_target_(false)
 {
     UpdateRect();
 }

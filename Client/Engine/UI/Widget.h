@@ -58,6 +58,9 @@ public:
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
 
+    FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
+    FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
+
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
     OnDragEvent OnDragEnd;
@@ -85,5 +88,7 @@ protected:
 
     Widget* parent_;
     std::vector<Widget*> children_;
+
+    bool is_ray_cast_target_;
     
 };

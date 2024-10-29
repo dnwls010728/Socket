@@ -35,7 +35,7 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
         if (result) return result;
     }
 
-    if (widget->HitTest(kPoint)) return widget;
+    if (widget->is_ray_cast_target_ && widget->HitTest(kPoint)) return widget;
     return nullptr;
 }
 
@@ -53,6 +53,42 @@ void Canvas::OnResize(Type::uint32 width, Type::uint32 height)
 void Canvas::OnEvent(const Event& kEvent)
 {
     const Type::uint32& type = kEvent.type;
+
+    if (type == static_cast<Type::uint32>(EventType::kMousePressed))
+    {
+        if (kEvent.button.button == MouseButton::kLeft)
+        {
+            if (hovered_widget_)
+            {
+                previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
+                
+                dragging_widget_ = hovered_widget_;
+                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
+            }
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseReleased))
+    {
+        if (dragging_widget_)
+        {
+            previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
+            
+            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
+            dragging_widget_ = nullptr;
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
+    {
+        if (dragging_widget_)
+        {
+            const Math::Vector2 mouse_position = {kEvent.motion.x, kEvent.motion.y};
+            
+            Math::Vector2 delta = mouse_position - previous_mouse_position_;
+            previous_mouse_position_ = mouse_position;
+            
+            dragging_widget_->OnDrag.Execute(delta);
+        }
+    }
 }
 
 void Canvas::BeginPlay()
@@ -70,11 +106,7 @@ void Canvas::Tick(float delta_time)
     
     if (root_widget_)
     {
-        Widget* widget = RayCast(root_widget_, mouse_position);
-        if (widget)
-        {
-            Logger::Print(L"HIT: %s", widget->name_.c_str());
-        }
+        hovered_widget_ = RayCast(root_widget_, mouse_position);
         
         root_widget_->Tick(delta_time);
     }
@@ -90,5 +122,11 @@ void Canvas::Render()
 
 void Canvas::Clear()
 {
+    previous_mouse_position_ = Math::Vector2::Zero();
+    
+    root_widget_ = nullptr;
+    hovered_widget_ = nullptr;
+    dragging_widget_ = nullptr;
+    
     widgets_.clear();
 }
