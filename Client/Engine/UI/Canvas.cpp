@@ -49,7 +49,7 @@ void Canvas::OnEvent(const Event& kEvent)
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
-                dragging_widget_->on_drag_start.Execute(previous_mouse_position_);
+                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
             }
         }
     }
@@ -59,7 +59,7 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
             
-            dragging_widget_->on_drag_end.Execute(previous_mouse_position_);
+            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
             dragging_widget_ = nullptr;
         }
     }
@@ -72,16 +72,16 @@ void Canvas::OnEvent(const Event& kEvent)
             Math::Vector2 delta = mouse_position - previous_mouse_position_;
             previous_mouse_position_ = mouse_position;
             
-            dragging_widget_->on_drag.Execute(delta);
+            dragging_widget_->OnDrag.Execute(delta);
         }
     }
 }
 
 void Canvas::BeginPlay()
 {
-    for (const auto& ui : widgets_)
+    for (const auto& widget : widgets_)
     {
-        ui->BeginPlay();
+        widget->BeginPlay();
     }
 }
 
@@ -102,17 +102,17 @@ void Canvas::Tick(float delta_time)
 
     hovered_widget_ = hovered_widget;
     
-    for (const auto& ui : widgets_)
+    for (const auto& widget : widgets_)
     {
-        ui->Tick(delta_time);
+        widget->Tick(delta_time);
     }
 }
 
 void Canvas::Render()
 {
-    for (const auto& ui : widgets_)
+    for (const auto& widget : widgets_)
     {
-        ui->Render();
+        widget->Render();
     }
 }
 

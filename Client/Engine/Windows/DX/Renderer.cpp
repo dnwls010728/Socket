@@ -509,8 +509,8 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
-    // d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
-    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
+    // d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 

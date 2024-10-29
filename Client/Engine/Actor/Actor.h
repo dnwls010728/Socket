@@ -8,8 +8,6 @@
 class ActorComponent;
 class Actor;
 
-DECLARE_DELEGATE(ContactSignature, Actor*);
-
 enum class EndPlayReason : Type::uint64;
 class TransformComponent;
 
@@ -48,12 +46,6 @@ public:
 
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
-    
-    ContactSignature on_collision_enter;
-    ContactSignature on_collision_exit;
-
-    ContactSignature on_trigger_enter;
-    ContactSignature on_trigger_exit;
 
 protected:
     friend class World;
@@ -86,10 +78,10 @@ protected:
     virtual void OnEnable();
     virtual void OnDisable();
 
-    virtual void OnCollisionEnter(Actor* other);
-    virtual void OnCollisionExit(Actor* other);
-    virtual void OnTriggerEnter(Actor* other);
-    virtual void OnTriggerExit(Actor* other);
+    FORCEINLINE virtual void OnCollisionEnter(Actor* other) {}
+    FORCEINLINE virtual void OnCollisionExit(Actor* other) {}
+    FORCEINLINE virtual void OnTriggerEnter(Actor* other) {}
+    FORCEINLINE virtual void OnTriggerExit(Actor* other) {}
 
     std::wstring name_;
 

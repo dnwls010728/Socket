@@ -20,26 +20,6 @@ Actor::Actor(const std::wstring& kName) :
     transform_ = transform->GetSharedThis();
 }
 
-void Actor::OnCollisionEnter(Actor* other)
-{
-    on_collision_enter.Execute(std::move(other));
-}
-
-void Actor::OnCollisionExit(Actor* other)
-{
-    on_collision_exit.Execute(std::move(other));
-}
-
-void Actor::OnTriggerEnter(Actor* other)
-{
-    on_trigger_enter.Execute(std::move(other));
-}
-
-void Actor::OnTriggerExit(Actor* other)
-{
-    on_trigger_exit.Execute(std::move(other));
-}
-
 void Actor::BeginPlay()
 {
     if (b2Body_IsValid(body_id_) && !b2Body_IsEnabled(body_id_)) b2Body_Enable(body_id_);

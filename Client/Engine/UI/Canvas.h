@@ -42,6 +42,7 @@ private:
     float match_mode_;
 
     std::vector<std::shared_ptr<Widget>> widgets_;
+    std::vector<Widget*> root_widgets_;
 
     Widget* hovered_widget_;
     Widget* dragging_widget_;
@@ -54,7 +55,9 @@ template <std::derived_from<Widget> T>
 T* Canvas::AddWidget(const std::wstring& kName)
 {
     std::shared_ptr<Widget> widget = std::make_shared<T>(kName);
+    
     widgets_.push_back(widget);
+    root_widgets_.push_back(widget.get());
 
     return static_cast<T*>(widget.get());
 }

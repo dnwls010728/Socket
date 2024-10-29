@@ -27,7 +27,7 @@ void ObjectPool::BeginPlay()
             {
                 poolable_actor->SetActive(false);
                 poolable_actor->SetPoolIndex(i);
-                poolable_actor->on_despawn.Add(this, &ObjectPool::OnPooledObjectDespawn);
+                poolable_actor->OnDespawn.Add(this, &ObjectPool::OnPooledObjectDespawn);
                 object_pool_.push_back(poolable_actor);
             }
         }
