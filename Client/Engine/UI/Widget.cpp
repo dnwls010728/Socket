@@ -3,10 +3,9 @@
 
 #include "Canvas.h"
 #include "Level/World.h"
-#include "Input/Mouse.h"
+#include "Math/Color.h"
 #include "Math/Rect.h"
-
-Type::uint32 Widget::next_z_index_ = 0;
+#include "Windows/DX/Renderer.h"
 
 Widget::Widget(const std::wstring& kName) :
     name_(kName),
@@ -18,8 +17,7 @@ Widget::Widget(const std::wstring& kName) :
     pivot_({.5f, .5f}),
     angle_(0.f),
     parent_(nullptr),
-    children_(),
-    z_index_(next_z_index_++)
+    children_()
 {
     UpdateRect();
 }
@@ -124,6 +122,11 @@ void Widget::DetachFromWidget()
     parent_ = nullptr;
 }
 
+bool Widget::HitTest(const Math::Vector2& kPoint) const
+{
+    return Math::Rect::Contains(rect_, kPoint);
+}
+
 Math::Vector2 Widget::GetPosition() const
 {
     Canvas* canvas = Canvas::Get();
@@ -140,6 +143,43 @@ Math::Vector2 Widget::GetPosition() const
 Math::Vector2 Widget::GetPivotPosition() const
 {
     return {rect_.x + rect_.width * pivot_.x, rect_.y + rect_.height * (1.f - pivot_.y)};
+}
+
+void Widget::BeginPlay()
+{
+    for (const auto& child : children_)
+    {
+        child->BeginPlay();
+    }
+}
+
+void Widget::Tick(float delta_time)
+{
+    for (const auto& child : children_)
+    {
+        child->Tick(delta_time);
+    }
+}
+
+void Widget::Render()
+{
+#ifdef _DEBUG
+    WindowsWindow* window = World::Get()->GetWindow();
+    if (!window) return;
+
+    Renderer* renderer = Renderer::Get();
+    if (!renderer) return;
+    
+    Math::Vector2 pivot_position = GetPivotPosition();
+    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+
+    renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+#endif
+    
+    for (const auto& child : children_)
+    {
+        child->Render();
+    }
 }
 
 void Widget::UpdateRect()

@@ -45,6 +45,8 @@ public:
     void AttachToWidget(Widget* parent);
     void DetachFromWidget();
 
+    bool HitTest(const Math::Vector2& kPoint) const;
+
     Math::Vector2 GetPosition() const;
     
     Math::Vector2 GetPivotPosition() const;
@@ -63,13 +65,11 @@ public:
 protected:
     friend class Canvas;
 
-    FORCEINLINE virtual void BeginPlay() {}
-    FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render() {}
+    virtual void BeginPlay();
+    virtual void Tick(float delta_time);
+    virtual void Render();
     
     virtual void UpdateRect();
-    
-    static Type::uint32 next_z_index_;
 
     std::wstring name_;
 
@@ -85,7 +85,5 @@ protected:
 
     Widget* parent_;
     std::vector<Widget*> children_;
-
-    Type::uint32 z_index_;
     
 };
