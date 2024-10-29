@@ -25,6 +25,12 @@ enum class AnchorPreset : Type::uint16
 
 ENUM_CLASS_FLAGS(AnchorPreset)
 
+enum class DrawMode : Type::uint8
+{
+    kSimple,
+    kSliced
+};
+
 class Widget : public std::enable_shared_from_this<Widget>
 {
     SHADER_CLASS_HELPER(Widget)

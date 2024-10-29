@@ -18,7 +18,7 @@ const TextAnchor Text::kLowerRight = TextAnchor::kBottom | TextAnchor::kRight;
 Text::Text(const std::wstring& kName) :
     Widget(kName),
     text_(L"New Text"),
-    font_family_(L"Silver24"),
+    font_family_(L"Nanum18"),
     text_alignment_(DWRITE_TEXT_ALIGNMENT_LEADING),
     paragraph_alignment_(DWRITE_PARAGRAPH_ALIGNMENT_NEAR),
     color_(Math::Color::White)
@@ -38,8 +38,6 @@ void Text::SetAlignment(TextAnchor anchor)
 
 void Text::Render()
 {
-    Widget::Render();
-
     WindowsWindow* window = World::Get()->GetWindow();
     if (!window) return;
 
@@ -50,6 +48,8 @@ void Text::Render()
     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
     renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, font_family_, text_alignment_, paragraph_alignment_);
+    
+    Widget::Render();
 }
 
 RTTR_REGISTRATION

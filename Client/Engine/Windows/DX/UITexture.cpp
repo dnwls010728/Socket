@@ -6,7 +6,8 @@
 UITexture::UITexture() :
     bitmap_(nullptr),
     width_(0),
-    height_(0)
+    height_(0),
+    slice9_rect_(Math::Rect::Zero())
 {
 }
 

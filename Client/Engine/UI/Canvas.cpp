@@ -80,7 +80,7 @@ void Canvas::OnEvent(const Event& kEvent)
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseReleased))
     {
-        if (focused_widget_)
+        if (focused_widget_ && focused_widget_ == hovered_widget_)
         {
             focused_widget_->OnMouseReleased.Execute();
         }

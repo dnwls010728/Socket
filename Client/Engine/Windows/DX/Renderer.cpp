@@ -100,6 +100,13 @@ bool Renderer::CreateDWrite()
                                                    DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
                                                    DWRITE_FONT_STRETCH_NORMAL, 24.f, L"ko-kr",
                                                    text_formats_[L"Silver24"].GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 18.f, L"ko-kr",
+                                                   text_formats_[L"Nanum18"].GetAddressOf());
+
     return SUCCEEDED(hr);
 }
 
