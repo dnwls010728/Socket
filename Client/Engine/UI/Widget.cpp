@@ -18,7 +18,8 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
-    is_ray_cast_target_(false)
+    is_ray_cast_target_(false),
+    is_focused_(false)
 {
     UpdateRect();
 }

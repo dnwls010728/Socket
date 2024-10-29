@@ -61,6 +61,11 @@ public:
     FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
     FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
 
+    FORCEINLINE bool IsFocused() const { return is_focused_; }
+
+    OnWidgetEvent OnMousePressed;
+    OnWidgetEvent OnMouseReleased;
+
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
     OnDragEvent OnDragEnd;
@@ -90,5 +95,6 @@ protected:
     std::vector<Widget*> children_;
 
     bool is_ray_cast_target_;
+    bool is_focused_;
     
 };

@@ -50,6 +50,7 @@ private:
 
     Widget* root_widget_;
     Widget* hovered_widget_;
+    Widget* focused_widget_;
     Widget* dragging_widget_;
 
     Math::Vector2 previous_mouse_position_;

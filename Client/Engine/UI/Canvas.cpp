@@ -13,6 +13,7 @@ Canvas::Canvas() :
     widgets_(),
     root_widget_(nullptr),
     hovered_widget_(nullptr),
+    focused_widget_(nullptr),
     dragging_widget_(nullptr),
     previous_mouse_position_(Math::Vector2::Zero())
 {
@@ -58,8 +59,17 @@ void Canvas::OnEvent(const Event& kEvent)
     {
         if (kEvent.button.button == MouseButton::kLeft)
         {
+            if (focused_widget_ != hovered_widget_)
+            {
+                if (focused_widget_) focused_widget_->is_focused_ = false;
+                focused_widget_ = hovered_widget_;
+                if (focused_widget_) focused_widget_->is_focused_ = true;
+            }
+            
             if (hovered_widget_)
             {
+                hovered_widget_->OnMousePressed.Execute();
+                
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
@@ -69,6 +79,11 @@ void Canvas::OnEvent(const Event& kEvent)
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseReleased))
     {
+        if (focused_widget_)
+        {
+            focused_widget_->OnMouseReleased.Execute();
+        }
+        
         if (dragging_widget_)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
@@ -126,6 +141,7 @@ void Canvas::Clear()
     
     root_widget_ = nullptr;
     hovered_widget_ = nullptr;
+    focused_widget_ = nullptr;
     dragging_widget_ = nullptr;
     
     widgets_.clear();
