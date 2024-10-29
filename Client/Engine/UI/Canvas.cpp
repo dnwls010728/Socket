@@ -30,8 +30,9 @@ float Canvas::GetScaleRatio() const
 Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
 {
     if (!widget) return nullptr;
-    for (const auto& child : widget->GetChildren())
+    for (auto it = widget->children_.rbegin(); it != widget->children_.rend(); ++it)
     {
+        Widget* child = *it;
         Widget* result = RayCast(child, kPoint);
         if (result) return result;
     }

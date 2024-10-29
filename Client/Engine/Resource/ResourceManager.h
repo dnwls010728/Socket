@@ -25,7 +25,7 @@ T* ResourceManager::Load(const std::wstring& kPath)
         Resource* resource = resources_[path].get();
         
         rttr::type type = rttr::type::get<T>();
-        rttr::type resource_type = rttr::type::get(resource);
+        rttr::type resource_type = rttr::type::get(*resource);
 
         if (type == resource_type) return static_cast<T*>(resource);
         return nullptr;
