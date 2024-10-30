@@ -226,13 +226,13 @@ void World::TransitionLevel()
     current_level_->AddActor<Camera>(L"Main Camera");
     
     current_level_->Load();
+    
+    Canvas::Get()->BeginPlay();
     current_level_->InitializeActors();
     
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();
-    
-    Canvas::Get()->BeginPlay();
 }
 
 void World::ProcessCollisionEvents()
