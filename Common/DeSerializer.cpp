@@ -11,7 +11,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint8_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -26,7 +26,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
