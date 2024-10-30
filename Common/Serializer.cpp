@@ -132,16 +132,8 @@ void Serializer::Serialize(BYTE* pos, int64_t* arr, uint8_t len, int& currentByt
 
 void Serializer::Serialize(BYTE* pos, double value, int& currentByte)
 {
-    uint64_t casting = static_cast<uint64_t>(value);
     pos[currentByte] = 11;
-    pos[currentByte + 1] = static_cast<BYTE>((casting >> 56) & 0xFF);
-    pos[currentByte + 2] = static_cast<BYTE>((casting >> 48) & 0xFF);
-    pos[currentByte + 3] = static_cast<BYTE>((casting >> 40) & 0xFF);
-    pos[currentByte + 4] = static_cast<BYTE>((casting>> 32) & 0xFF);
-    pos[currentByte + 5] = static_cast<BYTE>((casting >> 24) & 0xFF);
-    pos[currentByte + 6] = static_cast<BYTE>((casting >> 16) & 0xFF);
-    pos[currentByte + 7] = static_cast<BYTE>((casting >> 8) & 0xFF);
-    pos[currentByte + 8] = static_cast<BYTE>((casting >> 0) & 0xFF);
+    std::memcpy(&pos[currentByte+1], &value, sizeof(value));
     currentByte += sizeof(value) + 1;
     
 }
@@ -153,27 +145,15 @@ void Serializer::Serialize(BYTE* pos, double* arr, uint8_t len, int& currentByte
     pos[currentByte] = len;
     currentByte++;
     for (uint8_t idx = 0; idx < len; idx++) {
-        uint64_t casting = arr[idx];
-        pos[currentByte] = static_cast<BYTE>((casting>> 56) & 0xFF);
-        pos[currentByte + 1] = static_cast<BYTE>((casting >> 48) & 0xFF);
-        pos[currentByte + 2] = static_cast<BYTE>((casting >> 40) & 0xFF);
-        pos[currentByte + 3] = static_cast<BYTE>((casting >> 32) & 0xFF);
-        pos[currentByte + 4] = static_cast<BYTE>((casting >> 24) & 0xFF);
-        pos[currentByte + 5] = static_cast<BYTE>((casting >> 16) & 0xFF);
-        pos[currentByte + 6] = static_cast<BYTE>((casting >> 8) & 0xFF);
-        pos[currentByte + 7] = static_cast<BYTE>((casting >> 0) & 0xFF);
-        currentByte += sizeof(casting);
+        std::memcpy(&pos[currentByte], &arr[idx], sizeof(arr[idx]));
+        currentByte += sizeof(arr[idx]);
     }
 }
 
 void Serializer::Serialize(BYTE* pos, float value, int& currentByte)
 {
     pos[currentByte] = 13;
-    uint32_t casting = static_cast<uint32_t>(value);
-    pos[currentByte + 1] = static_cast<BYTE>((casting >> 24) & 0xFF);
-    pos[currentByte + 2] = static_cast<BYTE>((casting >> 16) & 0xFF);
-    pos[currentByte + 3] = static_cast<BYTE>((casting >> 8) & 0xFF);
-    pos[currentByte + 4] = static_cast<BYTE>((casting >> 0) & 0xFF);
+    std::memcpy(&pos[currentByte+1], &value, sizeof(value));
     currentByte += sizeof(value) + 1;
 }
 
@@ -184,12 +164,8 @@ void Serializer::Serialize(BYTE* pos, float* arr, uint8_t len, int& currentByte)
     pos[currentByte] = len;
     currentByte++;
     for (uint8_t idx = 0; idx < len; idx++) {
-        uint32_t casting = arr[idx];
-        pos[currentByte ] = static_cast<BYTE>((casting >> 24) & 0xFF);
-        pos[currentByte + 1] = static_cast<BYTE>((casting >> 16) & 0xFF);
-        pos[currentByte + 2] = static_cast<BYTE>((casting >> 8) & 0xFF);
-        pos[currentByte + 3] = static_cast<BYTE>((casting >> 0) & 0xFF);
-        currentByte += sizeof(casting);
+        std::memcpy(&pos[currentByte], &arr[idx], sizeof(arr[idx]));
+        currentByte += sizeof(arr[idx]);
     }
 }
 
