@@ -142,21 +142,10 @@ void Core::MainThread()
             
                     Renderer::Get()->ResizeViewport(kWindow, kWindowEvent.data1, kWindowEvent.data2);
                 }
-                else if (kType & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
-                {
-                    Keyboard::Get()->OnEvent(event);
-                    Canvas::Get()->OnEvent(event);
-                }
-                else if (kType == static_cast<Type::uint32>(EventType::kText))
-                {
-                    Canvas::Get()->OnEvent(event);
-                }
-                else if (kType & static_cast<Type::uint32>(EventType::kMousePressed | EventType::kMouseReleased | EventType::kMouseMotion | EventType::kMouseWheel))
-                {
-                    Mouse::Get()->OnEvent(event);
-                    Canvas::Get()->OnEvent(event);
-                }
 
+                Keyboard::Get()->OnEvent(event);
+                Mouse::Get()->OnEvent(event);
+                Canvas::Get()->OnEvent(event);
                 World::Get()->OnEvent(event);
             }
             
