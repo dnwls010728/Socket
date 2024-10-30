@@ -19,6 +19,32 @@ Canvas::Canvas() :
 {
 }
 
+void Canvas::GetWidgets(const rttr::type& type, std::vector<Widget*>& widgets)
+{
+    widgets.clear();
+    
+    for (const auto& widget : widgets_)
+    {
+        rttr::type widget_type = rttr::type::get(*widget);
+        if (widget_type.is_derived_from(type))
+        {
+            widgets.push_back(widget.get());
+        }
+    }
+}
+
+Widget* Canvas::GetWidget(const rttr::type& type)
+{
+    for (const auto& widget : widgets_)
+    {
+        rttr::type widget_type = rttr::type::get(*widget);
+        if (widget_type.is_derived_from(type))
+        {
+            return widget.get();
+        }
+    }
+}
+
 float Canvas::GetScaleRatio() const
 {
     const float width_ratio = width_ / static_cast<float>(reference_resolution_width_);

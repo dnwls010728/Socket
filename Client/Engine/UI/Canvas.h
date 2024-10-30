@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "Singleton.h"
-#include "Math/Math.h"
 #include "Math/Vector2.h"
 
 union Event;
@@ -17,6 +16,10 @@ public:
 
     template<std::derived_from<Widget> T>
     T* AddWidget(const std::wstring& kName);
+
+    void GetWidgets(const rttr::type& type, std::vector<Widget*>& widgets);
+
+    Widget* GetWidget(const rttr::type& type);
 
     float GetScaleRatio() const;
 

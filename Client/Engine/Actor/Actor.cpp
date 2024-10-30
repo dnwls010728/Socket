@@ -134,6 +134,18 @@ bool Actor::CompareTag(ActorTag tag) const
     return tag_ == tag;
 }
 
+void Actor::GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components)
+{
+    for (const auto& component : components_)
+    {
+        rttr::type component_type = rttr::type::get(*component);
+        if (component_type.is_derived_from(type))
+        {
+            components.push_back(component.get());
+        }
+    }
+}
+
 ActorComponent* Actor::GetComponent(const rttr::type& type)
 {
     for (const auto& component : components_)

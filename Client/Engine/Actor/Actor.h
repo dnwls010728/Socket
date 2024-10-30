@@ -29,6 +29,8 @@ public:
     template <std::derived_from<ActorComponent> T>
     T* AddComponent(const std::wstring& kName);
 
+    void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components);
+
     ActorComponent* GetComponent(const rttr::type& type);
 
     template <std::derived_from<Actor> T>
