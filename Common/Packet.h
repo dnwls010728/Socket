@@ -65,8 +65,8 @@ public:
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
-	int32_t _locationX;
-	int32_t _locationY;
+	float _locationX;
+	float _locationY;
 	
 
 	
@@ -85,8 +85,8 @@ public:
 
 	uint8_t _success;
 	uint32_t _userId;
-	int32_t _locationX;
-	int32_t _locationY;
+	float _locationX;
+	float _locationY;
 };
 
 class S_BroadcastingEnterPacket : public Packet

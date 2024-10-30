@@ -21,7 +21,8 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t& value)
 	currentByte++;
 	if (spliter == 2)
 	{
-		value = static_cast<uint16_t>(pos[currentByte]);
+		//value = static_cast<uint16_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(uint16_t);
 	}
 	else
@@ -36,7 +37,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint32_t& value)
 	currentByte++;
 	if (spliter == 3)
 	{
-		value = static_cast<uint32_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(uint32_t);
 	}
 	else
@@ -51,7 +52,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int32_t& value)
 	currentByte++;
 	if (spliter == 4)
 	{
-		value = static_cast<int32_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(int32_t);
 	}
 	else
@@ -66,7 +67,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint64_t& value)
 	currentByte++;
 	if (spliter == 5)
 	{
-		value = static_cast<uint64_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(uint64_t);
 	}
 	else
@@ -81,7 +82,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t& value)
 	currentByte++;
 	if (spliter == 6)
 	{
-		value = static_cast<int64_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(int64_t);
 	}
 	else
@@ -117,7 +118,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t* value)
 		currentByte++;
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			value[idx] = static_cast<uint16_t>(pos[currentByte]);
+			std::memcpy(value+idx,pos+currentByte,sizeof(uint16_t));
 			currentByte += sizeof(uint16_t);
 		}
 	}
@@ -137,7 +138,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint32_t* value)
 		currentByte++;
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			value[idx] = static_cast<uint32_t>(pos[currentByte]);
+			std::memcpy(value+idx,pos+currentByte,sizeof(uint32_t));
 			currentByte += sizeof(uint32_t);
 		}
 	}
@@ -157,7 +158,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t* value)
 		currentByte++;
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			value[idx] = static_cast<int64_t>(pos[currentByte]);
+			std::memcpy(value+idx,pos+currentByte,sizeof(int64_t));
 			currentByte += sizeof(int64_t);
 		}
 	}
@@ -173,7 +174,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, double& value)
 	currentByte++;
 	if (spliter == 11)
 	{
-		value = static_cast<double>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(double);
 	}
 	else
@@ -192,8 +193,43 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, double* value)
 		currentByte++;
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			value[idx] = static_cast<double>(pos[currentByte]);
+			std::memcpy(value+idx,pos+currentByte,sizeof(double));
 			currentByte += sizeof(double);
+		}
+	}
+	else
+	{
+		CRASH("Deserialize Error");
+	}
+}
+
+void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float& value)
+{
+	uint8_t spliter = pos[currentByte];
+	currentByte++;
+	if (spliter == 13)
+	{
+		std::memcpy(&value,pos+currentByte,sizeof(value));
+		currentByte += sizeof(float);
+	}
+	else
+	{
+		CRASH("Deserialize Error");
+	}
+}
+
+void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float* value)
+{
+	uint8_t spliter = pos[currentByte];
+	currentByte++;
+	if (spliter == 14)
+	{
+		uint8_t len = pos[currentByte];
+		currentByte++;
+		for (uint8_t idx = 0; idx < len; idx++)
+		{
+			std::memcpy(value+idx,pos+currentByte,sizeof(float));
+			currentByte += sizeof(float);
 		}
 	}
 	else

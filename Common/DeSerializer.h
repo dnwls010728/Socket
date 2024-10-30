@@ -14,4 +14,6 @@ public:
     static void Deserialize(BYTE* pos, int& currentByte, int64_t* value);
     static void Deserialize(BYTE* pos, int& currentByte, double& value);
     static void Deserialize(BYTE* pos, int& currentByte, double* value);
+    static void Deserialize(BYTE* pos, int& currentByte, float& value);
+    static void Deserialize(BYTE* pos, int& currentByte, float* value);
 };
