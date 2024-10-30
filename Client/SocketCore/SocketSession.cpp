@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "SocketSession.h"
-#include "RecvBuffer.h"
+#include "../../Common/RecvBuffer.h"
 #include <mutex>
 #include <vector>
 #include <thread>
-#include "SendBuffer.h"
+#include "../../Common/SendBuffer.h"
 #include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>

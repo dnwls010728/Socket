@@ -4,7 +4,7 @@
 #include "IocpCore.h"
 #include "IocpEvent.h"
 #include "NetworkConnector.h"
-#include "..\Util\RecvBuffer.h"
+#include "../../Common/RecvBuffer.h"
 enum
 {
 	BUFFER_SIZE = 0x10000, //64KB
@@ -77,7 +77,7 @@ private:
 	atomic<bool> _sendRegistered = false;
 
 private:
-	/* IocpEvent Àç»ç¿ë */
+	/* IocpEvent ï¿½ï¿½ï¿½ï¿½ */
 	ConnectEvent		_connectEvent;
 	DisconnectEvent		_disconnectEvent;
 	RecvEvent			_recvEvent;

@@ -1,8 +1,8 @@
 #pragma once
 #include <winsock2.h>
 #include <iostream>
-#include "SendBuffer.h"
-#include "RecvBuffer.h"
+#include "../../Common/SendBuffer.h"
+#include "../../Common/RecvBuffer.h"
 #include <vector>
 #include <thread>
 #define SERVER_IP "127.0.0.1"

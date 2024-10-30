@@ -13,7 +13,7 @@
 #include "Resource/ResourceManager.h"
 #include "UI/Widget/Image.h"
 #include "Windows/DX/UITexture.h"
-#include "../SocketCore/Packet.h"
+#include "../../Common/Packet.h"
 #include "../SocketCore/ServerPacketHandler.h"
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)

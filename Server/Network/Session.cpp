@@ -2,8 +2,7 @@
 #include "Session.h"
 #include "SocketUtils.h"
 #include "Service.h"
-
-
+#include "../../Common/RecvBuffer.h"
 Session::Session():_recvBuffer(BUFFER_SIZE)
 {
 	_socket = SocketUtils::CreateSocket();

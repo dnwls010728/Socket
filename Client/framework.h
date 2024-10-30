@@ -13,3 +13,10 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+//공통 정적 라이브러리
+#ifdef _DEBUG
+#pragma comment(lib,"..\\x64\\Debug\\Common.lib");
+#else
+#pragma comment(lib,"..\\x64\\Release\\Common.lib");
+#endif

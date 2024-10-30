@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
-#include "../../../../SocketCore/SendBuffer.h"
+#include "../../Common/Packet.h"
 #include "../../../../SocketCore/ServerPacketHandler.h"
 #include "Actor/Camera.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
@@ -12,7 +12,7 @@
 #include "UI/Canvas.h"
 #include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
-#include "../SocketCore/Packet.h"
+#include "../../Common/SendBuffer.h"
 uint32_t currentPlayerId = 0;
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)

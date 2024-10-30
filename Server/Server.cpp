@@ -3,6 +3,7 @@
 #include "..\Content\GameSession.h"
 #include "..\Content\ClientPacketHandler.h"
 #include "..\Network\Service.h"
+
 enum
 {
     WORKER_TICK = 64

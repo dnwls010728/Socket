@@ -26,12 +26,17 @@ using namespace std;
 #include <mswsock.h>
 #include <ws2tcpip.h>
 #pragma comment(lib,"ws2_32.lib")
+#ifdef _DEBUG
+#pragma comment(lib,"..\\x64\\Debug\\Common.lib");
+#else
+#pragma comment(lib,"..\\x64\\Release\\Common.lib");
+#endif
 
 #include "..\Thread\Lock.h"
 #include "..\Network\Session.h"
 #include "..\Thread\ThreadManager.h"
 #include "..\Network\Service.h"
 #include "..\Job\JobQueue.h"
-#include "..\Util\SendBuffer.h"
-#include "..\Util\RecvBuffer.h"
-#include "..\Network\Packet.h"
+#include "../Common/SendBuffer.h"
+#include "../Common/RecvBuffer.h"
+#include "../Common/Packet.h"

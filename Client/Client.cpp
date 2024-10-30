@@ -11,7 +11,7 @@
 #include "SocketCore/ServerPacketHandler.h"
 #include "Engine/Windows/WindowsWindow.h"
 #include "SocketCore/SocketSession.h"
-#include "SocketCore/Packet.h"
+#include "../Common/Packet.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {

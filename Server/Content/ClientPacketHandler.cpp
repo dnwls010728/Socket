@@ -4,7 +4,6 @@
 #include "Room.h"
 #include <iostream>
 
-#include "User.h"
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len)
@@ -50,7 +49,7 @@ void HandleEnter(const shared_ptr<PacketSession>& session, C_EnterPacket& pkt)
 void HandleMoving(const shared_ptr<PacketSession>& session, C_MovingPacket& pkt)
 {
     shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
-
+    
     shared_ptr<User> user = static_pointer_cast<User>(gameSession->userRef);
 
     user->locationX = pkt._locationX;

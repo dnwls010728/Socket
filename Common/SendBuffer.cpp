@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "SendBuffer.h"
 
 #include <memory>
@@ -75,7 +75,7 @@ std::shared_ptr<SendBuffer> SendBufferManager::Open(uint32_t size)
 		LSendBufferChunk->Reset();
 	}
 
-	// ´Ù ½èÀ¸¸é ¹ö¸®°í »õ°Å·Î ±³Ã¼
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å·ï¿½ ï¿½ï¿½Ã¼
 	if (LSendBufferChunk->FreeSize() < size)
 	{
 		LSendBufferChunk = Pop(); // WRITE_LOCK

@@ -1,5 +1,7 @@
-#pragma once
-
+﻿#pragma once
+#include <memory>
+#include <mutex>
+#include <vector>
 /*--------------
 	RecvBuffer
 ----------------*/
@@ -26,5 +28,5 @@ private:
 	int32_t			_bufferSize = 0;
 	int32_t			_readPos = 0;
 	int32_t			_writePos = 0;
-	vector<BYTE>	_buffer;
+	std::vector<BYTE>	_buffer;
 };
