@@ -41,22 +41,21 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     return nullptr;
 }
 
-void Canvas::OnResize(Type::uint32 width, Type::uint32 height)
-{
-    width_ = width;
-    height_ = height;
-
-    for (const auto& widget : widgets_)
-    {
-        widget->UpdateRect();
-    }
-}
-
 void Canvas::OnEvent(const Event& kEvent)
 {
     const Type::uint32& type = kEvent.type;
 
-    if (type == static_cast<Type::uint32>(EventType::kMousePressed))
+    if (type == static_cast<Type::uint32>(EventType::kWindowSize))
+    {
+        width_ = kEvent.window.data1;
+        height_ = kEvent.window.data2;
+
+        for (const auto& widget : widgets_)
+        {
+            widget->UpdateRect();
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMousePressed))
     {
         if (kEvent.button.button == MouseButton::kLeft)
         {

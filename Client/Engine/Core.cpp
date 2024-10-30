@@ -141,7 +141,6 @@ void Core::MainThread()
                     const WindowEvent& kWindowEvent = event.window;
             
                     Renderer::Get()->ResizeViewport(kWindow, kWindowEvent.data1, kWindowEvent.data2);
-                    Canvas::Get()->OnResize(kWindowEvent.data1, kWindowEvent.data2);
                 }
                 else if (kType & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
                 {

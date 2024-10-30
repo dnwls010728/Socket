@@ -32,7 +32,6 @@ private:
     friend class World;
     friend class Widget;
     
-    void OnResize(Type::uint32 width, Type::uint32 height);
     void OnEvent(const Event& kEvent);
     void BeginPlay();
     void Tick(float delta_time);
