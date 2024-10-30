@@ -39,6 +39,8 @@ void MainMenu::Load()
 
     Text* login_text = canvas->AddWidget<Text>(L"Login Text");
     login_text->AttachToWidget(login_button);
+    login_text->SetAnchorPreset(AnchorPreset::kStretch);
+    login_text->SetSize({0.f, 0.f});
     login_text->SetColor(Math::Color::Black);
     login_text->SetText(L"LOGIN");
     login_text->SetAlignment(Text::kMiddleCenter);
@@ -56,6 +58,8 @@ void MainMenu::Load()
 
     Text* exit_text = canvas->AddWidget<Text>(L"Exit Text");
     exit_text->AttachToWidget(exit_button);
+    exit_text->SetAnchorPreset(AnchorPreset::kStretch);
+    exit_text->SetSize({0.f, 0.f});
     exit_text->SetColor(Math::Color::Black);
     exit_text->SetText(L"EXIT");
     exit_text->SetAlignment(Text::kMiddleCenter);
