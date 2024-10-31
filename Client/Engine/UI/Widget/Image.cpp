@@ -1,21 +1,19 @@
 ﻿#include "pch.h"
-#include "Button.h"
+#include "Image.h"
 
 #include "Level/World.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
 
-Button::Button(const std::wstring& kName) :
+Image::Image(const std::wstring& kName) :
     Widget(kName),
     texture_(nullptr),
     draw_mode_(DrawMode::kSimple)
 {
-    size_ = { 160.f, 50.f };
-    is_ray_cast_target_ = true;
 }
 
-void Button::Render()
+void Image::Render()
 {
     WindowsWindow* window = World::Get()->GetWindow();
     if (!window) return;
@@ -37,7 +35,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Button>("Button")
+    registration::class_<Image>("Image")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

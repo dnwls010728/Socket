@@ -192,6 +192,7 @@
     <ClInclude Include="Engine\UI\Canvas.h" />
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\UI\Widget\Button.h" />
+    <ClInclude Include="Engine\UI\Widget\Image.h" />
     <ClInclude Include="Engine\UI\Widget\Text.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Game\Actor\Platform\Platform.h" />
     <ClInclude Include="Game\Actor\Platform\PlatformControllerComponent.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
+    <ClInclude Include="Game\Actor\UI\Inventory.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -470,6 +472,7 @@
     <ClCompile Include="Engine\UI\Canvas.cpp" />
     <ClCompile Include="Engine\UI\Widget.cpp" />
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
+    <ClCompile Include="Engine\UI\Widget\Image.cpp" />
     <ClCompile Include="Engine\UI\Widget\Text.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
@@ -493,6 +496,7 @@
     <ClCompile Include="Game\Actor\Platform\Platform.cpp" />
     <ClCompile Include="Game\Actor\Platform\PlatformControllerComponent.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
+    <ClCompile Include="Game\Actor\UI\Inventory.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
