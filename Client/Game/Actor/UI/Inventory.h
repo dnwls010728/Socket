@@ -14,6 +14,5 @@ public:
 
 private:
     Image* window_caption_;
-    Image* window_panel_;
     
 };

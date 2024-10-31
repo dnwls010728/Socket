@@ -106,6 +106,12 @@ bool Renderer::CreateDWrite()
                                                    DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
                                                    DWRITE_FONT_STRETCH_NORMAL, 18.f, L"ko-kr",
                                                    text_formats_[L"Nanum18"].GetAddressOf());
+    if (FAILED(hr)) return false;
+    
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 12.f, L"ko-kr",
+                                                   text_formats_[L"Nanum12"].GetAddressOf());
 
     return SUCCEEDED(hr);
 }
@@ -575,10 +581,11 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     
     if (FAILED(hr)) return;
     
-    float pivot_x = kRect.width * kPivot.x;
-    float pivot_y = kRect.height * (1.f - kPivot.y);
-
-    D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    // float pivot_x = kRect.width * kPivot.x;
+    // float pivot_y = kRect.height * (1.f - kPivot.y);
+    //
+    // D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
     d2d_viewport->d2d_render_target->DrawTextW(kString.c_str(), static_cast<UINT32>(kString.size()),

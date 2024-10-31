@@ -4,6 +4,7 @@
 #include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
 #include "UI/Widget/Image.h"
+#include "UI/Widget/Text.h"
 #include "Windows/DX/UITexture.h"
 
 Inventory::Inventory(const std::wstring& kName) :
@@ -29,12 +30,22 @@ Inventory::Inventory(const std::wstring& kName) :
         window_caption_->SetAnchoredPosition(position + kDelta);
     });
 
-    window_panel_ = canvas->AddWidget<Image>(L"InventoryPanel");
-    window_panel_->AttachToWidget(window_caption_);
-    window_panel_->SetSize({200.f, 300.f});
-    window_panel_->SetTexture(window_panel_texture);
-    window_panel_->SetDrawMode(DrawMode::kSliced);
-    window_panel_->SetPivot({.5f, 1.f});
+    Text* caption_text = canvas->AddWidget<Text>(L"InventoryCaptionText");
+    caption_text->AttachToWidget(window_caption_);
+    caption_text->SetAnchorPreset(AnchorPreset::kStretch);
+    caption_text->SetSize({0.f, 7.f});
+    caption_text->SetFontFamily(L"Nanum12");
+    caption_text->SetText(L"ITEM INVENTORY");
+    caption_text->SetColor(Math::Color::Black);
+    caption_text->SetAlignment(Text::kMiddleCenter);
+
+    Image* window_panel = canvas->AddWidget<Image>(L"InventoryPanel");
+    window_panel->AttachToWidget(window_caption_);
+    window_panel->SetAnchoredPosition({0.f, -7.f});
+    window_panel->SetSize({228.f, 300.f});
+    window_panel->SetTexture(window_panel_texture);
+    window_panel->SetDrawMode(DrawMode::kSliced);
+    window_panel->SetPivot({.5f, 1.f});
 }
 
 RTTR_REGISTRATION
