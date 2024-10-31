@@ -21,6 +21,7 @@ Inventory::Inventory(const std::wstring& kName) :
     window_caption_ = canvas->AddWidget<Image>(L"InventoryCaption");
     window_caption_->AttachToWidget(canvas->GetRootWidget());
     window_caption_->SetSize({200.f, 32.f});
+    window_caption_->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
     window_caption_->SetRayCastTarget(true);
     window_caption_->SetTexture(window_caption_texture);
     window_caption_->SetDrawMode(DrawMode::kSliced);
@@ -42,10 +43,27 @@ Inventory::Inventory(const std::wstring& kName) :
     Image* window_panel = canvas->AddWidget<Image>(L"InventoryPanel");
     window_panel->AttachToWidget(window_caption_);
     window_panel->SetAnchoredPosition({0.f, -7.f});
-    window_panel->SetSize({228.f, 300.f});
+    window_panel->SetSize({228.f, 308.f});
     window_panel->SetTexture(window_panel_texture);
     window_panel->SetDrawMode(DrawMode::kSliced);
     window_panel->SetPivot({.5f, 1.f});
+
+    for (int i = 0; i < 7; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            Image* slot = canvas->AddWidget<Image>(L"InventorySlot" + std::to_wstring(i) + std::to_wstring(j));
+            slot->AttachToWidget(window_panel);
+            slot->SetAnchoredPosition({2.f + j * 40.f, 2.f + i * 40.f});
+            slot->SetSize({64.f, 64.f});
+            slot->SetTexture(window_panel_texture);
+            slot->SetDrawMode(DrawMode::kSliced);
+            slot->SetPivot({.5f, .5f});
+            slot->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+        }
+    }
+
+    window_caption_->SetPosition({0.f, 0.f});
 }
 
 RTTR_REGISTRATION
