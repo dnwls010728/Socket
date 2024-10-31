@@ -17,19 +17,15 @@ MainMenu::MainMenu(const std::wstring& kName) :
 
 void MainMenu::Load()
 {
+    Level::Load();
+    
     Canvas* canvas = Canvas::Get();
-    
-    Widget* root_widget = canvas->AddWidget<Widget>(L"Root");
-    root_widget->SetAnchorPreset(AnchorPreset::kStretch);
-    root_widget->SetSize({0.f, 0.f});
-    
-    canvas->SetRootWidget(root_widget);
 
     UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Button.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
     
     Button* login_button = canvas->AddWidget<Button>(L"Login Button");
-    login_button->AttachToWidget(root_widget);
+    login_button->AttachToWidget(canvas->GetRootWidget());
     login_button->SetTexture(texture);
     login_button->SetDrawMode(DrawMode::kSliced);
     login_button->OnMouseReleased.Add([]()
@@ -46,7 +42,7 @@ void MainMenu::Load()
     login_text->SetAlignment(Text::kMiddleCenter);
 
     Button* exit_button = canvas->AddWidget<Button>(L"Exit Button");
-    exit_button->AttachToWidget(root_widget);
+    exit_button->AttachToWidget(canvas->GetRootWidget());
     exit_button->SetAnchoredPosition({0.f, 50.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);

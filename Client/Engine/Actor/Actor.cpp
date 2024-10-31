@@ -7,6 +7,7 @@
 #include "Level/World.h"
 
 Actor::Actor(const std::wstring& kName) :
+    name_(kName),
     tag_(ActorTag::kNone),
     layer_(ActorLayer::kDefault),
     is_active_(true),
@@ -14,8 +15,6 @@ Actor::Actor(const std::wstring& kName) :
     components_(),
     transform_(nullptr)
 {
-    name_ = kName;
-    
     TransformComponent* transform = AddComponent<TransformComponent>(L"Transform");
     transform_ = transform->GetSharedThis();
 }
