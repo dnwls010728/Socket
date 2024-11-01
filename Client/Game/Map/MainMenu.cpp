@@ -28,7 +28,7 @@ void MainMenu::Load()
     login_button->AttachToWidget(canvas->GetRootWidget());
     login_button->SetTexture(texture);
     login_button->SetDrawMode(DrawMode::kSliced);
-    login_button->OnMouseReleased.Add([]()
+    login_button->OnMouseReleased.Add([](Widget* kWidget)
     {
         World::Get()->OpenLevel(LevelType::kDefault);
     });
@@ -46,7 +46,7 @@ void MainMenu::Load()
     exit_button->SetAnchoredPosition({0.f, 50.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);
-    exit_button->OnMouseReleased.Add([]()
+    exit_button->OnMouseReleased.Add([](Widget* kWidget)
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);

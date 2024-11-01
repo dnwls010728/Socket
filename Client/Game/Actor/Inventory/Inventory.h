@@ -1,14 +1,6 @@
 ﻿#pragma once
+#include "Slot.h"
 #include "Actor/Actor.h"
-#include "Math/Vector2.h"
-
-class Image;
-
-struct Slot
-{
-    Image* slot;
-    Image* item;
-};
 
 class Inventory : public Actor
 {
@@ -20,13 +12,9 @@ public:
     virtual ~Inventory() override = default;
 
 private:
-    void OnItemDrop(const Math::Vector2& kPosition);
+    std::vector<std::unique_ptr<Slot>> slots_;
 
     int slot_count_;
-    int slot_row_count_;
-    
-    Image* window_caption_;
-
-    std::vector<Slot> slots_;
+    int row_count_;
     
 };

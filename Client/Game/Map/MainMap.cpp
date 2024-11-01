@@ -5,7 +5,7 @@
 #include "Actor/Character/Player/PlayerCharacter.h"
 #include "Actor/Network/Network.h"
 #include "Actor/Platform/Platform.h"
-#include "Actor/UI/Inventory.h"
+#include "Actor/Inventory/Inventory.h"
 
 MainMap::MainMap(const std::wstring& kName) : Level(kName)
 {

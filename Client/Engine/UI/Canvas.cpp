@@ -86,12 +86,12 @@ void Canvas::OnEvent(const Event& kEvent)
             
             if (hovered_widget_)
             {
-                hovered_widget_->OnMousePressed.Execute();
+                hovered_widget_->OnMousePressed.Execute(std::move(hovered_widget_));
                 
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
-                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
+                dragging_widget_->OnDragStart.Execute(std::move(dragging_widget_), previous_mouse_position_);
             }
         }
     }
@@ -99,17 +99,17 @@ void Canvas::OnEvent(const Event& kEvent)
     {
         if (focused_widget_ && focused_widget_ == hovered_widget_)
         {
-            focused_widget_->OnMouseReleased.Execute();
+            focused_widget_->OnMouseReleased.Execute(std::move(focused_widget_));
         }
         
         if (dragging_widget_)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
             
-            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
+            dragging_widget_->OnDragEnd.Execute(std::move(dragging_widget_), previous_mouse_position_);
             dragging_widget_ = nullptr;
 
-            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
+            if (hovered_widget_) hovered_widget_->OnDrop.Execute(std::move(hovered_widget_), previous_mouse_position_);
         }
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
@@ -121,7 +121,7 @@ void Canvas::OnEvent(const Event& kEvent)
             Math::Vector2 delta = mouse_position - previous_mouse_position_;
             previous_mouse_position_ = mouse_position;
             
-            dragging_widget_->OnDrag.Execute(delta);
+            dragging_widget_->OnDrag.Execute(std::move(dragging_widget_), delta);
         }
     }
 }

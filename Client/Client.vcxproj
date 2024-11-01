@@ -213,6 +213,8 @@
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
+    <ClInclude Include="Game\Actor\Inventory\Inventory.h" />
+    <ClInclude Include="Game\Actor\Inventory\Slot.h" />
     <ClInclude Include="Game\Actor\Network\Network.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
@@ -220,7 +222,6 @@
     <ClInclude Include="Game\Actor\Platform\Platform.h" />
     <ClInclude Include="Game\Actor\Platform\PlatformControllerComponent.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
-    <ClInclude Include="Game\Actor\UI\Inventory.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -489,6 +490,8 @@
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
+    <ClCompile Include="Game\Actor\Inventory\Inventory.cpp" />
+    <ClCompile Include="Game\Actor\Inventory\Slot.cpp" />
     <ClCompile Include="Game\Actor\Network\Network.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
@@ -496,7 +499,6 @@
     <ClCompile Include="Game\Actor\Platform\Platform.cpp" />
     <ClCompile Include="Game\Actor\Platform\PlatformControllerComponent.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
-    <ClCompile Include="Game\Actor\UI\Inventory.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
