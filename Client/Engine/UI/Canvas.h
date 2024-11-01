@@ -17,9 +17,12 @@ public:
     template<std::derived_from<Widget> T>
     T* AddWidget(const std::wstring& kName);
 
-    void GetWidgets(const rttr::type& type, std::vector<Widget*>& widgets);
+    Widget* FindWidget(const std::wstring& kName);
 
-    Widget* GetWidget(const rttr::type& type);
+    template<std::derived_from<Widget> T>
+    T* FindWidget(const std::wstring& kName);
+
+    void GetWidgets(std::vector<Widget*>& widgets) const;
 
     float GetScaleRatio() const;
 
@@ -67,4 +70,10 @@ T* Canvas::AddWidget(const std::wstring& kName)
     widgets_.push_back(widget);
 
     return static_cast<T*>(widget.get());
+}
+
+template <std::derived_from<Widget> T>
+T* Canvas::FindWidget(const std::wstring& kName)
+{
+    static_cast<T*>(FindWidget(kName));
 }

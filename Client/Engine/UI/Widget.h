@@ -11,6 +11,7 @@
 
 DECLARE_DELEGATE(OnWidgetEvent)
 DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
+DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -75,6 +76,8 @@ public:
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
     OnDragEvent OnDragEnd;
+
+    OnDropEvent OnDrop;
 
 protected:
     friend class Canvas;

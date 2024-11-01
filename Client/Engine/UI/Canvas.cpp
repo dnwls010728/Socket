@@ -19,29 +19,21 @@ Canvas::Canvas() :
 {
 }
 
-void Canvas::GetWidgets(const rttr::type& type, std::vector<Widget*>& widgets)
+Widget* Canvas::FindWidget(const std::wstring& kName)
 {
-    widgets.clear();
-    
     for (const auto& widget : widgets_)
     {
-        rttr::type widget_type = rttr::type::get(*widget);
-        if (widget_type.is_derived_from(type))
-        {
-            widgets.push_back(widget.get());
-        }
+        if (widget->name_ == kName) return widget.get();
     }
+
+    return nullptr;
 }
 
-Widget* Canvas::GetWidget(const rttr::type& type)
+void Canvas::GetWidgets(std::vector<Widget*>& widgets) const
 {
     for (const auto& widget : widgets_)
     {
-        rttr::type widget_type = rttr::type::get(*widget);
-        if (widget_type.is_derived_from(type))
-        {
-            return widget.get();
-        }
+        widgets.push_back(widget.get());
     }
 }
 
@@ -116,6 +108,8 @@ void Canvas::OnEvent(const Event& kEvent)
             
             dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
             dragging_widget_ = nullptr;
+
+            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
         }
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))

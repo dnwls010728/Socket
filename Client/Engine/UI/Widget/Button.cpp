@@ -26,9 +26,12 @@ void Button::Render()
     Math::Vector2 pivot_position = GetPivotPosition();
     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
-    if (draw_mode_ == DrawMode::kSimple)
-        renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
-    else renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, texture_->GetSlice9Rect());
+    if (texture_)
+    {
+        if (draw_mode_ == DrawMode::kSimple)
+            renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
+        else renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, texture_->GetSlice9Rect());
+    }
     
     Widget::Render();
 }

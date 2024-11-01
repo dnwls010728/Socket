@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Inventory.h"
 
+#include "Logger.h"
 #include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
 #include "UI/Widget/Image.h"
@@ -8,7 +9,9 @@
 #include "Windows/DX/UITexture.h"
 
 Inventory::Inventory(const std::wstring& kName) :
-    Actor(kName)
+    Actor(kName),
+    slot_count_(35),
+    slot_row_count_(5)
 {
     Canvas* canvas = Canvas::Get();
 
@@ -48,22 +51,26 @@ Inventory::Inventory(const std::wstring& kName) :
     window_panel->SetDrawMode(DrawMode::kSliced);
     window_panel->SetPivot({.5f, 1.f});
 
-    for (int i = 0; i < 7; ++i)
+    for (int index = 0; index < slot_count_; ++index)
     {
-        for (int j = 0; j < 5; ++j)
-        {
-            Image* slot = canvas->AddWidget<Image>(L"InventorySlot" + std::to_wstring(i) + std::to_wstring(j));
-            slot->AttachToWidget(window_panel);
-            slot->SetAnchoredPosition({2.f + j * 40.f, 2.f + i * 40.f});
-            slot->SetSize({64.f, 64.f});
-            slot->SetTexture(window_panel_texture);
-            slot->SetDrawMode(DrawMode::kSliced);
-            slot->SetPivot({.5f, .5f});
-            slot->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
-        }
-    }
+        int i = index / slot_row_count_;
+        int j = index % slot_row_count_;
 
-    window_caption_->SetPosition({0.f, 0.f});
+        Image* slot = canvas->AddWidget<Image>(L"InventorySlot" + std::to_wstring(i) + std::to_wstring(j));
+        slot->AttachToWidget(window_panel);
+        slot->SetAnchoredPosition({2.f + j * 40.f, 2.f + i * 40.f});
+        slot->SetSize({64.f, 64.f});
+        slot->SetTexture(window_panel_texture);
+        slot->SetDrawMode(DrawMode::kSliced);
+        slot->SetPivot({.5f, .5f});
+        slot->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+        slot->SetRayCastTarget(true);
+        slot->OnDrop.Add(this, &Inventory::OnItemDrop);
+    }
+}
+
+void Inventory::OnItemDrop(const Math::Vector2& kPosition)
+{
 }
 
 RTTR_REGISTRATION
