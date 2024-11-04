@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "MainMenu.h"
 
+#include "../../SocketCore/SocketSession.h"
+#include "../SocketCore/ServerPacketHandler.h"
 #include "Level/World.h"
 #include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
@@ -30,6 +32,19 @@ void MainMenu::Load()
     login_button->SetDrawMode(DrawMode::kSliced);
     login_button->OnMouseReleased.Add([](Widget* kWidget)
     {
+        if(!GSocketSession->Connect())
+        {
+            //TODO: 여기서 튕기는 코드 작성 해 주세요
+        }
+        else
+        {
+            C_EnterPacket pkt;
+            pkt.SetId("Sundaekyung");
+            pkt.SetName("Sundaekyung");
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+            GSocketSession->Send(sendBuffer);
+        }
+        
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 
