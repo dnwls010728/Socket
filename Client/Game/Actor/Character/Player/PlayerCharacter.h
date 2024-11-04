@@ -14,6 +14,9 @@ public:
 
     void SetNickname(const std::wstring& kNickname);
 
+    FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
+    FORCEINLINE int GetPacketId() const { return packet_id_; }
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float delta_time) override;
@@ -24,7 +27,9 @@ protected:
     std::wstring nickname_;
 
     Text* nickname_text_;
+
+    int packet_id_;
     
 };
 
-extern Type::uint32 current_player_id_;
+extern Type::uint32 current_player_id;

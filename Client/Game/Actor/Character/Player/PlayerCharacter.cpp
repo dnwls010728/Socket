@@ -11,7 +11,7 @@
 #include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
 
-Type::uint32 current_player_id_ = 0;
+Type::uint32 current_player_id = 0;
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
