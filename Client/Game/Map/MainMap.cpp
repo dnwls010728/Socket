@@ -5,7 +5,6 @@
 #include "Actor/Character/Player/PlayerCharacter.h"
 #include "Actor/Network/Network.h"
 #include "Actor/Platform/Platform.h"
-#include "Actor/Inventory/Inventory.h"
 
 MainMap::MainMap(const std::wstring& kName) : Level(kName)
 {
@@ -19,7 +18,6 @@ void MainMap::Load()
     PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
     // Network* network = AddActor<Network>(L"Network");
     Platform* platform = AddActor<Platform>(L"Platform");
-    Inventory* inventory = AddActor<Inventory>(L"Inventory");
 }
 
 RTTR_REGISTRATION
