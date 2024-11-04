@@ -1,19 +1,14 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
-#include "../../Common/Packet.h"
-#include "../../../../SocketCore/ServerPacketHandler.h"
 #include "Actor/Camera.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Input/Keyboard.h"
 #include "Resource/ResourceManager.h"
-#include "UI/Canvas.h"
-#include "UI/Widget/Text.h"
 #include "Windows/DX/Sprite.h"
-#include "../../Common/SendBuffer.h"
-uint32_t currentPlayerId = 0;
+
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
 {
@@ -25,13 +20,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     renderer_->SetColor(Math::Color::Black);
 
     collider_->SetOffset({0.f, 1.f});
-
-#pragma region 닉네임
-    nickname_widget_ = Canvas::Get()->AddWidget<UI::Text>(L"Player Nickname");
-    nickname_widget_->SetSize({200.f, 100.f});
-    nickname_widget_->SetAlignment(UI::TextAnchor::kMiddleCenter);
-    nickname_widget_->SetText(L"Lv. 1 Player");
-#pragma endregion
     
 }
 
@@ -45,42 +33,9 @@ void PlayerCharacter::BeginPlay()
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
-    if(packet_id_ == currentPlayerId)
-    {
-        Keyboard* keyboard = Keyboard::Get();
-        const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        velocity_.x = h * 5.f;
-        //좌 또는 우로 이동했다면
-        if(h!=0)
-        {
-            
-            C_MovingPacket pkt;
-            pkt._locationX = transform_->GetPosition().x;
-            pkt._locationY = transform_->GetPosition().y;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
-            GSocketSession->Send(sendBuffer);
-        }
-    }
-    
-}
-
-void PlayerCharacter::PostTick(float delta_time)
-{
-    CharacterBase::PostTick(delta_time);
-
-    TransformComponent* transform = GetTransform();
-    Math::Vector2 position;
-    if(!pos_queue_.empty())
-    {
-        position = PopPosQueue();
-    }else
-    {
-        position = transform->GetPosition();
-    }
-    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(position);
-
-    nickname_widget_->SetPosition(screen_position);
-    
+    Keyboard* keyboard = Keyboard::Get();
+    const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+    velocity_.x = h * 5.f;
 }
 
 RTTR_REGISTRATION

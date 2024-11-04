@@ -9,19 +9,30 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-namespace UI
+class Widget;
+
+DECLARE_DELEGATE(OnWidgetEvent, Widget*)
+DECLARE_DELEGATE(OnDragEvent, Widget*, const Math::Vector2&)
+DECLARE_DELEGATE(OnDropEvent, Widget*, const Math::Vector2&)
+
+enum class AnchorPreset : Type::uint16
 {
-    enum AnchorPresets
-    {
-        kLeft = (0x01<<0),
-        kRight = (0x01<<1),
-        kTop = (0x01<<2),
-        kBottom = (0x01<<3),
-        kCenter = (0x01<<4),
-        kMiddle = (0x01<<5),
-        kStretch = (0x01<<6)
-    };
-}
+    kLeft = (0x01<<0),
+    kRight = (0x01<<1),
+    kTop = (0x01<<2),
+    kBottom = (0x01<<3),
+    kCenter = (0x01<<4),
+    kMiddle = (0x01<<5),
+    kStretch = (0x01<<6)
+};
+
+ENUM_CLASS_FLAGS(AnchorPreset)
+
+enum class DrawMode : Type::uint8
+{
+    kSimple,
+    kSliced
+};
 
 class Widget : public std::enable_shared_from_this<Widget>
 {
@@ -39,38 +50,45 @@ public:
     void SetAnchorMax(const Math::Vector2& kAnchorMax);
     void SetPivot(const Math::Vector2& kPivot);
     void SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax);
-    void SetAnchorPreset(Type::uint16 anchor, bool match_pivot = false);
+    void SetAnchorPreset(AnchorPreset anchor, bool match_pivot = false);
     void AttachToWidget(Widget* parent);
     void DetachFromWidget();
+
+    bool HitTest(const Math::Vector2& kPoint) const;
+
+    Math::Vector2 GetPosition() const;
     
     Math::Vector2 GetPivotPosition() const;
+
+    FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
     
     FORCEINLINE float GetAngle() const { return angle_; }
     
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
-    
+
+    FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
+    FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
+
     FORCEINLINE bool IsFocused() const { return is_focused_; }
+
+    OnWidgetEvent OnMousePressed;
+    OnWidgetEvent OnMouseReleased;
+
+    OnDragEvent OnDragStart;
+    OnDragEvent OnDrag;
+    OnDragEvent OnDragEnd;
+
+    OnDropEvent OnDrop;
 
 protected:
     friend class Canvas;
 
-    FORCEINLINE virtual void OnMousePressed() {}
-    FORCEINLINE virtual void OnMouseReleased() {}
-    FORCEINLINE virtual void OnMouseHover() {}
-    FORCEINLINE virtual void OnMouseLeave() {}
-    FORCEINLINE virtual void OnKeyEvent(Type::uint16 key_code, bool is_pressed) {}
-    FORCEINLINE virtual void OnCharEvent(wchar_t character) {}
-    FORCEINLINE virtual void BeginPlay() {}
-    FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render() {}
-    
-    virtual void OnFocus();
-    virtual void OnBlur();
+    virtual void BeginPlay();
+    virtual void Tick(float delta_time);
+    virtual void Render();
     
     virtual void UpdateRect();
-    
-    static Type::uint32 next_z_index_;
 
     std::wstring name_;
 
@@ -87,9 +105,7 @@ protected:
     Widget* parent_;
     std::vector<Widget*> children_;
 
-    Type::uint32 z_index_;
-
-    bool can_interact_;
+    bool is_ray_cast_target_;
     bool is_focused_;
     
 };

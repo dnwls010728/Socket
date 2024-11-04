@@ -4,6 +4,7 @@
 #include "DebugDrawHelper.h"
 #include "Actor/Camera.h"
 #include "box2d/box2d.h"
+#include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
 #include "Time/TimerManager.h"
@@ -82,7 +83,8 @@ World::~World()
 void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
-    
+
+    AddLevel<EditorMap>(LevelType::kEditor, L"Editor");
     AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
     
@@ -226,13 +228,13 @@ void World::TransitionLevel()
     current_level_->AddActor<Camera>(L"Main Camera");
     
     current_level_->Load();
+    
+    Canvas::Get()->BeginPlay();
     current_level_->InitializeActors();
     
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();
-    
-    Canvas::Get()->BeginPlay();
 }
 
 void World::ProcessCollisionEvents()

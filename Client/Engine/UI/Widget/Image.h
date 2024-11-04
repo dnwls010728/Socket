@@ -1,40 +1,26 @@
 ﻿#pragma once
-#include <memory>
-
 #include "UI/Widget.h"
 
 class UITexture;
 
-namespace UI
+class Image : public Widget
 {
-    enum class DrawMode
-    {
-        Simple,
-        Sliced
-    };
+    SHADER_CLASS_HELPER(Image)
+    GENERATED_BODY(Image, Widget);
     
-    class Image : public Widget
-    {
-        SHADER_CLASS_HELPER(Image)
-        GENERATED_BODY(Image, Widget)
-        
-    public:
-        Image(const std::wstring& kName);
-        virtual ~Image() override = default;
+public:
+    Image(const std::wstring& kName);
+    virtual ~Image() override = default;
+    
+    FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
+    FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
-        FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
-        FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
-        FORCEINLINE void SetSlice9Rect(const Math::Rect& kSlice9Rect) { slice9_rect_ = kSlice9Rect; }
+protected:
+    virtual void Render() override;
 
-    protected:
-        virtual void Render() override;
+private:
+    UITexture* texture_;
 
-    private:
-        UITexture* texture_;
-
-        DrawMode draw_mode_;
-
-        Math::Rect slice9_rect_;
-        
-    };
-}
+    DrawMode draw_mode_;
+    
+};

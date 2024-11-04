@@ -10,9 +10,9 @@ namespace Math
         Rect operator=(const Rect& kOther);
 
         static Rect Zero();
-
-        bool Contains(const Math::Vector2& kPoint) const;
-        bool Overlaps(const Rect& other) const;
+        
+        static bool Contains(const Rect& kRect, const Math::Vector2& kPoint);
+        static bool Overlaps(const Rect& kRect, const Rect& other);
 
         FORCEINLINE float MinX() const { return x; }
         FORCEINLINE float MaxX() const { return x + width; }

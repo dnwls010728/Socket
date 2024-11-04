@@ -3,10 +3,9 @@
 
 #include "Canvas.h"
 #include "Level/World.h"
-#include "Input/Mouse.h"
+#include "Math/Color.h"
 #include "Math/Rect.h"
-
-Type::uint32 Widget::next_z_index_ = 0;
+#include "Windows/DX/Renderer.h"
 
 Widget::Widget(const std::wstring& kName) :
     name_(kName),
@@ -19,8 +18,7 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
-    z_index_(next_z_index_++),
-    can_interact_(false),
+    is_ray_cast_target_(false),
     is_focused_(false)
 {
     UpdateRect();
@@ -78,33 +76,33 @@ void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kA
     UpdateRect();
 }
 
-void Widget::SetAnchorPreset(Type::uint16 anchor, bool match_pivot)
+void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
 {
-    if ((anchor & UI::AnchorPresets::kLeft) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kRight) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kMiddle) && (anchor & UI::AnchorPresets::kCenter)) SetAnchors({.5f, .5f}, {.5f, .5f});
-    else if ((anchor & UI::AnchorPresets::kLeft) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({0.f, 0.f}, {0.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kRight) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({1.f, 0.f}, {1.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kTop)) SetAnchors({0.f, 1.f}, {1.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kCenter)) SetAnchors({0.f, .5f}, {1.f, .5f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kBottom)) SetAnchors({0.f, 0.f}, {1.f, 0.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
-    else if ((anchor & UI::AnchorPresets::kStretch) && (anchor & UI::AnchorPresets::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
-    else if (anchor & UI::AnchorPresets::kTop) SetAnchors({.5f, 1.f}, {.5f, 1.f});
-    else if (anchor & UI::AnchorPresets::kLeft) SetAnchors({0.f, .5f}, {0.f, .5f});
-    else if (anchor & UI::AnchorPresets::kRight) SetAnchors({1.f, .5f}, {1.f, .5f});
-    else if (anchor & UI::AnchorPresets::kBottom) SetAnchors({.5f, 0.f}, {.5f, 0.f});
-    else if (anchor & UI::AnchorPresets::kStretch) SetAnchors({0.f, 0.f}, {1.f, 1.f});
+    if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kMiddle | AnchorPreset::kCenter)) SetAnchors({.5f, .5f}, {.5f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kBottom)) SetAnchors({0.f, 0.f}, {0.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kBottom)) SetAnchors({1.f, 0.f}, {1.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kTop)) SetAnchors({0.f, 1.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kCenter)) SetAnchors({0.f, .5f}, {1.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kBottom)) SetAnchors({0.f, 0.f}, {1.f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft)) SetAnchors({0.f, .5f}, {0.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight)) SetAnchors({1.f, .5f}, {1.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch)) SetAnchors({0.f, 0.f}, {1.f, 1.f});
 
     if (match_pivot)
     {
-        if (anchor & UI::AnchorPresets::kLeft) pivot_.x = 0.f;
-        else if (anchor & UI::AnchorPresets::kRight) pivot_.x = 1.f;
+        if (EnumHasAnyFlags(anchor, AnchorPreset::kLeft)) pivot_.x = 0.f;
+        else if (EnumHasAnyFlags(anchor, AnchorPreset::kRight)) pivot_.x = 1.f;
         else pivot_.x = .5f;
 
-        if (anchor & UI::AnchorPresets::kTop) pivot_.y = 1.f;
-        else if (anchor & UI::AnchorPresets::kBottom) pivot_.y = 0.f;
+        if (EnumHasAnyFlags(anchor, AnchorPreset::kTop)) pivot_.y = 1.f;
+        else if (EnumHasAnyFlags(anchor, AnchorPreset::kBottom)) pivot_.y = 0.f;
         else pivot_.y = .5f;
 
         UpdateRect();
@@ -126,25 +124,71 @@ void Widget::DetachFromWidget()
     parent_ = nullptr;
 }
 
+bool Widget::HitTest(const Math::Vector2& kPoint) const
+{
+    return Math::Rect::Contains(rect_, kPoint);
+}
+
+Math::Vector2 Widget::GetPosition() const
+{
+    Canvas* canvas = Canvas::Get();
+    const Type::uint32 canvas_width = canvas->width_;
+    const Type::uint32 canvas_height = canvas->height_;
+
+    const float scale_ratio = canvas->GetScaleRatio();
+
+    float x = canvas_width * anchor_min_.x + position_.x * scale_ratio;
+    float y = canvas_height * (1.f - anchor_min_.y) + position_.y * scale_ratio;
+    return {x, y};
+}
+
 Math::Vector2 Widget::GetPivotPosition() const
 {
     return {rect_.x + rect_.width * pivot_.x, rect_.y + rect_.height * (1.f - pivot_.y)};
 }
 
-void Widget::OnFocus()
+void Widget::BeginPlay()
 {
-    is_focused_ = true;
+    for (const auto& child : children_)
+    {
+        child->BeginPlay();
+    }
 }
 
-void Widget::OnBlur()
+void Widget::Tick(float delta_time)
 {
-    is_focused_ = false;
+    for (const auto& child : children_)
+    {
+        child->Tick(delta_time);
+    }
+}
+
+void Widget::Render()
+{
+// #ifdef _DEBUG
+//     WindowsWindow* window = World::Get()->GetWindow();
+//     if (!window) return;
+//
+//     Renderer* renderer = Renderer::Get();
+//     if (!renderer) return;
+//     
+//     Math::Vector2 pivot_position = GetPivotPosition();
+//     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+//
+//     renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+// #endif
+    
+    for (const auto& child : children_)
+    {
+        child->Render();
+    }
 }
 
 void Widget::UpdateRect()
 {
-    Type::uint32 parent_width = 0;
-    Type::uint32 parent_height = 0;
+    Type::uint32 parent_width;
+    Type::uint32 parent_height;
+    
     Math::Vector2 parent_position = {0.f, 0.f};
 
     Canvas* canvas = Canvas::Get();
@@ -162,10 +206,10 @@ void Widget::UpdateRect()
         parent_height = canvas->height_;
     }
 
-    float left = 0.f;
-    float top = 0.f;
-    float right = 0.f;
-    float bottom = 0.f;
+    float left;
+    float top;
+    float right;
+    float bottom;
 
     if (anchor_min_.x == anchor_max_.x)
     {
@@ -201,15 +245,8 @@ void Widget::UpdateRect()
     if (pivot_y == 0.f) pivot_y = bottom;
     else if (pivot_y == bottom) pivot_y = 0.f;
 
-    if (anchor_min_.x == anchor_max_.x)
-    {
-        left -= pivot_x;
-    }
-
-    if (anchor_min_.y == anchor_max_.y)
-    {
-        top -= pivot_y;
-    }
+    if (anchor_min_.x == anchor_max_.x) left -= pivot_x;
+    if (anchor_min_.y == anchor_max_.y) top -= pivot_y;
 
     rect_ = {left, top, right, bottom};
 

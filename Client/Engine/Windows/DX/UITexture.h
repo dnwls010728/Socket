@@ -24,10 +24,15 @@ public:
     FORCEINLINE Type::uint32 GetWidth() const { return width_; }
     FORCEINLINE Type::uint32 GetHeight() const { return height_; }
 
+    FORCEINLINE void SetSlice9Rect(const Math::Rect& kRect) { slice9_rect_ = kRect; }
+    FORCEINLINE const Math::Rect& GetSlice9Rect() const { return slice9_rect_; }
+
 private:
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
     
     Type::uint32 width_;
     Type::uint32 height_;
+
+    Math::Rect slice9_rect_;
     
 };

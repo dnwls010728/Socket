@@ -32,17 +32,17 @@ bool Mouse::GetMouseButtonUp(MouseButton button) const
 void Mouse::OnEvent(const Event& kEvent)
 {
     const Type::uint32& kType = kEvent.type;
-    if (kType == EventType::kMouseMotion)
+    if (kType == static_cast<Type::uint32>(EventType::kMouseMotion))
     {
         const MouseMotionEvent& kMotion = kEvent.motion;
         mouse_position_ = Math::Vector2(kMotion.x, kMotion.y);
     }
-    else if (kType & EventType::kMousePressed || kType & EventType::kMouseReleased)
+    else if (kType & static_cast<Type::uint32>(EventType::kMousePressed) || kType & static_cast<Type::uint32>(EventType::kMouseReleased))
     {
         const MouseButtonEvent& kButton = kEvent.button;
         mouse_states_[static_cast<int>(kButton.button)].is_down = kButton.is_pressed;
     }
-    else if (kType == EventType::kMouseWheel)
+    else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))
     {
         const MouseWheelEvent& kWheel = kEvent.wheel;
         wheel_axis_ = static_cast<int>(kWheel.y);

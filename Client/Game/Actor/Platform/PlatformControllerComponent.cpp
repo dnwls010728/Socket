@@ -45,7 +45,7 @@ void PlatformControllerComponent::MovePassengers(Math::Vector2 velocity)
             ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i);
 
             HitResult hit_result;
-            if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * dir_y, ray_length, ActorLayer::kPlayer))
+            if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * dir_y, ray_length, static_cast<Type::uint16>(ActorLayer::kPlayer)))
             {
                 if (Actor* actor = hit_result.actor)
                 {
@@ -73,7 +73,7 @@ void PlatformControllerComponent::MovePassengers(Math::Vector2 velocity)
             ray_origin += Math::Vector2::Up() * (horizontal_ray_spacing_ * i);
 
             HitResult hit_result;
-            if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, ActorLayer::kPlayer))
+            if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * dir_x, ray_length, static_cast<Type::uint16>(ActorLayer::kPlayer)))
             {
                 if (Actor* actor = hit_result.actor)
                 {
@@ -100,7 +100,7 @@ void PlatformControllerComponent::MovePassengers(Math::Vector2 velocity)
                 ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i);
 
                 HitResult hit_result;
-                if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up(), ray_length, ActorLayer::kPlayer))
+                if (Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up(), ray_length, static_cast<Type::uint16>(ActorLayer::kPlayer)))
                 {
                     if (Actor* actor = hit_result.actor)
                     {

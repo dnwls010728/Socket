@@ -1,20 +1,15 @@
 ﻿#include "pch.h"
 #include "MainMenu.h"
 
-#include "Core.h"
-#include "Enums.h"
 #include "Level/World.h"
+#include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
+#include "UI/Widget.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/Text.h"
-#include "UI/Widget/TextBox.h"
 #include "Windows/WindowsWindow.h"
-#include "../SocketCore/SocketSession.h"
-#include "Resource/ResourceManager.h"
-#include "UI/Widget/Image.h"
 #include "Windows/DX/UITexture.h"
-#include "../../Common/Packet.h"
-#include "../SocketCore/ServerPacketHandler.h"
+
 MainMenu::MainMenu(const std::wstring& kName) :
     Level(kName)
 {
@@ -22,84 +17,67 @@ MainMenu::MainMenu(const std::wstring& kName) :
 
 void MainMenu::Load()
 {
+    Level::Load();
+    
     Canvas* canvas = Canvas::Get();
 
-    UI::Text* build = canvas->AddWidget<UI::Text>(L"Build");
-    build->SetAnchorPreset(UI::AnchorPresets::kLeft | UI::AnchorPresets::kBottom, true);
-    build->SetAnchoredPosition({10.f, 0.f});
-    build->SetSize({200.f, 30.f});
-    build->SetText(L"Development Build: v0.0.1");
-    build->SetAlignment(UI::TextAnchor::kMiddleLeft);
+    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Button.png");
+    texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
     
-    UI::TextBox* tb_id = canvas->AddWidget<UI::TextBox>(L"ID");
-    tb_id->SetAnchoredPosition({0.f, -45.f});
-    tb_id->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
-    tb_id->SetSize({200.f, 30.f});
-    tb_id->SetPlaceholder(L"ID");
-
-    UI::TextBox* tb_pw = canvas->AddWidget<UI::TextBox>(L"Password");
-    tb_pw->SetAnchoredPosition({0.f, 0.f});
-    tb_pw->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
-    tb_pw->SetSize({200.f, 30.f});
-    tb_pw->SetPlaceholder(L"Password");
-    tb_pw->SetContentType(UI::ContentType::kPassword);
-
-    UI::Button* start_button = canvas->AddWidget<UI::Button>(L"Login");
-    start_button->SetAnchoredPosition({0.f, 45.f});
-    start_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
-    start_button->on_click.Add([]()
+    Button* login_button = canvas->AddWidget<Button>(L"Login Button");
+    login_button->AttachToWidget(canvas->GetRootWidget());
+    login_button->SetTexture(texture);
+    login_button->SetDrawMode(DrawMode::kSliced);
+    login_button->OnMouseReleased.Add([](Widget* kWidget)
     {
-        if(!GSocketSession->Connect())
-        {
-            //TODO: 여기서 튕기는 코드 작성 해 주세요
-        }
-        else
-        {
-            C_EnterPacket pkt;
-            pkt.SetId("Sundaekyung");
-            pkt.SetName("Sundaekyung");
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
-            GSocketSession->Send(sendBuffer);
-            
-        }
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 
-    UI::Text* button_text = canvas->AddWidget<UI::Text>(L"Login Text");
-    button_text->SetAnchoredPosition({0.f, 0.f});
-    button_text->SetSize({0.f, 0.f});
-    button_text->SetAnchorPreset(UI::AnchorPresets::kStretch, true);
-    button_text->AttachToWidget(start_button);
-    button_text->SetText(L"Login");
-    button_text->SetAlignment(UI::TextAnchor::kMiddleCenter);
-    button_text->SetColor(Math::Color::Black);
+    Text* login_text = canvas->AddWidget<Text>(L"Login Text");
+    login_text->AttachToWidget(login_button);
+    login_text->SetAnchorPreset(AnchorPreset::kStretch);
+    login_text->SetSize({0.f, 0.f});
+    login_text->SetColor(Math::Color::Black);
+    login_text->SetText(L"LOGIN");
+    login_text->SetAlignment(Text::kMiddleCenter);
 
-    UI::Button* exit_button = canvas->AddWidget<UI::Button>(L"Exit");
-    exit_button->SetAnchoredPosition({0.f, 90.f});
-    exit_button->SetAnchorPreset(UI::AnchorPresets::kMiddle | UI::AnchorPresets::kCenter, true);
-    exit_button->on_click.Add([]()
+    Button* editor_button = canvas->AddWidget<Button>(L"Editor Button");
+    editor_button->AttachToWidget(canvas->GetRootWidget());
+    editor_button->SetAnchoredPosition({0.f, 50.f});
+    editor_button->SetTexture(texture);
+    editor_button->SetDrawMode(DrawMode::kSliced);
+    editor_button->OnMouseReleased.Add([](Widget* kWidget)
+    {
+        World::Get()->OpenLevel(LevelType::kEditor);
+    });
+
+    Text* editor_text = canvas->AddWidget<Text>(L"Editor Text");
+    editor_text->AttachToWidget(editor_button);
+    editor_text->SetAnchorPreset(AnchorPreset::kStretch);
+    editor_text->SetSize({0.f, 0.f});
+    editor_text->SetColor(Math::Color::Black);
+    editor_text->SetText(L"EDITOR");
+    editor_text->SetAlignment(Text::kMiddleCenter);
+    
+    Button* exit_button = canvas->AddWidget<Button>(L"Exit Button");
+    exit_button->AttachToWidget(canvas->GetRootWidget());
+    exit_button->SetAnchoredPosition({0.f, 100.f});
+    exit_button->SetTexture(texture);
+    exit_button->SetDrawMode(DrawMode::kSliced);
+    exit_button->OnMouseReleased.Add([](Widget* kWidget)
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);
     });
 
-    UI::Text* exit_button_text = canvas->AddWidget<UI::Text>(L"Exit Text");
-    exit_button_text->SetAnchoredPosition({0.f, 0.f});
-    exit_button_text->SetSize({0.f, 0.f});
-    exit_button_text->SetAnchorPreset(UI::AnchorPresets::kStretch, true);
-    exit_button_text->AttachToWidget(exit_button);
-    exit_button_text->SetText(L"Exit");
-    exit_button_text->SetAlignment(UI::TextAnchor::kMiddleCenter);
-    exit_button_text->SetColor(Math::Color::Black);
-
-    // UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\9SliceSprites-4.jpg");
-    //
-    // UI::Image* image = canvas->AddWidget<UI::Image>(L"Image");
-    // image->SetAnchorPreset(UI::AnchorPresets::kCenter | UI::AnchorPresets::kMiddle, true);
-    // image->SetSize({200.f, 200.f});
-    // image->SetTexture(texture);
-    // image->SetDrawMode(UI::DrawMode::Sliced);
-    // image->SetSlice9Rect({ 0.f, 0.f, 525.f, 525.f});
+    Text* exit_text = canvas->AddWidget<Text>(L"Exit Text");
+    exit_text->AttachToWidget(exit_button);
+    exit_text->SetAnchorPreset(AnchorPreset::kStretch);
+    exit_text->SetSize({0.f, 0.f});
+    exit_text->SetColor(Math::Color::Black);
+    exit_text->SetText(L"EXIT");
+    exit_text->SetAlignment(Text::kMiddleCenter);
+    
 }
 
 RTTR_REGISTRATION

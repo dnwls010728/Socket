@@ -179,6 +179,7 @@
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
+    <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
@@ -193,7 +194,6 @@
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\Image.h" />
     <ClInclude Include="Engine\UI\Widget\Text.h" />
-    <ClInclude Include="Engine\UI\Widget\TextBox.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\Renderer.h" />
@@ -213,6 +213,7 @@
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
     <ClInclude Include="Game\Actor\Component\RayCastController.h" />
+    <ClInclude Include="Game\Actor\Editor\Editor.h" />
     <ClInclude Include="Game\Actor\Network\Network.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Game\Actor\Platform\Platform.h" />
     <ClInclude Include="Game\Actor\Platform\PlatformControllerComponent.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
+    <ClInclude Include="Game\Map\EditorMap.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -468,7 +470,6 @@
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\Image.cpp" />
     <ClCompile Include="Engine\UI\Widget\Text.cpp" />
-    <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shaders.cpp" />
@@ -484,6 +485,7 @@
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
+    <ClCompile Include="Game\Actor\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actor\Network\Network.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
@@ -491,6 +493,7 @@
     <ClCompile Include="Game\Actor\Platform\Platform.cpp" />
     <ClCompile Include="Game\Actor\Platform\PlatformControllerComponent.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
+    <ClCompile Include="Game\Map\EditorMap.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">

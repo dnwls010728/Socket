@@ -53,3 +53,14 @@ void Sprite::Split(Type::uint32 cols, Type::uint32 rows, Math::Vector2 pivot)
         }
     }
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<Sprite>("Sprite")
+        .constructor<>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
+}

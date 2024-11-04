@@ -11,6 +11,8 @@ struct SpriteFrame
 
 class Sprite : public Texture
 {
+    GENERATED_BODY(Sprite, Texture)
+
 public:
     Sprite();
     virtual ~Sprite() override = default;

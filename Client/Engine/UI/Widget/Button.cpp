@@ -2,61 +2,47 @@
 #include "Button.h"
 
 #include "Level/World.h"
-#include "Math/Color.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
+#include "Windows/DX/UITexture.h"
 
-UI::Button::Button(const std::wstring& kName) :
+Button::Button(const std::wstring& kName) :
     Widget(kName),
-    color_(Math::Color::White)
+    texture_(nullptr),
+    draw_mode_(DrawMode::kSimple)
 {
-    size_ = {160.f, 30.f};
-    can_interact_ = true;
+    size_ = { 160.f, 50.f };
+    is_ray_cast_target_ = true;
 }
 
-void UI::Button::OnMousePressed()
-{
-    Widget::OnMousePressed();
-
-    color_ = Math::Color::Green;
-    
-}
-
-void UI::Button::OnMouseReleased()
-{
-    Widget::OnMouseReleased();
-
-    on_click.Execute();
-    
-}
-
-void UI::Button::OnMouseHover()
-{
-    Widget::OnMouseHover();
-
-    color_ = Math::Color::Red;
-    
-}
-
-void UI::Button::OnMouseLeave()
-{
-    Widget::OnMouseLeave();
-
-    color_ = Math::Color::White;
-    
-}
-
-void UI::Button::Render()
+void Button::Render()
 {
     WindowsWindow* window = World::Get()->GetWindow();
     if (!window) return;
-    
+
     Renderer* renderer = Renderer::Get();
     if (!renderer) return;
-
+    
     Math::Vector2 pivot_position = GetPivotPosition();
     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
-    renderer->DrawBox(window, rect_, pivot_position, color_, angle_);
+    if (texture_)
+    {
+        if (draw_mode_ == DrawMode::kSimple)
+            renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
+        else renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, texture_->GetSlice9Rect());
+    }
     
+    Widget::Render();
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<Button>("Button")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

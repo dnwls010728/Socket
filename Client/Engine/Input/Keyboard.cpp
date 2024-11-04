@@ -52,8 +52,8 @@ void Keyboard::OnEvent(const Event& kEvent)
 {
 	const Type::uint32& kType = kEvent.type;
 
-	if (kType == EventType::kKeyPressed && !kEvent.key.is_repeat ||
-		kType == EventType::kKeyReleased)
+	if (kType == static_cast<Type::uint32>(EventType::kKeyPressed) && !kEvent.key.is_repeat ||
+		kType == static_cast<Type::uint32>(EventType::kKeyReleased))
 	{
 		WORD key_code = kEvent.key.key_code;
 			
@@ -61,7 +61,7 @@ void Keyboard::OnEvent(const Event& kEvent)
 		if (it != key_states_.end())
 		{
 			KeyState& key_state = it->second;
-			key_state.is_down = kType == EventType::kKeyPressed;
+			key_state.is_down = kType == static_cast<Type::uint32>(EventType::kKeyPressed);
 		}
 	}
 }

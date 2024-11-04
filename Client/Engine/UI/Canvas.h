@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "Singleton.h"
+#include "Math/Vector2.h"
 
 union Event;
 
@@ -16,7 +17,19 @@ public:
     template<std::derived_from<Widget> T>
     T* AddWidget(const std::wstring& kName);
 
+    Widget* FindWidget(const std::wstring& kName);
+
+    template<std::derived_from<Widget> T>
+    T* FindWidget(const std::wstring& kName);
+
+    void GetWidgets(std::vector<Widget*>& widgets) const;
+
     float GetScaleRatio() const;
+
+    FORCEINLINE void SetRootWidget(Widget* widget) { root_widget_ = widget; }
+    FORCEINLINE Widget* GetRootWidget() const { return root_widget_; }
+
+    Widget* RayCast(Widget* widget, const Math::Vector2& kPoint);
 
 private:
     friend class Core;
@@ -25,7 +38,6 @@ private:
     friend class World;
     friend class Widget;
     
-    void OnResize(Type::uint32 width, Type::uint32 height);
     void OnEvent(const Event& kEvent);
     void BeginPlay();
     void Tick(float delta_time);
@@ -41,8 +53,12 @@ private:
 
     std::vector<std::shared_ptr<Widget>> widgets_;
 
+    Widget* root_widget_;
     Widget* hovered_widget_;
     Widget* focused_widget_;
+    Widget* dragging_widget_;
+
+    Math::Vector2 previous_mouse_position_;
     
 };
 
@@ -50,7 +66,14 @@ template <std::derived_from<Widget> T>
 T* Canvas::AddWidget(const std::wstring& kName)
 {
     std::shared_ptr<Widget> widget = std::make_shared<T>(kName);
+    
     widgets_.push_back(widget);
 
     return static_cast<T*>(widget.get());
+}
+
+template <std::derived_from<Widget> T>
+T* Canvas::FindWidget(const std::wstring& kName)
+{
+    static_cast<T*>(FindWidget(kName));
 }
