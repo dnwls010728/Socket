@@ -22,6 +22,16 @@ public:
     {
         nickname_widget_->SetText(kNick);
     }
+    FORCEINLINE void PushPosQueue(Math::Vector2 vec)
+    {
+        pos_queue_.push(vec);
+    }
+    FORCEINLINE Math::Vector2 PopPosQueue()
+    {
+        Math::Vector2 vec =  pos_queue_.front();
+        pos_queue_.pop();
+        return vec;
+    }
 
 protected:
     virtual void BeginPlay() override;
@@ -33,5 +43,7 @@ protected:
     UI::Text* nickname_widget_;
 
     int packet_id_;
+
+    std::queue<Math::Vector2> pos_queue_;
     
 };

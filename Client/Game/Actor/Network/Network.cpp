@@ -37,11 +37,16 @@ void Network::Tick(float deltaTime)
         }else if(socketEvent.type == S_PKT_MOVING)
         {
             MovingEvent evt = socketEvent.moving;
-            auto it = players_.find(evt.userId);
-            if (it != players_.end()) {
-                PlayerCharacter* targetPlayer = it->second;
-                targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
-            } 
+            if(currentPlayerId != evt.userId)
+            {
+                auto it = players_.find(evt.userId);
+                if (it != players_.end()) {
+                    PlayerCharacter* targetPlayer = it->second;
+                    //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
+                    targetPlayer->PushPosQueue(Math::Vector2(evt.locationX, evt.locationY));
+                }    
+            }
+             
         }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
             //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음

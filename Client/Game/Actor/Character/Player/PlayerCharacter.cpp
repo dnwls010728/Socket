@@ -69,7 +69,15 @@ void PlayerCharacter::PostTick(float delta_time)
     CharacterBase::PostTick(delta_time);
 
     TransformComponent* transform = GetTransform();
-    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(transform->GetPosition());
+    Math::Vector2 position;
+    if(!pos_queue_.empty())
+    {
+        position = PopPosQueue();
+    }else
+    {
+        position = transform->GetPosition();
+    }
+    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(position);
 
     nickname_widget_->SetPosition(screen_position);
     
