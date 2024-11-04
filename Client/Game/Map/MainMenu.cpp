@@ -41,9 +41,27 @@ void MainMenu::Load()
     login_text->SetText(L"LOGIN");
     login_text->SetAlignment(Text::kMiddleCenter);
 
+    Button* editor_button = canvas->AddWidget<Button>(L"Editor Button");
+    editor_button->AttachToWidget(canvas->GetRootWidget());
+    editor_button->SetAnchoredPosition({0.f, 50.f});
+    editor_button->SetTexture(texture);
+    editor_button->SetDrawMode(DrawMode::kSliced);
+    editor_button->OnMouseReleased.Add([](Widget* kWidget)
+    {
+        World::Get()->OpenLevel(LevelType::kEditor);
+    });
+
+    Text* editor_text = canvas->AddWidget<Text>(L"Editor Text");
+    editor_text->AttachToWidget(editor_button);
+    editor_text->SetAnchorPreset(AnchorPreset::kStretch);
+    editor_text->SetSize({0.f, 0.f});
+    editor_text->SetColor(Math::Color::Black);
+    editor_text->SetText(L"EDITOR");
+    editor_text->SetAlignment(Text::kMiddleCenter);
+    
     Button* exit_button = canvas->AddWidget<Button>(L"Exit Button");
     exit_button->AttachToWidget(canvas->GetRootWidget());
-    exit_button->SetAnchoredPosition({0.f, 50.f});
+    exit_button->SetAnchoredPosition({0.f, 100.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);
     exit_button->OnMouseReleased.Add([](Widget* kWidget)

@@ -186,8 +186,9 @@ void Widget::Render()
 
 void Widget::UpdateRect()
 {
-    Type::uint32 parent_width = 0;
-    Type::uint32 parent_height = 0;
+    Type::uint32 parent_width;
+    Type::uint32 parent_height;
+    
     Math::Vector2 parent_position = {0.f, 0.f};
 
     Canvas* canvas = Canvas::Get();
@@ -205,10 +206,10 @@ void Widget::UpdateRect()
         parent_height = canvas->height_;
     }
 
-    float left = 0.f;
-    float top = 0.f;
-    float right = 0.f;
-    float bottom = 0.f;
+    float left;
+    float top;
+    float right;
+    float bottom;
 
     if (anchor_min_.x == anchor_max_.x)
     {
@@ -244,15 +245,8 @@ void Widget::UpdateRect()
     if (pivot_y == 0.f) pivot_y = bottom;
     else if (pivot_y == bottom) pivot_y = 0.f;
 
-    if (anchor_min_.x == anchor_max_.x)
-    {
-        left -= pivot_x;
-    }
-
-    if (anchor_min_.y == anchor_max_.y)
-    {
-        top -= pivot_y;
-    }
+    if (anchor_min_.x == anchor_max_.x) left -= pivot_x;
+    if (anchor_min_.y == anchor_max_.y) top -= pivot_y;
 
     rect_ = {left, top, right, bottom};
 

@@ -369,17 +369,10 @@ void Renderer::BeginRender(const std::shared_ptr<WindowsWindow>& kWindow)
     current_viewport_ = FindViewport(kWindow.get());
     CHECK_IF(current_viewport_, L"Not found viewport for window.");
 
-    // constexpr float clear_color[4] = {
-    //     49.f / 255.f,
-    //     77.f / 255.f,
-    //     121.f / 255.f,
-    //     1.f
-    // };
-
     constexpr float kClearColor[4] = {
-        0.f,
-        0.f,
-        0.f,
+        49.f / 255.f,
+        77.f / 255.f,
+        121.f / 255.f,
         1.f
     };
 
