@@ -1,0 +1,7 @@
+wrap_mode: 1
+filter_mode: 1
+border:
+  l: 16
+  r: 16
+  t: 16
+  b: 16

@@ -1,13 +1,17 @@
 ﻿#include "pch.h"
 #include "Editor.h"
 
+#include <fstream>
 #include <ShObjIdl.h>
 
+#include "Data/FileHelper.h"
 #include "imgui/imgui.h"
 #include "Windows/DX/UITexture.h"
+#include "yaml-cpp/yaml.h"
 
 Editor::Editor(const std::wstring& kName) :
     Actor(kName),
+    file_path_(L""),
     loaded_texture_(nullptr)
 {
 }
@@ -15,10 +19,21 @@ Editor::Editor(const std::wstring& kName) :
 void Editor::Tick(float delta_time)
 {
     Actor::Tick(delta_time);
+    
+    const char* items[] = { "Reapet", "Clamp" };
+    const char* filter_items[] = { "Point", "Bilinear" };
+    
+    static int current_wrap_mode = 0;
+    static int current_filter_mode = 0;
+    
+    static float left_border = 0.f;
+    static float right_border = 0.f;
+    static float top_border = 0.f;
+    static float bottom_border = 0.f;
 
-    if (ImGui::Begin("Editor"))
+    if (ImGui::Begin("Texture Editor"))
     {
-        if (ImGui::Button("Load File"))
+        if (ImGui::Button("Load Texture"))
         {
             IFileOpenDialog* file_open;
             HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&file_open));
@@ -35,10 +50,12 @@ void Editor::Tick(float delta_time)
                         hr = item->GetDisplayName(SIGDN_FILESYSPATH, &file_path);
                         if (SUCCEEDED(hr))
                         {
+                            file_path_ = file_path;
+                            
                             if (loaded_texture_) loaded_texture_.reset();
                             loaded_texture_ = std::make_unique<Texture>();
 
-                            if (loaded_texture_->Load(file_path))
+                            if (loaded_texture_->Load(file_path_))
                             {
                             }
                             
@@ -53,26 +70,53 @@ void Editor::Tick(float delta_time)
             }
         }
 
-        static float left_border = 0.f;
-        static float right_border = 0.f;
-        static float top_border = 0.f;
-        static float bottom_border = 0.f;
+        ImGui::SameLine();
+
+        if (ImGui::Button("Save Meta Data"))
+        {
+            std::wofstream file(FileHelper::GetPath(file_path_) + L"\\" + FileHelper::GetBaseFilename(file_path_) + L".yaml");
+            YAML::Emitter emitter;
+            emitter << YAML::BeginMap;
+                emitter << YAML::Key << "wrap_mode";
+                emitter << YAML::Value << current_wrap_mode;
+                emitter << YAML::Key << "filter_mode";
+                emitter << YAML::Value << current_filter_mode;
+                emitter << YAML::Key << "border";
+                emitter << YAML::Value;
+                emitter << YAML::BeginMap;
+                    emitter << YAML::Key << "l";
+                    emitter << YAML::Value << left_border;
+                    emitter << YAML::Key << "r";
+                    emitter << YAML::Value << right_border;
+                    emitter << YAML::Key << "t";
+                    emitter << YAML::Value << top_border;
+                    emitter << YAML::Key << "b";
+                    emitter << YAML::Value << bottom_border;
+                emitter << YAML::EndMap;
+            emitter << YAML::EndMap;
+
+            file << emitter.c_str();
+            file.close();
+        }
+
+        ImGui::Combo("Wrap Mode", &current_wrap_mode, items, IM_ARRAYSIZE(items));
+        ImGui::Combo("Filter Mode", &current_filter_mode, filter_items, IM_ARRAYSIZE(filter_items));
 
         ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("Left Border", &left_border);
+        ImGui::InputFloat("L", &left_border);
         
         ImGui::SameLine();
         
         ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("Right Border", &right_border);
+        ImGui::InputFloat("R", &right_border);
         
         ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("Top Border", &top_border);
+        ImGui::InputFloat("T", &top_border);
         
         ImGui::SameLine();
         
         ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("Bottom Border", &bottom_border);
+        ImGui::InputFloat("B", &bottom_border);
 
         if (loaded_texture_)
         {

@@ -15,6 +15,8 @@ protected:
     virtual void Tick(float delta_time) override;
 
 private:
+    std::wstring file_path_;
+    
     std::unique_ptr<Texture> loaded_texture_;
     
 };
