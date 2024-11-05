@@ -8,12 +8,25 @@
 #include "Actor/Camera.h"
 #include "Audio/AudioManager.h"
 #include "Event/Events.h"
+#include "UI/Canvas.h"
+#include "UI/Widget.h"
 
 Level::Level(const std::wstring& kName) :
+    name_(kName),
     actors_(),
     has_begun_play_(false)
 {
-    name_ = kName;
+}
+
+void Level::Load()
+{
+    Canvas* canvas = Canvas::Get();
+    
+    Widget* root_widget = canvas->AddWidget<Widget>(L"Root");
+    root_widget->SetAnchorPreset(AnchorPreset::kStretch);
+    root_widget->SetSize({0.f, 0.f});
+
+    canvas->SetRootWidget(root_widget);
 }
 
 void Level::Unload(EndPlayReason type)
@@ -89,7 +102,7 @@ void Level::OnEvent(const Event& event)
 {
     if (has_begun_play_)
     {
-        if (event.type == EventType::kWindowSize)
+        if (event.type == static_cast<Type::uint32>(EventType::kWindowSize))
         {
             Camera::Get()->UpdateProjectionMatrix();
         }
@@ -100,5 +113,9 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Level>("Level");
+    registration::class_<Level>("Level")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

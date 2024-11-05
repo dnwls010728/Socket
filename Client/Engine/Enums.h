@@ -2,7 +2,8 @@
 
 enum class LevelType : Type::uint64
 {
-    kMainMenu = 0,
+    kEditor = 0,
+    kMainMenu,
     kDefault,
     kEnd
 };

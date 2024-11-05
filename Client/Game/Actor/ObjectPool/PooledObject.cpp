@@ -10,7 +10,7 @@ PooledObject::PooledObject(const std::wstring& kName) :
 void PooledObject::Deactivate()
 {
     SetActive(false);
-    on_despawn.Execute(this);
+    OnDespawn.Execute(this);
 }
 
 void PooledObject::OnEnable()

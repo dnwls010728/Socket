@@ -31,13 +31,13 @@ void Network::Tick(float deltaTime)
             std::wstring playerName;
             playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
             player->SetNickname(playerName);
-            currentPlayerId = socketEvent.enter.userId;
+            current_player_id = socketEvent.enter.userId;
             players_.insert({player->GetPacketId(), player});
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {
             MovingEvent evt = socketEvent.moving;
-            if(currentPlayerId != evt.userId)
+            if(current_player_id != evt.userId)
             {
                 auto it = players_.find(evt.userId);
                 if (it != players_.end()) {
@@ -50,7 +50,7 @@ void Network::Tick(float deltaTime)
         }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
             //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음
-            if(currentPlayerId != 0)
+            if(current_player_id != 0)
             {
                 PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                 player->SetPacketId(socketEvent.broadcastingEnter.userId);

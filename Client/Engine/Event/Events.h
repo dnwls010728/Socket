@@ -2,8 +2,9 @@
 #include <Windows.h>
 
 #include "Input/Mouse.h"
+#include "Misc/EnumClassFlags.h"
 
-enum EventType
+enum class EventType : Type::uint32
 {
     kNone = 0,
     kWindowSize = (0x01<<0),
@@ -15,6 +16,8 @@ enum EventType
     kMouseMotion = (0x01<<6),
     kMouseWheel = (0x01<<7)
 };
+
+ENUM_CLASS_FLAGS(EventType)
 
 struct WindowEvent
 {
@@ -41,6 +44,8 @@ struct MouseButtonEvent
     EventType type;
     bool is_pressed;
     MouseButton button;
+    float x;
+    float y;
 };
 
 struct MouseMotionEvent

@@ -20,19 +20,20 @@ public:
     Level(const std::wstring& kName);
     virtual ~Level() = default;
 
-    virtual void Load() = 0;
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
+
+protected:
+    friend class GameEngine;
     
+    virtual void Load();
     virtual void Unload(EndPlayReason type);
     virtual void InitializeActors();
     virtual void PhysicsTick(float delta_time);
     virtual void Tick(float delta_time);
     virtual void PostTick(float delta_time);
     virtual void Render(float alpha);
-
-    FORCEINLINE const std::wstring& GetName() const { return name_; }
-    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
-
-protected:
+    
     template<std::derived_from<Actor> T>
     T* AddActor(const std::wstring& kName);
 

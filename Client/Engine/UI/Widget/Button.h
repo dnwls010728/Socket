@@ -1,32 +1,26 @@
 ﻿#pragma once
-#include "Math/Color.h"
-#include "Misc/DelegateMacros.h"
 #include "UI/Widget.h"
 
-namespace UI
+class UITexture;
+
+class Button : public Widget
 {
-    DECLARE_DELEGATE(ButtonSignature);
+    SHADER_CLASS_HELPER(Button)
+    GENERATED_BODY(Button, Widget)
     
-    class Button : public Widget
-    {
-        SHADER_CLASS_HELPER(Button)
-        GENERATED_BODY(Button, Widget)
-        
-    public:
-        Button(const std::wstring& kName);
-        virtual ~Button() override = default;
+public:
+    Button(const std::wstring& kName);
+    virtual ~Button() override = default;
 
-        ButtonSignature on_click;
+    FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
+    FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
-    protected:
-        virtual void OnMousePressed() override;
-        virtual void OnMouseReleased() override;
-        virtual void OnMouseHover() override;
-        virtual void OnMouseLeave() override;
-        virtual void Render() override;
+protected:
+    virtual void Render() override;
+    
+private:
+    UITexture* texture_;
 
-    private:
-        Math::Color color_;
-        
-    };
-}
+    DrawMode draw_mode_;
+    
+};

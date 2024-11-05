@@ -107,8 +107,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
 		}
 		
 		b2Filter filter = b2DefaultFilter();
-		filter.categoryBits = GetOwner()->GetLayer();
-		filter.maskBits = ProjectSettings::kLayerCollisionMatrix.at(GetOwner()->GetLayer());
+		filter.categoryBits = static_cast<Type::uint16>(GetOwner()->GetLayer());
+		filter.maskBits = static_cast<Type::uint16>(ProjectSettings::kLayerCollisionMatrix.at(GetOwner()->GetLayer()));
 		
 		b2ShapeDef shape_def = b2DefaultShapeDef();
 		shape_def.filter = filter;

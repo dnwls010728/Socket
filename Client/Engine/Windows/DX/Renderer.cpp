@@ -100,6 +100,19 @@ bool Renderer::CreateDWrite()
                                                    DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
                                                    DWRITE_FONT_STRETCH_NORMAL, 24.f, L"ko-kr",
                                                    text_formats_[L"Silver24"].GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 18.f, L"ko-kr",
+                                                   text_formats_[L"Nanum18"].GetAddressOf());
+    if (FAILED(hr)) return false;
+    
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 12.f, L"ko-kr",
+                                                   text_formats_[L"Nanum12"].GetAddressOf());
+
     return SUCCEEDED(hr);
 }
 
@@ -356,17 +369,10 @@ void Renderer::BeginRender(const std::shared_ptr<WindowsWindow>& kWindow)
     current_viewport_ = FindViewport(kWindow.get());
     CHECK_IF(current_viewport_, L"Not found viewport for window.");
 
-    // constexpr float clear_color[4] = {
-    //     49.f / 255.f,
-    //     77.f / 255.f,
-    //     121.f / 255.f,
-    //     1.f
-    // };
-
     constexpr float kClearColor[4] = {
-        0.f,
-        0.f,
-        0.f,
+        49.f / 255.f,
+        77.f / 255.f,
+        121.f / 255.f,
         1.f
     };
 
@@ -509,8 +515,8 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
-    // d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
-    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
+    // d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
@@ -568,10 +574,11 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     
     if (FAILED(hr)) return;
     
-    float pivot_x = kRect.width * kPivot.x;
-    float pivot_y = kRect.height * (1.f - kPivot.y);
-
-    D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    // float pivot_x = kRect.width * kPivot.x;
+    // float pivot_y = kRect.height * (1.f - kPivot.y);
+    //
+    // D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
     d2d_viewport->d2d_render_target->DrawTextW(kString.c_str(), static_cast<UINT32>(kString.size()),

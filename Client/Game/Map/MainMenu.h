@@ -10,6 +10,7 @@ public:
     MainMenu(const std::wstring& kName);
     virtual ~MainMenu() override = default;
 
+protected:
     virtual void Load() override;
     
 };
