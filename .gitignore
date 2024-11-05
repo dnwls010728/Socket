@@ -438,3 +438,5 @@ FodyWeavers.xsd
 
 !Client/Lib/Debug
 !Server/Lib/Debug
+!DLLFiles/Debug
+!DLLFiles/Release
