@@ -20,11 +20,13 @@ void Editor::Tick(float delta_time)
 {
     Actor::Tick(delta_time);
     
-    const char* items[] = { "Reapet", "Clamp" };
+    const char* wrap_items[] = { "Reapet", "Clamp" };
     const char* filter_items[] = { "Point", "Bilinear" };
+    const char* sprite_items[] = { "Single", "Multiple" };
     
     static int current_wrap_mode = 0;
     static int current_filter_mode = 0;
+    static int current_sprite_mode = 0;
     
     static float left_border = 0.f;
     static float right_border = 0.f;
@@ -74,13 +76,15 @@ void Editor::Tick(float delta_time)
 
         if (ImGui::Button("Save Meta Data"))
         {
-            std::wofstream file(FileHelper::GetPath(file_path_) + L"\\" + FileHelper::GetBaseFilename(file_path_) + L".yaml");
+            std::wofstream file(file_path_ + L".yaml");
             YAML::Emitter emitter;
             emitter << YAML::BeginMap;
                 emitter << YAML::Key << "wrap_mode";
                 emitter << YAML::Value << current_wrap_mode;
                 emitter << YAML::Key << "filter_mode";
                 emitter << YAML::Value << current_filter_mode;
+                emitter << YAML::Key << "sprite_mode";
+                emitter << YAML::Value << current_sprite_mode;
                 emitter << YAML::Key << "border";
                 emitter << YAML::Value;
                 emitter << YAML::BeginMap;
@@ -99,8 +103,9 @@ void Editor::Tick(float delta_time)
             file.close();
         }
 
-        ImGui::Combo("Wrap Mode", &current_wrap_mode, items, IM_ARRAYSIZE(items));
+        ImGui::Combo("Wrap Mode", &current_wrap_mode, wrap_items, IM_ARRAYSIZE(wrap_items));
         ImGui::Combo("Filter Mode", &current_filter_mode, filter_items, IM_ARRAYSIZE(filter_items));
+        ImGui::Combo("Sprite Mode", &current_sprite_mode, sprite_items, IM_ARRAYSIZE(sprite_items));
 
         ImGui::SetNextItemWidth(100.f);
         ImGui::InputFloat("L", &left_border);

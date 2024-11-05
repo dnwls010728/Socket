@@ -29,6 +29,8 @@ Texture::Texture() :
 
 bool Texture::Load(const std::wstring& kPath)
 {
+    Resource::Load(kPath);
+    
     HRESULT hr = DirectX::CreateWICTextureFromFile(
         Renderer::Get()->GetDevice(),
         kPath.c_str(),

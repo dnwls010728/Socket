@@ -7,8 +7,10 @@ public:
     FileHelper();
     virtual ~FileHelper() override = default;
 
-    static std::wstring GetCleanFilename(const std::wstring& kPath);
-    static std::wstring GetBaseFilename(const std::wstring& kPath);
+    static bool IsFileExists(const std::wstring& kPath);
+    
+    static std::wstring GetFilename(const std::wstring& kPath);
+    static std::wstring GetFilenameWithoutExtension(const std::wstring& kPath);
     static std::wstring GetPath(const std::wstring& kPath);
     
 };

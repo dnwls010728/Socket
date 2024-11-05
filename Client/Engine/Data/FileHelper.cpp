@@ -9,13 +9,19 @@ FileHelper::FileHelper()
 {
 }
 
-std::wstring FileHelper::GetCleanFilename(const std::wstring& kPath)
+bool FileHelper::IsFileExists(const std::wstring& kPath)
+{
+    fs::path path = kPath;
+    return fs::exists(path);
+}
+
+std::wstring FileHelper::GetFilename(const std::wstring& kPath)
 {
     fs::path path = kPath;
     return path.filename().wstring();
 }
 
-std::wstring FileHelper::GetBaseFilename(const std::wstring& kPath)
+std::wstring FileHelper::GetFilenameWithoutExtension(const std::wstring& kPath)
 {
     fs::path path = kPath;
     return path.stem().wstring();
