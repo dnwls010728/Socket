@@ -47,11 +47,6 @@ void Actor::EndPlay(EndPlayReason type)
     }
 }
 
-void Actor::Destroyed()
-{
-    EndPlay(EndPlayReason::kDestroyed);
-}
-
 void Actor::PhysicsTick(float delta_time)
 {
     for (const auto& kComponent : components_)

@@ -342,7 +342,7 @@ void World::DestroyActors()
     while (!pending_destroy_actors_.empty())
     {
         std::shared_ptr<Actor> actor = pending_destroy_actors_.front();
-        actor->Destroyed();
+        actor->EndPlay(EndPlayReason::kDestroyed);
         
         std::erase(current_level_->actors_, actor);
         pending_destroy_actors_.pop();
