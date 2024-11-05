@@ -83,9 +83,12 @@ void Editor::Tick(float delta_time)
 
         if (ImGui::Button("Save Meta Data"))
         {
-            std::wofstream file(file_path_ + L".yaml");
-            YAML::Emitter emitter;
-            emitter << YAML::BeginMap;
+            if (file_path_.empty()) ImGui::OpenPopup("Fail");
+            else
+            {
+                std::wofstream file(file_path_ + L".yaml");
+                YAML::Emitter emitter;
+                emitter << YAML::BeginMap;
                 emitter << YAML::Key << "wrap_mode";
                 emitter << YAML::Value << current_wrap_mode;
                 emitter << YAML::Key << "filter_mode";
@@ -97,19 +100,40 @@ void Editor::Tick(float delta_time)
                 emitter << YAML::Key << "border";
                 emitter << YAML::Value;
                 emitter << YAML::BeginMap;
-                    emitter << YAML::Key << "l";
-                    emitter << YAML::Value << left_border;
-                    emitter << YAML::Key << "r";
-                    emitter << YAML::Value << right_border;
-                    emitter << YAML::Key << "t";
-                    emitter << YAML::Value << top_border;
-                    emitter << YAML::Key << "b";
-                    emitter << YAML::Value << bottom_border;
+                emitter << YAML::Key << "l";
+                emitter << YAML::Value << left_border;
+                emitter << YAML::Key << "r";
+                emitter << YAML::Value << right_border;
+                emitter << YAML::Key << "t";
+                emitter << YAML::Value << top_border;
+                emitter << YAML::Key << "b";
+                emitter << YAML::Value << bottom_border;
                 emitter << YAML::EndMap;
-            emitter << YAML::EndMap;
+                emitter << YAML::EndMap;
 
-            file << emitter.c_str();
-            file.close();
+                file << emitter.c_str();
+                file.close();
+
+                ImGui::OpenPopup("Success");
+            }
+        }
+        
+        if (ImGui::BeginPopupModal("Success", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+        {
+            ImGui::Text("Meta Data file saved successfully!");
+            ImGui::Separator();
+
+            if (ImGui::Button("OK", {60.f, 0.f})) ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+        }
+
+        if (ImGui::BeginPopupModal("Fail", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+        {
+            ImGui::Text("Failed to save Meta Data file!");
+            ImGui::Separator();
+
+            if (ImGui::Button("OK", {60.f, 0.f})) ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
         }
 
         ImGui::Combo("Wrap Mode", &current_wrap_mode, wrap_items, IM_ARRAYSIZE(wrap_items));
