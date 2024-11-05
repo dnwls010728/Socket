@@ -53,9 +53,37 @@ void Editor::Tick(float delta_time)
             }
         }
 
+        static float left_border = 0.f;
+        static float right_border = 0.f;
+        static float top_border = 0.f;
+        static float bottom_border = 0.f;
+
+        ImGui::SetNextItemWidth(100.f);
+        ImGui::InputFloat("Left Border", &left_border);
+        
+        ImGui::SameLine();
+        
+        ImGui::SetNextItemWidth(100.f);
+        ImGui::InputFloat("Right Border", &right_border);
+        
+        ImGui::SetNextItemWidth(100.f);
+        ImGui::InputFloat("Top Border", &top_border);
+        
+        ImGui::SameLine();
+        
+        ImGui::SetNextItemWidth(100.f);
+        ImGui::InputFloat("Bottom Border", &bottom_border);
+
         if (loaded_texture_)
         {
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {static_cast<float>(loaded_texture_->GetWidth()), static_cast<float>(loaded_texture_->GetHeight())});
+            ImVec2 image_position = ImGui::GetCursorScreenPos();
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {static_cast<float>(loaded_texture_->GetWidth()), static_cast<float>(loaded_texture_->GetHeight())}, {0.f, 0.f}, {1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {0.f, 1.f, 0.f, 1.f});
+            
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            draw_list->AddLine({image_position.x + left_border, image_position.y}, {image_position.x + left_border, image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 0, 0, 255));
+            draw_list->AddLine({image_position.x + loaded_texture_->GetWidth() - right_border, image_position.y}, {image_position.x + loaded_texture_->GetWidth() - right_border, image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 0, 0, 255));
+            draw_list->AddLine({image_position.x, image_position.y + top_border}, {image_position.x + loaded_texture_->GetWidth(), image_position.y + top_border}, IM_COL32(255, 0, 0, 255));
+            draw_list->AddLine({image_position.x, image_position.y + loaded_texture_->GetHeight() - bottom_border}, {image_position.x + loaded_texture_->GetWidth(), image_position.y + loaded_texture_->GetHeight() - bottom_border}, IM_COL32(255, 0, 0, 255));
         }
     }
 
