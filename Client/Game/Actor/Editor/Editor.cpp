@@ -34,6 +34,12 @@ void Editor::Tick(float delta_time)
     static float top_border = 0.f;
     static float bottom_border = 0.f;
 
+    ImGui::DockSpaceOverViewport(0);
+    if (ImGui::BeginMainMenuBar())
+    {
+        ImGui::EndMainMenuBar();
+    }
+
     if (ImGui::Begin("Texture Editor"))
     {
         if (ImGui::Button("Load Texture"))
@@ -127,7 +133,12 @@ void Editor::Tick(float delta_time)
         
         ImGui::SetNextItemWidth(100.f);
         ImGui::InputFloat("B", &bottom_border);
+    }
+    
+    ImGui::End();
 
+    if (ImGui::Begin("Texture"))
+    {
         if (loaded_texture_)
         {
             ImVec2 image_position = ImGui::GetCursorScreenPos();
