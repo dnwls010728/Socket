@@ -13,13 +13,21 @@ const Math::Vector2 Sprite::kBottomRight = Math::Vector2(0.f, 1.f);
 
 Sprite::Sprite() :
     frames_(),
-    ppu_(32.f)
+    ppu_(32)
 {
 }
 
 bool Sprite::Load(const std::wstring& kPath)
 {
     if (!Texture::Load(kPath)) return false;
+
+    if (!meta_data_.IsNull())
+    {
+        wrap_mode_ = static_cast<WrapMode>(meta_data_["wrap_mode"].as<Type::uint8>());
+        filter_mode_ = static_cast<FilterMode>(meta_data_["filter_mode"].as<Type::uint8>());
+        ppu_ = meta_data_["ppu"].as<Type::uint32>();
+    }
+    
     frames_.clear();
 
     SpriteFrame frame;

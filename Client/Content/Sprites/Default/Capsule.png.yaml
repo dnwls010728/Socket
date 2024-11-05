@@ -1,0 +1,9 @@
+wrap_mode: 1
+filter_mode: 1
+sprite_mode: 0
+ppu: 256
+border:
+  l: 0
+  r: 0
+  t: 0
+  b: 0

@@ -27,6 +27,7 @@ void Editor::Tick(float delta_time)
     static int current_wrap_mode = 0;
     static int current_filter_mode = 0;
     static int current_sprite_mode = 0;
+    static int ppu = 100;
     
     static float left_border = 0.f;
     static float right_border = 0.f;
@@ -85,6 +86,8 @@ void Editor::Tick(float delta_time)
                 emitter << YAML::Value << current_filter_mode;
                 emitter << YAML::Key << "sprite_mode";
                 emitter << YAML::Value << current_sprite_mode;
+                emitter << YAML::Key << "ppu";
+                emitter << YAML::Value << ppu;
                 emitter << YAML::Key << "border";
                 emitter << YAML::Value;
                 emitter << YAML::BeginMap;
@@ -106,6 +109,8 @@ void Editor::Tick(float delta_time)
         ImGui::Combo("Wrap Mode", &current_wrap_mode, wrap_items, IM_ARRAYSIZE(wrap_items));
         ImGui::Combo("Filter Mode", &current_filter_mode, filter_items, IM_ARRAYSIZE(filter_items));
         ImGui::Combo("Sprite Mode", &current_sprite_mode, sprite_items, IM_ARRAYSIZE(sprite_items));
+
+        ImGui::InputInt("PPU", &ppu);
 
         ImGui::SetNextItemWidth(100.f);
         ImGui::InputFloat("L", &left_border);

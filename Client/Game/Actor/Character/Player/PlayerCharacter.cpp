@@ -13,7 +13,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
 {
     sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Capsule.png");
-    sprite_->SetPPU(256);
     sprite_->Split(1, 1, Sprite::kBottom);
 
     renderer_->SetSprite(sprite_);
