@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Windows/DX/Texture.h"
 
 class Editor : public Actor
 {
@@ -12,5 +13,8 @@ public:
 
 protected:
     virtual void Tick(float delta_time) override;
+
+private:
+    std::unique_ptr<Texture> loaded_texture_;
     
 };
