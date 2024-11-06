@@ -9,12 +9,6 @@ struct SpriteFrame
     Math::Vector2 pivot;
 };
 
-enum class SpriteMode : Type::uint8
-{
-    kSingle,
-    kMultiple
-};
-
 class Sprite : public Texture
 {
     GENERATED_BODY(Sprite, Texture)
@@ -46,7 +40,5 @@ private:
     std::vector<SpriteFrame> frames_;
 
     Type::uint32 ppu_;
-
-    SpriteMode sprite_mode_;
     
 };

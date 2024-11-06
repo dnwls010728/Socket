@@ -12,7 +12,8 @@
 Editor::Editor(const std::wstring& kName) :
     Actor(kName),
     file_path_(L""),
-    loaded_texture_(nullptr)
+    loaded_texture_(nullptr),
+    frames_()
 {
 }
 
@@ -22,17 +23,10 @@ void Editor::Tick(float delta_time)
     
     const char* wrap_items[] = { "Reapet", "Clamp" };
     const char* filter_items[] = { "Point", "Bilinear" };
-    const char* sprite_items[] = { "Single", "Multiple" };
     
     static int current_wrap_mode = 0;
     static int current_filter_mode = 0;
-    static int current_sprite_mode = 0;
     static int ppu = 100;
-    
-    static float left_border = 0.f;
-    static float right_border = 0.f;
-    static float top_border = 0.f;
-    static float bottom_border = 0.f;
 
     ImGui::DockSpaceOverViewport(0);
     if (ImGui::BeginMainMenuBar())
@@ -83,80 +77,27 @@ void Editor::Tick(float delta_time)
 
         if (ImGui::Button("Save Meta Data"))
         {
-            if (file_path_.empty()) ImGui::OpenPopup("Fail");
-            else
-            {
-                std::wofstream file(file_path_ + L".yaml");
-                YAML::Emitter emitter;
-                emitter << YAML::BeginMap;
-                emitter << YAML::Key << "wrap_mode";
-                emitter << YAML::Value << current_wrap_mode;
-                emitter << YAML::Key << "filter_mode";
-                emitter << YAML::Value << current_filter_mode;
-                emitter << YAML::Key << "sprite_mode";
-                emitter << YAML::Value << current_sprite_mode;
-                emitter << YAML::Key << "ppu";
-                emitter << YAML::Value << ppu;
-                emitter << YAML::Key << "border";
-                emitter << YAML::Value;
-                emitter << YAML::BeginMap;
-                emitter << YAML::Key << "l";
-                emitter << YAML::Value << left_border;
-                emitter << YAML::Key << "r";
-                emitter << YAML::Value << right_border;
-                emitter << YAML::Key << "t";
-                emitter << YAML::Value << top_border;
-                emitter << YAML::Key << "b";
-                emitter << YAML::Value << bottom_border;
-                emitter << YAML::EndMap;
-                emitter << YAML::EndMap;
+            std::wofstream file(file_path_ + L".yaml");
+            YAML::Emitter emitter;
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "wrap_mode";
+            emitter << YAML::Value << current_wrap_mode;
+            emitter << YAML::Key << "filter_mode";
+            emitter << YAML::Value << current_filter_mode;
+            emitter << YAML::Key << "ppu";
+            emitter << YAML::Value << ppu;
+            emitter << YAML::Key << "frames";
+            emitter << YAML::Value;
+            emitter << YAML::EndMap;
 
-                file << emitter.c_str();
-                file.close();
-
-                ImGui::OpenPopup("Success");
-            }
-        }
-        
-        if (ImGui::BeginPopupModal("Success", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
-        {
-            ImGui::Text("Meta Data file saved successfully!");
-            ImGui::Separator();
-
-            if (ImGui::Button("OK", {60.f, 0.f})) ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-        }
-
-        if (ImGui::BeginPopupModal("Fail", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
-        {
-            ImGui::Text("Failed to save Meta Data file!");
-            ImGui::Separator();
-
-            if (ImGui::Button("OK", {60.f, 0.f})) ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
+            file << emitter.c_str();
+            file.close();
         }
 
         ImGui::Combo("Wrap Mode", &current_wrap_mode, wrap_items, IM_ARRAYSIZE(wrap_items));
         ImGui::Combo("Filter Mode", &current_filter_mode, filter_items, IM_ARRAYSIZE(filter_items));
-        ImGui::Combo("Sprite Mode", &current_sprite_mode, sprite_items, IM_ARRAYSIZE(sprite_items));
 
         ImGui::InputInt("PPU", &ppu);
-
-        ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("L", &left_border);
-        
-        ImGui::SameLine();
-        
-        ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("R", &right_border);
-        
-        ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("T", &top_border);
-        
-        ImGui::SameLine();
-        
-        ImGui::SetNextItemWidth(100.f);
-        ImGui::InputFloat("B", &bottom_border);
     }
     
     ImGui::End();
@@ -169,10 +110,6 @@ void Editor::Tick(float delta_time)
             ImGui::Image(loaded_texture_->resource_view_.Get(), {static_cast<float>(loaded_texture_->GetWidth()), static_cast<float>(loaded_texture_->GetHeight())}, {0.f, 0.f}, {1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {0.f, 1.f, 0.f, 1.f});
             
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            draw_list->AddLine({image_position.x + left_border, image_position.y}, {image_position.x + left_border, image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 0, 0, 255));
-            draw_list->AddLine({image_position.x + loaded_texture_->GetWidth() - right_border, image_position.y}, {image_position.x + loaded_texture_->GetWidth() - right_border, image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 0, 0, 255));
-            draw_list->AddLine({image_position.x, image_position.y + top_border}, {image_position.x + loaded_texture_->GetWidth(), image_position.y + top_border}, IM_COL32(255, 0, 0, 255));
-            draw_list->AddLine({image_position.x, image_position.y + loaded_texture_->GetHeight() - bottom_border}, {image_position.x + loaded_texture_->GetWidth(), image_position.y + loaded_texture_->GetHeight() - bottom_border}, IM_COL32(255, 0, 0, 255));
         }
     }
 
