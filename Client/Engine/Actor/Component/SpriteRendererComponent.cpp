@@ -75,8 +75,8 @@ void SpriteRendererComponent::Render(float alpha)
     shape_->SetPosition(transform->GetPosition());
     shape_->SetRotation(transform->GetAngle());
     shape_->SetScale({width * flip_x, height * flip_y});
-    shape_->SetUVOffset(current_frame.uv_offset);
-    shape_->SetUVScale(current_frame.uv_scale);
+    // shape_->SetUVOffset(current_frame.uv_offset);
+    // shape_->SetUVScale(current_frame.uv_scale);
     shape_->SetColor(color_);
     shape_->SetPivot({pivot_x, pivot_y});
 }

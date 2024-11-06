@@ -17,7 +17,10 @@ protected:
 private:
     struct FrameData
     {
-        std::wstring name;
+        float x;
+        float y;
+        float width;
+        float height;
     };
     
     std::wstring OpenFile();

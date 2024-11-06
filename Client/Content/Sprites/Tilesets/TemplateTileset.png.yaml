@@ -1,4 +1,16 @@
-wrap_mode: 1
+wrap_mode: 0
 filter_mode: 0
-ppu: 32
-frames
+ppu: 100
+frames:
+  - x: 0.580357134
+    y: 0.74609375
+    width: 0.272321433
+    height: 0.25
+  - x: 0.138392851
+    y: 0.12109375
+    width: 0.147321433
+    height: 0.12890625
+  - x: 0.151785716
+    y: 0.7421875
+    width: 0.129464284
+    height: 0.140625
