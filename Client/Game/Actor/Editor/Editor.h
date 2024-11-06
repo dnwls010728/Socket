@@ -21,6 +21,8 @@ private:
         float y;
         float width;
         float height;
+        float pivot_x;
+        float pivot_y;
     };
     
     std::wstring OpenFile();

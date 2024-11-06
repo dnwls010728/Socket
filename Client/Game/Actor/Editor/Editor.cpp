@@ -23,10 +23,14 @@ void Editor::Tick(float delta_time)
     
     const char* wrap_items[] = { "Reapet", "Clamp" };
     const char* filter_items[] = { "Point", "Bilinear" };
+    const char* pivot_items[] = { "Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right" };
     
     static int current_wrap_mode = 0;
     static int current_filter_mode = 0;
+    static int current_pivot = 0;
     static int ppu = 100;
+    static int col = 0;
+    static int row = 0;
 
     ImGui::DockSpaceOverViewport(0);
     if (ImGui::BeginMainMenuBar())
@@ -95,16 +99,28 @@ void Editor::Tick(float delta_time)
             for (const auto& frame : frames_)
             {
                 emitter << YAML::BeginMap;
-                emitter << YAML::Key << "index";
-                emitter << YAML::Value << index++;
-                emitter << YAML::Key << "x";
-                emitter << YAML::Value << frame.x / loaded_texture_->GetWidth();
-                emitter << YAML::Key << "y";
-                emitter << YAML::Value << frame.y / loaded_texture_->GetHeight();
-                emitter << YAML::Key << "width";
-                emitter << YAML::Value << frame.width / loaded_texture_->GetWidth();
-                emitter << YAML::Key << "height";
-                emitter << YAML::Value << frame.height / loaded_texture_->GetHeight();
+                    emitter << YAML::Key << "index";
+                    emitter << YAML::Value << index++;
+                    emitter << YAML::Key << "rect";
+                    emitter << YAML::Value;
+                    emitter << YAML::BeginMap;
+                        emitter << YAML::Key << "x";
+                        emitter << YAML::Value << frame.x / loaded_texture_->GetWidth();
+                        emitter << YAML::Key << "y";
+                        emitter << YAML::Value << frame.y / loaded_texture_->GetHeight();
+                        emitter << YAML::Key << "width";
+                        emitter << YAML::Value << frame.width / loaded_texture_->GetWidth();
+                        emitter << YAML::Key << "height";
+                        emitter << YAML::Value << frame.height / loaded_texture_->GetHeight();
+                    emitter << YAML::EndMap;
+                    emitter << YAML::Key << "pivot";
+                    emitter << YAML::Value;
+                    emitter << YAML::BeginMap;
+                        emitter << YAML::Key << "x";
+                        emitter << YAML::Value << frame.pivot_x;
+                        emitter << YAML::Key << "y";
+                        emitter << YAML::Value << frame.pivot_y;
+                    emitter << YAML::EndMap;
                 emitter << YAML::EndMap;
             }
 
@@ -120,20 +136,41 @@ void Editor::Tick(float delta_time)
 
         ImGui::InputInt("PPU", &ppu);
 
-        if (ImGui::Button("Add Frame"))
+        ImGui::Separator();
+
+        ImGui::InputInt("Col", &col);
+        ImGui::InputInt("Row", &row);
+
+        ImGui::Combo("Pivot", &current_pivot, pivot_items, IM_ARRAYSIZE(pivot_items));
+
+        if (ImGui::Button("Slice"))
         {
-            FrameData frame_data;
-            
-            frames_.push_back(frame_data);
+            int texture_width = loaded_texture_->GetWidth();
+            int texture_height = loaded_texture_->GetHeight();
+            int frame_width = texture_width / col;
+            int frame_height = texture_height / row;
+
+            frames_.clear();
+
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    FrameData frame;
+                    frame.x = j * frame_width;
+                    frame.y = i * frame_height;
+                    frame.width = frame_width;
+                    frame.height = frame_height;
+                    frame.pivot_x = 0.f;
+                    frame.pivot_y = 0.f;
+
+                    frames_.push_back(frame);
+                }
+            }
         }
     }
     
     ImGui::End();
-
-    static ImVec2 start_position;
-    static ImVec2 end_position;
-
-    static bool is_dragging = false;
 
     if (ImGui::Begin("Texture"))
     {
@@ -143,42 +180,11 @@ void Editor::Tick(float delta_time)
             ImGui::Image(loaded_texture_->resource_view_.Get(), {static_cast<float>(loaded_texture_->GetWidth()), static_cast<float>(loaded_texture_->GetHeight())}, {0.f, 0.f}, {1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {0.f, 1.f, 0.f, 1.f});
             
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-            if (ImGui::IsItemHovered())
-            {
-                if (ImGui::IsMouseClicked(0))
-                {
-                    start_position.x = ImGui::GetMousePos().x - image_position.x;
-                    start_position.y = ImGui::GetMousePos().y - image_position.y;
-
-                    is_dragging = true;
-                }
-
-                if (is_dragging)
-                {
-                    end_position.x = ImGui::GetMousePos().x - image_position.x;
-                    end_position.y = ImGui::GetMousePos().y - image_position.y;
-
-                    draw_list->AddRect({start_position.x + image_position.x, start_position.y + image_position.y}, {end_position.x + image_position.x, end_position.y + image_position.y}, IM_COL32(0, 255, 0, 255));
-                }
-
-                if (ImGui::IsMouseReleased(0))
-                {
-                    is_dragging = false;
-
-                    FrameData frame_data;
-                    frame_data.x = start_position.x;
-                    frame_data.y = start_position.y;
-                    frame_data.width = end_position.x - start_position.x;
-                    frame_data.height = end_position.y - start_position.y;
-
-                    frames_.push_back(frame_data);
-                }
-            }
-
             for (const auto& frame : frames_)
             {
-                draw_list->AddRect({image_position.x + frame.x, image_position.y + frame.y}, {image_position.x + frame.x + frame.width, image_position.y + frame.y + frame.height}, IM_COL32(0, 255, 0, 255));
+                ImVec2 min = {image_position.x + frame.x, image_position.y + frame.y};
+                ImVec2 max = {image_position.x + frame.x + frame.width, image_position.y + frame.y + frame.height};
+                draw_list->AddRect(min, max, IM_COL32(255, 0, 0, 255));
             }
         }
     }
