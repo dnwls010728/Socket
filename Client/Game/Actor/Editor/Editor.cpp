@@ -21,9 +21,9 @@ void Editor::Tick(float delta_time)
 {
     Actor::Tick(delta_time);
     
-    const char* wrap_items[] = { "Reapet", "Clamp" };
-    const char* filter_items[] = { "Point", "Bilinear" };
-    const char* pivot_items[] = { "Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right" };
+    static const char* wrap_items[] = { "Reapet", "Clamp" };
+    static const char* filter_items[] = { "Point", "Bilinear" };
+    static const char* pivot_items[] = { "Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right" };
     
     static int current_wrap_mode = 0;
     static int current_filter_mode = 0;
