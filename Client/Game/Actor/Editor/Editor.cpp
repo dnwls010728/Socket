@@ -20,6 +20,7 @@ Editor::Editor(const std::wstring& kName) :
     pivot_y_(.5f),
     file_path_(L""),
     loaded_texture_(nullptr),
+    frame_names_(),
     frames_()
 {
 }
@@ -148,6 +149,11 @@ void Editor::OpenTextureSettings(bool* is_open)
     ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
     ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
     ImGui::InputInt("PPU", &ppu_);
+
+    static int selected_frame_ = 0;
+
+    ImGui::ListBox("Frames", &selected_frame_, frame_names_.data(), frame_names_.size());
+    
     if (ImGui::Button("Texture Editor"))
     {
         show_texture_editor_ = true;
@@ -259,6 +265,12 @@ void Editor::OpenTextureEditor(bool* is_open)
 
                 frames_.push_back(frame);
             }
+        }
+
+        frame_names_.clear();
+        for (int i = 0; i < frames_.size(); ++i)
+        {
+            frame_names_.push_back(std::to_string(i).c_str());
         }
     }
 

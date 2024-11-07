@@ -42,6 +42,7 @@ private:
     
     std::unique_ptr<Texture> loaded_texture_;
 
+    std::vector<const char*> frame_names_;
     std::vector<FrameData> frames_;
     
 };
