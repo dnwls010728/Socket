@@ -17,6 +17,8 @@ protected:
 private:
     struct FrameData
     {
+        std::string name;
+        
         float x;
         float y;
         float width;

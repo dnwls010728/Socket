@@ -163,9 +163,11 @@ void Editor::OpenTextureSettings(bool* is_open)
     ImGui::Text("Preview");
     if (ImGui::BeginChild("Preview", {200.f, 200.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
     {
-        if (loaded_texture_)
+        if (loaded_texture_ && !frames_.empty())
         {
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0.f, 1.f}, {1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
+            ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
+            ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, uv0, uv1, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
         }
     }
 
@@ -251,11 +253,14 @@ void Editor::OpenTextureEditor(bool* is_open)
         float tile_size_y = height / grid[1];
 
         frames_.clear();
+        int index = 0;
+        
         for (int y = 0; y < grid[1]; ++y)
         {
             for (int x = 0; x < grid[0]; ++x)
             {
                 FrameData frame;
+                frame.name = std::to_string(index++);
                 frame.x = (x * tile_size_x) / width;
                 frame.y = (y * tile_size_y) / height;
                 frame.width = tile_size_x / width;
@@ -268,9 +273,9 @@ void Editor::OpenTextureEditor(bool* is_open)
         }
 
         frame_names_.clear();
-        for (int i = 0; i < frames_.size(); ++i)
+        for (const FrameData& frame : frames_)
         {
-            frame_names_.push_back(std::to_string(i).c_str());
+            frame_names_.push_back(frame.name.c_str());
         }
     }
 
