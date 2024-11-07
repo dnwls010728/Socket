@@ -279,6 +279,14 @@ void Editor::OpenTextureEditor(bool* is_open)
 
             draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
         }
+        
+        for (const FrameData& frame : frames_)
+        {
+            ImVec2 min = {image_position.x + frame.x * loaded_texture_->GetWidth(), image_position.y + frame.y * loaded_texture_->GetHeight()};
+            ImVec2 max = {min.x + frame.width * loaded_texture_->GetWidth(), min.y + frame.height * loaded_texture_->GetHeight()};
+
+            draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
+        }
     }
 
     ImGui::End();
