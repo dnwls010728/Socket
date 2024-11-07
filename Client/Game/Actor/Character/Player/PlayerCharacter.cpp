@@ -12,11 +12,13 @@
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
 {
-    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Capsule.png");
-    sprite_->Split(1, 1, Sprite::kBottom);
+    // sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Capsule.png");
+    // sprite_->Split(1, 1, Sprite::kBottom);
+    
+    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Character\\PlayerSheet.png");
 
     renderer_->SetSprite(sprite_);
-    renderer_->SetColor(Math::Color::Black);
+    // renderer_->SetColor(Math::Color::Black);
 
     collider_->SetOffset({0.f, 1.f});
     

@@ -41,7 +41,6 @@ protected:
 
 private:
     friend class AnimatorComponent;
-    friend class PlayerCharacter; // UV 테스트
     
     std::shared_ptr<class Shape> shape_;
     Sprite* sprite_;

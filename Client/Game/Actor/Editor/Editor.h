@@ -34,6 +34,9 @@ private:
     int wrap_mode_;
     int filter_mode_;
     int ppu_;
+
+    float pivot_x_;
+    float pivot_y_;
     
     std::wstring file_path_;
     

@@ -16,6 +16,8 @@ Editor::Editor(const std::wstring& kName) :
     wrap_mode_(0),
     filter_mode_(0),
     ppu_(256),
+    pivot_x_(.5f),
+    pivot_y_(.5f),
     file_path_(L""),
     loaded_texture_(nullptr),
     frames_()
@@ -109,28 +111,28 @@ void Editor::OpenTextureSettings(bool* is_open)
             emitter << YAML::Key << "frames";
             emitter << YAML::Value << YAML::BeginSeq;
 
-            for (int i = 0; i < 5; ++i)
+            for (const FrameData& frame : frames_)
             {
                 emitter << YAML::BeginMap;
                     emitter << YAML::Key << "rect";
                     emitter << YAML::Value;
                     emitter << YAML::BeginMap;
                         emitter << YAML::Key << "x";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.x;
                         emitter << YAML::Key << "y";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.y;
                         emitter << YAML::Key << "width";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.width;
                         emitter << YAML::Key << "height";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.height;
                     emitter << YAML::EndMap;
                     emitter << YAML::Key << "pivot";
                     emitter << YAML::Value;
                     emitter << YAML::BeginMap;
                         emitter << YAML::Key << "x";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.pivot_x;
                         emitter << YAML::Key << "y";
-                        emitter << YAML::Value << 0;
+                        emitter << YAML::Value << frame.pivot_y;
                     emitter << YAML::EndMap;
                 emitter << YAML::EndMap;
             }
@@ -175,11 +177,89 @@ void Editor::OpenTextureEditor(bool* is_open)
 
     static int grid[2];
 
+    static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right"};
+
+    static int selected_pivot_mode = 0;
+
     ImGui::Text("Auto Slice");
     ImGui::InputInt2("Grid", grid);
-    ImGui::SameLine();
+
+    if (ImGui::Combo("Pivot", &selected_pivot_mode, pivot_modes, IM_ARRAYSIZE(pivot_modes)))
+    {
+        if (selected_pivot_mode == 0)
+        {
+            pivot_x_ = .5f;
+            pivot_y_ = .5f;
+        }
+        else if (selected_pivot_mode == 1)
+        {
+            pivot_x_ = 0.f;
+            pivot_y_ = 1.f;
+        }
+        else if (selected_pivot_mode == 2)
+        {
+            pivot_x_ = .5f;
+            pivot_y_ = 1.f;
+        }
+        else if (selected_pivot_mode == 3)
+        {
+            pivot_x_ = 1.f;
+            pivot_y_ = 1.f;
+        }
+        else if (selected_pivot_mode == 4)
+        {
+            pivot_x_ = 0.f;
+            pivot_y_ = .5f;
+        }
+        else if (selected_pivot_mode == 5)
+        {
+            pivot_x_ = 1.f;
+            pivot_y_ = .5f;
+        }
+        else if (selected_pivot_mode == 6)
+        {
+            pivot_x_ = 0.f;
+            pivot_y_ = 0.f;
+        }
+        else if (selected_pivot_mode == 7)
+        {
+            pivot_x_ = .5f;
+            pivot_y_ = 0.f;
+        }
+        else if (selected_pivot_mode == 8)
+        {
+            pivot_x_ = 1.f;
+            pivot_y_ = 0.f;
+        }
+    }
+
+    ImGui::Text("Pivot X: %.1f", pivot_x_);
+    ImGui::Text("Pivot Y: %.1f", pivot_y_);
+    
     if (ImGui::Button("Slice"))
     {
+        int width = loaded_texture_->GetWidth();
+        int height = loaded_texture_->GetHeight();
+        
+        float tile_size_x = width / grid[0];
+        float tile_size_y = height / grid[1];
+
+        frames_.clear();
+        for (int y = 0; y < grid[1]; ++y)
+        {
+            for (int x = 0; x < grid[0]; ++x)
+            {
+                FrameData frame;
+                frame.x = (x * tile_size_x) / width;
+                frame.y = (y * tile_size_y) / height;
+                frame.width = tile_size_x / width;
+                frame.height = tile_size_y / height;
+                frame.pivot_x = pivot_x_;
+                frame.pivot_y = pivot_y_;
+
+                frames_.push_back(frame);
+            }
+        }
     }
 
     ImGui::Separator();
@@ -187,7 +267,18 @@ void Editor::OpenTextureEditor(bool* is_open)
     if (loaded_texture_)
     {
         ImVec2 image_position = ImGui::GetCursorScreenPos();
-        ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0.f, 1.f}, {1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
+        ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f});
+
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        draw_list->AddRect(image_position, {image_position.x + loaded_texture_->GetWidth(), image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 255, 255, 255));
+        
+        for (const FrameData& frame : frames_)
+        {
+            ImVec2 min = {image_position.x + frame.x * loaded_texture_->GetWidth(), image_position.y + frame.y * loaded_texture_->GetHeight()};
+            ImVec2 max = {min.x + frame.width * loaded_texture_->GetWidth(), min.y + frame.height * loaded_texture_->GetHeight()};
+
+            draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
+        }
     }
 
     ImGui::End();
