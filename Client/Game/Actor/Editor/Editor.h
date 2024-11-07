@@ -26,11 +26,14 @@ private:
     };
 
     void OpenTextureSettings(bool* is_open);
+    void OpenTextureEditor(bool* is_open);
 
-    bool show_texture_settings_ = false;
+    bool show_texture_settings_;
+    bool show_texture_editor_;
 
-    int wrap_mode_ = 0;
-    int filter_mode_ = 0;
+    int wrap_mode_;
+    int filter_mode_;
+    int ppu_;
     
     std::wstring file_path_;
     

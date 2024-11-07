@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Editor.h"
 
-#include <complex.h>
 #include <fstream>
 #include <ShObjIdl.h>
 
@@ -12,9 +11,11 @@
 
 Editor::Editor(const std::wstring& kName) :
     Actor(kName),
-    show_texture_settings_(false),
+    show_texture_settings_(true),
+    show_texture_editor_(false),
     wrap_mode_(0),
     filter_mode_(0),
+    ppu_(256),
     file_path_(L""),
     loaded_texture_(nullptr),
     frames_()
@@ -39,6 +40,7 @@ void Editor::Tick(float delta_time)
     }
 
     if (show_texture_settings_) OpenTextureSettings(&show_texture_settings_);
+    if (show_texture_editor_) OpenTextureEditor(&show_texture_editor_);
 }
 
 void Editor::OpenTextureSettings(bool* is_open)
@@ -100,11 +102,11 @@ void Editor::OpenTextureSettings(bool* is_open)
 
         emitter << YAML::BeginMap;
             emitter << YAML::Key << "wrap_mode";
-            emitter << YAML::Value << 0;
+            emitter << YAML::Value << wrap_mode_;
             emitter << YAML::Key << "filter_mode";
-            emitter << YAML::Value << 0;
+            emitter << YAML::Value << filter_mode_;
             emitter << YAML::Key << "ppu";
-            emitter << YAML::Value << 256;
+            emitter << YAML::Value << ppu_;
             emitter << YAML::Key << "frames";
             emitter << YAML::Value << YAML::BeginSeq;
 
@@ -146,8 +148,11 @@ void Editor::OpenTextureSettings(bool* is_open)
     ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
     ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
 
+    ImGui::InputInt("PPU", &ppu_);
+
     if (ImGui::Button("Texture Editor"))
     {
+        show_texture_editor_ = true;
     }
     
     ImGui::Separator();
@@ -158,12 +163,28 @@ void Editor::OpenTextureSettings(bool* is_open)
     {
         if (loaded_texture_)
         {
-            ImVec2 image_position = ImGui::GetCursorScreenPos();
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0, 1}, {1, 0}, {1, 1, 1, 1}, {1, 1, 1, 1});
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0.f, 1.f}, {1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
         }
     }
 
     ImGui::EndChild();
+
+    ImGui::End();
+}
+
+void Editor::OpenTextureEditor(bool* is_open)
+{
+    if (!ImGui::Begin("Texture Editor", is_open))
+    {
+        ImGui::End();
+        return;
+    }
+    
+    if (loaded_texture_)
+    {
+        ImVec2 image_position = ImGui::GetCursorScreenPos();
+        ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0.f, 1.f}, {1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
+    }
 
     ImGui::End();
 }
