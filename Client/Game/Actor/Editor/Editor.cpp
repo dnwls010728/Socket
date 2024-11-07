@@ -92,7 +92,6 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::SameLine();
-
     if (ImGui::Button("Save Metadata"))
     {
         if (!loaded_texture_) return;
@@ -144,21 +143,16 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::Separator();
-
     ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
     ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
-
     ImGui::InputInt("PPU", &ppu_);
-
     if (ImGui::Button("Texture Editor"))
     {
         show_texture_editor_ = true;
     }
     
     ImGui::Separator();
-
     ImGui::Text("Preview");
-
     if (ImGui::BeginChild("Preview", {200.f, 200.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
     {
         if (loaded_texture_)
@@ -168,7 +162,6 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::EndChild();
-
     ImGui::End();
 }
 
@@ -179,6 +172,17 @@ void Editor::OpenTextureEditor(bool* is_open)
         ImGui::End();
         return;
     }
+
+    static int grid[2];
+
+    ImGui::Text("Auto Slice");
+    ImGui::InputInt2("Grid", grid);
+    ImGui::SameLine();
+    if (ImGui::Button("Slice"))
+    {
+    }
+
+    ImGui::Separator();
     
     if (loaded_texture_)
     {
