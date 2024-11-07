@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Editor.h"
 
+#include <complex.h>
 #include <fstream>
 #include <ShObjIdl.h>
 
@@ -11,6 +12,9 @@
 
 Editor::Editor(const std::wstring& kName) :
     Actor(kName),
+    show_texture_settings_(false),
+    wrap_mode_(0),
+    filter_mode_(0),
     file_path_(L""),
     loaded_texture_(nullptr),
     frames_()
@@ -20,177 +24,148 @@ Editor::Editor(const std::wstring& kName) :
 void Editor::Tick(float delta_time)
 {
     Actor::Tick(delta_time);
-    
-    static const char* wrap_items[] = { "Reapet", "Clamp" };
-    static const char* filter_items[] = { "Point", "Bilinear" };
-    static const char* pivot_items[] = { "Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right" };
-    
-    static int current_wrap_mode = 0;
-    static int current_filter_mode = 0;
-    static int current_pivot = 0;
-    static int ppu = 100;
-    static int col = 0;
-    static int row = 0;
 
     ImGui::DockSpaceOverViewport(0);
     if (ImGui::BeginMainMenuBar())
     {
+        if (ImGui::BeginMenu("View"))
+        {
+            ImGui::MenuItem("Texture Settings", nullptr, &show_texture_settings_);
+
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMainMenuBar();
     }
 
-    if (ImGui::Begin("Texture Editor"))
+    if (show_texture_settings_) OpenTextureSettings(&show_texture_settings_);
+}
+
+void Editor::OpenTextureSettings(bool* is_open)
+{
+    if (!ImGui::Begin("Texture Settings", is_open))
     {
-        if (ImGui::Button("Load Texture"))
+        ImGui::End();
+        return;
+    }
+
+    static const char* wrap_modes[] = {"Repeat", "Clamp"};
+    static const char* filter_modes[] = {"Point", "Bilinear"};
+
+    if (ImGui::Button("Open Texture"))
+    {
+        IFileOpenDialog* file_open;
+        HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&file_open));
+        if (SUCCEEDED(hr))
         {
-            IFileOpenDialog* file_open;
-            HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&file_open));
+            hr = file_open->Show(NULL);
             if (SUCCEEDED(hr))
             {
-                hr = file_open->Show(NULL);
+                IShellItem* item;
+                hr = file_open->GetResult(&item);
                 if (SUCCEEDED(hr))
                 {
-                    IShellItem* item;
-                    hr = file_open->GetResult(&item);
+                    PWSTR file_path;
+                    hr = item->GetDisplayName(SIGDN_FILESYSPATH, &file_path);
                     if (SUCCEEDED(hr))
                     {
-                        PWSTR file_path;
-                        hr = item->GetDisplayName(SIGDN_FILESYSPATH, &file_path);
-                        if (SUCCEEDED(hr))
-                        {
-                            file_path_ = file_path;
-                            
-                            if (loaded_texture_) loaded_texture_.reset();
-                            loaded_texture_ = std::make_unique<Texture>();
+                        file_path_ = file_path;
 
-                            if (loaded_texture_->Load(file_path_))
-                            {
-                            }
-                            
-                            CoTaskMemFree(file_path);
+                        if (loaded_texture_) loaded_texture_.reset();
+                        loaded_texture_ = std::make_unique<Texture>();
+
+                        if (!loaded_texture_->Load(file_path_))
+                        {
+                            loaded_texture_.reset();
+                            file_path_ = L"";
                         }
-                        
-                        item->Release();
+
+                        CoTaskMemFree(file_path);
                     }
+
+                    item->Release();
                 }
-                
-                file_open->Release();
             }
         }
+    }
 
-        ImGui::SameLine();
+    ImGui::SameLine();
 
-        if (ImGui::Button("Save Meta Data"))
-        {
-            std::wofstream file(file_path_ + L".yaml");
-            YAML::Emitter emitter;
+    if (ImGui::Button("Save Metadata"))
+    {
+        if (!loaded_texture_) return;
 
-            emitter << YAML::BeginMap;
+        std::wofstream file(file_path_ + L".yaml");
+        YAML::Emitter emitter;
+
+        emitter << YAML::BeginMap;
             emitter << YAML::Key << "wrap_mode";
-            emitter << YAML::Value << current_wrap_mode;
+            emitter << YAML::Value << 0;
             emitter << YAML::Key << "filter_mode";
-            emitter << YAML::Value << current_filter_mode;
+            emitter << YAML::Value << 0;
             emitter << YAML::Key << "ppu";
-            emitter << YAML::Value << ppu;
+            emitter << YAML::Value << 256;
             emitter << YAML::Key << "frames";
             emitter << YAML::Value << YAML::BeginSeq;
 
-            int index = 0;
-
-            for (const auto& frame : frames_)
+            for (int i = 0; i < 5; ++i)
             {
                 emitter << YAML::BeginMap;
-                    emitter << YAML::Key << "index";
-                    emitter << YAML::Value << index++;
                     emitter << YAML::Key << "rect";
                     emitter << YAML::Value;
                     emitter << YAML::BeginMap;
                         emitter << YAML::Key << "x";
-                        emitter << YAML::Value << frame.x / loaded_texture_->GetWidth();
+                        emitter << YAML::Value << 0;
                         emitter << YAML::Key << "y";
-                        emitter << YAML::Value << frame.y / loaded_texture_->GetHeight();
+                        emitter << YAML::Value << 0;
                         emitter << YAML::Key << "width";
-                        emitter << YAML::Value << frame.width / loaded_texture_->GetWidth();
+                        emitter << YAML::Value << 0;
                         emitter << YAML::Key << "height";
-                        emitter << YAML::Value << frame.height / loaded_texture_->GetHeight();
+                        emitter << YAML::Value << 0;
                     emitter << YAML::EndMap;
                     emitter << YAML::Key << "pivot";
                     emitter << YAML::Value;
                     emitter << YAML::BeginMap;
                         emitter << YAML::Key << "x";
-                        emitter << YAML::Value << frame.pivot_x;
+                        emitter << YAML::Value << 0;
                         emitter << YAML::Key << "y";
-                        emitter << YAML::Value << frame.pivot_y;
+                        emitter << YAML::Value << 0;
                     emitter << YAML::EndMap;
                 emitter << YAML::EndMap;
             }
 
             emitter << YAML::EndSeq;
-            emitter << YAML::EndMap;
+        emitter << YAML::EndMap;
 
-            file << emitter.c_str();
-            file.close();
-        }
+        file << emitter.c_str();
+        file.close();
+    }
 
-        ImGui::Combo("Wrap Mode", &current_wrap_mode, wrap_items, IM_ARRAYSIZE(wrap_items));
-        ImGui::Combo("Filter Mode", &current_filter_mode, filter_items, IM_ARRAYSIZE(filter_items));
+    ImGui::Separator();
 
-        ImGui::InputInt("PPU", &ppu);
+    ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
+    ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
 
-        ImGui::Separator();
-
-        ImGui::InputInt("Col", &col);
-        ImGui::InputInt("Row", &row);
-
-        ImGui::Combo("Pivot", &current_pivot, pivot_items, IM_ARRAYSIZE(pivot_items));
-
-        if (ImGui::Button("Slice"))
-        {
-            int texture_width = loaded_texture_->GetWidth();
-            int texture_height = loaded_texture_->GetHeight();
-            int frame_width = texture_width / col;
-            int frame_height = texture_height / row;
-
-            frames_.clear();
-
-            for (int i = 0; i < row; i++)
-            {
-                for (int j = 0; j < col; j++)
-                {
-                    FrameData frame;
-                    frame.x = j * frame_width;
-                    frame.y = i * frame_height;
-                    frame.width = frame_width;
-                    frame.height = frame_height;
-                    frame.pivot_x = 0.f;
-                    frame.pivot_y = 0.f;
-
-                    frames_.push_back(frame);
-                }
-            }
-        }
+    if (ImGui::Button("Texture Editor"))
+    {
     }
     
-    ImGui::End();
+    ImGui::Separator();
 
-    if (ImGui::Begin("Texture"))
+    ImGui::Text("Preview");
+
+    if (ImGui::BeginChild("Preview", {200.f, 200.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
     {
         if (loaded_texture_)
         {
             ImVec2 image_position = ImGui::GetCursorScreenPos();
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {static_cast<float>(loaded_texture_->GetWidth()), static_cast<float>(loaded_texture_->GetHeight())}, {0.f, 0.f}, {1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {0.f, 1.f, 0.f, 1.f});
-            
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            for (const auto& frame : frames_)
-            {
-                ImVec2 min = {image_position.x + frame.x, image_position.y + frame.y};
-                ImVec2 max = {image_position.x + frame.x + frame.width, image_position.y + frame.y + frame.height};
-                draw_list->AddRect(min, max, IM_COL32(255, 0, 0, 255));
-            }
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, {0, 1}, {1, 0}, {1, 1, 1, 1}, {1, 1, 1, 1});
         }
     }
 
+    ImGui::EndChild();
+
     ImGui::End();
-    
 }
 
 RTTR_REGISTRATION

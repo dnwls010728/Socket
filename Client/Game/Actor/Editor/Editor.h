@@ -24,8 +24,13 @@ private:
         float pivot_x;
         float pivot_y;
     };
-    
-    std::wstring OpenFile();
+
+    void OpenTextureSettings(bool* is_open);
+
+    bool show_texture_settings_ = false;
+
+    int wrap_mode_ = 0;
+    int filter_mode_ = 0;
     
     std::wstring file_path_;
     
