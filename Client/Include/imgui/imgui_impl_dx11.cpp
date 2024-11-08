@@ -358,7 +358,8 @@ static void ImGui_ImplDX11_CreateFontsTexture()
     {
         D3D11_SAMPLER_DESC desc;
         ZeroMemory(&desc, sizeof(desc));
-        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        // desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; // Pixel Art를 위해 변경
         desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
         desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
         desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -451,6 +452,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
 
     // Create the pixel shader
     {
+        // 감마 값 추가
         static const char* pixelShader =
             "struct PS_INPUT\
             {\
@@ -464,6 +466,8 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
             float4 main(PS_INPUT input) : SV_Target\
             {\
             float4 out_col = input.col * texture0.Sample(sampler0, input.uv); \
+            float gamma = 2.2f; \
+            out_col.rgb = pow(out_col.rgb, 1.0 / gamma); \
             return out_col; \
             }";
 

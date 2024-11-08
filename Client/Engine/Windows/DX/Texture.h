@@ -10,13 +10,13 @@
 #include "Misc/Type.h"
 #include "Resource/Resource.h"
 
-enum class WrapMode
+enum class WrapMode : Type::uint8
 {
     kReapet,
     kClamp
 };
 
-enum class FilterMode
+enum class FilterMode : Type::uint8
 {
     kPoint,
     kBilinear

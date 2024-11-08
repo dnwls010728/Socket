@@ -113,7 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Client\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Client\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;DirectXTK.lib;fmod_vc.lib;rttr_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;DirectXTK.lib;fmod_vc.lib;rttr_core.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,6 +159,7 @@
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\Data\CSVReader.h" />
+    <ClInclude Include="Engine\Data\FileHelper.h" />
     <ClInclude Include="Engine\Data\RegistryHelper.h" />
     <ClInclude Include="Engine\Data\StatInfo.h" />
     <ClInclude Include="Engine\DebugDrawHelper.h" />
@@ -414,6 +415,43 @@
     <ClInclude Include="Include\tmxlite\Tileset.hpp" />
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
+    <ClInclude Include="Include\yaml-cpp\anchor.h" />
+    <ClInclude Include="Include\yaml-cpp\binary.h" />
+    <ClInclude Include="Include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="Include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="Include\yaml-cpp\depthguard.h" />
+    <ClInclude Include="Include\yaml-cpp\dll.h" />
+    <ClInclude Include="Include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="Include\yaml-cpp\emitter.h" />
+    <ClInclude Include="Include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="Include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="Include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="Include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="Include\yaml-cpp\exceptions.h" />
+    <ClInclude Include="Include\yaml-cpp\mark.h" />
+    <ClInclude Include="Include\yaml-cpp\node\convert.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="Include\yaml-cpp\node\emit.h" />
+    <ClInclude Include="Include\yaml-cpp\node\impl.h" />
+    <ClInclude Include="Include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\node.h" />
+    <ClInclude Include="Include\yaml-cpp\node\parse.h" />
+    <ClInclude Include="Include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="Include\yaml-cpp\node\type.h" />
+    <ClInclude Include="Include\yaml-cpp\noexcept.h" />
+    <ClInclude Include="Include\yaml-cpp\null.h" />
+    <ClInclude Include="Include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="Include\yaml-cpp\parser.h" />
+    <ClInclude Include="Include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="Include\yaml-cpp\traits.h" />
+    <ClInclude Include="Include\yaml-cpp\yaml.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SocketCore\ServerPacketHandler.h" />
@@ -444,6 +482,7 @@
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Core.cpp" />
     <ClCompile Include="Engine\Data\CSVReader.cpp" />
+    <ClCompile Include="Engine\Data\FileHelper.cpp" />
     <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
     <ClCompile Include="Engine\Data\StatInfo.cpp" />
     <ClCompile Include="Engine\DebugDrawHelper.cpp" />
@@ -527,7 +566,7 @@
     <ClCompile Include="Include\rttr\policy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-</ClCompile>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -657,21 +696,17 @@
     <Content Include="Lib\box2d.lib" />
     <Content Include="Lib\Debug\box2dd.lib" />
     <Content Include="Lib\Debug\DirectXTK.lib" />
-    <Content Include="Lib\Debug\fmod.dll" />
-    <Content Include="Lib\Debug\fmodL.dll" />
     <Content Include="Lib\Debug\fmodL_vc.lib" />
     <Content Include="Lib\Debug\fmod_vc.lib" />
     <Content Include="Lib\Debug\libtmxlite-s-d.lib" />
-    <Content Include="Lib\Debug\rttr_core_d.dll" />
     <Content Include="Lib\Debug\rttr_core_d.lib" />
+    <Content Include="Lib\Debug\yaml-cppd.lib" />
     <Content Include="Lib\DirectXTK.lib" />
-    <Content Include="Lib\fmod.dll" />
-    <Content Include="Lib\fmodL.dll" />
     <Content Include="Lib\fmodL_vc.lib" />
     <Content Include="Lib\fmod_vc.lib" />
     <Content Include="Lib\libtmxlite-s.lib" />
-    <Content Include="Lib\rttr_core.dll" />
     <Content Include="Lib\rttr_core.lib" />
+    <Content Include="Lib\yaml-cpp.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

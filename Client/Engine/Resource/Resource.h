@@ -3,6 +3,7 @@
 
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
+#include "yaml-cpp/yaml.h"
 
 class Resource
 {
@@ -12,6 +13,9 @@ public:
     Resource();
     virtual ~Resource() = default;
 
-    virtual bool Load(const std::wstring& kPath) = 0;
+    virtual bool Load(const std::wstring& kPath);
+
+protected:
+    YAML::Node meta_data_;
     
 };

@@ -15,6 +15,8 @@ Audio::~Audio()
 
 bool Audio::Load(const std::wstring& kPath)
 {
+    Resource::Load(kPath);
+    
     const std::string kFinalPath(kPath.begin(), kPath.end());
 
     FMOD_RESULT result = FMOD_System_CreateSound(AudioManager::Get()->fmod_system_, kFinalPath.c_str(), FMOD_DEFAULT, nullptr, &sound_);

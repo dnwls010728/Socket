@@ -13,6 +13,8 @@ UITexture::UITexture() :
 
 bool UITexture::Load(const std::wstring& kPath)
 {
+    Resource::Load(kPath);
+    
     D2DViewport* d2d_viewport = Renderer::Get()->FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return false;
     
