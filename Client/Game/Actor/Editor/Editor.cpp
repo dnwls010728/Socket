@@ -16,11 +16,15 @@ Editor::Editor(const std::wstring& kName) :
     wrap_mode_(0),
     filter_mode_(0),
     ppu_(256),
-    pivot_x_(.5f),
-    pivot_y_(.5f),
+    selected_frame_(0),
+    left_(0.f),
+    top_(0.f),
+    right_(1.f),
+    bottom_(1.f),
+    pivot_x_(0.f),
+    pivot_y_(0.f),
     file_path_(L""),
     loaded_texture_(nullptr),
-    frame_names_(),
     frames_()
 {
 }
@@ -149,14 +153,36 @@ void Editor::OpenTextureSettings(bool* is_open)
     ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
     ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
     ImGui::InputInt("PPU", &ppu_);
-
-    static int selected_frame_ = 0;
-
-    ImGui::ListBox("Frames", &selected_frame_, frame_names_.data(), frame_names_.size());
     
     if (ImGui::Button("Texture Editor"))
     {
         show_texture_editor_ = true;
+    }
+
+    bool is_selection_changed = ImGui::ListBox("Frames", &selected_frame_, [](void* user_data, int index)
+    {
+        std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
+        return frames->at(index).name.c_str();
+    }, &frames_, frames_.size(), 4);
+
+    if (is_selection_changed)
+    {
+        FrameData& frame = frames_[selected_frame_];
+        left_ = frame.x;
+        top_ = frame.y;
+        right_ = frame.x + frame.width;
+        bottom_ = frame.y + frame.height;
+        pivot_x_ = frame.pivot_x;
+        pivot_y_ = frame.pivot_y;
+    }
+
+    if (ImGui::Button("Remove"))
+    {
+        if (!frames_.empty())
+        {
+            frames_.erase(frames_.begin() + selected_frame_);
+            if (selected_frame_ >= frames_.size()) selected_frame_ = frames_.size() - 1;
+        }
     }
     
     ImGui::Separator();
@@ -167,7 +193,11 @@ void Editor::OpenTextureSettings(bool* is_open)
         {
             ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
             ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f}, uv0, uv1, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f});
+
+            float width = loaded_texture_->GetWidth();
+            float height = loaded_texture_->GetHeight();
+
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
         }
     }
 
@@ -189,6 +219,9 @@ void Editor::OpenTextureEditor(bool* is_open)
 
     static int selected_pivot_mode = 0;
 
+    static float auto_pivot_x = .5f;
+    static float auto_pivot_y = .5f;
+
     ImGui::Text("Auto Slice");
     ImGui::InputInt2("Grid", grid);
 
@@ -196,53 +229,50 @@ void Editor::OpenTextureEditor(bool* is_open)
     {
         if (selected_pivot_mode == 0)
         {
-            pivot_x_ = .5f;
-            pivot_y_ = .5f;
+            auto_pivot_x = .5f;
+            auto_pivot_y = .5f;
         }
         else if (selected_pivot_mode == 1)
         {
-            pivot_x_ = 0.f;
-            pivot_y_ = 1.f;
+            auto_pivot_x = 0.f;
+            auto_pivot_y = 1.f;
         }
         else if (selected_pivot_mode == 2)
         {
-            pivot_x_ = .5f;
-            pivot_y_ = 1.f;
+            auto_pivot_x = .5f;
+            auto_pivot_y = 1.f;
         }
         else if (selected_pivot_mode == 3)
         {
-            pivot_x_ = 1.f;
-            pivot_y_ = 1.f;
+            auto_pivot_x = 1.f;
+            auto_pivot_y = 1.f;
         }
         else if (selected_pivot_mode == 4)
         {
-            pivot_x_ = 0.f;
-            pivot_y_ = .5f;
+            auto_pivot_x = 0.f;
+            auto_pivot_y = .5f;
         }
         else if (selected_pivot_mode == 5)
         {
-            pivot_x_ = 1.f;
-            pivot_y_ = .5f;
+            auto_pivot_x = 1.f;
+            auto_pivot_y = .5f;
         }
         else if (selected_pivot_mode == 6)
         {
-            pivot_x_ = 0.f;
-            pivot_y_ = 0.f;
+            auto_pivot_x = 0.f;
+            auto_pivot_y = 0.f;
         }
         else if (selected_pivot_mode == 7)
         {
-            pivot_x_ = .5f;
-            pivot_y_ = 0.f;
+            auto_pivot_x = .5f;
+            auto_pivot_y = 0.f;
         }
         else if (selected_pivot_mode == 8)
         {
-            pivot_x_ = 1.f;
-            pivot_y_ = 0.f;
+            auto_pivot_x = 1.f;
+            auto_pivot_y = 0.f;
         }
     }
-
-    ImGui::Text("Pivot X: %.1f", pivot_x_);
-    ImGui::Text("Pivot Y: %.1f", pivot_y_);
     
     if (ImGui::Button("Slice"))
     {
@@ -265,44 +295,101 @@ void Editor::OpenTextureEditor(bool* is_open)
                 frame.y = (y * tile_size_y) / height;
                 frame.width = tile_size_x / width;
                 frame.height = tile_size_y / height;
-                frame.pivot_x = pivot_x_;
-                frame.pivot_y = pivot_y_;
+                frame.pivot_x = auto_pivot_x;
+                frame.pivot_y = auto_pivot_y;
 
                 frames_.push_back(frame);
             }
         }
-
-        frame_names_.clear();
-        for (const FrameData& frame : frames_)
-        {
-            frame_names_.push_back(frame.name.c_str());
-        }
     }
 
+    ImGui::Separator();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("L", &left_))
+    {
+        frames_[selected_frame_].x = left_;
+        frames_[selected_frame_].width = right_ - left_;
+    }
+    
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("T", &top_))
+    {
+        frames_[selected_frame_].y = top_;
+        frames_[selected_frame_].height = bottom_ - top_;
+    }
+    
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("R", &right_))
+    {
+        frames_[selected_frame_].width = right_ - left_;
+    }
+    
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("B", &bottom_))
+    {
+        frames_[selected_frame_].height = bottom_ - top_;
+    }
+
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("PX", &pivot_x_))
+    {
+        frames_[selected_frame_].pivot_x = pivot_x_;
+    }
+
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(50.f);
+    if (ImGui::InputFloat("PY", &pivot_y_))
+    {
+        frames_[selected_frame_].pivot_y = pivot_y_;
+    }
+    
     ImGui::Separator();
     
     if (loaded_texture_)
     {
+        float width = loaded_texture_->GetWidth();
+        float height = loaded_texture_->GetHeight();
+        
         ImVec2 image_position = ImGui::GetCursorScreenPos();
-        ImGui::Image(loaded_texture_->resource_view_.Get(), {loaded_texture_->GetWidth() * 1.f, loaded_texture_->GetHeight() * 1.f});
+        ImGui::Image(loaded_texture_->resource_view_.Get(), {width * 1.f, height * 1.f});
 
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        draw_list->AddRect(image_position, {image_position.x + loaded_texture_->GetWidth(), image_position.y + loaded_texture_->GetHeight()}, IM_COL32(255, 255, 255, 255));
+        draw_list->AddRect(image_position, {image_position.x + width, image_position.y + height}, IM_COL32(255, 255, 255, 255));
         
         for (const FrameData& frame : frames_)
         {
-            ImVec2 min = {image_position.x + frame.x * loaded_texture_->GetWidth(), image_position.y + frame.y * loaded_texture_->GetHeight()};
-            ImVec2 max = {min.x + frame.width * loaded_texture_->GetWidth(), min.y + frame.height * loaded_texture_->GetHeight()};
+            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
 
             draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
         }
         
         for (const FrameData& frame : frames_)
         {
-            ImVec2 min = {image_position.x + frame.x * loaded_texture_->GetWidth(), image_position.y + frame.y * loaded_texture_->GetHeight()};
-            ImVec2 max = {min.x + frame.width * loaded_texture_->GetWidth(), min.y + frame.height * loaded_texture_->GetHeight()};
+            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
 
             draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
+        }
+
+        if (!frames_.empty())
+        {
+            ImVec2 min = {image_position.x + frames_[selected_frame_].x * width, image_position.y + frames_[selected_frame_].y * height};
+            ImVec2 max = {min.x + frames_[selected_frame_].width * width, min.y + frames_[selected_frame_].height * height};
+
+            draw_list->AddRect(min, max, IM_COL32(255, 255, 255, 255), 0.f, 15, 3.f);
+        }
+
+        if (ImGui::IsItemHovered())
+        {
+            ImVec2 mouse_position = ImGui::GetMousePos();
+            ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
+
+            ImGui::BeginTooltip();
+            ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
+            ImGui::EndTooltip();
         }
     }
 

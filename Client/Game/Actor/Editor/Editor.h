@@ -36,7 +36,12 @@ private:
     int wrap_mode_;
     int filter_mode_;
     int ppu_;
+    int selected_frame_;
 
+    float left_;
+    float top_;
+    float right_;
+    float bottom_;
     float pivot_x_;
     float pivot_y_;
     
@@ -44,7 +49,6 @@ private:
     
     std::unique_ptr<Texture> loaded_texture_;
 
-    std::vector<const char*> frame_names_;
     std::vector<FrameData> frames_;
     
 };
