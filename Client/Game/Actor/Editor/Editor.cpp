@@ -13,8 +13,8 @@ Editor::Editor(const std::wstring& kName) :
     Actor(kName),
     show_texture_settings_(true),
     show_texture_editor_(false),
-    wrap_mode_(0),
-    filter_mode_(0),
+    selected_wrap_mode_(0),
+    selected_filter_mode_(0),
     ppu_(256),
     selected_frame_(0),
     left_(0.f),
@@ -58,8 +58,11 @@ void Editor::OpenTextureSettings(bool* is_open)
         return;
     }
 
+    static const char* texture_types[] = {"Sprite", "User Interface"};
     static const char* wrap_modes[] = {"Repeat", "Clamp"};
     static const char* filter_modes[] = {"Point", "Bilinear"};
+
+    static int selected_texture_type = 0;
 
     if (ImGui::Button("Open Texture"))
     {
@@ -108,9 +111,9 @@ void Editor::OpenTextureSettings(bool* is_open)
 
         emitter << YAML::BeginMap;
             emitter << YAML::Key << "wrap_mode";
-            emitter << YAML::Value << wrap_mode_;
+            emitter << YAML::Value << selected_wrap_mode_;
             emitter << YAML::Key << "filter_mode";
-            emitter << YAML::Value << filter_mode_;
+            emitter << YAML::Value << selected_filter_mode_;
             emitter << YAML::Key << "ppu";
             emitter << YAML::Value << ppu_;
             emitter << YAML::Key << "frames";
@@ -150,8 +153,9 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::Separator();
-    ImGui::Combo("Wrap Mode", &wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
-    ImGui::Combo("Filter Mode", &filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
+    ImGui::Combo("Texture Type", &selected_texture_type, texture_types, IM_ARRAYSIZE(texture_types));
+    ImGui::Combo("Wrap Mode", &selected_wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
+    ImGui::Combo("Filter Mode", &selected_filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
     ImGui::InputInt("PPU", &ppu_);
     
     if (ImGui::Button("Texture Editor"))

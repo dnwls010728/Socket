@@ -33,8 +33,8 @@ private:
     bool show_texture_settings_;
     bool show_texture_editor_;
 
-    int wrap_mode_;
-    int filter_mode_;
+    int selected_wrap_mode_;
+    int selected_filter_mode_;
     int ppu_;
     int selected_frame_;
 
