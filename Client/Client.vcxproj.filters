@@ -191,6 +191,7 @@
     <ClCompile Include="SocketCore\SocketEvent.cpp" />
     <ClCompile Include="SocketCore\SocketEventManager.cpp" />
     <ClCompile Include="SocketCore\SocketSession.cpp" />
+    <ClCompile Include="Engine\Data\FileHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -726,6 +727,13 @@
     <ClInclude Include="SocketCore\SocketEventManager.h" />
     <ClInclude Include="SocketCore\SocketSession.h" />
     <ClInclude Include="SocketCore\Util\CoreMacro.h" />
+    <ClInclude Include="Engine\Data\FileHelper.h" />
+    <ClInclude Include="Include\box2d\base.h" />
+    <ClInclude Include="Include\box2d\box2d.h" />
+    <ClInclude Include="Include\box2d\collision.h" />
+    <ClInclude Include="Include\box2d\id.h" />
+    <ClInclude Include="Include\box2d\math_functions.h" />
+    <ClInclude Include="Include\box2d\types.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">
