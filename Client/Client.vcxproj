@@ -226,6 +226,12 @@
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
+    <ClInclude Include="Include\box2d\base.h" />
+    <ClInclude Include="Include\box2d\box2d.h" />
+    <ClInclude Include="Include\box2d\collision.h" />
+    <ClInclude Include="Include\box2d\id.h" />
+    <ClInclude Include="Include\box2d\math_functions.h" />
+    <ClInclude Include="Include\box2d\types.h" />
     <ClInclude Include="Include\DirectXTK\Audio.h" />
     <ClInclude Include="Include\DirectXTK\BufferHelpers.h" />
     <ClInclude Include="Include\DirectXTK\CommonStates.h" />
@@ -540,24 +546,24 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_demo.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_impl_dx11.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_impl_win32.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_tables.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -685,28 +691,26 @@
     <Image Include="Client.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Include\FMOD\fmod.cs" />
-    <Compile Include="Include\FMOD\fmod_dsp.cs" />
-    <Compile Include="Include\FMOD\fmod_errors.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Include\rttr\registration" />
     <Content Include="Include\rttr\registration_friend" />
     <Content Include="Include\rttr\type" />
     <Content Include="Lib\box2d.lib" />
     <Content Include="Lib\Debug\box2dd.lib" />
     <Content Include="Lib\Debug\DirectXTK.lib" />
-    <Content Include="Lib\Debug\fmodL_vc.lib" />
     <Content Include="Lib\Debug\fmod_vc.lib" />
     <Content Include="Lib\Debug\libtmxlite-s-d.lib" />
     <Content Include="Lib\Debug\rttr_core_d.lib" />
     <Content Include="Lib\Debug\yaml-cppd.lib" />
     <Content Include="Lib\DirectXTK.lib" />
-    <Content Include="Lib\fmodL_vc.lib" />
     <Content Include="Lib\fmod_vc.lib" />
     <Content Include="Lib\libtmxlite-s.lib" />
     <Content Include="Lib\rttr_core.lib" />
     <Content Include="Lib\yaml-cpp.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Include\FMOD\fmod.cs" />
+    <Compile Include="Include\FMOD\fmod_dsp.cs" />
+    <Compile Include="Include\FMOD\fmod_errors.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
