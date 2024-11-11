@@ -3,7 +3,6 @@
 
 #include "GameEngine.h"
 #include "../SocketCore/SocketEventManager.h"
-#include "Actor/Character/Player/PlayerCharacter.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
 #include "Input/Keyboard.h"

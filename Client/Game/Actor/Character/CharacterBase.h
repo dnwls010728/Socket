@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
-#include "Math/Vector2.h"
 
 class CharacterBase : public Actor
 {
@@ -10,23 +9,10 @@ class CharacterBase : public Actor
 public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
-    FORCEINLINE void SetVelocity(int32_t x,int32_t y)
-    {
-        velocity_.x=x;
-        velocity_.y=y;
-    }
-
-    bool IsGrounded() const;
 
 protected:
-    virtual void Tick(float delta_time) override;
-    
     class SpriteRendererComponent* renderer_;
     class CapsuleColliderComponent* collider_;
-    class Controller2DComponent* controller_;
-
-    float gravity_;
-
-    Math::Vector2 velocity_;
+    class RigidBody2DComponent* rigid_body_;
     
 };
