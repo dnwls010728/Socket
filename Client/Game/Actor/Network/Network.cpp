@@ -43,7 +43,7 @@ void Network::Tick(float deltaTime)
                 if (it != players_.end()) {
                     PlayerCharacter* targetPlayer = it->second;
                     //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
-                    targetPlayer->PushPosQueue(Math::Vector2(evt.locationX, evt.locationY));
+                    // targetPlayer->PushPosQueue(Math::Vector2(evt.locationX, evt.locationY));
                 }    
             }
              
