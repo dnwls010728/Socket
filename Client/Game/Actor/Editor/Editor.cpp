@@ -156,56 +156,61 @@ void Editor::OpenTextureSettings(bool* is_open)
     ImGui::Combo("Texture Type", &selected_texture_type, texture_types, IM_ARRAYSIZE(texture_types));
     ImGui::Combo("Wrap Mode", &selected_wrap_mode_, wrap_modes, IM_ARRAYSIZE(wrap_modes));
     ImGui::Combo("Filter Mode", &selected_filter_mode_, filter_modes, IM_ARRAYSIZE(filter_modes));
-    ImGui::InputInt("PPU", &ppu_);
+
+    if (selected_texture_type == 0)
+    {
+        ImGui::InputInt("PPU", &ppu_);
     
-    if (ImGui::Button("Texture Editor"))
-    {
-        show_texture_editor_ = true;
-    }
-
-    bool is_selection_changed = ImGui::ListBox("Frames", &selected_frame_, [](void* user_data, int index)
-    {
-        std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
-        return frames->at(index).name.c_str();
-    }, &frames_, frames_.size(), 4);
-
-    if (is_selection_changed)
-    {
-        FrameData& frame = frames_[selected_frame_];
-        left_ = frame.x;
-        top_ = frame.y;
-        right_ = frame.x + frame.width;
-        bottom_ = frame.y + frame.height;
-        pivot_x_ = frame.pivot_x;
-        pivot_y_ = frame.pivot_y;
-    }
-
-    if (ImGui::Button("Remove"))
-    {
-        if (!frames_.empty())
+        if (ImGui::Button("Texture Editor"))
         {
-            frames_.erase(frames_.begin() + selected_frame_);
-            if (selected_frame_ >= frames_.size()) selected_frame_ = frames_.size() - 1;
+            show_texture_editor_ = true;
         }
+
+        bool is_selection_changed = ImGui::ListBox("Frames", &selected_frame_, [](void* user_data, int index)
+        {
+            std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
+            return frames->at(index).name.c_str();
+        }, &frames_, frames_.size(), 4);
+
+        if (is_selection_changed)
+        {
+            FrameData& frame = frames_[selected_frame_];
+            left_ = frame.x;
+            top_ = frame.y;
+            right_ = frame.x + frame.width;
+            bottom_ = frame.y + frame.height;
+            pivot_x_ = frame.pivot_x;
+            pivot_y_ = frame.pivot_y;
+        }
+
+        if (ImGui::Button("Remove"))
+        {
+            if (!frames_.empty())
+            {
+                frames_.erase(frames_.begin() + selected_frame_);
+                if (selected_frame_ >= frames_.size()) selected_frame_ = frames_.size() - 1;
+            }
+        }
+    
+        ImGui::Separator();
+        ImGui::Text("Preview");
+        if (ImGui::BeginChild("Preview", {200.f, 200.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
+        {
+            if (loaded_texture_ && !frames_.empty())
+            {
+                ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
+                ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
+
+                float width = loaded_texture_->GetWidth();
+                float height = loaded_texture_->GetHeight();
+
+                ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
+            }
+        }
+
+        ImGui::EndChild();
     }
     
-    ImGui::Separator();
-    ImGui::Text("Preview");
-    if (ImGui::BeginChild("Preview", {200.f, 200.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
-    {
-        if (loaded_texture_ && !frames_.empty())
-        {
-            ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
-            ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
-
-            float width = loaded_texture_->GetWidth();
-            float height = loaded_texture_->GetHeight();
-
-            ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
-        }
-    }
-
-    ImGui::EndChild();
     ImGui::End();
 }
 
