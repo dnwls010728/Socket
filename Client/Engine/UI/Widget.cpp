@@ -255,3 +255,11 @@ void Widget::UpdateRect()
         child->UpdateRect();
     }
 }
+
+void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
+{
+}
+
+void Widget::OnInputText(wchar_t character)
+{
+}

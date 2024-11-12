@@ -8,6 +8,7 @@
 #include "UI/Canvas.h"
 #include "UI/Widget.h"
 #include "UI/Widget/Button.h"
+#include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/Text.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/UITexture.h"
@@ -25,12 +26,16 @@ void MainMenu::Load()
 
     UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Button.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
+
+    EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
+    id_text_box->AttachToWidget(canvas->GetRootWidget());
+    id_text_box->SetAnchoredPosition({0.f, -100.f});
     
     Button* login_button = canvas->AddWidget<Button>(L"Login Button");
     login_button->AttachToWidget(canvas->GetRootWidget());
     login_button->SetTexture(texture);
     login_button->SetDrawMode(DrawMode::kSliced);
-    login_button->OnMouseReleased.Add([](Widget* kWidget)
+    login_button->OnMouseReleased.Add([]()
     {
         if(!GSocketSession->Connect())
         {
@@ -61,7 +66,7 @@ void MainMenu::Load()
     editor_button->SetAnchoredPosition({0.f, 50.f});
     editor_button->SetTexture(texture);
     editor_button->SetDrawMode(DrawMode::kSliced);
-    editor_button->OnMouseReleased.Add([](Widget* kWidget)
+    editor_button->OnMouseReleased.Add([]()
     {
         World::Get()->OpenLevel(LevelType::kEditor);
     });
@@ -79,7 +84,7 @@ void MainMenu::Load()
     exit_button->SetAnchoredPosition({0.f, 100.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);
-    exit_button->OnMouseReleased.Add([](Widget* kWidget)
+    exit_button->OnMouseReleased.Add([]()
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);

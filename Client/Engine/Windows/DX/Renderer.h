@@ -96,7 +96,7 @@ public:
 
     Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName);
 
-    bool GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
+    bool GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
 
     FORCEINLINE ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
     FORCEINLINE ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }

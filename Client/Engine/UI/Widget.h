@@ -11,9 +11,9 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnWidgetEvent, Widget*)
-DECLARE_DELEGATE(OnDragEvent, Widget*, const Math::Vector2&)
-DECLARE_DELEGATE(OnDropEvent, Widget*, const Math::Vector2&)
+DECLARE_DELEGATE(OnWidgetEvent)
+DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
+DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -87,8 +87,9 @@ protected:
     virtual void BeginPlay();
     virtual void Tick(float delta_time);
     virtual void Render();
-    
     virtual void UpdateRect();
+    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
+    virtual void OnInputText(wchar_t character);
 
     std::wstring name_;
 
