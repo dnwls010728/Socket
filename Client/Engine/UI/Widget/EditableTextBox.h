@@ -15,6 +15,7 @@ public:
     OnTextEvent OnTextChanged;
 
 protected:
+    virtual void Tick(float delta_time) override;
     virtual void Render() override;
     virtual void OnInputKey(Type::uint16 key_code, bool is_pressed) override;
     virtual void OnInputText(wchar_t character) override;
@@ -25,6 +26,10 @@ private:
     std::wstring text_;
 
     int cursor_position_;
+
+    float elapsed_time_;
+
+    bool cursor_visible_;
 
     std::vector<float> advances_;
     

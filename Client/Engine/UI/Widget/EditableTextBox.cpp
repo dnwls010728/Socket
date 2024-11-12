@@ -12,9 +12,24 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
     cursor_position_(0),
+    elapsed_time_(0.f),
+    cursor_visible_(false),
     advances_()
 {
     is_ray_cast_target_ = true;
+}
+
+void EditableTextBox::Tick(float delta_time)
+{
+    Widget::Tick(delta_time);
+    if (!is_focused_) return;
+
+    elapsed_time_ += delta_time;
+    if (elapsed_time_ > .5f)
+    {
+        cursor_visible_ = !cursor_visible_;
+        elapsed_time_ = 0.f;
+    }
 }
 
 void EditableTextBox::Render()
@@ -30,15 +45,18 @@ void EditableTextBox::Render()
 
     renderer->DrawString(window, text_, rect_, pivot_position, Math::Color::White, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
-    float advance = 0.f;
-    if (cursor_position_ - 1 < advances_.size())
+    if (cursor_visible_)
     {
-        advance = std::accumulate(advances_.begin(), advances_.begin() + cursor_position_, 0.f);
-    }
+        float advance = 0.f;
+        if (cursor_position_ - 1 < advances_.size())
+        {
+            advance = std::accumulate(advances_.begin(), advances_.begin() + cursor_position_, 0.f);
+        }
 
-    Math::Vector2 start = {rect_.x + advance, rect_.y};
-    Math::Vector2 end = start + Math::Vector2(0.f, rect_.height);
-    renderer->DrawLine(window, start, end, Math::Color::White, 1.f);
+        Math::Vector2 start = {rect_.x + advance, rect_.y};
+        Math::Vector2 end = start + Math::Vector2(0.f, rect_.height);
+        renderer->DrawLine(window, start, end, Math::Color::White, 1.f);
+    }
     
     Widget::Render();
 }
@@ -54,6 +72,9 @@ void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
             if (cursor_position_ > 0)
             {
                 cursor_position_--;
+
+                elapsed_time_ = 0.f;
+                cursor_visible_ = true;
             }
         }
         else if (key_code == VK_RIGHT)
@@ -61,6 +82,9 @@ void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
             if (cursor_position_ < text_.size())
             {
                 cursor_position_++;
+                
+                elapsed_time_ = 0.f;
+                cursor_visible_ = true;
             }
         }
         else if (key_code == VK_BACK)
@@ -69,26 +93,33 @@ void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
             {
                 text_.erase(cursor_position_ - 1, 1);
                 cursor_position_--;
+                
+                elapsed_time_ = 0.f;
+                cursor_visible_ = true;
             }
         }
-        // else if (key_code == VK_SPACE)
-        // {
-        //     text_.insert(cursor_position_, L" ");
-        //     cursor_position_++;
-        // }
         else if (key_code == VK_HOME)
         {
             cursor_position_ = 0;
+            
+            elapsed_time_ = 0.f;
+            cursor_visible_ = true;
         }
         else if (key_code == VK_END)
         {
             cursor_position_ = text_.size();
+            
+            elapsed_time_ = 0.f;
+            cursor_visible_ = true;
         }
         else if (key_code == VK_DELETE)
         {
             if (text_.size() > 0 && cursor_position_ < text_.size())
             {
                 text_.erase(cursor_position_, 1);
+                
+                elapsed_time_ = 0.f;
+                cursor_visible_ = true;
             }
         }
     }
@@ -105,6 +136,13 @@ void EditableTextBox::OnInputText(wchar_t character)
     renderer->GetTextAdvances(/*rect_, */text_, L"Nanum18", advances_);
 
     OnTextChanged.Execute(std::move(character));
+
+    // Space
+    if (character == 32)
+    {
+        elapsed_time_ = 0.f;
+        cursor_visible_ = true;
+    }
 }
 
 RTTR_REGISTRATION
