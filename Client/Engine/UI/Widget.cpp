@@ -256,6 +256,10 @@ void Widget::UpdateRect()
     }
 }
 
+void Widget::OnFocusChanged(bool is_focused)
+{
+}
+
 void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
 {
 }

@@ -61,6 +61,17 @@ void EditableTextBox::Render()
     Widget::Render();
 }
 
+void EditableTextBox::OnFocusChanged(bool is_focused)
+{
+    Widget::OnFocusChanged(is_focused);
+
+    if (!is_focused)
+    {
+        elapsed_time_ = 0.f;
+        cursor_visible_ = false;
+    }
+}
+
 void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
 {
     Widget::OnInputKey(key_code, is_pressed);

@@ -88,6 +88,7 @@ protected:
     virtual void Tick(float delta_time);
     virtual void Render();
     virtual void UpdateRect();
+    virtual void OnFocusChanged(bool is_focused);
     virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
     virtual void OnInputText(wchar_t character);
 

@@ -80,9 +80,18 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             if (focused_widget_ != hovered_widget_)
             {
-                if (focused_widget_) focused_widget_->is_focused_ = false;
+                if (focused_widget_)
+                {
+                    focused_widget_->is_focused_ = false;
+                    focused_widget_->OnFocusChanged(false);
+                }
+                
                 focused_widget_ = hovered_widget_;
-                if (focused_widget_) focused_widget_->is_focused_ = true;
+                if (focused_widget_)
+                {
+                    focused_widget_->is_focused_ = true;
+                    focused_widget_->OnFocusChanged(true);
+                }
             }
             
             if (hovered_widget_)
