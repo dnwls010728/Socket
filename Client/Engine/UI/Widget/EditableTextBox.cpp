@@ -25,6 +25,14 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     is_ray_cast_target_ = true;
 }
 
+void EditableTextBox::SetText(const std::wstring& kText)
+{
+    text_ = kText;
+    cursor_index_ = text_.size();
+
+    UpdateAdvances(kText);
+}
+
 void EditableTextBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
@@ -183,18 +191,7 @@ void EditableTextBox::OnInputText(wchar_t character)
     text_.insert(cursor_index_, 1, character);
     cursor_index_++;
 
-    std::wstring temp = text_;
-    if (content_type_ == ContentType::Password)
-    {
-        temp = std::wstring(text_.size(), L'*');
-    }
-
-    Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(/*rect_, */temp, L"Nanum18", advances_);
-
-    float advance = std::accumulate(advances_.begin(), advances_.end(), 0.f);
-    text_rect_.width = advance + 1.f;
-
+    UpdateAdvances(text_);
     OnTextChanged.Execute(std::move(character));
 
     // Space
@@ -203,6 +200,21 @@ void EditableTextBox::OnInputText(wchar_t character)
         elapsed_time_ = 0.f;
         cursor_visible_ = true;
     }
+}
+
+void EditableTextBox::UpdateAdvances(const std::wstring& kString)
+{
+    std::wstring temp = kString;
+    if (content_type_ == ContentType::Password)
+    {
+        temp = std::wstring(text_.size(), L'*');
+    }
+    
+    Renderer* renderer = Renderer::Get();
+    renderer->GetTextAdvances(/*rect_, */temp, L"Nanum18", advances_);
+
+    float advance = std::accumulate(advances_.begin(), advances_.end(), 0.f);
+    text_rect_.width = advance + 1.f;
 }
 
 RTTR_REGISTRATION

@@ -18,7 +18,8 @@ public:
     EditableTextBox(const std::wstring& kName);
     virtual ~EditableTextBox() override = default;
 
-    // FORCEINLINE void SetText(const std::wstring& kText) { text_ = kText; }
+    void SetText(const std::wstring& kText);
+
     FORCEINLINE const std::wstring& GetText() const { return text_; }
 
     FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
@@ -36,6 +37,8 @@ protected:
 
 private:
     friend class Canvas;
+
+    void UpdateAdvances(const std::wstring& kString);
     
     std::wstring text_;
     std::wstring placeholder_;

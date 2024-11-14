@@ -12,5 +12,10 @@ public:
 
 protected:
     virtual void Load() override;
+    virtual void Tick(float delta_time) override;
+
+private:
+    class EditableTextBox* chat_input_box_;
+    class Text* chat_text_;
 
 };
