@@ -17,6 +17,7 @@ public:
 protected:
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
+    virtual void UpdateRect() override;
     virtual void OnFocusChanged(bool is_focused) override;
     virtual void OnInputKey(Type::uint16 key_code, bool is_pressed) override;
     virtual void OnInputText(wchar_t character) override;
@@ -25,8 +26,11 @@ private:
     friend class Canvas;
     
     std::wstring text_;
+    std::wstring placeholder_;
 
-    int cursor_position_;
+    Math::Rect text_rect_;
+
+    int cursor_index_;
 
     float elapsed_time_;
 

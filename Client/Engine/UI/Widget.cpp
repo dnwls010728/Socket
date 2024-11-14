@@ -89,10 +89,10 @@ void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft)) SetAnchors({0.f, .5f}, {0.f, .5f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight)) SetAnchors({1.f, .5f}, {1.f, .5f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop | AnchorPreset::kCenter)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom | AnchorPreset::kCenter)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kMiddle)) SetAnchors({0.f, .5f}, {0.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kMiddle)) SetAnchors({1.f, .5f}, {1.f, .5f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch)) SetAnchors({0.f, 0.f}, {1.f, 1.f});
 
     if (match_pivot)
@@ -165,18 +165,18 @@ void Widget::Tick(float delta_time)
 
 void Widget::Render()
 {
-#ifdef _DEBUG
-    WindowsWindow* window = World::Get()->GetWindow();
-    if (!window) return;
-
-    Renderer* renderer = Renderer::Get();
-    if (!renderer) return;
-    
-    Math::Vector2 pivot_position = GetPivotPosition();
-    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
-
-    renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
-#endif
+// #ifdef _DEBUG
+//     WindowsWindow* window = World::Get()->GetWindow();
+//     if (!window) return;
+//
+//     Renderer* renderer = Renderer::Get();
+//     if (!renderer) return;
+//     
+//     Math::Vector2 pivot_position = GetPivotPosition();
+//     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+//
+//     renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+// #endif
     
     for (const auto& child : children_)
     {
