@@ -25,7 +25,7 @@ void MainMenu::Load()
     
     Canvas* canvas = Canvas::Get();
 
-    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Button.png");
+    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
 
     Image* id_image = canvas->AddWidget<Image>(L"ID Image");
@@ -55,6 +55,7 @@ void MainMenu::Load()
     pw_text_box->SetAnchoredPosition({10.f, 10.f});
     pw_text_box->SetSize({10.f, 10.f});
     pw_text_box->SetPlaceholder(L"Password");
+    pw_text_box->SetContentType(ContentType::Password);
     
     Button* login_button = canvas->AddWidget<Button>(L"Login Button");
     login_button->AttachToWidget(canvas->GetRootWidget());

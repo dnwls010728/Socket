@@ -17,7 +17,8 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     cursor_index_(0),
     elapsed_time_(0.f),
     cursor_visible_(false),
-    advances_()
+    advances_(),
+    content_type_(ContentType::Standard)
 {
     size_ = { 200.f, 50.f };
     
@@ -50,7 +51,16 @@ void EditableTextBox::Render()
 
     renderer->BeginLayer(rect_);
     if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    else renderer->DrawString(window, text_, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    else
+    {
+        std::wstring temp = text_;
+        if (content_type_ == ContentType::Password)
+        {
+            temp = std::wstring(text_.size(), L'*');
+        }
+        
+        renderer->DrawString(window, temp, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    }
 
     if (cursor_visible_)
     {
@@ -173,8 +183,14 @@ void EditableTextBox::OnInputText(wchar_t character)
     text_.insert(cursor_index_, 1, character);
     cursor_index_++;
 
+    std::wstring temp = text_;
+    if (content_type_ == ContentType::Password)
+    {
+        temp = std::wstring(text_.size(), L'*');
+    }
+
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(/*rect_, */text_, L"Nanum18", advances_);
+    renderer->GetTextAdvances(/*rect_, */temp, L"Nanum18", advances_);
 
     float advance = std::accumulate(advances_.begin(), advances_.end(), 0.f);
     text_rect_.width = advance + 1.f;

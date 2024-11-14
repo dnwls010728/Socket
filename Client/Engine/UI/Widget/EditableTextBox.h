@@ -3,6 +3,12 @@
 
 DECLARE_DELEGATE(OnTextEvent, wchar_t)
 
+enum class ContentType
+{
+    Standard,
+    Password
+};
+
 class EditableTextBox : public Widget
 {
     SHADER_CLASS_HELPER(EditableTextBox)
@@ -16,6 +22,7 @@ public:
     FORCEINLINE const std::wstring& GetText() const { return text_; }
 
     FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
+    FORCEINLINE void SetContentType(ContentType content_type) { content_type_ = content_type; }
 
     OnTextEvent OnTextChanged;
 
@@ -42,5 +49,7 @@ private:
     bool cursor_visible_;
 
     std::vector<float> advances_;
+
+    ContentType content_type_;
     
 };
