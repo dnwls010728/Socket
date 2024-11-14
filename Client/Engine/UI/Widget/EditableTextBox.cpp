@@ -12,7 +12,7 @@
 EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
-    placeholder_(L"Enter text..."),
+    placeholder_(L""),
     text_rect_(Math::Rect::Zero()),
     cursor_index_(0),
     elapsed_time_(0.f),
@@ -50,7 +50,7 @@ void EditableTextBox::Render()
 
     renderer->BeginLayer(rect_);
     if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    else renderer->DrawString(window, text_, text_rect_, GetPivotPosition(), Math::Color::White, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    else renderer->DrawString(window, text_, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
     if (cursor_visible_)
     {
@@ -64,7 +64,7 @@ void EditableTextBox::Render()
 
         Math::Vector2 start = {text_rect_.x + advance + 1.f, text_rect_.y + 40.f * scale_ratio};
         Math::Vector2 end = start + Math::Vector2(0.f, text_rect_.height - 80.f * scale_ratio);
-        renderer->DrawLine(window, start, end, Math::Color::White, 1.f);
+        renderer->DrawLine(window, start, end, Math::Color::Black, 1.f);
     }
     renderer->EndLayer();
     

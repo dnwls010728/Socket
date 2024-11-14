@@ -12,6 +12,11 @@ public:
     EditableTextBox(const std::wstring& kName);
     virtual ~EditableTextBox() override = default;
 
+    // FORCEINLINE void SetText(const std::wstring& kText) { text_ = kText; }
+    FORCEINLINE const std::wstring& GetText() const { return text_; }
+
+    FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
+
     OnTextEvent OnTextChanged;
 
 protected:
