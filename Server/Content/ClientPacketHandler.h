@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Common/SendBuffer.h"
-#include "../../Common/Packet.h"
+#include "../../CommonDLL/SendBuffer.h"
+#include "../../CommonDLL/Packet.h"
 using PacketHandlerFunc = function<void(const shared_ptr<PacketSession>&, BYTE*, int32_t)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 

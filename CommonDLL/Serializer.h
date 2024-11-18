@@ -1,5 +1,12 @@
 ﻿#pragma once
-class Serializer
+
+#ifdef EXPORT_DLL
+#define EXPORT_API __declspec(dllexport)
+#else
+#define EXPORT_API __declspec(dllimport)
+#endif
+
+class EXPORT_API Serializer
 {
 public:
     static void Serialize(BYTE* pos, uint8_t value, int& currentByte);

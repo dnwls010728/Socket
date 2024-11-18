@@ -27,9 +27,9 @@ using namespace std;
 #include <ws2tcpip.h>
 #pragma comment(lib,"ws2_32.lib")
 #ifdef _DEBUG
-#pragma comment(lib,"..\\x64\\Debug\\Common.lib");
+#pragma comment(lib,"..\\x64\\Debug\\CommonDLL.lib");
 #else
-#pragma comment(lib,"..\\x64\\Release\\Common.lib");
+#pragma comment(lib,"..\\x64\\Release\\CommonDLL.lib");
 #endif
 
 #include "..\Thread\Lock.h"
@@ -37,6 +37,6 @@ using namespace std;
 #include "..\Thread\ThreadManager.h"
 #include "..\Network\Service.h"
 #include "..\Job\JobQueue.h"
-#include "../Common/SendBuffer.h"
-#include "../Common/RecvBuffer.h"
-#include "../Common/Packet.h"
+#include "../CommonDLL/SendBuffer.h"
+#include "../CommonDLL/RecvBuffer.h"
+#include "../CommonDLL/Packet.h"

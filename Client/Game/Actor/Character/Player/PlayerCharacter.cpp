@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
-#include "../../Common/Packet.h"
-#include "../../Common/SendBuffer.h"
+#include "../../CommonDLL/Packet.h"
+#include "../../CommonDLL/SendBuffer.h"
 #include "../SocketCore/ServerPacketHandler.h"
 
 #include "Actor/Camera.h"

@@ -4,7 +4,7 @@
 #include "IocpCore.h"
 #include "IocpEvent.h"
 #include "NetworkConnector.h"
-#include "../../Common/RecvBuffer.h"
+#include "../../CommonDLL/RecvBuffer.h"
 enum
 {
 	BUFFER_SIZE = 0x10000, //64KB

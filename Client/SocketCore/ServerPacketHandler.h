@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <memory>
-#include "../../Common/Packet.h"
+#include "../../CommonDLL/Packet.h"
 #include "SocketSession.h"
 
 using PacketHandlerFunc = std::function<void(BYTE*, int32_t)>;

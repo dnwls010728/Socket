@@ -2,11 +2,18 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+
+#ifdef EXPORT_DLL
+#define EXPORT_API __declspec(dllexport)
+#else
+#define EXPORT_API __declspec(dllimport)
+#endif
+
 /*--------------
 	RecvBuffer
 ----------------*/
 
-class RecvBuffer
+class EXPORT_API RecvBuffer
 {
 	enum { BUFFER_COUNT = 10 };
 

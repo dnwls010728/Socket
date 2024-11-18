@@ -1,5 +1,12 @@
 ﻿#pragma once
-class Packet
+
+#ifdef EXPORT_DLL
+#define EXPORT_API __declspec(dllexport)
+#else
+#define EXPORT_API __declspec(dllimport)
+#endif
+
+class EXPORT_API Packet
 {
 public:
 	Packet()
@@ -19,7 +26,7 @@ protected:
 };
 
 
-class C_EnterPacket : public Packet
+class EXPORT_API C_EnterPacket : public Packet
 {
 public:
 	C_EnterPacket();
@@ -39,7 +46,7 @@ public:
 	std::string _id;
 };
 
-class S_EnterPacket : public Packet
+class EXPORT_API S_EnterPacket : public Packet
 {
 public:
 
@@ -56,7 +63,7 @@ public:
 	std::string _name;
 };
 
-class C_MovingPacket : public Packet
+class EXPORT_API C_MovingPacket : public Packet
 {
 public:
 	C_MovingPacket();
@@ -73,7 +80,7 @@ public:
 	
 };
 
-class S_MovingPacket : public Packet
+class EXPORT_API S_MovingPacket : public Packet
 {
 public:
 	S_MovingPacket();
@@ -89,7 +96,7 @@ public:
 	float _locationY;
 };
 
-class S_BroadcastingEnterPacket : public Packet
+class EXPORT_API S_BroadcastingEnterPacket : public Packet
 {
 public:
 	S_BroadcastingEnterPacket();
@@ -104,11 +111,17 @@ public:
 	std::string _name;
 };
 
-class S_EnterOtherUserPacket : public Packet
+class EXPORT_API S_EnterOtherUserPacket : public Packet
 {
 public:
 	S_EnterOtherUserPacket();
-	~S_EnterOtherUserPacket() override  =default;
+	~S_EnterOtherUserPacket() override
+	{
+		delete[] userIdentifyidArr_;
+		delete[] nameArr_;
+		delete[] locationXArr_;
+		delete[] locationYArr_;
+	};
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
