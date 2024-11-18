@@ -67,6 +67,8 @@ public:
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
 
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
+
     FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
     FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
 
@@ -107,6 +109,7 @@ protected:
     Widget* parent_;
     std::vector<Widget*> children_;
 
+    bool has_begun_play_;
     bool is_ray_cast_target_;
     bool is_focused_;
     

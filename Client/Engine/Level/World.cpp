@@ -226,7 +226,6 @@ void World::TransitionLevel()
     pending_level_ = nullptr;
 
     current_level_->AddActor<Camera>(L"Main Camera");
-    
     current_level_->Load();
     
     Canvas::Get()->BeginPlay();

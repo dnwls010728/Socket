@@ -18,16 +18,16 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
+    has_begun_play_(false),
     is_ray_cast_target_(false),
     is_focused_(false)
 {
-    UpdateRect();
 }
 
 void Widget::SetAnchoredPosition(const Math::Vector2& kPosition)
 {
     position_ = kPosition;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetPosition(const Math::Vector2& kPosition)
@@ -42,38 +42,38 @@ void Widget::SetPosition(const Math::Vector2& kPosition)
     float y = (kPosition.y - canvas_height * (1.f - anchor_min_.y)) / scale_ratio;
     position_ = {x, y};
     
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetSize(const Math::Vector2& kSize)
 {
     size_ = kSize;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorMin(const Math::Vector2& kAnchorMin)
 {
     anchor_min_ = kAnchorMin;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorMax(const Math::Vector2& kAnchorMax)
 {
     anchor_max_ = kAnchorMax;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetPivot(const Math::Vector2& kPivot)
 {
     pivot_ = kPivot;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax)
 {
     anchor_min_ = kAnchorMin;
     anchor_max_ = kAnchorMax;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
@@ -105,7 +105,7 @@ void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
         else if (EnumHasAnyFlags(anchor, AnchorPreset::kBottom)) pivot_.y = 0.f;
         else pivot_.y = .5f;
 
-        UpdateRect();
+        if (has_begun_play_) UpdateRect();
     }
 }
 
@@ -113,7 +113,7 @@ void Widget::AttachToWidget(Widget* parent)
 {
     parent_ = parent;
     parent_->children_.push_back(this);
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::DetachFromWidget()
@@ -149,6 +149,9 @@ Math::Vector2 Widget::GetPivotPosition() const
 
 void Widget::BeginPlay()
 {
+    has_begun_play_ = true;
+    UpdateRect();
+    
     for (const auto& child : children_)
     {
         child->BeginPlay();
