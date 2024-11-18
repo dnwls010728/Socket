@@ -42,13 +42,28 @@ void ScrollBox::Tick(float delta_time)
         int wheel_axis = mouse->GetWheelAxis();
         if (wheel_axis != 0)
         {
-            for (const auto& child : children_)
+            float scroll_speed = wheel_axis * 30.f;
+            float previous_scroll_offset_y = scroll_offset_y_;
+
+            scroll_offset_y_ = Math::Clamp(
+                scroll_offset_y_ + scroll_speed,
+                rect_.height - content_height_,
+                0.f
+            );
+
+            float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+            if (scroll_delta != 0.f)
             {
-                const Math::Vector2& anchored_position = child->GetAnchoredPosition();
-                child->SetAnchoredPosition({anchored_position.x, anchored_position.y + wheel_axis * 10.f});
+                for (const auto& child : children_)
+                {
+                    Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                    anchored_position.y += scroll_delta;
+                    child->SetAnchoredPosition(anchored_position);
+                }
             }
         }
     }
+
 }
 
 void ScrollBox::Render()
