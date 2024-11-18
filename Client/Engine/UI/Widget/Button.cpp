@@ -11,7 +11,7 @@ Button::Button(const std::wstring& kName) :
     texture_(nullptr),
     draw_mode_(DrawMode::kSimple)
 {
-    size_ = { 160.f, 50.f };
+    size_ = { 150.f, 50.f };
     is_ray_cast_target_ = true;
 }
 

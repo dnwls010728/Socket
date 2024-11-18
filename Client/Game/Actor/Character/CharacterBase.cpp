@@ -1,48 +1,25 @@
 ﻿#include "pch.h"
 #include "CharacterBase.h"
 
-#include "Actor/Component/Controller2DComponent.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/RigidBody2DComponent.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    Actor(kName),
-    gravity_(-9.8f),
-    velocity_(Math::Vector2::Zero())
+    Actor(kName)
 {
-    renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
-    collider_ = AddComponent<CapsuleColliderComponent>(L"Collider");
-    controller_ = AddComponent<Controller2DComponent>(L"Controller");
+    renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
+    collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
     
-}
-
-bool CharacterBase::IsGrounded() const
-{
-    return controller_->GetCollisions().below;
-}
-
-void CharacterBase::Tick(float delta_time)
-{
-    Actor::Tick(delta_time);
-
-    velocity_.y += gravity_ * delta_time;
-
-    controller_->Move(velocity_ * delta_time);
-
-    const CollisionInfo& collisions = controller_->GetCollisions();
-    if (collisions.below || collisions.above)
-    {
-        if (collisions.sliding_down_max_slope)
-            velocity_.y += collisions.slope_normal.y * -gravity_ * delta_time;
-        else velocity_.y = 0.f;
-    }
-    
+    rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody2D");
+    rigid_body_->UseAutoMass(false);
+    rigid_body_->SetFreezeRotation(true);
 }
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
-    
+
     registration::class_<CharacterBase>("CharacterBase")
         .constructor<const std::wstring&>()
         (

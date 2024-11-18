@@ -11,9 +11,9 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnWidgetEvent, Widget*)
-DECLARE_DELEGATE(OnDragEvent, Widget*, const Math::Vector2&)
-DECLARE_DELEGATE(OnDropEvent, Widget*, const Math::Vector2&)
+DECLARE_DELEGATE(OnWidgetEvent)
+DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
+DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -60,6 +60,8 @@ public:
     
     Math::Vector2 GetPivotPosition() const;
 
+    FORCEINLINE const Math::Rect& GetRect() const { return rect_; }
+
     FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
     
     FORCEINLINE float GetAngle() const { return angle_; }
@@ -67,9 +69,12 @@ public:
     FORCEINLINE Widget* GetParent() const { return parent_; }
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
 
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
+
     FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
     FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
 
+    FORCEINLINE bool IsHovered() const { return is_hovered_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     OnWidgetEvent OnMousePressed;
@@ -87,8 +92,10 @@ protected:
     virtual void BeginPlay();
     virtual void Tick(float delta_time);
     virtual void Render();
-    
     virtual void UpdateRect();
+    virtual void OnFocusChanged(bool is_focused);
+    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
+    virtual void OnInputText(wchar_t character);
 
     std::wstring name_;
 
@@ -105,7 +112,9 @@ protected:
     Widget* parent_;
     std::vector<Widget*> children_;
 
+    bool has_begun_play_;
     bool is_ray_cast_target_;
+    bool is_hovered_;
     bool is_focused_;
     
 };

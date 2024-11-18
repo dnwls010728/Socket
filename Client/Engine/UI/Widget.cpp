@@ -18,16 +18,17 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
+    has_begun_play_(false),
     is_ray_cast_target_(false),
+    is_hovered_(false),
     is_focused_(false)
 {
-    UpdateRect();
 }
 
 void Widget::SetAnchoredPosition(const Math::Vector2& kPosition)
 {
     position_ = kPosition;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetPosition(const Math::Vector2& kPosition)
@@ -42,38 +43,38 @@ void Widget::SetPosition(const Math::Vector2& kPosition)
     float y = (kPosition.y - canvas_height * (1.f - anchor_min_.y)) / scale_ratio;
     position_ = {x, y};
     
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetSize(const Math::Vector2& kSize)
 {
     size_ = kSize;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorMin(const Math::Vector2& kAnchorMin)
 {
     anchor_min_ = kAnchorMin;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorMax(const Math::Vector2& kAnchorMax)
 {
     anchor_max_ = kAnchorMax;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetPivot(const Math::Vector2& kPivot)
 {
     pivot_ = kPivot;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax)
 {
     anchor_min_ = kAnchorMin;
     anchor_max_ = kAnchorMax;
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
@@ -89,10 +90,10 @@ void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kLeft)) SetAnchors({0.f, 0.f}, {0.f, 1.f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kMiddle)) SetAnchors({.5f, 0.f}, {.5f, 1.f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch | AnchorPreset::kRight)) SetAnchors({1.f, 0.f}, {1.f, 1.f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft)) SetAnchors({0.f, .5f}, {0.f, .5f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight)) SetAnchors({1.f, .5f}, {1.f, .5f});
-    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kTop | AnchorPreset::kCenter)) SetAnchors({.5f, 1.f}, {.5f, 1.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kBottom | AnchorPreset::kCenter)) SetAnchors({.5f, 0.f}, {.5f, 0.f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kMiddle)) SetAnchors({0.f, .5f}, {0.f, .5f});
+    else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kMiddle)) SetAnchors({1.f, .5f}, {1.f, .5f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kStretch)) SetAnchors({0.f, 0.f}, {1.f, 1.f});
 
     if (match_pivot)
@@ -105,7 +106,7 @@ void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
         else if (EnumHasAnyFlags(anchor, AnchorPreset::kBottom)) pivot_.y = 0.f;
         else pivot_.y = .5f;
 
-        UpdateRect();
+        if (has_begun_play_) UpdateRect();
     }
 }
 
@@ -113,7 +114,7 @@ void Widget::AttachToWidget(Widget* parent)
 {
     parent_ = parent;
     parent_->children_.push_back(this);
-    UpdateRect();
+    if (has_begun_play_) UpdateRect();
 }
 
 void Widget::DetachFromWidget()
@@ -122,6 +123,8 @@ void Widget::DetachFromWidget()
 
     std::erase(parent_->children_, this);
     parent_ = nullptr;
+
+    if (has_begun_play_) UpdateRect();
 }
 
 bool Widget::HitTest(const Math::Vector2& kPoint) const
@@ -153,6 +156,9 @@ void Widget::BeginPlay()
     {
         child->BeginPlay();
     }
+    
+    has_begun_play_ = true;
+    UpdateRect();
 }
 
 void Widget::Tick(float delta_time)
@@ -165,18 +171,18 @@ void Widget::Tick(float delta_time)
 
 void Widget::Render()
 {
-// #ifdef _DEBUG
-//     WindowsWindow* window = World::Get()->GetWindow();
-//     if (!window) return;
-//
-//     Renderer* renderer = Renderer::Get();
-//     if (!renderer) return;
-//     
-//     Math::Vector2 pivot_position = GetPivotPosition();
-//     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
-//
-//     renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
-// #endif
+#ifdef _DEBUG
+    WindowsWindow* window = World::Get()->GetWindow();
+    if (!window) return;
+
+    Renderer* renderer = Renderer::Get();
+    if (!renderer) return;
+    
+    Math::Vector2 pivot_position = GetPivotPosition();
+    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+
+    renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+#endif
     
     for (const auto& child : children_)
     {
@@ -254,4 +260,16 @@ void Widget::UpdateRect()
     {
         child->UpdateRect();
     }
+}
+
+void Widget::OnFocusChanged(bool is_focused)
+{
+}
+
+void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
+{
+}
+
+void Widget::OnInputText(wchar_t character)
+{
 }

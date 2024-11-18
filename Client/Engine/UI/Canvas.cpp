@@ -3,6 +3,7 @@
 
 #include "Logger.h"
 #include "Widget.h"
+#include "Widget/EditableTextBox.h"
 
 Canvas::Canvas() :
     width_(0.f),
@@ -79,19 +80,28 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             if (focused_widget_ != hovered_widget_)
             {
-                if (focused_widget_) focused_widget_->is_focused_ = false;
+                if (focused_widget_)
+                {
+                    focused_widget_->is_focused_ = false;
+                    focused_widget_->OnFocusChanged(false);
+                }
+                
                 focused_widget_ = hovered_widget_;
-                if (focused_widget_) focused_widget_->is_focused_ = true;
+                if (focused_widget_)
+                {
+                    focused_widget_->is_focused_ = true;
+                    focused_widget_->OnFocusChanged(true);
+                }
             }
             
             if (hovered_widget_)
             {
-                hovered_widget_->OnMousePressed.Execute(std::move(hovered_widget_));
+                hovered_widget_->OnMousePressed.Execute();
                 
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
-                dragging_widget_->OnDragStart.Execute(std::move(dragging_widget_), previous_mouse_position_);
+                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
             }
         }
     }
@@ -99,17 +109,17 @@ void Canvas::OnEvent(const Event& kEvent)
     {
         if (focused_widget_ && focused_widget_ == hovered_widget_)
         {
-            focused_widget_->OnMouseReleased.Execute(std::move(focused_widget_));
+            focused_widget_->OnMouseReleased.Execute();
         }
         
         if (dragging_widget_)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
             
-            dragging_widget_->OnDragEnd.Execute(std::move(dragging_widget_), previous_mouse_position_);
+            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
             dragging_widget_ = nullptr;
 
-            if (hovered_widget_) hovered_widget_->OnDrop.Execute(std::move(hovered_widget_), previous_mouse_position_);
+            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
         }
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
@@ -121,8 +131,16 @@ void Canvas::OnEvent(const Event& kEvent)
             Math::Vector2 delta = mouse_position - previous_mouse_position_;
             previous_mouse_position_ = mouse_position;
             
-            dragging_widget_->OnDrag.Execute(std::move(dragging_widget_), delta);
+            dragging_widget_->OnDrag.Execute(delta);
         }
+    }
+    else if (type & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
+    {
+        if (focused_widget_) focused_widget_->OnInputKey(kEvent.key.key_code, kEvent.key.is_repeat);
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kText))
+    {
+        if (focused_widget_) focused_widget_->OnInputText(kEvent.text.character);
     }
 }
 
@@ -141,7 +159,13 @@ void Canvas::Tick(float delta_time)
     
     if (root_widget_)
     {
-        hovered_widget_ = RayCast(root_widget_, mouse_position);
+        Widget* hovered_widget = RayCast(root_widget_, mouse_position);
+        if (hovered_widget != hovered_widget_)
+        {
+            if (hovered_widget_) hovered_widget_->is_hovered_ = false;
+            hovered_widget_ = hovered_widget;
+            if (hovered_widget_) hovered_widget_->is_hovered_ = true;
+        }
         
         root_widget_->Tick(delta_time);
     }
