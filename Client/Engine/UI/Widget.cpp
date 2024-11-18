@@ -122,6 +122,8 @@ void Widget::DetachFromWidget()
 
     std::erase(parent_->children_, this);
     parent_ = nullptr;
+
+    if (has_begun_play_) UpdateRect();
 }
 
 bool Widget::HitTest(const Math::Vector2& kPoint) const
@@ -149,13 +151,13 @@ Math::Vector2 Widget::GetPivotPosition() const
 
 void Widget::BeginPlay()
 {
-    has_begun_play_ = true;
-    UpdateRect();
-    
     for (const auto& child : children_)
     {
         child->BeginPlay();
     }
+    
+    has_begun_play_ = true;
+    UpdateRect();
 }
 
 void Widget::Tick(float delta_time)
@@ -168,18 +170,18 @@ void Widget::Tick(float delta_time)
 
 void Widget::Render()
 {
-// #ifdef _DEBUG
-//     WindowsWindow* window = World::Get()->GetWindow();
-//     if (!window) return;
-//
-//     Renderer* renderer = Renderer::Get();
-//     if (!renderer) return;
-//     
-//     Math::Vector2 pivot_position = GetPivotPosition();
-//     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
-//
-//     renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
-// #endif
+#ifdef _DEBUG
+    WindowsWindow* window = World::Get()->GetWindow();
+    if (!window) return;
+
+    Renderer* renderer = Renderer::Get();
+    if (!renderer) return;
+    
+    Math::Vector2 pivot_position = GetPivotPosition();
+    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+
+    renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+#endif
     
     for (const auto& child : children_)
     {

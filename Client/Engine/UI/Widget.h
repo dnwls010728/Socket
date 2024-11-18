@@ -60,6 +60,8 @@ public:
     
     Math::Vector2 GetPivotPosition() const;
 
+    FORCEINLINE const Math::Rect& GetRect() const { return rect_; }
+
     FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
     
     FORCEINLINE float GetAngle() const { return angle_; }

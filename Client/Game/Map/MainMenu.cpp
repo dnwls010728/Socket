@@ -10,6 +10,7 @@
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/Image.h"
+#include "UI/Widget/ScrollBox.h"
 #include "UI/Widget/Text.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/UITexture.h"
@@ -27,6 +28,30 @@ void MainMenu::Load()
 
     UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
+
+    ScrollBox* scroll_box = canvas->AddWidget<ScrollBox>(L"Scroll Box");
+    scroll_box->AttachToWidget(canvas->GetRootWidget());
+    scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+    scroll_box->SetAnchoredPosition({0.f, 0.f});
+    scroll_box->SetSize({300.f, 300.f});
+
+    // Scroll Box 테스트 코드
+    for (int i = 0; i < 10; ++i)
+    {
+        Image* id_image = canvas->AddWidget<Image>(L"ID Image");
+        id_image->AttachToWidget(scroll_box);
+        id_image->SetAnchoredPosition({-50.f, -25.f});
+        id_image->SetSize({200.f, 50.f});
+        id_image->SetDrawMode(DrawMode::kSliced);
+        id_image->SetTexture(texture);
+    
+        EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
+        id_text_box->AttachToWidget(id_image);
+        id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
+        id_text_box->SetAnchoredPosition({10.f, 10.f});
+        id_text_box->SetSize({10.f, 10.f});
+        id_text_box->SetPlaceholder(L"ID");
+    }
 
     Image* id_image = canvas->AddWidget<Image>(L"ID Image");
     id_image->AttachToWidget(canvas->GetRootWidget());

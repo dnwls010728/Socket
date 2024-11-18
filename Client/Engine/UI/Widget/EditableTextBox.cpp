@@ -53,9 +53,6 @@ void EditableTextBox::Render()
 
     Renderer* renderer = Renderer::Get();
     if (!renderer) return;
-    
-    Math::Vector2 pivot_position = GetPivotPosition();
-    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
     renderer->BeginLayer(rect_);
     if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
