@@ -74,6 +74,7 @@ public:
     FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
     FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
 
+    FORCEINLINE bool IsHovered() const { return is_hovered_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     OnWidgetEvent OnMousePressed;
@@ -113,6 +114,7 @@ protected:
 
     bool has_begun_play_;
     bool is_ray_cast_target_;
+    bool is_hovered_;
     bool is_focused_;
     
 };

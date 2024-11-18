@@ -11,6 +11,7 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
     content_height_(0.f),
     scroll_offset_y_(0.f)
 {
+    is_ray_cast_target_ = true;
 }
 
 void ScrollBox::BeginPlay()
@@ -34,14 +35,19 @@ void ScrollBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
 
-    scroll_offset_y_ -= 100.f * delta_time;
+    Mouse* mouse = Mouse::Get();
 
-    for (const auto& child : children_)
+    if (is_hovered_)
     {
-        Math::Vector2 position = child->GetAnchoredPosition();
-        position.y -= 100.f * delta_time;
-
-        child->SetAnchoredPosition(position);
+        int wheel_axis = mouse->GetWheelAxis();
+        if (wheel_axis != 0)
+        {
+            for (const auto& child : children_)
+            {
+                const Math::Vector2& anchored_position = child->GetAnchoredPosition();
+                child->SetAnchoredPosition({anchored_position.x, anchored_position.y + wheel_axis * 10.f});
+            }
+        }
     }
 }
 
@@ -56,9 +62,6 @@ void ScrollBox::Render()
     renderer->BeginLayer(rect_);
     Widget::Render();
     renderer->EndLayer();
-
-    Math::Rect content_rect = {rect_.x, rect_.y + scroll_offset_y_, content_width_, content_height_};
-    renderer->DrawBox(window, content_rect, Math::Vector2::Zero(), Math::Color::Red, angle_, 1.f);
 }
 
 RTTR_REGISTRATION

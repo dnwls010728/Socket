@@ -20,6 +20,7 @@ Widget::Widget(const std::wstring& kName) :
     children_(),
     has_begun_play_(false),
     is_ray_cast_target_(false),
+    is_hovered_(false),
     is_focused_(false)
 {
 }

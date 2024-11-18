@@ -159,7 +159,13 @@ void Canvas::Tick(float delta_time)
     
     if (root_widget_)
     {
-        hovered_widget_ = RayCast(root_widget_, mouse_position);
+        Widget* hovered_widget = RayCast(root_widget_, mouse_position);
+        if (hovered_widget != hovered_widget_)
+        {
+            if (hovered_widget_) hovered_widget_->is_hovered_ = false;
+            hovered_widget_ = hovered_widget;
+            if (hovered_widget_) hovered_widget_->is_hovered_ = true;
+        }
         
         root_widget_->Tick(delta_time);
     }
