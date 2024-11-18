@@ -59,8 +59,6 @@ void ScrollBox::Render()
 
     Math::Rect content_rect = {rect_.x, rect_.y + scroll_offset_y_, content_width_, content_height_};
     renderer->DrawBox(window, content_rect, Math::Vector2::Zero(), Math::Color::Red, angle_, 1.f);
-
-    int a = 0;
 }
 
 RTTR_REGISTRATION
