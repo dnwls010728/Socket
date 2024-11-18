@@ -11,6 +11,7 @@ enum PacketNumber : uint16_t
 	C_PKT_MOVING=1002,
 	S_PKT_MOVING=1003,
 	S_PKT_BROADCASTING_ENTER=1004,
+	S_PKT_ENTER_OTHER_USER=1005,
 };
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len);
@@ -28,6 +29,7 @@ public:
 		{return HandlePacket<C_EnterPacket>(HandleEnter,session, buffer, len); };
 		GPacketHandler[C_PKT_MOVING] = [](const shared_ptr<PacketSession>& session,BYTE* buffer, int32_t len)
 		{return HandlePacket<C_MovingPacket>(HandleMoving,session, buffer, len); };
+		
 	}
 
 	static void HandlePacket(const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)

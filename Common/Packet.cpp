@@ -143,3 +143,37 @@ uint16_t S_BroadcastingEnterPacket::GetSize()
 		Serializer::GetPacketSize(_userId)+
 			Serializer::GetPacketSize(_name);
 }
+
+S_EnterOtherUserPacket::S_EnterOtherUserPacket()
+{
+}
+
+BYTE* S_EnterOtherUserPacket::Serialize(BYTE* buffer)
+{
+	int currentByte = 0;
+	Serializer::Serialize(buffer,userIdentifyidArr_,currentUserCnt_,currentByte);
+	Serializer::Serialize(buffer,nameArr_,currentUserCnt_,currentByte);
+	Serializer::Serialize(buffer,locationXArr_,currentUserCnt_,currentByte);
+	Serializer::Serialize(buffer,locationYArr_,currentUserCnt_,currentByte);
+	return buffer;
+	
+}
+
+void S_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte = 0;
+	DeSerializer::Deserialize(buffer,currentByte,userIdentifyidArr_);
+	DeSerializer::Deserialize(buffer,currentByte,nameArr_);
+	DeSerializer::Deserialize(buffer,currentByte,locationXArr_);
+	DeSerializer::Deserialize(buffer,currentByte,locationYArr_);
+	
+}
+
+uint16_t S_EnterOtherUserPacket::GetSize()
+{
+	return Serializer::GetPacketSize(userIdentifyidArr_,currentUserCnt_)
+	+ Serializer::GetPacketSize(nameArr_,currentUserCnt_)
+	+ Serializer::GetPacketSize(locationXArr_,currentUserCnt_)
+	+ Serializer::GetPacketSize(locationYArr_,currentUserCnt_);
+	
+}

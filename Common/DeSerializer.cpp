@@ -237,3 +237,21 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float* value)
 		CRASH("Deserialize Error");
 	}
 }
+
+void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string* value)
+{
+	uint8_t spliter = pos[currentByte];
+	currentByte++;
+	if(spliter == 15)
+	{
+		uint8_t len =  pos[currentByte];
+		currentByte++;
+		for(uint8_t idx = 0; idx < len; idx++)
+		{
+			uint8_t strLen = static_cast<uint8_t>(pos[currentByte]);
+			currentByte++;
+			value[idx] = std::string(reinterpret_cast<const char*>(pos + currentByte));
+			currentByte += value[idx].length()+1;
+		}
+	}
+}

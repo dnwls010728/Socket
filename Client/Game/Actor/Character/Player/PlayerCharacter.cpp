@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
+#include "../../Common/Packet.h"
+#include "../../Common/SendBuffer.h"
+#include "../SocketCore/ServerPacketHandler.h"
 
 #include "Actor/Camera.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
@@ -57,6 +60,16 @@ void PlayerCharacter::Tick(float delta_time)
     Keyboard* keyboard = Keyboard::Get();
     const int h = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
     velocity_.x = h * 5.f;
+    //좌 또는 우로 이동했다면
+    if(h!=0)
+    {
+            
+        C_MovingPacket pkt;
+        pkt._locationX = transform_->GetPosition().x;
+        pkt._locationY = transform_->GetPosition().y;
+        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+        GSocketSession->Send(sendBuffer);
+    }
 }
 
 void PlayerCharacter::PostTick(float delta_time)
@@ -64,9 +77,20 @@ void PlayerCharacter::PostTick(float delta_time)
     CharacterBase::PostTick(delta_time);
 
     TransformComponent* transform = GetTransform();
-    
     Math::Vector2 position = transform->GetPosition();
-    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(position);
+    Math::Vector2 screen_position;
+    if(is_position_updated_ == true)
+    {
+        screen_position = Renderer::Get()->ConvertScreenToWorld(last_recent_position_);
+        is_position_updated_ = false;
+    }
+    else
+    {
+        screen_position = Renderer::Get()->ConvertWorldToScreen(position);    
+    }
+    
+    
+    
 
     nickname_text_->SetPosition(screen_position);
 }

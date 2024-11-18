@@ -103,3 +103,19 @@ public:
 	uint32_t _userId;
 	std::string _name;
 };
+
+class S_EnterOtherUserPacket : public Packet
+{
+public:
+	S_EnterOtherUserPacket();
+	~S_EnterOtherUserPacket() override  =default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t* userIdentifyidArr_;
+	std::string* nameArr_;
+	float* locationXArr_;
+	float* locationYArr_;
+	uint32_t currentUserCnt_;
+};

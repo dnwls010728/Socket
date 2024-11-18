@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Actor/Character/CharacterBase.h"
-
 class Text;
 
 class PlayerCharacter : public CharacterBase
@@ -16,6 +15,8 @@ public:
 
     FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
     FORCEINLINE int GetPacketId() const { return packet_id_; }
+    FORCEINLINE void SetLastRecentPosition(Math::Vector2 v){last_recent_position_=v;}
+    FORCEINLINE void SetIsPostionUpdated(bool desire){is_position_updated_ = desire;}
 
 protected:
     virtual void BeginPlay() override;
@@ -29,6 +30,9 @@ protected:
     Text* nickname_text_;
 
     int packet_id_;
+
+    Math::Vector2 last_recent_position_;
+    bool is_position_updated_;
     
 };
 
