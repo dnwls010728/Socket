@@ -11,6 +11,7 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
     Widget(kName),
     content_width_(0.f),
     content_height_(0.f),
+    scroll_offset_x_(0.f),
     scroll_offset_y_(0.f),
     thumb_rect_(Math::Rect::Zero())
 {
@@ -42,29 +43,63 @@ void ScrollBox::Tick(float delta_time)
 
     if (is_hovered_)
     {
-        int wheel_axis = mouse->GetWheelAxis();
-        if (wheel_axis != 0)
+        if (content_width_ > rect_.width)
         {
-            float scroll_speed = wheel_axis * 30.f; 
-            float previous_scroll_offset_y = scroll_offset_y_;
-
-            scroll_offset_y_ = Math::Clamp(
-                scroll_offset_y_ + scroll_speed,
-                rect_.height - content_height_,
-                0.f
-            );
-
-            float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
-            if (scroll_delta != 0.f)
+            int wheel_h_axis = mouse->GetWheelHAxis();
+            if (wheel_h_axis != 0)
             {
-                for (const auto& child : children_)
+                float scroll_speed = -wheel_h_axis * 30.f; 
+                float previous_scroll_offset_x = scroll_offset_x_;
+
+                scroll_offset_x_ = Math::Clamp(
+                    scroll_offset_x_ + scroll_speed,
+                    rect_.width - content_width_,
+                    0.f
+                );
+
+                float scroll_delta = scroll_offset_x_ - previous_scroll_offset_x;
+                if (scroll_delta != 0.f)
                 {
-                    Math::Vector2 anchored_position = child->GetAnchoredPosition();
-                    anchored_position.y += scroll_delta;
-                    child->SetAnchoredPosition(anchored_position);
+                    for (const auto& child : children_)
+                    {
+                        Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                        anchored_position.x += scroll_delta;
+                        child->SetAnchoredPosition(anchored_position);
+                    }
                 }
             }
         }
+
+        if (content_height_ > rect_.height)
+        {
+            int wheel_axis = mouse->GetWheelAxis();
+            if (wheel_axis != 0)
+            {
+                float scroll_speed = wheel_axis * 30.f; 
+                float previous_scroll_offset_y = scroll_offset_y_;
+
+                scroll_offset_y_ = Math::Clamp(
+                    scroll_offset_y_ + scroll_speed,
+                    rect_.height - content_height_,
+                    0.f
+                );
+
+                float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+                if (scroll_delta != 0.f)
+                {
+                    for (const auto& child : children_)
+                    {
+                        Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                        anchored_position.y += scroll_delta;
+                        child->SetAnchoredPosition(anchored_position);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        is_hovered_ = true; // 임시
     }
 
 }
@@ -81,10 +116,21 @@ void ScrollBox::Render()
     Widget::Render();
     renderer->EndLayer();
 
-    float thumb_ratio = rect_.height / content_height_;
-    float thumb_height = Math::Max(rect_.height * thumb_ratio, 20.f);
-    float thumb_y = Math::Lerp(0.f, rect_.height - thumb_height, -scroll_offset_y_ / (content_height_ - rect_.height));
-    renderer->DrawBox(window, {rect_.x + rect_.width - 10.f, rect_.y + thumb_y, 10.f, thumb_height}, {0.f, 0.f}, Math::Color::White);
+    if (content_width_ > rect_.width)
+    {
+        float thumb_ratio = rect_.width / content_width_;
+        float thumb_width = Math::Max(rect_.width * thumb_ratio, 20.f);
+        float thumb_x = Math::Lerp(0.f, rect_.width - thumb_width, -scroll_offset_x_ / (content_width_ - rect_.width));
+        renderer->DrawBox(window, {rect_.x + thumb_x, rect_.y + rect_.height - 10.f, thumb_width, 10.f}, {0.f, 0.f}, Math::Color::Red);
+    }
+
+    if (content_height_ > rect_.height)
+    {
+        float thumb_ratio = rect_.height / content_height_;
+        float thumb_height = Math::Max(rect_.height * thumb_ratio, 20.f);
+        float thumb_y = Math::Lerp(0.f, rect_.height - thumb_height, -scroll_offset_y_ / (content_height_ - rect_.height));
+        renderer->DrawBox(window, {rect_.x + rect_.width - 10.f, rect_.y + thumb_y, 10.f, thumb_height}, {0.f, 0.f}, Math::Color::Red);
+    }
 }
 
 void ScrollBox::UpdateRect()

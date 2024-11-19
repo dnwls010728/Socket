@@ -19,6 +19,7 @@ protected:
 private:
     float content_width_;
     float content_height_;
+    float scroll_offset_x_;
     float scroll_offset_y_;
 
     Math::Rect thumb_rect_;
