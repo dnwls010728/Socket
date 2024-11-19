@@ -520,6 +520,32 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot,
+    const Math::Color& kColor, float radius, float rotation_z)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(window);
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(kColor.r / 255.f, kColor.g / 255.f, kColor.b / 255.f, kColor.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+
+    d2d_viewport->d2d_render_target->FillRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
 void Renderer::DrawCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius,
                           Math::Color color, float stroke)
 {

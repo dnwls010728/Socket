@@ -33,24 +33,16 @@ void MainMenu::Load()
     scroll_box->AttachToWidget(canvas->GetRootWidget());
     scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
     scroll_box->SetAnchoredPosition({0.f, 0.f});
-    scroll_box->SetSize({100.f, 200.f});
+    scroll_box->SetSize({200.f, 100.f});
 
     // Scroll Box 테스트 코드
     for (int i = 0; i < 10; ++i)
     {
-        Image* id_image = canvas->AddWidget<Image>(L"ID Image");
-        id_image->AttachToWidget(scroll_box);
-        id_image->SetAnchoredPosition({-50.f, -25.f});
-        id_image->SetSize({200.f, 50.f});
-        id_image->SetDrawMode(DrawMode::kSliced);
-        id_image->SetTexture(texture);
-    
-        EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
-        id_text_box->AttachToWidget(id_image);
-        id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
-        id_text_box->SetAnchoredPosition({10.f, 10.f});
-        id_text_box->SetSize({10.f, 10.f});
-        id_text_box->SetPlaceholder(L"ID");
+        Text* text = canvas->AddWidget<Text>(L"Text");
+        text->AttachToWidget(scroll_box);
+        text->SetSize({100.f, 30.f});
+        text->SetAlignment(Text::kMiddleLeft);
+        text->SetText(L"Text " + std::to_wstring(i));
     }
 
     Image* id_image = canvas->AddWidget<Image>(L"ID Image");
