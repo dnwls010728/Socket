@@ -12,11 +12,14 @@ public:
 
 protected:
     virtual void BeginPlay() override;
-    virtual void Tick(float delta_time) override;
     virtual void Render() override;
     virtual void UpdateRect() override;
 
 private:
+    friend class Canvas;
+    
+    void OnScroll(float x, float y);
+    
     float content_width_;
     float content_height_;
     float scroll_offset_x_;

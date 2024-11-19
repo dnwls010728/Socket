@@ -29,14 +29,15 @@ public:
     FORCEINLINE void SetRootWidget(Widget* widget) { root_widget_ = widget; }
     FORCEINLINE Widget* GetRootWidget() const { return root_widget_; }
 
-    Widget* RayCast(Widget* widget, const Math::Vector2& kPoint);
-
 private:
     friend class Core;
     friend class GameEngine;
     friend class Keyboard;
     friend class World;
     friend class Widget;
+    
+    Widget* RayCast(Widget* widget, const Math::Vector2& kPoint);
+    Widget* FindParentOfType(Widget* widget, const rttr::type& kType);
     
     void OnEvent(const Event& kEvent);
     void BeginPlay();

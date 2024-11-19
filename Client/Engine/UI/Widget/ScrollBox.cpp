@@ -35,75 +35,6 @@ void ScrollBox::BeginPlay()
     }
 }
 
-void ScrollBox::Tick(float delta_time)
-{
-    Widget::Tick(delta_time);
-
-    Mouse* mouse = Mouse::Get();
-
-    if (is_hovered_)
-    {
-        if (content_width_ > rect_.width)
-        {
-            int wheel_h_axis = mouse->GetWheelHAxis();
-            if (wheel_h_axis != 0)
-            {
-                float scroll_speed = -wheel_h_axis * 30.f; 
-                float previous_scroll_offset_x = scroll_offset_x_;
-
-                scroll_offset_x_ = Math::Clamp(
-                    scroll_offset_x_ + scroll_speed,
-                    rect_.width - content_width_,
-                    0.f
-                );
-
-                float scroll_delta = scroll_offset_x_ - previous_scroll_offset_x;
-                if (scroll_delta != 0.f)
-                {
-                    for (const auto& child : children_)
-                    {
-                        Math::Vector2 anchored_position = child->GetAnchoredPosition();
-                        anchored_position.x += scroll_delta;
-                        child->SetAnchoredPosition(anchored_position);
-                    }
-                }
-            }
-        }
-
-        if (content_height_ > rect_.height)
-        {
-            int wheel_axis = mouse->GetWheelAxis();
-            if (wheel_axis != 0)
-            {
-                float scroll_speed = wheel_axis * 30.f; 
-                float previous_scroll_offset_y = scroll_offset_y_;
-
-                scroll_offset_y_ = Math::Clamp(
-                    scroll_offset_y_ + scroll_speed,
-                    rect_.height - content_height_,
-                    0.f
-                );
-
-                float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
-                if (scroll_delta != 0.f)
-                {
-                    for (const auto& child : children_)
-                    {
-                        Math::Vector2 anchored_position = child->GetAnchoredPosition();
-                        anchored_position.y += scroll_delta;
-                        child->SetAnchoredPosition(anchored_position);
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        is_hovered_ = true; // 임시
-    }
-
-}
-
 void ScrollBox::Render()
 {
     WindowsWindow* window = World::Get()->GetWindow();
@@ -147,6 +78,61 @@ void ScrollBox::UpdateRect()
     {
         content_width_ = Math::Max(content_width_, child->GetRect().width);
         content_height_ += child->GetRect().height;
+    }
+}
+
+void ScrollBox::OnScroll(float x, float y)
+{
+    if (content_width_ > rect_.width)
+    {
+        if (x != 0.f)
+        {
+            float scroll_speed = -x * 30.f; 
+            float previous_scroll_offset_x = scroll_offset_x_;
+
+            scroll_offset_x_ = Math::Clamp(
+                scroll_offset_x_ + scroll_speed,
+                rect_.width - content_width_,
+                0.f
+            );
+
+            float scroll_delta = scroll_offset_x_ - previous_scroll_offset_x;
+            if (scroll_delta != 0.f)
+            {
+                for (const auto& child : children_)
+                {
+                    Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                    anchored_position.x += scroll_delta;
+                    child->SetAnchoredPosition(anchored_position);
+                }
+            }
+        }
+    }
+    
+    if (content_height_ > rect_.height)
+    {
+        if (y != 0.f)
+        {
+            float scroll_speed = y * 30.f; 
+            float previous_scroll_offset_y = scroll_offset_y_;
+
+            scroll_offset_y_ = Math::Clamp(
+                scroll_offset_y_ + scroll_speed,
+                rect_.height - content_height_,
+                0.f
+            );
+
+            float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+            if (scroll_delta != 0.f)
+            {
+                for (const auto& child : children_)
+                {
+                    Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                    anchored_position.y += scroll_delta;
+                    child->SetAnchoredPosition(anchored_position);
+                }
+            }
+        }
     }
 }
 

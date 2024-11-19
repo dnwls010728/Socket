@@ -3,7 +3,7 @@
 
 #include "Logger.h"
 #include "Widget.h"
-#include "Widget/EditableTextBox.h"
+#include "Widget/ScrollBox.h"
 
 Canvas::Canvas() :
     width_(0.f),
@@ -58,6 +58,18 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
 
     if (widget->is_ray_cast_target_ && widget->HitTest(kPoint)) return widget;
     return nullptr;
+}
+
+Widget* Canvas::FindParentOfType(Widget* widget, const rttr::type& kType)
+{
+    if (!widget) return nullptr;
+    
+    Widget* parent = widget->parent_;
+    if (!parent) return nullptr;
+
+    rttr::type parent_type = rttr::type::get(*parent);
+    if (parent_type.is_derived_from(kType)) return parent;
+    return FindParentOfType(parent, kType);
 }
 
 void Canvas::OnEvent(const Event& kEvent)
@@ -141,6 +153,20 @@ void Canvas::OnEvent(const Event& kEvent)
     else if (type == static_cast<Type::uint32>(EventType::kText))
     {
         if (focused_widget_) focused_widget_->OnInputText(kEvent.text.character);
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
+    {
+        Widget* scroll_box;
+        
+        rttr::type hovered_widget_type = rttr::type::get(*hovered_widget_);
+        if (hovered_widget_type.is_derived_from(ScrollBox::StaticClass())) scroll_box = hovered_widget_;
+        else scroll_box = FindParentOfType(hovered_widget_, ScrollBox::StaticClass());
+
+        if (scroll_box)
+        {
+            ScrollBox* scroll_box_casted = static_cast<ScrollBox*>(scroll_box);
+            scroll_box_casted->OnScroll(kEvent.wheel.x, kEvent.wheel.y);
+        }
     }
 }
 
