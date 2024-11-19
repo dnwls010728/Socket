@@ -33,10 +33,10 @@ void MainMenu::Load()
     scroll_box->AttachToWidget(canvas->GetRootWidget());
     scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
     scroll_box->SetAnchoredPosition({0.f, 0.f});
-    scroll_box->SetSize({300.f, 300.f});
+    scroll_box->SetSize({220.f, 200.f});
 
     // Scroll Box 테스트 코드
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 15; ++i)
     {
         Image* id_image = canvas->AddWidget<Image>(L"ID Image");
         id_image->AttachToWidget(scroll_box);

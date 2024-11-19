@@ -1,15 +1,18 @@
 ﻿#include "pch.h"
 #include "ScrollBox.h"
 
+#include "Logger.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
+#include "UI/Canvas.h"
 #include "Windows/DX/Renderer.h"
 
 ScrollBox::ScrollBox(const std::wstring& kName) :
     Widget(kName),
     content_width_(0.f),
     content_height_(0.f),
-    scroll_offset_y_(0.f)
+    scroll_offset_y_(0.f),
+    thumb_rect_(Math::Rect::Zero())
 {
     is_ray_cast_target_ = true;
 }
@@ -42,7 +45,7 @@ void ScrollBox::Tick(float delta_time)
         int wheel_axis = mouse->GetWheelAxis();
         if (wheel_axis != 0)
         {
-            float scroll_speed = wheel_axis * 30.f;
+            float scroll_speed = wheel_axis * 30.f; 
             float previous_scroll_offset_y = scroll_offset_y_;
 
             scroll_offset_y_ = Math::Clamp(
@@ -77,6 +80,25 @@ void ScrollBox::Render()
     renderer->BeginLayer(rect_);
     Widget::Render();
     renderer->EndLayer();
+
+    float thumb_ratio = rect_.height / content_height_;
+    float thumb_height = Math::Max(rect_.height * thumb_ratio, 20.f);
+    float thumb_y = Math::Lerp(0.f, rect_.height - thumb_height, -scroll_offset_y_ / (content_height_ - rect_.height));
+    renderer->DrawBox(window, {rect_.x + rect_.width - 10.f, rect_.y + thumb_y, 10.f, thumb_height}, {0.f, 0.f}, Math::Color::White);
+}
+
+void ScrollBox::UpdateRect()
+{
+    Widget::UpdateRect();
+
+    content_width_ = 0.f;
+    content_height_ = 0.f;
+    
+    for (const auto& child : children_)
+    {
+        content_width_ = Math::Max(content_width_, child->GetRect().width);
+        content_height_ += child->GetRect().height;
+    }
 }
 
 RTTR_REGISTRATION
