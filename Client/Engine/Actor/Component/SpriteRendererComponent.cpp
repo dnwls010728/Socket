@@ -14,8 +14,19 @@ SpriteRendererComponent::SpriteRendererComponent(Actor* owner, const std::wstrin
     frame_index_(0),
     flip_x_(false),
     flip_y_(false),
-    color_(Math::Color::White)
+    color_(Math::Color::White),
+    z_order_(0)
 {
+}
+
+void SpriteRendererComponent::SetZOrder(int z_order)
+{
+    z_order_ = z_order;
+    if (HasBegunPlay())
+    {
+        shape_->SetZOrder(z_order_);
+        World::Get()->SortZOrder();
+    }
 }
 
 void SpriteRendererComponent::InitializeComponent()
@@ -27,6 +38,16 @@ void SpriteRendererComponent::InitializeComponent()
     shape_->SetVertices(sprite_->GetVertices());
     shape_->SetIndices(sprite_->GetIndices());
     shape_->SetTexture(sprite_);
+    shape_->SetZOrder(z_order_);
+    
+    World::Get()->AddShape(shape_);
+}
+
+void SpriteRendererComponent::UninitializeComponent()
+{
+    ActorComponent::UninitializeComponent();
+
+    World::Get()->RemoveShape(shape_);
 }
 
 void SpriteRendererComponent::Render(float alpha)
@@ -58,8 +79,20 @@ void SpriteRendererComponent::Render(float alpha)
     shape_->SetUVScale(current_frame.uv_scale);
     shape_->SetColor(color_);
     shape_->SetPivot({pivot_x, pivot_y});
+}
+
+void SpriteRendererComponent::OnEnable()
+{
+    ActorComponent::OnEnable();
 
     World::Get()->AddShape(shape_);
+}
+
+void SpriteRendererComponent::OnDisable()
+{
+    ActorComponent::OnDisable();
+
+    World::Get()->RemoveShape(shape_);
 }
 
 RTTR_REGISTRATION

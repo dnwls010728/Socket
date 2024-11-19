@@ -12,7 +12,7 @@ public:
     virtual ~EventManager() override = default;
 
     bool PollEvent(Event& event);
-    bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result);
+    bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result);
 
 private:
     friend class Core;

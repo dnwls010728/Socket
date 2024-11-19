@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include <iostream>
 
-#define START int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
-
 #define SAFE_RELEASE(p) \
     do { \
         if (p) \
@@ -48,7 +46,7 @@
     RTTR_REGISTRATION_FRIEND \
     \
     public: \
-        inline static rttr::type StaticClass() \
+        FORCEINLINE static rttr::type StaticClass() \
         { \
             return rttr::type::get<class_name>(); \
         }

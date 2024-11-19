@@ -1,0 +1,332 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - rect:
+      x: 0
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 1
+      y: 1
+  - rect:
+      x: 0.142857149
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.428571433
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.857142866
+      y: 0
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.125
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.125
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.125
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.125
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.428571433
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.25
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.375
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.375
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.375
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.375
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.428571433
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.5
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.625
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.625
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.625
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.625
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.428571433
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.75
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.142857149
+      y: 0.875
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.285714298
+      y: 0.875
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.571428597
+      y: 0.875
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5
+  - rect:
+      x: 0.714285731
+      y: 0.875
+      width: 0.142857149
+      height: 0.125
+    pivot:
+      x: 0.5
+      y: 0.5

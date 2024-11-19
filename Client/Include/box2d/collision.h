@@ -29,7 +29,7 @@ typedef struct b2Hull b2Hull;
 /// don't use more vertices.
 #define b2_maxPolygonVertices 8
 
-/// Low level ray-cast input data
+/// Low level ray cast input data
 typedef struct b2RayCastInput
 {
 	/// Start point of the ray cast
@@ -63,7 +63,7 @@ typedef struct b2ShapeCastInput
 	float maxFraction;
 } b2ShapeCastInput;
 
-/// Low level ray-cast or shape-cast output data
+/// Low level ray cast or shape-cast output data
 typedef struct b2CastOutput
 {
 	/// The surface normal at the hit point
@@ -180,7 +180,11 @@ B2_API b2Polygon b2MakePolygon( const b2Hull* hull, float radius );
 
 /// Make an offset convex polygon from a convex hull. This will assert if the hull is not valid.
 /// @warning Do not manually fill in the hull data, it must come directly from b2ComputeHull
-B2_API b2Polygon b2MakeOffsetPolygon( const b2Hull* hull, float radius, b2Transform transform );
+B2_API b2Polygon b2MakeOffsetPolygon( const b2Hull* hull, b2Vec2 position, b2Rot rotation );
+
+/// Make an offset convex polygon from a convex hull. This will assert if the hull is not valid.
+/// @warning Do not manually fill in the hull data, it must come directly from b2ComputeHull
+B2_API b2Polygon b2MakeOffsetRoundedPolygon( const b2Hull* hull, b2Vec2 position, b2Rot rotation, float radius );
 
 /// Make a square polygon, bypassing the need for a convex hull.
 /// @param h the half-width
@@ -200,9 +204,17 @@ B2_API b2Polygon b2MakeRoundedBox( float hx, float hy, float radius );
 /// Make an offset box, bypassing the need for a convex hull.
 /// @param hx the half-width
 /// @param hy the half-height
-/// @param center the local position of the center of the box
+/// @param center the local center of the box
 /// @param rotation the local rotation of the box
 B2_API b2Polygon b2MakeOffsetBox( float hx, float hy, b2Vec2 center, b2Rot rotation );
+
+/// Make an offset rounded box, bypassing the need for a convex hull.
+/// @param hx the half-width
+/// @param hy the half-height
+/// @param center the local center of the box
+/// @param rotation the local rotation of the box
+/// @param radius the radius of the rounded extension
+B2_API b2Polygon b2MakeOffsetRoundedBox( float hx, float hy, b2Vec2 center, b2Rot rotation, float radius );
 
 /// Transform a polygon. This is useful for transferring a shape from one body to another.
 B2_API b2Polygon b2TransformPolygon( b2Transform transform, const b2Polygon* polygon );
@@ -237,17 +249,17 @@ B2_API bool b2PointInCapsule( b2Vec2 point, const b2Capsule* shape );
 /// Test a point for overlap with a convex polygon in local space
 B2_API bool b2PointInPolygon( b2Vec2 point, const b2Polygon* shape );
 
-/// Ray cast versus circle in shape local space. Initial overlap is treated as a miss.
+/// Ray cast versus circle shape in local space. Initial overlap is treated as a miss.
 B2_API b2CastOutput b2RayCastCircle( const b2RayCastInput* input, const b2Circle* shape );
 
-/// Ray cast versus capsule in shape local space. Initial overlap is treated as a miss.
+/// Ray cast versus capsule shape in local space. Initial overlap is treated as a miss.
 B2_API b2CastOutput b2RayCastCapsule( const b2RayCastInput* input, const b2Capsule* shape );
 
-/// Ray cast versus segment in shape local space. Optionally treat the segment as one-sided with hits from
+/// Ray cast versus segment shape in local space. Optionally treat the segment as one-sided with hits from
 /// the left side being treated as a miss.
 B2_API b2CastOutput b2RayCastSegment( const b2RayCastInput* input, const b2Segment* shape, bool oneSided );
 
-/// Ray cast versus polygon in shape local space. Initial overlap is treated as a miss.
+/// Ray cast versus polygon shape in local space. Initial overlap is treated as a miss.
 B2_API b2CastOutput b2RayCastPolygon( const b2RayCastInput* input, const b2Polygon* shape );
 
 /// Shape cast versus a circle. Initial overlap is treated as a miss.
@@ -336,8 +348,10 @@ typedef struct b2DistanceProxy
 	float radius;
 } b2DistanceProxy;
 
-/// Used to warm start b2Distance. Set count to zero on first call or
-/// use zero initialization.
+/// Used to warm start the GJK simplex. If you call this function multiple times with nearby
+/// transforms this might improve performance. Otherwise you can zero initialize this.
+/// The distance cache must be initialized to zero on the first call.
+/// Users should generally just zero initialize this structure for each call.
 typedef struct b2DistanceCache
 {
 	/// The number of stored simplex points
@@ -566,16 +580,16 @@ B2_API b2Manifold b2CollideSegmentAndPolygon( const b2Segment* segmentA, b2Trans
 											  b2Transform xfB );
 
 /// Compute the contact manifold between a chain segment and a circle
-B2_API b2Manifold b2CollideChainSegmentAndCircle( const b2ChainSegment* segmentA, b2Transform xfA,
-												   const b2Circle* circleB, b2Transform xfB );
+B2_API b2Manifold b2CollideChainSegmentAndCircle( const b2ChainSegment* segmentA, b2Transform xfA, const b2Circle* circleB,
+												  b2Transform xfB );
 
 /// Compute the contact manifold between a chain segment and a capsule
-B2_API b2Manifold b2CollideChainSegmentAndCapsule( const b2ChainSegment* segmentA, b2Transform xfA,
-													const b2Capsule* capsuleB, b2Transform xfB, b2DistanceCache* cache );
+B2_API b2Manifold b2CollideChainSegmentAndCapsule( const b2ChainSegment* segmentA, b2Transform xfA, const b2Capsule* capsuleB,
+												   b2Transform xfB, b2DistanceCache* cache );
 
 /// Compute the contact manifold between a chain segment and a rounded polygon
-B2_API b2Manifold b2CollideChainSegmentAndPolygon( const b2ChainSegment* segmentA, b2Transform xfA,
-													const b2Polygon* polygonB, b2Transform xfB, b2DistanceCache* cache );
+B2_API b2Manifold b2CollideChainSegmentAndPolygon( const b2ChainSegment* segmentA, b2Transform xfA, const b2Polygon* polygonB,
+												   b2Transform xfB, b2DistanceCache* cache );
 
 /**@}*/
 
@@ -602,8 +616,7 @@ B2_API b2Manifold b2CollideChainSegmentAndPolygon( const b2ChainSegment* segment
 /// The default category bit for a tree proxy. Used for collision filtering.
 #define b2_defaultCategoryBits ( 1 )
 
-/// Convenience mask bits to use when you don't need collision filtering and just want
-/// all results.
+/// Convenience mask bits to use when you don't need collision filtering and just want all results.
 #define b2_defaultMaskBits ( UINT64_MAX )
 
 /// A node in the dynamic tree. This is private data placed here for performance reasons.
@@ -617,31 +630,27 @@ typedef struct b2TreeNode
 
 	union
 	{
-		/// The node parent index
+		/// The node parent index (allocated node)
 		int32_t parent;
 
-		/// The node freelist next index
+		/// The node freelist next index (free node)
 		int32_t next;
 	}; // 4
 
-	/// Child 1 index
+	/// Child 1 index (internal node)
 	int32_t child1; // 4
 
-	/// Child 2 index
-	int32_t child2; // 4
+	union
+	{
+		/// Child 2 index (internal node)
+		int32_t child2;
 
-	/// User data
-	// todo could be union with child index
-	int32_t userData; // 4
+		/// User data (leaf node)
+		int32_t userData;
+	}; // 4
 
-	/// Leaf = 0, free node = -1
-	int16_t height; // 2
-
-	/// Has the AABB been enlarged?
-	bool enlarged; // 1
-
-	/// Padding for clarity
-	char pad[5];
+	uint16_t height; // 2
+	uint16_t flags;	 // 2
 } b2TreeNode;
 
 /// The dynamic tree structure. This should be considered private data.
@@ -682,6 +691,16 @@ typedef struct b2DynamicTree
 	int32_t rebuildCapacity;
 } b2DynamicTree;
 
+/// These are performance results returned by dynamic tree queries.
+typedef struct b2TreeStats
+{
+	/// Number of internal nodes visited during the query
+	int32_t nodeVisits;
+
+	/// Number of leaf nodes visited during the query
+	int32_t leafVisits;
+} b2TreeStats;
+
 /// Constructing the tree initializes the node pool.
 B2_API b2DynamicTree b2DynamicTree_Create( void );
 
@@ -705,49 +724,53 @@ B2_API void b2DynamicTree_EnlargeProxy( b2DynamicTree* tree, int32_t proxyId, b2
 typedef bool b2TreeQueryCallbackFcn( int32_t proxyId, int32_t userData, void* context );
 
 /// Query an AABB for overlapping proxies. The callback class is called for each proxy that overlaps the supplied AABB.
-B2_API void b2DynamicTree_Query( const b2DynamicTree* tree, b2AABB aabb, uint64_t maskBits, b2TreeQueryCallbackFcn* callback,
-								 void* context );
+///	@return performance data
+B2_API b2TreeStats b2DynamicTree_Query( const b2DynamicTree* tree, b2AABB aabb, uint64_t maskBits,
+										b2TreeQueryCallbackFcn* callback, void* context );
 
-/// This function receives clipped raycast input for a proxy. The function
+/// This function receives clipped ray cast input for a proxy. The function
 /// returns the new ray fraction.
 /// - return a value of 0 to terminate the ray cast
 /// - return a value less than input->maxFraction to clip the ray
 /// - return a value of input->maxFraction to continue the ray cast without clipping
 typedef float b2TreeRayCastCallbackFcn( const b2RayCastInput* input, int32_t proxyId, int32_t userData, void* context );
 
-/// Ray-cast against the proxies in the tree. This relies on the callback
-/// to perform a exact ray-cast in the case were the proxy contains a shape.
+/// Ray cast against the proxies in the tree. This relies on the callback
+/// to perform a exact ray cast in the case were the proxy contains a shape.
 /// The callback also performs the any collision filtering. This has performance
 /// roughly equal to k * log(n), where k is the number of collisions and n is the
 /// number of proxies in the tree.
 /// Bit-wise filtering using mask bits can greatly improve performance in some scenarios.
+///	However, this filtering may be approximate, so the user should still apply filtering to results.
 /// @param tree the dynamic tree to ray cast
-/// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1)
-/// @param maskBits filter bits: `bool accept = (maskBits & node->categoryBits) != 0;`
+/// @param input the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1)
+/// @param maskBits mask bit hint: `bool accept = (maskBits & node->categoryBits) != 0;`
 /// @param callback a callback class that is called for each proxy that is hit by the ray
 /// @param context user context that is passed to the callback
-B2_API void b2DynamicTree_RayCast( const b2DynamicTree* tree, const b2RayCastInput* input, uint64_t maskBits,
-								   b2TreeRayCastCallbackFcn* callback, void* context );
+///	@return performance data
+B2_API b2TreeStats b2DynamicTree_RayCast( const b2DynamicTree* tree, const b2RayCastInput* input, uint64_t maskBits,
+										  b2TreeRayCastCallbackFcn* callback, void* context );
 
-/// This function receives clipped ray-cast input for a proxy. The function
+/// This function receives clipped ray cast input for a proxy. The function
 /// returns the new ray fraction.
-/// - return a value of 0 to terminate the ray-cast
+/// - return a value of 0 to terminate the ray cast
 /// - return a value less than input->maxFraction to clip the ray
 /// - return a value of input->maxFraction to continue the ray cast without clipping
 typedef float b2TreeShapeCastCallbackFcn( const b2ShapeCastInput* input, int32_t proxyId, int32_t userData, void* context );
 
-/// Ray-cast against the proxies in the tree. This relies on the callback
-/// to perform a exact ray-cast in the case were the proxy contains a shape.
+/// Ray cast against the proxies in the tree. This relies on the callback
+/// to perform a exact ray cast in the case were the proxy contains a shape.
 /// The callback also performs the any collision filtering. This has performance
 /// roughly equal to k * log(n), where k is the number of collisions and n is the
 /// number of proxies in the tree.
 /// @param tree the dynamic tree to ray cast
-/// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
+/// @param input the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
 /// @param maskBits filter bits: `bool accept = (maskBits & node->categoryBits) != 0;`
 /// @param callback a callback class that is called for each proxy that is hit by the shape
 /// @param context user context that is passed to the callback
-B2_API void b2DynamicTree_ShapeCast( const b2DynamicTree* tree, const b2ShapeCastInput* input, uint64_t maskBits,
-									 b2TreeShapeCastCallbackFcn* callback, void* context );
+///	@return performance data
+B2_API b2TreeStats b2DynamicTree_ShapeCast( const b2DynamicTree* tree, const b2ShapeCastInput* input, uint64_t maskBits,
+											b2TreeShapeCastCallbackFcn* callback, void* context );
 
 /// Validate this tree. For testing.
 B2_API void b2DynamicTree_Validate( const b2DynamicTree* tree );
@@ -781,7 +804,6 @@ B2_API void b2DynamicTree_ShiftOrigin( b2DynamicTree* tree, b2Vec2 newOrigin );
 B2_API int b2DynamicTree_GetByteCount( const b2DynamicTree* tree );
 
 /// Get proxy user data
-/// @return the proxy user data or 0 if the id is invalid
 B2_INLINE int32_t b2DynamicTree_GetUserData( const b2DynamicTree* tree, int32_t proxyId )
 {
 	return tree->nodes[proxyId].userData;

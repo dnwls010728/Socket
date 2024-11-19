@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - index: 0
+    rect:
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    pivot:
+      x: 0
+      y: 0

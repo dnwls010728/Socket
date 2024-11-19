@@ -7,26 +7,26 @@ namespace Math
     struct Vector2;
 }
 
-enum class BodyType : MathTypes::uint64
+enum class BodyType : Type::uint64
 {
     kDynamic = 0,
     kKinematic,
     kStatic
 };
 
-enum class SleepMode : MathTypes::uint64
+enum class SleepMode : Type::uint64
 {
     kNeverSleep = 0,
     kStartAwake
 };
 
-enum class CollisionDetectionMode : MathTypes::uint64
+enum class CollisionDetectionMode : Type::uint64
 {
     kDiscrete = 0,
     kContinuous
 };
 
-enum class ForceMode : MathTypes::uint64
+enum class ForceMode : Type::uint64
 {
     kForce = 0,
     kImpulse
@@ -40,8 +40,6 @@ class RigidBody2DComponent : public ActorComponent
 public:
     RigidBody2DComponent(Actor* owner, const std::wstring& kName);
     virtual ~RigidBody2DComponent() override = default;
-
-    virtual void InitializeComponent() override;
 
     void SetBodyType(BodyType type);
     void SetGravityScale(float scale);
@@ -71,6 +69,9 @@ public:
     bool IsAwake() const;
 
     BodyType GetBodyType() const;
+
+protected:
+    virtual void InitializeComponent() override;
 
 private:
     void SetBodyTypeInternal(b2BodyId body_id);

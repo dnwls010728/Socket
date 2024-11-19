@@ -20,6 +20,9 @@
     <Filter Include="Util">
       <UniqueIdentifier>{0c75fff9-5416-4e9e-83e1-ffa1e9e51003}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{76158cc4-bff0-4d3e-af4b-2b686d66035c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp" />
@@ -71,6 +74,30 @@
     </ClCompile>
     <ClCompile Include="Thread\ThreadManager.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\DeSerializer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\RecvBuffer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\SendBuffer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Serializer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Packet.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\ClientPacketHandler.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\GameSession.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\GameSessionManager.cpp">
+      <Filter>Content</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +305,30 @@
     </ClInclude>
     <ClInclude Include="Thread\ThreadManager.h">
       <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\DeSerializer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\RecvBuffer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\SendBuffer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Serializer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Packet.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\ClientPacketHandler.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\GameSession.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\GameSessionManager.h">
+      <Filter>Content</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

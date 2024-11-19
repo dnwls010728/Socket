@@ -65,7 +65,7 @@ public:
     virtual ~Camera() override = default;
 
     virtual void PreInitializeComponents() override;
-    virtual void Tick(float delta_time) override;
+    virtual void PhysicsTick(float delta_time) override;
 
     static Camera* Get();
 
@@ -78,9 +78,9 @@ public:
 
     Bounds GetBounds() const;
 
-    inline float GetSize() const { return size_; }
-    inline float GetNearZ() const { return near_z_; }
-    inline float GetFarZ() const { return far_z_; }
+    FORCEINLINE float GetSize() const { return size_; }
+    FORCEINLINE float GetNearZ() const { return near_z_; }
+    FORCEINLINE float GetFarZ() const { return far_z_; }
 
 private:
     friend class Level;
@@ -103,9 +103,9 @@ private:
     
     float vertical_offset_;
 
-    MathTypes::uint32 half_width_;
-    MathTypes::uint32 half_height_;
-    MathTypes::uint32 limit_half_width_;
-    MathTypes::uint32 limit_half_height_;
+    Type::uint32 half_width_;
+    Type::uint32 half_height_;
+    Type::uint32 limit_half_width_;
+    Type::uint32 limit_half_height_;
     
 };

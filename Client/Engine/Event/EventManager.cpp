@@ -3,7 +3,6 @@
 
 #include <windowsx.h>
 
-#include "Logger.h"
 #include "Input/Mouse.h"
 
 EventManager::EventManager() :
@@ -21,7 +20,7 @@ bool EventManager::PollEvent(Event& event)
     return true;
 }
 
-bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result)
+bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
 {
     if (message == WM_SIZE)
     {
@@ -31,7 +30,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         int height = HIWORD(lParam);
         
         Event event;
-        event.type = EventType::kWindowSize;
+        event.type = static_cast<Type::uint32>(EventType::kWindowSize);
         event.window.data1 = width;
         event.window.data2 = height;
 
@@ -45,14 +44,14 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         WORD key_code = LOWORD(wParam);
         WORD key_flags = HIWORD(lParam);
         
-        MathTypes::uint32 scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
+        Type::uint32 scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
 
         bool is_released = (key_flags & KF_UP) == KF_UP;
         bool is_repeat = (key_flags & KF_REPEAT) == KF_REPEAT;
 
-        MathTypes::uint32 type = 0;
-        if (!is_released) type = EventType::kKeyPressed;
-        else type = EventType::kKeyReleased;
+        Type::uint32 type = 0;
+        if (!is_released) type = static_cast<Type::uint32>(EventType::kKeyPressed);
+        else type = static_cast<Type::uint32>(EventType::kKeyReleased);
 
         Event event;
         event.type = type;
@@ -69,7 +68,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         if (kCharacter < 32 || (kCharacter > 126 && kCharacter < 160)) return false;
 
         Event event;
-        event.type = EventType::kText;
+        event.type = static_cast<Type::uint32>(EventType::kText);
         event.text.character = kCharacter;
 
         events_.push(event);
@@ -80,9 +79,12 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         message == WM_RBUTTONDOWN || message == WM_RBUTTONUP ||
         message == WM_MBUTTONDOWN || message == WM_MBUTTONUP)
     {
+        const int x = GET_X_LPARAM(lParam);
+        const int y = GET_Y_LPARAM(lParam);
+        
         bool is_pressed = false;
         MouseButton mouse_button = MouseButton::kLeft;
-        MathTypes::uint32 type = 0;
+        Type::uint32 type = 0;
         
         if ((wParam & MK_LBUTTON))
         {
@@ -100,13 +102,15 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
             mouse_button = MouseButton::kMiddle;
         }
 
-        if (is_pressed) type = EventType::kMousePressed;
-        else type = EventType::kMouseReleased;
+        if (is_pressed) type = static_cast<Type::uint32>(EventType::kMousePressed);
+        else type = static_cast<Type::uint32>(EventType::kMouseReleased);
 
         Event event;
         event.type = type;
         event.button.is_pressed = is_pressed;
         event.button.button = mouse_button;
+        event.button.x = static_cast<float>(x);
+        event.button.y = static_cast<float>(y);
 
         events_.push(event);
         return true;
@@ -118,7 +122,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         const int y = GET_Y_LPARAM(lParam);
 
         Event event;
-        event.type = EventType::kMouseMotion;
+        event.type = static_cast<Type::uint32>(EventType::kMouseMotion);
         event.motion.x = static_cast<float>(x);
         event.motion.y = static_cast<float>(y);
 
@@ -132,7 +136,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         float delta_f = static_cast<float>(delta) / static_cast<float>(WHEEL_DELTA);
 
         Event event;
-        event.type = EventType::kMouseWheel;
+        event.type = static_cast<Type::uint32>(EventType::kMouseWheel);
 
         if (message == WM_MOUSEWHEEL)
         {

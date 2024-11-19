@@ -58,6 +58,8 @@ typedef struct b2RayResult
 	b2Vec2 point;
 	b2Vec2 normal;
 	float fraction;
+	int nodeVisits;
+	int leafVisits;
 	bool hit;
 } b2RayResult;
 
@@ -129,6 +131,9 @@ typedef struct b2WorldDef
 
 	/// User context that is provided to enqueueTask and finishTask
 	void* userTaskContext;
+
+	/// User data
+	void* userData;
 
 	/// Used internally to detect a valid definition. DO NOT SET.
 	int32_t internalValue;
@@ -219,10 +224,6 @@ typedef struct b2BodyDef
 
 	/// Used to disable a body. A disabled body does not move or collide.
 	bool isEnabled;
-
-	/// Automatically compute mass and related properties on this body from shapes.
-	/// Triggers whenever a shape is add/removed/changed. Default is true.
-	bool automaticMass;
 
 	/// This allows this body to bypass rotational speed limits. Should only be used
 	/// for circular objects, like wheels.
@@ -364,8 +365,11 @@ typedef struct b2ShapeDef
 	/// Normally shapes on static bodies don't invoke contact creation when they are added to the world. This overrides
 	/// that behavior and causes contact creation. This significantly slows down static body creation which can be important
 	/// when there are many static shapes.
-	/// This is implicitly always true for sensors.
-	bool forceContactCreation;
+	/// This is implicitly always true for sensors, dynamic bodies, and kinematic bodies.
+	bool invokeContactCreation;
+
+	/// Should the body update the mass properties when this shape is created. Default is true.
+	bool updateBodyMass;
 
 	/// Used internally to detect a valid definition. DO NOT SET.
 	int32_t internalValue;
@@ -479,6 +483,7 @@ typedef enum b2JointType
 	b2_distanceJoint,
 	b2_motorJoint,
 	b2_mouseJoint,
+	b2_nullJoint,
 	b2_prismaticJoint,
 	b2_revoluteJoint,
 	b2_weldJoint,
@@ -630,6 +635,28 @@ typedef struct b2MouseJointDef
 /// Use this to initialize your joint definition
 /// @ingroup mouse_joint
 B2_API b2MouseJointDef b2DefaultMouseJointDef( void );
+
+/// A null joint is used to disable collision between two specific bodies.
+///
+/// @ingroup null_joint
+typedef struct b2NullJointDef
+{
+	/// The first attached body.
+	b2BodyId bodyIdA;
+
+	/// The second attached body.
+	b2BodyId bodyIdB;
+
+	/// User data pointer
+	void* userData;
+
+	/// Used internally to detect a valid definition. DO NOT SET.
+	int32_t internalValue;
+} b2NullJointDef;
+
+/// Use this to initialize your joint definition
+/// @ingroup null_joint
+B2_API b2NullJointDef b2DefaultNullJointDef( void );
 
 /// Prismatic joint definition
 ///
@@ -942,13 +969,21 @@ typedef struct b2SensorBeginTouchEvent
 } b2SensorBeginTouchEvent;
 
 /// An end touch event is generated when a shape stops overlapping a sensor shape.
+///	You will get an end event if you do anything that destroys contacts previous to the last
+///	world step.  These include things like setting the transform, destroying a body
+///	or shape, or changing a filter or body type.
 typedef struct b2SensorEndTouchEvent
 {
 	/// The id of the sensor shape
+	///	@warning this shape may have been destroyed
+	///	@see b2Shape_IsValid
 	b2ShapeId sensorShapeId;
 
 	/// The id of the dynamic shape that stopped touching the sensor shape
+	///	@warning this shape may have been destroyed
+	///	@see b2Shape_IsValid
 	b2ShapeId visitorShapeId;
+
 } b2SensorEndTouchEvent;
 
 /// Sensor events are buffered in the Box2D world and are available
@@ -983,12 +1018,19 @@ typedef struct b2ContactBeginTouchEvent
 } b2ContactBeginTouchEvent;
 
 /// An end touch event is generated when two shapes stop touching.
+///	You will get an end event if you do anything that destroys contacts previous to the last
+///	world step. These include things like setting the transform, destroying a body
+///	or shape, or changing a filter or body type.
 typedef struct b2ContactEndTouchEvent
 {
 	/// Id of the first shape
+	///	@warning this shape may have been destroyed
+	///	@see b2Shape_IsValid
 	b2ShapeId shapeIdA;
 
 	/// Id of the second shape
+	///	@warning this shape may have been destroyed
+	///	@see b2Shape_IsValid
 	b2ShapeId shapeIdB;
 } b2ContactEndTouchEvent;
 

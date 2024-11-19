@@ -60,6 +60,19 @@ void WindowsApplication::RemoveMessageHandler(IWindowsMessageHandler& message_ha
     std::erase(message_handlers_, &message_handler);
 }
 
+void WindowsApplication::PumpMessages()
+{
+    MSG msg = {};
+    while (msg.message != WM_QUIT)
+    {
+        if (GetMessage(&msg, nullptr, 0, 0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+}
+
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WindowsApplication* application = nullptr;
@@ -76,18 +89,18 @@ LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-MathTypes::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+Type::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     std::shared_ptr<WindowsWindow> window = FindWindowByHWND(hWnd);
     
     if (window)
     {
         bool is_external_handled = false;
-        MathTypes::uint32 external_handler_result = 0;
+        Type::uint32 external_handler_result = 0;
         
         for (const auto& handler : message_handlers_)
         {
-            MathTypes::uint32 handler_result = 0;
+            Type::uint32 handler_result = 0;
             if (handler->ProcessMessage(hWnd, message, wParam, lParam, handler_result))
             {
                 if (!is_external_handled)
@@ -100,8 +113,8 @@ MathTypes::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WP
         
         if (message == WM_GETMINMAXINFO)
         {
-            MathTypes::uint32 window_ex_style = 0;
-            MathTypes::uint32 window_style = 0;
+            Type::uint32 window_ex_style = 0;
+            Type::uint32 window_style = 0;
     
             window_style |= WS_OVERLAPPED;
             window_style |= WS_CAPTION;

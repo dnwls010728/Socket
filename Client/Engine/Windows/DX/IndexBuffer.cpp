@@ -14,7 +14,7 @@ IndexBuffer::~IndexBuffer()
 bool IndexBuffer::CreateBuffer(bool cpu_access, bool gpu_access)
 {
     indices_ = 2048 * 3;
-    MathTypes::uint32 buffer_size = indices_ * sizeof(MathTypes::uint32);
+    Type::uint32 buffer_size = indices_ * sizeof(Type::uint32);
 
     D3D11_BUFFER_DESC buffer_desc;
     ZeroMemory(&buffer_desc, sizeof(D3D11_BUFFER_DESC));

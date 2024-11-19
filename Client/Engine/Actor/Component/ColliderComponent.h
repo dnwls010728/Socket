@@ -20,8 +20,6 @@ public:
     ColliderComponent(Actor* owner, const std::wstring& kName);
     virtual ~ColliderComponent() override = default;
 
-    virtual void InitializeComponent() override;
-
     void SetOffset(const Math::Vector2& kOffset);
     void SetMaterial(const PhysicsMaterial2D& kMaterial);
     void SetTrigger(bool is_trigger);
@@ -30,6 +28,8 @@ public:
 
 protected:
     friend class World;
+    
+    virtual void InitializeComponent() override;
     
     b2ShapeId shape_id_;
 

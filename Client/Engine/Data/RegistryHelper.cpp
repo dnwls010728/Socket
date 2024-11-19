@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "RegistryHelper.h"
 
-#include <Windows.h>
-
 void RegistryHelper::DeleteAll()
 {
     RegDeleteKey(HKEY_CURRENT_USER, L"Software\\Game");

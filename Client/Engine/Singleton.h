@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <mutex>
-#include "Misc/EngineMacros.h"
 
 template <typename T>
 class Singleton

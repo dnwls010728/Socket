@@ -15,6 +15,37 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 {
 }
 
+void TilemapComponent::LoadMap(const char* kPath)
+{
+	map_.load(kPath);
+
+	map_size_.x = static_cast<float>(map_.getTileCount().x);
+	map_size_.y = static_cast<float>(map_.getTileCount().y);
+	
+	const auto& tilesets = map_.getTilesets();
+	std::wstring tileset_path = std::wstring(tilesets[0].getImagePath().begin(), tilesets[0].getImagePath().end());
+	tileset_path = tileset_path.substr(10);
+
+	tilemap_texture_ = ResourceManager::Get()->Load<Texture>(tileset_path);
+	
+	const auto& layers = map_.getLayers();
+	for (const auto& layer : layers)
+	{
+		if (layer->getType() == tmx::Layer::Type::Object)
+		{
+			const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
+			GeneratePhysics(object);
+		}
+		else if (layer->getType() == tmx::Layer::Type::Tile)
+		{
+			const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
+			
+			Math::Vector2 chunk_size = {512.f, 512.f};
+			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, tilemap_texture_, chunk_size));
+		}
+	}
+}
+
 void TilemapComponent::InitializeComponent()
 {
 	ActorComponent::InitializeComponent();
@@ -35,44 +66,11 @@ void TilemapComponent::Render(float alpha)
 
 	for (const auto& tilemap_layer : tilemap_layers_)
 	{
-		tilemap_layer->AddShapes(
+		tilemap_layer->UpdateShapes(
 			GetOwner()->GetTransform()->GetPosition(),
 			{ 1.f / PPU, 1.f / PPU },
 			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
 		);
-	}
-}
-
-void TilemapComponent::LoadMap(const char* kPath)
-{
-	map_.load(kPath);
-
-	map_size_.x = static_cast<float>(map_.getTileCount().x);
-	map_size_.y = static_cast<float>(map_.getTileCount().y);
-	
-	const auto& tilesets = map_.getTilesets();
-	std::wstring tileset_path = std::wstring(tilesets[0].getImagePath().begin(), tilesets[0].getImagePath().end());
-	
-	if (ResourceManager::Get()->Load<Texture>(L"Tileset", tileset_path))
-	{
-		tilemap_texture_ = ResourceManager::Get()->GetResource<Texture>(L"Tileset");
-	}
-	
-	const auto& layers = map_.getLayers();
-	for (const auto& layer : layers)
-	{
-		if (layer->getType() == tmx::Layer::Type::Object)
-		{
-			const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
-			GeneratePhysics(object);
-		}
-		else if (layer->getType() == tmx::Layer::Type::Tile)
-		{
-			const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
-			
-			Math::Vector2 chunk_size = {512.f, 512.f};
-			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, tilemap_texture_, chunk_size));
-		}
 	}
 }
 
@@ -109,8 +107,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
 		}
 		
 		b2Filter filter = b2DefaultFilter();
-		filter.categoryBits = GetOwner()->GetLayer();
-		filter.maskBits = ProjectSettings::kLayerCollisionMatrix.at(GetOwner()->GetLayer());
+		filter.categoryBits = static_cast<Type::uint16>(GetOwner()->GetLayer());
+		filter.maskBits = static_cast<Type::uint16>(ProjectSettings::kLayerCollisionMatrix.at(GetOwner()->GetLayer()));
 		
 		b2ShapeDef shape_def = b2DefaultShapeDef();
 		shape_def.filter = filter;

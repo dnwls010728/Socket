@@ -13,23 +13,31 @@ public:
     SpriteRendererComponent(Actor* owner, const std::wstring& kName);
     virtual ~SpriteRendererComponent() override = default;
 
+    void SetZOrder(int z_order);
+
+    FORCEINLINE void SetSprite(Sprite* sprite) { sprite_ = sprite; }
+    FORCEINLINE const Sprite* GetSprite() const { return sprite_; }
+
+    FORCEINLINE void SetFrameIndex(Type::uint32 frame_index) { frame_index_ = frame_index; }
+    FORCEINLINE Type::uint32 GetFrameIndex() const { return frame_index_; }
+
+    FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
+    FORCEINLINE bool GetFlipX() const { return flip_x_; }
+
+    FORCEINLINE void IsFlipX(bool flip_y) { flip_y_ = flip_y; }
+    FORCEINLINE bool IsFlipY() const { return flip_y_; }
+
+    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
+    FORCEINLINE Math::Color GetColor() const { return color_; }
+
+    FORCEINLINE int GetZOrder() const { return z_order_; }
+
+protected:
     virtual void InitializeComponent() override;
+    virtual void UninitializeComponent() override;
     virtual void Render(float alpha) override;
-
-    inline void SetSprite(Sprite* sprite) { sprite_ = sprite; }
-    inline const Sprite* GetSprite() const { return sprite_; }
-
-    inline void SetFrameIndex(MathTypes::uint32 frame_index) { frame_index_ = frame_index; }
-    inline MathTypes::uint32 GetFrameIndex() const { return frame_index_; }
-
-    inline void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
-    inline bool GetFlipX() const { return flip_x_; }
-
-    inline void IsFlipX(bool flip_y) { flip_y_ = flip_y; }
-    inline bool IsFlipY() const { return flip_y_; }
-
-    inline void SetColor(const Math::Color& color) { color_ = color; }
-    inline Math::Color GetColor() const { return color_; }
+    virtual void OnEnable() override;
+    virtual void OnDisable() override;
 
 private:
     friend class AnimatorComponent;
@@ -37,11 +45,13 @@ private:
     std::shared_ptr<class Shape> shape_;
     Sprite* sprite_;
 
-    MathTypes::uint32 frame_index_;
+    Type::uint32 frame_index_;
 
     bool flip_x_;
     bool flip_y_;
 
     Math::Color color_;
+
+    int z_order_;
     
 };

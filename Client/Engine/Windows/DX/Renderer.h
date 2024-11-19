@@ -16,7 +16,8 @@
 #include <vector>
 
 #include "Singleton.h"
-#include "Math/MathTypes.h"
+#include "Math/Rect.h"
+#include "Misc/Type.h"
 #include "Windows/WindowsWindow.h"
 
 class DefaultPixelShader;
@@ -24,7 +25,6 @@ class DefaultVertexShader;
 
 namespace Math
 {
-    struct Rect;
     struct Vector2;
     struct Color;
 }
@@ -61,7 +61,7 @@ public:
     bool CreateViewport(std::shared_ptr<WindowsWindow> window, Math::Vector2 window_size);
     bool CreateD2DViewport(std::shared_ptr<WindowsWindow> window);
     bool CreateDepthStencilBuffer(Viewport& viewport);
-    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, MathTypes::uint32 width, MathTypes::uint32 height);
+    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width, Type::uint32 height);
     
     // TEST
     bool CreateRenderToTexture();
@@ -69,7 +69,7 @@ public:
     void BeginRTT();
     void EndRTT();
 
-    inline const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
+    FORCEINLINE const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
 
     Viewport* FindViewport(WindowsWindow* window);
     D2DViewport* FindD2DViewport(WindowsWindow* window);
@@ -80,30 +80,33 @@ public:
     void EndRenderD2D();
     void BeginLayer(const Math::Rect& kRect);
     void EndLayer();
-    void ChangeResolution(WindowsWindow* window, MathTypes::uint32 width, MathTypes::uint32 height, bool is_fullscreen = false);
+    void ChangeResolution(WindowsWindow* window, Type::uint32 width, Type::uint32 height, bool is_fullscreen = false);
     
     Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition) const;
     Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition) const;
 
     // Direct2D
     void DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float rotation_z = 0.f, float stroke = 1.f);
+    void DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float radius, float rotation_z = 0.f);
     void DrawCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius, Math::Color color, float stroke = 1.f);
     void DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector2 end, Math::Color color, float stroke = 1.f);
     void DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float rotation_z = 0.f, const std::wstring& kFontName = L"", DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-    void DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z = 0.f);
+    void DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z = 0.f, bool use_slice9 = false, const Math::Rect& kSlice9Rect = Math::Rect::Zero());
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 
     Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName);
 
-    bool GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
+    bool GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
 
-    inline ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
-    inline ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
-    inline Microsoft::WRL::ComPtr<IWICImagingFactory> GetImageFactory() const { return wic_imaging_factory_; }
+    FORCEINLINE ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
+    FORCEINLINE ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
+    FORCEINLINE Microsoft::WRL::ComPtr<IWICImagingFactory> GetImageFactory() const { return wic_imaging_factory_; }
 
 private:
     bool CreateBackBufferResources(Microsoft::WRL::ComPtr<IDXGISwapChain>& dxgi_swap_chain, Microsoft::WRL::ComPtr<ID3D11Texture2D>& back_buffer, Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& d3d_render_target_view);
+
+    void DrawSlice(D2DViewport* d2d_viewport, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const D2D1_RECT_F& kSrcRect, const D2D1_RECT_F& kDestRect);
 
     Microsoft::WRL::ComPtr<ID3D11Device> d3d_device_;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d_device_context_;

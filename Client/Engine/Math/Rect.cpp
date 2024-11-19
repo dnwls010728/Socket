@@ -26,12 +26,17 @@ Math::Rect Math::Rect::operator=(const Rect& kOther)
     return *this;
 }
 
-bool Math::Rect::Contains(const Math::Vector2& kPoint) const
+Math::Rect Math::Rect::Zero()
 {
-    return kPoint.x >= x && kPoint.x <= x + width && kPoint.y >= y && kPoint.y <= y + height;
+    return {0.f, 0.f, 0.f, 0.f};
 }
 
-bool Math::Rect::Overlaps(const Rect& other) const
+bool Math::Rect::Contains(const Rect& kRect, const Math::Vector2& kPoint)
 {
-    return x < other.Right() && Right() > other.x && y < other.Bottom() && Bottom() > other.y;
+    return kPoint.x >= kRect.x && kPoint.x <= kRect.x + kRect.width && kPoint.y >= kRect.y && kPoint.y <= kRect.y + kRect.height;
+}
+
+bool Math::Rect::Overlaps(const Rect& kRect, const Rect& other)
+{
+    return kRect.x < other.x + other.width && kRect.x + kRect.width > other.x && kRect.y < other.y + other.height && kRect.y + kRect.height > other.y;
 }

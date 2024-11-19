@@ -26,6 +26,6 @@ VS_OUTPUT main(VS_INPUT input)
 	VS_OUTPUT output;
 	output.position = mul(float4(input.position, 1.f), mat);
 	output.color = input.color;
-	output.texcoord = (input.texcoord + uv_offset) * uv_scale;
+	output.texcoord = (input.texcoord * uv_scale) + uv_offset;
 	return output;
 }

@@ -75,14 +75,14 @@ bool Renderer::CreateDWrite()
     if (FAILED(hr)) return false;
 
     Microsoft::WRL::ComPtr<IDWriteFontFile> silver_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Game_Data\\Silver.ttf", nullptr, silver_font.GetAddressOf());
+    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\Silver.ttf", nullptr, silver_font.GetAddressOf());
     if (FAILED(hr)) return false;
 
     hr = font_set_builder->AddFontFile(silver_font.Get());
     if (FAILED(hr)) return false;
 
     Microsoft::WRL::ComPtr<IDWriteFontFile> nanum_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Game_Data\\NanumBarunGothic.ttf", nullptr,
+    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\NanumBarunGothic.ttf", nullptr,
                                                   nanum_font.GetAddressOf());
     if (FAILED(hr)) return false;
 
@@ -100,6 +100,19 @@ bool Renderer::CreateDWrite()
                                                    DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
                                                    DWRITE_FONT_STRETCH_NORMAL, 24.f, L"ko-kr",
                                                    text_formats_[L"Silver24"].GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 18.f, L"ko-kr",
+                                                   text_formats_[L"Nanum18"].GetAddressOf());
+    if (FAILED(hr)) return false;
+    
+    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
+                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                                   DWRITE_FONT_STRETCH_NORMAL, 12.f, L"ko-kr",
+                                                   text_formats_[L"Nanum12"].GetAddressOf());
+
     return SUCCEEDED(hr);
 }
 
@@ -170,7 +183,7 @@ bool Renderer::CreateD2DViewport(std::shared_ptr<WindowsWindow> window)
     Viewport* viewport = FindViewport(window.get());
     if (viewport)
     {
-        const MathTypes::uint32 kDPI = GetDpiForWindow(window->GetHWnd());
+        const Type::uint32 kDPI = GetDpiForWindow(window->GetHWnd());
         const D2D1_RENDER_TARGET_PROPERTIES kRenderTargetProperties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -222,8 +235,8 @@ bool Renderer::CreateDepthStencilBuffer(Viewport& viewport)
     return SUCCEEDED(hr);
 }
 
-bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, MathTypes::uint32 width,
-                              MathTypes::uint32 height)
+bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width,
+                              Type::uint32 height)
 {
     Viewport* viewport = FindViewport(kWindow.get());
     if (viewport && (viewport->d3d_viewport.Width != width || viewport->d3d_viewport.Height != height))
@@ -255,7 +268,7 @@ bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Mat
             return false;
 
 #pragma region D2D Resize
-        const MathTypes::uint32 kDPI = GetDpiForWindow(kWindow->GetHWnd());
+        const Type::uint32 kDPI = GetDpiForWindow(kWindow->GetHWnd());
         const D2D1_RENDER_TARGET_PROPERTIES render_target_properties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -356,17 +369,10 @@ void Renderer::BeginRender(const std::shared_ptr<WindowsWindow>& kWindow)
     current_viewport_ = FindViewport(kWindow.get());
     CHECK_IF(current_viewport_, L"Not found viewport for window.");
 
-    // constexpr float clear_color[4] = {
-    //     49.f / 255.f,
-    //     77.f / 255.f,
-    //     121.f / 255.f,
-    //     1.f
-    // };
-
     constexpr float kClearColor[4] = {
-        0.f,
-        0.f,
-        0.f,
+        49.f / 255.f,
+        77.f / 255.f,
+        121.f / 255.f,
         1.f
     };
 
@@ -410,7 +416,7 @@ void Renderer::BeginLayer(const Math::Rect& kRect)
     Microsoft::WRL::ComPtr<ID2D1Layer> layer;
     current_d2d_viewport_->d2d_render_target->CreateLayer(nullptr, &layer);
 
-    D2D1_RECT_F clipRect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    D2D1_RECT_F clipRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
     current_d2d_viewport_->d2d_render_target->PushLayer(
         D2D1::LayerParameters(
             clipRect,
@@ -429,7 +435,7 @@ void Renderer::EndLayer()
     current_d2d_viewport_->d2d_render_target->PopLayer();
 }
 
-void Renderer::ChangeResolution(WindowsWindow* window, MathTypes::uint32 width, MathTypes::uint32 height, bool is_fullscreen)
+void Renderer::ChangeResolution(WindowsWindow* window, Type::uint32 width, Type::uint32 height, bool is_fullscreen)
 {
     Viewport* viewport = FindViewport(window);
     if (!viewport) return;
@@ -496,7 +502,7 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
 
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
     HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
@@ -509,8 +515,34 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
-    // d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
-    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
+    // d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot,
+    const Math::Color& kColor, float radius, float rotation_z)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(window);
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(kColor.r / 255.f, kColor.g / 255.f, kColor.b / 255.f, kColor.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+
+    d2d_viewport->d2d_render_target->FillRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
@@ -553,7 +585,7 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
+    const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
 
     Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName);
 
@@ -568,10 +600,11 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     
     if (FAILED(hr)) return;
     
-    float pivot_x = kRect.width * kPivot.x;
-    float pivot_y = kRect.height * (1.f - kPivot.y);
-
-    D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    // float pivot_x = kRect.width * kPivot.x;
+    // float pivot_y = kRect.height * (1.f - kPivot.y);
+    //
+    // D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
+    D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
     d2d_viewport->d2d_render_target->DrawTextW(kString.c_str(), static_cast<UINT32>(kString.size()),
@@ -579,7 +612,7 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z)
+void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z, bool use_slice9, const Math::Rect& kSlice9Rect)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -587,15 +620,70 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
 
-    const D2D1_RECT_F rect = D2D1::RectF(kRect.Left(), kRect.Top(), kRect.Right(), kRect.Bottom());
-
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
 
     // D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR - Point
     // D2D1_BITMAP_INTERPOLATION_MODE_LINEAR - Bilinear
 
-    d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), rect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+    if (!use_slice9)
+    {
+        const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
+        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+    }
+    else
+    {
+        const float kWidth = kBitmap->GetSize().width;
+        const float kHeight = kBitmap->GetSize().height;
+
+        const D2D1_RECT_F kSlice9 = D2D1::RectF(kSlice9Rect.x, kSlice9Rect.y, kSlice9Rect.width, kSlice9Rect.height);
+
+        // Top Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, 0.f, kSlice9.left, kSlice9.top),
+            D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MinX() + kSlice9.left, kRect.MinY() + kSlice9.top));
+
+        // Top Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, 0.f, kSlice9.right, kSlice9.top),
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MinY(), kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY() + kSlice9.top));
+        
+        // Top Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, 0.f, kWidth, kSlice9.top),
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY(), kRect.MaxX(), kRect.MinY() + kSlice9.top));
+        
+        // Center Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, kSlice9.top, kSlice9.left, kSlice9.bottom),
+            D2D1::RectF(kRect.MinX(), kRect.MinY() + kSlice9.top, kRect.MinX() + kSlice9.left, kRect.MaxY() - (kHeight - kSlice9.bottom)));
+        
+        // Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, kSlice9.top, kSlice9.right, kSlice9.bottom),
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MinY() + kSlice9.top, kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY() - (kHeight - kSlice9.bottom)));
+        
+        // Center Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, kSlice9.top, kWidth, kSlice9.bottom),
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MinY() + kSlice9.top, kRect.MaxX(), kRect.MaxY() - (kHeight - kSlice9.bottom)));
+        
+        // Bottom Left
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(0.f, kSlice9.bottom, kSlice9.left, kHeight),
+            D2D1::RectF(kRect.MinX(), kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MinX() + kSlice9.left, kRect.MaxY()));
+        
+        // Bottom Center
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.left, kSlice9.bottom, kSlice9.right, kHeight),
+            D2D1::RectF(kRect.MinX() + kSlice9.left, kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY()));
+        
+        // Bottom Right
+        DrawSlice(d2d_viewport, kBitmap,
+            D2D1::RectF(kSlice9.right, kSlice9.bottom, kWidth, kHeight),
+            D2D1::RectF(kRect.MaxX() - (kWidth - kSlice9.right), kRect.MaxY() - (kHeight - kSlice9.bottom), kRect.MaxX(), kRect.MaxY()));
+    }
+    
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
@@ -632,18 +720,19 @@ Microsoft::WRL::ComPtr<IDWriteTextFormat> Renderer::GetTextFormat(const std::wst
     return nullptr;
 }
 
-bool Renderer::GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances)
+bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances)
 {
     Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName);
     if (!text_format) return false;
 
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    // HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), kRect.width, kRect.height, text_layout.GetAddressOf());
     HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), FLT_MAX, FLT_MAX, text_layout.GetAddressOf());
     if (FAILED(hr)) return false;
     
     std::vector<DWRITE_CLUSTER_METRICS> cluster_metrics;
 
-    MathTypes::uint32 cluster_count = 0;
+    Type::uint32 cluster_count = 0;
     text_layout->GetClusterMetrics(nullptr, 0, &cluster_count);
         
     cluster_metrics.resize(cluster_count);
@@ -655,6 +744,11 @@ bool Renderer::GetTextAdvances(const std::wstring& kString, const std::wstring& 
     {
         advances.push_back(cluster.width);
     }
+
+    // UINT32 line_count = 0;
+    // text_layout->GetLineMetrics(nullptr, 0, &line_count);
+    // std::vector<DWRITE_LINE_METRICS> line_metrics(line_count);
+    // text_layout->GetLineMetrics(line_metrics.data(), line_count, &line_count);
 
     return true;
 }
@@ -668,5 +762,10 @@ bool Renderer::CreateBackBufferResources(Microsoft::WRL::ComPtr<IDXGISwapChain>&
 
     hr = d3d_device_->CreateRenderTargetView(back_buffer.Get(), nullptr, d3d_render_target_view.GetAddressOf());
     return SUCCEEDED(hr);
+}
+
+void Renderer::DrawSlice(D2DViewport* d2d_viewport, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const D2D1_RECT_F& kSrcRect, const D2D1_RECT_F& kDestRect)
+{
+    d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kDestRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, kSrcRect);
 }
 

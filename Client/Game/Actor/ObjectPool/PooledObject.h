@@ -14,16 +14,16 @@ public:
     PooledObject(const std::wstring& kName);
     virtual ~PooledObject() override = default;
 
-    virtual void OnEnable() override;
-
     void Deactivate();
 
-    OnPooledObjectDespawn on_despawn;
+    OnPooledObjectDespawn OnDespawn;
 
-    inline void SetPoolIndex(int index) { pool_index_ = index; }
-    inline int GetPoolIndex() const { return pool_index_; }
+    FORCEINLINE void SetPoolIndex(int index) { pool_index_ = index; }
+    FORCEINLINE int GetPoolIndex() const { return pool_index_; }
 
 protected:
+    virtual void OnEnable() override;
+    
     int pool_index_;
     
 };

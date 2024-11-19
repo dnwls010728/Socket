@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "Singleton.h"
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 #include "Math/Vector2.h"
 
 union Event;
@@ -37,10 +37,10 @@ public:
     bool GetMouseButtonDown(MouseButton button) const;
     bool GetMouseButtonUp(MouseButton button) const;
 
-    inline int GetWheelAxis() const { return wheel_axis_; }
-    inline int GetWheelHAxis() const { return wheel_h_axis_; }
+    FORCEINLINE int GetWheelAxis() const { return wheel_axis_; }
+    FORCEINLINE int GetWheelHAxis() const { return wheel_h_axis_; }
     
-    inline Math::Vector2 GetMousePosition() const { return mouse_position_; }
+    FORCEINLINE Math::Vector2 GetMousePosition() const { return mouse_position_; }
 
 private:
     friend class Core;

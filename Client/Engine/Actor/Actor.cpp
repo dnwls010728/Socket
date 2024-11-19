@@ -7,6 +7,7 @@
 #include "Level/World.h"
 
 Actor::Actor(const std::wstring& kName) :
+    name_(kName),
     tag_(ActorTag::kNone),
     layer_(ActorLayer::kDefault),
     is_active_(true),
@@ -14,30 +15,8 @@ Actor::Actor(const std::wstring& kName) :
     components_(),
     transform_(nullptr)
 {
-    name_ = kName;
-    
     TransformComponent* transform = AddComponent<TransformComponent>(L"Transform");
     transform_ = transform->GetSharedThis();
-}
-
-void Actor::OnCollisionEnter(Actor* other)
-{
-    on_collision_enter.Execute(std::move(other));
-}
-
-void Actor::OnCollisionExit(Actor* other)
-{
-    on_collision_exit.Execute(std::move(other));
-}
-
-void Actor::OnTriggerEnter(Actor* other)
-{
-    on_trigger_enter.Execute(std::move(other));
-}
-
-void Actor::OnTriggerExit(Actor* other)
-{
-    on_trigger_exit.Execute(std::move(other));
 }
 
 void Actor::BeginPlay()
@@ -66,11 +45,6 @@ void Actor::EndPlay(EndPlayReason type)
         b2DestroyBody(body_id_);
         body_id_ = b2_nullBodyId;
     }
-}
-
-void Actor::Destroyed()
-{
-    EndPlay(EndPlayReason::kDestroyed);
 }
 
 void Actor::PhysicsTick(float delta_time)
@@ -109,12 +83,22 @@ void Actor::OnEnable()
 {
     is_active_ = true;
     if (b2Body_IsValid(body_id_)) b2Body_Enable(body_id_);
+
+    for (const auto& component : components_)
+    {
+        component->OnEnable();
+    }
 }
 
 void Actor::OnDisable()
 {
     is_active_ = false;
     if (b2Body_IsValid(body_id_)) b2Body_Disable(body_id_);
+
+    for (const auto& component : components_)
+    {
+        component->OnDisable();
+    }
 }
 
 void Actor::SetActive(bool is_active)
@@ -142,6 +126,18 @@ void Actor::SetLifeSpan(float life_span)
 bool Actor::CompareTag(ActorTag tag) const
 {
     return tag_ == tag;
+}
+
+void Actor::GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components)
+{
+    for (const auto& component : components_)
+    {
+        rttr::type component_type = rttr::type::get(*component);
+        if (component_type.is_derived_from(type))
+        {
+            components.push_back(component.get());
+        }
+    }
 }
 
 ActorComponent* Actor::GetComponent(const rttr::type& type)

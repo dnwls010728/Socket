@@ -1,28 +1,26 @@
 ﻿#pragma once
-#include <memory>
-
 #include "UI/Widget.h"
 
 class UITexture;
 
-namespace UI
+class Image : public Widget
 {
-    class Image : public Widget
-    {
-        SHADER_CLASS_HELPER(Image)
-        GENERATED_BODY(Image, Widget)
-        
-    public:
-        Image(const std::wstring& kName);
-        virtual ~Image() override = default;
+    SHADER_CLASS_HELPER(Image)
+    GENERATED_BODY(Image, Widget);
+    
+public:
+    Image(const std::wstring& kName);
+    virtual ~Image() override = default;
+    
+    FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
+    FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
-        inline void SetTexture(UITexture* texture) { texture_ = texture; }
+protected:
+    virtual void Render() override;
 
-    protected:
-        virtual void Render() override;
+private:
+    UITexture* texture_;
 
-    private:
-        UITexture* texture_;
-        
-    };
-}
+    DrawMode draw_mode_;
+    
+};

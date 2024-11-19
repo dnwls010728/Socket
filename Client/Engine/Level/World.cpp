@@ -3,11 +3,10 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Camera.h"
-#include "Actor/Component/ColliderComponent.h"
 #include "box2d/box2d.h"
+#include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
-#include "Map/SplashMap.h"
 #include "Time/TimerManager.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowsWindow.h"
@@ -84,17 +83,17 @@ World::~World()
 void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
-    
-    AddLevel<SplashMap>(LevelType::kSplash, L"Splash");
+
+    AddLevel<EditorMap>(LevelType::kEditor, L"Editor");
     AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
     
-    OpenLevel(LevelType::kSplash);
+    OpenLevel(LevelType::kMainMenu);
 }
 
 void World::OpenLevel(LevelType type)
 {
-    pending_level_ = levels_[static_cast<MathTypes::uint64>(type)].get();
+    pending_level_ = levels_[static_cast<Type::uint64>(type)].get();
 }
 
 void World::PhysicsTick(float delta_time)
@@ -163,16 +162,19 @@ void World::Render(float alpha)
         }
     }
     
-    std::ranges::sort(shapes, Shape::CompareZOrder);
-    
-    shapes_.clear();
-    
     shape_batch_->DrawShapes(window_, shapes);
 }
 
 void World::AddShape(const std::shared_ptr<Shape>& kShape)
 {
     shapes_.push_back(kShape);
+    SortZOrder();
+}
+
+void World::RemoveShape(const std::shared_ptr<Shape>& kShape)
+{
+    std::erase(shapes_, kShape);
+    SortZOrder();
 }
 
 void World::GetActors(const rttr::type& type, std::vector<Actor*>& actors)
@@ -224,21 +226,20 @@ void World::TransitionLevel()
     pending_level_ = nullptr;
 
     current_level_->AddActor<Camera>(L"Main Camera");
-    
     current_level_->Load();
+    
+    Canvas::Get()->BeginPlay();
     current_level_->InitializeActors();
     
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();
-    
-    Canvas::Get()->BeginPlay();
 }
 
 void World::ProcessCollisionEvents()
 {
     b2ContactEvents events = b2World_GetContactEvents(World::Get()->world_id_);
-    for (MathTypes::uint32 i = 0; i < events.beginCount; ++i)
+    for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2ContactBeginTouchEvent event = events.beginEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
@@ -253,7 +254,7 @@ void World::ProcessCollisionEvents()
         actor_b->OnCollisionEnter(actor_a);
     }
 
-    for (MathTypes::uint32 i = 0; i < events.endCount; ++i)
+    for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2ContactEndTouchEvent event = events.endEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
@@ -272,7 +273,7 @@ void World::ProcessCollisionEvents()
 void World::ProcessTriggerEvents()
 {
     b2SensorEvents events = b2World_GetSensorEvents(World::Get()->world_id_);
-    for (MathTypes::uint32 i = 0; i < events.beginCount; ++i)
+    for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2SensorBeginTouchEvent event = events.beginEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);
@@ -286,7 +287,7 @@ void World::ProcessTriggerEvents()
         actor_b->OnTriggerEnter(actor_a);
     }
     
-    for (MathTypes::uint32 i = 0; i < events.endCount; ++i)
+    for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2SensorEndTouchEvent event = events.endEvents[i];
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);
@@ -340,7 +341,7 @@ void World::DestroyActors()
     while (!pending_destroy_actors_.empty())
     {
         std::shared_ptr<Actor> actor = pending_destroy_actors_.front();
-        actor->Destroyed();
+        actor->EndPlay(EndPlayReason::kDestroyed);
         
         std::erase(current_level_->actors_, actor);
         pending_destroy_actors_.pop();
@@ -350,6 +351,11 @@ void World::DestroyActors()
 void World::ActivateActor(Actor* actor, bool is_active)
 {
     pending_actor_activation_.push({actor, is_active});
+}
+
+void World::SortZOrder()
+{
+    std::ranges::sort(shapes_, Shape::CompareZOrder);
 }
 
 void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context)

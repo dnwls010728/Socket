@@ -42,9 +42,9 @@ void Camera::PreInitializeComponents()
     UpdateProjectionMatrix();
 }
 
-void Camera::Tick(float delta_time)
+void Camera::PhysicsTick(float delta_time)
 {
-    Actor::Tick(delta_time);
+    Actor::PhysicsTick(delta_time);
     
     if (target_ && target_collider_)
     {
@@ -115,7 +115,7 @@ void Camera::SetTarget(Actor* target)
     if (!IsValid(target)) return;
     target_ = target;
 
-    target_collider_ = target_->GetCollider();
+    target_collider_ = static_cast<ColliderComponent*>(target->GetComponent(ColliderComponent::StaticClass()));
     if (target_collider_)
     {
         const Bounds bounds = target_collider_->GetBounds();

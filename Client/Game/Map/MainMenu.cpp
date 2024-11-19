@@ -1,86 +1,188 @@
 ﻿#include "pch.h"
 #include "MainMenu.h"
 
-#include "Core.h"
-#include "Enums.h"
+#include "../../SocketCore/SocketSession.h"
+#include "../SocketCore/ServerPacketHandler.h"
+#include "Input/Keyboard.h"
 #include "Level/World.h"
+#include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
+#include "UI/Widget.h"
 #include "UI/Widget/Button.h"
+#include "UI/Widget/EditableTextBox.h"
+#include "UI/Widget/Image.h"
+#include "UI/Widget/ScrollBox.h"
 #include "UI/Widget/Text.h"
-#include "UI/Widget/TextBox.h"
 #include "Windows/WindowsWindow.h"
+#include "Windows/DX/UITexture.h"
 
 MainMenu::MainMenu(const std::wstring& kName) :
-    Level(kName)
+    Level(kName),
+    scroll_box_(nullptr)
 {
 }
 
 void MainMenu::Load()
 {
-    std::shared_ptr<UI::Text> build = std::make_shared<UI::Text>(L"Build");
-    build->SetAnchorPreset(AnchorPresets::kLeft | AnchorPresets::kBottom, true);
-    build->SetSize({200.f, 30.f});
-    build->SetText(L"Development Build: v0.0.1");
-
-    Canvas::Get()->AddWidget(build);
+    Level::Load();
     
-    std::shared_ptr<UI::TextBox> tb_id = std::make_shared<UI::TextBox>(L"ID");
-    tb_id->SetPosition({0.f, -45.f});
-    tb_id->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
-    tb_id->SetSize({200.f, 30.f});
-    tb_id->SetPlaceholder(L"ID");
+    Canvas* canvas = Canvas::Get();
 
-    Canvas::Get()->AddWidget(tb_id);
+    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
+    texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
 
-    std::shared_ptr<UI::TextBox> tb_pw = std::make_shared<UI::TextBox>(L"Password");
-    tb_pw->SetPosition({0.f, 0.f});
-    tb_pw->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
-    tb_pw->SetSize({200.f, 30.f});
-    tb_pw->SetPlaceholder(L"Password");
-    tb_pw->SetContentType(UI::ContentType::kPassword);
+    scroll_box_ = canvas->AddWidget<ScrollBox>(L"Scroll Box");
+    scroll_box_->AttachToWidget(canvas->GetRootWidget());
+    scroll_box_->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+    scroll_box_->SetAnchoredPosition({0.f, 0.f});
+    scroll_box_->SetSize({200.f, 100.f});
 
-    Canvas::Get()->AddWidget(tb_pw);
-    
-    std::shared_ptr<UI::Button> start_button = std::make_shared<UI::Button>(L"Login");
-    start_button->SetPosition({0.f, 45.f});
-    start_button->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
-    start_button->on_click.Add([]()
+    // Scroll Box 테스트 코드
+    for (int i = 0; i < 10; ++i)
     {
+        Text* text = canvas->AddWidget<Text>(L"Text");
+        text->AttachToWidget(scroll_box_);
+        text->SetSize({100.f, 30.f});
+        text->SetAlignment(Text::kMiddleLeft);
+        text->SetText(L"Text " + std::to_wstring(i));
+    }
+
+    Image* id_image = canvas->AddWidget<Image>(L"ID Image");
+    id_image->AttachToWidget(canvas->GetRootWidget());
+    id_image->SetAnchoredPosition({-50.f, -25.f});
+    id_image->SetSize({200.f, 50.f});
+    id_image->SetDrawMode(DrawMode::kSliced);
+    id_image->SetTexture(texture);
+    
+    EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
+    id_text_box->AttachToWidget(id_image);
+    id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
+    id_text_box->SetAnchoredPosition({10.f, 10.f});
+    id_text_box->SetSize({10.f, 10.f});
+    id_text_box->SetPlaceholder(L"ID");
+
+    Image* pw_image = canvas->AddWidget<Image>(L"Password Image");
+    pw_image->AttachToWidget(canvas->GetRootWidget());
+    pw_image->SetAnchoredPosition({-50.f, 25.f});
+    pw_image->SetSize({200.f, 50.f});
+    pw_image->SetDrawMode(DrawMode::kSliced);
+    pw_image->SetTexture(texture);
+
+    EditableTextBox* pw_text_box = canvas->AddWidget<EditableTextBox>(L"Password Text Box");
+    pw_text_box->AttachToWidget(pw_image);
+    pw_text_box->SetAnchorPreset(AnchorPreset::kStretch);
+    pw_text_box->SetAnchoredPosition({10.f, 10.f});
+    pw_text_box->SetSize({10.f, 10.f});
+    pw_text_box->SetPlaceholder(L"Password");
+    pw_text_box->SetContentType(ContentType::Password);
+    
+    Button* login_button = canvas->AddWidget<Button>(L"Login Button");
+    login_button->AttachToWidget(canvas->GetRootWidget());
+    login_button->SetAnchoredPosition({100.f, 0.f});
+    login_button->SetSize({100.f, 100.f});
+    login_button->SetTexture(texture);
+    login_button->SetDrawMode(DrawMode::kSliced);
+    login_button->OnMouseReleased.Add([]()
+    {
+        if(!GSocketSession->Connect())
+        {
+            //TODO: 여기서 튕기는 코드 작성 해 주세요
+        }
+        else
+        {
+            C_EnterPacket pkt;
+            pkt.SetId("Sundaekyung");
+            pkt.SetName("Sundaekyung");
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+            GSocketSession->Send(sendBuffer);
+        }
+        
         World::Get()->OpenLevel(LevelType::kDefault);
     });
 
-    Canvas::Get()->AddWidget(start_button);
+    Text* login_text = canvas->AddWidget<Text>(L"Login Text");
+    login_text->AttachToWidget(login_button);
+    login_text->SetAnchorPreset(AnchorPreset::kStretch);
+    login_text->SetSize({0.f, 0.f});
+    login_text->SetColor(Math::Color::Black);
+    login_text->SetText(L"LOGIN");
+    login_text->SetAlignment(Text::kMiddleCenter);
 
-    std::shared_ptr<UI::Text> button_text = std::make_shared<UI::Text>(L"Login Text");
-    button_text->SetPosition({0.f, 0.f});
-    button_text->SetSize({0.f, 0.f});
-    button_text->SetAnchorPreset(AnchorPresets::kStretch, true);
-    button_text->AttachToWidget(start_button.get());
-    button_text->SetText(L"Login");
-    button_text->SetColor(Math::Color::Black);
-
-    Canvas::Get()->AddWidget(button_text);
-
-    std::shared_ptr<UI::Button> exit_button = std::make_shared<UI::Button>(L"Exit");
-    exit_button->SetPosition({0.f, 90.f});
-    exit_button->SetAnchorPreset(AnchorPresets::kMiddle | AnchorPresets::kCenter, true);
-    exit_button->on_click.Add([]()
+    Button* editor_button = canvas->AddWidget<Button>(L"Editor Button");
+    editor_button->AttachToWidget(canvas->GetRootWidget());
+    editor_button->SetAnchoredPosition({-75.f, 75.f});
+    editor_button->SetTexture(texture);
+    editor_button->SetDrawMode(DrawMode::kSliced);
+    editor_button->OnMouseReleased.Add([]()
+    {
+        World::Get()->OpenLevel(LevelType::kEditor);
+    });
+    
+    Text* editor_text = canvas->AddWidget<Text>(L"Editor Text");
+    editor_text->AttachToWidget(editor_button);
+    editor_text->SetAnchorPreset(AnchorPreset::kStretch);
+    editor_text->SetSize({0.f, 0.f});
+    editor_text->SetColor(Math::Color::Black);
+    editor_text->SetText(L"EDITOR");
+    editor_text->SetAlignment(Text::kMiddleCenter);
+    
+    Button* exit_button = canvas->AddWidget<Button>(L"Exit Button");
+    exit_button->AttachToWidget(canvas->GetRootWidget());
+    exit_button->SetAnchoredPosition({75.f, 75.f});
+    exit_button->SetTexture(texture);
+    exit_button->SetDrawMode(DrawMode::kSliced);
+    exit_button->OnMouseReleased.Add([]()
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);
     });
+    
+    Text* exit_text = canvas->AddWidget<Text>(L"Exit Text");
+    exit_text->AttachToWidget(exit_button);
+    exit_text->SetAnchorPreset(AnchorPreset::kStretch);
+    exit_text->SetSize({0.f, 0.f});
+    exit_text->SetColor(Math::Color::Black);
+    exit_text->SetText(L"EXIT");
+    exit_text->SetAlignment(Text::kMiddleCenter);
+    
+}
 
-    Canvas::Get()->AddWidget(exit_button);
+void MainMenu::Tick(float delta_time)
+{
+    Level::Tick(delta_time);
 
-    std::shared_ptr<UI::Text> exit_button_text = std::make_shared<UI::Text>(L"Exit Text");
-    exit_button_text->SetPosition({0.f, 0.f});
-    exit_button_text->SetSize({0.f, 0.f});
-    exit_button_text->SetAnchorPreset(AnchorPresets::kStretch, true);
-    exit_button_text->AttachToWidget(exit_button.get());
-    exit_button_text->SetText(L"Exit");
-    exit_button_text->SetColor(Math::Color::Black);
+    Keyboard* keyboard = Keyboard::Get();
+    if (keyboard->GetKey(VK_UP))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.y -= 100.f * delta_time;
 
-    Canvas::Get()->AddWidget(exit_button_text);
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_DOWN))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.y += 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_LEFT))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.x -= 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_RIGHT))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.x += 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
 }
 
 RTTR_REGISTRATION

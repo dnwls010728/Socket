@@ -2,6 +2,7 @@
 #include "Core.h"
 
 #include "GameEngine.h"
+#include "../SocketCore/SocketEventManager.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
 #include "Input/Keyboard.h"
@@ -15,7 +16,6 @@
 #include "Windows/DX/Renderer.h"
 
 Core::Core() :
-    current_application_(nullptr),
     game_window_(),
     game_engine_(nullptr),
     is_running_(false),
@@ -27,12 +27,9 @@ Core::Core() :
 {
 }
 
-void Core::Init(const HINSTANCE kInstanceHandle)
+void Core::Init(WindowsApplication* application)
 {
-    // 윈도우 애플리케이션을 생성하고 메시지 핸들러로 등록
-    HICON icon_handle = LoadIcon(kInstanceHandle, MAKEINTRESOURCE(IDI_ICON1));
-    current_application_ = std::make_shared<WindowsApplication>(kInstanceHandle, icon_handle);
-    current_application_->AddMessageHandler(*this);
+    application->AddMessageHandler(*this);
 
     // DirectX 11 렌더러 초기화
     CHECK_IF(Renderer::Get()->Init(), L"Failed to initialize renderer.");
@@ -49,8 +46,8 @@ void Core::Init(const HINSTANCE kInstanceHandle)
     definition->height = ProjectSettings::kScreenHeight;
 
     // 게임 윈도우 생성
-    std::shared_ptr<WindowsWindow> new_window = current_application_->MakeWindow();
-    current_application_->InitWindow(new_window, definition, nullptr);
+    std::shared_ptr<WindowsWindow> new_window = application->MakeWindow();
+    application->InitWindow(new_window, definition, nullptr);
 
     // 렌더러에 뷰포트 생성
     CHECK_IF(Renderer::Get()->CreateViewport(new_window, {definition->width, definition->height}), L"Failed to create viewport.");
@@ -69,7 +66,7 @@ void Core::Init(const HINSTANCE kInstanceHandle)
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result)
+bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
     if (EventManager::Get()->ProcessMessage(hWnd, message, wParam, lParam, handler_result)) return true;
@@ -137,28 +134,17 @@ void Core::MainThread()
             Event event;
             while (event_manager->PollEvent(event))
             {
-                const MathTypes::uint32& kType = event.type;
-                if (kType == EventType::kWindowSize)
+                const Type::uint32& kType = event.type;
+                if (kType == static_cast<Type::uint32>(EventType::kWindowSize))
                 {
                     const WindowEvent& kWindowEvent = event.window;
             
                     Renderer::Get()->ResizeViewport(kWindow, kWindowEvent.data1, kWindowEvent.data2);
-                    Canvas::Get()->OnResize(kWindowEvent.data1, kWindowEvent.data2);
-                }
-                else if (kType & (EventType::kKeyPressed | EventType::kKeyReleased))
-                {
-                    Keyboard::Get()->OnEvent(event);
-                    Canvas::Get()->OnEvent(event);
-                }
-                else if (kType == EventType::kText)
-                {
-                    Canvas::Get()->OnEvent(event);
-                }
-                else if (kType & (EventType::kMousePressed | EventType::kMouseReleased | EventType::kMouseMotion | EventType::kMouseWheel))
-                {
-                    Mouse::Get()->OnEvent(event);
                 }
 
+                Keyboard::Get()->OnEvent(event);
+                Mouse::Get()->OnEvent(event);
+                Canvas::Get()->OnEvent(event);
                 World::Get()->OnEvent(event);
             }
             

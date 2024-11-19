@@ -11,15 +11,16 @@ public:
     CSVReader();
     virtual ~CSVReader() override = default;
 
-    void Split(const std::wstring& kStr, wchar_t delimiter, std::vector<std::wstring>& out);
-
     template <typename T>
-    bool Load(const std::wstring& kPath, std::vector<T>& out);
+    bool Parse(const std::wstring& kPath, std::vector<T>& out);
+
+private:
+    void Split(const std::wstring& kStr, wchar_t delimiter, std::vector<std::wstring>& out);
     
 };
 
 template <typename T>
-bool CSVReader::Load(const std::wstring& kPath, std::vector<T>& out)
+bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
 {
     std::wifstream file(kPath);
     if (!file.is_open()) return false;

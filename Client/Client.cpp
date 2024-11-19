@@ -2,34 +2,46 @@
 #define _CRTDBG_MAP_ALLOC
 
 #include "Client.h"
-#include "Core.h"
-#include "Misc/EngineMacros.h"
+#include "Engine/Core.h"
 
 #include <crtdbg.h>
 #include <iostream>
 
-#include "Windows/WindowsWindow.h"
+#include "resource.h"
+#include "SocketCore/ServerPacketHandler.h"
+#include "Engine/Windows/WindowsWindow.h"
+#include "SocketCore/SocketSession.h"
+#include "../Common/Packet.h"
 
-START
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 #ifdef _DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+    
+    HICON icon_handle = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    WindowsApplication* application = new WindowsApplication(hInstance, icon_handle);
 
     Core* core = new Core();
-    core->Init(hInstance);
+    core->Init(application);
 
-    MSG msg = {};
-    while (msg.message != WM_QUIT)
+    ServerPacketHandler::Init();
+    
+    /*
+    if(GSocketSession->Connect())
     {
-        if (GetMessage(&msg, nullptr, 0, 0))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
+        C_EnterPacket pkt;
+        pkt.SetId("Client");
+        pkt.SetName("Client");
+        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+        GSocketSession->Send(sendBuffer);
+    };
+    */
+    
+    application->PumpMessages();
 
     SAFE_RELEASE(core);
+    SAFE_RELEASE(application);
     
     return 0;
 }

@@ -1,10 +1,8 @@
 ﻿#pragma once
 #include <vector>
 
-#include "..\resource.h"
-#include "Singleton.h"
 #include "../framework.h"
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 
 struct WindowDefinition;
 class WindowsWindow;
@@ -12,7 +10,7 @@ class WindowsWindow;
 class IWindowsMessageHandler
 {
 public:
-    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, MathTypes::uint32 handler_result) = 0;
+    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result) = 0;
     
 };
 
@@ -29,6 +27,7 @@ public:
     void InitWindow(const std::shared_ptr<WindowsWindow>& kWindow, const std::shared_ptr<WindowDefinition>& kDefinition, const std::shared_ptr<WindowsWindow>& kParentWindow);
     void AddMessageHandler(IWindowsMessageHandler& message_handler);
     void RemoveMessageHandler(IWindowsMessageHandler& message_handler);
+    void PumpMessages();
     void Quit();
 
     const std::vector<std::shared_ptr<WindowsWindow>>& GetWindows() const { return windows_; }
@@ -36,7 +35,7 @@ public:
 private:
     static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    MathTypes::uint32 ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    Type::uint32 ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     std::shared_ptr<WindowsWindow> FindWindowByHWND(HWND hWnd) const;
 

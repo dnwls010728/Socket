@@ -6,7 +6,6 @@
 
 #include "Math.h"
 
-
 Math::Vector2::Vector2() :
     x(),
     y()
@@ -260,12 +259,12 @@ Math::Vector2 Math::Vector2::Reflect(Vector2 direction, Vector2 normal)
 
 Math::Vector2 Math::Vector2::PositiveInfinity()
 {
-    return {std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
+    return {FLT_MAX, FLT_MAX};
 }
 
 Math::Vector2 Math::Vector2::NegativeInfinity()
 {
-    return {std::numeric_limits<float>::lowest(), std::numeric_limits<float>::lowest()};
+    return {-FLT_MAX, -FLT_MAX};
 }
 
 float Math::Vector2::Angle(Vector2 from, Vector2 to)

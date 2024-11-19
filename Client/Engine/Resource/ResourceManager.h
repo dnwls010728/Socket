@@ -9,31 +9,31 @@ public:
     virtual ~ResourceManager() override = default;
 
     template <std::derived_from<Resource> T>
-    bool Load(const std::wstring& kName, const std::wstring& kPath);
-
-    template <std::derived_from<Resource> T>
-    T* GetResource(const std::wstring& kName);
+    T* Load(const std::wstring& kPath);
 
 private:
-    std::map<std::wstring, std::unique_ptr<Resource>> resources_;
+    std::unordered_map<std::wstring, std::unique_ptr<Resource>> resources_;
     
 };
 
 template <std::derived_from<Resource> T>
-bool ResourceManager::Load(const std::wstring& kName, const std::wstring& kPath)
+T* ResourceManager::Load(const std::wstring& kPath)
 {
-    if (resources_.contains(kName)) return true;
+    std::wstring path = L".\\Content\\" + kPath;
+    if (resources_.contains(path))
+    {
+        Resource* resource = resources_[path].get();
+        
+        rttr::type type = rttr::type::get<T>();
+        rttr::type resource_type = rttr::type::get(*resource);
 
-    T* resource = new T();
-    if (!resource->Load(kPath)) return false;
+        if (type == resource_type) return static_cast<T*>(resource);
+        return nullptr;
+    }
 
-    resources_[kName] = std::unique_ptr<T>(resource);
-    return true;
-}
+    std::unique_ptr<T> resource = std::make_unique<T>();
+    if (!resource->Load(path)) return nullptr;
 
-template <std::derived_from<Resource> T>
-T* ResourceManager::GetResource(const std::wstring& kName)
-{
-    if (!resources_.contains(kName)) return nullptr;
-    return dynamic_cast<T*>(resources_[kName].get());
+    resources_[path] = std::move(resource);
+    return static_cast<T*>(resources_[path].get());
 }

@@ -6,7 +6,7 @@
 #include <string>
 #include <d2d1.h>
 
-#include "Math/MathTypes.h"
+#include "Misc/Type.h"
 #include "Resource/Resource.h"
 
 class UITexture : public Resource
@@ -19,15 +19,20 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
 
-    inline Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
+    FORCEINLINE Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
     
-    inline MathTypes::uint32 GetWidth() const { return width_; }
-    inline MathTypes::uint32 GetHeight() const { return height_; }
+    FORCEINLINE Type::uint32 GetWidth() const { return width_; }
+    FORCEINLINE Type::uint32 GetHeight() const { return height_; }
+
+    FORCEINLINE void SetSlice9Rect(const Math::Rect& kRect) { slice9_rect_ = kRect; }
+    FORCEINLINE const Math::Rect& GetSlice9Rect() const { return slice9_rect_; }
 
 private:
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
     
-    MathTypes::uint32 width_;
-    MathTypes::uint32 height_;
+    Type::uint32 width_;
+    Type::uint32 height_;
+
+    Math::Rect slice9_rect_;
     
 };

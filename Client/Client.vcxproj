@@ -113,7 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Client\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\Client\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;DirectXTK.lib;fmod_vc.lib;rttr_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;DirectXTK.lib;fmod_vc.lib;rttr_core.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,10 +159,9 @@
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\Data\CSVReader.h" />
+    <ClInclude Include="Engine\Data\FileHelper.h" />
     <ClInclude Include="Engine\Data\RegistryHelper.h" />
-    <ClInclude Include="Engine\Data\StatInfo.h" />
     <ClInclude Include="Engine\DebugDrawHelper.h" />
-    <ClInclude Include="Engine\Editor\Editor.h" />
     <ClInclude Include="Engine\Enums.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
     <ClInclude Include="Engine\Event\Events.h" />
@@ -175,14 +174,14 @@
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
     <ClInclude Include="Engine\Math\Math.h" />
-    <ClInclude Include="Engine\Math\MathTypes.h" />
     <ClInclude Include="Engine\Math\Rect.h" />
     <ClInclude Include="Engine\Math\Vector2.h" />
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
+    <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
-    <ClInclude Include="Engine\Object.h" />
+    <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Resource\Resource.h" />
     <ClInclude Include="Engine\Resource\ResourceManager.h" />
@@ -193,9 +192,10 @@
     <ClInclude Include="Engine\UI\Canvas.h" />
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\UI\Widget\Button.h" />
+    <ClInclude Include="Engine\UI\Widget\EditableTextBox.h" />
     <ClInclude Include="Engine\UI\Widget\Image.h" />
+    <ClInclude Include="Engine\UI\Widget\ScrollBox.h" />
     <ClInclude Include="Engine\UI\Widget\Text.h" />
-    <ClInclude Include="Engine\UI\Widget\TextBox.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\Renderer.h" />
@@ -211,24 +211,17 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Game\Actor\Capsule.h" />
     <ClInclude Include="Game\Actor\Character\CharacterBase.h" />
-    <ClInclude Include="Game\Actor\Character\Player\Player.h" />
-    <ClInclude Include="Game\Actor\Character\Player\State\PlayerJumpingState.h" />
-    <ClInclude Include="Game\Actor\Character\Player\State\PlayerStandingState.h" />
-    <ClInclude Include="Game\Actor\Component\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actor\Component\RayCastController.h" />
+    <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
+    <ClInclude Include="Game\Actor\Editor\Editor.h" />
+    <ClInclude Include="Game\Actor\Network\Network.h" />
     <ClInclude Include="Game\Actor\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
-    <ClInclude Include="Game\Actor\Platform\Platform.h" />
-    <ClInclude Include="Game\Actor\Platform\PlatformControllerComponent.h" />
-    <ClInclude Include="Game\Actor\StateMachine\State.h" />
-    <ClInclude Include="Game\Actor\StateMachine\StateMachine.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
+    <ClInclude Include="Game\Map\EditorMap.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
-    <ClInclude Include="Game\Map\SplashMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
@@ -425,8 +418,50 @@
     <ClInclude Include="Include\tmxlite\Tileset.hpp" />
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
+    <ClInclude Include="Include\yaml-cpp\anchor.h" />
+    <ClInclude Include="Include\yaml-cpp\binary.h" />
+    <ClInclude Include="Include\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="Include\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="Include\yaml-cpp\depthguard.h" />
+    <ClInclude Include="Include\yaml-cpp\dll.h" />
+    <ClInclude Include="Include\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="Include\yaml-cpp\emitter.h" />
+    <ClInclude Include="Include\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="Include\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="Include\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="Include\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="Include\yaml-cpp\exceptions.h" />
+    <ClInclude Include="Include\yaml-cpp\mark.h" />
+    <ClInclude Include="Include\yaml-cpp\node\convert.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="Include\yaml-cpp\node\emit.h" />
+    <ClInclude Include="Include\yaml-cpp\node\impl.h" />
+    <ClInclude Include="Include\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="Include\yaml-cpp\node\node.h" />
+    <ClInclude Include="Include\yaml-cpp\node\parse.h" />
+    <ClInclude Include="Include\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="Include\yaml-cpp\node\type.h" />
+    <ClInclude Include="Include\yaml-cpp\noexcept.h" />
+    <ClInclude Include="Include\yaml-cpp\null.h" />
+    <ClInclude Include="Include\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="Include\yaml-cpp\parser.h" />
+    <ClInclude Include="Include\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="Include\yaml-cpp\traits.h" />
+    <ClInclude Include="Include\yaml-cpp\yaml.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SocketCore\ServerPacketHandler.h" />
+    <ClInclude Include="SocketCore\SocketEvent.h" />
+    <ClInclude Include="SocketCore\SocketEventManager.h" />
+    <ClInclude Include="SocketCore\SocketSession.h" />
+    <ClInclude Include="SocketCore\Util\CoreMacro.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -450,10 +485,9 @@
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Core.cpp" />
     <ClCompile Include="Engine\Data\CSVReader.cpp" />
+    <ClCompile Include="Engine\Data\FileHelper.cpp" />
     <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
-    <ClCompile Include="Engine\Data\StatInfo.cpp" />
     <ClCompile Include="Engine\DebugDrawHelper.cpp" />
-    <ClCompile Include="Engine\Editor\Editor.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Input\Keyboard.cpp" />
@@ -466,7 +500,6 @@
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
-    <ClCompile Include="Engine\Object.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Resource\Resource.cpp" />
     <ClCompile Include="Engine\Resource\ResourceManager.cpp" />
@@ -476,9 +509,10 @@
     <ClCompile Include="Engine\UI\Canvas.cpp" />
     <ClCompile Include="Engine\UI\Widget.cpp" />
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
+    <ClCompile Include="Engine\UI\Widget\EditableTextBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Image.cpp" />
+    <ClCompile Include="Engine\UI\Widget\ScrollBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Text.cpp" />
-    <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shaders.cpp" />
@@ -490,53 +524,57 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Game\Actor\Capsule.cpp" />
     <ClCompile Include="Game\Actor\Character\CharacterBase.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\Player.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\State\PlayerJumpingState.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\State\PlayerStandingState.cpp" />
-    <ClCompile Include="Game\Actor\Component\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actor\Component\RayCastController.cpp" />
+    <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
+    <ClCompile Include="Game\Actor\Editor\Editor.cpp" />
+    <ClCompile Include="Game\Actor\Network\Network.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
-    <ClCompile Include="Game\Actor\Platform\Platform.cpp" />
-    <ClCompile Include="Game\Actor\Platform\PlatformControllerComponent.cpp" />
-    <ClCompile Include="Game\Actor\StateMachine\State.cpp" />
-    <ClCompile Include="Game\Actor\StateMachine\StateMachine.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
+    <ClCompile Include="Game\Map\EditorMap.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
-    <ClCompile Include="Game\Map\SplashMap.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_demo.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_impl_dx11.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_impl_win32.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_tables.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\imgui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Include\rttr\policy.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SocketCore\ServerPacketHandler.cpp" />
+    <ClCompile Include="SocketCore\SocketEvent.cpp" />
+    <ClCompile Include="SocketCore\SocketEventManager.cpp" />
+    <ClCompile Include="SocketCore\SocketSession.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -608,14 +646,8 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Nexol\RiderProjects\Socket\\Client\Game;C:\Users\Nexol\RiderProjects\Socket\\Client\Engine;C:\Users\Nexol\RiderProjects\Socket\\Client\Include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\master\Desktop\project_storage\Socket\\Client\Game;C:\Users\master\Desktop\project_storage\Socket\\Client\Engine;C:\Users\master\Desktop\project_storage\Socket\\Client\Include;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -653,32 +685,26 @@
     <Image Include="Client.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Include\FMOD\fmod.cs" />
-    <Compile Include="Include\FMOD\fmod_dsp.cs" />
-    <Compile Include="Include\FMOD\fmod_errors.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Include\rttr\registration" />
     <Content Include="Include\rttr\registration_friend" />
     <Content Include="Include\rttr\type" />
     <Content Include="Lib\box2d.lib" />
     <Content Include="Lib\Debug\box2dd.lib" />
     <Content Include="Lib\Debug\DirectXTK.lib" />
-    <Content Include="Lib\Debug\fmod.dll" />
-    <Content Include="Lib\Debug\fmodL.dll" />
-    <Content Include="Lib\Debug\fmodL_vc.lib" />
     <Content Include="Lib\Debug\fmod_vc.lib" />
     <Content Include="Lib\Debug\libtmxlite-s-d.lib" />
-    <Content Include="Lib\Debug\rttr_core_d.dll" />
     <Content Include="Lib\Debug\rttr_core_d.lib" />
+    <Content Include="Lib\Debug\yaml-cppd.lib" />
     <Content Include="Lib\DirectXTK.lib" />
-    <Content Include="Lib\fmod.dll" />
-    <Content Include="Lib\fmodL.dll" />
-    <Content Include="Lib\fmodL_vc.lib" />
     <Content Include="Lib\fmod_vc.lib" />
     <Content Include="Lib\libtmxlite-s.lib" />
-    <Content Include="Lib\rttr_core.dll" />
     <Content Include="Lib\rttr_core.lib" />
+    <Content Include="Lib\yaml-cpp.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Include\FMOD\fmod.cs" />
+    <Compile Include="Include\FMOD\fmod_dsp.cs" />
+    <Compile Include="Include\FMOD\fmod_errors.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

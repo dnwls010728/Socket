@@ -2,6 +2,7 @@
 #include "DebugDrawHelper.h"
 
 #include "Level/World.h"
+#include "Math/Math.h"
 #include "Windows/DX/Shape.h"
 
 DebugDrawHelper::DebugDrawHelper() :
@@ -103,10 +104,10 @@ void DebugDrawHelper::Clear()
 
     segment_shape_->SetVertices(segment_vertices_);
 
-    World::Get()->AddShape(polygon_shape_);
-    World::Get()->AddShape(circle_shape_);
-    World::Get()->AddShape(capsule_shape_);
-    World::Get()->AddShape(segment_shape_);
+    // World::Get()->AddShape(polygon_shape_);
+    // World::Get()->AddShape(circle_shape_);
+    // World::Get()->AddShape(capsule_shape_);
+    // World::Get()->AddShape(segment_shape_);
 
     polygon_vertices_.clear();
     polygon_indices_.clear();

@@ -6,12 +6,15 @@
 UITexture::UITexture() :
     bitmap_(nullptr),
     width_(0),
-    height_(0)
+    height_(0),
+    slice9_rect_(Math::Rect::Zero())
 {
 }
 
 bool UITexture::Load(const std::wstring& kPath)
 {
+    Resource::Load(kPath);
+    
     D2DViewport* d2d_viewport = Renderer::Get()->FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return false;
     
