@@ -116,12 +116,15 @@ void ScrollBox::Render()
     Widget::Render();
     renderer->EndLayer();
 
+    Canvas* canvas = Canvas::Get();
+    const float scale_ratio = canvas->GetScaleRatio();
+
     if (content_width_ > rect_.width)
     {
         float thumb_ratio = rect_.width / content_width_;
         float thumb_width = Math::Max(rect_.width * thumb_ratio, 20.f);
         float thumb_x = Math::Lerp(0.f, rect_.width - thumb_width, -scroll_offset_x_ / (content_width_ - rect_.width));
-        renderer->DrawBox(window, {rect_.x + thumb_x, rect_.y + rect_.height - 10.f, thumb_width, 10.f}, {0.f, 0.f}, Math::Color::Red);
+        renderer->DrawBox(window, {rect_.x + thumb_x, rect_.y + rect_.height - 10.f * scale_ratio, thumb_width, 10.f * scale_ratio}, {0.f, 0.f}, Math::Color::Red);
     }
 
     if (content_height_ > rect_.height)
@@ -129,7 +132,7 @@ void ScrollBox::Render()
         float thumb_ratio = rect_.height / content_height_;
         float thumb_height = Math::Max(rect_.height * thumb_ratio, 20.f);
         float thumb_y = Math::Lerp(0.f, rect_.height - thumb_height, -scroll_offset_y_ / (content_height_ - rect_.height));
-        renderer->DrawBox(window, {rect_.x + rect_.width - 10.f, rect_.y + thumb_y, 10.f, thumb_height}, {0.f, 0.f}, Math::Color::Red);
+        renderer->DrawBox(window, {rect_.x + rect_.width - 10.f * scale_ratio, rect_.y + thumb_y, 10.f * scale_ratio, thumb_height}, {0.f, 0.f}, Math::Color::Red);
     }
 }
 
