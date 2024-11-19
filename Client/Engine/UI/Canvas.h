@@ -37,7 +37,9 @@ private:
     friend class Widget;
     
     Widget* RayCast(Widget* widget, const Math::Vector2& kPoint);
-    Widget* FindParentOfType(Widget* widget, const rttr::type& kType);
+    Widget* FindWidgetParentOfType(Widget* widget, const rttr::type& kType);
+    
+    bool IsWidgetType(Widget* widget, const rttr::type& kType);
     
     void OnEvent(const Event& kEvent);
     void BeginPlay();

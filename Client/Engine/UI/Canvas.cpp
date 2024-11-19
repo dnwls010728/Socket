@@ -60,7 +60,7 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     return nullptr;
 }
 
-Widget* Canvas::FindParentOfType(Widget* widget, const rttr::type& kType)
+Widget* Canvas::FindWidgetParentOfType(Widget* widget, const rttr::type& kType)
 {
     if (!widget) return nullptr;
     
@@ -69,7 +69,15 @@ Widget* Canvas::FindParentOfType(Widget* widget, const rttr::type& kType)
 
     rttr::type parent_type = rttr::type::get(*parent);
     if (parent_type.is_derived_from(kType)) return parent;
-    return FindParentOfType(parent, kType);
+    return FindWidgetParentOfType(parent, kType);
+}
+
+bool Canvas::IsWidgetType(Widget* widget, const rttr::type& kType)
+{
+    if (!widget) return false;
+
+    rttr::type widget_type = rttr::type::get(*widget);
+    return widget_type.is_derived_from(kType);
 }
 
 void Canvas::OnEvent(const Event& kEvent)
@@ -156,16 +164,15 @@ void Canvas::OnEvent(const Event& kEvent)
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
     {
-        Widget* scroll_box;
+        Widget* scroll_widget;
         
-        rttr::type hovered_widget_type = rttr::type::get(*hovered_widget_);
-        if (hovered_widget_type.is_derived_from(ScrollBox::StaticClass())) scroll_box = hovered_widget_;
-        else scroll_box = FindParentOfType(hovered_widget_, ScrollBox::StaticClass());
+        if (IsWidgetType(hovered_widget_, ScrollBox::StaticClass())) scroll_widget = hovered_widget_;
+        else scroll_widget = FindWidgetParentOfType(hovered_widget_, ScrollBox::StaticClass());
 
-        if (scroll_box)
+        if (scroll_widget)
         {
-            ScrollBox* scroll_box_casted = static_cast<ScrollBox*>(scroll_box);
-            scroll_box_casted->OnScroll(kEvent.wheel.x, kEvent.wheel.y);
+            ScrollBox* scroll_box = dynamic_cast<ScrollBox*>(scroll_widget);
+            scroll_box->OnScroll(kEvent.wheel.x, kEvent.wheel.y);
         }
     }
 }
