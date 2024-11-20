@@ -79,10 +79,43 @@ void ScrollBox::UpdateRect()
         content_width_ = Math::Max(content_width_, child->GetRect().width);
         content_height_ += child->GetRect().height;
     }
+
+    if (content_width_ > rect_.width)
+    {
+        float previous_scroll_offset_x = scroll_offset_x_;
+        scroll_offset_x_ = Math::Clamp(scroll_offset_x_, rect_.width - content_width_, 0.f);
+        if (scroll_offset_x_ != previous_scroll_offset_x)
+        {
+            for (const auto& child : children_)
+            {
+                Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                anchored_position.x += (scroll_offset_x_ - previous_scroll_offset_x) / Canvas::Get()->GetScaleRatio();
+                child->SetAnchoredPosition(anchored_position);
+            }
+        }
+    }
+
+    if (content_height_ > rect_.height)
+    {
+        float previous_scroll_offset_y = scroll_offset_y_;
+        scroll_offset_y_ = Math::Clamp(scroll_offset_y_, rect_.height - content_height_, 0.f);
+        if (scroll_offset_y_ != previous_scroll_offset_y)
+        {
+            for (const auto& child : children_)
+            {
+                Math::Vector2 anchored_position = child->GetAnchoredPosition();
+                anchored_position.y += (scroll_offset_y_ - previous_scroll_offset_y) / Canvas::Get()->GetScaleRatio();
+                child->SetAnchoredPosition(anchored_position);
+            }
+        }
+    }
 }
 
 void ScrollBox::OnScroll(float x, float y)
 {
+    Canvas* canvas = Canvas::Get();
+    const float scale_ratio = canvas->GetScaleRatio();
+    
     if (content_width_ > rect_.width)
     {
         if (x != 0.f)
@@ -102,7 +135,7 @@ void ScrollBox::OnScroll(float x, float y)
                 for (const auto& child : children_)
                 {
                     Math::Vector2 anchored_position = child->GetAnchoredPosition();
-                    anchored_position.x += scroll_delta;
+                    anchored_position.x += scroll_delta / scale_ratio;
                     child->SetAnchoredPosition(anchored_position);
                 }
             }
@@ -128,7 +161,7 @@ void ScrollBox::OnScroll(float x, float y)
                 for (const auto& child : children_)
                 {
                     Math::Vector2 anchored_position = child->GetAnchoredPosition();
-                    anchored_position.y += scroll_delta;
+                    anchored_position.y += scroll_delta / scale_ratio;
                     child->SetAnchoredPosition(anchored_position);
                 }
             }
