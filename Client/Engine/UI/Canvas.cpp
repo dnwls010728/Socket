@@ -82,6 +82,9 @@ bool Canvas::IsWidgetType(Widget* widget, const rttr::type& kType)
 
 void Canvas::OnEvent(const Event& kEvent)
 {
+    Canvas* canvas = Canvas::Get();
+    const float scale_ratio = canvas->GetScaleRatio();
+    
     const Type::uint32& type = kEvent.type;
 
     if (type == static_cast<Type::uint32>(EventType::kWindowSize))
@@ -121,7 +124,7 @@ void Canvas::OnEvent(const Event& kEvent)
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
-                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
+                dragging_widget_->OnDragStart.Execute(previous_mouse_position_ / scale_ratio);
             }
         }
     }
@@ -136,10 +139,10 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
             
-            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
+            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_ / scale_ratio);
             dragging_widget_ = nullptr;
 
-            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
+            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_ / scale_ratio);
         }
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
@@ -151,7 +154,7 @@ void Canvas::OnEvent(const Event& kEvent)
             Math::Vector2 delta = mouse_position - previous_mouse_position_;
             previous_mouse_position_ = mouse_position;
             
-            dragging_widget_->OnDrag.Execute(delta);
+            dragging_widget_->OnDrag.Execute(delta / scale_ratio);
         }
     }
     else if (type & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
