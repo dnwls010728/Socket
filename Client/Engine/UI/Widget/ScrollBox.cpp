@@ -55,7 +55,7 @@ void ScrollBox::Render()
         float thumb_ratio = rect_.width / content_width_;
         float thumb_width = Math::Max(rect_.width * thumb_ratio, 20.f);
         float thumb_x = Math::Lerp(0.f, rect_.width - thumb_width, -scroll_offset_x_ / (content_width_ - rect_.width));
-        renderer->DrawRoundBox(window, {rect_.x + thumb_x, rect_.y + rect_.height - 5.f * scale_ratio, thumb_width, 5.f * scale_ratio}, {0.f, 0.f}, Math::Color::Gray, 5.f);
+        renderer->DrawSolidRoundBox(window, {rect_.x + thumb_x, rect_.y + rect_.height - 10.f * scale_ratio, thumb_width, 10.f * scale_ratio}, {0.f, 0.f}, Math::Color::Gray, 5.f);
     }
 
     if (content_height_ > rect_.height)
@@ -63,7 +63,7 @@ void ScrollBox::Render()
         float thumb_ratio = rect_.height / content_height_;
         float thumb_height = Math::Max(rect_.height * thumb_ratio, 20.f);
         float thumb_y = Math::Lerp(0.f, rect_.height - thumb_height, -scroll_offset_y_ / (content_height_ - rect_.height));
-        renderer->DrawRoundBox(window, {rect_.x + rect_.width - 5.f * scale_ratio, rect_.y + thumb_y, 5.f * scale_ratio, thumb_height}, {0.f, 0.f}, Math::Color::Gray, 5.f);
+        renderer->DrawSolidRoundBox(window, {rect_.x + rect_.width - 10.f * scale_ratio, rect_.y + thumb_y, 10.f * scale_ratio, thumb_height}, {0.f, 0.f}, Math::Color::Gray, 5.f);
     }
 }
 

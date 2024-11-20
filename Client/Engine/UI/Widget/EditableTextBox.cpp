@@ -110,11 +110,8 @@ void EditableTextBox::OnFocusChanged(bool is_focused)
 {
     Widget::OnFocusChanged(is_focused);
 
-    if (!is_focused)
-    {
-        elapsed_time_ = 0.f;
-        cursor_visible_ = false;
-    }
+    elapsed_time_ = 0.f;
+    cursor_visible_ = is_focused;
 }
 
 void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)

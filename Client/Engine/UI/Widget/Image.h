@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Math/Color.h"
 #include "UI/Widget.h"
 
 class UITexture;
@@ -15,6 +16,9 @@ public:
     FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
+    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
+    FORCEINLINE const Math::Color& GetColor() const { return color_; }
+
 protected:
     virtual void Render() override;
 
@@ -22,5 +26,7 @@ private:
     UITexture* texture_;
 
     DrawMode draw_mode_;
+
+    Math::Color color_;
     
 };
