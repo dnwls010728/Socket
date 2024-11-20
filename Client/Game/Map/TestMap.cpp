@@ -28,7 +28,7 @@ void TestMap::Load()
     message_input_background_->AttachToWidget(canvas->GetRootWidget());
     message_input_background_->SetAnchorPreset(AnchorPreset::kBottom | AnchorPreset::kStretch, true);
     message_input_background_->SetAnchoredPosition({0.f, 0.f});
-    message_input_background_->SetSize({0.f, 32.f});
+    message_input_background_->SetSize({0.f, 24.f});
 
     message_input_ = canvas->AddWidget<EditableTextBox>(L"MessageInput");
     message_input_->AttachToWidget(message_input_background_);
@@ -40,7 +40,7 @@ void TestMap::Load()
     message_history_ = canvas->AddWidget<Image>(L"MessageHistory");
     message_history_->AttachToWidget(canvas->GetRootWidget());
     message_history_->SetAnchorPreset(AnchorPreset::kBottom | AnchorPreset::kStretch, true);
-    message_history_->SetAnchoredPosition({0.f, -32.f});
+    message_history_->SetAnchoredPosition({0.f, -24.f});
     message_history_->SetSize({0.f, 48.f});
     message_history_->SetColor({255, 255, 255, 100});
 
@@ -53,13 +53,13 @@ void TestMap::Load()
     resize_handle_ = canvas->AddWidget<Image>(L"ResizeHandle");
     resize_handle_->AttachToWidget(canvas->GetRootWidget());
     resize_handle_->SetAnchorPreset(AnchorPreset::kBottom | AnchorPreset::kStretch, true);
-    resize_handle_->SetAnchoredPosition({0.f, -80.f});
+    resize_handle_->SetAnchoredPosition({0.f, -72.f});
     resize_handle_->SetSize({0.f, 16.f});
     resize_handle_->SetRayCastTarget(true);
     resize_handle_->OnDrag.Add([=](const Math::Vector2& kDelta)
     {
         Math::Vector2 position = resize_handle_->GetAnchoredPosition();
-        position.y = Math::Min(position.y + kDelta.y, -80.f);
+        position.y = Math::Min(position.y + kDelta.y, -72.f);
         resize_handle_->SetAnchoredPosition(position);
 
         Math::Vector2 size = message_history_->GetSize();
