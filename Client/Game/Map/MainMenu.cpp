@@ -115,7 +115,7 @@ void MainMenu::Load()
     editor_button->SetDrawMode(DrawMode::kSliced);
     editor_button->OnMouseReleased.Add([]()
     {
-        World::Get()->OpenLevel(LevelType::kEditor);
+        World::Get()->OpenLevel(LevelType::kTest);
     });
     
     Text* editor_text = canvas->AddWidget<Text>(L"Editor Text");

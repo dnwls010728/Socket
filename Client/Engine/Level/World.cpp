@@ -90,7 +90,7 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
     AddLevel<TestMap>(LevelType::kTest, L"Test");
     
-    OpenLevel(LevelType::kTest);
+    OpenLevel(LevelType::kMainMenu);
 }
 
 void World::OpenLevel(LevelType type)
