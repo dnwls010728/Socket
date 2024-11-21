@@ -111,6 +111,7 @@ void ScrollBox::Render()
 void ScrollBox::UpdateRect()
 {
     Widget::UpdateRect();
+    if (!has_begun_play_) return;
 
     content_width_ = 0.f;
     content_height_ = 0.f;

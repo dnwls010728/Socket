@@ -152,13 +152,13 @@ Math::Vector2 Widget::GetPivotPosition() const
 
 void Widget::BeginPlay()
 {
+    UpdateRect();
+    has_begun_play_ = true;
+    
     for (const auto& child : children_)
     {
         child->BeginPlay();
     }
-    
-    has_begun_play_ = true;
-    UpdateRect();
 }
 
 void Widget::Tick(float delta_time)
