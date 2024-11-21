@@ -18,13 +18,52 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
     is_ray_cast_target_ = true;
 }
 
+void ScrollBox::SetScrollOffsetX(float offset_x)
+{
+    offset_x = Math::Clamp(offset_x, 0.f, 1.f);
+    
+    float previous_scroll_offset_x = scroll_offset_x_;
+    scroll_offset_x_ = Math::Lerp(0.f, content_width_ - rect_.width, -offset_x);
+
+    float scroll_delta = scroll_offset_x_ - previous_scroll_offset_x;
+    if (scroll_delta != 0.f)
+    {
+        for (const auto& child : children_)
+        {
+            Math::Vector2 anchored_position = child->GetAnchoredPosition();
+            anchored_position.x += scroll_delta / Canvas::Get()->GetScaleRatio();
+            child->SetAnchoredPosition(anchored_position);
+        }
+    }
+}
+
+void ScrollBox::SetScrollOffsetY(float offset_y)
+{
+    offset_y = Math::Clamp(offset_y, 0.f, 1.f);
+    
+    float previous_scroll_offset_y = scroll_offset_y_;
+    scroll_offset_y_ = Math::Lerp(0.f, content_height_ - rect_.height, -offset_y);
+
+    float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+    if (scroll_delta != 0.f)
+    {
+        for (const auto& child : children_)
+        {
+            Math::Vector2 anchored_position = child->GetAnchoredPosition();
+            anchored_position.y += scroll_delta / Canvas::Get()->GetScaleRatio();
+            child->SetAnchoredPosition(anchored_position);
+        }
+    }
+}
+
 void ScrollBox::BeginPlay()
 {
     Widget::BeginPlay();
     
     float offset_y = 0.f;
-    for (const auto& child : children_)
+    for (auto it = children_.begin(); it != children_.end(); ++it)
     {
+        Widget* child = *it;
         child->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
         child->SetAnchoredPosition({0.f, offset_y});
         
@@ -33,6 +72,9 @@ void ScrollBox::BeginPlay()
         content_width_ = Math::Max(content_width_, child->GetRect().width);
         content_height_ += child->GetRect().height;
     }
+
+    SetScrollOffsetX(0.f);
+    SetScrollOffsetY(1.f);
 }
 
 void ScrollBox::Render()

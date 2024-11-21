@@ -35,6 +35,7 @@ void TestMap::Load()
     message_input_->SetAnchorPreset(AnchorPreset::kStretch);
     message_input_->SetAnchoredPosition({0.f, 0.f});
     message_input_->SetSize({0.f, 0.f});
+    message_input_->SetFontFamily(L"Nanum12");
     message_input_->SetPlaceholder(L"메시지를 입력해 주세요...");
     
     message_history_ = canvas->AddWidget<Image>(L"MessageHistory");
@@ -71,8 +72,9 @@ void TestMap::Load()
     {
         Text* text = canvas->AddWidget<Text>(L"MessageText" + std::to_wstring(i));
         text->AttachToWidget(message_scroll_area_);
-        text->SetSize({300.f, 30.f});
+        text->SetSize({300.f, 16.f});
         text->SetAlignment(Text::kMiddleLeft);
+        text->SetFontFamily(L"Nanum12");
         text->SetText(std::to_wstring(i) + L" - Hello World!");
     }
 }

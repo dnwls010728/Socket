@@ -13,6 +13,7 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
     placeholder_(L""),
+    font_family_(L"Nanum18"),
     text_rect_(Math::Rect::Zero()),
     cursor_index_(0),
     elapsed_time_(0.f),
@@ -55,7 +56,7 @@ void EditableTextBox::Render()
     if (!renderer) return;
 
     renderer->BeginLayer(rect_);
-    if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, font_family_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     else
     {
         std::wstring temp = text_;
@@ -64,7 +65,7 @@ void EditableTextBox::Render()
             temp = std::wstring(text_.size(), L'*');
         }
         
-        renderer->DrawString(window, temp, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, temp, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, font_family_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
     if (cursor_visible_)
@@ -205,7 +206,7 @@ void EditableTextBox::UpdateAdvances(const std::wstring& kString)
     }
     
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(/*rect_, */temp, L"Nanum18", advances_);
+    renderer->GetTextAdvances(/*rect_, */temp, font_family_, advances_);
 
     float advance = std::accumulate(advances_.begin(), advances_.end(), 0.f);
     text_rect_.width = advance + 1.f;

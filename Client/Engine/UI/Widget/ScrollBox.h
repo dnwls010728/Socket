@@ -10,6 +10,9 @@ public:
     ScrollBox(const std::wstring& kName);
     virtual ~ScrollBox() override = default;
 
+    void SetScrollOffsetX(float offset_x);
+    void SetScrollOffsetY(float offset_y);
+
 protected:
     virtual void BeginPlay() override;
     virtual void Render() override;

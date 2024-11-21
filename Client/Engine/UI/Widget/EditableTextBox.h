@@ -22,6 +22,9 @@ public:
 
     FORCEINLINE const std::wstring& GetText() const { return text_; }
 
+    FORCEINLINE void SetFontFamily(const std::wstring& kFontFamily) { font_family_ = kFontFamily; }
+    FORCEINLINE const std::wstring& GetFontFamily() const { return font_family_; }
+
     FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
     FORCEINLINE void SetContentType(ContentType content_type) { content_type_ = content_type; }
 
@@ -42,6 +45,7 @@ private:
     
     std::wstring text_;
     std::wstring placeholder_;
+    std::wstring font_family_;
 
     Math::Rect text_rect_;
 
