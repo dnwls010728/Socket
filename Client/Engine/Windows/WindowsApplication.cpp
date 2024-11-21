@@ -81,7 +81,7 @@ void WindowsApplication::PumpMessages()
 
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WindowsApplication* application = nullptr;
+    WindowsApplication* application;
 
     if (message == WM_NCCREATE)
     {

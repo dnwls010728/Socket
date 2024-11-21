@@ -59,11 +59,11 @@ void TestMap::Load()
     resize_handle_->OnDrag.Add([=](const Math::Vector2& kDelta)
     {
         Math::Vector2 position = resize_handle_->GetAnchoredPosition();
-        position.y = Math::Min(position.y + kDelta.y, -72.f);
+        position.y = Math::Clamp(position.y + kDelta.y, -196.f, -72.f);
         resize_handle_->SetAnchoredPosition(position);
 
         Math::Vector2 size = message_history_->GetSize();
-        size.y = Math::Max(size.y - kDelta.y, 48.f);
+        size.y = Math::Clamp(size.y - kDelta.y, 48.f, 172.f);
         message_history_->SetSize(size);
     });
 
