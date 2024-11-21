@@ -11,7 +11,7 @@ public:
     Core();
     ~Core() = default;
 
-    void Init(WindowsApplication* application);
+    void Init();
     
     virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result) override;
 

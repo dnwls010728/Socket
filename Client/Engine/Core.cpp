@@ -27,8 +27,9 @@ Core::Core() :
 {
 }
 
-void Core::Init(WindowsApplication* application)
+void Core::Init()
 {
+    WindowsApplication* application = WindowsApplication::Get();
     application->AddMessageHandler(*this);
 
     // DirectX 11 렌더러 초기화
