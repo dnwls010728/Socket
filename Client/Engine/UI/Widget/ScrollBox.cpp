@@ -61,9 +61,8 @@ void ScrollBox::BeginPlay()
     Widget::BeginPlay();
     
     float offset_y = 0.f;
-    for (auto it = children_.begin(); it != children_.end(); ++it)
+    for (const auto& child : children_)
     {
-        Widget* child = *it;
         child->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
         child->SetAnchoredPosition({0.f, offset_y});
         
