@@ -98,21 +98,29 @@ void Canvas::OnEvent(const Event& kEvent)
     {
         Math::Vector2 mouse_position = {kEvent.motion.x, kEvent.motion.y};
         Math::Vector2 mouse_delta = mouse_position - mouse_position_;
-        
-        Widget* result = RayCast(root_widget_, mouse_position);
-        Widget* previous_result = RayCast(root_widget_, mouse_position_);
 
-        if (result != previous_result)
+        if (root_widget_)
         {
-            if (result) result->OnMouseEnter();
-            if (previous_result) previous_result->OnMouseLeave();
-        }
-        else
-        {
-            if (result) result->OnMouseMotion();
+            root_widget_->OnMouseMotion(mouse_position, mouse_delta);
         }
         
         mouse_position_ = mouse_position;
+    }
+    else if (type & static_cast<Type::uint32>(EventType::kMousePressed | EventType::kMouseReleased))
+    {
+        const MouseButtonEvent& kButton = kEvent.button;
+        if (root_widget_)
+        {
+            root_widget_->OnMouseButton({kButton.x, kButton.y}, kButton.button, kButton.is_pressed);
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
+    {
+        const MouseWheelEvent& kWheel = kEvent.wheel;
+        if (root_widget_)
+        {
+            root_widget_->OnScroll({kWheel.mouse_x, kWheel.mouse_y}, {kWheel.x, kWheel.y});
+        }
     }
 }
 

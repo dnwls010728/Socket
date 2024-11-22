@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Button.h"
 
+#include "Logger.h"
 #include "Level/World.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -34,6 +35,13 @@ void Button::Render()
     }
     
     Widget::Render();
+}
+
+bool Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    if (is_pressed) OnPressed.Execute();
+    else OnReleased.Execute();
+    return true;
 }
 
 RTTR_REGISTRATION

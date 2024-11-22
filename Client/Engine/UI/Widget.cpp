@@ -277,20 +277,59 @@ void Widget::OnInputText(wchar_t character)
 
 bool Widget::OnMouseEnter()
 {
-    Logger::Print(L"Widget::OnMouseEnter: %s", name_.c_str());
-    return true;
+    return false;
 }
 
 bool Widget::OnMouseLeave()
 {
-    Logger::Print(L"Widget::OnMouseLeave: %s", name_.c_str());
-    return true;
+    return false;
 }
 
-bool Widget::OnMouseMotion()
+bool Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
-    Logger::Print(L"Widget::OnMouseMotion: %s", name_.c_str());
-    return true;
+    bool is_handled = false;
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+
+        bool is_result = child->HitTest(kPosition);
+        bool is_previous_result = child->HitTest(kPosition - kDelta);
+
+        if (is_result != is_previous_result)
+        {
+            is_handled |= child->OnMouseEnter();
+            is_handled |= child->OnMouseLeave();
+        }
+
+        if (is_result || is_previous_result)
+            is_handled |= child->OnMouseMotion(kPosition, kDelta);
+    }
+
+    return is_handled;
+}
+
+bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+        if (child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
+            return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+        if (child->HitTest(kPosition) && child->OnScroll(kPosition, kDelta))
+            return true;
+    }
+    
+    return false;
 }
 
 RTTR_REGISTRATION

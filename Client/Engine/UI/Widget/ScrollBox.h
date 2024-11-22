@@ -18,10 +18,10 @@ protected:
     virtual void Render() override;
     virtual void UpdateRect() override;
 
+    virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
+
 private:
     friend class Canvas;
-    
-    void OnScroll(float x, float y);
     
     float content_width_;
     float content_height_;

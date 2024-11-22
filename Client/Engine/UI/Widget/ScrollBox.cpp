@@ -153,16 +153,16 @@ void ScrollBox::UpdateRect()
     }
 }
 
-void ScrollBox::OnScroll(float x, float y)
+bool ScrollBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     Canvas* canvas = Canvas::Get();
     const float scale_ratio = canvas->GetScaleRatio();
     
     if (content_width_ > rect_.width)
     {
-        if (x != 0.f)
+        if (kDelta.x != 0.f)
         {
-            float scroll_speed = -x * 30.f; 
+            float scroll_speed = -kDelta.x * 30.f; 
             float previous_scroll_offset_x = scroll_offset_x_;
 
             scroll_offset_x_ = Math::Clamp(
@@ -186,9 +186,9 @@ void ScrollBox::OnScroll(float x, float y)
     
     if (content_height_ > rect_.height)
     {
-        if (y != 0.f)
+        if (kDelta.y != 0.f)
         {
-            float scroll_speed = y * 30.f; 
+            float scroll_speed = kDelta.y * 30.f; 
             float previous_scroll_offset_y = scroll_offset_y_;
 
             scroll_offset_y_ = Math::Clamp(
@@ -209,6 +209,8 @@ void ScrollBox::OnScroll(float x, float y)
             }
         }
     }
+    
+    return true;
 }
 
 RTTR_REGISTRATION

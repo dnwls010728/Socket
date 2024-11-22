@@ -132,11 +132,19 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
     if (message == WM_MOUSEWHEEL || message == WM_MOUSEHWHEEL)
     {
+        POINT mouse_position;
+        mouse_position.x = GET_X_LPARAM(lParam);
+        mouse_position.y = GET_Y_LPARAM(lParam);
+
+        ScreenToClient(hWnd, &mouse_position);
+        
         const short delta = GET_WHEEL_DELTA_WPARAM(wParam);
         float delta_f = static_cast<float>(delta) / static_cast<float>(WHEEL_DELTA);
 
         Event event;
         event.type = static_cast<Type::uint32>(EventType::kMouseWheel);
+        event.wheel.mouse_x = static_cast<float>(mouse_position.x);
+        event.wheel.mouse_y = static_cast<float>(mouse_position.y);
 
         if (message == WM_MOUSEWHEEL)
         {

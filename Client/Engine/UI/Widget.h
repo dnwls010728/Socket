@@ -10,7 +10,6 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnWidgetEvent)
 DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
 DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
 
@@ -78,9 +77,6 @@ public:
     FORCEINLINE bool IsHovered() const { return is_hovered_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
-    OnWidgetEvent OnMousePressed;
-    OnWidgetEvent OnMouseReleased;
-
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
     OnDragEvent OnDragEnd;
@@ -101,7 +97,9 @@ protected:
     // Input Events
     virtual bool OnMouseEnter();
     virtual bool OnMouseLeave();
-    virtual bool OnMouseMotion();
+    virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+    virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
 
     std::wstring name_;
 
