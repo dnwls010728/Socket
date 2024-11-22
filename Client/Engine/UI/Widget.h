@@ -98,6 +98,11 @@ protected:
     virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
     virtual void OnInputText(wchar_t character);
 
+    // Input Events
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseLeave();
+    virtual bool OnMouseMotion();
+
     std::wstring name_;
 
     Math::Rect rect_;

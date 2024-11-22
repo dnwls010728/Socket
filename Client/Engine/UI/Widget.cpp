@@ -2,6 +2,7 @@
 #include "Widget.h"
 
 #include "Canvas.h"
+#include "Logger.h"
 #include "Level/World.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
@@ -272,4 +273,33 @@ void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
 
 void Widget::OnInputText(wchar_t character)
 {
+}
+
+bool Widget::OnMouseEnter()
+{
+    Logger::Print(L"Widget::OnMouseEnter: %s", name_.c_str());
+    return true;
+}
+
+bool Widget::OnMouseLeave()
+{
+    Logger::Print(L"Widget::OnMouseLeave: %s", name_.c_str());
+    return true;
+}
+
+bool Widget::OnMouseMotion()
+{
+    Logger::Print(L"Widget::OnMouseMotion: %s", name_.c_str());
+    return true;
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<Widget>("Widget")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }
