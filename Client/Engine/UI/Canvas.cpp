@@ -13,9 +13,6 @@ Canvas::Canvas() :
     match_mode_(ProjectSettings::kMatchMode),
     widgets_(),
     root_widget_(nullptr),
-    hovered_widget_(nullptr),
-    focused_widget_(nullptr),
-    dragging_widget_(nullptr),
     mouse_position_(Math::Vector2::Zero())
 {
 }
@@ -52,11 +49,10 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     for (auto it = widget->children_.rbegin(); it != widget->children_.rend(); ++it)
     {
         Widget* child = *it;
-        Widget* result = RayCast(child, kPoint);
-        if (result) return result;
+        if (child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
-    if (widget->is_ray_cast_target_ && widget->HitTest(kPoint)) return widget;
+    if (widget->HitTest(kPoint)) return widget;
     return nullptr;
 }
 
@@ -149,9 +145,6 @@ void Canvas::Clear()
     mouse_position_ = Math::Vector2::Zero();
     
     root_widget_ = nullptr;
-    hovered_widget_ = nullptr;
-    focused_widget_ = nullptr;
-    dragging_widget_ = nullptr;
     
     widgets_.clear();
 }

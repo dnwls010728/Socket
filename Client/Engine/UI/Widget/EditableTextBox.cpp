@@ -22,8 +22,6 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     content_type_(ContentType::Standard)
 {
     size_ = { 200.f, 50.f };
-    
-    is_ray_cast_target_ = true;
 }
 
 void EditableTextBox::SetText(const std::wstring& kText)
@@ -37,7 +35,7 @@ void EditableTextBox::SetText(const std::wstring& kText)
 void EditableTextBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
-    if (!is_focused_) return;
+    // if (!is_focused_) return;
 
     elapsed_time_ += delta_time;
     if (elapsed_time_ > .5f)

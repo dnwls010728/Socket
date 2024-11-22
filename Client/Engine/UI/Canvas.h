@@ -57,9 +57,6 @@ private:
     std::vector<std::shared_ptr<Widget>> widgets_;
 
     Widget* root_widget_;
-    Widget* hovered_widget_;
-    Widget* focused_widget_;
-    Widget* dragging_widget_;
 
     Math::Vector2 mouse_position_;
     

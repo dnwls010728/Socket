@@ -71,12 +71,6 @@ public:
 
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
 
-    FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
-    FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
-
-    FORCEINLINE bool IsHovered() const { return is_hovered_; }
-    FORCEINLINE bool IsFocused() const { return is_focused_; }
-
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
     OnDragEvent OnDragEnd;
@@ -117,8 +111,5 @@ protected:
     std::vector<Widget*> children_;
 
     bool has_begun_play_;
-    bool is_ray_cast_target_;
-    bool is_hovered_;
-    bool is_focused_;
     
 };

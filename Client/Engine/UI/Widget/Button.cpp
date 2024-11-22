@@ -13,7 +13,6 @@ Button::Button(const std::wstring& kName) :
     draw_mode_(DrawMode::kSimple)
 {
     size_ = { 150.f, 50.f };
-    is_ray_cast_target_ = true;
 }
 
 void Button::Render()

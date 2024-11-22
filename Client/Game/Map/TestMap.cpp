@@ -56,7 +56,6 @@ void TestMap::Load()
     resize_handle_->SetAnchorPreset(AnchorPreset::kBottom | AnchorPreset::kStretch, true);
     resize_handle_->SetAnchoredPosition({0.f, -72.f});
     resize_handle_->SetSize({0.f, 16.f});
-    resize_handle_->SetRayCastTarget(true);
     resize_handle_->OnDrag.Add([=](const Math::Vector2& kDelta)
     {
         Math::Vector2 position = resize_handle_->GetAnchoredPosition();

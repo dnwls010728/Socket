@@ -15,7 +15,6 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
     scroll_offset_y_(0.f),
     thumb_rect_(Math::Rect::Zero())
 {
-    is_ray_cast_target_ = true;
 }
 
 void ScrollBox::SetScrollOffsetX(float offset_x)
