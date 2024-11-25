@@ -35,7 +35,7 @@ void EditableTextBox::SetText(const std::wstring& kText)
 void EditableTextBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
-    // if (!is_focused_) return;
+    if (!is_focused_) return;
 
     elapsed_time_ += delta_time;
     if (elapsed_time_ > .5f)
@@ -103,14 +103,6 @@ void EditableTextBox::UpdateRect()
     text_rect_.x = left;
     text_rect_.y = top;
     text_rect_.height = bottom;
-}
-
-void EditableTextBox::OnFocusChanged(bool is_focused)
-{
-    Widget::OnFocusChanged(is_focused);
-
-    elapsed_time_ = 0.f;
-    cursor_visible_ = is_focused;
 }
 
 void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
@@ -193,6 +185,13 @@ void EditableTextBox::OnInputText(wchar_t character)
         elapsed_time_ = 0.f;
         cursor_visible_ = true;
     }
+}
+
+bool EditableTextBox::OnFocus(bool is_focused)
+{
+    elapsed_time_ = 0.f;
+    cursor_visible_ = is_focused;
+    return Widget::OnFocus(is_focused);
 }
 
 void EditableTextBox::UpdateAdvances(const std::wstring& kString)

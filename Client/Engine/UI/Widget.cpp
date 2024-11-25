@@ -19,7 +19,8 @@ Widget::Widget(const std::wstring& kName) :
     angle_(0.f),
     parent_(nullptr),
     children_(),
-    has_begun_play_(false)
+    has_begun_play_(false),
+    is_focused_(false)
 {
 }
 
@@ -169,18 +170,19 @@ void Widget::Tick(float delta_time)
 
 void Widget::Render()
 {
-// #ifdef _DEBUG
-//     WindowsWindow* window = World::Get()->GetWindow();
-//     if (!window) return;
-//
-//     Renderer* renderer = Renderer::Get();
-//     if (!renderer) return;
-//     
-//     Math::Vector2 pivot_position = GetPivotPosition();
-//     if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
-//
-//     renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
-// #endif
+    if (is_focused_)
+    {
+        WindowsWindow* window = World::Get()->GetWindow();
+        if (!window) return;
+
+        Renderer* renderer = Renderer::Get();
+        if (!renderer) return;
+    
+        Math::Vector2 pivot_position = GetPivotPosition();
+        if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+
+        renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+    }
     
     for (const auto& child : children_)
     {
@@ -260,16 +262,18 @@ void Widget::UpdateRect()
     }
 }
 
-void Widget::OnFocusChanged(bool is_focused)
-{
-}
-
 void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
 {
 }
 
 void Widget::OnInputText(wchar_t character)
 {
+}
+
+bool Widget::OnFocus(bool is_focused)
+{
+    is_focused_ = is_focused;
+    return false;
 }
 
 bool Widget::OnMouseEnter()
@@ -313,7 +317,8 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
         if (child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
             return true;
     }
-    
+
+    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas::Get()->UpdateFocus(this);
     return false;
 }
 

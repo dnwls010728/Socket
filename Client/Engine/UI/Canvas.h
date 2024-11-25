@@ -46,6 +46,7 @@ private:
     void Tick(float delta_time);
     void Render();
     void Clear();
+    void UpdateFocus(Widget* widget);
 
     Type::uint32 width_;
     Type::uint32 height_;
@@ -55,6 +56,7 @@ private:
     float match_mode_;
 
     std::vector<std::shared_ptr<Widget>> widgets_;
+    std::vector<Widget*> focus_widgets_;
 
     Widget* root_widget_;
 

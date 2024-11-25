@@ -12,6 +12,7 @@ Canvas::Canvas() :
     reference_resolution_height_(ProjectSettings::kCanvasReferenceHeight),
     match_mode_(ProjectSettings::kMatchMode),
     widgets_(),
+    focus_widgets_(),
     root_widget_(nullptr),
     mouse_position_(Math::Vector2::Zero())
 {
@@ -130,6 +131,10 @@ void Canvas::BeginPlay()
 
 void Canvas::Tick(float delta_time)
 {
+    if (root_widget_)
+    {
+        root_widget_->Tick(delta_time);
+    }
 }
 
 void Canvas::Render()
@@ -147,4 +152,27 @@ void Canvas::Clear()
     root_widget_ = nullptr;
     
     widgets_.clear();
+    focus_widgets_.clear();
+}
+
+void Canvas::UpdateFocus(Widget* widget)
+{
+    for (const auto& widget : focus_widgets_)
+    {
+        if (!widget->IsFocused()) continue;
+        widget->OnFocus(false);
+    }
+
+    focus_widgets_.clear();
+
+    while (widget)
+    {
+        focus_widgets_.push_back(widget);
+        widget = widget->GetParent();
+    }
+
+    for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+    {
+        (*it)->OnFocus(true);
+    }
 }
