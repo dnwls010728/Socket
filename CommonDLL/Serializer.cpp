@@ -147,6 +147,8 @@ void Serializer::Serialize(BYTE* pos, std::string* arr,uint8_t len, int& current
     currentByte++;
     for(uint8_t idx = 0;idx<len;idx++)
     {
+        pos[currentByte] = strlen(arr[idx].c_str());
+        currentByte++;
         strcpy_s(reinterpret_cast<char*>(pos + currentByte), strlen(arr[idx].c_str()) + 1, arr[idx].c_str());
         currentByte += strlen(arr[idx].c_str());
         pos[currentByte] = '\0';
@@ -239,7 +241,7 @@ int Serializer::GetPacketSize(float value)
 
 int Serializer::GetPacketSize(float* arr, uint8_t len)
 {
-    return sizeof(arr[0]) * len + 2;
+    return sizeof(float) * len + 2;
 }
 
 uint8_t Serializer::GetArrLen(std::string* arr)

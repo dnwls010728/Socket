@@ -34,7 +34,13 @@ void Network::Tick(float deltaTime)
             current_player_id = socketEvent.enter.userId;
             players_.insert({player->GetPacketId(), player});
             playerPacketIds_.insert(player->GetPacketId());
-                    
+
+            //다른 유저들 정보 가져오기
+            C_EnterOtherUserPacket pkt;
+            pkt._userId = current_player_id;
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUserPacket>(pkt,C_PKT_ENTER_OTHER_USER);
+            GSocketSession->Send(sendBuffer);
+            
         }else if(socketEvent.type == S_PKT_MOVING)
         {
             MovingEvent evt = socketEvent.moving;
@@ -71,8 +77,7 @@ void Network::Tick(float deltaTime)
             EnterOtherUserEvent evt = socketEvent.enterOtherUser;
             for(int idx=0;idx<socketEvent.enterOtherUser.currentUserCnt_;idx++)
             {
-                if(evt.userIdentifyidArr_[idx] != current_player_id
-                    && !playerPacketIds_.contains(evt.userIdentifyidArr_[idx]))
+                if(evt.userIdentifyidArr_[idx] != current_player_id)
                 {
                     PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                     
@@ -89,11 +94,7 @@ void Network::Tick(float deltaTime)
                 
             }
 
-            //힙을 사용한 패킷이면 이벤트 적용 후 메모리 해제
-            delete[] evt.userIdentifyidArr_;
-            delete[] evt.nameArr_;
-            delete[] evt.locationXArr_;
-            delete[] evt.locationYArr_;
+            
             
         }
     }

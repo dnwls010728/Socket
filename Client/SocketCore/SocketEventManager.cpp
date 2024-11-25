@@ -64,6 +64,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         event.locationXArr_ = enterOtherUserPkt->locationXArr_;
         event.locationYArr_ = enterOtherUserPkt->locationYArr_;
         SocketEvent socketEvent{};
+        socketEvent.enterOtherUser = event;
         socketEvent.type = S_PKT_ENTER_OTHER_USER;
         eventQueue.push(socketEvent);
         return true;

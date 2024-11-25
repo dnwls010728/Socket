@@ -164,6 +164,12 @@ void S_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,currentUserCnt_);
+
+	userIdentifyidArr_ = new uint32_t[currentUserCnt_];
+	nameArr_ = new std::string[currentUserCnt_];
+	locationXArr_ = new float[currentUserCnt_];
+	locationYArr_ = new float[currentUserCnt_];
+	
 	DeSerializer::Deserialize(buffer,currentByte,userIdentifyidArr_);
 	DeSerializer::Deserialize(buffer,currentByte,nameArr_);
 	DeSerializer::Deserialize(buffer,currentByte,locationXArr_);
@@ -176,8 +182,31 @@ uint16_t S_EnterOtherUserPacket::GetSize()
 	return Serializer::GetPacketSize(userIdentifyidArr_,currentUserCnt_)
 	+ Serializer::GetPacketSize(nameArr_,currentUserCnt_)
 	+ Serializer::GetPacketSize(locationXArr_,currentUserCnt_)
-	+ Serializer::GetPacketSize(locationYArr_,currentUserCnt_);
+	+ Serializer::GetPacketSize(locationYArr_,currentUserCnt_)
+	+ Serializer::GetPacketSize(currentUserCnt_);
 	
+}
+
+C_EnterOtherUserPacket::C_EnterOtherUserPacket()
+{
+}
+
+BYTE* C_EnterOtherUserPacket::Serialize(BYTE* buffer)
+{
+	int currentByte=0;
+	Serializer::Serialize(buffer,_userId,currentByte);
+	return buffer;
+}
+
+void C_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte = 0;
+	DeSerializer::Deserialize(buffer,currentByte,_userId);
+}
+
+uint16_t C_EnterOtherUserPacket::GetSize()
+{
+	return Serializer::GetPacketSize(_userId);
 }
 
 

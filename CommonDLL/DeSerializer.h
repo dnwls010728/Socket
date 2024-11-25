@@ -23,11 +23,11 @@ public:
     static void Deserialize(BYTE* pos, int& currentByte, float* value);
     static void Deserialize(BYTE* pos, int& currentByte, std::string* value);
 
-    static void HeapInitialize(uint16_t*& arr, int len);
-    static void HeapInitialize(uint32_t*& arr, int len);
-    static void HeapInitialize(int64_t*& arr, int len);
-    static void HeapInitialize(double*& arr, int len);
-    static void HeapInitialize(float*& arr, int len);
-    static void HeapInitialize(std::string*& arr, int len);
+    static void HeapInitialize(uint16_t** arr, int len);
+    static void HeapInitialize(uint32_t** arr, int len);
+    static void HeapInitialize(int64_t** arr, int len);
+    static void HeapInitialize(double** arr, int len);
+    static void HeapInitialize(float** arr, int len);
+    static void HeapInitialize(std::string** arr, int len);
     
 };

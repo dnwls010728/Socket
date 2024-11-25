@@ -40,9 +40,13 @@ void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt)
 void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt)
 {
     std:: cout << "Enter Other User Packet" << std::endl;
+    for(uint8_t i=0;i<pkt->currentUserCnt_;i++)
+    {
+        std::cout<< pkt->nameArr_[i]<<std::endl;
+    }
     //std::shared_ptr<S_EnterOtherUserPacket> pktRef = std::make_shared<S_EnterOtherUserPacket>(pkt);
     SocketEventManager* socket_event_manager = SocketEventManager::Get();
-    socket_event_manager->RegisterEvent(std::move(pkt),S_PKT_ENTER_OTHER_USER);
+    socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER_OTHER_USER);
 }
 
 

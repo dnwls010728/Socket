@@ -14,6 +14,8 @@ enum PacketNumber : uint16_t
     S_PKT_MOVING=1003,
     S_PKT_BROADCASTING_ENTER=1004,
     S_PKT_ENTER_OTHER_USER=1005,
+    C_PKT_ENTER_OTHER_USER=1006
+    
 };
 
 void HandleInvalid(BYTE* buf, int32_t len);

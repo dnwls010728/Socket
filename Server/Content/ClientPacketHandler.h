@@ -12,11 +12,13 @@ enum PacketNumber : uint16_t
 	S_PKT_MOVING=1003,
 	S_PKT_BROADCASTING_ENTER=1004,
 	S_PKT_ENTER_OTHER_USER=1005,
+	C_PKT_ENTER_OTHER_USER=1006
 };
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len);
 void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPacket> pkt);
 void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt);
+void HandleEnterOtherUser(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterOtherUserPacket> pkt);
 
 class ClientPacketHandler
 {
@@ -29,6 +31,8 @@ public:
 		{return HandlePacket<C_EnterPacket>(HandleEnter,session, buffer, len); };
 		GPacketHandler[C_PKT_MOVING] = [](const shared_ptr<PacketSession>& session,BYTE* buffer, int32_t len)
 		{return HandlePacket<C_MovingPacket>(HandleMoving,session, buffer, len); };
+		GPacketHandler[C_PKT_ENTER_OTHER_USER] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)
+		{ return HandlePacket<C_EnterOtherUserPacket>(HandleEnterOtherUser,session, buffer, len); };
 		
 	}
 
@@ -38,7 +42,7 @@ public:
 		return GPacketHandler[header->id](session, buffer, len);
 	}
 
-	static shared_ptr<SendBuffer> MakeSendBuffer(S_EnterPacket& pkt) { return MakeSendBuffer(pkt, S_PKT_ENTER); }
+	
 
 public:
 	template<typename PacketType, typename ProcessFunc>

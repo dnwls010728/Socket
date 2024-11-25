@@ -47,39 +47,7 @@ void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPac
     GRoom->DoAsync(&Room::Broadcast, broadcastSendBuffer);
 
 
-    // Handle Enter는 처음으로 들어온 유저만이 호출할 수 있는 패킷
-    // 따라서 room의 현재 패킷에 들어있는 데이터들을 동기화 할 필요가 있음.
     
-    if(GRoom->users.size() != 0)
-    {
-        S_EnterOtherUserPacket sendOtherPkt;
-        //쉐어드포인터 생성
-        size_t arrSize = GRoom->users.size();
-        uint32_t* userIdxArr = new uint32_t[arrSize];
-        string* userNameArr = new string[arrSize];
-        float* locationXArr = new float[arrSize];
-        float* locationYArr = new float[arrSize];
-        int userCnt = 0;
-        //배열에 담기
-        for(auto it = GRoom->users.begin(); it != GRoom->users.end(); ++it)
-        {
-            userIdxArr[userCnt] = it->second->userIdentifyId;
-            userNameArr[userCnt] = it->second->name;
-            locationXArr[userCnt] = it->second->locationX;
-            locationYArr[userCnt] = it->second->locationY;
-            ++userCnt;
-        }
-
-        //패킷에 지정
-        sendOtherPkt.userIdentifyidArr_=userIdxArr;
-        sendOtherPkt.nameArr_ = userNameArr;
-        sendOtherPkt.locationXArr_ = locationXArr;
-        sendOtherPkt.locationYArr_ = locationYArr;
-        sendOtherPkt.currentUserCnt_ = GRoom->users.size();
-        auto sendOtherPktBuffer = ClientPacketHandler::MakeSendBuffer<S_EnterOtherUserPacket>(sendOtherPkt,S_PKT_ENTER_OTHER_USER);
-        GRoom->DoAsync(&Room::Broadcast, sendOtherPktBuffer);
-        
-    }
 }
 void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt)
 {
@@ -104,4 +72,47 @@ void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingP
     //룸 전체에 브로드 캐스팅
     GRoom->DoAsync(&Room::Broadcast,sendBuffer);
     
+}
+
+void HandleEnterOtherUser(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterOtherUserPacket> pkt)
+{
+    // Handle Enter는 처음으로 들어온 유저만이 호출할 수 있는 패킷
+    // 따라서 room의 현재 패킷에 들어있는 데이터들을 동기화 할 필요가 있음.
+    
+    if(GRoom->users.size() != 0)
+    {
+        S_EnterOtherUserPacket sendOtherPkt;
+        size_t arrSize = GRoom->users.size();
+        uint32_t* userIdxArr = new uint32_t[arrSize];
+        string* userNameArr = new string[arrSize];
+        float* locationXArr = new float[arrSize];
+        float* locationYArr = new float[arrSize];
+        int userCnt = 0;
+        //배열에 담기
+        for(auto it = GRoom->users.begin(); it != GRoom->users.end(); ++it)
+        {
+            userIdxArr[userCnt] = it->second->userIdentifyId;
+            userNameArr[userCnt] = it->second->name;
+            locationXArr[userCnt] = it->second->locationX;
+            locationYArr[userCnt] = it->second->locationY;
+            ++userCnt;
+        }
+
+        //패킷에 지정
+        sendOtherPkt.userIdentifyidArr_=userIdxArr;
+        sendOtherPkt.nameArr_ = userNameArr;
+        sendOtherPkt.locationXArr_ = locationXArr;
+        sendOtherPkt.locationYArr_ = locationYArr;
+        sendOtherPkt.currentUserCnt_ = GRoom->users.size();
+        auto sendOtherPktBuffer = ClientPacketHandler::MakeSendBuffer<S_EnterOtherUserPacket>(sendOtherPkt,S_PKT_ENTER_OTHER_USER);
+
+
+        delete[] userIdxArr;
+        delete[] locationXArr;
+        delete[] locationYArr;
+        delete[] userNameArr;
+        
+        session->Send(sendOtherPktBuffer);
+        
+    }
 }

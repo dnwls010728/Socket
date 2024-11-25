@@ -135,3 +135,16 @@ public:
 	float* locationYArr_;
 	uint32_t currentUserCnt_;
 };
+
+class EXPORT_API C_EnterOtherUserPacket : public Packet
+{
+public:
+	C_EnterOtherUserPacket();
+	~C_EnterOtherUserPacket() override = default;
+
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _userId;
+};
