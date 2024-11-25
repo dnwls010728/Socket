@@ -7,6 +7,7 @@
 #include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
+#include "Map/TestMap.h"
 #include "Time/TimerManager.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowsWindow.h"
@@ -87,6 +88,7 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     AddLevel<EditorMap>(LevelType::kEditor, L"Editor");
     AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
+    AddLevel<TestMap>(LevelType::kTest, L"Test");
     
     OpenLevel(LevelType::kMainMenu);
 }
@@ -227,7 +229,7 @@ void World::TransitionLevel()
 
     current_level_->AddActor<Camera>(L"Main Camera");
     current_level_->Load();
-    
+
     Canvas::Get()->BeginPlay();
     current_level_->InitializeActors();
     

@@ -3,6 +3,7 @@
 
 #include "../../SocketCore/SocketSession.h"
 #include "../SocketCore/ServerPacketHandler.h"
+#include "Input/Keyboard.h"
 #include "Level/World.h"
 #include "Resource/ResourceManager.h"
 #include "UI/Canvas.h"
@@ -16,7 +17,8 @@
 #include "Windows/DX/UITexture.h"
 
 MainMenu::MainMenu(const std::wstring& kName) :
-    Level(kName)
+    Level(kName),
+    scroll_box_(nullptr)
 {
 }
 
@@ -29,28 +31,20 @@ void MainMenu::Load()
     UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
 
-    ScrollBox* scroll_box = canvas->AddWidget<ScrollBox>(L"Scroll Box");
-    scroll_box->AttachToWidget(canvas->GetRootWidget());
-    scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
-    scroll_box->SetAnchoredPosition({0.f, 0.f});
-    scroll_box->SetSize({300.f, 300.f});
+    scroll_box_ = canvas->AddWidget<ScrollBox>(L"Scroll Box");
+    scroll_box_->AttachToWidget(canvas->GetRootWidget());
+    scroll_box_->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+    scroll_box_->SetAnchoredPosition({0.f, 0.f});
+    scroll_box_->SetSize({200.f, 100.f});
 
     // Scroll Box 테스트 코드
     for (int i = 0; i < 10; ++i)
     {
-        Image* id_image = canvas->AddWidget<Image>(L"ID Image");
-        id_image->AttachToWidget(scroll_box);
-        id_image->SetAnchoredPosition({-50.f, -25.f});
-        id_image->SetSize({200.f, 50.f});
-        id_image->SetDrawMode(DrawMode::kSliced);
-        id_image->SetTexture(texture);
-    
-        EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
-        id_text_box->AttachToWidget(id_image);
-        id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
-        id_text_box->SetAnchoredPosition({10.f, 10.f});
-        id_text_box->SetSize({10.f, 10.f});
-        id_text_box->SetPlaceholder(L"ID");
+        Text* text = canvas->AddWidget<Text>(L"Text");
+        text->AttachToWidget(scroll_box_);
+        text->SetSize({100.f, 30.f});
+        text->SetAlignment(Text::kMiddleLeft);
+        text->SetText(L"Text " + std::to_wstring(i));
     }
 
     Image* id_image = canvas->AddWidget<Image>(L"ID Image");
@@ -121,7 +115,7 @@ void MainMenu::Load()
     editor_button->SetDrawMode(DrawMode::kSliced);
     editor_button->OnMouseReleased.Add([]()
     {
-        World::Get()->OpenLevel(LevelType::kEditor);
+        World::Get()->OpenLevel(LevelType::kTest);
     });
     
     Text* editor_text = canvas->AddWidget<Text>(L"Editor Text");
@@ -151,6 +145,44 @@ void MainMenu::Load()
     exit_text->SetText(L"EXIT");
     exit_text->SetAlignment(Text::kMiddleCenter);
     
+}
+
+void MainMenu::Tick(float delta_time)
+{
+    Level::Tick(delta_time);
+
+    Keyboard* keyboard = Keyboard::Get();
+    if (keyboard->GetKey(VK_UP))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.y -= 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_DOWN))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.y += 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_LEFT))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.x -= 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
+
+    if (keyboard->GetKey(VK_RIGHT))
+    {
+        Math::Vector2 size = scroll_box_->GetSize();
+        size.x += 100.f * delta_time;
+
+        scroll_box_->SetSize(size);
+    }
 }
 
 RTTR_REGISTRATION

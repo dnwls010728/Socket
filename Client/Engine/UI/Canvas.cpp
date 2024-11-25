@@ -3,7 +3,7 @@
 
 #include "Logger.h"
 #include "Widget.h"
-#include "Widget/EditableTextBox.h"
+#include "Widget/ScrollBox.h"
 
 Canvas::Canvas() :
     width_(0.f),
@@ -60,8 +60,31 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     return nullptr;
 }
 
+Widget* Canvas::FindWidgetParentOfType(Widget* widget, const rttr::type& kType)
+{
+    if (!widget) return nullptr;
+    
+    Widget* parent = widget->parent_;
+    if (!parent) return nullptr;
+
+    rttr::type parent_type = rttr::type::get(*parent);
+    if (parent_type.is_derived_from(kType)) return parent;
+    return FindWidgetParentOfType(parent, kType);
+}
+
+bool Canvas::IsWidgetType(Widget* widget, const rttr::type& kType)
+{
+    if (!widget) return false;
+
+    rttr::type widget_type = rttr::type::get(*widget);
+    return widget_type.is_derived_from(kType);
+}
+
 void Canvas::OnEvent(const Event& kEvent)
 {
+    Canvas* canvas = Canvas::Get();
+    const float scale_ratio = canvas->GetScaleRatio();
+    
     const Type::uint32& type = kEvent.type;
 
     if (type == static_cast<Type::uint32>(EventType::kWindowSize))
@@ -101,7 +124,7 @@ void Canvas::OnEvent(const Event& kEvent)
                 previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
                 
                 dragging_widget_ = hovered_widget_;
-                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
+                dragging_widget_->OnDragStart.Execute(previous_mouse_position_ / scale_ratio);
             }
         }
     }
@@ -116,10 +139,10 @@ void Canvas::OnEvent(const Event& kEvent)
         {
             previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
             
-            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
+            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_ / scale_ratio);
             dragging_widget_ = nullptr;
 
-            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
+            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_ / scale_ratio);
         }
     }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
@@ -131,7 +154,7 @@ void Canvas::OnEvent(const Event& kEvent)
             Math::Vector2 delta = mouse_position - previous_mouse_position_;
             previous_mouse_position_ = mouse_position;
             
-            dragging_widget_->OnDrag.Execute(delta);
+            dragging_widget_->OnDrag.Execute(delta / scale_ratio);
         }
     }
     else if (type & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
@@ -141,6 +164,19 @@ void Canvas::OnEvent(const Event& kEvent)
     else if (type == static_cast<Type::uint32>(EventType::kText))
     {
         if (focused_widget_) focused_widget_->OnInputText(kEvent.text.character);
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
+    {
+        Widget* scroll_widget;
+        
+        if (IsWidgetType(hovered_widget_, ScrollBox::StaticClass())) scroll_widget = hovered_widget_;
+        else scroll_widget = FindWidgetParentOfType(hovered_widget_, ScrollBox::StaticClass());
+
+        if (scroll_widget)
+        {
+            ScrollBox* scroll_box = dynamic_cast<ScrollBox*>(scroll_widget);
+            scroll_box->OnScroll(kEvent.wheel.x, kEvent.wheel.y);
+        }
     }
 }
 

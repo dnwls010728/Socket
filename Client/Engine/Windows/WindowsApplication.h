@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 
+#include "Singleton.h"
 #include "../framework.h"
 #include "Misc/Type.h"
 
@@ -14,16 +15,17 @@ public:
     
 };
 
-class WindowsApplication
+class WindowsApplication : public Singleton<WindowsApplication>
 {
 public:
-    WindowsApplication(const HINSTANCE instance_handle, const HICON icon_handle);
-    ~WindowsApplication();
+    WindowsApplication();
+    virtual ~WindowsApplication() override;
 
     ATOM RegisterClass(const HINSTANCE instance_handle, const HICON icon_handle);
 
     std::shared_ptr<WindowsWindow> MakeWindow();
-    
+
+    void Init(const HINSTANCE instance_handle, const HICON icon_handle);
     void InitWindow(const std::shared_ptr<WindowsWindow>& kWindow, const std::shared_ptr<WindowDefinition>& kDefinition, const std::shared_ptr<WindowsWindow>& kParentWindow);
     void AddMessageHandler(IWindowsMessageHandler& message_handler);
     void RemoveMessageHandler(IWindowsMessageHandler& message_handler);

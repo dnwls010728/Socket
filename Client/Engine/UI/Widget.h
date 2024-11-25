@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <vector>
-#include <rttr/registration>
 
 #include "Event/Events.h"
 #include "Math/Rect.h"
@@ -63,6 +62,8 @@ public:
     FORCEINLINE const Math::Rect& GetRect() const { return rect_; }
 
     FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
+
+    FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE float GetAngle() const { return angle_; }
     

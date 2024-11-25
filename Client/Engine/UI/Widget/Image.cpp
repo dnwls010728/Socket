@@ -2,6 +2,7 @@
 #include "Image.h"
 
 #include "Level/World.h"
+#include "Math/Color.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
@@ -9,7 +10,8 @@
 Image::Image(const std::wstring& kName) :
     Widget(kName),
     texture_(nullptr),
-    draw_mode_(DrawMode::kSimple)
+    draw_mode_(DrawMode::kSimple),
+    color_(Math::Color::White)
 {
 }
 
@@ -29,6 +31,10 @@ void Image::Render()
         if (draw_mode_ == DrawMode::kSimple)
             renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_);
         else renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, texture_->GetSlice9Rect());
+    }
+    else
+    {
+        renderer->DrawSolidBox(window, rect_, pivot_position, color_);
     }
     
     Widget::Render();

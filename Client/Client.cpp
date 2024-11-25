@@ -19,28 +19,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 #endif
     
     HICON icon_handle = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    WindowsApplication* application = new WindowsApplication(hInstance, icon_handle);
+    
+    WindowsApplication* application = WindowsApplication::Get();
+    application->Init(hInstance, icon_handle);
 
-    Core* core = new Core();
-    core->Init(application);
+    std::unique_ptr<Core> core = std::make_unique<Core>();
+    core->Init();
 
     ServerPacketHandler::Init();
     
-    /*
-    if(GSocketSession->Connect())
-    {
-        C_EnterPacket pkt;
-        pkt.SetId("Client");
-        pkt.SetName("Client");
-        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
-        GSocketSession->Send(sendBuffer);
-    };
-    */
-    
     application->PumpMessages();
-
-    SAFE_RELEASE(core);
-    SAFE_RELEASE(application);
     
     return 0;
 }
