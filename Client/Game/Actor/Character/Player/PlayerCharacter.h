@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Actor/Character/CharacterBase.h"
+#include "Actor/Character/Player/PlayerCharacter.h"
+#include "Actor/Component/TransformComponent.h"
+#include "Level/World.h"
 class Text;
 
 
@@ -11,8 +14,6 @@ class PlayerCharacter : public CharacterBase
 public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
-
-    void SetNickname(const std::wstring& kNickname);
 
     FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
     FORCEINLINE int GetPacketId() const { return packet_id_; }

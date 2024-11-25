@@ -30,7 +30,7 @@ void Network::Tick(float deltaTime)
             player->SetPacketId(socketEvent.enter.userId);
             std::wstring playerName;
             playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
-            player->SetNickname(playerName);
+            //player->SetNickname(playerName);
             current_player_id = socketEvent.enter.userId;
             players_.insert({player->GetPacketId(), player});
                     
@@ -42,8 +42,8 @@ void Network::Tick(float deltaTime)
                 auto it = players_.find(evt.userId);
                 if (it != players_.end()) {
                     PlayerCharacter* targetPlayer = it->second;
-                    targetPlayer->SetIsPostionUpdated(true);
-                    targetPlayer->SetLastRecentPosition(Math::Vector2(evt.locationX,evt.locationY));
+                    //targetPlayer->SetIsPostionUpdated(true);
+                    //targetPlayer->SetLastRecentPosition(Math::Vector2(evt.locationX,evt.locationY));
                 }    
             }
              
@@ -57,9 +57,9 @@ void Network::Tick(float deltaTime)
                 player->SetPacketId(evt.userId);
                 std::wstring playerName;
                 playerName.assign(evt.name.begin(),evt.name.end());
-                player->SetNickname(playerName);
-                player->SetIsPostionUpdated(true);
-                player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
+                //player->SetNickname(playerName);
+                //player->SetIsPostionUpdated(true);
+                //player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
                 players_.insert({player->GetPacketId(), player});
             }
             
@@ -75,9 +75,9 @@ void Network::Tick(float deltaTime)
                     player->SetPacketId(evt.userIdentifyidArr_[idx]);
                     std::wstring playerName;
                     playerName.assign(evt.nameArr_[idx].begin(),evt.nameArr_[idx].end());
-                    player->SetNickname(playerName);
-                    player->SetIsPostionUpdated(true);
-                    player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
+                    //player->SetNickname(playerName);
+                    //player->SetIsPostionUpdated(true);
+                    //player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
                     //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
                     players_.insert({player->GetPacketId(), player});    
                 }
