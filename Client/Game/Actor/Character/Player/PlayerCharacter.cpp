@@ -71,7 +71,27 @@ void PlayerCharacter::Tick(float delta_time)
         GSocketSession->Send(sendBuffer);
     }
 }
+void PlayerCharacter::PostTick(float delta_time)
+{
+    CharacterBase::PostTick(delta_time);
 
+    TransformComponent* transform = GetTransform();
+    Math::Vector2 position = transform->GetPosition();
+    Math::Vector2 screen_position;
+    if(is_position_updated_ == true)
+    {
+        screen_position = Renderer::Get()->ConvertScreenToWorld(last_recent_position_);
+        transform->SetPosition(last_recent_position_);
+        is_position_updated_ = false;
+    }
+    else
+    {
+        screen_position = Renderer::Get()->ConvertWorldToScreen(position);
+        //transform->SetPosition(screen_position);
+    }
+    
+    //nickname_text_->SetPosition(screen_position);
+}
 RTTR_REGISTRATION
 {
     using namespace rttr;

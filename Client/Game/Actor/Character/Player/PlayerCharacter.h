@@ -15,19 +15,26 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
+    FORCEINLINE void SetNickname(const std::wstring& kNickname){nickname_ = kNickname;}
+    FORCEINLINE void SetIsPositionUpdated(bool update){is_position_updated_ = update;}
+    FORCEINLINE void SetLastRecentPosition(Math::Vector2 position){last_recent_position_ = position;}
+
     FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
     FORCEINLINE int GetPacketId() const { return packet_id_; }
+    
 
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
+    virtual void PostTick(float delta_time) override;
 
 private:
     class Sprite* sprite_;
-
     int horizontal_axis_;
+    std::wstring nickname_;
 
+    //Text* nickname_text_;
     float move_speed_;
     int packet_id_;
 
