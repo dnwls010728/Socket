@@ -151,6 +151,7 @@ S_EnterOtherUserPacket::S_EnterOtherUserPacket()
 BYTE* S_EnterOtherUserPacket::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
+	Serializer::Serialize(buffer,currentUserCnt_,currentByte);
 	Serializer::Serialize(buffer,userIdentifyidArr_,currentUserCnt_,currentByte);
 	Serializer::Serialize(buffer,nameArr_,currentUserCnt_,currentByte);
 	Serializer::Serialize(buffer,locationXArr_,currentUserCnt_,currentByte);
@@ -162,6 +163,7 @@ BYTE* S_EnterOtherUserPacket::Serialize(BYTE* buffer)
 void S_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
+	DeSerializer::Deserialize(buffer, currentByte,currentUserCnt_);
 	DeSerializer::Deserialize(buffer,currentByte,userIdentifyidArr_);
 	DeSerializer::Deserialize(buffer,currentByte,nameArr_);
 	DeSerializer::Deserialize(buffer,currentByte,locationXArr_);
@@ -177,3 +179,5 @@ uint16_t S_EnterOtherUserPacket::GetSize()
 	+ Serializer::GetPacketSize(locationYArr_,currentUserCnt_);
 	
 }
+
+

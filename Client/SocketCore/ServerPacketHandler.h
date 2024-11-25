@@ -17,9 +17,10 @@ enum PacketNumber : uint16_t
 };
 
 void HandleInvalid(BYTE* buf, int32_t len);
-void HandleEnter(S_EnterPacket& pkt);
-void HandleMoving(S_MovingPacket& pkt);
-void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt);
+void HandleEnter(std::shared_ptr<S_EnterPacket> pkt);
+void HandleMoving(std::shared_ptr<S_MovingPacket> pkt);
+void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt);
+void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt);
 
 class ServerPacketHandler
 {
@@ -34,6 +35,8 @@ public:
         {return HandlePacket<S_MovingPacket>(HandleMoving,buffer,len);};
         GPacketHandler[S_PKT_BROADCASTING_ENTER] = [](BYTE* buffer,int32_t len)
         {return HandlePacket<S_BroadcastingEnterPacket>(HandleBroadcastEnter,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_OTHER_USER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterOtherUserPacket>(HandleEnterOtherUser,buffer,len);};
         
     }
     static void HandlePacket(BYTE* buffer, int32_t len)
@@ -46,9 +49,10 @@ public:
     template<typename PacketType, typename ProcessFunc>
     static void HandlePacket(ProcessFunc func,BYTE* buffer,int32_t len)
     {
-        PacketType pkt;
-        pkt.Deserialize(buffer + sizeof(PacketHeader),len-sizeof(PacketHeader));
-        return func(pkt);
+        std::shared_ptr<PacketType> pkt = std::make_shared<PacketType>();
+        
+        pkt->Deserialize(buffer + sizeof(PacketHeader),len-sizeof(PacketHeader));
+        return func(std::move(pkt));
     }
 
     template<typename T>

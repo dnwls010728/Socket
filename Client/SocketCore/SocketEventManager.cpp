@@ -54,6 +54,19 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         socketEvent.type = S_PKT_BROADCASTING_ENTER;
         eventQueue.push(socketEvent);
         return true;
+    }else if(pktId == S_PKT_ENTER_OTHER_USER)
+    {
+        S_EnterOtherUserPacket* enterOtherUserPkt = (S_EnterOtherUserPacket*)pkt.get();
+        EnterOtherUserEvent event{};
+        event.currentUserCnt_ = enterOtherUserPkt->currentUserCnt_;
+        event.nameArr_ =enterOtherUserPkt->nameArr_;
+        event.userIdentifyidArr_ = enterOtherUserPkt->userIdentifyidArr_;
+        event.locationXArr_ = enterOtherUserPkt->locationXArr_;
+        event.locationYArr_ = enterOtherUserPkt->locationYArr_;
+        SocketEvent socketEvent{};
+        socketEvent.type = S_PKT_ENTER_OTHER_USER;
+        eventQueue.push(socketEvent);
+        return true;
     }
     return false;
 }

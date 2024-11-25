@@ -23,6 +23,7 @@ protected:
 	virtual BYTE* Serialize(BYTE* buffer) { return nullptr; };
 	virtual void Deserialize(BYTE* buffer, int32_t len) {  };
 	virtual uint16_t GetSize() { return 0; };
+	
 };
 
 
@@ -40,6 +41,7 @@ public:
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
+	
 
 
 	std::string _name;
@@ -58,6 +60,7 @@ public:
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
+	
 	uint8_t _success;
 	uint32_t _userId;
 	std::string _name;
@@ -72,6 +75,7 @@ public:
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
+	
 	float _locationX;
 	float _locationY;
 	
@@ -89,6 +93,7 @@ public:
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
+	
 
 	uint8_t _success;
 	uint32_t _userId;
@@ -106,6 +111,7 @@ public:
 	virtual uint16_t GetSize() override;
 
 
+	
 	uint8_t _success;
 	uint32_t _userId;
 	std::string _name;
@@ -115,17 +121,14 @@ class EXPORT_API S_EnterOtherUserPacket : public Packet
 {
 public:
 	S_EnterOtherUserPacket();
-	~S_EnterOtherUserPacket() override
-	{
-		delete[] userIdentifyidArr_;
-		delete[] nameArr_;
-		delete[] locationXArr_;
-		delete[] locationYArr_;
-	};
+	~S_EnterOtherUserPacket() override =default;
+	
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
 
+	
+	
 	uint32_t* userIdentifyidArr_;
 	std::string* nameArr_;
 	float* locationXArr_;

@@ -15,7 +15,7 @@ void MainMap::Load()
 
     Network* network = AddActor<Network>(L"Network");
     Tilemap* tilemap = AddActor<Tilemap>(L"Tilemap");
-    PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
+    //PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
 }
 
 RTTR_REGISTRATION

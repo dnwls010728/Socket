@@ -15,8 +15,8 @@ enum PacketNumber : uint16_t
 };
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len);
-void HandleEnter(const shared_ptr<PacketSession>& session, C_EnterPacket& pkt);
-void HandleMoving(const shared_ptr<PacketSession>& session, C_MovingPacket& pkt);
+void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPacket> pkt);
+void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt);
 
 class ClientPacketHandler
 {
@@ -44,9 +44,9 @@ public:
 	template<typename PacketType, typename ProcessFunc>
 	static void HandlePacket(ProcessFunc func, const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len) 
 	{
-		PacketType pkt;
-		pkt.Deserialize(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
-		return func(session, pkt);
+		std::shared_ptr<PacketType> pkt = std::make_shared<PacketType>();
+		pkt->Deserialize(buffer + sizeof(PacketHeader),len-sizeof(PacketHeader));
+		return func(session,std::move(pkt));
 	}
 
 	template<typename T>

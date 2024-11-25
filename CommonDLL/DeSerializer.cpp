@@ -6,7 +6,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint8_t& value)
 	currentByte++;
 	if (spliter == 1)
 	{
-		value = static_cast<uint8_t>(pos[currentByte]);
+		std::memcpy(&value,pos+currentByte,sizeof(value));
 		currentByte += sizeof(uint8_t);
 	}
 	else
@@ -21,8 +21,8 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t& value)
 	currentByte++;
 	if (spliter == 2)
 	{
-		//value = static_cast<uint16_t>(pos[currentByte]);
 		std::memcpy(&value,pos+currentByte,sizeof(value));
+			
 		currentByte += sizeof(uint16_t);
 	}
 	else
@@ -53,6 +53,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int32_t& value)
 	if (spliter == 4)
 	{
 		std::memcpy(&value,pos+currentByte,sizeof(value));
+		
 		currentByte += sizeof(int32_t);
 	}
 	else
@@ -118,7 +119,8 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t* value)
 		currentByte++;
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			std::memcpy(value+idx,pos+currentByte,sizeof(uint16_t));
+			
+			std::memcpy(&value[idx],pos+currentByte,sizeof(value));
 			currentByte += sizeof(uint16_t);
 		}
 	}
@@ -136,9 +138,12 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint32_t* value)
 	{
 		uint8_t len = pos[currentByte];
 		currentByte++;
+		//이때 value는 쓰레기 값
+		HeapInitialize(value,len);
+		
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
-			std::memcpy(value+idx,pos+currentByte,sizeof(uint32_t));
+			std::memcpy(value+idx,pos+currentByte,sizeof(value));
 			currentByte += sizeof(uint32_t);
 		}
 	}
@@ -156,6 +161,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t* value)
 	{
 		uint8_t len = pos[currentByte];
 		currentByte++;
+		HeapInitialize(value,len);
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
 			std::memcpy(value+idx,pos+currentByte,sizeof(int64_t));
@@ -191,6 +197,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, double* value)
 	{
 		uint8_t len = pos[currentByte];
 		currentByte++;
+		HeapInitialize(value,len);
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
 			std::memcpy(value+idx,pos+currentByte,sizeof(double));
@@ -226,6 +233,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float* value)
 	{
 		uint8_t len = pos[currentByte];
 		currentByte++;
+		HeapInitialize(value,len);
 		for (uint8_t idx = 0; idx < len; idx++)
 		{
 			std::memcpy(value+idx,pos+currentByte,sizeof(float));
@@ -246,6 +254,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string* value)
 	{
 		uint8_t len =  pos[currentByte];
 		currentByte++;
+		HeapInitialize(value,len);
 		for(uint8_t idx = 0; idx < len; idx++)
 		{
 			uint8_t strLen = static_cast<uint8_t>(pos[currentByte]);
@@ -254,4 +263,34 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string* value)
 			currentByte += value[idx].length()+1;
 		}
 	}
+}
+
+void DeSerializer::HeapInitialize(uint16_t*& arr, int len)
+{
+	arr = new uint16_t[len];
+}
+
+void DeSerializer::HeapInitialize(uint32_t*& arr, int len)
+{
+	arr = new uint32_t[len];
+}
+
+void DeSerializer::HeapInitialize(int64_t*& arr, int len)
+{
+	arr = new int64_t[len];
+}
+
+void DeSerializer::HeapInitialize(double*& arr, int len)
+{
+	arr = new double[len];
+}
+
+void DeSerializer::HeapInitialize(float*& arr, int len)
+{
+	arr = new float[len];
+}
+
+void DeSerializer::HeapInitialize(std::string*& arr, int len)
+{
+	arr = new std::string[len];
 }

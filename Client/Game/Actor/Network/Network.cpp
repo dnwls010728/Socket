@@ -26,13 +26,14 @@ void Network::Tick(float deltaTime)
             
                     
             PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
-                    
+            
             player->SetPacketId(socketEvent.enter.userId);
             std::wstring playerName;
             playerName.assign(socketEvent.enter.name.begin(),socketEvent.enter.name.end());
             player->SetNickname(playerName);
             current_player_id = socketEvent.enter.userId;
             players_.insert({player->GetPacketId(), player});
+            playerPacketIds_.insert(player->GetPacketId());
                     
         }else if(socketEvent.type == S_PKT_MOVING)
         {
@@ -50,9 +51,10 @@ void Network::Tick(float deltaTime)
         }else if(socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
             //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음
-            if(current_player_id != 0)
+            BroadcastingEnterEvent evt = socketEvent.broadcastingEnter;
+            if(current_player_id != evt.userId)
             {
-                BroadcastingEnterEvent evt = socketEvent.broadcastingEnter;
+                
                 PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                 player->SetPacketId(evt.userId);
                 std::wstring playerName;
@@ -61,6 +63,7 @@ void Network::Tick(float deltaTime)
                 player->SetIsPositionUpdated(true);
                 player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
                 players_.insert({player->GetPacketId(), player});
+                playerPacketIds_.insert(player->GetPacketId());
             }
             
         }else if(socketEvent.type == S_PKT_ENTER_OTHER_USER)
@@ -68,7 +71,8 @@ void Network::Tick(float deltaTime)
             EnterOtherUserEvent evt = socketEvent.enterOtherUser;
             for(int idx=0;idx<socketEvent.enterOtherUser.currentUserCnt_;idx++)
             {
-                if(evt.userIdentifyidArr_[idx] != current_player_id)
+                if(evt.userIdentifyidArr_[idx] != current_player_id
+                    && !playerPacketIds_.contains(evt.userIdentifyidArr_[idx]))
                 {
                     PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                     
@@ -79,10 +83,18 @@ void Network::Tick(float deltaTime)
                     player->SetIsPositionUpdated(true);
                     player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
                     //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
-                    players_.insert({player->GetPacketId(), player});    
+                    players_.insert({player->GetPacketId(), player});
+                    playerPacketIds_.insert(player->GetPacketId());
                 }
                 
             }
+
+            //힙을 사용한 패킷이면 이벤트 적용 후 메모리 해제
+            delete[] evt.userIdentifyidArr_;
+            delete[] evt.nameArr_;
+            delete[] evt.locationXArr_;
+            delete[] evt.locationYArr_;
+            
         }
     }
 }

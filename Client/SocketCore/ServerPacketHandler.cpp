@@ -11,28 +11,38 @@ void HandleInvalid(BYTE* buf, int32_t len)
     std::cout << "Invalid Packet" << std::endl;    
 }
 
-void HandleEnter(S_EnterPacket& pkt)
+void HandleEnter(std::shared_ptr<S_EnterPacket> pkt)
 {
     std::cout << "Enter Packet" << std::endl;
-    std::shared_ptr<S_EnterPacket> pktRef = std::make_shared<S_EnterPacket>(pkt);
+    //std::shared_ptr<S_EnterPacket> pktRef = std::make_shared<S_EnterPacket>(pkt);
     //얘가 로그인 성공을 알리는 response
     SocketEventManager* socket_event_manager = SocketEventManager::Get();
-    socket_event_manager->RegisterEvent(pktRef,S_PKT_ENTER);
+    socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER);
 }
 
-void HandleMoving(S_MovingPacket& pkt)
+void HandleMoving(std::shared_ptr<S_MovingPacket> pkt)
 {
     std::cout<< "Moving" << std::endl;
-    std::shared_ptr<S_MovingPacket> pktRef = std::make_shared<S_MovingPacket>(pkt);
+    //std::shared_ptr<S_MovingPacket> pktRef = std::make_shared<S_MovingPacket>(pkt);
     SocketEventManager* socket_event_manager = SocketEventManager::Get();
-    socket_event_manager->RegisterEvent(pktRef,S_PKT_MOVING);
+    socket_event_manager->RegisterEvent(pkt,S_PKT_MOVING);
     
 }
 
-void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt)
+void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt)
 {
     std::cout << "Broadcast Packet" << std::endl;
-    std::shared_ptr<S_BroadcastingEnterPacket> pktRef = std::make_shared<S_BroadcastingEnterPacket>(pkt);
+    //std::shared_ptr<S_BroadcastingEnterPacket> pktRef = std::make_shared<S_BroadcastingEnterPacket>(pkt);
     SocketEventManager* socket_event_manager = SocketEventManager::Get();
-    socket_event_manager->RegisterEvent(pktRef,S_PKT_BROADCASTING_ENTER);
+    socket_event_manager->RegisterEvent(pkt,S_PKT_BROADCASTING_ENTER);
 }
+
+void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt)
+{
+    std:: cout << "Enter Other User Packet" << std::endl;
+    //std::shared_ptr<S_EnterOtherUserPacket> pktRef = std::make_shared<S_EnterOtherUserPacket>(pkt);
+    SocketEventManager* socket_event_manager = SocketEventManager::Get();
+    socket_event_manager->RegisterEvent(std::move(pkt),S_PKT_ENTER_OTHER_USER);
+}
+
+

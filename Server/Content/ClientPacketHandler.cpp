@@ -10,20 +10,20 @@ void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t 
 {
 }
 
-void HandleEnter(const shared_ptr<PacketSession>& session, C_EnterPacket& pkt)
+void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPacket> pkt)
 {
     shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
     cout << "Enter EnterPacket" << endl;
-    cout << pkt.GetName()<<endl;
-    cout<< pkt.GetId() << endl;
+    cout << pkt->GetName()<<endl;
+    cout<< pkt->GetId() << endl;
 
     static atomic<uint32_t> idGenerator = 0;
 
     shared_ptr<User> user = make_shared<User>();
     user->userIdentifyId = ++idGenerator;
     user->ownerSession = gameSession;
-    user->name = pkt.GetName();
-    user->id = pkt.GetId();
+    user->name = pkt->GetName();
+    user->id = pkt->GetId();
     user->locationX = 0;
     user->locationY = 0;
     gameSession->userRef = user;
@@ -77,18 +77,18 @@ void HandleEnter(const shared_ptr<PacketSession>& session, C_EnterPacket& pkt)
         sendOtherPkt.locationYArr_ = locationYArr;
         sendOtherPkt.currentUserCnt_ = GRoom->users.size();
         auto sendOtherPktBuffer = ClientPacketHandler::MakeSendBuffer<S_EnterOtherUserPacket>(sendOtherPkt,S_PKT_ENTER_OTHER_USER);
-        session->Send(sendOtherPktBuffer);
+        GRoom->DoAsync(&Room::Broadcast, sendOtherPktBuffer);
         
     }
 }
-void HandleMoving(const shared_ptr<PacketSession>& session, C_MovingPacket& pkt)
+void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt)
 {
     shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
     
     shared_ptr<User> user = static_pointer_cast<User>(gameSession->userRef);
 
-    user->locationX = pkt._locationX;
-    user->locationY = pkt._locationY;
+    user->locationX = pkt->_locationX;
+    user->locationY = pkt->_locationY;
 
     S_MovingPacket sendPkt;
     sendPkt._success = 1;
