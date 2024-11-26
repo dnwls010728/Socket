@@ -262,14 +262,6 @@ void Widget::UpdateRect()
     }
 }
 
-void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
-{
-}
-
-void Widget::OnInputText(wchar_t character)
-{
-}
-
 bool Widget::OnFocus(bool is_focused)
 {
     is_focused_ = is_focused;
@@ -331,6 +323,16 @@ bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelt
             return true;
     }
     
+    return false;
+}
+
+bool Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+{
+    return false;
+}
+
+bool Widget::OnChar(wchar_t character)
+{
     return false;
 }
 

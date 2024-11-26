@@ -83,8 +83,10 @@ void Canvas::OnEvent(const Event& kEvent)
 
     if (type == static_cast<Type::uint32>(EventType::kWindowSize))
     {
-        width_ = kEvent.window.data1;
-        height_ = kEvent.window.data2;
+        const WindowEvent& kWindow = kEvent.window;
+        
+        width_ = kWindow.data1;
+        height_ = kWindow.data2;
 
         for (const auto& widget : widgets_)
         {
@@ -117,6 +119,27 @@ void Canvas::OnEvent(const Event& kEvent)
         if (root_widget_)
         {
             root_widget_->OnScroll({kWheel.mouse_x, kWheel.mouse_y}, {kWheel.x, kWheel.y});
+        }
+    }
+    else if (type & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
+    {
+        if (focus_widgets_.size() > 0)
+        {
+            for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+            {
+                const KeyboardEvent kKey = kEvent.key;
+                if ((*it)->IsFocused() && (*it)->OnKey(kKey.key_code, kKey.is_repeat)) break;
+            }
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kText))
+    {
+        if (focus_widgets_.size() > 0)
+        {
+            for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+            {
+                if ((*it)->IsFocused() && (*it)->OnChar(kEvent.text.character)) break;
+            }
         }
     }
 }
@@ -157,10 +180,10 @@ void Canvas::Clear()
 
 void Canvas::UpdateFocus(Widget* widget)
 {
-    for (const auto& widget : focus_widgets_)
+    for (const auto& focus_widget : focus_widgets_)
     {
-        if (!widget->IsFocused()) continue;
-        widget->OnFocus(false);
+        if (!focus_widget->IsFocused()) continue;
+        focus_widget->OnFocus(false);
     }
 
     focus_widgets_.clear();

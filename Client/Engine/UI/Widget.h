@@ -86,8 +86,6 @@ protected:
     virtual void Tick(float delta_time);
     virtual void Render();
     virtual void UpdateRect();
-    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
-    virtual void OnInputText(wchar_t character);
 
     // Input Events
     virtual bool OnFocus(bool is_focused);
@@ -96,6 +94,8 @@ protected:
     virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
     virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
+    virtual bool OnChar(wchar_t character);
 
     std::wstring name_;
 
