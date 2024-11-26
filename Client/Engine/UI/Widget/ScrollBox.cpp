@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "ScrollBox.h"
 
-#include "Logger.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
 #include "UI/Canvas.h"
@@ -13,7 +12,8 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
     content_height_(0.f),
     scroll_offset_x_(0.f),
     scroll_offset_y_(0.f),
-    thumb_rect_(Math::Rect::Zero())
+    thumb_rect_(Math::Rect::Zero()),
+    is_thumb_pressed_(false)
 {
 }
 

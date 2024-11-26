@@ -17,7 +17,7 @@ protected:
     virtual void BeginPlay() override;
     virtual void Render() override;
     virtual void UpdateRect() override;
-
+    
     virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
 private:
@@ -29,5 +29,7 @@ private:
     float scroll_offset_y_;
 
     Math::Rect thumb_rect_;
+    
+    bool is_thumb_pressed_;
     
 };
