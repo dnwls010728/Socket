@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Button.h"
 
+#include "Logger.h"
 #include "Level/World.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -12,7 +13,6 @@ Button::Button(const std::wstring& kName) :
     draw_mode_(DrawMode::kSimple)
 {
     size_ = { 150.f, 50.f };
-    is_ray_cast_target_ = true;
 }
 
 void Button::Render()
@@ -34,6 +34,13 @@ void Button::Render()
     }
     
     Widget::Render();
+}
+
+bool Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    if (is_pressed) OnPressed.Execute();
+    else OnReleased.Execute();
+    return true;
 }
 
 RTTR_REGISTRATION

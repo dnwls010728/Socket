@@ -10,7 +10,6 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnWidgetEvent)
 DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
 DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
 
@@ -72,14 +71,7 @@ public:
 
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
 
-    FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
-    FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
-
-    FORCEINLINE bool IsHovered() const { return is_hovered_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
-
-    OnWidgetEvent OnMousePressed;
-    OnWidgetEvent OnMouseReleased;
 
     OnDragEvent OnDragStart;
     OnDragEvent OnDrag;
@@ -94,9 +86,16 @@ protected:
     virtual void Tick(float delta_time);
     virtual void Render();
     virtual void UpdateRect();
-    virtual void OnFocusChanged(bool is_focused);
-    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
-    virtual void OnInputText(wchar_t character);
+
+    // Input Events
+    virtual bool OnFocus(bool is_focused);
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseLeave();
+    virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+    virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
+    virtual bool OnChar(wchar_t character);
 
     std::wstring name_;
 
@@ -114,8 +113,6 @@ protected:
     std::vector<Widget*> children_;
 
     bool has_begun_play_;
-    bool is_ray_cast_target_;
-    bool is_hovered_;
     bool is_focused_;
     
 };

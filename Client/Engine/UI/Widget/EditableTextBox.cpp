@@ -22,8 +22,6 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     content_type_(ContentType::Standard)
 {
     size_ = { 200.f, 50.f };
-    
-    is_ray_cast_target_ = true;
 }
 
 void EditableTextBox::SetText(const std::wstring& kText)
@@ -107,18 +105,15 @@ void EditableTextBox::UpdateRect()
     text_rect_.height = bottom;
 }
 
-void EditableTextBox::OnFocusChanged(bool is_focused)
+bool EditableTextBox::OnFocus(bool is_focused)
 {
-    Widget::OnFocusChanged(is_focused);
-
     elapsed_time_ = 0.f;
     cursor_visible_ = is_focused;
+    return Widget::OnFocus(is_focused);
 }
 
-void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
+bool EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
 {
-    Widget::OnInputKey(key_code, is_pressed);
-
     if (is_pressed)
     {
         if (key_code == VK_LEFT)
@@ -177,12 +172,12 @@ void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
             }
         }
     }
+
+    return true;
 }
 
-void EditableTextBox::OnInputText(wchar_t character)
+bool EditableTextBox::OnChar(wchar_t character)
 {
-    Widget::OnInputText(character);
-
     text_.insert(cursor_index_, 1, character);
     cursor_index_++;
 
@@ -195,6 +190,8 @@ void EditableTextBox::OnInputText(wchar_t character)
         elapsed_time_ = 0.f;
         cursor_visible_ = true;
     }
+
+    return true;
 }
 
 void EditableTextBox::UpdateAdvances(const std::wstring& kString)

@@ -58,6 +58,8 @@ struct MouseMotionEvent
 struct MouseWheelEvent
 {
     EventType type;
+    float mouse_x;
+    float mouse_y;
     float x;
     float y;
 };

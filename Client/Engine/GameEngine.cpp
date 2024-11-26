@@ -7,6 +7,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Input/Keyboard.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
 #include "UI/Canvas.h"
@@ -105,13 +106,20 @@ void GameEngine::Tick(float delta_time)
 void GameEngine::Render(float alpha)
 {
     ImGui::Render();
+
+    static bool redraw = true;
     
     Renderer::Get()->BeginRender(game_window_);
     World::Get()->Render(alpha);
 
-    Renderer::Get()->BeginRenderD2D(game_window_);
-    Canvas::Get()->Render();
-    Renderer::Get()->EndRenderD2D();
+    if (redraw)
+    {
+        Renderer::Get()->BeginRenderD2D(game_window_);
+        Canvas::Get()->Render();
+        Renderer::Get()->EndRenderD2D();
+    }
+
+    if (Keyboard::Get()->GetKeyDown(VK_F1)) redraw = !redraw;
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     
