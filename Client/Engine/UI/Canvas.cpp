@@ -36,6 +36,28 @@ void Canvas::GetWidgets(std::vector<Widget*>& widgets) const
     }
 }
 
+void Canvas::SetWidgetFocus(Widget* widget)
+{
+    for (const auto& focus_widget : focus_widgets_)
+    {
+        if (!focus_widget->IsFocused()) continue;
+        focus_widget->OnFocus(false);
+    }
+
+    focus_widgets_.clear();
+
+    while (widget)
+    {
+        focus_widgets_.push_back(widget);
+        widget = widget->GetParent();
+    }
+
+    for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+    {
+        (*it)->OnFocus(true);
+    }
+}
+
 float Canvas::GetScaleRatio() const
 {
     const float width_ratio = width_ / static_cast<float>(reference_resolution_width_);
@@ -176,26 +198,4 @@ void Canvas::Clear()
     
     widgets_.clear();
     focus_widgets_.clear();
-}
-
-void Canvas::UpdateFocus(Widget* widget)
-{
-    for (const auto& focus_widget : focus_widgets_)
-    {
-        if (!focus_widget->IsFocused()) continue;
-        focus_widget->OnFocus(false);
-    }
-
-    focus_widgets_.clear();
-
-    while (widget)
-    {
-        focus_widgets_.push_back(widget);
-        widget = widget->GetParent();
-    }
-
-    for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
-    {
-        (*it)->OnFocus(true);
-    }
 }

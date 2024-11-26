@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Level/Level.h"
 
+class EditableTextBox;
+
 class MainMenu : public Level
 {
     SHADER_CLASS_HELPER(MainMenu)
@@ -15,6 +17,8 @@ protected:
     virtual void Tick(float delta_time) override;
 
 private:
+    EditableTextBox* id_text_box;
+    EditableTextBox* pw_text_box;
     class ScrollBox* scroll_box_;
     
 };

@@ -23,6 +23,7 @@ public:
     T* FindWidget(const std::wstring& kName);
 
     void GetWidgets(std::vector<Widget*>& widgets) const;
+    void SetWidgetFocus(Widget* widget);
 
     float GetScaleRatio() const;
 
@@ -46,7 +47,6 @@ private:
     void Tick(float delta_time);
     void Render();
     void Clear();
-    void UpdateFocus(Widget* widget);
 
     Type::uint32 width_;
     Type::uint32 height_;

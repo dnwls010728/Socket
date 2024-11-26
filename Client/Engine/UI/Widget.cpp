@@ -310,7 +310,7 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
             return true;
     }
 
-    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas::Get()->UpdateFocus(this);
+    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas::Get()->SetWidgetFocus(this);
     return false;
 }
 

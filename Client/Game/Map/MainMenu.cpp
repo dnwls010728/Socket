@@ -54,7 +54,7 @@ void MainMenu::Load()
     id_image->SetDrawMode(DrawMode::kSliced);
     id_image->SetTexture(texture);
     
-    EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
+    id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
     id_text_box->AttachToWidget(id_image);
     id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
     id_text_box->SetAnchoredPosition({10.f, 10.f});
@@ -68,7 +68,7 @@ void MainMenu::Load()
     pw_image->SetDrawMode(DrawMode::kSliced);
     pw_image->SetTexture(texture);
 
-    EditableTextBox* pw_text_box = canvas->AddWidget<EditableTextBox>(L"Password Text Box");
+    pw_text_box = canvas->AddWidget<EditableTextBox>(L"Password Text Box");
     pw_text_box->AttachToWidget(pw_image);
     pw_text_box->SetAnchorPreset(AnchorPreset::kStretch);
     pw_text_box->SetAnchoredPosition({10.f, 10.f});
@@ -183,6 +183,19 @@ void MainMenu::Tick(float delta_time)
 
         scroll_box_->SetSize(size);
     }
+
+    if (keyboard->GetKeyDown(VK_TAB))
+    {
+        if (id_text_box->IsFocused())
+        {
+            Canvas::Get()->SetWidgetFocus(pw_text_box);
+        }
+        else if (pw_text_box->IsFocused())
+        {
+            Canvas::Get()->SetWidgetFocus(id_text_box);
+        }
+    }
+    
 }
 
 RTTR_REGISTRATION
