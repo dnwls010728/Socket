@@ -195,7 +195,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
@@ -270,7 +269,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
@@ -344,7 +342,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
@@ -418,7 +415,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
@@ -492,7 +488,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
@@ -566,7 +561,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>x64\Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>C:\Users\master\Desktop\project_storage\Socket\x64\Debug\Common.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>x64\Debug\Common.pch</PrecompiledHeaderOutputFile>
