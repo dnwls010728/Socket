@@ -314,6 +314,26 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
     return false;
 }
 
+bool Widget::OnBeginDrag()
+{
+    return false;
+}
+
+bool Widget::OnDrag()
+{
+    return false;
+}
+
+bool Widget::OnEndDrag()
+{
+    return false;
+}
+
+bool Widget::OnDrop()
+{
+    return false;
+}
+
 bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)

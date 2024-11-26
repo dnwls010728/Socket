@@ -38,8 +38,11 @@ void Button::Render()
 
 bool Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
-    if (is_pressed) OnPressed.Execute();
-    else OnReleased.Execute();
+    if (!is_pressed && button == MouseButton::kLeft)
+    {
+        if (OnClick.IsBound()) OnClick.Execute();
+    }
+    
     return true;
 }
 

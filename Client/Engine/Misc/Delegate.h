@@ -45,9 +45,18 @@ public:
         RemoveImpl(GetFunctionAddress(std::forward<F>(func)));
     }
 
-    template<typename F>
-    bool IsBound(F&& func) const {
-        return IsBoundImpl(GetFunctionAddress(std::forward<F>(func)));
+    // template<typename F>
+    // bool IsBound(F&& func) const {
+    //     return IsBoundImpl(GetFunctionAddress(std::forward<F>(func)));
+    // }
+
+    /**
+     * 이 델리게이트가 바인딩된 함수가 있는지 확인합니다.
+     * @return 어떤 함수가 바인딩되어 있으면 true, 아니면 false를 반환합니다.
+     */
+    bool IsBound()
+    {
+        return !functions_.empty();
     }
 
 private:
@@ -70,8 +79,8 @@ private:
         functions_.erase(it, functions_.end());
     }
 
-    bool IsBoundImpl(std::uintptr_t addr) const {
-        return std::any_of(functions_.begin(), functions_.end(),
-            [addr](const auto& func) { return func.GetAddr() == addr; });
-    }
+    // bool IsBoundImpl(std::uintptr_t addr) const {
+    //     return std::any_of(functions_.begin(), functions_.end(),
+    //         [addr](const auto& func) { return func.GetAddr() == addr; });
+    // }
 };

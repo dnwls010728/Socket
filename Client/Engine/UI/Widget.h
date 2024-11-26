@@ -10,9 +10,6 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
-DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
-
 enum class AnchorPreset : Type::uint16
 {
     kLeft = (0x01<<0),
@@ -73,12 +70,6 @@ public:
 
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
-    OnDragEvent OnDragStart;
-    OnDragEvent OnDrag;
-    OnDragEvent OnDragEnd;
-
-    OnDropEvent OnDrop;
-
 protected:
     friend class Canvas;
 
@@ -93,6 +84,10 @@ protected:
     virtual bool OnMouseLeave();
     virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+    virtual bool OnBeginDrag();
+    virtual bool OnDrag();
+    virtual bool OnEndDrag();
+    virtual bool OnDrop();
     virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);

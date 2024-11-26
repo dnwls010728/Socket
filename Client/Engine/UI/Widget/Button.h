@@ -17,8 +17,7 @@ public:
     FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
-    OnButtonEvent OnPressed;
-    OnButtonEvent OnReleased;
+    OnButtonEvent OnClick;
 
 protected:
     virtual void Render() override;
