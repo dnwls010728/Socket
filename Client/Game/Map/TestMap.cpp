@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "TestMap.h"
 
+#include "Logger.h"
 #include "Math/Math.h"
 #include "UI/Canvas.h"
 #include "UI/Widget/EditableTextBox.h"
@@ -56,16 +57,26 @@ void TestMap::Load()
     resize_handle_->SetAnchorPreset(AnchorPreset::kBottom | AnchorPreset::kStretch, true);
     resize_handle_->SetAnchoredPosition({0.f, -72.f});
     resize_handle_->SetSize({0.f, 16.f});
-    // resize_handle_->OnDrag.Add([=](const Math::Vector2& kDelta)
-    // {
-    //     Math::Vector2 position = resize_handle_->GetAnchoredPosition();
-    //     position.y = Math::Clamp(position.y + kDelta.y, -196.f, -72.f);
-    //     resize_handle_->SetAnchoredPosition(position);
-    //
-    //     Math::Vector2 size = message_history_->GetSize();
-    //     size.y = Math::Clamp(size.y - kDelta.y, 48.f, 172.f);
-    //     message_history_->SetSize(size);
-    // });
+    resize_handle_->BeginDragHandler.Add([=](const Math::Vector2& kPosition)
+    {
+        Logger::Print(L"Begin Drag");
+    });
+    
+    resize_handle_->DragHandler.Add([=](const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+    {
+        Math::Vector2 position = resize_handle_->GetAnchoredPosition();
+        position.y = Math::Clamp(position.y + kDelta.y, -196.f, -72.f);
+        resize_handle_->SetAnchoredPosition(position);
+    
+        Math::Vector2 size = message_history_->GetSize();
+        size.y = Math::Clamp(size.y - kDelta.y, 48.f, 172.f);
+        message_history_->SetSize(size);
+    });
+
+    resize_handle_->EndDragHandler.Add([=](const Math::Vector2& kPosition)
+    {
+        Logger::Print(L"End Drag");
+    });
 
     for (Type::uint32 i = 0; i < 10; ++i)
     {

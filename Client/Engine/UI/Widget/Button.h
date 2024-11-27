@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "UI/Widget.h"
 
-DECLARE_DELEGATE(OnButtonEvent)
+DECLARE_DELEGATE(ClickDelegate)
 
 class UITexture;
 
@@ -17,7 +17,7 @@ public:
     FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
 
-    OnButtonEvent OnClick;
+    ClickDelegate ClickHandler;
 
 protected:
     virtual void Render() override;

@@ -49,11 +49,6 @@ public:
 protected:
     virtual void Render() override;
 
-    virtual bool OnBeginDrag(const Math::Vector2& kPosition) override;
-    virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
-    virtual bool OnEndDrag(const Math::Vector2& kPosition) override;
-    virtual bool OnDrop(const Math::Vector2& kPosition, const Widget* kWidget) override;
-
 private:
     std::wstring text_;
     std::wstring font_family_;

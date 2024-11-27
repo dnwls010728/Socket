@@ -40,7 +40,7 @@ bool Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
 {
     if (!is_pressed && button == MouseButton::kLeft)
     {
-        if (OnClick.IsBound()) OnClick.Execute();
+        if (ClickHandler.IsBound()) ClickHandler.Execute();
     }
     
     return true;

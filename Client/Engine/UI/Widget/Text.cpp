@@ -53,30 +53,6 @@ void Text::Render()
     Widget::Render();
 }
 
-bool Text::OnBeginDrag(const Math::Vector2& kPosition)
-{
-    Logger::Print(L"Text::OnBeginDrag - Position: %f, %f", kPosition.x, kPosition.y);
-    return true;
-}
-
-bool Text::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
-{
-    Logger::Print(L"Text::OnDrag - Position: %f, %f, Delta: %f, %f", kPosition.x, kPosition.y, kDelta.x, kDelta.y);
-    return true;
-}
-
-bool Text::OnEndDrag(const Math::Vector2& kPosition)
-{
-    Logger::Print(L"Text::OnEndDrag - Position: %f, %f", kPosition.x, kPosition.y);
-    return true;
-}
-
-bool Text::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
-{
-    Logger::Print(L"Text::OnDrop - Position: %f, %f Drop Widget: %s", kPosition.x, kPosition.y, kWidget->GetName().c_str());
-    return true;
-}
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

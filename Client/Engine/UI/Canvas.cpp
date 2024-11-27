@@ -218,14 +218,6 @@ void Canvas::BeginPlay()
 
 void Canvas::Tick(float delta_time)
 {
-    if (ImGui::Begin("Property"))
-    {
-        ImGui::Checkbox("IsDragging", &is_dragging_);
-        ImGui::Checkbox("HasBegunDrag", &has_begun_drag_);
-    }
-
-    ImGui::End();
-    
     if (root_widget_)
     {
         root_widget_->Tick(delta_time);

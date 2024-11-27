@@ -3,7 +3,7 @@
 
 class PooledObject;
 
-DECLARE_DELEGATE(OnPooledObjectDespawn, PooledObject*);
+DECLARE_DELEGATE(PooledObjectDespawnDelegate, PooledObject*);
 
 class PooledObject : public Actor
 {
@@ -16,7 +16,7 @@ public:
 
     void Deactivate();
 
-    OnPooledObjectDespawn OnDespawn;
+    PooledObjectDespawnDelegate DespawnHandler;
 
     FORCEINLINE void SetPoolIndex(int index) { pool_index_ = index; }
     FORCEINLINE int GetPoolIndex() const { return pool_index_; }

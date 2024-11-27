@@ -82,7 +82,7 @@ void MainMenu::Load()
     login_button->SetSize({100.f, 100.f});
     login_button->SetTexture(texture);
     login_button->SetDrawMode(DrawMode::kSliced);
-    login_button->OnClick.Add([]()
+    login_button->ClickHandler.Add([]()
     {
         if(!GSocketSession->Connect())
         {
@@ -113,7 +113,7 @@ void MainMenu::Load()
     editor_button->SetAnchoredPosition({-75.f, 75.f});
     editor_button->SetTexture(texture);
     editor_button->SetDrawMode(DrawMode::kSliced);
-    editor_button->OnClick.Add([]()
+    editor_button->ClickHandler.Add([]()
     {
         World::Get()->OpenLevel(LevelType::kTest);
     });
@@ -131,7 +131,7 @@ void MainMenu::Load()
     exit_button->SetAnchoredPosition({75.f, 75.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);
-    exit_button->OnClick.Add([]()
+    exit_button->ClickHandler.Add([]()
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);

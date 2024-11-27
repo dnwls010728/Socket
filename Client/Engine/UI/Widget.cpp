@@ -316,21 +316,45 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
 
 bool Widget::OnBeginDrag(const Math::Vector2& kPosition)
 {
+    if (BeginDragHandler.IsBound())
+    {
+        BeginDragHandler.Execute(kPosition);
+        return true;
+    }
+    
     return false;
 }
 
 bool Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
+    if (DragHandler.IsBound())
+    {
+        DragHandler.Execute(kPosition, kDelta);
+        return true;
+    }
+    
     return false;
 }
 
 bool Widget::OnEndDrag(const Math::Vector2& kPosition)
 {
+    if (EndDragHandler.IsBound())
+    {
+        EndDragHandler.Execute(kPosition);
+        return true;
+    }
+    
     return false;
 }
 
 bool Widget::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
 {
+    if (DropHandler.IsBound())
+    {
+        DropHandler.Execute(kPosition, std::move(kWidget));
+        return true;
+    }
+    
     return false;
 }
 

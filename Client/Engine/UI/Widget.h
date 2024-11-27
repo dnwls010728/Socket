@@ -10,6 +10,11 @@
 
 class Widget;
 
+DECLARE_DELEGATE(BeginDragDelegate, const Math::Vector2&)
+DECLARE_DELEGATE(DragDelegate, const Math::Vector2&, const Math::Vector2&)
+DECLARE_DELEGATE(EndDragDelegate, const Math::Vector2&)
+DECLARE_DELEGATE(DropDelegate, const Math::Vector2&, const Widget*)
+
 enum class AnchorPreset : Type::uint16
 {
     kLeft = (0x01<<0),
@@ -71,6 +76,11 @@ public:
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
 
     FORCEINLINE bool IsFocused() const { return is_focused_; }
+
+    BeginDragDelegate BeginDragHandler;
+    DragDelegate DragHandler;
+    EndDragDelegate EndDragHandler;
+    DropDelegate DropHandler;
 
 protected:
     friend class Canvas;
