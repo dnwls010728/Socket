@@ -3,6 +3,7 @@
 
 #include "Logger.h"
 #include "Widget.h"
+#include "imgui/imgui.h"
 #include "Widget/ScrollBox.h"
 
 Canvas::Canvas() :
@@ -14,6 +15,9 @@ Canvas::Canvas() :
     widgets_(),
     focus_widgets_(),
     root_widget_(nullptr),
+    dragging_widget_(nullptr),
+    is_dragging_(false),
+    has_begun_drag_(false),
     mouse_position_(Math::Vector2::Zero())
 {
 }
@@ -75,7 +79,7 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
         if (child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
-    if (widget->HitTest(kPoint)) return widget;
+    if (widget->HitTest(kPoint) && widget->GetParent() != nullptr) return widget;
     return nullptr;
 }
 
@@ -122,7 +126,19 @@ void Canvas::OnEvent(const Event& kEvent)
 
         if (root_widget_)
         {
-            root_widget_->OnMouseMotion(mouse_position, mouse_delta);
+            bool is_handled = false;
+            
+            if (is_dragging_)
+            {
+                if (!has_begun_drag_)
+                {
+                    is_handled |= dragging_widget_->OnBeginDrag(mouse_position);
+                    has_begun_drag_ = true;
+                }
+                else is_handled |= dragging_widget_->OnDrag(mouse_position, mouse_delta);
+            }
+            
+            if (!is_handled) root_widget_->OnMouseMotion(mouse_position, mouse_delta);
         }
         
         mouse_position_ = mouse_position;
@@ -130,8 +146,34 @@ void Canvas::OnEvent(const Event& kEvent)
     else if (type & static_cast<Type::uint32>(EventType::kMousePressed | EventType::kMouseReleased))
     {
         const MouseButtonEvent& kButton = kEvent.button;
+        const Math::Vector2 mouse_position = {kButton.x, kButton.y};
+        
         if (root_widget_)
         {
+            Widget* drop_widget = RayCast(root_widget_, {kButton.x, kButton.y});
+            if (is_dragging_ && !kButton.is_pressed && drop_widget != dragging_widget_)
+            {
+                if (drop_widget) drop_widget->OnDrop(mouse_position, dragging_widget_);
+            }
+            
+            if (!is_dragging_ && kButton.is_pressed && kButton.button == MouseButton::kLeft)
+            {
+                dragging_widget_ = RayCast(root_widget_, {kButton.x, kButton.y});
+                is_dragging_ = dragging_widget_ != nullptr;
+                if (!is_dragging_) SetWidgetFocus(nullptr);
+            }
+            else if (is_dragging_ && !kButton.is_pressed && kButton.button == MouseButton::kLeft)
+            {
+                if (has_begun_drag_)
+                {
+                    dragging_widget_->OnEndDrag(mouse_position);
+                    has_begun_drag_ = false;
+                }
+                
+                is_dragging_ = false;
+                dragging_widget_ = nullptr;
+            }
+            
             root_widget_->OnMouseButton({kButton.x, kButton.y}, kButton.button, kButton.is_pressed);
         }
     }
@@ -176,6 +218,14 @@ void Canvas::BeginPlay()
 
 void Canvas::Tick(float delta_time)
 {
+    if (ImGui::Begin("Property"))
+    {
+        ImGui::Checkbox("IsDragging", &is_dragging_);
+        ImGui::Checkbox("HasBegunDrag", &has_begun_drag_);
+    }
+
+    ImGui::End();
+    
     if (root_widget_)
     {
         root_widget_->Tick(delta_time);

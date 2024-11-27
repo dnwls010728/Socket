@@ -59,6 +59,10 @@ private:
     std::vector<Widget*> focus_widgets_;
 
     Widget* root_widget_;
+    Widget* dragging_widget_;
+
+    bool is_dragging_;
+    bool has_begun_drag_;
 
     Math::Vector2 mouse_position_;
     

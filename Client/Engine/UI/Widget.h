@@ -55,6 +55,8 @@ public:
     
     Math::Vector2 GetPivotPosition() const;
 
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+
     FORCEINLINE const Math::Rect& GetRect() const { return rect_; }
 
     FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
@@ -84,10 +86,10 @@ protected:
     virtual bool OnMouseLeave();
     virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
-    virtual bool OnBeginDrag();
-    virtual bool OnDrag();
-    virtual bool OnEndDrag();
-    virtual bool OnDrop();
+    virtual bool OnBeginDrag(const Math::Vector2& kPosition);
+    virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnEndDrag(const Math::Vector2& kPosition);
+    virtual bool OnDrop(const Math::Vector2& kPosition, const Widget* kWidget);
     virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);

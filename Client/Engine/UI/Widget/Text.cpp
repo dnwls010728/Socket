@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Text.h"
 
+#include "Logger.h"
 #include "Level/World.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -50,6 +51,30 @@ void Text::Render()
     renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, font_family_, text_alignment_, paragraph_alignment_);
     
     Widget::Render();
+}
+
+bool Text::OnBeginDrag(const Math::Vector2& kPosition)
+{
+    Logger::Print(L"Text::OnBeginDrag - Position: %f, %f", kPosition.x, kPosition.y);
+    return true;
+}
+
+bool Text::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    Logger::Print(L"Text::OnDrag - Position: %f, %f, Delta: %f, %f", kPosition.x, kPosition.y, kDelta.x, kDelta.y);
+    return true;
+}
+
+bool Text::OnEndDrag(const Math::Vector2& kPosition)
+{
+    Logger::Print(L"Text::OnEndDrag - Position: %f, %f", kPosition.x, kPosition.y);
+    return true;
+}
+
+bool Text::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
+{
+    Logger::Print(L"Text::OnDrop - Position: %f, %f Drop Widget: %s", kPosition.x, kPosition.y, kWidget->GetName().c_str());
+    return true;
 }
 
 RTTR_REGISTRATION

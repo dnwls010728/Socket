@@ -314,22 +314,22 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
     return false;
 }
 
-bool Widget::OnBeginDrag()
+bool Widget::OnBeginDrag(const Math::Vector2& kPosition)
 {
     return false;
 }
 
-bool Widget::OnDrag()
+bool Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     return false;
 }
 
-bool Widget::OnEndDrag()
+bool Widget::OnEndDrag(const Math::Vector2& kPosition)
 {
     return false;
 }
 
-bool Widget::OnDrop()
+bool Widget::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
 {
     return false;
 }
