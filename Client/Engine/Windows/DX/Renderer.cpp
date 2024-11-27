@@ -684,32 +684,33 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
 
-    Microsoft::WRL::ComPtr<ID2D1Effect> effect;
-
-    Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
-    HRESULT hr = d2d_viewport->d2d_render_target.As(&device_context);
-    if (FAILED(hr)) return;
-
-    hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);
-    if (FAILED(hr)) return;
-
-    effect->SetInput(0, kBitmap.Get());
-    effect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, D2D1_MATRIX_5X4_F{
-        1.f, 0.f, 0.f, 0.f, 0.f,
-        0.f, 1.f, 0.f, 0.f, 0.f,
-        0.f, 0.f, 1.f, 0.f, 0.f,
-        0.f, 0.f, 0.f, 1.f, 0.f
-    });
-
+    // Microsoft::WRL::ComPtr<ID2D1Effect> effect;
+    //
+    // Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
+    // HRESULT hr = d2d_viewport->d2d_render_target.As(&device_context);
+    // if (FAILED(hr)) return;
+    //
+    // hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);
+    // if (FAILED(hr)) return;
+    //
+    // effect->SetInput(0, kBitmap.Get());
+    // effect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, D2D1_MATRIX_5X4_F{
+    //     1.f, 0.f, 0.f, 0.f,
+    //     0.f, 1.f, 0.f, 0.f,
+    //     0.f, 0.f, 1.f, 0.f,
+    //     0.f, 0.f, 0.f, 1.f,
+    //     0.f, 0.f, 0.f, 0.f
+    // });
+    
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
-
+    
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
     d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
     
-    const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
-    device_context->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
-    device_context->DrawImage(effect.Get(), {kTempRect.left, kTempRect.top});
+    // const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
+    // device_context->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    // device_context->DrawImage(effect.Get(), {kTempRect.left, kTempRect.top});
 
     // D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR - Point
     // D2D1_BITMAP_INTERPOLATION_MODE_LINEAR - Bilinear
