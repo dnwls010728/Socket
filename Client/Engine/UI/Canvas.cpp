@@ -79,7 +79,7 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
         if (child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
-    if (widget->HitTest(kPoint) && widget->GetParent() != nullptr) return widget;
+    if (widget->HitTest(kPoint)) return widget;
     return nullptr;
 }
 
