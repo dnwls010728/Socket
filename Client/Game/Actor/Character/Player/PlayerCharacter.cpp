@@ -74,15 +74,24 @@ void PlayerCharacter::Tick(float delta_time)
             rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
         }
 
-        C_MovingPacket pkt;
-        pkt._locationX = transform_->GetPosition().x;
-        pkt._locationY = transform_->GetPosition().y;
-        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
-        GSocketSession->Send(sendBuffer);
+        static float send_timer = 0.f;
+        send_timer += delta_time;
+
+        // 1초에 50번 동기화
+        if (send_timer > 1.f / 50.f)
+        {
+            send_timer = 0.f;
+            
+            C_MovingPacket pkt;
+            pkt._locationX = transform_->GetPosition().x;
+            pkt._locationY = transform_->GetPosition().y;
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+            GSocketSession->Send(sendBuffer);
+        }
     }
     else
     {
-        Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), last_recent_position_, delta_time * 100.f);
+        Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), last_recent_position_, delta_time * 10.f);
         transform_->SetPosition(position);
     }
 }
