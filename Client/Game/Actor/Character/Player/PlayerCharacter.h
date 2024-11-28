@@ -16,7 +16,6 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     FORCEINLINE void SetNickname(const std::wstring& kNickname){nickname_ = kNickname;}
-    FORCEINLINE void SetIsPositionUpdated(bool update){is_position_updated_ = update;}
     FORCEINLINE void SetLastRecentPosition(Math::Vector2 position){last_recent_position_ = position;}
 
     FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
@@ -40,7 +39,6 @@ private:
 
     Math::Vector2 previous_position_;
     Math::Vector2 last_recent_position_;
-    bool is_position_updated_;
     
 };
 

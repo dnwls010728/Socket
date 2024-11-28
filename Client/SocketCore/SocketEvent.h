@@ -11,8 +11,8 @@ struct MovingEvent
 {
     
     uint32_t userId;
-    int32_t locationX;
-    int32_t locationY;
+    float locationX;
+    float locationY;
 };
 
 struct BroadcastingEnterEvent

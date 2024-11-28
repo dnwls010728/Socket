@@ -18,8 +18,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     horizontal_axis_(0),
     move_speed_(2.f),
     previous_position_(Math::Vector2::Zero()),
-    last_recent_position_(Math::Vector2::Zero()),
-    is_position_updated_(false)
+    last_recent_position_(Math::Vector2::Zero())
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -75,24 +74,14 @@ void PlayerCharacter::Tick(float delta_time)
             rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
         }
 
-        static float timer = 0.f;
-        timer += delta_time;
-
-        if (timer > 0.1f)
-        {
-            timer = 0.f;
-        
-            C_MovingPacket pkt;
-            pkt._locationX = transform_->GetPosition().x;
-            pkt._locationY = transform_->GetPosition().y;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
-            GSocketSession->Send(sendBuffer);
-        }
+        C_MovingPacket pkt;
+        pkt._locationX = transform_->GetPosition().x;
+        pkt._locationY = transform_->GetPosition().y;
+        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+        GSocketSession->Send(sendBuffer);
     }
-    else if (is_position_updated_)
+    else
     {
-        is_position_updated_ = false;
-        
         Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), last_recent_position_, delta_time * 100.f);
         transform_->SetPosition(position);
     }

@@ -47,7 +47,6 @@ void Network::Tick(float deltaTime)
                 auto it = players_.find(evt.userId);
                 if (it != players_.end()) {
                     PlayerCharacter* targetPlayer = it->second;
-                    targetPlayer->SetIsPositionUpdated(true);
                     targetPlayer->SetLastRecentPosition(Math::Vector2(evt.locationX,evt.locationY));
                 }    
             }
@@ -58,13 +57,11 @@ void Network::Tick(float deltaTime)
             BroadcastingEnterEvent evt = socketEvent.broadcastingEnter;
             if(current_player_id != evt.userId)
             {
-                
                 PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
                 player->SetPacketId(evt.userId);
                 std::wstring playerName;
                 playerName.assign(evt.name.begin(),evt.name.end());
                 player->SetNickname(playerName);
-                player->SetIsPositionUpdated(true);
                 player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
                 players_.insert({player->GetPacketId(), player});
                 playerPacketIds_.insert(player->GetPacketId());
@@ -83,7 +80,6 @@ void Network::Tick(float deltaTime)
                     std::wstring playerName;
                     playerName.assign(evt.nameArr_[idx].begin(),evt.nameArr_[idx].end());
                     player->SetNickname(playerName);
-                    player->SetIsPositionUpdated(true);
                     player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
                     //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
                     players_.insert({player->GetPacketId(), player});
