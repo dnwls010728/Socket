@@ -38,6 +38,7 @@ private:
     float move_speed_;
     int packet_id_;
 
+    Math::Vector2 previous_position_;
     Math::Vector2 last_recent_position_;
     bool is_position_updated_;
     

@@ -41,7 +41,7 @@ public:
     inline static const std::map<ActorLayer, ActorLayer> kLayerCollisionMatrix = { // 레이어 충돌 매트릭스
         {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kBullet},
         {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kBullet},
-        {ActorLayer::kPlayer, ActorLayer::kPlayer | ActorLayer::kGround | ActorLayer::kDefault},
+        {ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault},
         {ActorLayer::kBullet, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault}
     };
     

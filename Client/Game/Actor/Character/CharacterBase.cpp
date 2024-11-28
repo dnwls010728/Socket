@@ -6,7 +6,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    Actor(kName)
+    NetworkActor(kName)
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
