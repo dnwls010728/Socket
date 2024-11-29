@@ -75,28 +75,18 @@ void PlayerCharacter::Tick(float delta_time)
         }
 
         static float send_timer = 0.f;
+        send_timer += delta_time;
 
-        // 물리 몸체가 깨어있을 때, 1초에 50번 동기화
-        // 좀 더 좋은 방식을 찾을 경우, 변경할 수 있음
-        if (rigid_body_->IsAwake())
-        {
-            send_timer += delta_time;
-
-            // 1초에 50번 동기화
-            if (send_timer > 1.f / 5.f)
-            {
-                send_timer = 0.f;
-            
-                C_MovingPacket pkt;
-                pkt._locationX = transform_->GetPosition().x;
-                pkt._locationY = transform_->GetPosition().y;
-                std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
-                GSocketSession->Send(sendBuffer);
-            }
-        }
-        else
+        // 1초에 10번 동기화
+        if (send_timer > 1.f / 10.f)
         {
             send_timer = 0.f;
+            
+            C_MovingPacket pkt;
+            pkt._locationX = transform_->GetPosition().x;
+            pkt._locationY = transform_->GetPosition().y;
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+            GSocketSession->Send(sendBuffer);
         }
     }
     else
