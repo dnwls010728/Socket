@@ -83,7 +83,7 @@ void PlayerCharacter::Tick(float delta_time)
             send_timer += delta_time;
 
             // 1초에 50번 동기화
-            if (send_timer > 1.f / 50.f)
+            if (send_timer > 1.f / 5.f)
             {
                 send_timer = 0.f;
             
