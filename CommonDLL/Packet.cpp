@@ -209,4 +209,24 @@ uint16_t C_EnterOtherUserPacket::GetSize()
 	return Serializer::GetPacketSize(_userId);
 }
 
+S_LeaveOtherUserPacket::S_LeaveOtherUserPacket()
+{
+}
 
+BYTE* S_LeaveOtherUserPacket::Serialize(BYTE* buffer)
+{
+	int currentByte = 0;
+	Serializer::Serialize(buffer,_userId,currentByte);
+	return buffer;
+}
+
+void S_LeaveOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte = 0;
+	DeSerializer::Deserialize(buffer,currentByte,_userId);
+}
+
+uint16_t S_LeaveOtherUserPacket::GetSize()
+{
+	return Serializer::GetPacketSize(_userId);
+}

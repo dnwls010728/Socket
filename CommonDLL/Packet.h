@@ -148,3 +148,16 @@ public:
 
 	uint32_t _userId;
 };
+
+class EXPORT_API S_LeaveOtherUserPacket : public Packet
+{
+public:
+	S_LeaveOtherUserPacket();
+	~S_LeaveOtherUserPacket() override = default;
+
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _userId;
+};

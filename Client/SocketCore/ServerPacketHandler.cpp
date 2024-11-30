@@ -49,4 +49,12 @@ void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt)
     socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER_OTHER_USER);
 }
 
+void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUserPacket> pkt)
+{
+    std::cout <<"Leave Other User Packet" << std::endl;
+
+    SocketEventManager* socket_event_manager = SocketEventManager::Get();
+    socket_event_manager->RegisterEvent(pkt,S_PKT_LEAVE_OTHER_USER); 
+}
+
 

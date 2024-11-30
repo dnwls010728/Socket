@@ -30,6 +30,11 @@ struct EnterOtherUserEvent
     uint32_t currentUserCnt_;
 };
 
+struct LeaveOtherUserEvent
+{
+    uint32_t userId;
+};
+
 struct SocketEvent
 {
     Type::uint32 type;
@@ -37,6 +42,7 @@ struct SocketEvent
     MovingEvent moving;
     BroadcastingEnterEvent broadcastingEnter;
     EnterOtherUserEvent enterOtherUser;
+    LeaveOtherUserEvent leaveOtherUser;
 };
 
 

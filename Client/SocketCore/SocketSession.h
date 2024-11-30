@@ -5,7 +5,12 @@
 #include "../../CommonDLL/RecvBuffer.h"
 #include <vector>
 #include <thread>
+//이거를 이제 서버 IP 주소로 바꿔서 접속해보셈 >_<
 #define SERVER_IP "127.0.0.1"
+//포트도!
+//서버 컴퓨터 방화벽 들어가서 확인 해보고
+//포트 열렸는지 네트워크 설정함 봐보고
+//그래도 안되면 알려주세요 -_-
 #define SERVER_PORT 7777
 #define BUFFER_SIZE 1024
 

@@ -90,7 +90,19 @@ void Network::Tick(float deltaTime)
 
             
             
+        }else if(socketEvent.type == S_PKT_LEAVE_OTHER_USER)
+        {
+            LeaveOtherUserEvent evt = socketEvent.leaveOtherUser;
+
+            // TODO: 이 부분에서 player Actor의 객체 삭제를 진행해 주세요.
+
+            if(players_.find(evt.userId) != players_.end())
+            {
+                players_.erase(players_.find(evt.userId));
+            }
+            
         }
+        
     }
 }
 

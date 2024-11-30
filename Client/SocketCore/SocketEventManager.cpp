@@ -68,6 +68,16 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         socketEvent.type = S_PKT_ENTER_OTHER_USER;
         eventQueue.push(socketEvent);
         return true;
+    }else if(pktId == S_PKT_LEAVE_OTHER_USER)
+    {
+        S_LeaveOtherUserPacket* leaveOtherUserPkt = (S_LeaveOtherUserPacket*)pkt.get();
+        LeaveOtherUserEvent event{};
+        event.userId = leaveOtherUserPkt->_userId;
+        SocketEvent socketEvent{};
+        socketEvent.leaveOtherUser = event;
+        socketEvent.type = S_PKT_LEAVE_OTHER_USER;
+        eventQueue.push(socketEvent);
+        return true;
     }
     return false;
 }

@@ -16,4 +16,5 @@ protected:
 private:
     std::map<uint32_t, PlayerCharacter*> players_;
     std::set<uint32_t> playerPacketIds_;
+    
 };
