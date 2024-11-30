@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameSession.h"
 #include "ClientPacketHandler.h"
+#include "Room.h"
 
 void GameSession::OnConnected()
 {
@@ -10,6 +11,7 @@ void GameSession::OnConnected()
 void GameSession::OnDisconnected()
 {
 	wcout << L"DisConnected" << GetSessionRef()->GetAddress().GetIpAddress() << endl;
+	GRoom->Leave(userRef);
 }
 
 void GameSession::OnRecvPacket(BYTE* buffer, int len)
@@ -18,8 +20,6 @@ void GameSession::OnRecvPacket(BYTE* buffer, int len)
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
 	ClientPacketHandler::HandlePacket(session, buffer, len);
-
-	//TODO: PacketId 대역 체크
 	
 }
 

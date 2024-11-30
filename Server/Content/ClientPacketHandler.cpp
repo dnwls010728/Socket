@@ -64,10 +64,10 @@ void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingP
     sendPkt._locationX = user->locationX;
     sendPkt._locationY = user->locationY;
 
-    cout << "User IdentifiyId : " << user->userIdentifyId << endl;
+    /*cout << "User IdentifiyId : " << user->userIdentifyId << endl;
     cout << "Location X : " << user->locationX << endl;
     cout << "Location Y : " << user->locationY << endl;
-    cout << "User name :" << user->name << endl;
+    cout << "User name :" << user->name << endl;*/
     auto sendBuffer = ClientPacketHandler::MakeSendBuffer<S_MovingPacket>(sendPkt,S_PKT_MOVING);
     //룸 전체에 브로드 캐스팅
     GRoom->DoAsync(&Room::Broadcast,sendBuffer);
