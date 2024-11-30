@@ -3,6 +3,7 @@
 
 #include "WindowsWindow.h"
 #include "combaseapi.h"
+#include "../../SocketCore/Util/GlobalFreeManager.h"
 
 WindowsApplication::WindowsApplication() :
     instance_handle_(nullptr),
@@ -77,6 +78,8 @@ void WindowsApplication::PumpMessages()
             DispatchMessage(&msg);
         }
     }
+
+    
 }
 
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

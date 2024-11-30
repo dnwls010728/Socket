@@ -15,7 +15,7 @@ struct PacketHeader
 	uint16_t id;
 };
 struct IOContext {
-	OVERLAPPED overlapped;
+	OVERLAPPED* overlapped;
 	WSABUF wsabuf;
 	char buffer[BUFFER_SIZE];
 	int operation; // 0: recv, 1: send
@@ -37,7 +37,7 @@ public:
 
 			if (bytesTransferred == 0) {
 				std::cout << "Connection closed by server." << std::endl;
-				continue;
+				break;
 			}
 
 			if (ioContext->operation == 0) { // recv
@@ -108,6 +108,7 @@ private:
 	SOCKADDR_IN _sockAddr = {};
 	std::vector<std::thread> _workers;
 	IOContext *  _context;
+	HANDLE _hIocp = INVALID_HANDLE_VALUE;
 };
 
-extern SocketSession* GSocketSession;
+//extern SocketSession* GSocketSession;

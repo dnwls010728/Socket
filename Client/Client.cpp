@@ -11,6 +11,7 @@
 #include "SocketCore/ServerPacketHandler.h"
 #include "Engine/Windows/WindowsWindow.h"
 #include "SocketCore/SocketSession.h"
+#include "SocketCore/Util/GlobalFreeManager.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -25,10 +26,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     std::unique_ptr<Core> core = std::make_unique<Core>();
     core->Init();
-
+    GlobalFreeManager::InitMemory();
     ServerPacketHandler::Init();
     
     application->PumpMessages();
-    
+    GlobalFreeManager::FreeMemory();
     return 0;
 }

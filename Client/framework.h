@@ -21,4 +21,5 @@
 #pragma comment(lib,"..\\x64\\Release\\CommonDLL.lib");
 #endif
 
-
+//서버 관련 정적 변수 정의 헤더
+#include "SocketCore/Util/GlobalFreeManager.h"

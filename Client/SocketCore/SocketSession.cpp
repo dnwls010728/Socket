@@ -13,7 +13,7 @@
 #include "ServerPacketHandler.h"
 //여기서 하나 날 수 있음 근데 이건 상관 없음
 //글로벌 소켓 세션이라
-SocketSession* GSocketSession = new SocketSession();
+//SocketSession* GSocketSession = new SocketSession();
 SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(new IOContext())
 {
 	WSADATA wsaData;
@@ -22,13 +22,21 @@ SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(new IOContext()
 
 SocketSession::~SocketSession()
 {
+
+	// IOCP 스레드 종료 요청
+	for (size_t i = 0; i < _workers.size(); ++i) {
+		PostQueuedCompletionStatus(_hIocp, 0, 0, nullptr);
+	}
+	
 	for (auto& worker : _workers) {
-		worker.join();
+		if(worker.joinable())
+			worker.join();
 	}
 	
 	delete _context;
 	
 	closesocket(_socket);
+	CloseHandle(_hIocp);
 	WSACleanup();
 }
 
@@ -44,7 +52,8 @@ bool SocketSession::Connect()
 		return false;
 	};
 
-	HANDLE hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+	HANDLE hIocp = _hIocp;
 	CreateIoCompletionPort((HANDLE)_socket, hIocp, 0, 0);
 
 	IOContext* ioContext = _context;
@@ -56,12 +65,13 @@ bool SocketSession::Connect()
 	DWORD numOfBytes = 0;
 	DWORD flags = 0;
 	_connected.exchange(true);
-	WSARecv(_socket, &ioContext->wsabuf, 1, &numOfBytes, &flags, &ioContext->overlapped, NULL);
+	WSARecv(_socket, &ioContext->wsabuf, 1, &numOfBytes, &flags, (LPWSAOVERLAPPED)&ioContext->overlapped, NULL);
 
+	std::lock_guard<std::mutex> lock(_mutex);
 	_workers.reserve(2);
 	for (int i = 0; i < 2; i++)
 	{
-		_workers.emplace_back([this, hIocp,ioContext]() { this->WorkerThread(hIocp,ioContext); });
+		_workers.emplace_back([=]() { this->WorkerThread(hIocp,ioContext); });
 	}
 
 	//delete ioContext;
@@ -91,6 +101,7 @@ void SocketSession::Disconnect(const char* cause)
 	OnDisconnected();
 }
 
+
 void SocketSession::ProcessConnect()
 {
 }
@@ -110,7 +121,7 @@ void SocketSession::ProcessRecv(int numOfBytes, IOContext* ioContext)
 	DWORD nob = 0;
 	DWORD flags = 0;
 
-	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, &ioContext->overlapped, nullptr);
+	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, (LPWSAOVERLAPPED)&ioContext->overlapped, nullptr);
 
 	//delete ioContext;
 }
