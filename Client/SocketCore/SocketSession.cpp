@@ -11,8 +11,10 @@
 #include <atomic>
 #pragma comment(lib,"ws2_32.lib")
 #include "ServerPacketHandler.h"
+//여기서 하나 날 수 있음 근데 이건 상관 없음
+//글로벌 소켓 세션이라
 SocketSession* GSocketSession = new SocketSession();
-SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(IOContext{})
+SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(new IOContext())
 {
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -23,7 +25,9 @@ SocketSession::~SocketSession()
 	for (auto& worker : _workers) {
 		worker.join();
 	}
-
+	
+	delete _context;
+	
 	closesocket(_socket);
 	WSACleanup();
 }
@@ -43,7 +47,7 @@ bool SocketSession::Connect()
 	HANDLE hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	CreateIoCompletionPort((HANDLE)_socket, hIocp, 0, 0);
 
-	IOContext* ioContext = new IOContext;
+	IOContext* ioContext = _context;
 	ZeroMemory(&ioContext->overlapped, sizeof(OVERLAPPED));
 	ioContext->wsabuf.buf = reinterpret_cast<char*>(_recvBuffer.WritePos());
 	ioContext->wsabuf.len = _recvBuffer.FreeSize();
@@ -57,8 +61,10 @@ bool SocketSession::Connect()
 	_workers.reserve(2);
 	for (int i = 0; i < 2; i++)
 	{
-		_workers.emplace_back([this, hIocp]() { this->WorkerThread(hIocp); });
+		_workers.emplace_back([this, hIocp,ioContext]() { this->WorkerThread(hIocp,ioContext); });
 	}
+
+	//delete ioContext;
 	return true;
 }
 
@@ -93,9 +99,9 @@ void SocketSession::ProcessDisconnect()
 {
 }
 
-void SocketSession::ProcessRecv(int numOfBytes)
+void SocketSession::ProcessRecv(int numOfBytes, IOContext* ioContext)
 {
-	IOContext* ioContext = new IOContext;
+	
 	ZeroMemory(&ioContext->overlapped, sizeof(OVERLAPPED));
 	ioContext->wsabuf.buf = reinterpret_cast<char*>(_recvBuffer.WritePos());
 	ioContext->wsabuf.len = _recvBuffer.FreeSize();
@@ -105,6 +111,8 @@ void SocketSession::ProcessRecv(int numOfBytes)
 	DWORD flags = 0;
 
 	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, &ioContext->overlapped, nullptr);
+
+	//delete ioContext;
 }
 
 void SocketSession::ProcessSend(int numOfBytes)
@@ -149,7 +157,7 @@ int SocketSession::OnRecv(BYTE* buffer, int len)
 
 void SocketSession::OnSend(int len)
 {
-	std::cout<< "Message Send : " << len << std::endl;
+	//std::cout<< "Message Send : " << len << std::endl;
 }
 
 void SocketSession::OnDisconnected()

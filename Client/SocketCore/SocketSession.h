@@ -24,11 +24,10 @@ class SocketSession : public std::enable_shared_from_this<SocketSession>
 {
 public:
 
-	void WorkerThread(HANDLE hIOCP) {
+	void WorkerThread(HANDLE hIOCP,IOContext* ioContext) {
 		DWORD bytesTransferred;
 		ULONG_PTR completionKey;
-		IOContext* ioContext = new IOContext();
-
+		
 		while (true) {
 			BOOL result = GetQueuedCompletionStatus(hIOCP, &bytesTransferred, &completionKey, (LPOVERLAPPED*)&ioContext, INFINITE);
 			if (!result) {
@@ -61,7 +60,7 @@ public:
 				}
 				_recvBuffer.Clean();
 
-				ProcessRecv(0);
+				ProcessRecv(0,ioContext);
 
 				//WSASend((SOCKET)completionKey, &ioContext->wsabuf, 1, NULL, flags, &ioContext->overlapped, NULL);
 			}
@@ -88,7 +87,7 @@ public:
 
 	void ProcessConnect();
 	void ProcessDisconnect();
-	void ProcessRecv(int numOfBytes);
+	void ProcessRecv(int numOfBytes,IOContext* ioContext);
 	void ProcessSend(int numOfBytes);
 	void OnRecvPacket(BYTE* buffer, int len);
 
@@ -108,7 +107,7 @@ private:
 	std::atomic<bool> _connected = false;
 	SOCKADDR_IN _sockAddr = {};
 	std::vector<std::thread> _workers;
-	IOContext _context;
+	IOContext *  _context;
 };
 
 extern SocketSession* GSocketSession;
