@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Math/Vector2.h"
 
 class NetworkActor : public Actor
 {
@@ -9,11 +10,18 @@ class NetworkActor : public Actor
 public:
     NetworkActor(const std::wstring& kName);
     virtual ~NetworkActor() override = default;
+    
+    FORCEINLINE int GetPacketID() const { return packet_id_; }
 
-    FORCEINLINE void SetIsMine(bool is_mine) { is_mine_ = is_mine; }
     FORCEINLINE bool IsMine() const { return is_mine_; }
 
 protected:
+    friend class NetworkManager;
+    
+    int packet_id_;
+    
     bool is_mine_;
+
+    Math::Vector2 received_position_;
     
 };

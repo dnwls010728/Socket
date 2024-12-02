@@ -3,7 +3,9 @@
 
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
-    is_mine_(false)
+    is_mine_(false),
+    packet_id_(-1),
+    received_position_(Math::Vector2::Zero())
 {
 }
 
