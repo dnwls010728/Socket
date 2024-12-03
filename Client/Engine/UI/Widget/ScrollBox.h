@@ -12,7 +12,6 @@ public:
 
 protected:
     virtual void BeginPlay() override;
-    virtual void Tick(float delta_time) override;
     virtual void Render() override;
     virtual void UpdateRect() override;
 

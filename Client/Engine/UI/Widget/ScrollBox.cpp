@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "ScrollBox.h"
 
-#include "imgui/imgui.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
 #include "UI/Canvas.h"
@@ -25,30 +24,14 @@ void ScrollBox::BeginPlay()
     {
         child->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
         child->SetAnchoredPosition({0.f, offset_y});
-
-        float rect_height = child->GetRect().height;
-        offset_y += rect_height;
+        
+        offset_y += child->GetSize().y;
 
         content_width_ = Math::Max(content_width_, child->GetRect().width);
-        content_height_ += rect_height;
+        content_height_ += child->GetRect().height;
     }
 
-    min_allowed_scroll_y_ = rect_.height - content_height_;
-}
-
-void ScrollBox::Tick(float delta_time)
-{
-    Widget::Tick(delta_time);
-
-    if (ImGui::Begin("Property"))
-    {
-        ImGui::Text("Rect Height: %.2f", rect_.height);
-        ImGui::Text("Scroll Offset Y: %.2f", scroll_offset_y_);
-        ImGui::Text("Content Width: %.2f", content_width_);
-        ImGui::Text("Content Height: %.2f", content_height_);
-    }
-
-    ImGui::End();
+    min_allowed_scroll_y_ = size_.y - offset_y;
 }
 
 void ScrollBox::Render()

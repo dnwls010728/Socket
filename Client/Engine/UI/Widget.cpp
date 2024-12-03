@@ -125,6 +125,7 @@ void Widget::DetachFromWidget()
     if (has_begun_play_) UpdateRect();
 }
 
+
 bool Widget::HitTest(const Math::Vector2& kPoint) const
 {
     return Math::Rect::Contains(rect_, kPoint);

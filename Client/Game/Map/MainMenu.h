@@ -14,8 +14,11 @@ public:
 
 protected:
     virtual void Load() override;
+    virtual void Tick(float delta_time) override;
 
 private:
+    class ScrollBox* scroll_box;
+    
     EditableTextBox* id_text_box;
     EditableTextBox* pw_text_box;
     
