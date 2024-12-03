@@ -11,6 +11,7 @@
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/Image.h"
+#include "UI/Widget/ScrollBox.h"
 #include "UI/Widget/Text.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/UITexture.h"
@@ -28,6 +29,22 @@ void MainMenu::Load()
 
     UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
+
+    ScrollBox* scroll_box = canvas->AddWidget<ScrollBox>(L"Scroll Box");
+    scroll_box->AttachToWidget(canvas->GetRootWidget());
+    scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+    scroll_box->SetAnchoredPosition({0.f, 0.f});
+    scroll_box->SetSize({200.f, 100.f});
+
+    // Scroll Box 테스트 코드
+    for (int i = 0; i < 10; ++i)
+    {
+        Text* text = canvas->AddWidget<Text>(L"Text");
+        text->AttachToWidget(scroll_box);
+        text->SetSize({100.f, 30.f});
+        text->SetAlignment(Text::kMiddleLeft);
+        text->SetText(L"Text " + std::to_wstring(i));
+    }
 
     Image* id_image = canvas->AddWidget<Image>(L"ID Image");
     id_image->AttachToWidget(canvas->GetRootWidget());

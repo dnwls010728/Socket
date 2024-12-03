@@ -53,6 +53,11 @@ void Text::Render()
     Widget::Render();
 }
 
+bool Text::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    return Widget::OnMouseButton(kPosition, button, is_pressed);
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

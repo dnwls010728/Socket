@@ -49,6 +49,8 @@ public:
 protected:
     virtual void Render() override;
 
+    virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
+
 private:
     std::wstring text_;
     std::wstring font_family_;

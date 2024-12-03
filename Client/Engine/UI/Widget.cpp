@@ -2,7 +2,6 @@
 #include "Widget.h"
 
 #include "Canvas.h"
-#include "Logger.h"
 #include "Level/World.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
