@@ -5,7 +5,6 @@ enum class LevelType : Type::uint64
     kEditor = 0,
     kMainMenu,
     kDefault,
-    kTest,
     kEnd
 };
 

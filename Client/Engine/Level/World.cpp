@@ -7,7 +7,6 @@
 #include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
-#include "Map/TestMap.h"
 #include "Network/NetworkManager.h"
 #include "Time/TimerManager.h"
 #include "UI/Canvas.h"
@@ -89,7 +88,6 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     AddLevel<EditorMap>(LevelType::kEditor, L"Editor");
     AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
-    AddLevel<TestMap>(LevelType::kTest, L"Test");
     
     OpenLevel(LevelType::kMainMenu);
 }
