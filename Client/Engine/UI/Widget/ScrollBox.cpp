@@ -34,6 +34,25 @@ void ScrollBox::BeginPlay()
     min_allowed_scroll_y_ = size_.y - offset_y;
 }
 
+void ScrollBox::Tick(float delta_time)
+{
+    Widget::Tick(delta_time);
+
+    float previous_scroll_offset_y = scroll_offset_y_;
+    float target_scroll_y = scroll_offset_y_;
+
+    if (scroll_offset_y_ > 0.f) target_scroll_y = 0.f;
+    else if (scroll_offset_y_ < min_allowed_scroll_y_) target_scroll_y = min_allowed_scroll_y_;
+
+    if (target_scroll_y != scroll_offset_y_)
+    {
+        scroll_offset_y_ = Math::Lerp(scroll_offset_y_, target_scroll_y, delta_time * 5.f);
+
+        float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+        UpdateChildrenPosition(scroll_delta);
+    }
+}
+
 void ScrollBox::Render()
 {
     Renderer* renderer = Renderer::Get();
@@ -73,13 +92,19 @@ bool ScrollBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kD
         float scroll_speed = kDelta.y * 10.f;
         float previous_scroll_offset_y = scroll_offset_y_;
 
-        scroll_offset_y_ = Math::Clamp(
-            scroll_offset_y_ + scroll_speed,
-            min_allowed_scroll_y_,
-            0.f
-        );
+        scroll_offset_y_ += scroll_speed;
 
         float scroll_delta = scroll_offset_y_ - previous_scroll_offset_y;
+        UpdateChildrenPosition(scroll_delta);
+    }
+    
+    return true;
+}
+
+void ScrollBox::UpdateChildrenPosition(float scroll_delta)
+{
+    if (scroll_offset_y_ != 0.f)
+    {
         for (const auto& child : children_)
         {
             Math::Vector2 anchored_position = child->GetAnchoredPosition();
@@ -87,8 +112,6 @@ bool ScrollBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kD
             child->SetAnchoredPosition(anchored_position);
         }
     }
-    
-    return true;
 }
 
 RTTR_REGISTRATION
