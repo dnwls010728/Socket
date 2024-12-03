@@ -3,8 +3,6 @@
 
 #include "Logger.h"
 #include "Widget.h"
-#include "imgui/imgui.h"
-#include "Widget/ScrollBox.h"
 
 Canvas::Canvas() :
     width_(0.f),

@@ -195,7 +195,6 @@
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\EditableTextBox.h" />
     <ClInclude Include="Engine\UI\Widget\Image.h" />
-    <ClInclude Include="Engine\UI\Widget\ScrollBox.h" />
     <ClInclude Include="Engine\UI\Widget\Text.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
@@ -515,7 +514,6 @@
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\EditableTextBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Image.cpp" />
-    <ClCompile Include="Engine\UI\Widget\ScrollBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Text.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
