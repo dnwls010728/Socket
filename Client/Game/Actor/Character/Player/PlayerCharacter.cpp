@@ -11,14 +11,11 @@
 #include "Resource/ResourceManager.h"
 #include "Windows/DX/Sprite.h"
 
-Type::uint32 current_player_id = 0;
-
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     horizontal_axis_(0),
     move_speed_(2.f),
-    previous_position_(Math::Vector2::Zero()),
-    last_recent_position_(Math::Vector2::Zero())
+    previous_position_(Math::Vector2::Zero())
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -91,7 +88,7 @@ void PlayerCharacter::Tick(float delta_time)
     }
     else
     {
-        Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), last_recent_position_, delta_time * 10.f);
+        Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), received_position_, delta_time * 10.f);
         transform_->SetPosition(position);
     }
 }

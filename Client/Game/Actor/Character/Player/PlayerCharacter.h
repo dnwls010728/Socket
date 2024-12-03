@@ -14,12 +14,6 @@ class PlayerCharacter : public CharacterBase
 public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
-
-    FORCEINLINE void SetNickname(const std::wstring& kNickname){nickname_ = kNickname;}
-    FORCEINLINE void SetLastRecentPosition(Math::Vector2 position){last_recent_position_ = position;}
-
-    FORCEINLINE void SetPacketId(int packet_id) { packet_id_ = packet_id; }
-    FORCEINLINE int GetPacketId() const { return packet_id_; }
     
 
 protected:
@@ -30,16 +24,11 @@ protected:
 
 private:
     class Sprite* sprite_;
+    
     int horizontal_axis_;
-    std::wstring nickname_;
-
-    //Text* nickname_text_;
+    
     float move_speed_;
-    int packet_id_;
 
     Math::Vector2 previous_position_;
-    Math::Vector2 last_recent_position_;
     
 };
-
-extern Type::uint32 current_player_id;

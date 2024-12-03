@@ -25,67 +25,67 @@ void Network::Tick(float deltaTime)
         {
             PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
             // player->SetIsMine(true);
-            player->SetPacketId(socketEvent.enter.userId);
+            // player->SetPacketId(socketEvent.enter.userId);
             std::wstring playerName;
             playerName.assign(socketEvent.enter.name.begin(), socketEvent.enter.name.end());
-            player->SetNickname(playerName);
-            current_player_id = socketEvent.enter.userId;
-            players_.insert({player->GetPacketId(), player});
-            playerPacketIds_.insert(player->GetPacketId());
+            // player->SetNickname(playerName);
+            // current_player_id = socketEvent.enter.userId;
+            // players_.insert({player->GetPacketId(), player});
+            // playerPacketIds_.insert(player->GetPacketId());
 
             //다른 유저들 정보 가져오기
             C_EnterOtherUserPacket pkt;
-            pkt._userId = current_player_id;
+            // pkt._userId = current_player_id;
             std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUserPacket>(pkt, C_PKT_ENTER_OTHER_USER);
             GSocketSession->Send(sendBuffer);
         }
         else if (socketEvent.type == S_PKT_MOVING)
         {
             MovingEvent evt = socketEvent.moving;
-            if (current_player_id != evt.userId)
-            {
-                auto it = players_.find(evt.userId);
-                if (it != players_.end())
-                {
-                    PlayerCharacter* targetPlayer = it->second;
-                    targetPlayer->SetLastRecentPosition(Math::Vector2(evt.locationX, evt.locationY));
-                }
-            }
+            // if (current_player_id != evt.userId)
+            // {
+            //     auto it = players_.find(evt.userId);
+            //     if (it != players_.end())
+            //     {
+            //         PlayerCharacter* targetPlayer = it->second;
+            //         targetPlayer->SetLastRecentPosition(Math::Vector2(evt.locationX, evt.locationY));
+            //     }
+            // }
         }
         else if (socketEvent.type == S_PKT_BROADCASTING_ENTER)
         {
             //S_EnterPacket보다 BroadCastingPacket이 먼저 도착할 경우 실행하지 않음
             BroadcastingEnterEvent evt = socketEvent.broadcastingEnter;
-            if (current_player_id != evt.userId)
-            {
-                PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
-                player->SetPacketId(evt.userId);
-                std::wstring playerName;
-                playerName.assign(evt.name.begin(), evt.name.end());
-                player->SetNickname(playerName);
-                player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
-                players_.insert({player->GetPacketId(), player});
-                playerPacketIds_.insert(player->GetPacketId());
-            }
+            // if (current_player_id != evt.userId)
+            // {
+            //     PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
+            //     player->SetPacketId(evt.userId);
+            //     std::wstring playerName;
+            //     playerName.assign(evt.name.begin(), evt.name.end());
+            //     player->SetNickname(playerName);
+            //     player->SetLastRecentPosition(Math::Vector2(0.0f, 0.0f));
+            //     players_.insert({player->GetPacketId(), player});
+            //     playerPacketIds_.insert(player->GetPacketId());
+            // }
         }
         else if (socketEvent.type == S_PKT_ENTER_OTHER_USER)
         {
             EnterOtherUserEvent evt = socketEvent.enterOtherUser;
             for (int idx = 0; idx < socketEvent.enterOtherUser.currentUserCnt_; idx++)
             {
-                if (evt.userIdentifyidArr_[idx] != current_player_id)
-                {
-                    PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
-
-                    player->SetPacketId(evt.userIdentifyidArr_[idx]);
-                    std::wstring playerName;
-                    playerName.assign(evt.nameArr_[idx].begin(), evt.nameArr_[idx].end());
-                    player->SetNickname(playerName);
-                    player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
-                    //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
-                    players_.insert({player->GetPacketId(), player});
-                    playerPacketIds_.insert(player->GetPacketId());
-                }
+                // if (evt.userIdentifyidArr_[idx] != current_player_id)
+                // {
+                //     PlayerCharacter* player = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass());
+                //
+                //     player->SetPacketId(evt.userIdentifyidArr_[idx]);
+                //     std::wstring playerName;
+                //     playerName.assign(evt.nameArr_[idx].begin(), evt.nameArr_[idx].end());
+                //     player->SetNickname(playerName);
+                //     player->SetLastRecentPosition(Math::Vector2(evt.locationXArr_[idx], evt.locationYArr_[idx]));
+                //     //targetPlayer->GetTransform()->SetPosition(Math::Vector2(evt.locationX, evt.locationY));
+                //     players_.insert({player->GetPacketId(), player});
+                //     playerPacketIds_.insert(player->GetPacketId());
+                // }
             }
         }
         else if (socketEvent.type == S_PKT_LEAVE_OTHER_USER)

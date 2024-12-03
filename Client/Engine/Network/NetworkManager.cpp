@@ -3,10 +3,11 @@
 
 #include "../../SocketCore/SocketEventManager.h"
 #include "Actor/NetworkActor.h"
+#include "Actor/Character/Player/PlayerCharacter.h"
 #include "Level/World.h"
 
 NetworkManager::NetworkManager() :
-    player_class_(rttr::type::get<void>()),
+    player_class_(PlayerCharacter::StaticClass()),
     players_()
 {
 }
