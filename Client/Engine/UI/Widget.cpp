@@ -19,6 +19,7 @@ Widget::Widget(const std::wstring& kName) :
     parent_(nullptr),
     children_(),
     has_begun_play_(false),
+    is_active_(true),
     is_focused_(false)
 {
 }
@@ -186,6 +187,7 @@ void Widget::Render()
     
     for (const auto& child : children_)
     {
+        if (!child->is_active_) continue;
         child->Render();
     }
 }
@@ -284,6 +286,7 @@ bool Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& 
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
         Widget* child = *it;
+        if (!child->is_active_) continue;
 
         bool is_result = child->HitTest(kPosition);
         bool is_previous_result = child->HitTest(kPosition - kDelta);
@@ -306,7 +309,7 @@ bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, b
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
         Widget* child = *it;
-        if (child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
+        if (child->is_active_ && child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
             return true;
     }
 
@@ -363,6 +366,8 @@ bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelt
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
         Widget* child = *it;
+        if (!child->is_active_) continue;
+        
         if (child->HitTest(kPosition) && child->OnScroll(kPosition, kDelta))
             return true;
     }

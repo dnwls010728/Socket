@@ -74,7 +74,7 @@ public:
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
 
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
-
+    FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     BeginDragDelegate BeginDragHandler;
@@ -120,6 +120,7 @@ protected:
     std::vector<Widget*> children_;
 
     bool has_begun_play_;
+    bool is_active_;
     bool is_focused_;
     
 };

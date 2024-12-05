@@ -87,6 +87,8 @@ void ScrollBox::UpdateRect()
 
 bool ScrollBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
+    if (rect_.y >= content_height_) return Widget::OnScroll(kPosition, kDelta);
+    
     if (kDelta.y != 0.f)
     {
         float scroll_speed = kDelta.y * 10.f;

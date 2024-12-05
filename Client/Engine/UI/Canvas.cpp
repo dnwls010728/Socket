@@ -74,7 +74,7 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     for (auto it = widget->children_.rbegin(); it != widget->children_.rend(); ++it)
     {
         Widget* child = *it;
-        if (child->HitTest(kPoint)) return RayCast(child, kPoint);
+        if (child->is_active_ && child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
     if (widget->HitTest(kPoint)) return widget;
