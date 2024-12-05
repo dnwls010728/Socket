@@ -106,20 +106,13 @@ void GameEngine::Tick(float delta_time)
 void GameEngine::Render(float alpha)
 {
     ImGui::Render();
-
-    static bool redraw = true;
     
     Renderer::Get()->BeginRender(game_window_);
     World::Get()->Render(alpha);
-
-    if (redraw)
-    {
-        Renderer::Get()->BeginRenderD2D(game_window_);
-        Canvas::Get()->Render();
-        Renderer::Get()->EndRenderD2D();
-    }
-
-    if (Keyboard::Get()->GetKeyDown(VK_F1)) redraw = !redraw;
+    
+    Renderer::Get()->BeginRenderD2D(game_window_);
+    Canvas::Get()->Render();
+    Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     

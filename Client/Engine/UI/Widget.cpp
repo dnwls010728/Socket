@@ -113,6 +113,7 @@ void Widget::AttachToWidget(Widget* parent)
 {
     parent_ = parent;
     parent_->children_.push_back(this);
+    parent_->OnWidgetAttached(this);
     if (has_begun_play_) UpdateRect();
 }
 
@@ -190,6 +191,10 @@ void Widget::Render()
         if (!child->is_active_) continue;
         child->Render();
     }
+}
+
+void Widget::OnWidgetAttached(Widget* child)
+{
 }
 
 void Widget::UpdateRect()

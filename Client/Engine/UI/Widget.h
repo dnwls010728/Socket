@@ -88,6 +88,7 @@ protected:
     virtual void BeginPlay();
     virtual void Tick(float delta_time);
     virtual void Render();
+    virtual void OnWidgetAttached(Widget* child);
     virtual void UpdateRect();
 
     // Input Events
