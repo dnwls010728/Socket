@@ -23,6 +23,7 @@ public:
     void SetActive(bool is_active);
     void Destroy();
     void SetLifeSpan(float life_span);
+    void SetPersistent(bool is_persistent);
     
     bool CompareTag(ActorTag tag) const;
 
@@ -99,6 +100,9 @@ protected:
     std::shared_ptr<TransformComponent> transform_;
     
     TimerHandle life_span_timer_;
+
+private:
+    bool is_persistent_;
 
 };
 

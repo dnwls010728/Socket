@@ -7,8 +7,10 @@
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Resource/ResourceManager.h"
+#include "State/PlayerIdle.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -24,6 +26,11 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
+    
+    idle_state_ = std::make_shared<PlayerIdle>(state_machine_);
+
+    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
+    state_machine_->ChangeState(idle_state_.get());
     
 }
 

@@ -12,6 +12,7 @@ Actor::Actor(const std::wstring& kName) :
     layer_(ActorLayer::kDefault),
     is_active_(true),
     is_pending_destroy_(false),
+    is_persistent_(false),
     components_(),
     transform_(nullptr)
 {
@@ -121,6 +122,11 @@ void Actor::SetLifeSpan(float life_span)
     {
         TimerManager::Get()->ClearTimer(life_span_timer_);
     }
+}
+
+void Actor::SetPersistent(bool is_persistent)
+{
+    is_persistent_ = is_persistent;
 }
 
 bool Actor::CompareTag(ActorTag tag) const
