@@ -11,7 +11,11 @@ void GameSession::OnConnected()
 void GameSession::OnDisconnected()
 {
 	wcout << L"DisConnected" << GetSessionRef()->GetAddress().GetIpAddress() << endl;
-	GRoom->Leave(userRef);
+	if(roomRef.lock().use_count() != 0)
+	{
+		roomRef.lock()->Leave(userRef);
+	}
+		
 }
 
 void GameSession::OnRecvPacket(BYTE* buffer, int len)

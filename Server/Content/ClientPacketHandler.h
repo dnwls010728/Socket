@@ -1,4 +1,6 @@
 #pragma once
+#include "Channel.h"
+#include "Room.h"
 #include "../../CommonDLL/SendBuffer.h"
 #include "../../CommonDLL/Packet.h"
 using PacketHandlerFunc = function<void(const shared_ptr<PacketSession>&, BYTE*, int32_t)>;
@@ -13,13 +15,20 @@ enum PacketNumber : uint16_t
 	S_PKT_BROADCASTING_ENTER=1004,
 	S_PKT_ENTER_OTHER_USER=1005,
 	C_PKT_ENTER_OTHER_USER=1006,
-	S_PKT_LEAVE_OTHER_USER=1007
+	S_PKT_LEAVE_OTHER_USER=1007,
+	C_PKT_ENTER_ROOM=1008,
+	S_PKT_ENTER_ROOM=1009,
+	C_PKT_ENTER_CHANNEL=1010,
+	S_PKT_ENTER_CHANNEL=1011,
+	S_PKT_LEAVE_CHANNEL=1012,
 };
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len);
 void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPacket> pkt);
 void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt);
 void HandleEnterOtherUser(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterOtherUserPacket> pkt);
+void HandleEnterRoom(const shared_ptr<PacketSession>& session,shared_ptr<C_EnterRoom> pkt);
+void HandleEnterChannel(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterChannel> pkt);
 
 class ClientPacketHandler
 {
@@ -34,7 +43,13 @@ public:
 		{return HandlePacket<C_MovingPacket>(HandleMoving,session, buffer, len); };
 		GPacketHandler[C_PKT_ENTER_OTHER_USER] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)
 		{ return HandlePacket<C_EnterOtherUserPacket>(HandleEnterOtherUser,session, buffer, len); };
+		GPacketHandler[C_PKT_ENTER_ROOM] = [](const shared_ptr<PacketSession>& session,BYTE* buffer,int32_t len)
+		{return HandlePacket<C_EnterRoom>(HandleEnterRoom,session, buffer, len); };
+		GPacketHandler[C_PKT_ENTER_CHANNEL] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)
+		{return HandlePacket<C_EnterChannel>(HandleEnterChannel,session, buffer, len); };
 		
+		Room::Init();
+		Channel::Init();
 	}
 
 	static void HandlePacket(const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)

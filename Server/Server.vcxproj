@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Content\Channel.cpp" />
     <ClCompile Include="Content\ClientPacketHandler.cpp" />
     <ClCompile Include="Content\GameSession.cpp" />
     <ClCompile Include="Content\GameSessionManager.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Util\LockQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Content\Channel.h" />
     <ClInclude Include="Content\ClientPacketHandler.h" />
     <ClInclude Include="Content\GameSession.h" />
     <ClInclude Include="Content\GameSessionManager.h" />

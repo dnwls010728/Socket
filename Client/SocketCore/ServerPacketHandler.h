@@ -15,7 +15,12 @@ enum PacketNumber : uint16_t
     S_PKT_BROADCASTING_ENTER=1004,
     S_PKT_ENTER_OTHER_USER=1005,
     C_PKT_ENTER_OTHER_USER=1006,
-    S_PKT_LEAVE_OTHER_USER=1007
+    S_PKT_LEAVE_OTHER_USER=1007,
+    C_PKT_ENTER_ROOM=1008,
+    S_PKT_ENTER_ROOM=1009,
+    C_PKT_ENTER_CHANNEL=1010,
+    S_PKT_ENTER_CHANNEL=1011,
+    S_PKT_LEAVE_CHANNEL=1012,
     
 };
 
@@ -25,6 +30,9 @@ void HandleMoving(std::shared_ptr<S_MovingPacket> pkt);
 void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt);
 void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt);
 void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUserPacket> pkt);
+void HandleEnterRoom(std::shared_ptr<S_EnterRoom> pkt);
+void HandleEnterChannel(std::shared_ptr<S_EnterChannel> pkt);
+void HandleLeaveChannel(std::shared_ptr<S_LeaveChannel> pkt);
 
 class ServerPacketHandler
 {
@@ -43,6 +51,15 @@ public:
         {return HandlePacket<S_EnterOtherUserPacket>(HandleEnterOtherUser,buffer,len);};
         GPacketHandler[S_PKT_LEAVE_OTHER_USER] = [](BYTE* buffer,int32_t len)
         {return HandlePacket<S_LeaveOtherUserPacket>(HandleLeaveOtherUser,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_ROOM] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterRoom>(HandleEnterRoom,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_CHANNEL] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterChannel>(HandleEnterChannel,buffer,len);};
+        GPacketHandler[S_PKT_LEAVE_CHANNEL] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_LeaveChannel>(HandleLeaveChannel,buffer,len);};
+        
+        
+        
         
     }
     static void HandlePacket(BYTE* buffer, int32_t len)

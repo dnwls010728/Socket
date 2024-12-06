@@ -78,6 +78,36 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         socketEvent.type = S_PKT_LEAVE_OTHER_USER;
         eventQueue.push(socketEvent);
         return true;
+    }else if(pktId == S_PKT_ENTER_ROOM)
+    {
+        S_EnterRoom* enterRoomPkt = (S_EnterRoom*)pkt.get();
+        EnterRoom event{};
+        event.roomNum=enterRoomPkt->_currentRoomNum;
+        SocketEvent socketEvent{};
+        socketEvent.enterRoom = event;
+        socketEvent.type = S_PKT_ENTER_ROOM;
+        eventQueue.push(socketEvent);
+        return true;
+    }else if(pktId == S_PKT_ENTER_CHANNEL)
+    {
+        S_EnterChannel* enterChannelPkt = (S_EnterChannel*)pkt.get();
+        EnterChannel event{};
+        event.currentChannelNum = enterChannelPkt->_currentChannelNum;
+        SocketEvent socketEvent;
+        socketEvent.enterChannel = event;
+        socketEvent.type = S_PKT_ENTER_CHANNEL;
+        eventQueue.push(socketEvent);
+        return true;
+    }else if(pktId == S_PKT_LEAVE_CHANNEL)
+    {
+        S_LeaveChannel* leaveChannelPkt = (S_LeaveChannel*)pkt.get();
+        LeaveChannel event{};
+        event.userId = leaveChannelPkt->_userId;
+        SocketEvent socketEvent{};
+        socketEvent.leaveChannel = event;
+        socketEvent.type = S_PKT_LEAVE_CHANNEL;
+        eventQueue.push(socketEvent);
+        return true;
     }
     return false;
 }

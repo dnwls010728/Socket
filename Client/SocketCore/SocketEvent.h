@@ -35,6 +35,21 @@ struct LeaveOtherUserEvent
     uint32_t userId;
 };
 
+struct EnterRoom
+{
+    uint32_t roomNum;
+};
+
+struct EnterChannel
+{
+    uint32_t currentChannelNum;
+};
+
+struct LeaveChannel
+{
+    uint32_t userId;
+};
+
 struct SocketEvent
 {
     Type::uint32 type;
@@ -43,6 +58,9 @@ struct SocketEvent
     BroadcastingEnterEvent broadcastingEnter;
     EnterOtherUserEvent enterOtherUser;
     LeaveOtherUserEvent leaveOtherUser;
+    EnterRoom enterRoom;
+    EnterChannel enterChannel;
+    LeaveChannel leaveChannel;
 };
 
 

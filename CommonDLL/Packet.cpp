@@ -230,3 +230,114 @@ uint16_t S_LeaveOtherUserPacket::GetSize()
 {
 	return Serializer::GetPacketSize(_userId);
 }
+
+C_EnterRoom::C_EnterRoom()
+{
+}
+
+BYTE* C_EnterRoom::Serialize(BYTE* buffer)
+{
+	int currentByte = 0;
+	Serializer::Serialize(buffer,_roomNum,currentByte);
+	return buffer;
+}
+
+void C_EnterRoom::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte = 0;
+	DeSerializer::Deserialize(buffer,currentByte,_roomNum);
+}
+
+uint16_t C_EnterRoom::GetSize()
+{
+	return Serializer::GetPacketSize(_roomNum);
+}
+
+S_EnterRoom::S_EnterRoom()
+{
+}
+
+BYTE* S_EnterRoom::Serialize(BYTE* buffer)
+{
+	int currentByte = 0;
+	Serializer::Serialize(buffer,_currentRoomNum,currentByte);
+	return buffer;
+}
+
+void S_EnterRoom::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte = 0;
+	DeSerializer::Deserialize(buffer,currentByte,_currentRoomNum);
+}
+
+uint16_t S_EnterRoom::GetSize()
+{
+	return Serializer::GetPacketSize(_currentRoomNum);
+}
+
+C_EnterChannel::C_EnterChannel()
+{
+}
+
+BYTE* C_EnterChannel::Serialize(BYTE* buffer)
+{
+	int currentByte=0;
+	Serializer::Serialize(buffer,_channelNum,currentByte);
+	return buffer;
+}
+
+void C_EnterChannel::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte=0;
+	DeSerializer::Deserialize(buffer,currentByte,_channelNum);
+}
+
+uint16_t C_EnterChannel::GetSize()
+{
+	return Serializer::GetPacketSize(_channelNum);
+}
+
+S_EnterChannel::S_EnterChannel()
+{
+}
+
+BYTE* S_EnterChannel::Serialize(BYTE* buffer)
+{
+	int currentByte=0;
+	Serializer::Serialize(buffer,_currentChannelNum,currentByte);
+	return buffer;
+}
+
+void S_EnterChannel::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte=0;
+	DeSerializer::Deserialize(buffer,currentByte,_currentChannelNum);
+	
+}
+
+uint16_t S_EnterChannel::GetSize()
+{
+	return Serializer::GetPacketSize(_currentChannelNum);
+}
+
+S_LeaveChannel::S_LeaveChannel()
+{
+}
+
+BYTE* S_LeaveChannel::Serialize(BYTE* buffer)
+{
+	int currentByte=0;
+	Serializer::Serialize(buffer,_userId,currentByte);
+	return buffer;
+}
+
+void S_LeaveChannel::Deserialize(BYTE* buffer, int32_t len)
+{
+	int currentByte=0;
+	DeSerializer::Deserialize(buffer,currentByte,_userId);
+}
+
+uint16_t S_LeaveChannel::GetSize()
+{
+	return Serializer::GetPacketSize(_userId);
+}

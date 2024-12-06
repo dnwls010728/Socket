@@ -161,3 +161,64 @@ public:
 
 	uint32_t _userId;
 };
+
+class EXPORT_API C_EnterRoom : public Packet
+{
+public:
+	C_EnterRoom();
+	~C_EnterRoom() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _roomNum;
+	
+};
+
+class EXPORT_API S_EnterRoom : public Packet
+{
+public:
+	S_EnterRoom();
+	~S_EnterRoom() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _currentRoomNum;
+};
+
+class EXPORT_API C_EnterChannel : public Packet
+{
+	public:
+	C_EnterChannel();
+	~C_EnterChannel() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _channelNum;
+};
+
+class EXPORT_API S_EnterChannel : public Packet
+{
+	public:
+	S_EnterChannel();
+	~S_EnterChannel() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+	
+	uint32_t _currentChannelNum;
+};
+
+class EXPORT_API S_LeaveChannel : public Packet
+{
+public:
+	S_LeaveChannel();
+	~S_LeaveChannel() override = default;
+	virtual BYTE* Serialize(BYTE* buffer) override;
+	virtual void Deserialize(BYTE* buffer, int32_t len) override;
+	virtual uint16_t GetSize() override;
+
+	uint32_t _userId;
+};
