@@ -12,7 +12,12 @@ public:
     Mob1(const std::wstring& kName);
     virtual ~Mob1() override = default;
 
+protected:
+    virtual void BeginPlay() override;
+
 private:
+    void Turn();
+    
     std::shared_ptr<Mob1Idle> idle_state_;
     
     class Sprite* sprite_;

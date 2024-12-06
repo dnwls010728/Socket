@@ -40,9 +40,10 @@ public:
     inline static constexpr float kFixedTimeStep = .02f; // 고정 프레임 간격
 
     inline static const std::map<ActorLayer, ActorLayer> kLayerCollisionMatrix = { // 레이어 충돌 매트릭스
-        {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kBullet},
-        {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kBullet},
+        {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
+        {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
         {ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault},
+        {ActorLayer::kMob, ActorLayer::kGround | ActorLayer::kDefault},
         {ActorLayer::kBullet, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault}
     };
     

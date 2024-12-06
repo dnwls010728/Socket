@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "Mob1.h"
 
+#include <random>
+
 #include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Resource/ResourceManager.h"
@@ -20,6 +23,23 @@ Mob1::Mob1(const std::wstring& kName) :
     idle_state_ = std::make_shared<Mob1Idle>(state_machine_);
     state_machine_->ChangeState(idle_state_.get());
     
+}
+
+void Mob1::BeginPlay()
+{
+    MobBase::BeginPlay();
+
+    TimerManager::Get()->SetTimer(this, &Mob1::Turn, 1.f, true);
+}
+
+void Mob1::Turn()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(-1, 1);
+    int direction = dis(gen);
+
+    rigid_body_->SetLinearVelocityX(direction * 5.f);
 }
 
 RTTR_REGISTRATION
