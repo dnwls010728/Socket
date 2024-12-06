@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Actor/Character/CharacterBase.h"
+#include "Character/Actor/CharacterBase.h"
 #include "Actor/Character/Player/PlayerCharacter.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Level/World.h"
