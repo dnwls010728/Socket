@@ -91,6 +91,37 @@ void Editor::OpenTextureSettings(bool* is_open)
                             loaded_texture_.reset();
                             file_path_ = L"";
                         }
+                        else
+                        {
+                            std::string file_path_str(file_path_.begin(), file_path_.end());
+                            YAML::Node node = YAML::LoadFile(file_path_str + ".yaml");
+                            if (!node.IsNull())
+                            {
+                                selected_wrap_mode_ = node["wrap_mode"].as<int>();
+                                selected_filter_mode_ = node["filter_mode"].as<int>();
+                                ppu_ = node["ppu"].as<int>();
+
+                                if (node["frames"])
+                                {
+                                    int i = 0;
+                                    
+                                    frames_.clear();
+                                    for (const YAML::Node& frame : node["frames"])
+                                    {
+                                        FrameData data;
+                                        data.name = std::to_string(i++);
+                                        data.x = frame["rect"]["x"].as<float>();
+                                        data.y = frame["rect"]["y"].as<float>();
+                                        data.width = frame["rect"]["width"].as<float>();
+                                        data.height = frame["rect"]["height"].as<float>();
+                                        data.pivot_x = frame["pivot"]["x"].as<float>();
+                                        data.pivot_y = frame["pivot"]["y"].as<float>();
+                                        
+                                        frames_.push_back(data);
+                                    }
+                                }
+                            }
+                        }
 
                         CoTaskMemFree(file_path);
                     }
@@ -182,6 +213,22 @@ void Editor::OpenTextureSettings(bool* is_open)
             pivot_x_ = frame.pivot_x;
             pivot_y_ = frame.pivot_y;
         }
+
+        if (ImGui::Button("Add"))
+        {
+            FrameData frame;
+            frame.name = std::to_string(frames_.size());
+            frame.x = 0.f;
+            frame.y = 0.f;
+            frame.width = 1.f;
+            frame.height = 1.f;
+            frame.pivot_x = .5f;
+            frame.pivot_y = .5f;
+
+            frames_.push_back(frame);
+        }
+
+        ImGui::SameLine();
 
         if (ImGui::Button("Remove"))
         {
