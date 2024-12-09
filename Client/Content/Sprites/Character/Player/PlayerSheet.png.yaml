@@ -1,0 +1,396 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - rect:
+      x: 0
+      y: 0
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.111111112
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.111111112
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.222222224
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.222222224
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.222222224
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.222222224
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.5
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.625
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.75
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.875
+      y: 0.333333343
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.5
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.625
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.5
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.625
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.75
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.875
+      y: 0.555555582
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.666666687
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.666666687
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.666666687
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.5
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.625
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.75
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.875
+      y: 0.777777791
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.125
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.25
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.5
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.625
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.75
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.875
+      y: 0.888888896
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
