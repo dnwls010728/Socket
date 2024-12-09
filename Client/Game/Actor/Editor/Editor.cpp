@@ -443,6 +443,25 @@ void Editor::OpenTextureEditor(bool* is_open)
             ImVec2 mouse_position = ImGui::GetMousePos();
             ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
 
+            if (ImGui::IsMouseClicked(0))
+            {
+                for (auto it = frames_.rbegin(); it != frames_.rend(); ++it)
+                {
+                    const FrameData& frame = *it;
+                    if (uv.x >= frame.x && uv.x <= frame.x + frame.width && uv.y >= frame.y && uv.y <= frame.y + frame.height)
+                    {
+                        selected_frame_ = std::distance(it, frames_.rend()) - 1;
+                        left_ = frame.x;
+                        top_ = frame.y;
+                        right_ = frame.x + frame.width;
+                        bottom_ = frame.y + frame.height;
+                        pivot_x_ = frame.pivot_x;
+                        pivot_y_ = frame.pivot_y;
+                        break;
+                    }
+                }
+            }
+
             ImGui::BeginTooltip();
             ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
             ImGui::EndTooltip();
