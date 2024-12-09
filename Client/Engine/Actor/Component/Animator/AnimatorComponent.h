@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Actor/Component/ActorComponent.h"
+#include "yaml-cpp/node/convert.h"
 
 class AnimationClip;
 class SpriteRendererComponent;
@@ -37,4 +38,5 @@ private:
     float timer_;
     int current_index_;
     bool is_playing_;
+
 };

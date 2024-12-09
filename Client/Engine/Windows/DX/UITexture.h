@@ -7,11 +7,11 @@
 #include <d2d1.h>
 
 #include "Misc/Type.h"
-#include "Resource/Resource.h"
+#include "Asset/Asset.h"
 
-class UITexture : public Resource
+class UITexture : public Asset
 {
-    GENERATED_BODY(UITexture, Resource)
+    GENERATED_BODY(UITexture, Asset)
     
 public:
     UITexture();

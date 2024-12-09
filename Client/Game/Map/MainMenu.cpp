@@ -5,7 +5,7 @@
 #include "../SocketCore/ServerPacketHandler.h"
 #include "Input/Keyboard.h"
 #include "Level/World.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "UI/Canvas.h"
 #include "UI/Widget.h"
 #include "UI/Widget/Button.h"
@@ -27,7 +27,7 @@ void MainMenu::Load()
     
     Canvas* canvas = Canvas::Get();
 
-    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
+    UITexture* texture = AssetManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
 
     scroll_box = canvas->AddWidget<ScrollBox>(L"Scroll Box");

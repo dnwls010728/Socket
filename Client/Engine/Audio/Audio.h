@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "FMOD/fmod_common.h"
-#include "Resource/Resource.h"
+#include "Asset/Asset.h"
 
 struct AudioFormat
 {
@@ -10,9 +10,9 @@ struct AudioFormat
     int bits;
 };
 
-class Audio : public Resource
+class Audio : public Asset
 {
-    GENERATED_BODY(Audio, Resource)
+    GENERATED_BODY(Audio, Asset)
     
 public:
     Audio();

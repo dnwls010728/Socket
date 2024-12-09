@@ -15,7 +15,7 @@ Audio::~Audio()
 
 bool Audio::Load(const std::wstring& kPath)
 {
-    Resource::Load(kPath);
+    Asset::Load(kPath);
     
     const std::string kFinalPath(kPath.begin(), kPath.end());
 

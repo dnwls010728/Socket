@@ -7,14 +7,14 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Character/Component/FSM/StateMachine.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "State/Mob1Idle.h"
 #include "Windows/DX/Sprite.h"
 
 Mob1::Mob1(const std::wstring& kName) :
     MobBase(kName)
 {
-    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Character\\Mob\\1\\Slime_Spiked_Full.png");
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Character\\Mob\\1\\Slime_Spiked_Full.png");
     if (sprite_) renderer_->SetSprite(sprite_);
     
     collider_->SetOffset({0.f, .5f});

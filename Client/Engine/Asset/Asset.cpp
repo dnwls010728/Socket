@@ -1,14 +1,14 @@
 ﻿#include "pch.h"
-#include "Resource.h"
+#include "Asset.h"
 
 #include "Data/FileHelper.h"
 
-Resource::Resource() :
+Asset::Asset() :
     meta_data_(YAML::Null)
 {
 }
 
-bool Resource::Load(const std::wstring& kPath)
+bool Asset::Load(const std::wstring& kPath)
 {
     if (!FileHelper::IsFileExists(kPath + L".yaml")) return false;
 
@@ -29,7 +29,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<Resource>("Resource")
+    registration::class_<Asset>("Resource")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

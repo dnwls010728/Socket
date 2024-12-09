@@ -8,7 +8,7 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Vector2.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "Time/Time.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowDefinition.h"
@@ -98,7 +98,7 @@ bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam,
 
                 World::Get()->Release();
                 Renderer::Get()->Release();
-                ResourceManager::Get()->Release();
+                AssetManager::Get()->Release();
             }
         }
         return true;

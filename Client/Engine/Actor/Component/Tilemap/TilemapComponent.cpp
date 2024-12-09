@@ -6,7 +6,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "box2d/box2d.h"
 #include "Level/World.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "Windows/DX/Texture.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
@@ -26,7 +26,7 @@ void TilemapComponent::LoadMap(const char* kPath)
 	std::wstring tileset_path = std::wstring(tilesets[0].getImagePath().begin(), tilesets[0].getImagePath().end());
 	tileset_path = tileset_path.substr(10);
 
-	tilemap_texture_ = ResourceManager::Get()->Load<Texture>(tileset_path);
+	tilemap_texture_ = AssetManager::Get()->Load<Texture>(tileset_path);
 	
 	const auto& layers = map_.getLayers();
 	for (const auto& layer : layers)

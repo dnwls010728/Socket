@@ -11,7 +11,7 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "State/PlayerIdle.h"
 #include "Windows/DX/Sprite.h"
 
@@ -23,7 +23,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 {
     SetLayer(ActorLayer::kPlayer);
     
-    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Character\\Player\\PlayerSheet.png");
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Character\\Player\\PlayerSheet.png");
     if (sprite_) renderer_->SetSprite(sprite_);
 
     collider_->SetOffset({0.f, .5f});

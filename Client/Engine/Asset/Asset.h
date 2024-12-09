@@ -5,13 +5,13 @@
 #include "rttr/registration_friend.h"
 #include "yaml-cpp/yaml.h"
 
-class Resource
+class Asset
 {
-    GENERATED_BODY(Resource);
+    GENERATED_BODY(Asset);
     
 public:
-    Resource();
-    virtual ~Resource() = default;
+    Asset();
+    virtual ~Asset() = default;
 
     virtual bool Load(const std::wstring& kPath);
 

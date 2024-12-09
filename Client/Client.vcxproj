@@ -184,8 +184,8 @@
     <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Network\NetworkManager.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
-    <ClInclude Include="Engine\Resource\Resource.h" />
-    <ClInclude Include="Engine\Resource\ResourceManager.h" />
+    <ClInclude Include="Engine\Asset\Asset.h" />
+    <ClInclude Include="Engine\Asset\AssetManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
     <ClInclude Include="Engine\PhysicsDebugDrawHelper.h" />
     <ClInclude Include="Engine\Time\Time.h" />
@@ -511,8 +511,8 @@
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Network\NetworkManager.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
-    <ClCompile Include="Engine\Resource\Resource.cpp" />
-    <ClCompile Include="Engine\Resource\ResourceManager.cpp" />
+    <ClCompile Include="Engine\Asset\Asset.cpp" />
+    <ClCompile Include="Engine\Asset\AssetManager.cpp" />
     <ClCompile Include="Engine\PhysicsDebugDrawHelper.cpp" />
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />

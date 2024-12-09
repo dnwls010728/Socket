@@ -5,7 +5,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
 
 Bullet::Bullet(const std::wstring& kName) :
@@ -22,7 +22,7 @@ Bullet::Bullet(const std::wstring& kName) :
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
 
-    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
     sprite_->SetPPU(256);
 
     sprite_->Split(1, 1, Sprite::kCenter);
