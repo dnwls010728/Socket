@@ -271,17 +271,19 @@ void Editor::OpenTextureEditor(bool* is_open)
 
     static int grid[2];
 
-    static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right"};
+    static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom"};
 
     static int selected_pivot_mode = 0;
 
     static float auto_pivot_x = .5f;
     static float auto_pivot_y = .5f;
 
+    static bool is_custom_pivot = false;
+
     ImGui::Text("Auto Slice");
     ImGui::InputInt2("Grid", grid);
 
-    if (ImGui::Combo("Pivot", &selected_pivot_mode, pivot_modes, IM_ARRAYSIZE(pivot_modes)))
+    if (ImGui::Combo("Pivot Preset", &selected_pivot_mode, pivot_modes, IM_ARRAYSIZE(pivot_modes)))
     {
         if (selected_pivot_mode == 0)
         {
@@ -328,6 +330,17 @@ void Editor::OpenTextureEditor(bool* is_open)
             auto_pivot_x = 1.f;
             auto_pivot_y = 0.f;
         }
+
+        is_custom_pivot = selected_pivot_mode == 9;
+    }
+
+    if (is_custom_pivot)
+    {
+        ImGui::SetNextItemWidth(50.f);
+        ImGui::InputFloat("Pivot X", &auto_pivot_x);
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(50.f);
+        ImGui::InputFloat("Pivot Y", &auto_pivot_y);
     }
     
     if (ImGui::Button("Slice"))
