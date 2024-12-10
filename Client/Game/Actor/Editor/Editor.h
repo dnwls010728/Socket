@@ -31,6 +31,7 @@ private:
     {
         std::string name;
         float sample_frame_rate;
+        bool is_repeat;
         std::vector<Type::uint32> frame_indexes;
     };
 

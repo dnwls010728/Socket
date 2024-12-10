@@ -101,7 +101,16 @@ void Editor::OpenTextureSettings(bool* is_open)
                         else
                         {
                             std::string file_path_str(file_path_.begin(), file_path_.end());
-                            YAML::Node node = YAML::LoadFile(file_path_str + ".yaml");
+                            YAML::Node node(YAML::NodeType::Null);
+
+                            try
+                            {
+                                node = YAML::LoadFile(file_path_str + ".yaml");
+                            }
+                            catch (const YAML::BadFile& e)
+                            {
+                            }
+                            
                             if (!node.IsNull())
                             {
                                 selected_wrap_mode_ = node["wrap_mode"].as<int>();
@@ -136,6 +145,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                         AnimationData data;
                                         data.name = animation["name"].as<std::string>();
                                         data.sample_frame_rate = animation["sample_frame_rate"].as<float>();
+                                        data.is_repeat = animation["repeat"].as<bool>();
                                         
                                         for (const YAML::Node& index : animation["frame_indexes"])
                                         {
@@ -212,6 +222,8 @@ void Editor::OpenTextureSettings(bool* is_open)
                     emitter << YAML::Value << animation.name;
                     emitter << YAML::Key << "sample_frame_rate";
                     emitter << YAML::Value << animation.sample_frame_rate;
+                    emitter << YAML::Key << "repeat";
+                    emitter << YAML::Value << animation.is_repeat;
                     emitter << YAML::Key << "frame_indexes";
                     emitter << YAML::Value << YAML::BeginSeq;
                     for (Type::uint32 index : animation.frame_indexes)
@@ -548,6 +560,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     static int selected_animation = 0;
     static int scale = 1.f;
 
+    static bool is_repeat = false;
     static bool is_playing = false;
 
     static float timer = 0.f;
@@ -662,6 +675,10 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     ImGui::EndDisabled();
+    
+    ImGui::BeginDisabled(is_playing);
+    ImGui::Checkbox("Repeat", &is_repeat);
+    ImGui::EndDisabled();
     ImGui::EndGroup();
 
     if (is_playing)
@@ -687,6 +704,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         selected_index = 0;
         sample_frame_rate = animations_[selected_animation].sample_frame_rate;
+        is_repeat = animations_[selected_animation].is_repeat;
         
         frame_indexes_.clear();
         for (const auto& index : animations_[selected_animation].frame_indexes)
@@ -712,6 +730,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         AnimationData animation;
         animation.name = animation_name;
         animation.sample_frame_rate = sample_frame_rate;
+        animation.is_repeat = is_repeat;
 
         for (const std::string& index : frame_indexes_)
         {

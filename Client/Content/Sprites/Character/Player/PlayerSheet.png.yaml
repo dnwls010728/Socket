@@ -179,6 +179,22 @@ frames:
       x: 0.5
       y: 0
   - rect:
+      x: 0.75
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.875
+      y: 0.444444448
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
       x: 0
       y: 0.555555582
       width: 0.125
@@ -260,6 +276,14 @@ frames:
       y: 0
   - rect:
       x: 0.25
+      y: 0.666666687
+      width: 0.125
+      height: 0.111111112
+    pivot:
+      x: 0.5
+      y: 0
+  - rect:
+      x: 0.375
       y: 0.666666687
       width: 0.125
       height: 0.111111112
@@ -397,11 +421,13 @@ frames:
 Animations:
   - name: Idle
     sample_frame_rate: 8
+    repeat: true
     frame_indexes:
       - 0
       - 1
-  - name: Walk
+  - name: Run
     sample_frame_rate: 8
+    repeat: true
     frame_indexes:
       - 8
       - 9
