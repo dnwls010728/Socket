@@ -236,6 +236,7 @@ void Editor::OpenTextureSettings(bool* is_open)
             {
                 frames_.erase(frames_.begin() + selected_frame_);
                 if (selected_frame_ >= frames_.size()) selected_frame_ = frames_.size() - 1;
+                if (selected_frame_ < 0) selected_frame_ = 0;
             }
         }
     
@@ -373,6 +374,7 @@ void Editor::OpenTextureEditor(bool* is_open)
     }
 
     ImGui::Separator();
+    ImGui::Text("Frame Settings");
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat("L", &left_))
     {

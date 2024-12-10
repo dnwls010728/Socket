@@ -27,11 +27,11 @@ class ProjectSettings
 public:
     inline static const std::wstring kWindowTitle = L"ProjectM"; // 윈도우 타이틀
 
-    inline static constexpr Type::uint32 kScreenWidth = 640; // 화면 너비
-    inline static constexpr Type::uint32 kScreenHeight = 480; // 화면 높이
+    inline static constexpr Type::uint32 kScreenWidth = 800; // 화면 너비
+    inline static constexpr Type::uint32 kScreenHeight = 600; // 화면 높이
 
-    inline static constexpr Type::uint32 kCanvasReferenceWidth = 640;
-    inline static constexpr Type::uint32 kCanvasReferenceHeight = 480;
+    inline static constexpr Type::uint32 kCanvasReferenceWidth = 800;
+    inline static constexpr Type::uint32 kCanvasReferenceHeight = 600;
     inline static constexpr float kMatchMode = 0.f;
     
     inline static constexpr bool kShowFrameRate = true; // 프레임레이트 표시 여부
