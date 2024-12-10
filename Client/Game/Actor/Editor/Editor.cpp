@@ -4,6 +4,7 @@
 #include <fstream>
 #include <ShObjIdl.h>
 
+#include "Logger.h"
 #include "Data/FileHelper.h"
 #include "imgui/imgui.h"
 #include "Windows/DX/UITexture.h"
@@ -26,7 +27,8 @@ Editor::Editor(const std::wstring& kName) :
     pivot_y_(0.f),
     file_path_(L""),
     loaded_texture_(nullptr),
-    frames_()
+    frames_(),
+    animation_frames_()
 {
 }
 
@@ -200,7 +202,8 @@ void Editor::OpenTextureSettings(bool* is_open)
         ImGui::SameLine();
         if (ImGui::Button("Sprite Animator")) show_sprite_animator_ = true;
 
-        bool is_selection_changed = ImGui::ListBox("Frames", &selected_frame_, [](void* user_data, int index)
+        ImGui::Text("Frames");
+        bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
         {
             std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
             return frames->at(index).name.c_str();
@@ -501,50 +504,128 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     static int sample_frame_rate = 60;
+    static int selected_item = 0;
+    static int scale = 1.f;
+
+    static bool is_playing = false;
+
+    static float timer = 0.f;
+
+    static float x = 0.f;
+    static float y = 0.f;
 
     ImGui::InputInt("Sample Frame Rate", &sample_frame_rate);
 
     ImVec2 start_position = ImGui::GetCursorScreenPos();
     if (ImGui::BeginChild("Sprite Animator", {300.f, 300.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
     {
-        ImVec2 cursor_center = {start_position.x + 150.f, start_position.y + 150.f};
+        ImVec2 cursor_center = {start_position.x + 150.f + x, start_position.y + 150.f + y};
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         
-        if (loaded_texture_ && !frames_.empty())
+        if (loaded_texture_ && !animation_frames_.empty())
         {
-            ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
-            ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
+            float frame_x = animation_frames_[selected_item].x;
+            float frame_y = animation_frames_[selected_item].y;
+            float frame_width = animation_frames_[selected_item].width;
+            float frame_height = animation_frames_[selected_item].height;
+            
+            ImVec2 uv0 = {frame_x, frame_y};
+            ImVec2 uv1 = {frame_x + frame_width, frame_y + frame_height};
 
-            float width = loaded_texture_->GetWidth() * frames_[selected_frame_].width;
-            float height = loaded_texture_->GetHeight() * frames_[selected_frame_].height;
+            float width = loaded_texture_->GetWidth() * frame_width;
+            float height = loaded_texture_->GetHeight() * frame_height;
 
-            ImVec2 center_position = {150.f, 150.f};
+            width *= scale;
+            height *= scale;
 
-            float pivot_x = width * frames_[selected_frame_].pivot_x;
-            float pivot_y = height * (1.f - frames_[selected_frame_].pivot_y);
+            float pivot_x = width * animation_frames_[selected_item].pivot_x;
+            float pivot_y = height * (1.f - animation_frames_[selected_item].pivot_y);
 
+            ImVec2 center_position = {150.f + x, 150.f + y};
             ImVec2 pivot_position = {center_position.x - pivot_x, center_position.y - pivot_y};
 
             ImGui::SetCursorPos(pivot_position);
             ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
         }
 
-        // XY 축
         draw_list->AddLine(cursor_center, {cursor_center.x + 50.f, cursor_center.y}, IM_COL32(255, 0, 0, 255));
         draw_list->AddLine(cursor_center, {cursor_center.x, cursor_center.y - 50.f}, IM_COL32(0, 255, 0, 255));
     }
 
     ImGui::EndChild();
-    ImGui::End();
-
-    static float timer = 0.f;
-    timer += ImGui::GetIO().DeltaTime;
-
-    if (timer >= 1.f / sample_frame_rate)
+    
+    ImGuiIO& io = ImGui::GetIO();
+    if (ImGui::IsItemHovered())
     {
-        timer = 0.f;
-        selected_frame_ = (selected_frame_ + 1) % frames_.size();
+        if (io.MouseWheel > 0)
+        {
+            scale += 1;
+        }
+        else if (io.MouseWheel < 0)
+        {
+            scale -= 1;
+        }
+        
+        if (ImGui::IsMouseDragging(1))
+        {
+            ImVec2 delta = io.MouseDelta;
+            x += delta.x;
+            y += delta.y;
+        }
     }
+    
+    ImGui::SameLine();
+    
+    ImGui::BeginGroup();
+    ImGui::Text("Animation Frames");
+    
+    ImGui::SetNextItemWidth(100.f);
+    bool is_selection_changed = ImGui::ListBox("##Animation Frames", &selected_item, [](void* user_data, int index)
+    {
+        std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
+        return frames->at(index).name.c_str();
+    }, &animation_frames_, animation_frames_.size(), 4);
+
+    ImGui::BeginDisabled(is_playing);
+    if (ImGui::Button("Add"))
+    {
+        animation_frames_.push_back(frames_[selected_frame_]);
+    }
+
+    ImGui::EndDisabled();
+    ImGui::SameLine();
+
+    ImGui::BeginDisabled(is_playing);
+    if (ImGui::Button("Remove"))
+    {
+        if (!animation_frames_.empty())
+        {
+            animation_frames_.erase(animation_frames_.begin() + selected_item);
+            if (selected_item >= animation_frames_.size()) selected_item = animation_frames_.size() - 1;
+            if (selected_item < 0) selected_item = 0;
+        }
+    }
+
+    ImGui::EndDisabled();
+    ImGui::EndGroup();
+
+    if (ImGui::Button(is_playing ? "Pause" : "Play"))
+    {
+        is_playing = !is_playing;
+        timer = 0.f;
+    }
+
+    if (is_playing)
+    {
+        timer += ImGui::GetIO().DeltaTime;
+        if (timer >= 1.f / sample_frame_rate)
+        {
+            timer = 0.f;
+            selected_item = (selected_item + 1) % animation_frames_.size();
+        }
+    }
+    
+    ImGui::End();
 }
 
 RTTR_REGISTRATION

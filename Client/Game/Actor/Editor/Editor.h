@@ -52,5 +52,6 @@ private:
     std::unique_ptr<Texture> loaded_texture_;
 
     std::vector<FrameData> frames_;
+    std::vector<FrameData> animation_frames_;
     
 };
