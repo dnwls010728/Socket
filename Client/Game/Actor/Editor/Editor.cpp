@@ -19,6 +19,8 @@ Editor::Editor(const std::wstring& kName) :
     selected_filter_mode_(0),
     ppu_(256),
     selected_frame_(0),
+    selected_index_(0),
+    selected_animation_(0),
     left_(0.f),
     top_(0.f),
     right_(1.f),
@@ -89,6 +91,19 @@ void Editor::OpenTextureSettings(bool* is_open)
                     if (SUCCEEDED(hr))
                     {
                         file_path_ = file_path;
+
+                        selected_index_ = 0;
+                        selected_animation_ = 0;
+                        selected_frame_ = 0;
+
+                        frame_indexes_.clear();
+                        animations_.clear();
+                        frames_.clear();
+                        
+                        ppu_ = 256;
+                        
+                        selected_filter_mode_ = 0;
+                        selected_wrap_mode_ = 0;
 
                         if (loaded_texture_) loaded_texture_.reset();
                         loaded_texture_ = std::make_unique<Texture>();
@@ -556,8 +571,6 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     static int sample_frame_rate = 60;
-    static int selected_index = 0;
-    static int selected_animation = 0;
     static int scale = 1.f;
 
     static bool is_repeat = false;
@@ -590,7 +603,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         
         if (loaded_texture_ && !frame_indexes_.empty())
         {
-            Type::uint32 index = std::stoi(frame_indexes_[selected_index]);
+            Type::uint32 index = std::stoi(frame_indexes_[selected_index_]);
             
             float frame_x = frames_[index].x;
             float frame_y = frames_[index].y;
@@ -648,7 +661,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::Text("Frame Indexes");
     
     ImGui::SetNextItemWidth(100.f);
-    ImGui::ListBox("##Frame Indexes", &selected_index, [](void* user_data, int index)
+    ImGui::ListBox("##Frame Indexes", &selected_index_, [](void* user_data, int index)
     {
         std::vector<std::string>* frame_indexes = static_cast<std::vector<std::string>*>(user_data);
         return frame_indexes->at(index).c_str();
@@ -668,9 +681,9 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         if (!frame_indexes_.empty())
         {
-            frame_indexes_.erase(frame_indexes_.begin() + selected_index);
-            if (selected_index >= frame_indexes_.size()) selected_index = frame_indexes_.size() - 1;
-            if (selected_index < 0) selected_index = 0;
+            frame_indexes_.erase(frame_indexes_.begin() + selected_index_);
+            if (selected_index_ >= frame_indexes_.size()) selected_index_ = frame_indexes_.size() - 1;
+            if (selected_index_ < 0) selected_index_ = 0;
         }
     }
 
@@ -679,21 +692,36 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::BeginDisabled(is_playing);
     ImGui::Checkbox("Repeat", &is_repeat);
     ImGui::EndDisabled();
-    ImGui::EndGroup();
 
-    if (is_playing)
+    ImGui::Separator();
+    ImGui::Text("View Settings");
+
+    if (ImGui::Button("Center"))
     {
-        timer += ImGui::GetIO().DeltaTime;
-        if (timer >= 1.f / sample_frame_rate)
-        {
-            timer = 0.f;
-            selected_index = (selected_index + 1) % frame_indexes_.size();
-        }
+        x = 0.f;
+        y = 0.f;
     }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Default Size"))
+    {
+        scale = 1.f;
+    }
+    
+    if (ImGui::Button("Reset"))
+    {
+        x = 0.f;
+        y = 0.f;
+
+        scale = 1.f;
+    }
+    
+    ImGui::EndGroup();
 
     ImGui::Text("Animations");
     ImGui::BeginDisabled(is_playing);
-    bool is_selection_changed = ImGui::ListBox("##Animations", &selected_animation, [](void* user_data, int index)
+    bool is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -702,12 +730,12 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
     if (is_selection_changed)
     {
-        selected_index = 0;
-        sample_frame_rate = animations_[selected_animation].sample_frame_rate;
-        is_repeat = animations_[selected_animation].is_repeat;
+        selected_index_ = 0;
+        sample_frame_rate = animations_[selected_animation_].sample_frame_rate;
+        is_repeat = animations_[selected_animation_].is_repeat;
         
         frame_indexes_.clear();
-        for (const auto& index : animations_[selected_animation].frame_indexes)
+        for (const auto& index : animations_[selected_animation_].frame_indexes)
         {
             frame_indexes_.push_back(std::to_string(index));
         }
@@ -725,7 +753,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::BeginDisabled(is_playing);
     if (ImGui::Button("Add##Animation"))
     {
-        selected_index = 0;
+        selected_index_ = 0;
         
         AnimationData animation;
         animation.name = animation_name;
@@ -748,9 +776,9 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         if (!animations_.empty())
         {
-            animations_.erase(animations_.begin() + selected_animation);
-            if (selected_animation >= animations_.size()) selected_animation = animations_.size() - 1;
-            if (selected_animation < 0) selected_animation = 0;
+            animations_.erase(animations_.begin() + selected_animation_);
+            if (selected_animation_ >= animations_.size()) selected_animation_ = animations_.size() - 1;
+            if (selected_animation_ < 0) selected_animation_ = 0;
         }
     }
     
@@ -758,6 +786,16 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndGroup();
     
     ImGui::End();
+    
+    if (is_playing)
+    {
+        timer += ImGui::GetIO().DeltaTime;
+        if (timer >= 1.f / sample_frame_rate)
+        {
+            timer = 0.f;
+            selected_index_ = (selected_index_ + 1) % frame_indexes_.size();
+        }
+    }
 }
 
 RTTR_REGISTRATION

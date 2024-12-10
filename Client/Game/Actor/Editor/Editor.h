@@ -47,6 +47,8 @@ private:
     int selected_filter_mode_;
     int ppu_;
     int selected_frame_;
+    int selected_index_;
+    int selected_animation_;
 
     float left_;
     float top_;
