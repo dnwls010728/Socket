@@ -720,13 +720,11 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndGroup();
 
     ImGui::Text("Animations");
-    ImGui::BeginDisabled(is_playing);
     bool is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
     }, &animations_, animations_.size(), 4);
-    ImGui::EndDisabled();
 
     if (is_selection_changed)
     {
