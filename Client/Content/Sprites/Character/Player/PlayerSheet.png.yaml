@@ -394,3 +394,20 @@ frames:
     pivot:
       x: 0.5
       y: 0
+Animations:
+  - name: Idle
+    sample_frame_rate: 8
+    frame_indexes:
+      - 0
+      - 1
+  - name: Walk
+    sample_frame_rate: 8
+    frame_indexes:
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15

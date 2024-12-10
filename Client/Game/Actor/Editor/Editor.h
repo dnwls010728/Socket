@@ -17,7 +17,7 @@ protected:
 private:
     struct FrameData
     {
-        std::string name;
+        std::string index;
         
         float x;
         float y;
@@ -25,6 +25,13 @@ private:
         float height;
         float pivot_x;
         float pivot_y;
+    };
+
+    struct AnimationData
+    {
+        std::string name;
+        float sample_frame_rate;
+        std::vector<Type::uint32> frame_indexes;
     };
 
     void OpenTextureSettings(bool* is_open);
@@ -52,6 +59,7 @@ private:
     std::unique_ptr<Texture> loaded_texture_;
 
     std::vector<FrameData> frames_;
-    std::vector<FrameData> animation_frames_;
+    std::vector<std::string> frame_indexes_;
+    std::vector<AnimationData> animations_;
     
 };

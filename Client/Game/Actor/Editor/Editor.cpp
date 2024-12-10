@@ -28,7 +28,8 @@ Editor::Editor(const std::wstring& kName) :
     file_path_(L""),
     loaded_texture_(nullptr),
     frames_(),
-    animation_frames_()
+    frame_indexes_(),
+    animations_()
 {
 }
 
@@ -107,7 +108,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                 selected_filter_mode_ = node["filter_mode"].as<int>();
                                 ppu_ = node["ppu"].as<int>();
 
-                                if (node["frames"])
+                                if (node["frames"].IsSequence())
                                 {
                                     int i = 0;
                                     
@@ -115,7 +116,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                     for (const YAML::Node& frame : node["frames"])
                                     {
                                         FrameData data;
-                                        data.name = std::to_string(i++);
+                                        data.index = std::to_string(i++);
                                         data.x = frame["rect"]["x"].as<float>();
                                         data.y = frame["rect"]["y"].as<float>();
                                         data.width = frame["rect"]["width"].as<float>();
@@ -124,6 +125,24 @@ void Editor::OpenTextureSettings(bool* is_open)
                                         data.pivot_y = frame["pivot"]["y"].as<float>();
                                         
                                         frames_.push_back(data);
+                                    }
+                                }
+
+                                if (node["Animations"].IsSequence())
+                                {
+                                    animations_.clear();
+                                    for (const YAML::Node& animation : node["Animations"])
+                                    {
+                                        AnimationData data;
+                                        data.name = animation["name"].as<std::string>();
+                                        data.sample_frame_rate = animation["sample_frame_rate"].as<float>();
+                                        
+                                        for (const YAML::Node& index : animation["frame_indexes"])
+                                        {
+                                            data.frame_indexes.push_back(index.as<Type::uint32>());
+                                        }
+
+                                        animations_.push_back(data);
                                     }
                                 }
                             }
@@ -183,6 +202,27 @@ void Editor::OpenTextureSettings(bool* is_open)
             }
 
             emitter << YAML::EndSeq;
+        
+            emitter << YAML::Key << "Animations";
+            emitter << YAML::Value << YAML::BeginSeq;
+            for (const AnimationData& animation : animations_)
+            {
+                emitter << YAML::BeginMap;
+                    emitter << YAML::Key << "name";
+                    emitter << YAML::Value << animation.name;
+                    emitter << YAML::Key << "sample_frame_rate";
+                    emitter << YAML::Value << animation.sample_frame_rate;
+                    emitter << YAML::Key << "frame_indexes";
+                    emitter << YAML::Value << YAML::BeginSeq;
+                    for (Type::uint32 index : animation.frame_indexes)
+                    {
+                        emitter << index;
+                    }
+                    emitter << YAML::EndSeq;
+                emitter << YAML::EndMap;
+            }
+        
+            emitter << YAML::EndSeq;
         emitter << YAML::EndMap;
 
         file << emitter.c_str();
@@ -206,7 +246,7 @@ void Editor::OpenTextureSettings(bool* is_open)
         bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
         {
             std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
-            return frames->at(index).name.c_str();
+            return frames->at(index).index.c_str();
         }, &frames_, frames_.size(), 4);
 
         if (is_selection_changed)
@@ -223,7 +263,7 @@ void Editor::OpenTextureSettings(bool* is_open)
         if (ImGui::Button("Add"))
         {
             FrameData frame;
-            frame.name = std::to_string(frames_.size());
+            frame.index = std::to_string(frames_.size());
             frame.x = 0.f;
             frame.y = 0.f;
             frame.width = 1.f;
@@ -368,7 +408,7 @@ void Editor::OpenTextureEditor(bool* is_open)
                 for (int x = 0; x < grid[0]; ++x)
                 {
                     FrameData frame;
-                    frame.name = std::to_string(index++);
+                    frame.index = std::to_string(index++);
                     frame.x = (x * tile_size_x) / width;
                     frame.y = (y * tile_size_y) / height;
                     frame.width = tile_size_x / width;
@@ -504,7 +544,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     static int sample_frame_rate = 60;
-    static int selected_item = 0;
+    static int selected_index = 0;
+    static int selected_animation = 0;
     static int scale = 1.f;
 
     static bool is_playing = false;
@@ -514,7 +555,19 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     static float x = 0.f;
     static float y = 0.f;
 
-    ImGui::InputInt("Sample Frame Rate", &sample_frame_rate);
+    static char animation_name[256] = "";
+
+    ImGui::Text("Sample Frame Rate");
+    ImGui::InputInt("##Sample Frame Rate", &sample_frame_rate);
+    ImGui::SameLine();
+    ImGui::BeginDisabled(frame_indexes_.empty());
+    if (ImGui::Button(is_playing ? "Pause" : "Play"))
+    {
+        is_playing = !is_playing;
+        timer = 0.f;
+    }
+    
+    ImGui::EndDisabled();
 
     ImVec2 start_position = ImGui::GetCursorScreenPos();
     if (ImGui::BeginChild("Sprite Animator", {300.f, 300.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
@@ -522,12 +575,14 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         ImVec2 cursor_center = {start_position.x + 150.f + x, start_position.y + 150.f + y};
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         
-        if (loaded_texture_ && !animation_frames_.empty())
+        if (loaded_texture_ && !frame_indexes_.empty())
         {
-            float frame_x = animation_frames_[selected_item].x;
-            float frame_y = animation_frames_[selected_item].y;
-            float frame_width = animation_frames_[selected_item].width;
-            float frame_height = animation_frames_[selected_item].height;
+            Type::uint32 index = std::stoi(frame_indexes_[selected_index]);
+            
+            float frame_x = frames_[index].x;
+            float frame_y = frames_[index].y;
+            float frame_width = frames_[index].width;
+            float frame_height = frames_[index].height;
             
             ImVec2 uv0 = {frame_x, frame_y};
             ImVec2 uv1 = {frame_x + frame_width, frame_y + frame_height};
@@ -538,8 +593,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             width *= scale;
             height *= scale;
 
-            float pivot_x = width * animation_frames_[selected_item].pivot_x;
-            float pivot_y = height * (1.f - animation_frames_[selected_item].pivot_y);
+            float pivot_x = width * frames_[index].pivot_x;
+            float pivot_y = height * (1.f - frames_[index].pivot_y);
 
             ImVec2 center_position = {150.f + x, 150.f + y};
             ImVec2 pivot_position = {center_position.x - pivot_x, center_position.y - pivot_y};
@@ -577,43 +632,37 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::SameLine();
     
     ImGui::BeginGroup();
-    ImGui::Text("Animation Frames");
+    ImGui::Text("Frame Indexes");
     
     ImGui::SetNextItemWidth(100.f);
-    bool is_selection_changed = ImGui::ListBox("##Animation Frames", &selected_item, [](void* user_data, int index)
+    ImGui::ListBox("##Frame Indexes", &selected_index, [](void* user_data, int index)
     {
-        std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
-        return frames->at(index).name.c_str();
-    }, &animation_frames_, animation_frames_.size(), 4);
+        std::vector<std::string>* frame_indexes = static_cast<std::vector<std::string>*>(user_data);
+        return frame_indexes->at(index).c_str();
+    }, &frame_indexes_, frame_indexes_.size(), 4);
 
     ImGui::BeginDisabled(is_playing);
-    if (ImGui::Button("Add"))
+    if (ImGui::Button("Add##Frame Index"))
     {
-        animation_frames_.push_back(frames_[selected_frame_]);
+        frame_indexes_.push_back(std::to_string(selected_frame_));
     }
 
     ImGui::EndDisabled();
     ImGui::SameLine();
 
     ImGui::BeginDisabled(is_playing);
-    if (ImGui::Button("Remove"))
+    if (ImGui::Button("Remove##Frame Index"))
     {
-        if (!animation_frames_.empty())
+        if (!frame_indexes_.empty())
         {
-            animation_frames_.erase(animation_frames_.begin() + selected_item);
-            if (selected_item >= animation_frames_.size()) selected_item = animation_frames_.size() - 1;
-            if (selected_item < 0) selected_item = 0;
+            frame_indexes_.erase(frame_indexes_.begin() + selected_index);
+            if (selected_index >= frame_indexes_.size()) selected_index = frame_indexes_.size() - 1;
+            if (selected_index < 0) selected_index = 0;
         }
     }
 
     ImGui::EndDisabled();
     ImGui::EndGroup();
-
-    if (ImGui::Button(is_playing ? "Pause" : "Play"))
-    {
-        is_playing = !is_playing;
-        timer = 0.f;
-    }
 
     if (is_playing)
     {
@@ -621,9 +670,72 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         if (timer >= 1.f / sample_frame_rate)
         {
             timer = 0.f;
-            selected_item = (selected_item + 1) % animation_frames_.size();
+            selected_index = (selected_index + 1) % frame_indexes_.size();
         }
     }
+
+    ImGui::Text("Animations");
+    ImGui::BeginDisabled(is_playing);
+    bool is_selection_changed = ImGui::ListBox("##Animations", &selected_animation, [](void* user_data, int index)
+    {
+        std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
+        return animations->at(index).name.c_str();
+    }, &animations_, animations_.size(), 4);
+    ImGui::EndDisabled();
+
+    if (is_selection_changed)
+    {
+        sample_frame_rate = animations_[selected_animation].sample_frame_rate;
+        
+        frame_indexes_.clear();
+        for (const auto& index : animations_[selected_animation].frame_indexes)
+        {
+            frame_indexes_.push_back(std::to_string(index));
+        }
+    }
+
+    ImGui::SameLine();
+    ImGui::BeginGroup();
+    ImGui::Text("Animation Name");
+    
+    ImGui::BeginDisabled(is_playing);
+    ImGui::SetNextItemWidth(100.f);
+    ImGui::InputText("##Animation Name", animation_name, IM_ARRAYSIZE(animation_name));
+    ImGui::EndDisabled();
+    
+    ImGui::BeginDisabled(is_playing);
+    if (ImGui::Button("Add##Animation"))
+    {
+        selected_index = 0;
+        
+        AnimationData animation;
+        animation.name = animation_name;
+        animation.sample_frame_rate = sample_frame_rate;
+
+        for (const std::string& index : frame_indexes_)
+        {
+            animation.frame_indexes.push_back(std::stoi(index));
+        }
+
+        animations_.push_back(animation);
+    }
+
+    ImGui::EndDisabled();
+    ImGui::SameLine();
+
+    ImGui::BeginDisabled(is_playing);
+    if (ImGui::Button("Remove##Animation"))
+    {
+        if (!animations_.empty())
+        {
+            animations_.erase(animations_.begin() + selected_animation);
+            if (selected_animation >= animations_.size()) selected_animation = animations_.size() - 1;
+            if (selected_animation < 0) selected_animation = 0;
+        }
+    }
+    
+    ImGui::EndDisabled();
+    ImGui::EndGroup();
     
     ImGui::End();
 }
