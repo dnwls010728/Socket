@@ -13,6 +13,7 @@ Editor::Editor(const std::wstring& kName) :
     Actor(kName),
     show_texture_settings_(true),
     show_texture_editor_(false),
+    show_sprite_animator_(false),
     selected_wrap_mode_(0),
     selected_filter_mode_(0),
     ppu_(256),
@@ -39,6 +40,8 @@ void Editor::Tick(float delta_time)
         if (ImGui::BeginMenu("View"))
         {
             ImGui::MenuItem("Texture Settings", nullptr, &show_texture_settings_);
+            ImGui::MenuItem("Texture Editor", nullptr, &show_texture_editor_);
+            ImGui::MenuItem("Sprite Animator", nullptr, &show_sprite_animator_);
 
             ImGui::EndMenu();
         }
@@ -48,6 +51,7 @@ void Editor::Tick(float delta_time)
 
     if (show_texture_settings_) OpenTextureSettings(&show_texture_settings_);
     if (show_texture_editor_) OpenTextureEditor(&show_texture_editor_);
+    if (show_sprite_animator_) OpenSpriteAnimator(&show_sprite_animator_);
 }
 
 void Editor::OpenTextureSettings(bool* is_open)
@@ -191,11 +195,10 @@ void Editor::OpenTextureSettings(bool* is_open)
     if (selected_texture_type == 0)
     {
         ImGui::InputInt("PPU", &ppu_);
-    
-        if (ImGui::Button("Texture Editor"))
-        {
-            show_texture_editor_ = true;
-        }
+
+        if (ImGui::Button("Texture Editor")) show_texture_editor_ = true;
+        ImGui::SameLine();
+        if (ImGui::Button("Sprite Animator")) show_sprite_animator_ = true;
 
         bool is_selection_changed = ImGui::ListBox("Frames", &selected_frame_, [](void* user_data, int index)
         {
@@ -346,29 +349,32 @@ void Editor::OpenTextureEditor(bool* is_open)
     
     if (ImGui::Button("Slice"))
     {
-        int width = loaded_texture_->GetWidth();
-        int height = loaded_texture_->GetHeight();
-        
-        float tile_size_x = width / grid[0];
-        float tile_size_y = height / grid[1];
-
-        frames_.clear();
-        int index = 0;
-        
-        for (int y = 0; y < grid[1]; ++y)
+        if (grid[0] > 0 && grid[1] > 0)
         {
-            for (int x = 0; x < grid[0]; ++x)
-            {
-                FrameData frame;
-                frame.name = std::to_string(index++);
-                frame.x = (x * tile_size_x) / width;
-                frame.y = (y * tile_size_y) / height;
-                frame.width = tile_size_x / width;
-                frame.height = tile_size_y / height;
-                frame.pivot_x = auto_pivot_x;
-                frame.pivot_y = auto_pivot_y;
+            int width = loaded_texture_->GetWidth();
+            int height = loaded_texture_->GetHeight();
+        
+            float tile_size_x = width / grid[0];
+            float tile_size_y = height / grid[1];
 
-                frames_.push_back(frame);
+            frames_.clear();
+            int index = 0;
+        
+            for (int y = 0; y < grid[1]; ++y)
+            {
+                for (int x = 0; x < grid[0]; ++x)
+                {
+                    FrameData frame;
+                    frame.name = std::to_string(index++);
+                    frame.x = (x * tile_size_x) / width;
+                    frame.y = (y * tile_size_y) / height;
+                    frame.width = tile_size_x / width;
+                    frame.height = tile_size_y / height;
+                    frame.pivot_x = auto_pivot_x;
+                    frame.pivot_y = auto_pivot_y;
+
+                    frames_.push_back(frame);
+                }
             }
         }
     }
@@ -484,6 +490,61 @@ void Editor::OpenTextureEditor(bool* is_open)
     }
 
     ImGui::End();
+}
+
+void Editor::OpenSpriteAnimator(bool* is_open)
+{
+    if (!ImGui::Begin("Sprite Animator", is_open))
+    {
+        ImGui::End();
+        return;
+    }
+
+    static int sample_frame_rate = 60;
+
+    ImGui::InputInt("Sample Frame Rate", &sample_frame_rate);
+
+    ImVec2 start_position = ImGui::GetCursorScreenPos();
+    if (ImGui::BeginChild("Sprite Animator", {300.f, 300.f}, true, ImGuiWindowFlags_HorizontalScrollbar))
+    {
+        ImVec2 cursor_center = {start_position.x + 150.f, start_position.y + 150.f};
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        
+        if (loaded_texture_ && !frames_.empty())
+        {
+            ImVec2 uv0 = {frames_[selected_frame_].x, frames_[selected_frame_].y};
+            ImVec2 uv1 = {frames_[selected_frame_].x + frames_[selected_frame_].width, frames_[selected_frame_].y + frames_[selected_frame_].height};
+
+            float width = loaded_texture_->GetWidth() * frames_[selected_frame_].width;
+            float height = loaded_texture_->GetHeight() * frames_[selected_frame_].height;
+
+            ImVec2 center_position = {150.f, 150.f};
+
+            float pivot_x = width * frames_[selected_frame_].pivot_x;
+            float pivot_y = height * (1.f - frames_[selected_frame_].pivot_y);
+
+            ImVec2 pivot_position = {center_position.x - pivot_x, center_position.y - pivot_y};
+
+            ImGui::SetCursorPos(pivot_position);
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
+        }
+
+        // XY 축
+        draw_list->AddLine(cursor_center, {cursor_center.x + 50.f, cursor_center.y}, IM_COL32(255, 0, 0, 255));
+        draw_list->AddLine(cursor_center, {cursor_center.x, cursor_center.y - 50.f}, IM_COL32(0, 255, 0, 255));
+    }
+
+    ImGui::EndChild();
+    ImGui::End();
+
+    static float timer = 0.f;
+    timer += ImGui::GetIO().DeltaTime;
+
+    if (timer >= 1.f / sample_frame_rate)
+    {
+        timer = 0.f;
+        selected_frame_ = (selected_frame_ + 1) % frames_.size();
+    }
 }
 
 RTTR_REGISTRATION

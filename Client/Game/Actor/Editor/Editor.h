@@ -29,9 +29,11 @@ private:
 
     void OpenTextureSettings(bool* is_open);
     void OpenTextureEditor(bool* is_open);
+    void OpenSpriteAnimator(bool* is_open);
 
     bool show_texture_settings_;
     bool show_texture_editor_;
+    bool show_sprite_animator_;
 
     int selected_wrap_mode_;
     int selected_filter_mode_;
