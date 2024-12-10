@@ -685,6 +685,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
     if (is_selection_changed)
     {
+        selected_index = 0;
         sample_frame_rate = animations_[selected_animation].sample_frame_rate;
         
         frame_indexes_.clear();
