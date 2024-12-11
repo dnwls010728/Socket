@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "Data/FileHelper.h"
 #include "imgui/imgui.h"
+#include "Math/Math.h"
 #include "Windows/DX/UITexture.h"
 #include "yaml-cpp/yaml.h"
 
@@ -629,8 +630,10 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             ImGui::Image(loaded_texture_->resource_view_.Get(), {width, height}, uv0, uv1);
         }
 
-        draw_list->AddLine(cursor_center, {cursor_center.x + 50.f, cursor_center.y}, IM_COL32(255, 0, 0, 255));
-        draw_list->AddLine(cursor_center, {cursor_center.x, cursor_center.y - 50.f}, IM_COL32(0, 255, 0, 255));
+        float length = Math::Clamp(10.f * scale, 10.f, 10.f * scale);
+        
+        draw_list->AddLine(cursor_center, {cursor_center.x + length, cursor_center.y}, IM_COL32(255, 0, 0, 255));
+        draw_list->AddLine(cursor_center, {cursor_center.x, cursor_center.y - length}, IM_COL32(0, 255, 0, 255));
     }
 
     ImGui::EndChild();
