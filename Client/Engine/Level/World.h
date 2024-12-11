@@ -97,6 +97,7 @@ private:
     PhysicsDebugDrawHelper debug_draw_helper_;
     
     Level* current_level_;
+    Level* persistent_level_;
     Level* pending_level_;
     
     std::shared_ptr<Level> levels_[static_cast<Type::uint64>(LevelType::kEnd)];
