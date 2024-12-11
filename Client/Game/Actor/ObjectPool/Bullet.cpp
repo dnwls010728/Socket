@@ -23,10 +23,10 @@ Bullet::Bullet(const std::wstring& kName) :
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
 
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
-    sprite_->SetPPU(256);
+    // sprite_->SetPPU(256);
 
-    sprite_->Split(1, 1, Sprite::kCenter);
-    sprite_->SetFilterMode(FilterMode::kBilinear);
+    // sprite_->Split(1, 1, Sprite::kCenter);
+    // sprite_->SetFilterMode(FilterMode::kBilinear);
 
     renderer_->SetSprite(sprite_);
 

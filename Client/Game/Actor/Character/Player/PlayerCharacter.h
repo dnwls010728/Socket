@@ -26,9 +26,6 @@ private:
     
     class Sprite* sprite_;
     class StateMachine* state_machine_;
-
-    // 임시
-    class AnimatorComponent* animator_;
     
     int horizontal_axis_;
     

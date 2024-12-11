@@ -18,12 +18,8 @@ public:
     virtual ~Sprite() override = default;
 
     virtual bool Load(const std::wstring& kPath) override;
-    
-    void Split(Type::uint32 cols, Type::uint32 rows, Math::Vector2 pivot);
 
-    FORCEINLINE void SetPPU(Type::uint32 ppu) { ppu_ = ppu; }
-    
-    FORCEINLINE const std::vector<SpriteFrame>& GetFrames() const { return frames_; }
+    FORCEINLINE const std::map<std::wstring, SpriteFrame>& GetFrames() const { return frames_; }
     FORCEINLINE Type::uint32 GetPPU() const { return ppu_; }
 
     static const Math::Vector2 kCenter;
@@ -37,8 +33,8 @@ public:
     static const Math::Vector2 kBottomRight;
 
 private:
-    std::vector<SpriteFrame> frames_;
-
+    std::map<std::wstring, SpriteFrame> frames_;
+    
     Type::uint32 ppu_;
     
 };

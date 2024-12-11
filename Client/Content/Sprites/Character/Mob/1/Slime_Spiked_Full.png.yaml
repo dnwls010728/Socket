@@ -2,7 +2,8 @@ wrap_mode: 1
 filter_mode: 0
 ppu: 32
 frames:
-  - rect:
+  - name: Slime_Spiked_Full_0
+    rect:
       x: 0
       y: 0
       width: 0.166666672
@@ -10,7 +11,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_1
+    rect:
       x: 0.166666672
       y: 0
       width: 0.166666672
@@ -18,7 +20,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_2
+    rect:
       x: 0.333333343
       y: 0
       width: 0.166666672
@@ -26,7 +29,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_3
+    rect:
       x: 0.5
       y: 0
       width: 0.166666672
@@ -34,7 +38,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_4
+    rect:
       x: 0.666666687
       y: 0
       width: 0.166666672
@@ -42,7 +47,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_5
+    rect:
       x: 0.833333313
       y: 0
       width: 0.166666672
@@ -50,7 +56,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_6
+    rect:
       x: 0
       y: 0.200000003
       width: 0.166666672
@@ -58,7 +65,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_7
+    rect:
       x: 0.166666672
       y: 0.200000003
       width: 0.166666672
@@ -66,7 +74,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_8
+    rect:
       x: 0.333333343
       y: 0.200000003
       width: 0.166666672
@@ -74,7 +83,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_9
+    rect:
       x: 0.5
       y: 0.200000003
       width: 0.166666672
@@ -82,7 +92,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_10
+    rect:
       x: 0.666666687
       y: 0.200000003
       width: 0.166666672
@@ -90,7 +101,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_11
+    rect:
       x: 0.833333313
       y: 0.200000003
       width: 0.166666672
@@ -98,7 +110,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_12
+    rect:
       x: 0
       y: 0.400000006
       width: 0.166666672
@@ -106,7 +119,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_13
+    rect:
       x: 0.166666672
       y: 0.400000006
       width: 0.166666672
@@ -114,7 +128,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_14
+    rect:
       x: 0.333333343
       y: 0.400000006
       width: 0.166666672
@@ -122,7 +137,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_15
+    rect:
       x: 0.5
       y: 0.400000006
       width: 0.166666672
@@ -130,7 +146,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_16
+    rect:
       x: 0.666666687
       y: 0.400000006
       width: 0.166666672
@@ -138,7 +155,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_17
+    rect:
       x: 0.833333313
       y: 0.400000006
       width: 0.166666672
@@ -146,7 +164,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_18
+    rect:
       x: 0
       y: 0.600000024
       width: 0.166666672
@@ -154,7 +173,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_19
+    rect:
       x: 0.166666672
       y: 0.600000024
       width: 0.166666672
@@ -162,7 +182,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_20
+    rect:
       x: 0.333333343
       y: 0.600000024
       width: 0.166666672
@@ -170,7 +191,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_21
+    rect:
       x: 0.5
       y: 0.600000024
       width: 0.166666672
@@ -178,7 +200,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_22
+    rect:
       x: 0.666666687
       y: 0.600000024
       width: 0.166666672
@@ -186,7 +209,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_23
+    rect:
       x: 0.833333313
       y: 0.600000024
       width: 0.166666672
@@ -194,7 +218,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_24
+    rect:
       x: 0
       y: 0.800000012
       width: 0.166666672
@@ -202,7 +227,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_25
+    rect:
       x: 0.166666672
       y: 0.800000012
       width: 0.166666672
@@ -210,7 +236,8 @@ frames:
     pivot:
       x: 0.5
       y: 0.25
-  - rect:
+  - name: Slime_Spiked_Full_26
+    rect:
       x: 0.333333343
       y: 0.800000012
       width: 0.166666672
@@ -223,7 +250,7 @@ Animations:
     sample_frame_rate: 8
     repeat: true
     frame_indexes:
-      - 0
-      - 1
-      - 2
-      - 3
+      - Slime_Spiked_Full_0
+      - Slime_Spiked_Full_1
+      - Slime_Spiked_Full_2
+      - Slime_Spiked_Full_3

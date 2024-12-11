@@ -34,6 +34,7 @@ Editor::Editor(const std::wstring& kName) :
     frame_indexes_(),
     animations_()
 {
+    std::strcpy(frame_name_, "");
 }
 
 void Editor::Tick(float delta_time)
@@ -141,7 +142,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                     for (const YAML::Node& frame : node["frames"])
                                     {
                                         FrameData data;
-                                        data.index = std::to_string(i++);
+                                        data.name = frame["name"].as<std::string>();
                                         data.x = frame["rect"]["x"].as<float>();
                                         data.y = frame["rect"]["y"].as<float>();
                                         data.width = frame["rect"]["width"].as<float>();
@@ -165,7 +166,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                         
                                         for (const YAML::Node& index : animation["frame_indexes"])
                                         {
-                                            data.frame_indexes.push_back(index.as<Type::uint32>());
+                                            data.frame_indexes.push_back(index.as<std::string>());
                                         }
 
                                         animations_.push_back(data);
@@ -204,6 +205,8 @@ void Editor::OpenTextureSettings(bool* is_open)
             for (const FrameData& frame : frames_)
             {
                 emitter << YAML::BeginMap;
+                    emitter << YAML::Key << "name";
+                    emitter << YAML::Value << frame.name;
                     emitter << YAML::Key << "rect";
                     emitter << YAML::Value;
                     emitter << YAML::BeginMap;
@@ -242,7 +245,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                     emitter << YAML::Value << animation.is_repeat;
                     emitter << YAML::Key << "frame_indexes";
                     emitter << YAML::Value << YAML::BeginSeq;
-                    for (Type::uint32 index : animation.frame_indexes)
+                    for (const auto& index : animation.frame_indexes)
                     {
                         emitter << index;
                     }
@@ -274,12 +277,14 @@ void Editor::OpenTextureSettings(bool* is_open)
         bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
         {
             std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
-            return frames->at(index).index.c_str();
+            return frames->at(index).name.c_str();
         }, &frames_, frames_.size(), 4);
 
         if (is_selection_changed)
         {
             FrameData& frame = frames_[selected_frame_];
+            std::strcpy(frame_name_, frame.name.c_str());
+            
             left_ = frame.x;
             top_ = frame.y;
             right_ = frame.x + frame.width;
@@ -291,7 +296,7 @@ void Editor::OpenTextureSettings(bool* is_open)
         if (ImGui::Button("Add"))
         {
             FrameData frame;
-            frame.index = std::to_string(frames_.size());
+            frame.name = "";
             frame.x = 0.f;
             frame.y = 0.f;
             frame.width = 1.f;
@@ -435,8 +440,11 @@ void Editor::OpenTextureEditor(bool* is_open)
             {
                 for (int x = 0; x < grid[0]; ++x)
                 {
+                    std::wstring filename = FileHelper::GetFilenameWithoutExtension(file_path_);
+                    std::string to_string = std::string(filename.begin(), filename.end());
+                    
                     FrameData frame;
-                    frame.index = std::to_string(index++);
+                    frame.name = to_string + "_" + std::to_string(index++);
                     frame.x = (x * tile_size_x) / width;
                     frame.y = (y * tile_size_y) / height;
                     frame.width = tile_size_x / width;
@@ -452,6 +460,12 @@ void Editor::OpenTextureEditor(bool* is_open)
 
     ImGui::Separator();
     ImGui::Text("Frame Settings");
+
+    if (ImGui::InputText("Name", frame_name_, IM_ARRAYSIZE(frame_name_)))
+    {
+        frames_[selected_frame_].name = frame_name_;
+    }
+    
     ImGui::SetNextItemWidth(50.f);
     if (ImGui::InputFloat("L", &left_))
     {
@@ -573,6 +587,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
     static int sample_frame_rate = 60;
     static int scale = 1.f;
+    static int current_frame = 0;
 
     static bool is_repeat = false;
     static bool is_playing = false;
@@ -604,12 +619,10 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         
         if (loaded_texture_ && !frame_indexes_.empty())
         {
-            Type::uint32 index = std::stoi(frame_indexes_[selected_index_]);
-            
-            float frame_x = frames_[index].x;
-            float frame_y = frames_[index].y;
-            float frame_width = frames_[index].width;
-            float frame_height = frames_[index].height;
+            float frame_x = frames_[current_frame].x;
+            float frame_y = frames_[current_frame].y;
+            float frame_width = frames_[current_frame].width;
+            float frame_height = frames_[current_frame].height;
             
             ImVec2 uv0 = {frame_x, frame_y};
             ImVec2 uv1 = {frame_x + frame_width, frame_y + frame_height};
@@ -620,8 +633,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             width *= scale;
             height *= scale;
 
-            float pivot_x = width * frames_[index].pivot_x;
-            float pivot_y = height * (1.f - frames_[index].pivot_y);
+            float pivot_x = width * frames_[current_frame].pivot_x;
+            float pivot_y = height * (1.f - frames_[current_frame].pivot_y);
 
             ImVec2 center_position = {150.f + x, 150.f + y};
             ImVec2 pivot_position = {center_position.x - pivot_x, center_position.y - pivot_y};
@@ -664,16 +677,26 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::Text("Frame Indexes");
     
     ImGui::SetNextItemWidth(100.f);
-    ImGui::ListBox("##Frame Indexes", &selected_index_, [](void* user_data, int index)
+    bool is_selection_changed = ImGui::ListBox("##Frame Indexes", &selected_index_, [](void* user_data, int index)
     {
         std::vector<std::string>* frame_indexes = static_cast<std::vector<std::string>*>(user_data);
         return frame_indexes->at(index).c_str();
     }, &frame_indexes_, frame_indexes_.size(), 4);
 
+    if (is_selection_changed)
+    {
+        const auto it = std::ranges::find_if(frames_, [this](const FrameData& frame)
+        {
+            return frame.name == frame_indexes_[selected_index_];
+        });
+
+        current_frame = std::distance(frames_.begin(), it);
+    }
+
     ImGui::BeginDisabled(is_playing);
     if (ImGui::Button("Add##Frame Index"))
     {
-        frame_indexes_.push_back(std::to_string(selected_frame_));
+        frame_indexes_.push_back(frames_[selected_frame_].name);
     }
 
     ImGui::EndDisabled();
@@ -723,7 +746,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndGroup();
 
     ImGui::Text("Animations");
-    bool is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
+    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -738,7 +761,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         frame_indexes_.clear();
         for (const auto& index : animations_[selected_animation_].frame_indexes)
         {
-            frame_indexes_.push_back(std::to_string(index));
+            frame_indexes_.push_back(index);
         }
     }
 
@@ -763,10 +786,12 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
         for (const std::string& index : frame_indexes_)
         {
-            animation.frame_indexes.push_back(std::stoi(index));
+            animation.frame_indexes.push_back(index);
         }
 
         animations_.push_back(animation);
+
+        std::strcpy(animation_name, "");
     }
 
     ImGui::EndDisabled();
@@ -795,6 +820,13 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         {
             timer = 0.f;
             selected_index_ = (selected_index_ + 1) % frame_indexes_.size();
+            
+            const auto it = std::ranges::find_if(frames_, [this](const FrameData& frame)
+            {
+                return frame.name == frame_indexes_[selected_index_];
+            });
+
+            current_frame = std::distance(frames_.begin(), it);
         }
     }
 }

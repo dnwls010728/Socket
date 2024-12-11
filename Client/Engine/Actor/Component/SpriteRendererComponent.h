@@ -14,12 +14,9 @@ public:
     virtual ~SpriteRendererComponent() override = default;
 
     void SetZOrder(int z_order);
+    void SetSprite(Sprite* sprite);
 
-    FORCEINLINE void SetSprite(Sprite* sprite) { sprite_ = sprite; }
     FORCEINLINE const Sprite* GetSprite() const { return sprite_; }
-
-    FORCEINLINE void SetFrameIndex(Type::uint32 frame_index) { frame_index_ = frame_index; }
-    FORCEINLINE Type::uint32 GetFrameIndex() const { return frame_index_; }
 
     FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
     FORCEINLINE bool GetFlipX() const { return flip_x_; }
@@ -45,7 +42,7 @@ private:
     std::shared_ptr<class Shape> shape_;
     Sprite* sprite_;
 
-    Type::uint32 frame_index_;
+    std::wstring current_frame_;
 
     bool flip_x_;
     bool flip_y_;

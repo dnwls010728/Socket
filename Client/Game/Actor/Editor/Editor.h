@@ -17,7 +17,7 @@ protected:
 private:
     struct FrameData
     {
-        std::string index;
+        std::string name;
         
         float x;
         float y;
@@ -32,7 +32,7 @@ private:
         std::string name;
         float sample_frame_rate;
         bool is_repeat;
-        std::vector<Type::uint32> frame_indexes;
+        std::vector<std::string> frame_indexes;
     };
 
     void OpenTextureSettings(bool* is_open);
@@ -49,6 +49,8 @@ private:
     int selected_frame_;
     int selected_index_;
     int selected_animation_;
+
+    char frame_name_[256];
 
     float left_;
     float top_;
