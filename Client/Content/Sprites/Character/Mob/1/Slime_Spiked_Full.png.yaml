@@ -246,11 +246,4 @@ frames:
       x: 0.5
       y: 0.25
 Animations:
-  - name: Idle
-    sample_frame_rate: 8
-    repeat: true
-    frame_indexes:
-      - Slime_Spiked_Full_0
-      - Slime_Spiked_Full_1
-      - Slime_Spiked_Full_2
-      - Slime_Spiked_Full_3
+  []

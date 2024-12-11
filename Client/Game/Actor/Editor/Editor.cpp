@@ -44,6 +44,16 @@ void Editor::Tick(float delta_time)
     ImGui::DockSpaceOverViewport(0);
     if (ImGui::BeginMainMenuBar())
     {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Exit"))
+            {
+                World::Get()->OpenLevel(LevelType::kMainMenu);
+            }
+
+            ImGui::EndMenu();
+        }
+        
         if (ImGui::BeginMenu("View"))
         {
             ImGui::MenuItem("Texture Settings", nullptr, &show_texture_settings_);
@@ -161,7 +171,7 @@ void Editor::OpenTextureSettings(bool* is_open)
                                     {
                                         AnimationData data;
                                         data.name = animation["name"].as<std::string>();
-                                        data.sample_frame_rate = animation["sample_frame_rate"].as<float>();
+                                        data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
                                         data.is_repeat = animation["repeat"].as<bool>();
                                         
                                         for (const YAML::Node& index : animation["frame_indexes"])

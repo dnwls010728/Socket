@@ -454,8 +454,16 @@ frames:
       y: 0
 Animations:
   - name: Idle
-    sample_frame_rate: 60
+    sample_frame_rate: 8
     repeat: true
     frame_indexes:
       - PlayerSheet_0
       - PlayerSheet_1
+  - name: Walk
+    sample_frame_rate: 8
+    repeat: true
+    frame_indexes:
+      - PlayerSheet_16
+      - PlayerSheet_17
+      - PlayerSheet_18
+      - PlayerSheet_19
