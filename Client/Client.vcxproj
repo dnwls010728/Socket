@@ -198,6 +198,8 @@
     <ClInclude Include="Engine\UI\Widget\Text.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
+    <ClInclude Include="Engine\Windows\DX\Material.h" />
+    <ClInclude Include="Engine\Windows\DX\Mesh.h" />
     <ClInclude Include="Engine\Windows\DX\Renderer.h" />
     <ClInclude Include="Engine\Windows\DX\Shaders.h" />
     <ClInclude Include="Engine\Windows\DX\Shape.h" />
@@ -522,6 +524,8 @@
     <ClCompile Include="Engine\UI\Widget\ScrollBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Text.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
+    <ClCompile Include="Engine\Windows\DX\Material.cpp" />
+    <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shaders.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shape.cpp" />
