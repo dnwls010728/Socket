@@ -647,7 +647,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         }
         else if (io.MouseWheel < 0)
         {
-            scale -= 1;
+            scale = Math::Max(1.f, scale - 1);
         }
         
         if (ImGui::IsMouseDragging(1))
