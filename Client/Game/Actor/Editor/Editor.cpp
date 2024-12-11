@@ -718,8 +718,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         if (!frame_indexes_.empty())
         {
             frame_indexes_.erase(frame_indexes_.begin() + selected_index_);
-            if (selected_index_ >= frame_indexes_.size()) selected_index_ = frame_indexes_.size() - 1;
-            if (selected_index_ < 0) selected_index_ = 0;
+            selected_index_ = Math::Clamp(selected_index_, 0, frame_indexes_.size() - 1);
         }
     }
 
