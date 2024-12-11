@@ -7,6 +7,7 @@
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Asset/AssetManager.h"
@@ -31,6 +32,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     state_machine_->ChangeState(idle_state_.get());
+
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
     
 }
 

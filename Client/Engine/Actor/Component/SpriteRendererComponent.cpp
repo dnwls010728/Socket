@@ -35,6 +35,11 @@ void SpriteRendererComponent::SetSprite(Sprite* sprite)
     current_frame_ = sprite_->GetFrames().begin()->first;
 }
 
+void SpriteRendererComponent::SetFrame(const std::wstring& kFrame)
+{
+    current_frame_ = kFrame;
+}
+
 void SpriteRendererComponent::InitializeComponent()
 {
     ActorComponent::InitializeComponent();

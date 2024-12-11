@@ -459,7 +459,7 @@ Animations:
     frame_indexes:
       - PlayerSheet_0
       - PlayerSheet_1
-  - name: Walk
+  - name: Temp
     sample_frame_rate: 8
     repeat: true
     frame_indexes:
@@ -467,3 +467,15 @@ Animations:
       - PlayerSheet_17
       - PlayerSheet_18
       - PlayerSheet_19
+  - name: Walk
+    sample_frame_rate: 8
+    repeat: true
+    frame_indexes:
+      - PlayerSheet_64
+      - PlayerSheet_65
+      - PlayerSheet_66
+      - PlayerSheet_67
+      - PlayerSheet_68
+      - PlayerSheet_69
+      - PlayerSheet_70
+      - PlayerSheet_71

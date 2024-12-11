@@ -15,8 +15,9 @@ public:
 
     void SetZOrder(int z_order);
     void SetSprite(Sprite* sprite);
+    void SetFrame(const std::wstring& kFrame);
 
-    FORCEINLINE const Sprite* GetSprite() const { return sprite_; }
+    FORCEINLINE Sprite* GetSprite() const { return sprite_; }
 
     FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
     FORCEINLINE bool GetFlipX() const { return flip_x_; }
@@ -37,8 +38,6 @@ protected:
     virtual void OnDisable() override;
 
 private:
-    friend class AnimatorComponent;
-    
     std::shared_ptr<class Shape> shape_;
     Sprite* sprite_;
 

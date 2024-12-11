@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Component/ActorComponent.h"
+#include "Windows/DX/Sprite.h"
 
 class AnimatorComponent : public ActorComponent
 {
@@ -11,6 +12,15 @@ public:
     virtual ~AnimatorComponent() override = default;
 
 protected:
+    virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
+
+private:
+    class SpriteRendererComponent* renderer_;
+    class Sprite* sprite_;
+
+    float timer_;
+
+    int current_index_;
     
 };
