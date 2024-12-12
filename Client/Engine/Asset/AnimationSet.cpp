@@ -1,14 +1,14 @@
 ﻿#include "pch.h"
-#include "AnimationClip.h"
+#include "AnimationSet.h"
 
 #include "Data/FileHelper.h"
 
-AnimationClip::AnimationClip() :
+AnimationSet::AnimationSet() :
     data_(YAML::Null)
 {
 }
 
-bool AnimationClip::Load(const std::wstring& kPath)
+bool AnimationSet::Load(const std::wstring& kPath)
 {
     Asset::Load(kPath);
     if (!FileHelper::IsFileExists(kPath)) return false;
@@ -30,7 +30,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<AnimationClip>("AnimationClip")
+    registration::class_<AnimationSet>("AnimationClip")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

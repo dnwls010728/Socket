@@ -10,12 +10,12 @@ Asset::Asset() :
 
 bool Asset::Load(const std::wstring& kPath)
 {
-    if (!FileHelper::IsFileExists(kPath + L".yaml")) return false;
+    if (!FileHelper::IsFileExists(kPath + L".meta")) return false;
 
     try
     {
         const std::string kToString = std::string(kPath.begin(), kPath.end());
-        meta_data_ = YAML::LoadFile(kToString + ".yaml");
+        meta_data_ = YAML::LoadFile(kToString + ".meta");
     }
     catch (const YAML::BadFile& e)
     {

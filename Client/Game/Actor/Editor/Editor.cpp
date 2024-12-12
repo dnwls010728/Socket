@@ -57,7 +57,7 @@ void Editor::Tick(float delta_time)
         if (ImGui::BeginMenu("View"))
         {
             ImGui::MenuItem("Texture Settings", nullptr, &show_texture_settings_);
-            ImGui::MenuItem("Texture Editor", nullptr, &show_texture_editor_);
+            // ImGui::MenuItem("Texture Editor", nullptr, &show_texture_editor_);
             ImGui::MenuItem("Sprite Animator", nullptr, &show_sprite_animator_);
 
             ImGui::EndMenu();
@@ -127,12 +127,12 @@ void Editor::OpenTextureSettings(bool* is_open)
                         }
                         else
                         {
-                            std::string file_path_str(file_path_.begin(), file_path_.end());
+                            std::string to_string(file_path_.begin(), file_path_.end());
                             YAML::Node node(YAML::NodeType::Null);
 
                             try
                             {
-                                node = YAML::LoadFile(file_path_str + ".yaml");
+                                node = YAML::LoadFile(to_string + ".meta");
                             }
                             catch (const YAML::BadFile& e)
                             {
@@ -146,8 +146,6 @@ void Editor::OpenTextureSettings(bool* is_open)
 
                                 if (node["frames"].IsSequence())
                                 {
-                                    int i = 0;
-                                    
                                     frames_.clear();
                                     for (const YAML::Node& frame : node["frames"])
                                     {
@@ -180,7 +178,7 @@ void Editor::OpenTextureSettings(bool* is_open)
     {
         if (!loaded_texture_) return;
 
-        std::wofstream file(file_path_ + L".yaml");
+        std::wofstream file(file_path_ + L".meta");
         YAML::Emitter emitter;
 
         emitter << YAML::BeginMap;
@@ -775,9 +773,74 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndDisabled();
     ImGui::EndGroup();
-    
-    if (ImGui::Button("Save Animations"))
+
+    if (ImGui::Button("Open Animation Set"))
     {
+        if (!loaded_texture_) return;
+        
+        std::string to_string(file_path_.begin(), file_path_.end());
+        YAML::Node node(YAML::NodeType::Null);
+
+        try
+        {
+            node = YAML::LoadFile(to_string + ".animset");
+        }
+        catch (const YAML::BadFile& e)
+        {
+        }
+
+        if (!node.IsNull())
+        {
+            animations_.clear();
+            frame_indexes_.clear();
+            
+            for (const YAML::Node& animation : node)
+            {
+                AnimationData data;
+                data.name = animation["name"].as<std::string>();
+                data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
+                data.is_repeat = animation["repeat"].as<bool>();
+
+                for (const YAML::Node& index : animation["frame_indexes"])
+                {
+                    data.frame_indexes.push_back(index.as<std::string>());
+                }
+
+                animations_.push_back(data);
+            }
+        }
+    }
+
+    ImGui::SameLine();
+    
+    if (ImGui::Button("Save Animation Set"))
+    {
+        if (!loaded_texture_) return;
+
+        std::wofstream file(file_path_ + L".animset");
+        YAML::Emitter emitter;
+
+        for (const AnimationData& animation : animations_)
+        {
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "name";
+            emitter << YAML::Value << animation.name;
+            emitter << YAML::Key << "sample_frame_rate";
+            emitter << YAML::Value << animation.sample_frame_rate;
+            emitter << YAML::Key << "repeat";
+            emitter << YAML::Value << animation.is_repeat;
+            emitter << YAML::Key << "frame_indexes";
+            emitter << YAML::Value << YAML::BeginSeq;
+            for (const auto& index : animation.frame_indexes)
+            {
+                emitter << index;
+            }
+            emitter << YAML::EndSeq;
+            emitter << YAML::EndMap;
+        }
+
+        file << emitter.c_str();
+        file.close();
     }
     
     ImGui::End();
