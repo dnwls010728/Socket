@@ -17,7 +17,6 @@ protected:
 
 private:
     class SpriteRendererComponent* renderer_;
-    class Sprite* sprite_;
 
     float timer_;
 

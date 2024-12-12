@@ -1,35 +1,36 @@
 ﻿#include "pch.h"
-#include "Asset.h"
+#include "AnimationClip.h"
 
 #include "Data/FileHelper.h"
 
-Asset::Asset() :
-    meta_data_(YAML::Null)
+AnimationClip::AnimationClip() :
+    data_(YAML::Null)
 {
 }
 
-bool Asset::Load(const std::wstring& kPath)
+bool AnimationClip::Load(const std::wstring& kPath)
 {
-    if (!FileHelper::IsFileExists(kPath + L".yaml")) return false;
+    Asset::Load(kPath);
+    if (!FileHelper::IsFileExists(kPath)) return false;
 
     try
     {
         const std::string kToString = std::string(kPath.begin(), kPath.end());
-        meta_data_ = YAML::LoadFile(kToString + ".yaml");
+        data_ = YAML::LoadFile(kToString);
     }
     catch (const YAML::BadFile& e)
     {
         return false;
     }
-    
+
     return true;
 }
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
-    
-    registration::class_<Asset>("Resource")
+
+    registration::class_<AnimationClip>("AnimationClip")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

@@ -163,25 +163,6 @@ void Editor::OpenTextureSettings(bool* is_open)
                                         frames_.push_back(data);
                                     }
                                 }
-
-                                if (node["Animations"].IsSequence())
-                                {
-                                    animations_.clear();
-                                    for (const YAML::Node& animation : node["Animations"])
-                                    {
-                                        AnimationData data;
-                                        data.name = animation["name"].as<std::string>();
-                                        data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
-                                        data.is_repeat = animation["repeat"].as<bool>();
-                                        
-                                        for (const YAML::Node& index : animation["frame_indexes"])
-                                        {
-                                            data.frame_indexes.push_back(index.as<std::string>());
-                                        }
-
-                                        animations_.push_back(data);
-                                    }
-                                }
                             }
                         }
 
@@ -195,7 +176,7 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Save Metadata"))
+    if (ImGui::Button("Save Texture"))
     {
         if (!loaded_texture_) return;
 
@@ -241,29 +222,6 @@ void Editor::OpenTextureSettings(bool* is_open)
             }
 
             emitter << YAML::EndSeq;
-        
-            emitter << YAML::Key << "Animations";
-            emitter << YAML::Value << YAML::BeginSeq;
-            for (const AnimationData& animation : animations_)
-            {
-                emitter << YAML::BeginMap;
-                    emitter << YAML::Key << "name";
-                    emitter << YAML::Value << animation.name;
-                    emitter << YAML::Key << "sample_frame_rate";
-                    emitter << YAML::Value << animation.sample_frame_rate;
-                    emitter << YAML::Key << "repeat";
-                    emitter << YAML::Value << animation.is_repeat;
-                    emitter << YAML::Key << "frame_indexes";
-                    emitter << YAML::Value << YAML::BeginSeq;
-                    for (const auto& index : animation.frame_indexes)
-                    {
-                        emitter << index;
-                    }
-                    emitter << YAML::EndSeq;
-                emitter << YAML::EndMap;
-            }
-        
-            emitter << YAML::EndSeq;
         emitter << YAML::EndMap;
 
         file << emitter.c_str();
@@ -280,8 +238,6 @@ void Editor::OpenTextureSettings(bool* is_open)
         ImGui::InputInt("PPU", &ppu_);
 
         if (ImGui::Button("Texture Editor")) show_texture_editor_ = true;
-        ImGui::SameLine();
-        if (ImGui::Button("Sprite Animator")) show_sprite_animator_ = true;
 
         ImGui::Text("Frames");
         bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
@@ -819,6 +775,10 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndDisabled();
     ImGui::EndGroup();
+    
+    if (ImGui::Button("Save Animations"))
+    {
+    }
     
     ImGui::End();
     
