@@ -793,20 +793,23 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         {
             animations_.clear();
             frame_indexes_.clear();
-            
-            for (const YAML::Node& animation : node)
+
+            if (node["animations"].IsSequence())
             {
-                AnimationData data;
-                data.name = animation["name"].as<std::string>();
-                data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
-                data.is_repeat = animation["repeat"].as<bool>();
-
-                for (const YAML::Node& index : animation["frame_indexes"])
+                for (const YAML::Node& animation : node["animations"])
                 {
-                    data.frame_indexes.push_back(index.as<std::string>());
-                }
+                    AnimationData data;
+                    data.name = animation["name"].as<std::string>();
+                    data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
+                    data.is_repeat = animation["repeat"].as<bool>();
 
-                animations_.push_back(data);
+                    for (const YAML::Node& index : animation["frame_indexes"])
+                    {
+                        data.frame_indexes.push_back(index.as<std::string>());
+                    }
+
+                    animations_.push_back(data);
+                }
             }
         }
     }
@@ -817,9 +820,17 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         if (!loaded_texture_) return;
 
+        std::wstring relative_path = FileHelper::GetRelativePath(file_path_);
+        std::string to_string(relative_path.begin(), relative_path.end());
+
         std::wofstream file(file_path_ + L".animset");
         YAML::Emitter emitter;
 
+        emitter << YAML::BeginMap;
+        emitter << YAML::Key << "target";
+        emitter << YAML::Value << to_string;
+        emitter << YAML::Key << "animations";
+        emitter << YAML::Value << YAML::BeginSeq;
         for (const AnimationData& animation : animations_)
         {
             emitter << YAML::BeginMap;
@@ -831,13 +842,15 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             emitter << YAML::Value << animation.is_repeat;
             emitter << YAML::Key << "frame_indexes";
             emitter << YAML::Value << YAML::BeginSeq;
-            for (const auto& index : animation.frame_indexes)
-            {
-                emitter << index;
-            }
+                for (const auto& index : animation.frame_indexes)
+                {
+                    emitter << index;
+                }
             emitter << YAML::EndSeq;
             emitter << YAML::EndMap;
         }
+        emitter << YAML::EndSeq;
+        emitter << YAML::EndMap;
 
         file << emitter.c_str();
         file.close();

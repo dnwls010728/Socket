@@ -1,6 +1,20 @@
-name: Idle
-sample_frame_rate: 8
-repeat: true
-frame_indexes:
-  - PlayerSheet_0
-  - PlayerSheet_1
+target: Sprites\Character\Player\PlayerSheet.png
+animations:
+  - name: Idle
+    sample_frame_rate: 8
+    repeat: true
+    frame_indexes:
+      - PlayerSheet_0
+      - PlayerSheet_1
+  - name: Walk
+    sample_frame_rate: 8
+    repeat: true
+    frame_indexes:
+      - PlayerSheet_24
+      - PlayerSheet_25
+      - PlayerSheet_26
+      - PlayerSheet_27
+      - PlayerSheet_28
+      - PlayerSheet_29
+      - PlayerSheet_30
+      - PlayerSheet_31
