@@ -47,27 +47,6 @@ bool Sprite::Load(const std::wstring& kPath)
                 frames_[to_wstring] = sprite_frame;
             }
         }
-
-        if (meta_data_["Animations"].IsSequence())
-        {
-            for (const auto& animation : meta_data_["Animations"])
-            {
-                SpriteAnimation sprite_animation;
-                sprite_animation.sample_frame_rate = animation["sample_frame_rate"].as<int>();
-                sprite_animation.is_repeat = animation["repeat"].as<bool>();
-                
-                for (const auto& frame_index : animation["frame_indexes"])
-                {
-                    std::string name = frame_index.as<std::string>();
-                    std::wstring to_wstring = std::wstring(name.begin(), name.end());
-                    sprite_animation.frame_indexes.push_back(to_wstring);
-                }
-
-                std::string name = animation["name"].as<std::string>();
-                std::wstring to_wstring = std::wstring(name.begin(), name.end());
-                animations_[to_wstring] = sprite_animation;
-            }
-        }
     }
     else
     {
@@ -92,6 +71,6 @@ RTTR_REGISTRATION
     registration::class_<Sprite>("Sprite")
         .constructor<>()
         (
-            policy::ctor::as_std_shared_ptr
+            policy::ctor::as_raw_ptr
         );
 }

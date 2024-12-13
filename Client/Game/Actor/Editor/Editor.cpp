@@ -57,7 +57,7 @@ void Editor::Tick(float delta_time)
         if (ImGui::BeginMenu("View"))
         {
             ImGui::MenuItem("Texture Settings", nullptr, &show_texture_settings_);
-            ImGui::MenuItem("Texture Editor", nullptr, &show_texture_editor_);
+            // ImGui::MenuItem("Texture Editor", nullptr, &show_texture_editor_);
             ImGui::MenuItem("Sprite Animator", nullptr, &show_sprite_animator_);
 
             ImGui::EndMenu();
@@ -127,12 +127,12 @@ void Editor::OpenTextureSettings(bool* is_open)
                         }
                         else
                         {
-                            std::string file_path_str(file_path_.begin(), file_path_.end());
+                            std::string to_string(file_path_.begin(), file_path_.end());
                             YAML::Node node(YAML::NodeType::Null);
 
                             try
                             {
-                                node = YAML::LoadFile(file_path_str + ".yaml");
+                                node = YAML::LoadFile(to_string + ".meta");
                             }
                             catch (const YAML::BadFile& e)
                             {
@@ -146,8 +146,6 @@ void Editor::OpenTextureSettings(bool* is_open)
 
                                 if (node["frames"].IsSequence())
                                 {
-                                    int i = 0;
-                                    
                                     frames_.clear();
                                     for (const YAML::Node& frame : node["frames"])
                                     {
@@ -163,25 +161,6 @@ void Editor::OpenTextureSettings(bool* is_open)
                                         frames_.push_back(data);
                                     }
                                 }
-
-                                if (node["Animations"].IsSequence())
-                                {
-                                    animations_.clear();
-                                    for (const YAML::Node& animation : node["Animations"])
-                                    {
-                                        AnimationData data;
-                                        data.name = animation["name"].as<std::string>();
-                                        data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
-                                        data.is_repeat = animation["repeat"].as<bool>();
-                                        
-                                        for (const YAML::Node& index : animation["frame_indexes"])
-                                        {
-                                            data.frame_indexes.push_back(index.as<std::string>());
-                                        }
-
-                                        animations_.push_back(data);
-                                    }
-                                }
                             }
                         }
 
@@ -195,11 +174,11 @@ void Editor::OpenTextureSettings(bool* is_open)
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Save Metadata"))
+    if (ImGui::Button("Save Texture"))
     {
         if (!loaded_texture_) return;
 
-        std::wofstream file(file_path_ + L".yaml");
+        std::wofstream file(file_path_ + L".meta");
         YAML::Emitter emitter;
 
         emitter << YAML::BeginMap;
@@ -241,29 +220,6 @@ void Editor::OpenTextureSettings(bool* is_open)
             }
 
             emitter << YAML::EndSeq;
-        
-            emitter << YAML::Key << "Animations";
-            emitter << YAML::Value << YAML::BeginSeq;
-            for (const AnimationData& animation : animations_)
-            {
-                emitter << YAML::BeginMap;
-                    emitter << YAML::Key << "name";
-                    emitter << YAML::Value << animation.name;
-                    emitter << YAML::Key << "sample_frame_rate";
-                    emitter << YAML::Value << animation.sample_frame_rate;
-                    emitter << YAML::Key << "repeat";
-                    emitter << YAML::Value << animation.is_repeat;
-                    emitter << YAML::Key << "frame_indexes";
-                    emitter << YAML::Value << YAML::BeginSeq;
-                    for (const auto& index : animation.frame_indexes)
-                    {
-                        emitter << index;
-                    }
-                    emitter << YAML::EndSeq;
-                emitter << YAML::EndMap;
-            }
-        
-            emitter << YAML::EndSeq;
         emitter << YAML::EndMap;
 
         file << emitter.c_str();
@@ -280,8 +236,6 @@ void Editor::OpenTextureSettings(bool* is_open)
         ImGui::InputInt("PPU", &ppu_);
 
         if (ImGui::Button("Texture Editor")) show_texture_editor_ = true;
-        ImGui::SameLine();
-        if (ImGui::Button("Sprite Animator")) show_sprite_animator_ = true;
 
         ImGui::Text("Frames");
         bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
@@ -364,6 +318,7 @@ void Editor::OpenTextureEditor(bool* is_open)
     static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom"};
 
     static int selected_pivot_mode = 0;
+    static float scale = 1.f;
 
     static float auto_pivot_x = .5f;
     static float auto_pivot_y = .5f;
@@ -521,66 +476,136 @@ void Editor::OpenTextureEditor(bool* is_open)
     
     if (loaded_texture_)
     {
-        float width = loaded_texture_->GetWidth();
-        float height = loaded_texture_->GetHeight();
+        float width = loaded_texture_->GetWidth() * scale;
+        float height = loaded_texture_->GetHeight() * scale;
+
+        ImVec2 space = ImGui::GetContentRegionAvail();
+        if (ImGui::BeginChild("Texture", {space.x, space.y}, true, ImGuiWindowFlags_HorizontalScrollbar))
+        {
+            ImVec2 image_position = ImGui::GetCursorScreenPos();
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {width * 1.f, height * 1.f});
+
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            draw_list->AddRect(image_position, {image_position.x + width, image_position.y + height}, IM_COL32(255, 255, 255, 255));
         
-        ImVec2 image_position = ImGui::GetCursorScreenPos();
-        ImGui::Image(loaded_texture_->resource_view_.Get(), {width * 1.f, height * 1.f});
-
-        ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        draw_list->AddRect(image_position, {image_position.x + width, image_position.y + height}, IM_COL32(255, 255, 255, 255));
-        
-        for (const FrameData& frame : frames_)
-        {
-            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
-            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
-
-            draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
-        }
-        
-        for (const FrameData& frame : frames_)
-        {
-            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
-            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
-
-            draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
-        }
-
-        if (!frames_.empty())
-        {
-            ImVec2 min = {image_position.x + frames_[selected_frame_].x * width, image_position.y + frames_[selected_frame_].y * height};
-            ImVec2 max = {min.x + frames_[selected_frame_].width * width, min.y + frames_[selected_frame_].height * height};
-
-            draw_list->AddRect(min, max, IM_COL32(255, 255, 255, 255), 0.f, 15, 3.f);
-        }
-
-        if (ImGui::IsItemHovered())
-        {
-            ImVec2 mouse_position = ImGui::GetMousePos();
-            ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
-
-            if (ImGui::IsMouseClicked(0))
+            for (const FrameData& frame : frames_)
             {
-                for (auto it = frames_.rbegin(); it != frames_.rend(); ++it)
-                {
-                    const FrameData& frame = *it;
-                    if (uv.x >= frame.x && uv.x <= frame.x + frame.width && uv.y >= frame.y && uv.y <= frame.y + frame.height)
-                    {
-                        selected_frame_ = std::distance(it, frames_.rend()) - 1;
-                        left_ = frame.x;
-                        top_ = frame.y;
-                        right_ = frame.x + frame.width;
-                        bottom_ = frame.y + frame.height;
-                        pivot_x_ = frame.pivot_x;
-                        pivot_y_ = frame.pivot_y;
-                        break;
-                    }
-                }
+                ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+                ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
+
+                draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
+            }
+        
+            for (const FrameData& frame : frames_)
+            {
+                ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+                ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
+
+                draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
             }
 
-            ImGui::BeginTooltip();
-            ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
-            ImGui::EndTooltip();
+            if (!frames_.empty())
+            {
+                ImVec2 min = {image_position.x + frames_[selected_frame_].x * width, image_position.y + frames_[selected_frame_].y * height};
+                ImVec2 max = {min.x + frames_[selected_frame_].width * width, min.y + frames_[selected_frame_].height * height};
+
+                draw_list->AddRect(min, max, IM_COL32(255, 255, 255, 255), 0.f, 15, 3.f);
+            }
+
+            if (ImGui::IsItemHovered())
+            {
+                ImVec2 mouse_position = ImGui::GetMousePos();
+                ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
+
+                if (ImGui::IsMouseClicked(0))
+                {
+                    for (auto it = frames_.rbegin(); it != frames_.rend(); ++it)
+                    {
+                        const FrameData& frame = *it;
+                        if (uv.x >= frame.x && uv.x <= frame.x + frame.width && uv.y >= frame.y && uv.y <= frame.y + frame.height)
+                        {
+                            selected_frame_ = std::distance(it, frames_.rend()) - 1;
+                            left_ = frame.x;
+                            top_ = frame.y;
+                            right_ = frame.x + frame.width;
+                            bottom_ = frame.y + frame.height;
+                            pivot_x_ = frame.pivot_x;
+                            pivot_y_ = frame.pivot_y;
+                            break;
+                        }
+                    }
+                }
+
+                static bool is_dragging = false;
+                static ImVec2 start_position = {0.f, 0.f};
+                static ImVec2 end_position = {0.f, 0.f};
+
+                if (ImGui::IsMouseDragging(0))
+                {
+                    if (!is_dragging)
+                    {
+                        start_position = mouse_position;
+                        is_dragging = true;
+                        
+                        start_position = {start_position.x - image_position.x, start_position.y - image_position.y};
+                        start_position = {start_position.x / width, start_position.y / height};
+                    }
+                    else
+                    {
+                        end_position = mouse_position;
+                        
+                        end_position = {end_position.x - image_position.x, end_position.y - image_position.y};
+                        end_position = {end_position.x / width, end_position.y / height};
+                    }
+                    
+                    draw_list->AddRect({image_position.x + start_position.x * width, image_position.y + start_position.y * height}, {image_position.x + end_position.x * width, image_position.y + end_position.y * height}, IM_COL32(255, 0, 0, 255));
+                }
+
+                if (ImGui::IsMouseReleased(0))
+                {
+                    if (is_dragging)
+                    {
+                        end_position = mouse_position;
+                        is_dragging = false;
+                        
+                        end_position = {end_position.x - image_position.x, end_position.y - image_position.y};
+                        end_position = {end_position.x / width, end_position.y / height};
+                        
+                        std::wstring filename = FileHelper::GetFilenameWithoutExtension(file_path_);
+                        std::string to_string = std::string(filename.begin(), filename.end());
+
+                        FrameData frame;
+                        frame.name = to_string + "_" + std::to_string(frames_.size());
+                        frame.x = Math::Min(start_position.x, end_position.x);
+                        frame.y = Math::Min(start_position.y, end_position.y);
+                        frame.width = Math::Abs(end_position.x - start_position.x);
+                        frame.height = Math::Abs(end_position.y - start_position.y);
+                        frame.pivot_x = .5f;
+                        frame.pivot_y = .5f;
+
+                        frames_.push_back(frame);
+                    }
+                }
+
+                ImGui::BeginTooltip();
+                ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
+                ImGui::EndTooltip();
+            }
+        }
+
+        ImGui::EndChild();
+
+        ImGuiIO& io = ImGui::GetIO();
+        if (ImGui::IsItemHovered())
+        {
+            if (io.MouseWheel > 0)
+            {
+                scale += .1f;
+            }
+            else if (io.MouseWheel < 0)
+            {
+                scale = Math::Max(0.f, scale - .1f);
+            }
         }
     }
 
@@ -596,10 +621,10 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     static int sample_frame_rate = 60;
-    static int scale = 1.f;
+    static float scale = 1.f;
     static int current_frame = 0;
 
-    static bool is_repeat = false;
+    static bool is_loop = false;
     static bool is_playing = false;
 
     static float timer = 0.f;
@@ -666,11 +691,11 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         if (io.MouseWheel > 0)
         {
-            scale += 1;
+            scale += .1f;
         }
         else if (io.MouseWheel < 0)
         {
-            scale = Math::Max(1.f, scale - 1);
+            scale = Math::Max(0.f, scale - .1f);
         }
         
         if (ImGui::IsMouseDragging(1))
@@ -725,7 +750,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndDisabled();
     
     ImGui::BeginDisabled(is_playing);
-    ImGui::Checkbox("Repeat", &is_repeat);
+    ImGui::Checkbox("Loop", &is_loop);
     ImGui::EndDisabled();
 
     ImGui::Separator();
@@ -754,8 +779,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndGroup();
 
-    ImGui::Text("Animations");
-    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
+    ImGui::Text("Animation Sequences");
+    is_selection_changed = ImGui::ListBox("##AnimationSequences", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -765,7 +790,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         selected_index_ = 0;
         sample_frame_rate = animations_[selected_animation_].sample_frame_rate;
-        is_repeat = animations_[selected_animation_].is_repeat;
+        is_loop = animations_[selected_animation_].is_loop;
         
         frame_indexes_.clear();
         for (const auto& index : animations_[selected_animation_].frame_indexes)
@@ -791,7 +816,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         AnimationData animation;
         animation.name = animation_name;
         animation.sample_frame_rate = sample_frame_rate;
-        animation.is_repeat = is_repeat;
+        animation.is_loop = is_loop;
 
         for (const std::string& index : frame_indexes_)
         {
@@ -819,6 +844,88 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndDisabled();
     ImGui::EndGroup();
+
+    if (ImGui::Button("Open Animation Set"))
+    {
+        if (!loaded_texture_) return;
+        
+        std::string to_string(file_path_.begin(), file_path_.end());
+        YAML::Node node(YAML::NodeType::Null);
+
+        try
+        {
+            node = YAML::LoadFile(to_string + ".animset");
+        }
+        catch (const YAML::BadFile& e)
+        {
+        }
+
+        if (!node.IsNull())
+        {
+            animations_.clear();
+            frame_indexes_.clear();
+
+            if (node["sequences"].IsSequence())
+            {
+                for (const YAML::Node& animation : node["sequences"])
+                {
+                    AnimationData data;
+                    data.name = animation["name"].as<std::string>();
+                    data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
+                    data.is_loop = animation["loop"].as<bool>();
+
+                    for (const YAML::Node& index : animation["frames"])
+                    {
+                        data.frame_indexes.push_back(index.as<std::string>());
+                    }
+
+                    animations_.push_back(data);
+                }
+            }
+        }
+    }
+
+    ImGui::SameLine();
+    
+    if (ImGui::Button("Save Animation Set"))
+    {
+        if (!loaded_texture_) return;
+
+        std::wstring relative_path = FileHelper::GetRelativePath(file_path_);
+        std::string to_string(relative_path.begin(), relative_path.end());
+
+        std::wofstream file(file_path_ + L".animset");
+        YAML::Emitter emitter;
+
+        emitter << YAML::BeginMap;
+        emitter << YAML::Key << "target";
+        emitter << YAML::Value << to_string;
+        emitter << YAML::Key << "sequences";
+        emitter << YAML::Value << YAML::BeginSeq;
+        for (const AnimationData& animation : animations_)
+        {
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "name";
+            emitter << YAML::Value << animation.name;
+            emitter << YAML::Key << "sample_frame_rate";
+            emitter << YAML::Value << animation.sample_frame_rate;
+            emitter << YAML::Key << "loop";
+            emitter << YAML::Value << animation.is_loop;
+            emitter << YAML::Key << "frames";
+            emitter << YAML::Value << YAML::BeginSeq;
+                for (const auto& index : animation.frame_indexes)
+                {
+                    emitter << index;
+                }
+            emitter << YAML::EndSeq;
+            emitter << YAML::EndMap;
+        }
+        emitter << YAML::EndSeq;
+        emitter << YAML::EndMap;
+
+        file << emitter.c_str();
+        file.close();
+    }
     
     ImGui::End();
     

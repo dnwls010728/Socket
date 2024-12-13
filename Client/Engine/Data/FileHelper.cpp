@@ -32,3 +32,13 @@ std::wstring FileHelper::GetPath(const std::wstring& kPath)
     fs::path path = kPath;
     return path.parent_path().wstring();
 }
+
+std::wstring FileHelper::GetRelativePath(const std::wstring& kPath)
+{
+    fs::path current_path = fs::current_path() / L"Content";
+    fs::path path = kPath;
+
+    path = fs::relative(path, current_path);
+
+    return path.wstring();
+}

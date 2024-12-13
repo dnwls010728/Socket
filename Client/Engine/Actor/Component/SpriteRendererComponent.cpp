@@ -29,26 +29,31 @@ void SpriteRendererComponent::SetZOrder(int z_order)
     }
 }
 
-void SpriteRendererComponent::SetSprite(Sprite* sprite)
+void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFrame)
 {
     sprite_ = sprite;
-    current_frame_ = sprite_->GetFrames().begin()->first;
-}
-
-void SpriteRendererComponent::SetFrame(const std::wstring& kFrame)
-{
     current_frame_ = kFrame;
+
+    if (HasBegunPlay())
+    {
+        shape_->SetVertices(sprite_->GetVertices());
+        shape_->SetIndices(sprite_->GetIndices());
+        shape_->SetTexture(sprite_);
+    }
 }
 
 void SpriteRendererComponent::InitializeComponent()
 {
     ActorComponent::InitializeComponent();
-    if (!sprite_) return;
 
     shape_ = std::make_shared<Shape>();
-    shape_->SetVertices(sprite_->GetVertices());
-    shape_->SetIndices(sprite_->GetIndices());
-    shape_->SetTexture(sprite_);
+    if (sprite_)
+    {
+        shape_->SetVertices(sprite_->GetVertices());
+        shape_->SetIndices(sprite_->GetIndices());
+        shape_->SetTexture(sprite_);
+    }
+    
     shape_->SetZOrder(z_order_);
     
     World::Get()->AddShape(shape_);

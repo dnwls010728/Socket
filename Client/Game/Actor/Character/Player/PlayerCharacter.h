@@ -4,6 +4,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Level/World.h"
 
+class AnimationSet;
 class PlayerIdle;
 
 class PlayerCharacter : public CharacterBase
@@ -35,5 +36,7 @@ private:
     float move_speed_;
 
     Math::Vector2 previous_position_;
+
+    AnimationSet* animation_set_;
     
 };

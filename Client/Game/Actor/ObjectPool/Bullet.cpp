@@ -28,7 +28,7 @@ Bullet::Bullet(const std::wstring& kName) :
     // sprite_->Split(1, 1, Sprite::kCenter);
     // sprite_->SetFilterMode(FilterMode::kBilinear);
 
-    renderer_->SetSprite(sprite_);
+    renderer_->SetSprite(sprite_, L"");
 
     GetTransform()->SetScale({.25f, .25f});
 }

@@ -14,8 +14,7 @@ public:
     virtual ~SpriteRendererComponent() override = default;
 
     void SetZOrder(int z_order);
-    void SetSprite(Sprite* sprite);
-    void SetFrame(const std::wstring& kFrame);
+    void SetSprite(Sprite* sprite, const std::wstring& kFrame);
 
     FORCEINLINE Sprite* GetSprite() const { return sprite_; }
 

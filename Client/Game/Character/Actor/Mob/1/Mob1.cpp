@@ -15,7 +15,7 @@ Mob1::Mob1(const std::wstring& kName) :
     MobBase(kName)
 {
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Character\\Mob\\1\\Slime_Spiked_Full.png");
-    if (sprite_) renderer_->SetSprite(sprite_);
+    if (sprite_) renderer_->SetSprite(sprite_, L"Slime_Spiked_Full_0");
     
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
