@@ -318,6 +318,7 @@ void Editor::OpenTextureEditor(bool* is_open)
     static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom"};
 
     static int selected_pivot_mode = 0;
+    static float scale = 1.f;
 
     static float auto_pivot_x = .5f;
     static float auto_pivot_y = .5f;
@@ -475,66 +476,136 @@ void Editor::OpenTextureEditor(bool* is_open)
     
     if (loaded_texture_)
     {
-        float width = loaded_texture_->GetWidth();
-        float height = loaded_texture_->GetHeight();
+        float width = loaded_texture_->GetWidth() * scale;
+        float height = loaded_texture_->GetHeight() * scale;
+
+        ImVec2 space = ImGui::GetContentRegionAvail();
+        if (ImGui::BeginChild("Texture", {space.x, space.y}, true, ImGuiWindowFlags_HorizontalScrollbar))
+        {
+            ImVec2 image_position = ImGui::GetCursorScreenPos();
+            ImGui::Image(loaded_texture_->resource_view_.Get(), {width * 1.f, height * 1.f});
+
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            draw_list->AddRect(image_position, {image_position.x + width, image_position.y + height}, IM_COL32(255, 255, 255, 255));
         
-        ImVec2 image_position = ImGui::GetCursorScreenPos();
-        ImGui::Image(loaded_texture_->resource_view_.Get(), {width * 1.f, height * 1.f});
-
-        ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        draw_list->AddRect(image_position, {image_position.x + width, image_position.y + height}, IM_COL32(255, 255, 255, 255));
-        
-        for (const FrameData& frame : frames_)
-        {
-            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
-            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
-
-            draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
-        }
-        
-        for (const FrameData& frame : frames_)
-        {
-            ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
-            ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
-
-            draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
-        }
-
-        if (!frames_.empty())
-        {
-            ImVec2 min = {image_position.x + frames_[selected_frame_].x * width, image_position.y + frames_[selected_frame_].y * height};
-            ImVec2 max = {min.x + frames_[selected_frame_].width * width, min.y + frames_[selected_frame_].height * height};
-
-            draw_list->AddRect(min, max, IM_COL32(255, 255, 255, 255), 0.f, 15, 3.f);
-        }
-
-        if (ImGui::IsItemHovered())
-        {
-            ImVec2 mouse_position = ImGui::GetMousePos();
-            ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
-
-            if (ImGui::IsMouseClicked(0))
+            for (const FrameData& frame : frames_)
             {
-                for (auto it = frames_.rbegin(); it != frames_.rend(); ++it)
-                {
-                    const FrameData& frame = *it;
-                    if (uv.x >= frame.x && uv.x <= frame.x + frame.width && uv.y >= frame.y && uv.y <= frame.y + frame.height)
-                    {
-                        selected_frame_ = std::distance(it, frames_.rend()) - 1;
-                        left_ = frame.x;
-                        top_ = frame.y;
-                        right_ = frame.x + frame.width;
-                        bottom_ = frame.y + frame.height;
-                        pivot_x_ = frame.pivot_x;
-                        pivot_y_ = frame.pivot_y;
-                        break;
-                    }
-                }
+                ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+                ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
+
+                draw_list->AddRect(min, max, IM_COL32(0, 255, 0, 255));
+            }
+        
+            for (const FrameData& frame : frames_)
+            {
+                ImVec2 min = {image_position.x + frame.x * width, image_position.y + frame.y * height};
+                ImVec2 max = {min.x + frame.width * width, min.y + frame.height * height};
+
+                draw_list->AddCircleFilled({min.x + frame.pivot_x * (max.x - min.x), min.y + (1 - frame.pivot_y) * (max.y - min.y)}, 3.f, IM_COL32(255, 0, 0, 255));
             }
 
-            ImGui::BeginTooltip();
-            ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
-            ImGui::EndTooltip();
+            if (!frames_.empty())
+            {
+                ImVec2 min = {image_position.x + frames_[selected_frame_].x * width, image_position.y + frames_[selected_frame_].y * height};
+                ImVec2 max = {min.x + frames_[selected_frame_].width * width, min.y + frames_[selected_frame_].height * height};
+
+                draw_list->AddRect(min, max, IM_COL32(255, 255, 255, 255), 0.f, 15, 3.f);
+            }
+
+            if (ImGui::IsItemHovered())
+            {
+                ImVec2 mouse_position = ImGui::GetMousePos();
+                ImVec2 uv = {(mouse_position.x - image_position.x) / width, (mouse_position.y - image_position.y) / height};
+
+                if (ImGui::IsMouseClicked(0))
+                {
+                    for (auto it = frames_.rbegin(); it != frames_.rend(); ++it)
+                    {
+                        const FrameData& frame = *it;
+                        if (uv.x >= frame.x && uv.x <= frame.x + frame.width && uv.y >= frame.y && uv.y <= frame.y + frame.height)
+                        {
+                            selected_frame_ = std::distance(it, frames_.rend()) - 1;
+                            left_ = frame.x;
+                            top_ = frame.y;
+                            right_ = frame.x + frame.width;
+                            bottom_ = frame.y + frame.height;
+                            pivot_x_ = frame.pivot_x;
+                            pivot_y_ = frame.pivot_y;
+                            break;
+                        }
+                    }
+                }
+
+                static bool is_dragging = false;
+                static ImVec2 start_position = {0.f, 0.f};
+                static ImVec2 end_position = {0.f, 0.f};
+
+                if (ImGui::IsMouseDragging(0))
+                {
+                    if (!is_dragging)
+                    {
+                        start_position = mouse_position;
+                        is_dragging = true;
+                        
+                        start_position = {start_position.x - image_position.x, start_position.y - image_position.y};
+                        start_position = {start_position.x / width, start_position.y / height};
+                    }
+                    else
+                    {
+                        end_position = mouse_position;
+                        
+                        end_position = {end_position.x - image_position.x, end_position.y - image_position.y};
+                        end_position = {end_position.x / width, end_position.y / height};
+                    }
+                    
+                    draw_list->AddRect({image_position.x + start_position.x * width, image_position.y + start_position.y * height}, {image_position.x + end_position.x * width, image_position.y + end_position.y * height}, IM_COL32(255, 0, 0, 255));
+                }
+
+                if (ImGui::IsMouseReleased(0))
+                {
+                    if (is_dragging)
+                    {
+                        end_position = mouse_position;
+                        is_dragging = false;
+                        
+                        end_position = {end_position.x - image_position.x, end_position.y - image_position.y};
+                        end_position = {end_position.x / width, end_position.y / height};
+                        
+                        std::wstring filename = FileHelper::GetFilenameWithoutExtension(file_path_);
+                        std::string to_string = std::string(filename.begin(), filename.end());
+
+                        FrameData frame;
+                        frame.name = to_string + "_" + std::to_string(frames_.size());
+                        frame.x = Math::Min(start_position.x, end_position.x);
+                        frame.y = Math::Min(start_position.y, end_position.y);
+                        frame.width = Math::Abs(end_position.x - start_position.x);
+                        frame.height = Math::Abs(end_position.y - start_position.y);
+                        frame.pivot_x = .5f;
+                        frame.pivot_y = .5f;
+
+                        frames_.push_back(frame);
+                    }
+                }
+
+                ImGui::BeginTooltip();
+                ImGui::Text("UV: (%.2f, %.2f)", uv.x, uv.y);
+                ImGui::EndTooltip();
+            }
+        }
+
+        ImGui::EndChild();
+
+        ImGuiIO& io = ImGui::GetIO();
+        if (ImGui::IsItemHovered())
+        {
+            if (io.MouseWheel > 0)
+            {
+                scale += .1f;
+            }
+            else if (io.MouseWheel < 0)
+            {
+                scale = Math::Max(0.f, scale - .1f);
+            }
         }
     }
 
@@ -550,7 +621,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     }
 
     static int sample_frame_rate = 60;
-    static int scale = 1.f;
+    static float scale = 1.f;
     static int current_frame = 0;
 
     static bool is_loop = false;
@@ -620,11 +691,11 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         if (io.MouseWheel > 0)
         {
-            scale += 1;
+            scale += .1f;
         }
         else if (io.MouseWheel < 0)
         {
-            scale = Math::Max(1.f, scale - 1);
+            scale = Math::Max(0.f, scale - .1f);
         }
         
         if (ImGui::IsMouseDragging(1))
