@@ -553,7 +553,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     static int scale = 1.f;
     static int current_frame = 0;
 
-    static bool is_repeat = false;
+    static bool is_loop = false;
     static bool is_playing = false;
 
     static float timer = 0.f;
@@ -679,7 +679,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndDisabled();
     
     ImGui::BeginDisabled(is_playing);
-    ImGui::Checkbox("Repeat", &is_repeat);
+    ImGui::Checkbox("Loop", &is_loop);
     ImGui::EndDisabled();
 
     ImGui::Separator();
@@ -708,8 +708,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndGroup();
 
-    ImGui::Text("Animations");
-    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
+    ImGui::Text("Animation Sequences");
+    is_selection_changed = ImGui::ListBox("##AnimationSequences", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -719,7 +719,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     {
         selected_index_ = 0;
         sample_frame_rate = animations_[selected_animation_].sample_frame_rate;
-        is_repeat = animations_[selected_animation_].is_repeat;
+        is_loop = animations_[selected_animation_].is_loop;
         
         frame_indexes_.clear();
         for (const auto& index : animations_[selected_animation_].frame_indexes)
@@ -745,7 +745,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         AnimationData animation;
         animation.name = animation_name;
         animation.sample_frame_rate = sample_frame_rate;
-        animation.is_repeat = is_repeat;
+        animation.is_loop = is_loop;
 
         for (const std::string& index : frame_indexes_)
         {
@@ -794,16 +794,16 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             animations_.clear();
             frame_indexes_.clear();
 
-            if (node["animations"].IsSequence())
+            if (node["sequences"].IsSequence())
             {
-                for (const YAML::Node& animation : node["animations"])
+                for (const YAML::Node& animation : node["sequences"])
                 {
                     AnimationData data;
                     data.name = animation["name"].as<std::string>();
                     data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
-                    data.is_repeat = animation["repeat"].as<bool>();
+                    data.is_loop = animation["loop"].as<bool>();
 
-                    for (const YAML::Node& index : animation["frame_indexes"])
+                    for (const YAML::Node& index : animation["frames"])
                     {
                         data.frame_indexes.push_back(index.as<std::string>());
                     }
@@ -829,7 +829,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         emitter << YAML::BeginMap;
         emitter << YAML::Key << "target";
         emitter << YAML::Value << to_string;
-        emitter << YAML::Key << "animations";
+        emitter << YAML::Key << "sequences";
         emitter << YAML::Value << YAML::BeginSeq;
         for (const AnimationData& animation : animations_)
         {
@@ -838,9 +838,9 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             emitter << YAML::Value << animation.name;
             emitter << YAML::Key << "sample_frame_rate";
             emitter << YAML::Value << animation.sample_frame_rate;
-            emitter << YAML::Key << "repeat";
-            emitter << YAML::Value << animation.is_repeat;
-            emitter << YAML::Key << "frame_indexes";
+            emitter << YAML::Key << "loop";
+            emitter << YAML::Value << animation.is_loop;
+            emitter << YAML::Key << "frames";
             emitter << YAML::Value << YAML::BeginSeq;
                 for (const auto& index : animation.frame_indexes)
                 {

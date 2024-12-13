@@ -19,9 +19,9 @@ public:
     Shape();
     virtual ~Shape() = default;
 
-    void SetPosition(Math::Vector2 position);
-    void SetScale(Math::Vector2 scale);
-    void SetPivot(Math::Vector2 pivot);
+    void SetPosition(const Math::Vector2& position);
+    void SetScale(const Math::Vector2& scale);
+    void SetPivot(const Math::Vector2& pivot);
     void SetRotation(float rotation);
 
     Bounds GetBounds() const;
@@ -41,10 +41,10 @@ public:
     FORCEINLINE const Math::Vector2& GetScale() const { return scale_; }
     FORCEINLINE const Math::Vector2& GetPivot() const { return pivot_; }
 
-    FORCEINLINE void SetUVOffset(Math::Vector2 uv_offset) { uv_offset_ = uv_offset; }
+    FORCEINLINE void SetUVOffset(const Math::Vector2& uv_offset) { uv_offset_ = uv_offset; }
     FORCEINLINE const Math::Vector2& GetUVOffset() const { return uv_offset_; }
 
-    FORCEINLINE void SetUVScale(Math::Vector2 uv_scale) { uv_scale_ = uv_scale; }
+    FORCEINLINE void SetUVScale(const Math::Vector2& uv_scale) { uv_scale_ = uv_scale; }
     FORCEINLINE const Math::Vector2& GetUVScale() const { return uv_scale_; }
 
     FORCEINLINE void SetColor(const Math::Color& kColor) { color_ = kColor; }

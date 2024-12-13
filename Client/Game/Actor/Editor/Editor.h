@@ -31,7 +31,7 @@ private:
     {
         std::string name;
         int sample_frame_rate;
-        bool is_repeat;
+        bool is_loop;
         std::vector<std::string> frame_indexes;
     };
 

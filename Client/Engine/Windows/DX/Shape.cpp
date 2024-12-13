@@ -21,19 +21,19 @@ Shape::Shape() :
     UpdateMatrixx();
 }
 
-void Shape::SetPosition(Math::Vector2 position)
+void Shape::SetPosition(const Math::Vector2& position)
 {
     position_ = position;
     UpdateMatrixx();
 }
 
-void Shape::SetScale(Math::Vector2 scale)
+void Shape::SetScale(const Math::Vector2& scale)
 {
     scale_ = scale;
     UpdateMatrixx();
 }
 
-void Shape::SetPivot(Math::Vector2 pivot)
+void Shape::SetPivot(const Math::Vector2& pivot)
 {
     pivot_ = pivot;
     UpdateMatrixx();

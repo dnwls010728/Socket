@@ -8,6 +8,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Asset/AnimationSet.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Asset/AssetManager.h"
@@ -21,9 +22,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     previous_position_(Math::Vector2::Zero())
 {
     SetLayer(ActorLayer::kPlayer);
-    
-    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Character\\Player\\PlayerSheet.png");
-    if (sprite_) renderer_->SetSprite(sprite_);
 
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
@@ -33,7 +31,11 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     state_machine_->ChangeState(idle_state_.get());
 
+    animation_set_ = AssetManager::Get()->Load<AnimationSet>(L"Sprites\\Character\\Player\\PlayerSheet.png.animset");
+    
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
+    animator_->SetAnimationSet(animation_set_);
+    animator_->PlayAnimation(L"Idle");
     
 }
 
@@ -75,6 +77,8 @@ void PlayerCharacter::Tick(float delta_time)
     {
         Keyboard* keyboard = Keyboard::Get();
         horizontal_axis_ = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+        if (horizontal_axis_ != 0) animator_->PlayAnimation(L"Walk");
+        else animator_->PlayAnimation(L"Idle");
         
         if (keyboard->GetKeyDown('C'))
         {

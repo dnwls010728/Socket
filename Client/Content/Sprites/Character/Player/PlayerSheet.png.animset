@@ -1,15 +1,15 @@
 target: Sprites\Character\Player\PlayerSheet.png
-animations:
+sequences:
   - name: Idle
     sample_frame_rate: 8
-    repeat: true
-    frame_indexes:
+    loop: true
+    frames:
       - PlayerSheet_0
       - PlayerSheet_1
   - name: Walk
     sample_frame_rate: 8
-    repeat: true
-    frame_indexes:
+    loop: true
+    frames:
       - PlayerSheet_24
       - PlayerSheet_25
       - PlayerSheet_26
