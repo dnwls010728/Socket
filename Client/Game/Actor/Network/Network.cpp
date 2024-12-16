@@ -34,9 +34,9 @@ void Network::Tick(float deltaTime)
             // playerPacketIds_.insert(player->GetPacketId());
 
             //다른 유저들 정보 가져오기
-            C_EnterOtherUserPacket pkt;
+            C_EnterOtherUser pkt;
             // pkt._userId = current_player_id;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUserPacket>(pkt, C_PKT_ENTER_OTHER_USER);
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUser>(pkt, C_PKT_ENTER_OTHER_USER);
             GSocketSession->Send(sendBuffer);
         }
         else if (socketEvent.type == S_PKT_MOVING)

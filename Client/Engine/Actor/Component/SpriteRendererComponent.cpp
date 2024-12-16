@@ -31,7 +31,9 @@ void SpriteRendererComponent::SetZOrder(int z_order)
 
 void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFrame)
 {
+    if (!sprite) return;
     sprite_ = sprite;
+    
     current_frame_ = kFrame;
 
     if (HasBegunPlay())

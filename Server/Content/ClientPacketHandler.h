@@ -24,9 +24,9 @@ enum PacketNumber : uint16_t
 };
 
 void HandleInvalid(const shared_ptr<PacketSession>& session, BYTE* buf, int32_t len);
-void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterPacket> pkt);
-void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_MovingPacket> pkt);
-void HandleEnterOtherUser(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterOtherUserPacket> pkt);
+void HandleEnter(const shared_ptr<PacketSession>& session, shared_ptr<C_Enter> pkt);
+void HandleMoving(const shared_ptr<PacketSession>& session, shared_ptr<C_Moving> pkt);
+void HandleEnterOtherUser(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterOtherUser> pkt);
 void HandleEnterRoom(const shared_ptr<PacketSession>& session,shared_ptr<C_EnterRoom> pkt);
 void HandleEnterChannel(const shared_ptr<PacketSession>& session, shared_ptr<C_EnterChannel> pkt);
 
@@ -38,11 +38,11 @@ public:
 		for (int32_t i = 0; i < UINT16_MAX; i++)
 			GPacketHandler[i] = HandleInvalid;
 		GPacketHandler[C_PKT_ENTER] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)
-		{return HandlePacket<C_EnterPacket>(HandleEnter,session, buffer, len); };
+		{return HandlePacket<C_Enter>(HandleEnter,session, buffer, len); };
 		GPacketHandler[C_PKT_MOVING] = [](const shared_ptr<PacketSession>& session,BYTE* buffer, int32_t len)
-		{return HandlePacket<C_MovingPacket>(HandleMoving,session, buffer, len); };
+		{return HandlePacket<C_Moving>(HandleMoving,session, buffer, len); };
 		GPacketHandler[C_PKT_ENTER_OTHER_USER] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)
-		{ return HandlePacket<C_EnterOtherUserPacket>(HandleEnterOtherUser,session, buffer, len); };
+		{ return HandlePacket<C_EnterOtherUser>(HandleEnterOtherUser,session, buffer, len); };
 		GPacketHandler[C_PKT_ENTER_ROOM] = [](const shared_ptr<PacketSession>& session,BYTE* buffer,int32_t len)
 		{return HandlePacket<C_EnterRoom>(HandleEnterRoom,session, buffer, len); };
 		GPacketHandler[C_PKT_ENTER_CHANNEL] = [](const shared_ptr<PacketSession>& session, BYTE* buffer, int32_t len)

@@ -11,7 +11,7 @@ void HandleInvalid(BYTE* buf, int32_t len)
     std::cout << "Invalid Packet" << std::endl;    
 }
 
-void HandleEnter(std::shared_ptr<S_EnterPacket> pkt)
+void HandleEnter(std::shared_ptr<S_Enter> pkt)
 {
     //std::cout << "Enter Packet" << std::endl;
     //std::shared_ptr<S_EnterPacket> pktRef = std::make_shared<S_EnterPacket>(pkt);
@@ -20,7 +20,7 @@ void HandleEnter(std::shared_ptr<S_EnterPacket> pkt)
     socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER);
 }
 
-void HandleMoving(std::shared_ptr<S_MovingPacket> pkt)
+void HandleMoving(std::shared_ptr<S_Moving> pkt)
 {
     //std::cout<< "Moving" << std::endl;
     //std::shared_ptr<S_MovingPacket> pktRef = std::make_shared<S_MovingPacket>(pkt);
@@ -29,7 +29,7 @@ void HandleMoving(std::shared_ptr<S_MovingPacket> pkt)
     
 }
 
-void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt)
+void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnter> pkt)
 {
    // std::cout << "Broadcast Packet" << std::endl;
     //std::shared_ptr<S_BroadcastingEnterPacket> pktRef = std::make_shared<S_BroadcastingEnterPacket>(pkt);
@@ -37,7 +37,7 @@ void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt)
     socket_event_manager->RegisterEvent(pkt,S_PKT_BROADCASTING_ENTER);
 }
 
-void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt)
+void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUser> pkt)
 {
     //std:: cout << "Enter Other User Packet" << std::endl;
     for(uint8_t i=0;i<pkt->currentUserCnt_;i++)
@@ -49,7 +49,7 @@ void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt)
     socket_event_manager->RegisterEvent(pkt,S_PKT_ENTER_OTHER_USER);
 }
 
-void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUserPacket> pkt)
+void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUser> pkt)
 {
     SocketEventManager* socket_event_manager = SocketEventManager::Get();
     socket_event_manager->RegisterEvent(pkt,S_PKT_LEAVE_OTHER_USER); 

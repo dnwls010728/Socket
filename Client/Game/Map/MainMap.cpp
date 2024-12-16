@@ -13,7 +13,7 @@ void MainMap::Load()
     Level::Load();
 
     Tilemap* tilemap = AddActor<Tilemap>(L"Tilemap");
-    Mob1* mob1 = AddActor<Mob1>(L"Mob1");
+    // Mob1* mob1 = AddActor<Mob1>(L"Mob1");
 }
 
 RTTR_REGISTRATION

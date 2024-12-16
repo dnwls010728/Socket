@@ -25,11 +25,11 @@ enum PacketNumber : uint16_t
 };
 
 void HandleInvalid(BYTE* buf, int32_t len);
-void HandleEnter(std::shared_ptr<S_EnterPacket> pkt);
-void HandleMoving(std::shared_ptr<S_MovingPacket> pkt);
-void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnterPacket> pkt);
-void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUserPacket> pkt);
-void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUserPacket> pkt);
+void HandleEnter(std::shared_ptr<S_Enter> pkt);
+void HandleMoving(std::shared_ptr<S_Moving> pkt);
+void HandleBroadcastEnter(std::shared_ptr<S_BroadcastingEnter> pkt);
+void HandleEnterOtherUser(std::shared_ptr<S_EnterOtherUser> pkt);
+void HandleLeaveOtherUser(std::shared_ptr<S_LeaveOtherUser> pkt);
 void HandleEnterRoom(std::shared_ptr<S_EnterRoom> pkt);
 void HandleEnterChannel(std::shared_ptr<S_EnterChannel> pkt);
 void HandleLeaveChannel(std::shared_ptr<S_LeaveChannel> pkt);
@@ -42,15 +42,15 @@ public:
         for(int32_t i=0; i<UINT16_MAX; i++)
             GPacketHandler[i] = HandleInvalid;
         GPacketHandler[S_PKT_ENTER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_EnterPacket>(HandleEnter,buffer,len);};
+        {return HandlePacket<S_Enter>(HandleEnter,buffer,len);};
         GPacketHandler[S_PKT_MOVING] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_MovingPacket>(HandleMoving,buffer,len);};
+        {return HandlePacket<S_Moving>(HandleMoving,buffer,len);};
         GPacketHandler[S_PKT_BROADCASTING_ENTER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_BroadcastingEnterPacket>(HandleBroadcastEnter,buffer,len);};
+        {return HandlePacket<S_BroadcastingEnter>(HandleBroadcastEnter,buffer,len);};
         GPacketHandler[S_PKT_ENTER_OTHER_USER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_EnterOtherUserPacket>(HandleEnterOtherUser,buffer,len);};
+        {return HandlePacket<S_EnterOtherUser>(HandleEnterOtherUser,buffer,len);};
         GPacketHandler[S_PKT_LEAVE_OTHER_USER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_LeaveOtherUserPacket>(HandleLeaveOtherUser,buffer,len);};
+        {return HandlePacket<S_LeaveOtherUser>(HandleLeaveOtherUser,buffer,len);};
         GPacketHandler[S_PKT_ENTER_ROOM] = [](BYTE* buffer,int32_t len)
         {return HandlePacket<S_EnterRoom>(HandleEnterRoom,buffer,len);};
         GPacketHandler[S_PKT_ENTER_CHANNEL] = [](BYTE* buffer,int32_t len)

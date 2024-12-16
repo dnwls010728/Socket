@@ -230,6 +230,8 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="InGamePacket.cpp" />
+    <ClCompile Include="LobbyPacket.cpp" />
     <ClCompile Include="Packet.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -599,6 +601,8 @@
   <ItemGroup>
     <ClInclude Include="CoreMacro.h" />
     <ClInclude Include="DeSerializer.h" />
+    <ClInclude Include="InGamePacket.h" />
+    <ClInclude Include="LobbyPacket.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RecvBuffer.h" />

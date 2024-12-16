@@ -7,11 +7,8 @@
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
-#include "Actor/Component/Animator/AnimatorComponent.h"
-#include "Asset/AnimationSet.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
-#include "Asset/AssetManager.h"
 #include "State/PlayerIdle.h"
 #include "Windows/DX/Sprite.h"
 
@@ -30,12 +27,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     state_machine_->ChangeState(idle_state_.get());
-
-    animation_set_ = AssetManager::Get()->Load<AnimationSet>(L"Sprites\\Character\\Player\\PlayerSheet.png.animset");
-    
-    animator_ = AddComponent<AnimatorComponent>(L"Animator");
-    animator_->SetAnimationSet(animation_set_);
-    animator_->PlayAnimation(L"Idle");
     
 }
 
@@ -77,8 +68,6 @@ void PlayerCharacter::Tick(float delta_time)
     {
         Keyboard* keyboard = Keyboard::Get();
         horizontal_axis_ = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        if (horizontal_axis_ != 0) animator_->PlayAnimation(L"Walk");
-        else animator_->PlayAnimation(L"Idle");
         
         if (keyboard->GetKeyDown('C'))
         {
@@ -93,10 +82,10 @@ void PlayerCharacter::Tick(float delta_time)
         {
             send_timer = 0.f;
             
-            C_MovingPacket pkt;
+            C_Moving pkt;
             pkt._locationX = transform_->GetPosition().x;
             pkt._locationY = transform_->GetPosition().y;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Moving>(pkt,C_PKT_MOVING);
             GSocketSession->Send(sendBuffer);
         }
     }

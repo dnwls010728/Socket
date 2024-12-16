@@ -12,32 +12,29 @@ public:
 	Packet()
 	{
         
-	};
+	}
 	virtual ~Packet()
 	{
         
-	};
+	}
 protected:
     
     
-	virtual BYTE* Serialize(BYTE* buffer) { return nullptr; };
-	virtual void Deserialize(BYTE* buffer, int32_t len) {  };
-	virtual uint16_t GetSize() { return 0; };
+	virtual BYTE* Serialize(BYTE* buffer) { return nullptr; }
+	virtual void Deserialize(BYTE* buffer, int32_t len) {  }
+	virtual uint16_t GetSize() { return 0; }
 	
 };
 
 
-class EXPORT_API C_EnterPacket : public Packet
+class EXPORT_API C_Enter : public Packet
 {
 public:
-	C_EnterPacket();
+	C_Enter() =default;
 
-	~C_EnterPacket() override = default;    
+	~C_Enter() override = default;    
 
-	void SetName(const std::string& name){_name=name;};
-	void SetId(const std::string& id){_id=id;};
-    std::string GetName() const{return _name;};
-	std::string GetId() const{return _id;};
+	
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
@@ -48,14 +45,11 @@ public:
 	std::string _id;
 };
 
-class EXPORT_API S_EnterPacket : public Packet
+class EXPORT_API S_Enter : public Packet
 {
 public:
-
-	void SetSuccess(uint8_t success){_success=success;};
-    uint8_t GetSuccess()const{return _success;};
-	S_EnterPacket();
-	~S_EnterPacket() override = default;
+	S_Enter() = default;
+	~S_Enter() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
@@ -66,11 +60,11 @@ public:
 	std::string _name;
 };
 
-class EXPORT_API C_MovingPacket : public Packet
+class EXPORT_API C_Moving : public Packet
 {
 public:
-	C_MovingPacket();
-	~C_MovingPacket() override = default;
+	C_Moving() = default;
+	~C_Moving() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
@@ -84,11 +78,11 @@ public:
 	
 };
 
-class EXPORT_API S_MovingPacket : public Packet
+class EXPORT_API S_Moving : public Packet
 {
 public:
-	S_MovingPacket();
-	~S_MovingPacket() override = default;
+	S_Moving() = default;
+	~S_Moving() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
@@ -101,11 +95,11 @@ public:
 	float _locationY;
 };
 
-class EXPORT_API S_BroadcastingEnterPacket : public Packet
+class EXPORT_API S_BroadcastingEnter : public Packet
 {
 public:
-	S_BroadcastingEnterPacket();
-	~S_BroadcastingEnterPacket() override = default;
+	S_BroadcastingEnter() = default;
+	~S_BroadcastingEnter() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
 	virtual uint16_t GetSize() override;
@@ -117,11 +111,11 @@ public:
 	std::string _name;
 };
 
-class EXPORT_API S_EnterOtherUserPacket : public Packet
+class EXPORT_API S_EnterOtherUser : public Packet
 {
 public:
-	S_EnterOtherUserPacket();
-	~S_EnterOtherUserPacket() override =default;
+	S_EnterOtherUser() = default;
+	~S_EnterOtherUser() override =default;
 	
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -136,11 +130,11 @@ public:
 	uint32_t currentUserCnt_;
 };
 
-class EXPORT_API C_EnterOtherUserPacket : public Packet
+class EXPORT_API C_EnterOtherUser : public Packet
 {
 public:
-	C_EnterOtherUserPacket();
-	~C_EnterOtherUserPacket() override = default;
+	C_EnterOtherUser() = default;
+	~C_EnterOtherUser() override = default;
 
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -149,11 +143,11 @@ public:
 	uint32_t _userId;
 };
 
-class EXPORT_API S_LeaveOtherUserPacket : public Packet
+class EXPORT_API S_LeaveOtherUser : public Packet
 {
 public:
-	S_LeaveOtherUserPacket();
-	~S_LeaveOtherUserPacket() override = default;
+	S_LeaveOtherUser() = default;
+	~S_LeaveOtherUser() override = default;
 
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -165,7 +159,7 @@ public:
 class EXPORT_API C_EnterRoom : public Packet
 {
 public:
-	C_EnterRoom();
+	C_EnterRoom() = default;
 	~C_EnterRoom() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -178,7 +172,7 @@ public:
 class EXPORT_API S_EnterRoom : public Packet
 {
 public:
-	S_EnterRoom();
+	S_EnterRoom() = default;
 	~S_EnterRoom() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -190,7 +184,7 @@ public:
 class EXPORT_API C_EnterChannel : public Packet
 {
 	public:
-	C_EnterChannel();
+	C_EnterChannel() = default;
 	~C_EnterChannel() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -202,7 +196,7 @@ class EXPORT_API C_EnterChannel : public Packet
 class EXPORT_API S_EnterChannel : public Packet
 {
 	public:
-	S_EnterChannel();
+	S_EnterChannel() = default;
 	~S_EnterChannel() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -214,7 +208,7 @@ class EXPORT_API S_EnterChannel : public Packet
 class EXPORT_API S_LeaveChannel : public Packet
 {
 public:
-	S_LeaveChannel();
+	S_LeaveChannel() = default;
 	~S_LeaveChannel() override = default;
 	virtual BYTE* Serialize(BYTE* buffer) override;
 	virtual void Deserialize(BYTE* buffer, int32_t len) override;
