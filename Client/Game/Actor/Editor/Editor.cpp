@@ -779,8 +779,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     
     ImGui::EndGroup();
 
-    ImGui::Text("Animation Sequences");
-    is_selection_changed = ImGui::ListBox("##AnimationSequences", &selected_animation_, [](void* user_data, int index)
+    ImGui::Text("Animations");
+    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -865,9 +865,9 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             animations_.clear();
             frame_indexes_.clear();
 
-            if (node["sequences"].IsSequence())
+            if (node["animations"].IsSequence())
             {
-                for (const YAML::Node& animation : node["sequences"])
+                for (const YAML::Node& animation : node["animations"])
                 {
                     AnimationData data;
                     data.name = animation["name"].as<std::string>();
@@ -900,7 +900,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         emitter << YAML::BeginMap;
         emitter << YAML::Key << "target";
         emitter << YAML::Value << to_string;
-        emitter << YAML::Key << "sequences";
+        emitter << YAML::Key << "animations";
         emitter << YAML::Value << YAML::BeginSeq;
         for (const AnimationData& animation : animations_)
         {

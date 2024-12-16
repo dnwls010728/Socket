@@ -1,0 +1,8 @@
+target: Sprites\Character\Player\PlayerSheet.png
+animations:
+  - name: Idle
+    sample_frame_rate: 8
+    loop: true
+    frames:
+      - PlayerSheet_0
+      - PlayerSheet_1
