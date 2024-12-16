@@ -93,10 +93,10 @@ void PlayerCharacter::Tick(float delta_time)
         {
             send_timer = 0.f;
             
-            C_MovingPacket pkt;
+            C_Moving pkt;
             pkt._locationX = transform_->GetPosition().x;
             pkt._locationY = transform_->GetPosition().y;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_MovingPacket>(pkt,C_PKT_MOVING);
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Moving>(pkt,C_PKT_MOVING);
             GSocketSession->Send(sendBuffer);
         }
     }

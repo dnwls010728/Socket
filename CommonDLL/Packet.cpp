@@ -3,11 +3,8 @@
 #include "DeSerializer.h"
 #include "Serializer.h"
 
-C_EnterPacket::C_EnterPacket()
-{
-}
 
-BYTE* C_EnterPacket::Serialize(BYTE* buffer)
+BYTE* C_Enter::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
 	Serializer::Serialize(buffer, _name, currentByte);
@@ -15,7 +12,7 @@ BYTE* C_EnterPacket::Serialize(BYTE* buffer)
 	return buffer;
 }
 
-void C_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
+void C_Enter::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	
@@ -23,7 +20,7 @@ void C_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
 	DeSerializer::Deserialize(buffer, currentByte,_id);
 }
 
-uint16_t C_EnterPacket::GetSize()
+uint16_t C_Enter::GetSize()
 {
 	uint16_t ret = 0;
 	ret += Serializer::GetPacketSize(_name);
@@ -31,12 +28,9 @@ uint16_t C_EnterPacket::GetSize()
 	return ret;
 }
 
-S_EnterPacket::S_EnterPacket()
-{
-	
-}
 
-BYTE* S_EnterPacket::Serialize(BYTE* buffer)
+
+BYTE* S_Enter::Serialize(BYTE* buffer)
 {
 	
 	int currentByte = 0;
@@ -46,7 +40,7 @@ BYTE* S_EnterPacket::Serialize(BYTE* buffer)
 	return buffer;
 }
 
-void S_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
+void S_Enter::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,_success);
@@ -54,18 +48,16 @@ void S_EnterPacket::Deserialize(BYTE* buffer, int32_t len)
 	DeSerializer::Deserialize(buffer, currentByte,_name);
 }
 
-uint16_t S_EnterPacket::GetSize()
+uint16_t S_Enter::GetSize()
 {
 	return Serializer::GetPacketSize(_success)+
 		Serializer::GetPacketSize(_userId)+
 			Serializer::GetPacketSize(_name);
 }
 
-C_MovingPacket::C_MovingPacket()
-{
-}
 
-BYTE* C_MovingPacket::Serialize(BYTE* buffer)
+
+BYTE* C_Moving::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
 	Serializer::Serialize(buffer,_locationX,currentByte);
@@ -73,23 +65,21 @@ BYTE* C_MovingPacket::Serialize(BYTE* buffer)
 	return buffer;
 }
 
-void C_MovingPacket::Deserialize(BYTE* buffer, int32_t len)
+void C_Moving::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,_locationX);
 	DeSerializer::Deserialize(buffer, currentByte,_locationY);
 }
 
-uint16_t C_MovingPacket::GetSize()
+uint16_t C_Moving::GetSize()
 {
 	return Serializer::GetPacketSize(_locationX)+Serializer::GetPacketSize(_locationY);
 }
 
-S_MovingPacket::S_MovingPacket()
-{
-}
 
-BYTE* S_MovingPacket::Serialize(BYTE* buffer)
+
+BYTE* S_Moving::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
 	Serializer::Serialize(buffer,_success,currentByte);
@@ -99,7 +89,7 @@ BYTE* S_MovingPacket::Serialize(BYTE* buffer)
 	return buffer;
 }
 
-void S_MovingPacket::Deserialize(BYTE* buffer, int32_t len)
+void S_Moving::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,_success);
@@ -108,7 +98,7 @@ void S_MovingPacket::Deserialize(BYTE* buffer, int32_t len)
 	DeSerializer::Deserialize(buffer, currentByte,_locationY);
 }
 
-uint16_t S_MovingPacket::GetSize()
+uint16_t S_Moving::GetSize()
 {
 	return Serializer::GetPacketSize(_success)+
 		Serializer::GetPacketSize(_userId)+
@@ -116,11 +106,9 @@ uint16_t S_MovingPacket::GetSize()
 				Serializer::GetPacketSize(_locationY);
 }
 
-S_BroadcastingEnterPacket::S_BroadcastingEnterPacket()
-{
-}
 
-BYTE* S_BroadcastingEnterPacket::Serialize(BYTE* buffer)
+
+BYTE* S_BroadcastingEnter::Serialize(BYTE* buffer)
 {
 	int currentByte=0;
 	Serializer::Serialize(buffer,_success,currentByte);
@@ -129,7 +117,7 @@ BYTE* S_BroadcastingEnterPacket::Serialize(BYTE* buffer)
 	return buffer;
 }
 
-void S_BroadcastingEnterPacket::Deserialize(BYTE* buffer, int32_t len)
+void S_BroadcastingEnter::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte=0;
 	DeSerializer::Deserialize(buffer, currentByte,_success);
@@ -137,18 +125,15 @@ void S_BroadcastingEnterPacket::Deserialize(BYTE* buffer, int32_t len)
 	DeSerializer::Deserialize(buffer, currentByte,_name);
 }
 
-uint16_t S_BroadcastingEnterPacket::GetSize()
+uint16_t S_BroadcastingEnter::GetSize()
 {
 	return Serializer::GetPacketSize(_success)+
 		Serializer::GetPacketSize(_userId)+
 			Serializer::GetPacketSize(_name);
 }
 
-S_EnterOtherUserPacket::S_EnterOtherUserPacket()
-{
-}
 
-BYTE* S_EnterOtherUserPacket::Serialize(BYTE* buffer)
+BYTE* S_EnterOtherUser::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
 	Serializer::Serialize(buffer,currentUserCnt_,currentByte);
@@ -160,7 +145,7 @@ BYTE* S_EnterOtherUserPacket::Serialize(BYTE* buffer)
 	
 }
 
-void S_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+void S_EnterOtherUser::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer, currentByte,currentUserCnt_);
@@ -177,7 +162,7 @@ void S_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
 	
 }
 
-uint16_t S_EnterOtherUserPacket::GetSize()
+uint16_t S_EnterOtherUser::GetSize()
 {
 	return Serializer::GetPacketSize(userIdentifyidArr_,currentUserCnt_)
 	+ Serializer::GetPacketSize(nameArr_,currentUserCnt_)
@@ -187,53 +172,47 @@ uint16_t S_EnterOtherUserPacket::GetSize()
 	
 }
 
-C_EnterOtherUserPacket::C_EnterOtherUserPacket()
-{
-}
 
-BYTE* C_EnterOtherUserPacket::Serialize(BYTE* buffer)
+
+BYTE* C_EnterOtherUser::Serialize(BYTE* buffer)
 {
 	int currentByte=0;
 	Serializer::Serialize(buffer,_userId,currentByte);
 	return buffer;
 }
 
-void C_EnterOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+void C_EnterOtherUser::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer,currentByte,_userId);
 }
 
-uint16_t C_EnterOtherUserPacket::GetSize()
+uint16_t C_EnterOtherUser::GetSize()
 {
 	return Serializer::GetPacketSize(_userId);
 }
 
-S_LeaveOtherUserPacket::S_LeaveOtherUserPacket()
-{
-}
 
-BYTE* S_LeaveOtherUserPacket::Serialize(BYTE* buffer)
+
+BYTE* S_LeaveOtherUser::Serialize(BYTE* buffer)
 {
 	int currentByte = 0;
 	Serializer::Serialize(buffer,_userId,currentByte);
 	return buffer;
 }
 
-void S_LeaveOtherUserPacket::Deserialize(BYTE* buffer, int32_t len)
+void S_LeaveOtherUser::Deserialize(BYTE* buffer, int32_t len)
 {
 	int currentByte = 0;
 	DeSerializer::Deserialize(buffer,currentByte,_userId);
 }
 
-uint16_t S_LeaveOtherUserPacket::GetSize()
+uint16_t S_LeaveOtherUser::GetSize()
 {
 	return Serializer::GetPacketSize(_userId);
 }
 
-C_EnterRoom::C_EnterRoom()
-{
-}
+
 
 BYTE* C_EnterRoom::Serialize(BYTE* buffer)
 {
@@ -253,9 +232,7 @@ uint16_t C_EnterRoom::GetSize()
 	return Serializer::GetPacketSize(_roomNum);
 }
 
-S_EnterRoom::S_EnterRoom()
-{
-}
+
 
 BYTE* S_EnterRoom::Serialize(BYTE* buffer)
 {
@@ -275,9 +252,7 @@ uint16_t S_EnterRoom::GetSize()
 	return Serializer::GetPacketSize(_currentRoomNum);
 }
 
-C_EnterChannel::C_EnterChannel()
-{
-}
+
 
 BYTE* C_EnterChannel::Serialize(BYTE* buffer)
 {
@@ -297,9 +272,7 @@ uint16_t C_EnterChannel::GetSize()
 	return Serializer::GetPacketSize(_channelNum);
 }
 
-S_EnterChannel::S_EnterChannel()
-{
-}
+
 
 BYTE* S_EnterChannel::Serialize(BYTE* buffer)
 {
@@ -320,9 +293,7 @@ uint16_t S_EnterChannel::GetSize()
 	return Serializer::GetPacketSize(_currentChannelNum);
 }
 
-S_LeaveChannel::S_LeaveChannel()
-{
-}
+
 
 BYTE* S_LeaveChannel::Serialize(BYTE* buffer)
 {

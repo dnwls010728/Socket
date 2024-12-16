@@ -89,10 +89,10 @@ void MainMenu::Load()
         }
         else
         {
-            C_EnterPacket pkt;
-            pkt.SetId("Sundaekyung");
-            pkt.SetName("Sundaekyung");
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
+            C_Enter pkt;
+            pkt._id = "Sundaekyung";
+            pkt._name = "Sundaekyung";
+            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Enter>(pkt,C_PKT_ENTER);
             GSocketSession->Send(sendBuffer);
         }
         

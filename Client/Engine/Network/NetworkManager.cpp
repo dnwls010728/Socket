@@ -42,9 +42,9 @@ void NetworkManager::Tick(float delta_time)
                 std::shared_ptr<SendBuffer> enterChannelSendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterChannel>(enterChannelPkt,C_PKT_ENTER_CHANNEL);
                 GSocketSession->Send(enterChannelSendBuffer);
                 
-                C_EnterOtherUserPacket pkt;
+                C_EnterOtherUser pkt;
                 pkt._userId = actor->packet_id_;
-                std::shared_ptr<SendBuffer> send_buffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUserPacket>(pkt, C_PKT_ENTER_OTHER_USER);
+                std::shared_ptr<SendBuffer> send_buffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUser>(pkt, C_PKT_ENTER_OTHER_USER);
                 GSocketSession->Send(send_buffer);
             }
             break;

@@ -20,7 +20,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
 {
     if(pktId == S_PKT_ENTER)
     {
-        S_EnterPacket* enterPkt = (S_EnterPacket*)pkt.get();
+        S_Enter* enterPkt = (S_Enter*)pkt.get();
         EnterEvent event{};
         event.userId = enterPkt->_userId;
         event.name = enterPkt->_name;
@@ -32,7 +32,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
     }
     else if(pktId == S_PKT_MOVING)
     {
-        S_MovingPacket* movingPkt = (S_MovingPacket*)pkt.get();
+        S_Moving* movingPkt = (S_Moving*)pkt.get();
         MovingEvent event{};
         event.userId = movingPkt->_userId;
         event.locationX = movingPkt->_locationX;
@@ -45,7 +45,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         return true;
     }else if(pktId == S_PKT_BROADCASTING_ENTER)
     {
-        S_BroadcastingEnterPacket* broadcastingEnterPkt = (S_BroadcastingEnterPacket*)pkt.get();
+        S_BroadcastingEnter* broadcastingEnterPkt = (S_BroadcastingEnter*)pkt.get();
         BroadcastingEnterEvent event{};
         event.userId = broadcastingEnterPkt->_userId;
         event.name = broadcastingEnterPkt->_name;
@@ -56,7 +56,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         return true;
     }else if(pktId == S_PKT_ENTER_OTHER_USER)
     {
-        S_EnterOtherUserPacket* enterOtherUserPkt = (S_EnterOtherUserPacket*)pkt.get();
+        S_EnterOtherUser* enterOtherUserPkt = (S_EnterOtherUser*)pkt.get();
         EnterOtherUserEvent event{};
         event.currentUserCnt_ = enterOtherUserPkt->currentUserCnt_;
         event.nameArr_ =enterOtherUserPkt->nameArr_;
@@ -70,7 +70,7 @@ bool SocketEventManager::RegisterEvent(const std::shared_ptr<Packet>& pkt,uint16
         return true;
     }else if(pktId == S_PKT_LEAVE_OTHER_USER)
     {
-        S_LeaveOtherUserPacket* leaveOtherUserPkt = (S_LeaveOtherUserPacket*)pkt.get();
+        S_LeaveOtherUser* leaveOtherUserPkt = (S_LeaveOtherUser*)pkt.get();
         LeaveOtherUserEvent event{};
         event.userId = leaveOtherUserPkt->_userId;
         SocketEvent socketEvent{};
