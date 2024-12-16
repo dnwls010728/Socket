@@ -10,7 +10,7 @@ class SpriteRendererComponent : public ActorComponent
     GENERATED_BODY(SpriteRendererComponent, ActorComponent)
     
 public:
-    SpriteRendererComponent(Actor* owner, const std::wstring& kName);
+    SpriteRendererComponent(Actor* owner, const std::wstring& kName = L"");
     virtual ~SpriteRendererComponent() override = default;
 
     void SetZOrder(int z_order);

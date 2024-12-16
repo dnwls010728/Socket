@@ -36,7 +36,5 @@ private:
     float move_speed_;
 
     Math::Vector2 previous_position_;
-
-    AnimationSet* animation_set_;
     
 };
