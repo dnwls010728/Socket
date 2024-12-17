@@ -845,7 +845,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndDisabled();
     ImGui::EndGroup();
 
-    if (ImGui::Button("Open Animation Set"))
+    if (ImGui::Button("Open Animation Pack"))
     {
         if (!loaded_texture_) return;
         
@@ -854,7 +854,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
         try
         {
-            node = YAML::LoadFile(to_string + ".animset");
+            node = YAML::LoadFile(to_string + ".animpack");
         }
         catch (const YAML::BadFile& e)
         {
@@ -887,14 +887,14 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
     ImGui::SameLine();
     
-    if (ImGui::Button("Save Animation Set"))
+    if (ImGui::Button("Save Animation Pack"))
     {
         if (!loaded_texture_) return;
 
         std::wstring relative_path = FileHelper::GetRelativePath(file_path_);
         std::string to_string(relative_path.begin(), relative_path.end());
 
-        std::wofstream file(file_path_ + L".animset");
+        std::wofstream file(file_path_ + L".animpack");
         YAML::Emitter emitter;
 
         emitter << YAML::BeginMap;

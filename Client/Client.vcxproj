@@ -143,6 +143,9 @@
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Camera.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\Animation.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\AnimationPack.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\AnimatorComponent.h" />
     <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\CapsuleColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
@@ -476,6 +479,9 @@
     <ClCompile Include="Engine\Actor\Actor.cpp" />
     <ClCompile Include="Engine\Actor\Camera.cpp" />
     <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\Animation.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\AnimationPack.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\AnimatorComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\CapsuleColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
