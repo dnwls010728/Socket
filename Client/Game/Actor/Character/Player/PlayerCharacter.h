@@ -35,5 +35,7 @@ private:
     float move_speed_;
 
     Math::Vector2 previous_position_;
+
+    class Weapon* weapon_;
     
 };
