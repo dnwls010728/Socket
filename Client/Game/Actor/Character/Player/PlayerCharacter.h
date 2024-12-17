@@ -25,16 +25,17 @@ protected:
 private:
     std::shared_ptr<PlayerIdle> idle_state_;
     
-    class Sprite* sprite_;
-    class StateMachine* state_machine_;
-
-    // 임시
     class AnimatorComponent* animator_;
+    class StateMachine* state_machine_;
+    
+    class AnimationPack* animation_pack_;
     
     int horizontal_axis_;
     
     float move_speed_;
 
     Math::Vector2 previous_position_;
+
+    class Weapon* weapon_;
     
 };

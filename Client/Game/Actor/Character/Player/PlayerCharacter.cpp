@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
+
+#include "Weapon.h"
 #include "../../CommonDLL/Packet.h"
 #include "../../CommonDLL/SendBuffer.h"
 #include "../SocketCore/ServerPacketHandler.h"
@@ -7,8 +9,12 @@
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/Animator/AnimationPack.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Asset/AssetManager.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 #include "State/PlayerIdle.h"
 #include "Windows/DX/Sprite.h"
 
@@ -16,12 +22,19 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     horizontal_axis_(0),
     move_speed_(2.f),
-    previous_position_(Math::Vector2::Zero())
+    previous_position_(Math::Vector2::Zero()),
+    weapon_(nullptr)
 {
     SetLayer(ActorLayer::kPlayer);
 
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
+    
+    animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Player\\PlayerSheet.png.animpack");
+    
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
+    animator_->SetAnimationPack(animation_pack_);
+    animator_->PlayAnimation(L"Idle");
     
     idle_state_ = std::make_shared<PlayerIdle>(state_machine_);
 
@@ -37,6 +50,9 @@ void PlayerCharacter::BeginPlay()
     if (is_mine_)
     {
         Camera::Get()->SetTarget(this);
+
+        weapon_ = World::Get()->SpawnActor<Weapon>(Weapon::StaticClass(), L"Weapon");
+        if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
     }
     else
     {
@@ -53,7 +69,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     {
         if (horizontal_axis_ != 0)
         {
-            renderer_->SetFlipX(horizontal_axis_ < 0);
             rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
         }
     }
@@ -67,12 +82,22 @@ void PlayerCharacter::Tick(float delta_time)
     if (is_mine_)
     {
         Keyboard* keyboard = Keyboard::Get();
-        horizontal_axis_ = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+        horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
+        if (horizontal_axis_ != 0) animator_->PlayAnimation(L"Run");
+        else animator_->PlayAnimation(L"Idle");
         
-        if (keyboard->GetKeyDown('C'))
+        if (keyboard->GetKeyDown(VK_SPACE))
         {
             rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
         }
+
+        Math::Vector2 position = GetTransform()->GetPosition();
+
+        Mouse* mouse = Mouse::Get();
+        Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+        Math::Vector2 direction = (mouse_position - position).Normalized();
+        
+        renderer_->SetFlipX(direction.x < 0);
 
         static float send_timer = 0.f;
         send_timer += delta_time;
@@ -95,6 +120,7 @@ void PlayerCharacter::Tick(float delta_time)
         transform_->SetPosition(position);
     }
 }
+
 void PlayerCharacter::PostTick(float delta_time)
 {
     CharacterBase::PostTick(delta_time);
@@ -104,6 +130,8 @@ void PlayerCharacter::PostTick(float delta_time)
     Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(position);
     
     // nickname_text_->SetPosition(screen_position);
+    
+    if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
 }
 RTTR_REGISTRATION
 {

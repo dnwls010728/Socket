@@ -143,6 +143,9 @@
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Camera.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\Animation.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\AnimationPack.h" />
+    <ClInclude Include="Engine\Actor\Component\Animator\AnimatorComponent.h" />
     <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\CapsuleColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
@@ -214,6 +217,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actor\Character\Player\State\PlayerIdle.h" />
+    <ClInclude Include="Game\Actor\Character\Player\Weapon.h" />
     <ClInclude Include="Game\Actor\Editor\Editor.h" />
     <ClInclude Include="Game\Actor\NetworkActor.h" />
     <ClInclude Include="Game\Actor\Network\Network.h" />
@@ -478,6 +482,9 @@
     <ClCompile Include="Engine\Actor\Actor.cpp" />
     <ClCompile Include="Engine\Actor\Camera.cpp" />
     <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\Animation.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\AnimationPack.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Animator\AnimatorComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\CapsuleColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
@@ -536,6 +543,7 @@
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actor\Character\Player\State\PlayerIdle.cpp" />
+    <ClCompile Include="Game\Actor\Character\Player\Weapon.cpp" />
     <ClCompile Include="Game\Actor\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actor\NetworkActor.cpp" />
     <ClCompile Include="Game\Actor\Network\Network.cpp" />
