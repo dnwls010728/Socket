@@ -620,7 +620,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         return;
     }
 
-    static int sample_frame_rate = 60;
+    static int frame_rate = 60;
     static float scale = 1.f;
     static int current_frame = 0;
 
@@ -635,7 +635,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     static char animation_name[256] = "";
 
     ImGui::Text("Sample Frame Rate");
-    ImGui::InputInt("##Sample Frame Rate", &sample_frame_rate);
+    ImGui::InputInt("##Sample Frame Rate", &frame_rate);
     ImGui::SameLine();
     ImGui::BeginDisabled(frame_indexes_.empty());
     if (ImGui::Button(is_playing ? "Pause" : "Play"))
@@ -789,7 +789,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     if (is_selection_changed)
     {
         selected_index_ = 0;
-        sample_frame_rate = animations_[selected_animation_].sample_frame_rate;
+        frame_rate = animations_[selected_animation_].frame_rate;
         is_loop = animations_[selected_animation_].is_loop;
         
         frame_indexes_.clear();
@@ -815,7 +815,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         
         AnimationData animation;
         animation.name = animation_name;
-        animation.sample_frame_rate = sample_frame_rate;
+        animation.frame_rate = frame_rate;
         animation.is_loop = is_loop;
 
         for (const std::string& index : frame_indexes_)
@@ -871,7 +871,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
                 {
                     AnimationData data;
                     data.name = animation["name"].as<std::string>();
-                    data.sample_frame_rate = animation["sample_frame_rate"].as<int>();
+                    data.frame_rate = animation["frame_rate"].as<int>();
                     data.is_loop = animation["loop"].as<bool>();
 
                     for (const YAML::Node& index : animation["frames"])
@@ -907,8 +907,8 @@ void Editor::OpenSpriteAnimator(bool* is_open)
             emitter << YAML::BeginMap;
             emitter << YAML::Key << "name";
             emitter << YAML::Value << animation.name;
-            emitter << YAML::Key << "sample_frame_rate";
-            emitter << YAML::Value << animation.sample_frame_rate;
+            emitter << YAML::Key << "frame_rate";
+            emitter << YAML::Value << animation.frame_rate;
             emitter << YAML::Key << "loop";
             emitter << YAML::Value << animation.is_loop;
             emitter << YAML::Key << "frames";
@@ -932,7 +932,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     if (is_playing)
     {
         timer += ImGui::GetIO().DeltaTime;
-        if (timer >= 1.f / sample_frame_rate)
+        if (timer >= 1.f / frame_rate)
         {
             timer = 0.f;
             selected_index_ = (selected_index_ + 1) % frame_indexes_.size();

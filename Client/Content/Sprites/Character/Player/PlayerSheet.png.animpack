@@ -1,13 +1,13 @@
 target: Sprites\Character\Player\PlayerSheet.png
 animations:
   - name: Idle
-    sample_frame_rate: 8
+    frame_rate: 8
     loop: true
     frames:
       - PlayerSheet_0
       - PlayerSheet_1
   - name: Walk
-    sample_frame_rate: 8
+    frame_rate: 8
     loop: true
     frames:
       - PlayerSheet_16
@@ -15,7 +15,7 @@ animations:
       - PlayerSheet_18
       - PlayerSheet_19
   - name: Run
-    sample_frame_rate: 8
+    frame_rate: 8
     loop: true
     frames:
       - PlayerSheet_24
