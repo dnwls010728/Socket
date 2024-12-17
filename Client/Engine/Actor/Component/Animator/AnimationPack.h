@@ -14,6 +14,8 @@ public:
     virtual bool Load(const std::wstring& kPath) override;
 
 private:
+    friend class AnimatorComponent;
+    
     std::wstring target_;
     
     std::map<std::wstring, std::shared_ptr<Animation>> animations_;

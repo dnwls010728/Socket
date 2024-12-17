@@ -8,6 +8,7 @@ public:
 
 private:
     friend class AnimationPack;
+    friend class AnimatorComponent;
     
     int frame_rate_;
     bool is_loop_;
