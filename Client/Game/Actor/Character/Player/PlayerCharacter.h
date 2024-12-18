@@ -4,8 +4,9 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Level/World.h"
 
+class AnimatorComponent;
 class AnimationSet;
-class PlayerIdle;
+class PlayerLocomotion;
 
 class PlayerCharacter : public CharacterBase
 {
@@ -16,6 +17,10 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
+    FORCEINLINE AnimatorComponent* GetAnimator() const { return animator_; }
+    
+    FORCEINLINE int GetHorizontalAxis() const { return horizontal_axis_; }
+
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
@@ -23,9 +28,9 @@ protected:
     virtual void PostTick(float delta_time) override;
 
 private:
-    std::shared_ptr<PlayerIdle> idle_state_;
+    std::shared_ptr<PlayerLocomotion> locomotion_state_;
     
-    class AnimatorComponent* animator_;
+    AnimatorComponent* animator_;
     class StateMachine* state_machine_;
     
     class AnimationPack* animation_pack_;

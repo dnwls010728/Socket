@@ -15,7 +15,7 @@
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "State/PlayerIdle.h"
+#include "State/PlayerLocomotion.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -34,12 +34,11 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
     animator_->SetAnimationPack(animation_pack_);
-    animator_->PlayAnimation(L"Idle");
-    
-    idle_state_ = std::make_shared<PlayerIdle>(state_machine_);
 
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
-    state_machine_->ChangeState(idle_state_.get());
+    
+    locomotion_state_ = std::make_shared<PlayerLocomotion>(state_machine_);
+    state_machine_->ChangeState(locomotion_state_.get());
     
 }
 
@@ -83,8 +82,6 @@ void PlayerCharacter::Tick(float delta_time)
     {
         Keyboard* keyboard = Keyboard::Get();
         horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
-        if (horizontal_axis_ != 0) animator_->PlayAnimation(L"Run");
-        else animator_->PlayAnimation(L"Idle");
         
         if (keyboard->GetKeyDown(VK_SPACE))
         {

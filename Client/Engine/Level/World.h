@@ -72,7 +72,6 @@ private:
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
     friend class CameraComponent;
-    friend class PlayerController;
 
     void OnEvent(const Event& kEvent);
     void TransitionLevel();

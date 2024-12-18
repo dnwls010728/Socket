@@ -20,6 +20,8 @@ Weapon::Weapon(const std::wstring& kName) :
 
     bullet_pool_ = AddComponent<ObjectPool>(L"Bullet Pool");
     bullet_pool_->SetPooledObjectClass(Bullet::StaticClass());
+
+    GetTransform()->SetScale({.75f, .75f});
 }
 
 void Weapon::Tick(float delta_time)

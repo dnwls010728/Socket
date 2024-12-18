@@ -216,7 +216,7 @@
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actor\Character\Player\PlayerCharacter.h" />
-    <ClInclude Include="Game\Actor\Character\Player\State\PlayerIdle.h" />
+    <ClInclude Include="Game\Actor\Character\Player\State\PlayerLocomotion.h" />
     <ClInclude Include="Game\Actor\Character\Player\Weapon.h" />
     <ClInclude Include="Game\Actor\Editor\Editor.h" />
     <ClInclude Include="Game\Actor\NetworkActor.h" />
@@ -542,7 +542,7 @@
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actor\Character\Player\PlayerCharacter.cpp" />
-    <ClCompile Include="Game\Actor\Character\Player\State\PlayerIdle.cpp" />
+    <ClCompile Include="Game\Actor\Character\Player\State\PlayerLocomotion.cpp" />
     <ClCompile Include="Game\Actor\Character\Player\Weapon.cpp" />
     <ClCompile Include="Game\Actor\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actor\NetworkActor.cpp" />
