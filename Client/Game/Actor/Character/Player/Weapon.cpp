@@ -24,26 +24,17 @@ Weapon::Weapon(const std::wstring& kName) :
     GetTransform()->SetScale({.75f, .75f});
 }
 
-void Weapon::Tick(float delta_time)
+void Weapon::Shot(const Math::Vector2& kDirection)
 {
-    Actor::Tick(delta_time);
-    
     Math::Vector2 position = GetTransform()->GetPosition();
     
-    Mouse* mouse = Mouse::Get();
-    Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
-    Math::Vector2 direction = (mouse_position - position).Normalized();
-
-    float theta = std::atan2f(direction.y, direction.x);
-
-    if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+    float theta = std::atan2f(kDirection.y, kDirection.x);
+    
+    PooledObject* bullet = bullet_pool_->SpawnPooledObject();
+    if (bullet)
     {
-        PooledObject* bullet = bullet_pool_->SpawnPooledObject();
-        if (bullet)
-        {
-            bullet->GetTransform()->SetPosition(position + direction * .5f);
-            bullet->GetTransform()->SetAngle(theta * Math::Rad2Deg());
-        }
+        bullet->GetTransform()->SetPosition(position + kDirection * .5f);
+        bullet->GetTransform()->SetAngle(theta * Math::Rad2Deg());
     }
 }
 

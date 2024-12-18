@@ -89,7 +89,7 @@ void PlayerCharacter::Tick(float delta_time)
             rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
         }
 
-        Math::Vector2 position = GetTransform()->GetPosition();
+        Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * .4f;
 
         Mouse* mouse = Mouse::Get();
         Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
@@ -100,24 +100,23 @@ void PlayerCharacter::Tick(float delta_time)
         if (IsValid(weapon_))
         {
             Math::Vector2 offset = direction * .2f;
-            Math::Vector2 new_position = position  + Math::Vector2::Up() * .4f + offset;
+            Math::Vector2 new_position = position + offset;
             
             weapon_->GetRenderer()->SetFlipX(direction.x < 0);
             
             float theta = std::atan2f(direction.y, direction.x);
     
             float degree;
-            if (direction.x < 0.f)
-            {
-                degree = theta * Math::Rad2Deg() - 135.f;
-            }
-            else
-            {
-                degree = theta * Math::Rad2Deg() - 45.f;
-            }
+            if (direction.x < 0.f) degree = theta * Math::Rad2Deg() - 135.f;
+            else degree = theta * Math::Rad2Deg() - 45.f;
 
             weapon_->GetTransform()->SetPosition(new_position);
             weapon_->GetTransform()->SetAngle(degree);
+
+            if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+            {
+                weapon_->Shot(direction);
+            }
         }
 
         static float send_timer = 0.f;

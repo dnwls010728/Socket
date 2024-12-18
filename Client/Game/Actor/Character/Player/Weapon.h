@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Math/Vector2.h"
 
 class SpriteRendererComponent;
 
@@ -12,10 +13,9 @@ public:
     Weapon(const std::wstring& kName);
     virtual ~Weapon() override = default;
 
-    FORCEINLINE SpriteRendererComponent* GetRenderer() const { return renderer_; }
+    void Shot(const Math::Vector2& kDirection);
 
-protected:
-    virtual void Tick(float delta_time) override;
+    FORCEINLINE SpriteRendererComponent* GetRenderer() const { return renderer_; }
 
 private:
     SpriteRendererComponent* renderer_;
