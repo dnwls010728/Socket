@@ -39,11 +39,11 @@ void Weapon::Tick(float delta_time)
     float degree;
     if (direction.x < 0.f)
     {
-        degree = theta * (180.f / MATH_PI) - 135.f;
+        degree = theta * Math::Rad2Deg() - 135.f;
     }
     else
     {
-        degree = theta * (180.f / MATH_PI) - 45.f;
+        degree = theta * Math::Rad2Deg() - 45.f;
     }
 
     GetTransform()->SetAngle(degree);
@@ -54,7 +54,7 @@ void Weapon::Tick(float delta_time)
         if (bullet)
         {
             bullet->GetTransform()->SetPosition(position + direction * .5f);
-            bullet->GetTransform()->SetAngle(theta * (180.f / MATH_PI));
+            bullet->GetTransform()->SetAngle(theta * Math::Rad2Deg());
         }
     }
 }
