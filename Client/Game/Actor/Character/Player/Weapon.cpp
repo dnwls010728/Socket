@@ -3,6 +3,8 @@
 
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/ObjectPool/Bullet.h"
+#include "Actor/ObjectPool/ObjectPool.h"
 #include "Asset/AssetManager.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
@@ -11,12 +13,13 @@
 Weapon::Weapon(const std::wstring& kName) :
     Actor(kName)
 {
+    renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
+    
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Weapon\\Icon29_12.png");
-    if (sprite_)
-    {
-        renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
-        renderer_->SetSprite(sprite_, L"Icon29_12_0");
-    }
+    if (sprite_) renderer_->SetSprite(sprite_, L"Icon29_12_0");
+
+    bullet_pool_ = AddComponent<ObjectPool>(L"Bullet Pool");
+    bullet_pool_->SetPooledObjectClass(Bullet::StaticClass());
 }
 
 void Weapon::Tick(float delta_time)
@@ -44,6 +47,16 @@ void Weapon::Tick(float delta_time)
     }
 
     GetTransform()->SetAngle(degree);
+
+    if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+    {
+        PooledObject* bullet = bullet_pool_->SpawnPooledObject();
+        if (bullet)
+        {
+            bullet->GetTransform()->SetPosition(position + direction * .5f);
+            bullet->GetTransform()->SetAngle(theta * (180.f / MATH_PI));
+        }
+    }
 }
 
 RTTR_REGISTRATION

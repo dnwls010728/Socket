@@ -15,29 +15,25 @@ Bullet::Bullet(const std::wstring& kName) :
     
     circle_collider_ = AddComponent<CircleColliderComponent>(L"Collider");
     circle_collider_->SetRadius(.125f);
-    // circle_collider_->SetTrigger(true);
     
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
     rigid_body_->SetCollisionDetectionMode(CollisionDetectionMode::kContinuous);
+    rigid_body_->SetFreezeRotation(true);
+    rigid_body_->SetGravityScale(0.f);
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
 
-    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
-    // sprite_->SetPPU(256);
-
-    // sprite_->Split(1, 1, Sprite::kCenter);
-    // sprite_->SetFilterMode(FilterMode::kBilinear);
-
-    renderer_->SetSprite(sprite_, L"");
-
-    GetTransform()->SetScale({.25f, .25f});
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Bullet\\02.png");
+    renderer_->SetSprite(sprite_, L"02_0");
 }
 
 void Bullet::OnEnable()
 {
     PooledObject::OnEnable();
 
-    rigid_body_->AddForceX(20.f, ForceMode::kImpulse);
+    Math::Vector2 direction = GetTransform()->GetRightVector();
+
+    rigid_body_->AddForce(direction * 20.f, ForceMode::kImpulse);
 }
 
 RTTR_REGISTRATION
