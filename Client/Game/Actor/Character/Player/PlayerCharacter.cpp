@@ -61,6 +61,16 @@ void PlayerCharacter::BeginPlay()
     
 }
 
+void PlayerCharacter::EndPlay(EndPlayReason type)
+{
+    CharacterBase::EndPlay(type);
+
+    if (type == EndPlayReason::kDestroyed)
+    {
+        if (IsValid(weapon_)) weapon_->Destroy();
+    }
+}
+
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
