@@ -15,6 +15,7 @@
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "Math/Math.h"
 #include "State/PlayerLocomotion.h"
 #include "Windows/DX/Sprite.h"
 
@@ -49,14 +50,14 @@ void PlayerCharacter::BeginPlay()
     if (is_mine_)
     {
         Camera::Get()->SetTarget(this);
-
-        weapon_ = World::Get()->SpawnActor<Weapon>(Weapon::StaticClass(), L"Weapon");
-        if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
     }
     else
     {
         rigid_body_->SetBodyType(BodyType::kStatic);
     }
+    
+    weapon_ = World::Get()->SpawnActor<Weapon>(Weapon::StaticClass(), L"Weapon");
+    if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
     
 }
 
@@ -96,6 +97,29 @@ void PlayerCharacter::Tick(float delta_time)
         
         renderer_->SetFlipX(direction.x < 0);
 
+        if (IsValid(weapon_))
+        {
+            Math::Vector2 offset = direction * .2f;
+            Math::Vector2 new_position = position  + Math::Vector2::Up() * .4f + offset;
+            
+            weapon_->GetRenderer()->SetFlipX(direction.x < 0);
+            
+            float theta = std::atan2f(direction.y, direction.x);
+    
+            float degree;
+            if (direction.x < 0.f)
+            {
+                degree = theta * Math::Rad2Deg() - 135.f;
+            }
+            else
+            {
+                degree = theta * Math::Rad2Deg() - 45.f;
+            }
+
+            weapon_->GetTransform()->SetPosition(new_position);
+            weapon_->GetTransform()->SetAngle(degree);
+        }
+
         static float send_timer = 0.f;
         send_timer += delta_time;
 
@@ -128,8 +152,12 @@ void PlayerCharacter::PostTick(float delta_time)
     
     // nickname_text_->SetPosition(screen_position);
     
-    if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
+    if (!is_mine_)
+    {
+        if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
+    }
 }
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

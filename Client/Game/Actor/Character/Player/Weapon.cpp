@@ -33,22 +33,8 @@ void Weapon::Tick(float delta_time)
     Mouse* mouse = Mouse::Get();
     Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
     Math::Vector2 direction = (mouse_position - position).Normalized();
-        
-    renderer_->SetFlipX(direction.x < 0.f);
 
     float theta = std::atan2f(direction.y, direction.x);
-    
-    float degree;
-    if (direction.x < 0.f)
-    {
-        degree = theta * Math::Rad2Deg() - 135.f;
-    }
-    else
-    {
-        degree = theta * Math::Rad2Deg() - 45.f;
-    }
-
-    GetTransform()->SetAngle(degree);
 
     if (mouse->GetMouseButtonDown(MouseButton::kLeft))
     {
