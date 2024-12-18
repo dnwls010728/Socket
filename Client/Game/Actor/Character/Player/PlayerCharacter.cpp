@@ -12,6 +12,8 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
@@ -40,6 +42,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
     locomotion_state_ = std::make_shared<PlayerLocomotion>(state_machine_);
     state_machine_->ChangeState(locomotion_state_.get());
+
+    audio_ = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\GUNSupr_Silenced Pistol Fire Short_01.wav");
     
 }
 
@@ -125,6 +129,7 @@ void PlayerCharacter::Tick(float delta_time)
 
             if (mouse->GetMouseButtonDown(MouseButton::kLeft))
             {
+                AudioManager::Get()->PlayOneShot(audio_);
                 weapon_->Shot(direction);
             }
         }

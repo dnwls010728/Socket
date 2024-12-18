@@ -43,5 +43,7 @@ private:
     Math::Vector2 previous_position_;
 
     class Weapon* weapon_;
+
+    class Audio* audio_;
     
 };
