@@ -10,6 +10,8 @@ public:
     Bullet(const std::wstring& kName);
     virtual ~Bullet() override = default;
 
+    virtual void Deactivate() override;
+
     FORCEINLINE RigidBody2DComponent* GetRigidBody() const { return rigid_body_; }
 
 protected:
@@ -22,5 +24,7 @@ private:
     class SpriteRendererComponent* renderer_;
 
     class Sprite* sprite_;
+
+    TimerHandle life_timer_;
     
 };

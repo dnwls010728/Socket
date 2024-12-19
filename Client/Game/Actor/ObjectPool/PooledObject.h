@@ -14,7 +14,7 @@ public:
     PooledObject(const std::wstring& kName);
     virtual ~PooledObject() override = default;
 
-    void Deactivate();
+    virtual void Deactivate();
 
     PooledObjectDespawnDelegate DespawnHandler;
 

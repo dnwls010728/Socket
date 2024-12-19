@@ -12,7 +12,8 @@
 #include "Windows/DX/Sprite.h"
 
 Bullet::Bullet(const std::wstring& kName) :
-    PooledObject(kName)
+    PooledObject(kName),
+    life_timer_()
 {
     SetLayer(ActorLayer::kBullet);
     
@@ -29,6 +30,15 @@ Bullet::Bullet(const std::wstring& kName) :
 
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Bullet\\02.png");
     renderer_->SetSprite(sprite_, L"02_0");
+}
+
+void Bullet::Deactivate()
+{
+    PooledObject::Deactivate();
+
+    TimerManager* timer_manager = TimerManager::Get();
+    if (timer_manager->GetTimerRemaining(life_timer_) > 0.f)
+        timer_manager->ClearTimer(life_timer_);
 }
 
 void Bullet::PhysicsTick(float delta_time)
@@ -51,6 +61,8 @@ void Bullet::PhysicsTick(float delta_time)
 void Bullet::OnEnable()
 {
     PooledObject::OnEnable();
+
+    life_timer_ = TimerManager::Get()->SetTimer(this, &Bullet::Deactivate, 1.f);
 
     Math::Vector2 direction = GetTransform()->GetRightVector();
 
