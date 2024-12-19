@@ -12,6 +12,7 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     renderer_(nullptr),
     animation_pack_(nullptr),
+    current_animation_name_(L""),
     current_animation_(nullptr),
     timer_(0.f),
     is_playing_(false),
@@ -27,6 +28,7 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
     if (it == animation_pack_->animations_.end()) return;
     if (current_animation_ == it->second.get()) return;
 
+    current_animation_name_ = kName;
     current_animation_ = it->second.get();
     current_frame_ = 0;
     timer_ = 0.f;

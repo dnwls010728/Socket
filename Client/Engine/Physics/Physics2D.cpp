@@ -168,7 +168,7 @@ bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std
     filter.maskBits = layer;
     
     MultiOverlapContext context = {output_actors};
-    b2World_OverlapCircle(World::Get()->world_id_, &circle, transform, filter, SingleOverlapCallback, &context);
+    b2World_OverlapCircle(World::Get()->world_id_, &circle, transform, filter, MultiOverlapCallback, &context);
     if (!output_actors.empty()) return true;
 
     return false;

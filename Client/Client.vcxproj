@@ -226,8 +226,7 @@
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
     <ClInclude Include="Game\Character\Actor\CharacterBase.h" />
-    <ClInclude Include="Game\Character\Actor\Mob\1\Mob1.h" />
-    <ClInclude Include="Game\Character\Actor\Mob\1\State\Mob1Idle.h" />
+    <ClInclude Include="Game\Character\Actor\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Actor\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
@@ -625,8 +624,7 @@
       <SDLCheck>false</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Game\Character\Actor\Mob\1\Mob1.cpp" />
-    <ClCompile Include="Game\Character\Actor\Mob\1\State\Mob1Idle.cpp" />
+    <ClCompile Include="Game\Character\Actor\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Actor\Mob\MobBase.cpp" />
     <ClCompile Include="Game\Character\Component\FSM\State.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>

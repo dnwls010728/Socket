@@ -16,6 +16,10 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_->SetFreezeRotation(true);
 }
 
+void CharacterBase::OnDamaged(float damage)
+{
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

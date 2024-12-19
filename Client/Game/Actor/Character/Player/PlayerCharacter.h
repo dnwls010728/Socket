@@ -5,7 +5,6 @@
 #include "Level/World.h"
 
 class AnimatorComponent;
-class AnimationSet;
 class PlayerLocomotion;
 
 class PlayerCharacter : public CharacterBase
