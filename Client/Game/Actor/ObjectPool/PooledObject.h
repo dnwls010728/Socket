@@ -22,8 +22,6 @@ public:
     FORCEINLINE int GetPoolIndex() const { return pool_index_; }
 
 protected:
-    virtual void OnEnable() override;
-    
     int pool_index_;
     
 };
