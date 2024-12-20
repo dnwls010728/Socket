@@ -228,6 +228,8 @@
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Character\Player\Weapon.h" />
+    <ClInclude Include="Game\Combat\Interface\IAttackable.h" />
+    <ClInclude Include="Game\Combat\Interface\IDamageable.h" />
     <ClInclude Include="Game\Map\EditorMap.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
