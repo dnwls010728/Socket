@@ -14,7 +14,7 @@ public:
     PooledObject(const std::wstring& kName);
     virtual ~PooledObject() override = default;
 
-    void Deactivate();
+    virtual void Deactivate();
 
     PooledObjectDespawnDelegate DespawnHandler;
 
@@ -22,8 +22,6 @@ public:
     FORCEINLINE int GetPoolIndex() const { return pool_index_; }
 
 protected:
-    virtual void OnEnable() override;
-    
     int pool_index_;
     
 };

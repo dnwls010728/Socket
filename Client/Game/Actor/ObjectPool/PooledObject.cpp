@@ -13,13 +13,6 @@ void PooledObject::Deactivate()
     DespawnHandler.Execute(this);
 }
 
-void PooledObject::OnEnable()
-{
-    Actor::OnEnable();
-
-    TimerManager::Get()->SetTimer(this, &PooledObject::Deactivate, 2.f);
-}
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

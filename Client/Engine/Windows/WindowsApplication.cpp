@@ -78,8 +78,6 @@ void WindowsApplication::PumpMessages()
             DispatchMessage(&msg);
         }
     }
-
-    
 }
 
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -137,6 +135,8 @@ Type::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM 
             MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
             info->ptMinTrackSize.x = 100 + border_rect.right - border_rect.left;
             info->ptMinTrackSize.y = 100 + border_rect.bottom - border_rect.top;
+
+            return 0;
         }
         
         if (message == WM_DESTROY)

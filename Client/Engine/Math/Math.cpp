@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Math.h"
 
+#include <random>
+
 float Math::Sign(float a)
 {
     if (a < 0.f) return -1.f;
@@ -52,6 +54,24 @@ float Math::Rad2Deg()
 float Math::Deg2Rad()
 {
     return (MATH_PI * 2.f) / 360.f;
+}
+
+float Math::Random(float min, float max)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(min, max);
+
+    return dis(gen);
+}
+
+int Math::Random(int min, int max)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(min, max);
+
+    return dis(gen);
 }
 
 bool Math::IsValid(float f)

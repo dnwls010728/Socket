@@ -13,6 +13,9 @@ namespace Math
     float Pow(float f, float p);
     float Rad2Deg();
     float Deg2Rad();
+    float Random(float min, float max);
+    
+    int Random(int min, int max);
 
     bool IsValid(float f);
 }

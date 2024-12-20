@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include "Actor/Component/ActorComponent.h"
-#include "Asset/AnimationSet.h"
-#include "Windows/DX/Sprite.h"
 
-class AnimationSet;
+class AnimationPack;
 
 class AnimatorComponent : public ActorComponent
 {
@@ -14,8 +12,11 @@ public:
     AnimatorComponent(Actor* owner, const std::wstring& kName);
     virtual ~AnimatorComponent() override = default;
 
-    void SetAnimationSet(AnimationSet* animation_set);
-    void PlayAnimation(const std::wstring& kSequence);
+    void PlayAnimation(const std::wstring& kName);
+
+    FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
+
+    FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
 protected:
     virtual void BeginPlay() override;
@@ -23,15 +24,15 @@ protected:
 
 private:
     class SpriteRendererComponent* renderer_;
+    
+    AnimationPack* animation_pack_;
+
+    class Animation* current_animation_;
 
     float timer_;
 
-    int current_index_;
-
     bool is_playing_;
 
-    AnimationSet* animation_set_;
-    
-    AnimationSequence current_sequence_;
+    int current_frame_;
     
 };

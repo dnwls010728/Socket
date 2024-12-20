@@ -30,7 +30,7 @@ private:
     struct AnimationData
     {
         std::string name;
-        int sample_frame_rate;
+        int frame_rate;
         bool is_loop;
         std::vector<std::string> frame_indexes;
     };

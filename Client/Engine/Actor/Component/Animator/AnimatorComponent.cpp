@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "AnimatorComponent.h"
 
+#include "Animation.h"
+#include "AnimationPack.h"
 #include "Actor/Actor.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Asset/AssetManager.h"
@@ -9,34 +11,30 @@
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     renderer_(nullptr),
+    animation_pack_(nullptr),
+    current_animation_(nullptr),
     timer_(0.f),
-    current_index_(0),
     is_playing_(false),
-    animation_set_(nullptr),
-    current_sequence_()
+    current_frame_(0)
 {
 }
 
-void AnimatorComponent::SetAnimationSet(AnimationSet* animation_set)
+void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 {
-    animation_set_ = animation_set;
-}
+    if (!animation_pack_) return;
 
-void AnimatorComponent::PlayAnimation(const std::wstring& kSequence)
-{
-    if (animation_set_)
+    const auto it = animation_pack_->animations_.find(kName);
+    if (it == animation_pack_->animations_.end()) return;
+
+    current_animation_ = it->second.get();
+    current_frame_ = 0;
+    timer_ = 0.f;
+    is_playing_ = true;
+
+    if (HasBegunPlay() && renderer_)
     {
-        if (current_sequence_.name == kSequence) return;
-        
-        const auto& sequences = animation_set_->GetSequences();
-        auto it = sequences.find(kSequence);
-        if (it != sequences.end())
-        {
-            timer_ = 0.f;
-            current_index_ = 0;
-            current_sequence_ = it->second;
-            is_playing_ = true;
-        }
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
 }
 
@@ -44,42 +42,40 @@ void AnimatorComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
-    ActorComponent* component = GetOwner()->GetComponent(SpriteRendererComponent::StaticClass());
-    if (component)
+    ActorComponent* component = owner_->GetComponent(SpriteRendererComponent::StaticClass());
+    if (component) renderer_ = static_cast<SpriteRendererComponent*>(component);
+
+    if (renderer_ && animation_pack_ && current_animation_)
     {
-        renderer_ = static_cast<SpriteRendererComponent*>(component);
-        if (renderer_)
-        {
-            Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_set_->GetTarget());
-            if (sprite) renderer_->SetSprite(sprite, current_sequence_.frames[current_index_]);
-        }
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
 }
 
 void AnimatorComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
+    if (!renderer_ || !is_playing_ || !current_animation_) return;
 
-    if (is_playing_)
+    const float frame_time = 1.f / current_animation_->frame_rate_;
+    timer_ += delta_time;
+
+    if (timer_ >= frame_time)
     {
-        timer_ += delta_time;
-        if (timer_ >= 1.f / current_sequence_.sample_frame_rate)
+        timer_ -= frame_time;
+        if (current_frame_ >= current_animation_->frames_.size() - 1)
         {
-            if (current_index_ < current_sequence_.frames.size())
+            if (!current_animation_->is_loop_)
             {
-                current_index_ = (current_index_ + 1) % current_sequence_.frames.size();
-                
-                Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_set_->GetTarget());
-                if (sprite) renderer_->SetSprite(sprite, current_sequence_.frames[current_index_]);
+                is_playing_ = false;
+                return;
             }
-            else
-            {
-                if (current_sequence_.is_loop) current_index_ = 0;
-                else is_playing_ = false;
-            }
-
-            timer_ -= 1.f / current_sequence_.sample_frame_rate;
         }
+        
+        current_frame_ = (current_frame_ + 1) % current_animation_->frames_.size();
+
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[current_frame_]);
     }
 }
 

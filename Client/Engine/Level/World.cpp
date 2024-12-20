@@ -29,6 +29,7 @@ World::World() :
     shape_batch_(nullptr),
     shapes_(),
     current_level_(nullptr),
+    persistent_level_(nullptr),
     pending_level_(nullptr),
     levels_(),
     pending_actors_(),
