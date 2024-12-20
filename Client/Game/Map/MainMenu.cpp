@@ -1,11 +1,13 @@
 ﻿#include "pch.h"
 #include "MainMenu.h"
 
+#include "Logger.h"
 #include "../../SocketCore/SocketSession.h"
 #include "../SocketCore/ServerPacketHandler.h"
 #include "Input/Keyboard.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
+#include "Math/Math.h"
 #include "UI/Canvas.h"
 #include "UI/Widget.h"
 #include "UI/Widget/Button.h"
