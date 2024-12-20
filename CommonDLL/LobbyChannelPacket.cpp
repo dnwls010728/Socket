@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "InGamePacket.h"
+#include "LobbyChannelPacket.h"
 #include "Serializer.h"
 #include "DeSerializer.h"
 
@@ -252,8 +252,8 @@ uint16_t S_GetMyAwardInfo::GetSize()
                     Serializer::GetPacketSize(_awardInfoArr,_awardCnt);
 }
 
-// C_MatchingCancle
-BYTE* C_MatchingCancle::Serialize(BYTE* buffer)
+// C_MatchingCancel
+BYTE* C_MatchingCancel::Serialize(BYTE* buffer)
 {
     int currentByte = 0;
     Serializer::Serialize(buffer, _userId, currentByte);
@@ -261,21 +261,21 @@ BYTE* C_MatchingCancle::Serialize(BYTE* buffer)
     return buffer;
 }
 
-void C_MatchingCancle::Deserialize(BYTE* buffer, int32_t len)
+void C_MatchingCancel::Deserialize(BYTE* buffer, int32_t len)
 {
     int currentByte = 0;
     DeSerializer::Deserialize(buffer, currentByte, _userId);
     DeSerializer::Deserialize(buffer, currentByte, _matchingQueueId);
 }
 
-uint16_t C_MatchingCancle::GetSize()
+uint16_t C_MatchingCancel::GetSize()
 {
     return Serializer::GetPacketSize(_userId) +
            Serializer::GetPacketSize(_matchingQueueId);
 }
 
-// S_MatchingCancle
-BYTE* S_MatchingCancle::Serialize(BYTE* buffer)
+// S_MatchingCancel
+BYTE* S_MatchingCancel::Serialize(BYTE* buffer)
 {
     int currentByte = 0;
     Serializer::Serialize(buffer, _userId, currentByte);
@@ -284,7 +284,7 @@ BYTE* S_MatchingCancle::Serialize(BYTE* buffer)
     return buffer;
 }
 
-void S_MatchingCancle::Deserialize(BYTE* buffer, int32_t len)
+void S_MatchingCancel::Deserialize(BYTE* buffer, int32_t len)
 {
     int currentByte = 0;
     DeSerializer::Deserialize(buffer, currentByte, _userId);
@@ -292,7 +292,7 @@ void S_MatchingCancle::Deserialize(BYTE* buffer, int32_t len)
     DeSerializer::Deserialize(buffer, currentByte, _isSuccess);
 }
 
-uint16_t S_MatchingCancle::GetSize()
+uint16_t S_MatchingCancel::GetSize()
 {
     return Serializer::GetPacketSize(_userId) +
            Serializer::GetPacketSize(_matchingQueueId) +

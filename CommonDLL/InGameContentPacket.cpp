@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "LobbyPacket.h"
+#include "InGameContentPacket.h"
 #include "Serializer.h"
 #include "DeSerializer.h"
 

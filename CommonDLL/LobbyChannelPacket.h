@@ -63,10 +63,10 @@ class EXPORT_API S_MatchingFinished: public Packet
     uint32_t _matchingQueueTurn;
 };
 
-class EXPORT_API C_MatchingCancle : public Packet
+class EXPORT_API C_MatchingCancel : public Packet
 {
-    C_MatchingCancle() =default;
-    ~C_MatchingCancle() override =default;
+    C_MatchingCancel() =default;
+    ~C_MatchingCancel() override =default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -75,10 +75,10 @@ class EXPORT_API C_MatchingCancle : public Packet
     uint32_t _matchingQueueId;
 };
 
-class EXPORT_API S_MatchingCancle : public Packet
+class EXPORT_API S_MatchingCancel : public Packet
 {
-    S_MatchingCancle() =default;
-    ~S_MatchingCancle() override =default;
+    S_MatchingCancel() =default;
+    ~S_MatchingCancel() override =default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
