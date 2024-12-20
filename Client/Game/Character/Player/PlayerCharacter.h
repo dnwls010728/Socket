@@ -1,11 +1,9 @@
 ﻿#pragma once
-#include "Character/Actor/CharacterBase.h"
-#include "Actor/Character/Player/PlayerCharacter.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Character/CharacterBase.h"
 #include "Level/World.h"
 
 class AnimatorComponent;
-class PlayerLocomotion;
 
 class PlayerCharacter : public CharacterBase
 {
@@ -28,12 +26,12 @@ protected:
     virtual void PostTick(float delta_time) override;
 
 private:
-    std::shared_ptr<PlayerLocomotion> locomotion_state_;
+    class Sprite* sprite_;
+    class AnimationPack* animation_pack_;
+    class Audio* audio_;
     
     AnimatorComponent* animator_;
     class StateMachine* state_machine_;
-    
-    class AnimationPack* animation_pack_;
     
     int horizontal_axis_;
     
@@ -42,7 +40,5 @@ private:
     Math::Vector2 previous_position_;
 
     class Weapon* weapon_;
-
-    class Audio* audio_;
     
 };

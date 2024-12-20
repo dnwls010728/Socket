@@ -29,7 +29,10 @@ bool AnimationPack::Load(const std::wstring& kPath)
             {
                 for (const YAML::Node& animation : node["animations"])
                 {
-                    std::shared_ptr<Animation> data = std::make_shared<Animation>();
+                    std::string name = animation["name"].as<std::string>();
+                    std::wstring to_wide_string(name.begin(), name.end());
+                    
+                    std::shared_ptr<Animation> data = std::make_shared<Animation>(to_wide_string);
                     data->frame_rate_ = animation["frame_rate"].as<int>();
                     data->is_loop_ = animation["loop"].as<bool>();
 
@@ -39,8 +42,7 @@ bool AnimationPack::Load(const std::wstring& kPath)
                         data->frames_.push_back(std::wstring(frame.begin(), frame.end()));
                     }
 
-                    std::string name = animation["name"].as<std::string>();
-                    animations_[std::wstring(name.begin(), name.end())] = data;
+                    animations_[to_wide_string] = data;
                 }
             }
         }

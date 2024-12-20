@@ -12,7 +12,6 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     renderer_(nullptr),
     animation_pack_(nullptr),
-    current_animation_name_(L""),
     current_animation_(nullptr),
     timer_(0.f),
     is_playing_(false),
@@ -26,9 +25,7 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 
     const auto it = animation_pack_->animations_.find(kName);
     if (it == animation_pack_->animations_.end()) return;
-    if (current_animation_ == it->second.get()) return;
 
-    current_animation_name_ = kName;
     current_animation_ = it->second.get();
     current_frame_ = 0;
     timer_ = 0.f;
@@ -48,7 +45,7 @@ void AnimatorComponent::BeginPlay()
     ActorComponent* component = owner_->GetComponent(SpriteRendererComponent::StaticClass());
     if (component) renderer_ = static_cast<SpriteRendererComponent*>(component);
 
-    if (renderer_ && animation_pack_)
+    if (renderer_ && animation_pack_ && current_animation_)
     {
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);

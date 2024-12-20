@@ -18,7 +18,6 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
-#include "State/PlayerLocomotion.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -28,22 +27,22 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     previous_position_(Math::Vector2::Zero()),
     weapon_(nullptr)
 {
+    AssetManager* asset_manager = AssetManager::Get();
+    sprite_ = asset_manager->Load<Sprite>(L"Sprites\\Character\\Player\\PlayerSheet.png");
+    animation_pack_ = asset_manager->Load<AnimationPack>(L"Sprites\\Character\\Player\\PlayerSheet.png.animpack");
+    audio_ = asset_manager->Load<Audio>(L"Audio\\SE\\GUNSupr_Silenced Pistol Fire Short_01.wav");
+    
     SetLayer(ActorLayer::kPlayer);
+
+    renderer_->SetSprite(sprite_, L"PlayerSheet_0");
 
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
-    
-    animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Player\\PlayerSheet.png.animpack");
     
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
     animator_->SetAnimationPack(animation_pack_);
 
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
-    
-    locomotion_state_ = std::make_shared<PlayerLocomotion>(state_machine_);
-    state_machine_->ChangeState(locomotion_state_.get());
-
-    audio_ = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\GUNSupr_Silenced Pistol Fire Short_01.wav");
     
 }
 

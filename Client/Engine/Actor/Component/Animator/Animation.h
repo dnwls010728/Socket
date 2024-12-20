@@ -3,13 +3,16 @@
 class Animation
 {
 public:
-    Animation();
+    Animation(const std::wstring& kName);
     ~Animation() = default;
+
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
 
 private:
     friend class AnimationPack;
     friend class AnimatorComponent;
-    
+
+    std::wstring name_;
     int frame_rate_;
     bool is_loop_;
     std::vector<std::wstring> frames_;

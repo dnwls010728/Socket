@@ -16,8 +16,6 @@ public:
 
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
 
-    FORCEINLINE std::wstring GetAnimationName() const { return current_animation_name_; }
-
     FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
 protected:
@@ -28,8 +26,6 @@ private:
     class SpriteRendererComponent* renderer_;
     
     AnimationPack* animation_pack_;
-
-    std::wstring current_animation_name_;
 
     class Animation* current_animation_;
 

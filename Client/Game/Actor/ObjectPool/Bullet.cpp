@@ -7,7 +7,7 @@
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
-#include "Character/Actor/CharacterBase.h"
+#include "Character/CharacterBase.h"
 #include "Physics/Physics2D.h"
 #include "Windows/DX/Sprite.h"
 
