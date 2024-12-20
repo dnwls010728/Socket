@@ -6,6 +6,10 @@ MobBase::MobBase(const std::wstring& kName) :
 {
 }
 
+void MobBase::TakeDamage(int damage)
+{
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;
