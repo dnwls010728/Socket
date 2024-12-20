@@ -10,8 +10,6 @@ public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
 
-    virtual void OnDamaged(float damage);
-
 protected:
     class SpriteRendererComponent* renderer_;
     class CapsuleColliderComponent* collider_;

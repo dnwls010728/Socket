@@ -45,17 +45,17 @@ void Bullet::PhysicsTick(float delta_time)
 {
     PooledObject::PhysicsTick(delta_time);
 
-    std::vector<Actor*> out_actors;
-    bool is_hit = Physics2D::OverlapCircleAll(GetTransform()->GetPosition(), .125f, out_actors, static_cast<Type::uint16>(ActorLayer::kMob));
-    if (is_hit)
-    {
-        CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
-        if (character)
-        {
-            character->OnDamaged(10.f);
-            Deactivate();
-        }
-    }
+    // std::vector<Actor*> out_actors;
+    // bool is_hit = Physics2D::OverlapCircleAll(GetTransform()->GetPosition(), .125f, out_actors, static_cast<Type::uint16>(ActorLayer::kMob));
+    // if (is_hit)
+    // {
+    //     CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
+    //     if (character)
+    //     {
+    //         character->OnDamaged(10.f);
+    //         Deactivate();
+    //     }
+    // }
 }
 
 void Bullet::OnEnable()

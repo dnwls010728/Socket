@@ -2,6 +2,7 @@
 #include "MainMap.h"
 
 #include "Actor/Tilemap.h"
+#include "Character/Mob/Dummy/Dummy.h"
 
 MainMap::MainMap(const std::wstring& kName) : Level(kName)
 {
@@ -12,6 +13,7 @@ void MainMap::Load()
     Level::Load();
 
     Tilemap* tilemap = AddActor<Tilemap>(L"Tilemap");
+    Dummy* dummy = AddActor<Dummy>(L"Dummy");
 }
 
 RTTR_REGISTRATION
