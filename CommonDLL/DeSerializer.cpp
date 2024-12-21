@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "DeSerializer.h"
+DeSerializer* GDeSerializer = new DeSerializer();
+
 void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint8_t& value)
 {
 	uint8_t spliter = pos[currentByte];
@@ -42,7 +44,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint32_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -58,7 +60,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int32_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -73,7 +75,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint64_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -88,7 +90,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -98,14 +100,13 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string& value)
 	currentByte++;
 	if (spliter == 7)
 	{
-		uint8_t strLen = static_cast<uint8_t>(pos[currentByte]);
 		currentByte++;
 		value = std::string(reinterpret_cast<const char*>(pos + currentByte));
-		currentByte += value.length()+1;
+		currentByte += static_cast<int>(value.length()+1);
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -126,7 +127,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint16_t* value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -150,7 +151,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, uint32_t* value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -171,7 +172,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, int64_t* value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -186,7 +187,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, double& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -207,7 +208,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, double* value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -222,7 +223,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float& value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -243,7 +244,7 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, float* value)
 	}
 	else
 	{
-		CRASH("Deserialize Error");
+		CRASH("Deserialize Error")
 	}
 }
 
@@ -258,40 +259,9 @@ void DeSerializer::Deserialize(BYTE* pos, int& currentByte, std::string* value)
 		//HeapInitialize(&value,len);
 		for(uint8_t idx = 0; idx < len; idx++)
 		{
-			uint8_t strLen = static_cast<uint8_t>(pos[currentByte]);
 			currentByte++;
 			value[idx] = std::string(reinterpret_cast<const char*>(pos + currentByte));
-			currentByte += value[idx].length()+1;
+			currentByte += static_cast<int>(value[idx].length()+1);
 		}
 	}
-}
-
-void DeSerializer::HeapInitialize(uint16_t** arr, int len)
-{
-	*arr = new uint16_t[len];
-}
-
-void DeSerializer::HeapInitialize(uint32_t** arr, int len)
-{
-	*arr = new uint32_t[len];
-}
-
-void DeSerializer::HeapInitialize(int64_t** arr, int len)
-{
-	*arr = new int64_t[len];
-}
-
-void DeSerializer::HeapInitialize(double** arr, int len)
-{
-	*arr = new double[len];
-}
-
-void DeSerializer::HeapInitialize(float** arr, int len)
-{
-	*arr = new float[len];
-}
-
-void DeSerializer::HeapInitialize(std::string** arr, int len)
-{
-	*arr = new std::string[len];
 }

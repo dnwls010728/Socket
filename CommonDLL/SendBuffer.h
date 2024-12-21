@@ -11,7 +11,7 @@
 #define EXPORT_API __declspec(dllimport)
 #endif
 
-class EXPORT_API SendBufferChunk;
+class SendBufferChunk;
 
 extern thread_local std::shared_ptr<class SendBufferChunk> LSendBufferChunk;
 
@@ -19,16 +19,16 @@ extern thread_local std::shared_ptr<class SendBufferChunk> LSendBufferChunk;
 	SendBuffer
 -----------------*/
 
-class EXPORT_API SendBuffer
+class SendBuffer
 {
 public:
-    SendBuffer(std::shared_ptr<SendBufferChunk> owner, BYTE* buffer, uint32_t allocSize);
-    ~SendBuffer();
+    EXPORT_API SendBuffer(std::shared_ptr<SendBufferChunk> owner, BYTE* buffer, uint32_t allocSize);
+    EXPORT_API ~SendBuffer();
 
-    BYTE* Buffer() { return _buffer; }
-    uint32_t AllocSize() { return _allocSize; }
-    uint32_t WriteSize() { return _writeSize; }
-    void Close(uint32_t writeSize);
+    EXPORT_API BYTE* Buffer() { return _buffer; }
+    EXPORT_API uint32_t AllocSize() { return _allocSize; }
+    EXPORT_API uint32_t WriteSize() { return _writeSize; }
+    EXPORT_API void Close(uint32_t writeSize);
 
 private:
     BYTE* _buffer;
@@ -41,7 +41,7 @@ private:
 	SendBufferChunk
 --------------------*/
 
-class EXPORT_API SendBufferChunk : public std::enable_shared_from_this<SendBufferChunk>
+class SendBufferChunk : public std::enable_shared_from_this<SendBufferChunk>
 {
     enum
     {
@@ -49,16 +49,16 @@ class EXPORT_API SendBufferChunk : public std::enable_shared_from_this<SendBuffe
     };
 
 public:
-    SendBufferChunk();
-    ~SendBufferChunk();
+    EXPORT_API SendBufferChunk();
+    EXPORT_API ~SendBufferChunk();
 
-    void Reset();
-    std::shared_ptr<SendBuffer> Open(uint32_t allocSize);
-    void Close(uint32_t writeSize);
+    EXPORT_API void Reset();
+    EXPORT_API std::shared_ptr<SendBuffer> Open(uint32_t allocSize);
+    EXPORT_API void Close(uint32_t writeSize);
 
-    bool IsOpen() { return _open; }
-    BYTE* Buffer() { return &_buffer[_usedSize]; }
-    uint32_t FreeSize() { return static_cast<uint32_t>(_buffer.size()) - _usedSize; }
+    EXPORT_API bool IsOpen() { return _open; }
+    EXPORT_API BYTE* Buffer() { return &_buffer[_usedSize]; }
+    EXPORT_API uint32_t FreeSize() { return static_cast<uint32_t>(_buffer.size()) - _usedSize; }
 
 private:
     std::array<BYTE, SEND_BUFFER_CHUNK_SIZE> _buffer = {};
@@ -70,16 +70,16 @@ private:
 	SendBufferManager
 ----------------------*/
 
-class EXPORT_API SendBufferManager
+class SendBufferManager
 {
 public:
-    std::shared_ptr<SendBuffer> Open(uint32_t size);
+    EXPORT_API std::shared_ptr<SendBuffer> Open(uint32_t size);
 
 private:
-    std::shared_ptr<SendBufferChunk> Pop();
-    void Push(std::shared_ptr<SendBufferChunk> buffer);
+    EXPORT_API std::shared_ptr<SendBufferChunk> Pop();
+    EXPORT_API void Push(std::shared_ptr<SendBufferChunk> buffer);
 
-    static void PushGlobal(SendBufferChunk* buffer);
+    EXPORT_API static void PushGlobal(SendBufferChunk* buffer);
 
 private:
     std::mutex _mutex;

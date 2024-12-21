@@ -34,12 +34,6 @@ void Room::Leave(shared_ptr<User> userRef)
 {
     WRITE_LOCK;
     users.erase(userRef->userIdentifyId);
-
-    S_LeaveOtherUser pkt;
-    pkt._userId = userRef->userIdentifyId;
-
-    auto sendBuffer = ClientPacketHandler::MakeSendBuffer<S_LeaveOtherUser>(pkt,S_PKT_LEAVE_OTHER_USER);
-    Broadcast(sendBuffer);
 }
 
 void Room::Broadcast(shared_ptr<SendBuffer> sendBufferRef)

@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Serializer.h"
-
-
+Serializer* GSerializer = new Serializer();
 
 void Serializer::Serialize(BYTE* pos, uint8_t value, int& currentByte)
 {
@@ -53,7 +52,7 @@ void Serializer::Serialize(BYTE* pos, std::string value, int& currentByte)
     pos[currentByte] = strLen;
     currentByte++;
     strcpy_s(reinterpret_cast<char*>(pos + currentByte), strlen(value.c_str()) + 1, value.c_str());
-    currentByte += strlen(value.c_str());
+    currentByte += static_cast<int>(strlen(value.c_str()));
     pos[currentByte] = '\0';
     currentByte++;
 
@@ -147,10 +146,10 @@ void Serializer::Serialize(BYTE* pos, std::string* arr,uint8_t len, int& current
     currentByte++;
     for(uint8_t idx = 0;idx<len;idx++)
     {
-        pos[currentByte] = strlen(arr[idx].c_str());
+        pos[currentByte] = static_cast<BYTE>(strlen(arr[idx].c_str()));
         currentByte++;
         strcpy_s(reinterpret_cast<char*>(pos + currentByte), strlen(arr[idx].c_str()) + 1, arr[idx].c_str());
-        currentByte += strlen(arr[idx].c_str());
+        currentByte += static_cast<BYTE>(strlen(arr[idx].c_str()));
         pos[currentByte] = '\0';
         currentByte++;
     }
@@ -189,7 +188,7 @@ int Serializer::GetPacketSize(int64_t value)
 int Serializer::GetPacketSize(std::string value)
 {
     // 식별자 1 + 문자열 길이 + 1 null문자 + 1
-    return strlen(value.c_str()) + 3;
+    return static_cast<int>(strlen(value.c_str()) + 3);
 }
 
 int Serializer::GetPacketSize(std::string* arr,uint8_t len)
@@ -200,26 +199,26 @@ int Serializer::GetPacketSize(std::string* arr,uint8_t len)
     temp += 1;
     for(uint8_t idx = 0;idx<len;idx++)
     {
-        temp += strlen(arr[idx].c_str()) + 1;
+        temp += static_cast<int>(strlen(arr[idx].c_str()) + 1);
     }
     return temp;
 }
 
 int Serializer::GetPacketSize(uint16_t* arr, uint8_t len)
 {
-    //±¸ºÐÀÚ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ * ÀÚ·áÇü Å©±â
+    
     return sizeof(arr[0]) * len + 2;
 }
 
 int Serializer::GetPacketSize(uint32_t* arr, uint8_t len)
 {
-    //±¸ºÐÀÚ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ * ÀÚ·áÇü Å©±â
-    return sizeof(arr[0]) * len + 2;
+    
+    return static_cast<int>(sizeof(arr[0]) * len + 2);
 }
 
 int Serializer::GetPacketSize(uint64_t* arr, uint8_t len)
 {
-    //±¸ºÐÀÚ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ * ÀÚ·áÇü Å©±â
+    
     return sizeof(arr[0]) * len + 2;
 }
 
@@ -230,8 +229,8 @@ int Serializer::GetPacketSize(double value)
 
 int Serializer::GetPacketSize(double* arr, uint8_t len)
 {
-    //±¸ºÐÀÚ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ 1¹ÙÀÌÆ®, ¹è¿­ ±æÀÌ * ÀÚ·áÇü Å©±â
-    return sizeof(arr[0]) *len + 2;
+    
+    return static_cast<int>(sizeof(arr[0]) *len + 2);
 }
 
 int Serializer::GetPacketSize(float value)
@@ -241,24 +240,5 @@ int Serializer::GetPacketSize(float value)
 
 int Serializer::GetPacketSize(float* arr, uint8_t len)
 {
-    return sizeof(float) * len + 2;
+    return static_cast<int>(sizeof(float) * len + 2);
 }
-
-uint8_t Serializer::GetArrLen(std::string* arr)
-{
-    uint8_t cnt=0;
-    while(&arr[cnt] != nullptr)
-        cnt++;
-
-    return cnt;
-}
-
-/*
-uint8_t Serializer::GetArrLen(void* arr, uint8_t dataSize)
-{
-    uint8_t cnt=0;
-    while(arr+dataSize*cnt != nullptr)
-        cnt++;
-    return cnt;
-}
-*/

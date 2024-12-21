@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS users (
+    user_pk INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(64) NOT NULL UNIQUE,
+    user_password VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS items (
+    item_pk INT AUTO_INCREMENT PRIMARY KEY,
+    item_description VARCHAR(256) NOT NULL
+);

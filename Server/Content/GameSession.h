@@ -17,6 +17,5 @@ public:
 public:
 	shared_ptr<class User> userRef;
 	weak_ptr<class Room> roomRef;
-	weak_ptr<class Channel> channelRef;
 	
 };

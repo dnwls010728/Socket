@@ -137,7 +137,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Content\Channel.cpp" />
     <ClCompile Include="Content\ClientPacketHandler.cpp" />
     <ClCompile Include="Content\GameSession.cpp" />
     <ClCompile Include="Content\GameSessionManager.cpp" />
@@ -168,7 +167,6 @@
     <ClCompile Include="Util\LockQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Content\Channel.h" />
     <ClInclude Include="Content\ClientPacketHandler.h" />
     <ClInclude Include="Content\GameSession.h" />
     <ClInclude Include="Content\GameSessionManager.h" />
@@ -216,6 +214,9 @@
     <Content Include="Lib\mysqlcppconnx-2-vs14.dll" />
     <Content Include="Lib\mysqlcppconnx-static.lib" />
     <Content Include="Lib\mysqlcppconnx.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sql\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

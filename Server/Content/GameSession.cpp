@@ -15,10 +15,6 @@ void GameSession::OnDisconnected()
 	{
 		roomRef.lock()->Leave(userRef);
 	}
-	if (channelRef.lock().use_count() != 0)
-	{
-		channelRef.lock()->Leave(userRef);
-	}
 		
 }
 

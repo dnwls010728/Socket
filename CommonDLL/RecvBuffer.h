@@ -13,22 +13,22 @@
 	RecvBuffer
 ----------------*/
 
-class EXPORT_API RecvBuffer
+class RecvBuffer
 {
 	enum { BUFFER_COUNT = 10 };
 
 public:
-	RecvBuffer(int32_t bufferSize);
-	~RecvBuffer();
+	EXPORT_API RecvBuffer(int32_t bufferSize);
+	EXPORT_API ~RecvBuffer();
 
-	void			Clean();
-	bool			OnRead(int32_t numOfBytes);
-	bool			OnWrite(int32_t numOfBytes);
+	EXPORT_API void			Clean();
+	EXPORT_API bool			OnRead(int32_t numOfBytes);
+	EXPORT_API bool			OnWrite(int32_t numOfBytes);
 
-	BYTE* ReadPos() { return &_buffer[_readPos]; }
-	BYTE* WritePos() { return &_buffer[_writePos]; }
-	int32_t			DataSize() { return _writePos - _readPos; }
-	int32_t			FreeSize() { return _capacity - _writePos; }
+	EXPORT_API BYTE* ReadPos() { return &_buffer[_readPos]; }
+	EXPORT_API BYTE* WritePos() { return &_buffer[_writePos]; }
+	EXPORT_API int32_t			DataSize() { return _writePos - _readPos; }
+	EXPORT_API int32_t			FreeSize() { return _capacity - _writePos; }
 
 private:
 	int32_t			_capacity = 0;

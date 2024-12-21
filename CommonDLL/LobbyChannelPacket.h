@@ -5,7 +5,7 @@ class EXPORT_API C_EnterToLobby : public Packet
 {
 public:
     C_EnterToLobby() = default;
-    ~C_EnterToLobby() override = default;
+    
 
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -18,7 +18,6 @@ class EXPORT_API S_EnterToLobby : public Packet
 {
 public:
     S_EnterToLobby() = default;
-    ~S_EnterToLobby() override = default;
 
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
@@ -31,7 +30,6 @@ class EXPORT_API C_EnterToMatching : public Packet
 {
 public:
     C_EnterToMatching() = default;
-    ~C_EnterToMatching() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -43,7 +41,6 @@ class EXPORT_API S_EnterToMatching : public Packet
 {
 public:
     S_EnterToMatching() = default;
-    ~S_EnterToMatching() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -57,7 +54,6 @@ class EXPORT_API S_MatchingFinished : public Packet
 {
 public:
     S_MatchingFinished() = default;
-    ~S_MatchingFinished() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -71,7 +67,6 @@ class EXPORT_API C_MatchingCancel : public Packet
 {
 public:
     C_MatchingCancel() = default;
-    ~C_MatchingCancel() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -84,7 +79,6 @@ class EXPORT_API S_MatchingCancel : public Packet
 {
 public:
     S_MatchingCancel() = default;
-    ~S_MatchingCancel() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -98,7 +92,6 @@ class EXPORT_API C_JoinGame : public Packet
 {
 public:
     C_JoinGame() = default;
-    ~C_JoinGame() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -111,7 +104,6 @@ class EXPORT_API S_JoinGame : public Packet
 {
 public:
     S_JoinGame() = default;
-    ~S_JoinGame() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -121,28 +113,26 @@ public:
     uint32_t _inGameId;
 };
 
-class EXPORT_API C_SignIn : public Packet
+class  C_SignIn : public Packet
 {
 public:
-    C_SignIn() = default;
-    ~C_SignIn() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API C_SignIn() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     std::string _username;
     std::string _password;
 };
 
-class EXPORT_API S_SignIn : public Packet
+class S_SignIn : public Packet
 {
 public:
-    S_SignIn() = default;
-    ~S_SignIn() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_SignIn() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     std::string _username;
@@ -151,29 +141,27 @@ public:
     std::string _errorReason;
 };
 
-class EXPORT_API C_Login : public Packet
+class C_Login : public Packet
 {
 public:
-    C_Login() = default;
-    ~C_Login() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API C_Login() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     std::string _username;
     std::string _password;
 };
 
-class EXPORT_API S_Login : public Packet
+class S_Login : public Packet
 {
 public:
     
-    S_Login() =default;
-    ~S_Login() override =default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_Login() =default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     std::string _username;
@@ -187,7 +175,6 @@ class EXPORT_API C_GetMyAwardInfo : public Packet
 public:
     
     C_GetMyAwardInfo() =default;
-    ~C_GetMyAwardInfo() override =default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -200,7 +187,6 @@ class EXPORT_API S_GetMyAwardInfo : public Packet
 public:
     
     S_GetMyAwardInfo() =default;
-    ~S_GetMyAwardInfo() override =default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -217,7 +203,6 @@ class EXPORT_API C_SelectCharacter :  public Packet
 public:
     
     C_SelectCharacter() =default;
-    ~C_SelectCharacter() override =default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -226,15 +211,14 @@ public:
     uint32_t _characterId;
 };
 
-class EXPORT_API S_SelectCharacter : public Packet
+class  S_SelectCharacter : public Packet
 {
 public:
     
-    S_SelectCharacter() =default;
-    ~S_SelectCharacter() override =default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_SelectCharacter() =default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     uint32_t _characterId;
@@ -247,7 +231,6 @@ class EXPORT_API C_SelectWeapon : public Packet
 public:
     
     C_SelectWeapon() = default;
-    ~C_SelectWeapon() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -256,15 +239,14 @@ public:
     uint32_t _weaponId;
 };
 
-class EXPORT_API S_SelectWeapon : public Packet
+class  S_SelectWeapon : public Packet
 {
 public:
     
-    S_SelectWeapon() = default;
-    ~S_SelectWeapon() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_SelectWeapon() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     uint32_t _weaponId;
@@ -277,7 +259,6 @@ class EXPORT_API C_BuyWeapon : public Packet
 public:
     
     C_BuyWeapon() = default;
-    ~C_BuyWeapon() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -287,15 +268,14 @@ public:
     
 };
 
-class EXPORT_API S_BuyWeapon : public Packet
+class S_BuyWeapon : public Packet
 {
 public:
     
-    S_BuyWeapon() = default;
-    ~S_BuyWeapon() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_BuyWeapon() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
 
     uint32_t _userId;
@@ -309,7 +289,6 @@ class EXPORT_API C_CacheFulling : public Packet
 public:
     
     C_CacheFulling() = default;
-    ~C_CacheFulling() override = default;
     virtual BYTE* Serialize(BYTE* buffer) override;
     virtual void Deserialize(BYTE* buffer, int32_t len) override;
     virtual uint16_t GetSize() override;
@@ -319,15 +298,14 @@ public:
     
 };
 
-class EXPORT_API S_CacheFulling : public Packet
+class  S_CacheFulling : public Packet
 {
 public:
     
-    S_CacheFulling() = default;
-    ~S_CacheFulling() override = default;
-    virtual BYTE* Serialize(BYTE* buffer) override;
-    virtual void Deserialize(BYTE* buffer, int32_t len) override;
-    virtual uint16_t GetSize() override;
+    EXPORT_API S_CacheFulling() = default;
+    EXPORT_API virtual BYTE* Serialize(BYTE* buffer) override;
+    EXPORT_API virtual void Deserialize(BYTE* buffer, int32_t len) override;
+    EXPORT_API virtual uint16_t GetSize() override;
 
     uint32_t _userId;
     uint32_t _cacheAmount;
