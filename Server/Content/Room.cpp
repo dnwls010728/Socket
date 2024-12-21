@@ -5,7 +5,6 @@
 
 map<int,shared_ptr<Room>>* GRoomMap = new map<int,shared_ptr<Room>>();
 
-
 void Room::Init()
 {
     GRoomMap->insert(pair<int,shared_ptr<Room>>(0, make_shared<Room>(0,"firstRoom")));

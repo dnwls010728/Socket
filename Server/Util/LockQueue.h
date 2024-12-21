@@ -19,6 +19,11 @@ public:
 		_items.push(item);
 	}
 
+	size_t Size()
+	{
+		return _items.size();
+	}
+
 	T Pop()
 	{
 		WRITE_LOCK;

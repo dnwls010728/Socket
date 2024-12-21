@@ -98,6 +98,7 @@ public:
 
     uint32_t _userId;
     uint32_t _matchingQueueId;
+    uint32_t _mapId;
 };
 
 class EXPORT_API S_JoinGame : public Packet

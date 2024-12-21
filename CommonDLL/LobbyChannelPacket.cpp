@@ -305,6 +305,7 @@ BYTE* C_JoinGame::Serialize(BYTE* buffer)
     int currentByte = 0;
     GSerializer->Serialize(buffer, _userId, currentByte);
     GSerializer->Serialize(buffer, _matchingQueueId, currentByte);
+    GSerializer->Serialize(buffer,_mapId, currentByte);
     return buffer;
 }
 
@@ -313,12 +314,14 @@ void C_JoinGame::Deserialize(BYTE* buffer, int32_t len)
     int currentByte = 0;
     GDeSerializer->Deserialize(buffer, currentByte, _userId);
     GDeSerializer->Deserialize(buffer, currentByte, _matchingQueueId);
+    GDeSerializer->Deserialize(buffer, currentByte, _mapId);
 }
 
 uint16_t C_JoinGame::GetSize()
 {
     return GSerializer->GetPacketSize(_userId) +
-           GSerializer->GetPacketSize(_matchingQueueId);
+           GSerializer->GetPacketSize(_matchingQueueId)+
+               GSerializer->GetPacketSize(_mapId);
 }
 
 // S_JoinGame
