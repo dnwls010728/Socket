@@ -41,11 +41,11 @@
   Common definitions and declarations that are needed by public headers.
 
   Note: Any common stuff that is needed only by the implementation, should be
-  kept in the CommonDLL folder, either as headers or source files.
+  kept in the common/ folder, either as headers or source files.
 */
 
 #include "common_constants.h"
-#include "commonapi.h"
+#include "common/api.h"
 #include "common/error.h"
 #include "common/util.h"
 #include "common/value.h"
