@@ -28,7 +28,7 @@ void JobQueue::Execute()
 		vector<shared_ptr<Job>> jobs;
 		_jobs.PopAll(OUT jobs);
 
-		const int jobCount = jobs.size();
+		const size_t jobCount = jobs.size();
 
 		for (int i = 0; i < jobCount; i++)
 			jobs[i]->Execute();

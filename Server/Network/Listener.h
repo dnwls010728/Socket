@@ -19,17 +19,17 @@ public:
 
 	
 public:
-	/* �ܺο��� ��� */
+	
 	bool StartAccept(shared_ptr<ServerService> service);
 	void CloseSocket();
 
 public:
-	/* �������̽� ���� */
+	
 	virtual HANDLE GetHandle() override;
 	virtual void Dispatch(class IocpEvent* iocpEvent, int numOfBytes = 0) override;
 
 private:
-	/* ���� ���� */
+	
 	void RegisterAccept(AcceptEvent* acceptEvent);
 	void ProcessAccept(AcceptEvent* acceptEvent);
 

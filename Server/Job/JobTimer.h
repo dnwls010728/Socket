@@ -5,7 +5,7 @@
 #include "JobQueue.h"
 struct JobData
 {
-	JobData(weak_ptr<JobQueue> owner, shared_ptr<Job> job) : owner(owner), job(job)
+	JobData(const weak_ptr<JobQueue>& owner, const shared_ptr<Job>& job) : owner(owner), job(job)
 	{
 
 	}
@@ -30,7 +30,7 @@ struct TimerItem
 class JobTimer
 {
 public:
-	void Reserve(uint64_t tickAfter, weak_ptr<JobQueue> owner, shared_ptr<Job> job);
+	void Reserve(uint64_t tickAfter, const weak_ptr<JobQueue>& owner, const shared_ptr<Job>& job);
 	void Distribute(uint64_t now);
 	void Clear();
 

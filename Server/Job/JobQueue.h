@@ -39,6 +39,6 @@ public:
 
 protected:
 	LockQueue<shared_ptr<Job>> _jobs;
-	atomic<int> _jobCount = 0;
+	atomic<int> _jobCount;
 };
 

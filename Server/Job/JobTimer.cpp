@@ -2,7 +2,7 @@
 #include "JobTimer.h"
 
 
-void JobTimer::Reserve(uint64_t tickAfter, weak_ptr<JobQueue> owner, shared_ptr<Job> job)
+void JobTimer::Reserve(uint64_t tickAfter, const weak_ptr<JobQueue>& owner, const shared_ptr<Job>& job)
 {
 	const uint64_t executeTick = ::GetTickCount64() + tickAfter;
 	JobData* jobData = new JobData(owner, job);

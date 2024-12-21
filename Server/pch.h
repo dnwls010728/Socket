@@ -27,9 +27,9 @@ using namespace std;
 #include <ws2tcpip.h>
 #pragma comment(lib,"ws2_32.lib")
 #ifdef _DEBUG
-#pragma comment(lib,"..\\x64\\Debug\\CommonDLL.lib");
+#pragma comment(lib,"..\\x64\\Debug\\CommonDLL.lib")
 #else
-#pragma comment(lib,"..\\x64\\Release\\CommonDLL.lib");
+#pragma comment(lib,"..\\x64\\Release\\CommonDLL.lib")
 #endif
 
 #include "..\Thread\Lock.h"
