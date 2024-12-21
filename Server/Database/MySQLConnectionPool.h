@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "MySQLConnection.h"
 
-#define DB_HOST "127.0.0.1"
-#define DB_USER "root"
-#define DB_PASSWORD "root"
-#define DB_PORT  3306
-#define DB_POOL_SIZE 32
-#define DB_NAME "gameserver" 
+const std::string DB_HOST= "127.0.0.1";
+const std::string DB_USER= "root";
+const std::string DB_PASSWORD= "root";
+constexpr uint32_t DB_PORT=  3306;
+constexpr size_t DB_POOL_SIZE= 32;
+const std::string DB_NAME= "gameserver" ;
 
 class MySQLConnectionPool {
 public:
@@ -25,7 +25,7 @@ public:
         return conn;
     }
 
-    void release(std::shared_ptr<MySQLConnection> conn) {
+    void release(const std::shared_ptr<MySQLConnection>& conn) {
         std::unique_lock<std::mutex> lock(mtx);
         connections.push(conn);
         cv.notify_one();

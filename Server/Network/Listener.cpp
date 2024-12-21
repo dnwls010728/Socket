@@ -64,7 +64,7 @@ HANDLE Listener::GetHandle()
 
 void Listener::Dispatch(IocpEvent* iocpEvent, int numOfBytes)
 {
-	AcceptEvent* acceptEvent = static_cast<AcceptEvent*>(iocpEvent);
+	AcceptEvent* acceptEvent = reinterpret_cast<AcceptEvent*>(iocpEvent);
 	ProcessAccept(acceptEvent);
 }
 

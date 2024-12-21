@@ -22,21 +22,25 @@ class Session : public IocpObject
 
 public:
 	Session();
-	virtual ~Session();
+	virtual ~Session() override;
+	Session(const Session&) = delete;
+	Session& operator=(const Session&) = delete;
+	Session(Session&&) = delete;
+	Session& operator=(Session&&) = delete;
 
 public:
 	void Send(shared_ptr<SendBuffer> buffer);
 	bool Connect();
 	void Disconnect(const WCHAR* cause);
 
-	shared_ptr<Service> GetService() { return _service.lock(); }
+	shared_ptr<Service> GetService() const { return _service.lock(); }
 	void SetService(shared_ptr<Service> service) { _service = service; }
 
 public:
 	void SetNetAddress(NetworkConnector address) { _netAddress = address; }
-	NetworkConnector GetAddress() { return _netAddress; }
-	SOCKET GetSocket()  { return _socket; }
-	bool IsConnected() { return _connected;}
+	NetworkConnector GetAddress() const { return _netAddress; }
+	SOCKET GetSocket() const  { return _socket; }
+	bool IsConnected() const { return _connected;}
 	shared_ptr<Session> GetSessionRef() { return static_pointer_cast<Session>(shared_from_this()); }
 
 private:
@@ -95,8 +99,12 @@ struct PacketHeader
 class PacketSession : public Session
 {
 public :
-	PacketSession();
-	virtual ~PacketSession();
+	PacketSession() = default;
+	virtual ~PacketSession() override = default;
+	PacketSession(const PacketSession&) = delete;
+	PacketSession& operator=(const PacketSession&) = delete;
+	PacketSession(PacketSession&&) = delete;
+	PacketSession& operator=(PacketSession&&) = delete;
 
 	shared_ptr<PacketSession> GetPacketSessionRef() { return static_pointer_cast<PacketSession>(shared_from_this()); }
 

@@ -5,6 +5,14 @@ template<typename T>
 class LockQueue
 {
 public:
+	LockQueue() = default;
+	~LockQueue() = default;
+
+	LockQueue(const LockQueue&) = delete;
+	LockQueue& operator=(const LockQueue&) = delete;
+	LockQueue(LockQueue&&) = delete;
+	LockQueue& operator=(LockQueue&&) = delete;
+	
 	void Push(T item)
 	{
 		WRITE_LOCK;

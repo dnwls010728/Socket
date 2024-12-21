@@ -11,20 +11,25 @@ class Listener : public IocpObject
 {
 public:
 	Listener() = default;
-	~Listener();
+	~Listener() override;
+	Listener(const Listener&) = delete;
+	Listener& operator=(const Listener&) = delete;
+	Listener(Listener&&) = delete;
+	Listener& operator=(Listener&&) = delete;
 
+	
 public:
-	/* ¿ÜºÎ¿¡¼­ »ç¿ë */
+	/* ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */
 	bool StartAccept(shared_ptr<ServerService> service);
 	void CloseSocket();
 
 public:
-	/* ÀÎÅÍÆäÀÌ½º ±¸Çö */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	virtual HANDLE GetHandle() override;
 	virtual void Dispatch(class IocpEvent* iocpEvent, int numOfBytes = 0) override;
 
 private:
-	/* ¼ö½Å °ü·Ã */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	void RegisterAccept(AcceptEvent* acceptEvent);
 	void ProcessAccept(AcceptEvent* acceptEvent);
 

@@ -12,31 +12,25 @@ void Room::Init()
     GRoomMap->insert(pair<int,shared_ptr<Room>>(1, make_shared<Room>(1,"secondRoom")));
 }
 
-void Room::LeaveAndJoin(shared_ptr<User> userRef,const shared_ptr<Room>& targetRoom)
-{
-    WRITE_LOCK;
-    Leave(std::move(userRef));
-    targetRoom->Enter(std::move(userRef));
-}
 
 Room::Room(uint32_t roomIdentifyKey, string roomName):roomIdentifyKey(roomIdentifyKey),roomName(roomName)
 {
 }
 
-bool Room::Enter(shared_ptr<User> userRef)
+bool Room::Enter(const shared_ptr<User>& userRef)
 {
     WRITE_LOCK;
     users[userRef->userIdentifyId] = userRef;
     return true;
 }
 
-void Room::Leave(shared_ptr<User> userRef)
+void Room::Leave(const shared_ptr<User>& userRef)
 {
     WRITE_LOCK;
     users.erase(userRef->userIdentifyId);
 }
 
-void Room::Broadcast(shared_ptr<SendBuffer> sendBufferRef)
+void Room::Broadcast(const shared_ptr<SendBuffer>& sendBufferRef)
 {
     for(auto& p : users)
     {

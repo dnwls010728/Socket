@@ -17,7 +17,7 @@ public:
         conn->setSchema(db);
     }
 
-    sql::Connection* get() {
+    sql::Connection* get() const{
         return conn.get();
     }
 

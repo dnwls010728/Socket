@@ -283,13 +283,7 @@ void Session::HandlerError(int errCode)
 	}
 }
 
-PacketSession::PacketSession()
-{
-}
 
-PacketSession::~PacketSession()
-{
-}
 
 int PacketSession::OnRecv(BYTE* buffer, int len)
 {

@@ -7,7 +7,7 @@ public:
     User() = default;
     ~User()
     {
-        cout<< "User Memory Free" << endl;
+        cout<< "User Memory Free \n";
     }
 
     string name;

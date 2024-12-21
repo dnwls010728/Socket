@@ -11,10 +11,6 @@ void GameSession::OnConnected()
 void GameSession::OnDisconnected()
 {
 	wcout << L"DisConnected" << GetSessionRef()->GetAddress().GetIpAddress() << endl;
-	if(roomRef.lock().use_count() != 0)
-	{
-		roomRef.lock()->Leave(userRef);
-	}
 		
 }
 
