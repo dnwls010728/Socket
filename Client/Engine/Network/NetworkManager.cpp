@@ -31,21 +31,6 @@ void NetworkManager::Tick(float delta_time)
                 actor->is_mine_ = true;
 
                 players_[actor->packet_id_] = actor;
-
-                C_EnterRoom enterRoomPkt;
-                enterRoomPkt._roomNum = 0;
-                std::shared_ptr<SendBuffer> enterRoomSendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterRoom>(enterRoomPkt,C_PKT_ENTER_ROOM);
-                GSocketSession->Send(enterRoomSendBuffer);
-
-                C_EnterChannel enterChannelPkt;
-                enterChannelPkt._channelNum = 0;
-                std::shared_ptr<SendBuffer> enterChannelSendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterChannel>(enterChannelPkt,C_PKT_ENTER_CHANNEL);
-                GSocketSession->Send(enterChannelSendBuffer);
-                
-                C_EnterOtherUser pkt;
-                pkt._userId = actor->packet_id_;
-                std::shared_ptr<SendBuffer> send_buffer = ServerPacketHandler::MakeSendBuffer<C_EnterOtherUser>(pkt, C_PKT_ENTER_OTHER_USER);
-                GSocketSession->Send(send_buffer);
             }
             break;
 
