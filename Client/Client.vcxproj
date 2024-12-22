@@ -618,7 +618,6 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Nexol\RiderProjects\Socket\\Client\Game;C:\Users\Nexol\RiderProjects\Socket\\Client\Engine;C:\Users\Nexol\RiderProjects\Socket\\Client\Include;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Game\Character\Component\FSM\State.cpp">
@@ -843,7 +842,6 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Nexol\RiderProjects\Socket\\Client\Game;C:\Users\Nexol\RiderProjects\Socket\\Client\Engine;C:\Users\Nexol\RiderProjects\Socket\\Client\Include;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Game\Character\Player\Weapon.cpp">
@@ -918,7 +916,6 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Nexol\RiderProjects\Socket\\Client\Game;C:\Users\Nexol\RiderProjects\Socket\\Client\Engine;C:\Users\Nexol\RiderProjects\Socket\\Client\Include;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Game\Map\EditorMap.cpp" />
