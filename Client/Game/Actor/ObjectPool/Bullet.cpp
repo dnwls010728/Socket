@@ -8,6 +8,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Character/CharacterBase.h"
+#include "Misc/GameplayStatics.h"
 #include "Physics/Physics2D.h"
 #include "Windows/DX/Sprite.h"
 
@@ -52,7 +53,7 @@ void Bullet::PhysicsTick(float delta_time)
         CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
         if (character)
         {
-            CharacterBase::ApplyDamage(character, 10.f, GetInstigator(), GetOwner());
+            GameplayStatics::ApplyDamage(character, 10.f, GetInstigator(), GetOwner());
             Deactivate();
         }
     }
