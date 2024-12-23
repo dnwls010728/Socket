@@ -110,7 +110,7 @@ bool Physics2D::OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kS
     transform.p = {kCenter.x, kCenter.y};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
 
     SingleOverlapContext context = {output_actor};
@@ -128,7 +128,7 @@ bool Physics2D::OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2&
     transform.p = {kCenter.x, kCenter.y};
 
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
 
     MultiOverlapContext context = {output_actors};
@@ -146,7 +146,7 @@ bool Physics2D::OverlapCircle(const Math::Vector2& kCenter, float radius, Actor*
     transform.p = {kCenter.x, kCenter.y};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     SingleOverlapContext context = {output_actor};
@@ -164,7 +164,7 @@ bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std
     transform.p = {kCenter.x, kCenter.y};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     MultiOverlapContext context = {output_actors};
@@ -177,7 +177,7 @@ bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std
 bool Physics2D::RayCast(HitResult& hit_result, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer)
 {
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
 
     if (!Math::IsValid(max_distance)) return false;
@@ -194,7 +194,7 @@ bool Physics2D::RayCast(HitResult& hit_result, const Math::Vector2& kOrigin, con
 bool Physics2D::RayCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer)
 {
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
 
     if (!Math::IsValid(max_distance)) return false;
@@ -214,7 +214,7 @@ bool Physics2D::BoxCast(HitResult& hit_result, const Math::Vector2& kSize, float
     b2Transform transform = {{kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f)};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     if (!Math::IsValid(max_distance)) return false;
@@ -234,7 +234,7 @@ bool Physics2D::BoxCastAll(std::vector<HitResult>& hit_results, const Math::Vect
     b2Transform transform = {{kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f)};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     if (!Math::IsValid(max_distance)) return false;
@@ -254,7 +254,7 @@ bool Physics2D::CircleCast(HitResult& hit_result, float radius, float angle, con
     b2Transform transform = {{kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f)};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     if (!Math::IsValid(max_distance)) return false;
@@ -274,7 +274,7 @@ bool Physics2D::CircleCastAll(std::vector<HitResult>& hit_results, float radius,
     b2Transform transform = {{kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f)};
     
     b2QueryFilter filter = b2DefaultQueryFilter();
-    filter.categoryBits = layer;
+    filter.categoryBits = 65535;
     filter.maskBits = layer;
     
     if (!Math::IsValid(max_distance)) return false;

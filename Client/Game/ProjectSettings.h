@@ -42,7 +42,7 @@ public:
         {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
         {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
         {ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault},
-        {ActorLayer::kMob, ActorLayer::kMob | ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault},
+        {ActorLayer::kMob, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault},
         {ActorLayer::kBullet, ActorLayer::kMob}
     };
     
