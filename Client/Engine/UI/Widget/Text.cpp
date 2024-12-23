@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Text.h"
 
+#include "Logger.h"
 #include "Level/World.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -50,6 +51,11 @@ void Text::Render()
     renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, font_family_, text_alignment_, paragraph_alignment_);
     
     Widget::Render();
+}
+
+bool Text::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    return Widget::OnMouseButton(kPosition, button, is_pressed);
 }
 
 RTTR_REGISTRATION

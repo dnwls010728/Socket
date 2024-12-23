@@ -1,11 +1,16 @@
 #pragma once
 #include <winsock2.h>
 #include <iostream>
-#include "../../Common/SendBuffer.h"
-#include "../../Common/RecvBuffer.h"
+#include "../../CommonDLL/SendBuffer.h"
+#include "../../CommonDLL/RecvBuffer.h"
 #include <vector>
 #include <thread>
+//이거를 이제 서버 IP 주소로 바꿔서 접속해보셈 >_<
 #define SERVER_IP "127.0.0.1"
+//포트도!
+//서버 컴퓨터 방화벽 들어가서 확인 해보고
+//포트 열렸는지 네트워크 설정함 봐보고
+//그래도 안되면 알려주세요 -_-
 #define SERVER_PORT 7777
 #define BUFFER_SIZE 1024
 
@@ -15,7 +20,7 @@ struct PacketHeader
 	uint16_t id;
 };
 struct IOContext {
-	OVERLAPPED overlapped;
+	OVERLAPPED* overlapped;
 	WSABUF wsabuf;
 	char buffer[BUFFER_SIZE];
 	int operation; // 0: recv, 1: send
@@ -24,11 +29,10 @@ class SocketSession : public std::enable_shared_from_this<SocketSession>
 {
 public:
 
-	void WorkerThread(HANDLE hIOCP) {
+	void WorkerThread(HANDLE hIOCP,IOContext* ioContext) {
 		DWORD bytesTransferred;
 		ULONG_PTR completionKey;
-		IOContext* ioContext = new IOContext();
-
+		
 		while (true) {
 			BOOL result = GetQueuedCompletionStatus(hIOCP, &bytesTransferred, &completionKey, (LPOVERLAPPED*)&ioContext, INFINITE);
 			if (!result) {
@@ -38,7 +42,7 @@ public:
 
 			if (bytesTransferred == 0) {
 				std::cout << "Connection closed by server." << std::endl;
-				continue;
+				break;
 			}
 
 			if (ioContext->operation == 0) { // recv
@@ -61,7 +65,7 @@ public:
 				}
 				_recvBuffer.Clean();
 
-				ProcessRecv(0);
+				ProcessRecv(0,ioContext);
 
 				//WSASend((SOCKET)completionKey, &ioContext->wsabuf, 1, NULL, flags, &ioContext->overlapped, NULL);
 			}
@@ -88,7 +92,7 @@ public:
 
 	void ProcessConnect();
 	void ProcessDisconnect();
-	void ProcessRecv(int numOfBytes);
+	void ProcessRecv(int numOfBytes,IOContext* ioContext);
 	void ProcessSend(int numOfBytes);
 	void OnRecvPacket(BYTE* buffer, int len);
 
@@ -108,7 +112,8 @@ private:
 	std::atomic<bool> _connected = false;
 	SOCKADDR_IN _sockAddr = {};
 	std::vector<std::thread> _workers;
-	IOContext _context;
+	IOContext *  _context;
+	HANDLE _hIocp = INVALID_HANDLE_VALUE;
 };
 
-extern SocketSession* GSocketSession;
+//extern SocketSession* GSocketSession;

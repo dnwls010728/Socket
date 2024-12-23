@@ -11,20 +11,25 @@ class Listener : public IocpObject
 {
 public:
 	Listener() = default;
-	~Listener();
+	~Listener() override;
+	Listener(const Listener&) = delete;
+	Listener& operator=(const Listener&) = delete;
+	Listener(Listener&&) = delete;
+	Listener& operator=(Listener&&) = delete;
 
+	
 public:
-	/* 외부에서 사용 */
+	
 	bool StartAccept(shared_ptr<ServerService> service);
 	void CloseSocket();
 
 public:
-	/* 인터페이스 구현 */
+	
 	virtual HANDLE GetHandle() override;
 	virtual void Dispatch(class IocpEvent* iocpEvent, int numOfBytes = 0) override;
 
 private:
-	/* 수신 관련 */
+	
 	void RegisterAccept(AcceptEvent* acceptEvent);
 	void ProcessAccept(AcceptEvent* acceptEvent);
 

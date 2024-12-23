@@ -5,13 +5,12 @@
 #include "Engine/Core.h"
 
 #include <crtdbg.h>
-#include <iostream>
 
 #include "resource.h"
 #include "SocketCore/ServerPacketHandler.h"
 #include "Engine/Windows/WindowsWindow.h"
 #include "SocketCore/SocketSession.h"
-#include "../Common/Packet.h"
+#include "SocketCore/Util/GlobalFreeManager.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -20,28 +19,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 #endif
     
     HICON icon_handle = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    WindowsApplication* application = new WindowsApplication(hInstance, icon_handle);
+    
+    WindowsApplication* application = WindowsApplication::Get();
+    application->Init(hInstance, icon_handle);
 
-    Core* core = new Core();
-    core->Init(application);
-
+    std::unique_ptr<Core> core = std::make_unique<Core>();
+    core->Init();
+    GlobalFreeManager::InitMemory();
     ServerPacketHandler::Init();
     
-    /*
-    if(GSocketSession->Connect())
-    {
-        C_EnterPacket pkt;
-        pkt.SetId("Client");
-        pkt.SetName("Client");
-        std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
-        GSocketSession->Send(sendBuffer);
-    };
-    */
-    
     application->PumpMessages();
-
-    SAFE_RELEASE(core);
-    SAFE_RELEASE(application);
-    
+    GlobalFreeManager::FreeMemory();
     return 0;
 }

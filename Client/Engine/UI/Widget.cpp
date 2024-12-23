@@ -19,8 +19,7 @@ Widget::Widget(const std::wstring& kName) :
     parent_(nullptr),
     children_(),
     has_begun_play_(false),
-    is_ray_cast_target_(false),
-    is_hovered_(false),
+    is_active_(true),
     is_focused_(false)
 {
 }
@@ -114,6 +113,7 @@ void Widget::AttachToWidget(Widget* parent)
 {
     parent_ = parent;
     parent_->children_.push_back(this);
+    parent_->OnWidgetAttached(this);
     if (has_begun_play_) UpdateRect();
 }
 
@@ -126,6 +126,7 @@ void Widget::DetachFromWidget()
 
     if (has_begun_play_) UpdateRect();
 }
+
 
 bool Widget::HitTest(const Math::Vector2& kPoint) const
 {
@@ -152,13 +153,13 @@ Math::Vector2 Widget::GetPivotPosition() const
 
 void Widget::BeginPlay()
 {
+    UpdateRect();
+    has_begun_play_ = true;
+    
     for (const auto& child : children_)
     {
         child->BeginPlay();
     }
-    
-    has_begun_play_ = true;
-    UpdateRect();
 }
 
 void Widget::Tick(float delta_time)
@@ -171,23 +172,29 @@ void Widget::Tick(float delta_time)
 
 void Widget::Render()
 {
-#ifdef _DEBUG
-    WindowsWindow* window = World::Get()->GetWindow();
-    if (!window) return;
+    if (is_focused_)
+    {
+        WindowsWindow* window = World::Get()->GetWindow();
+        if (!window) return;
 
-    Renderer* renderer = Renderer::Get();
-    if (!renderer) return;
+        Renderer* renderer = Renderer::Get();
+        if (!renderer) return;
     
-    Math::Vector2 pivot_position = GetPivotPosition();
-    if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
+        Math::Vector2 pivot_position = GetPivotPosition();
+        if (GetParent()) pivot_position = GetParent()->GetPivotPosition();
 
-    renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
-#endif
+        renderer->DrawBox(window, rect_, pivot_position, Math::Color::Green, angle_, 1.f);
+    }
     
     for (const auto& child : children_)
     {
+        if (!child->is_active_) continue;
         child->Render();
     }
+}
+
+void Widget::OnWidgetAttached(Widget* child)
+{
 }
 
 void Widget::UpdateRect()
@@ -262,14 +269,134 @@ void Widget::UpdateRect()
     }
 }
 
-void Widget::OnFocusChanged(bool is_focused)
+bool Widget::OnFocus(bool is_focused)
 {
+    is_focused_ = is_focused;
+    return false;
 }
 
-void Widget::OnInputKey(Type::uint16 key_code, bool is_pressed)
+bool Widget::OnMouseEnter()
 {
+    return false;
 }
 
-void Widget::OnInputText(wchar_t character)
+bool Widget::OnMouseLeave()
 {
+    return false;
+}
+
+bool Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    bool is_handled = false;
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+        if (!child->is_active_) continue;
+
+        bool is_result = child->HitTest(kPosition);
+        bool is_previous_result = child->HitTest(kPosition - kDelta);
+
+        if (is_result != is_previous_result)
+        {
+            is_handled |= child->OnMouseEnter();
+            is_handled |= child->OnMouseLeave();
+        }
+
+        if (is_result || is_previous_result)
+            is_handled |= child->OnMouseMotion(kPosition, kDelta);
+    }
+
+    return is_handled;
+}
+
+bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+{
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+        if (child->is_active_ && child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
+            return true;
+    }
+
+    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas::Get()->SetWidgetFocus(this);
+    return false;
+}
+
+bool Widget::OnBeginDrag(const Math::Vector2& kPosition)
+{
+    if (BeginDragHandler.IsBound())
+    {
+        BeginDragHandler.Execute(kPosition);
+        return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    if (DragHandler.IsBound())
+    {
+        DragHandler.Execute(kPosition, kDelta);
+        return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnEndDrag(const Math::Vector2& kPosition)
+{
+    if (EndDragHandler.IsBound())
+    {
+        EndDragHandler.Execute(kPosition);
+        return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
+{
+    if (DropHandler.IsBound())
+    {
+        DropHandler.Execute(kPosition, std::move(kWidget));
+        return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    for (auto it = children_.rbegin(); it != children_.rend(); ++it)
+    {
+        Widget* child = *it;
+        if (!child->is_active_) continue;
+        
+        if (child->HitTest(kPosition) && child->OnScroll(kPosition, kDelta))
+            return true;
+    }
+    
+    return false;
+}
+
+bool Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+{
+    return false;
+}
+
+bool Widget::OnChar(wchar_t character)
+{
+    return false;
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<Widget>("Widget")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

@@ -48,6 +48,8 @@ public:
     void SetFreezeRotation(bool freeze);
     void UseAutoMass(bool use_auto_mass);
     void SetMass(float mass);
+    void SetPosition(const Math::Vector2& kPosition);
+    void SetAngle(float angle);
     void SetLinearVelocity(const Math::Vector2& kLinearVelocity);
     void SetLinearVelocityX(float linear_velocity);
     void SetLinearVelocityY(float linear_velocity);
@@ -60,8 +62,10 @@ public:
     void Sleep();
     void WakeUp();
 
+    Math::Vector2 GetPosition() const;
     Math::Vector2 GetLinearVelocity() const;
-    
+
+    float GetAngle() const;
     float GetAngularVelocity() const;
     float GetLinearVelocityX() const;
     float GetLinearVelocityY() const;

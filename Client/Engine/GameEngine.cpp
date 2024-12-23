@@ -7,6 +7,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Input/Keyboard.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
 #include "UI/Canvas.h"
@@ -108,7 +109,7 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRender(game_window_);
     World::Get()->Render(alpha);
-
+    
     Renderer::Get()->BeginRenderD2D(game_window_);
     Canvas::Get()->Render();
     Renderer::Get()->EndRenderD2D();

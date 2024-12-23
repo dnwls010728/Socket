@@ -26,7 +26,7 @@ public:
     FORCEINLINE float GetAngle() const { return angle_; }
 
 protected:
-    virtual void PhysicsTickComponent(float delta_time) override;
+    virtual void TickComponent(float delta_time) override;
 
 private:
     friend class Actor;

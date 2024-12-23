@@ -2,8 +2,8 @@
 #include "MainMap.h"
 
 #include "Actor/Tilemap.h"
-#include "Actor/Character/Player/PlayerCharacter.h"
-#include "Actor/Network/Network.h"
+#include "Character/Mob/Dummy/Dummy.h"
+#include "Character/Player/PlayerCharacter.h"
 
 MainMap::MainMap(const std::wstring& kName) : Level(kName)
 {
@@ -13,9 +13,9 @@ void MainMap::Load()
 {
     Level::Load();
 
-    Network* network = AddActor<Network>(L"Network");
     Tilemap* tilemap = AddActor<Tilemap>(L"Tilemap");
-    PlayerCharacter* player = AddActor<PlayerCharacter>(L"Player");
+    PlayerCharacter* player = AddActor<PlayerCharacter>(L"PlayerCharacter");
+    Dummy* dummy = AddActor<Dummy>(L"Dummy");
 }
 
 RTTR_REGISTRATION

@@ -10,6 +10,11 @@ class ThreadManager
 public:
 	ThreadManager();
 	~ThreadManager();
+	ThreadManager(const ThreadManager&) = delete;
+	ThreadManager& operator=(const ThreadManager&) = delete;
+	ThreadManager(ThreadManager&&) = delete;
+	ThreadManager& operator=(ThreadManager&&) = delete;
+	
 
 	void	Launch(function<void(void)> callback);
 	void	Join();

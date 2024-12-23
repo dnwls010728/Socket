@@ -3,13 +3,12 @@
 
 #include "WindowsWindow.h"
 #include "combaseapi.h"
+#include "../../SocketCore/Util/GlobalFreeManager.h"
 
-WindowsApplication::WindowsApplication(const HINSTANCE instance_handle, const HICON icon_handle) :
-    instance_handle_(instance_handle),
+WindowsApplication::WindowsApplication() :
+    instance_handle_(nullptr),
     windows_()
 {
-    RegisterClass(instance_handle, icon_handle);
-    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 }
 
 WindowsApplication::~WindowsApplication()
@@ -37,6 +36,14 @@ ATOM WindowsApplication::RegisterClass(const HINSTANCE instance_handle, const HI
 std::shared_ptr<WindowsWindow> WindowsApplication::MakeWindow()
 {
     return WindowsWindow::Make();
+}
+
+void WindowsApplication::Init(const HINSTANCE instance_handle, const HICON icon_handle)
+{
+    instance_handle_ = instance_handle;
+    
+    RegisterClass(instance_handle, icon_handle);
+    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 }
 
 void WindowsApplication::InitWindow(const std::shared_ptr<WindowsWindow>& kWindow, const std::shared_ptr<WindowDefinition>& kDefinition, const std::shared_ptr<WindowsWindow>& kParentWindow)
@@ -75,7 +82,7 @@ void WindowsApplication::PumpMessages()
 
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WindowsApplication* application = nullptr;
+    WindowsApplication* application;
 
     if (message == WM_NCCREATE)
     {
@@ -128,6 +135,8 @@ Type::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM 
             MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
             info->ptMinTrackSize.x = 100 + border_rect.right - border_rect.left;
             info->ptMinTrackSize.y = 100 + border_rect.bottom - border_rect.top;
+
+            return 0;
         }
         
         if (message == WM_DESTROY)

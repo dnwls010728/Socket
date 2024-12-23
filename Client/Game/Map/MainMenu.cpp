@@ -1,11 +1,13 @@
 ﻿#include "pch.h"
 #include "MainMenu.h"
 
+#include "Logger.h"
 #include "../../SocketCore/SocketSession.h"
 #include "../SocketCore/ServerPacketHandler.h"
 #include "Input/Keyboard.h"
 #include "Level/World.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
+#include "Math/Math.h"
 #include "UI/Canvas.h"
 #include "UI/Widget.h"
 #include "UI/Widget/Button.h"
@@ -17,8 +19,7 @@
 #include "Windows/DX/UITexture.h"
 
 MainMenu::MainMenu(const std::wstring& kName) :
-    Level(kName),
-    scroll_box_(nullptr)
+    Level(kName)
 {
 }
 
@@ -28,20 +29,20 @@ void MainMenu::Load()
     
     Canvas* canvas = Canvas::Get();
 
-    UITexture* texture = ResourceManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
+    UITexture* texture = AssetManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});
 
-    scroll_box_ = canvas->AddWidget<ScrollBox>(L"Scroll Box");
-    scroll_box_->AttachToWidget(canvas->GetRootWidget());
-    scroll_box_->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
-    scroll_box_->SetAnchoredPosition({0.f, 0.f});
-    scroll_box_->SetSize({200.f, 100.f});
+    scroll_box = canvas->AddWidget<ScrollBox>(L"Scroll Box");
+    scroll_box->AttachToWidget(canvas->GetRootWidget());
+    scroll_box->SetAnchorPreset(AnchorPreset::kLeft | AnchorPreset::kTop, true);
+    scroll_box->SetAnchoredPosition({0.f, 0.f});
+    scroll_box->SetSize({200.f, 100.f});
 
     // Scroll Box 테스트 코드
     for (int i = 0; i < 10; ++i)
     {
         Text* text = canvas->AddWidget<Text>(L"Text");
-        text->AttachToWidget(scroll_box_);
+        text->AttachToWidget(scroll_box);
         text->SetSize({100.f, 30.f});
         text->SetAlignment(Text::kMiddleLeft);
         text->SetText(L"Text " + std::to_wstring(i));
@@ -54,21 +55,21 @@ void MainMenu::Load()
     id_image->SetDrawMode(DrawMode::kSliced);
     id_image->SetTexture(texture);
     
-    EditableTextBox* id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
+    id_text_box = canvas->AddWidget<EditableTextBox>(L"ID Text Box");
     id_text_box->AttachToWidget(id_image);
     id_text_box->SetAnchorPreset(AnchorPreset::kStretch);
     id_text_box->SetAnchoredPosition({10.f, 10.f});
     id_text_box->SetSize({10.f, 10.f});
     id_text_box->SetPlaceholder(L"ID");
-
+    
     Image* pw_image = canvas->AddWidget<Image>(L"Password Image");
     pw_image->AttachToWidget(canvas->GetRootWidget());
     pw_image->SetAnchoredPosition({-50.f, 25.f});
     pw_image->SetSize({200.f, 50.f});
     pw_image->SetDrawMode(DrawMode::kSliced);
     pw_image->SetTexture(texture);
-
-    EditableTextBox* pw_text_box = canvas->AddWidget<EditableTextBox>(L"Password Text Box");
+    
+    pw_text_box = canvas->AddWidget<EditableTextBox>(L"Password Text Box");
     pw_text_box->AttachToWidget(pw_image);
     pw_text_box->SetAnchorPreset(AnchorPreset::kStretch);
     pw_text_box->SetAnchoredPosition({10.f, 10.f});
@@ -82,24 +83,23 @@ void MainMenu::Load()
     login_button->SetSize({100.f, 100.f});
     login_button->SetTexture(texture);
     login_button->SetDrawMode(DrawMode::kSliced);
-    login_button->OnMouseReleased.Add([]()
+    login_button->ClickHandler.Add([]()
     {
-        if(!GSocketSession->Connect())
-        {
-            //TODO: 여기서 튕기는 코드 작성 해 주세요
-        }
-        else
-        {
-            C_EnterPacket pkt;
-            pkt.SetId("Sundaekyung");
-            pkt.SetName("Sundaekyung");
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_EnterPacket>(pkt,C_PKT_ENTER);
-            GSocketSession->Send(sendBuffer);
-        }
+        // if(!GSocketSession->Connect())
+        // {
+        // }
+        // else
+        // {
+        //     C_Enter pkt;
+        //     pkt._id = "Sundaekyung";
+        //     pkt._name = "Sundaekyung";
+        //     std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Enter>(pkt,C_PKT_ENTER);
+        //     GSocketSession->Send(sendBuffer);
+        // }
         
         World::Get()->OpenLevel(LevelType::kDefault);
     });
-
+    
     Text* login_text = canvas->AddWidget<Text>(L"Login Text");
     login_text->AttachToWidget(login_button);
     login_text->SetAnchorPreset(AnchorPreset::kStretch);
@@ -107,13 +107,13 @@ void MainMenu::Load()
     login_text->SetColor(Math::Color::Black);
     login_text->SetText(L"LOGIN");
     login_text->SetAlignment(Text::kMiddleCenter);
-
+    
     Button* editor_button = canvas->AddWidget<Button>(L"Editor Button");
     editor_button->AttachToWidget(canvas->GetRootWidget());
     editor_button->SetAnchoredPosition({-75.f, 75.f});
     editor_button->SetTexture(texture);
     editor_button->SetDrawMode(DrawMode::kSliced);
-    editor_button->OnMouseReleased.Add([]()
+    editor_button->ClickHandler.Add([]()
     {
         World::Get()->OpenLevel(LevelType::kEditor);
     });
@@ -131,7 +131,7 @@ void MainMenu::Load()
     exit_button->SetAnchoredPosition({75.f, 75.f});
     exit_button->SetTexture(texture);
     exit_button->SetDrawMode(DrawMode::kSliced);
-    exit_button->OnMouseReleased.Add([]()
+    exit_button->ClickHandler.Add([]()
     {
         WindowsWindow* window = World::Get()->GetWindow();
         PostMessage(window->GetHWnd(), WM_USER, 0, 0);
@@ -152,36 +152,11 @@ void MainMenu::Tick(float delta_time)
     Level::Tick(delta_time);
 
     Keyboard* keyboard = Keyboard::Get();
+
     if (keyboard->GetKey(VK_UP))
     {
-        Math::Vector2 size = scroll_box_->GetSize();
-        size.y -= 100.f * delta_time;
-
-        scroll_box_->SetSize(size);
-    }
-
-    if (keyboard->GetKey(VK_DOWN))
-    {
-        Math::Vector2 size = scroll_box_->GetSize();
-        size.y += 100.f * delta_time;
-
-        scroll_box_->SetSize(size);
-    }
-
-    if (keyboard->GetKey(VK_LEFT))
-    {
-        Math::Vector2 size = scroll_box_->GetSize();
-        size.x -= 100.f * delta_time;
-
-        scroll_box_->SetSize(size);
-    }
-
-    if (keyboard->GetKey(VK_RIGHT))
-    {
-        Math::Vector2 size = scroll_box_->GetSize();
-        size.x += 100.f * delta_time;
-
-        scroll_box_->SetSize(size);
+        Math::Vector2 size = scroll_box->GetSize();
+        scroll_box->SetSize({size.x, size.y + 1.f});
     }
 }
 

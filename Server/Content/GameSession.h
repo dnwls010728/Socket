@@ -2,13 +2,19 @@
 
 #include "User.h"
 #include "Room.h"
-class GameSession : public PacketSession
+class GameSession final: public PacketSession
 {
 public:
-	~GameSession()
+	GameSession() = default;
+	virtual ~GameSession() override
 	{
-		cout << "~GameSession" << endl;
+		cout << "~GameSession \n";
 	}
+	GameSession(const GameSession& rhs) = delete;
+	GameSession& operator=(const GameSession& rhs) = delete;
+	GameSession(GameSession&& rhs) = delete;
+	GameSession& operator=(GameSession&& rhs) = delete;
+	
 
 	virtual void OnConnected() override;
 	virtual void OnDisconnected() override;
@@ -16,5 +22,5 @@ public:
 	virtual void OnSend(int len) override;
 public:
 	shared_ptr<class User> userRef;
-	weak_ptr<class Room> roomRef;
+	
 };

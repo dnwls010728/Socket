@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Sprite.h"
 
+#include "Data/FileHelper.h"
+
 const Math::Vector2 Sprite::kCenter = Math::Vector2(.5f, .5f);
 const Math::Vector2 Sprite::kTopLeft = Math::Vector2(0.f, 1.f);
 const Math::Vector2 Sprite::kTop = Math::Vector2(.5f, 1.f);
@@ -39,8 +41,10 @@ bool Sprite::Load(const std::wstring& kPath)
                 sprite_frame.uv_scale.y = frame["rect"]["height"].as<float>();
                 sprite_frame.pivot.x = frame["pivot"]["x"].as<float>();
                 sprite_frame.pivot.y = frame["pivot"]["y"].as<float>();
-
-                frames_.push_back(sprite_frame);
+                
+                std::string name = frame["name"].as<std::string>();
+                std::wstring to_wstring = std::wstring(name.begin(), name.end());
+                frames_[to_wstring] = sprite_frame;
             }
         }
     }
@@ -53,33 +57,11 @@ bool Sprite::Load(const std::wstring& kPath)
         frame.uv_scale = Math::Vector2::One();
         frame.pivot = kCenter;
 
-        frames_.push_back(frame);
+        std::wstring filename = FileHelper::GetFilenameWithoutExtension(kPath);
+        frames_[filename + L"_0"] = frame;
     }
     
     return true;;
-}
-
-void Sprite::Split(Type::uint32 cols, Type::uint32 rows, Math::Vector2 pivot)
-{
-    const float frame_width = static_cast<float>(width_) / cols;
-    const float frame_height = static_cast<float>(height_) / rows;
-
-    frames_.clear();
-
-    for (Type::uint32 y = 0; y < rows; ++y)
-    {
-        for (Type::uint32 x = 0; x < cols; ++x)
-        {
-            SpriteFrame frame;
-            frame.uv_offset.x = x;
-            frame.uv_offset.y = y;
-            frame.uv_scale.x = frame_width / static_cast<float>(width_);
-            frame.uv_scale.y = frame_height / static_cast<float>(height_);
-            frame.pivot = pivot;
-
-            frames_.push_back(frame);
-        }
-    }
 }
 
 RTTR_REGISTRATION
@@ -89,6 +71,6 @@ RTTR_REGISTRATION
     registration::class_<Sprite>("Sprite")
         .constructor<>()
         (
-            policy::ctor::as_std_shared_ptr
+            policy::ctor::as_raw_ptr
         );
 }

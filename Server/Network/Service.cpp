@@ -3,12 +3,8 @@
 #include "Session.h"
 #include "Listener.h"
 
-Service::Service(ServiceType type, NetworkConnector address, shared_ptr<IocpCore> core, SessionFactory factory, int maxSessionCount)
+Service::Service(ServiceType type, NetworkConnector address, const shared_ptr<IocpCore>& core, SessionFactory factory, int maxSessionCount)
 	:_type(type),_netAddress(address),_iocpCore(core),_sessionFactory(factory),_maxSessionCount(maxSessionCount)
-{
-}
-
-Service::~Service()
 {
 }
 
@@ -23,7 +19,7 @@ void Service::CloseService()
 	_sessionCount = 0;
 }
 
-void Service::Broadcast(shared_ptr<SendBuffer> buffer)
+void Service::Broadcast(const shared_ptr<SendBuffer>& buffer)
 {
 	WRITE_LOCK;
 	for (const auto& session : _sessions)
@@ -41,14 +37,14 @@ shared_ptr<Session> Service::CreateSession()
 	return session;
 }
 
-void Service::AddSession(shared_ptr<Session> session)
+void Service::AddSession(const shared_ptr<Session>& session)
 {
 	WRITE_LOCK;
 	_sessionCount++;
 	_sessions.insert(session);
 }
 
-void Service::ReleaseSession(shared_ptr<Session> session)
+void Service::ReleaseSession(const shared_ptr<Session>& session)
 {
 	WRITE_LOCK;
 	_sessions.erase(session);;
@@ -82,6 +78,11 @@ ServerService::ServerService(NetworkConnector targetAddress, shared_ptr<IocpCore
 
 }
 
+ServerService::~ServerService()
+{
+	
+}
+
 
 bool ServerService::Start()
 {
@@ -91,7 +92,7 @@ bool ServerService::Start()
 	_listener = make_shared<Listener>();
 	if (_listener == nullptr)
 		return false;
-	shared_ptr<ServerService> service = static_pointer_cast<ServerService>(shared_from_this());
+	const shared_ptr<ServerService> service = static_pointer_cast<ServerService>(shared_from_this());
 	if (_listener->StartAccept(service) == false)
 		return false;
 

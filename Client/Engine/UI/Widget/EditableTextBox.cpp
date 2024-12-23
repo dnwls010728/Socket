@@ -13,6 +13,7 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
     placeholder_(L""),
+    font_family_(L"Nanum18"),
     text_rect_(Math::Rect::Zero()),
     cursor_index_(0),
     elapsed_time_(0.f),
@@ -21,8 +22,6 @@ EditableTextBox::EditableTextBox(const std::wstring& kName) :
     content_type_(ContentType::Standard)
 {
     size_ = { 200.f, 50.f };
-    
-    is_ray_cast_target_ = true;
 }
 
 void EditableTextBox::SetText(const std::wstring& kText)
@@ -55,7 +54,7 @@ void EditableTextBox::Render()
     if (!renderer) return;
 
     renderer->BeginLayer(rect_);
-    if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    if (text_.empty()) renderer->DrawString(window, placeholder_, rect_, GetPivotPosition(), Math::Color::Gray, angle_, font_family_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     else
     {
         std::wstring temp = text_;
@@ -64,7 +63,7 @@ void EditableTextBox::Render()
             temp = std::wstring(text_.size(), L'*');
         }
         
-        renderer->DrawString(window, temp, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, temp, text_rect_, GetPivotPosition(), Math::Color::Black, angle_, font_family_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
     if (cursor_visible_)
@@ -106,21 +105,15 @@ void EditableTextBox::UpdateRect()
     text_rect_.height = bottom;
 }
 
-void EditableTextBox::OnFocusChanged(bool is_focused)
+bool EditableTextBox::OnFocus(bool is_focused)
 {
-    Widget::OnFocusChanged(is_focused);
-
-    if (!is_focused)
-    {
-        elapsed_time_ = 0.f;
-        cursor_visible_ = false;
-    }
+    elapsed_time_ = 0.f;
+    cursor_visible_ = is_focused;
+    return Widget::OnFocus(is_focused);
 }
 
-void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
+bool EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
 {
-    Widget::OnInputKey(key_code, is_pressed);
-
     if (is_pressed)
     {
         if (key_code == VK_LEFT)
@@ -179,12 +172,12 @@ void EditableTextBox::OnInputKey(Type::uint16 key_code, bool is_pressed)
             }
         }
     }
+
+    return true;
 }
 
-void EditableTextBox::OnInputText(wchar_t character)
+bool EditableTextBox::OnChar(wchar_t character)
 {
-    Widget::OnInputText(character);
-
     text_.insert(cursor_index_, 1, character);
     cursor_index_++;
 
@@ -197,6 +190,8 @@ void EditableTextBox::OnInputText(wchar_t character)
         elapsed_time_ = 0.f;
         cursor_visible_ = true;
     }
+
+    return true;
 }
 
 void EditableTextBox::UpdateAdvances(const std::wstring& kString)
@@ -208,7 +203,7 @@ void EditableTextBox::UpdateAdvances(const std::wstring& kString)
     }
     
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(/*rect_, */temp, L"Nanum18", advances_);
+    renderer->GetTextAdvances(/*rect_, */temp, font_family_, advances_);
 
     float advance = std::accumulate(advances_.begin(), advances_.end(), 0.f);
     text_rect_.width = advance + 1.f;

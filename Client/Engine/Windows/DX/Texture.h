@@ -8,7 +8,7 @@
 
 #include "Vertex.h"
 #include "Misc/Type.h"
-#include "Resource/Resource.h"
+#include "Asset/Asset.h"
 
 enum class WrapMode : Type::uint8
 {
@@ -22,9 +22,9 @@ enum class FilterMode : Type::uint8
     kBilinear
 };
 
-class Texture : public Resource
+class Texture : public Asset
 {
-    GENERATED_BODY(Texture, Resource)
+    GENERATED_BODY(Texture, Asset)
     
 public:
     Texture();

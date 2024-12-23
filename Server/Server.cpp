@@ -22,6 +22,7 @@ int main()
 {
     ClientPacketHandler::Init();
 
+    
 
     shared_ptr<ServerService> service = make_shared<ServerService>(
         NetworkConnector(L"127.0.0.1", 7777),

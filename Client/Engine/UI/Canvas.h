@@ -23,6 +23,7 @@ public:
     T* FindWidget(const std::wstring& kName);
 
     void GetWidgets(std::vector<Widget*>& widgets) const;
+    void SetWidgetFocus(Widget* widget);
 
     float GetScaleRatio() const;
 
@@ -55,13 +56,15 @@ private:
     float match_mode_;
 
     std::vector<std::shared_ptr<Widget>> widgets_;
+    std::vector<Widget*> focus_widgets_;
 
     Widget* root_widget_;
-    Widget* hovered_widget_;
-    Widget* focused_widget_;
     Widget* dragging_widget_;
 
-    Math::Vector2 previous_mouse_position_;
+    bool is_dragging_;
+    bool has_begun_drag_;
+
+    Math::Vector2 mouse_position_;
     
 };
 

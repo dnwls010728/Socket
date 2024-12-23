@@ -16,7 +16,10 @@
 
 //공통 정적 라이브러리
 #ifdef _DEBUG
-#pragma comment(lib,"..\\x64\\Debug\\Common.lib");
+#pragma comment(lib,"..\\x64\\Debug\\CommonDLL.lib");
 #else
-#pragma comment(lib,"..\\x64\\Release\\Common.lib");
+#pragma comment(lib,"..\\x64\\Release\\CommonDLL.lib");
 #endif
+
+//서버 관련 정적 변수 정의 헤더
+#include "SocketCore/Util/GlobalFreeManager.h"

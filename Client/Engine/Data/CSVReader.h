@@ -5,24 +5,24 @@
 #include "Singleton.h"
 #include "rttr/type.h"
 
-class CSVReader : public Singleton<CSVReader>
+class CSVReader
 {
 public:
     CSVReader();
-    virtual ~CSVReader() override = default;
+    ~CSVReader() = default;
 
     template <typename T>
-    bool Parse(const std::wstring& kPath, std::vector<T>& out);
+    static bool Parse(const std::wstring& kPath, std::vector<T>& out);
 
 private:
-    void Split(const std::wstring& kStr, wchar_t delimiter, std::vector<std::wstring>& out);
+    static void Split(const std::wstring& kStr, wchar_t delimiter, std::vector<std::wstring>& out);
     
 };
 
 template <typename T>
 bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
 {
-    std::wifstream file(kPath);
+    std::wifstream file(L".\\Content\\" + kPath);
     if (!file.is_open()) return false;
 
     std::wstring line;

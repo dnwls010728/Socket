@@ -2,13 +2,12 @@
 #include "Core.h"
 
 #include "GameEngine.h"
-#include "../SocketCore/SocketEventManager.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Vector2.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
 #include "Time/Time.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowDefinition.h"
@@ -27,8 +26,9 @@ Core::Core() :
 {
 }
 
-void Core::Init(WindowsApplication* application)
+void Core::Init()
 {
+    WindowsApplication* application = WindowsApplication::Get();
     application->AddMessageHandler(*this);
 
     // DirectX 11 렌더러 초기화
@@ -97,7 +97,7 @@ bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam,
 
                 World::Get()->Release();
                 Renderer::Get()->Release();
-                ResourceManager::Get()->Release();
+                AssetManager::Get()->Release();
             }
         }
         return true;

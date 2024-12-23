@@ -1,90 +1,81 @@
 ﻿#include "pch.h"
 #include "AnimatorComponent.h"
 
-#include "AnimationClip.h"
+#include "Animation.h"
+#include "AnimationPack.h"
 #include "Actor/Actor.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Asset/AssetManager.h"
+#include "Windows/DX/Sprite.h"
 
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     renderer_(nullptr),
-    clips_(),
+    animation_pack_(nullptr),
+    current_animation_(nullptr),
     timer_(0.f),
-    current_index_(0),
-    is_playing_(false)
+    is_playing_(false),
+    current_frame_(0)
 {
-    current_clip_ = nullptr;
 }
 
-std::shared_ptr<AnimationClip> AnimatorComponent::AddClip(const std::wstring& kName, int* sprite_idx_arr, int size)
+void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 {
-    std::shared_ptr<AnimationClip> clip = std::make_shared<AnimationClip>();
+    if (!animation_pack_) return;
 
-    for (int i = 0; i < size; i++)
+    const auto it = animation_pack_->animations_.find(kName);
+    if (it == animation_pack_->animations_.end()) return;
+
+    current_animation_ = it->second.get();
+    current_frame_ = 0;
+    timer_ = 0.f;
+    is_playing_ = true;
+
+    if (HasBegunPlay() && renderer_)
     {
-        clip->frames_.push_back(sprite_idx_arr[i]);
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
-    clips_[kName] = clip;
-
-    return clip;
-}
-
-bool AnimatorComponent::PlayClip(std::wstring clip_name)
-{
-    if (clips_[clip_name] == current_clip_) return false;
-    current_clip_ = clips_[clip_name];
-    is_playing_ = true;
-    timer_ = 0.f;
-    current_index_ = 0;
-    return true;
-}
-
-bool AnimatorComponent::PlayClip(std::shared_ptr<AnimationClip> clip)
-{
-    if (clip == current_clip_) return false;
-    current_clip_ = clip;
-    is_playing_ = true;
-    timer_ = 0.f;
-    current_index_ = 0;
-    return true;
 }
 
 void AnimatorComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
-    ActorComponent* component = GetOwner()->GetComponent(SpriteRendererComponent::StaticClass());
-    if (component)
+    ActorComponent* component = owner_->GetComponent(SpriteRendererComponent::StaticClass());
+    if (component) renderer_ = static_cast<SpriteRendererComponent*>(component);
+
+    if (renderer_ && animation_pack_ && current_animation_)
     {
-        renderer_ = static_cast<SpriteRendererComponent*>(component);
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
 }
 
 void AnimatorComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
-    if (!renderer_) return;
+    if (!renderer_ || !is_playing_ || !current_animation_) return;
 
-    if (is_playing_)
+    const float frame_time = 1.f / current_animation_->frame_rate_;
+    timer_ += delta_time;
+
+    if (timer_ >= frame_time)
     {
-        timer_ += delta_time;
-        if (timer_ >= 1.f / current_clip_->GetFrameRate())
+        timer_ -= frame_time;
+        if (current_frame_ >= current_animation_->frames_.size() - 1)
         {
-            if (current_clip_->events_.contains(current_index_)) current_clip_->events_[current_index_]();
-            if (current_clip_->is_repeat_ || current_index_ < current_clip_->frames_.size() - 1)
-            {
-                current_index_ = (current_index_ + 1) % current_clip_->frames_.size();
-                renderer_->frame_index_ = current_clip_->frames_[current_index_];
-            
-                timer_ -= 1.f / current_clip_->GetFrameRate();
-            }
-            else
+            if (!current_animation_->is_loop_)
             {
                 is_playing_ = false;
-                timer_ = 0.f;
-                current_index_ = 0;
+                return;
             }
         }
+        
+        current_frame_ = (current_frame_ + 1) % current_animation_->frames_.size();
+
+        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
+        if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[current_frame_]);
     }
 }
 

@@ -10,12 +10,12 @@ IocpCore::~IocpCore()
 	::CloseHandle(_iocpHandle);
 }
 
-bool IocpCore::Register(shared_ptr<IocpObject> iocpObject)
+bool IocpCore::Register(const shared_ptr<IocpObject>& iocpObject) const
 {
 	return ::CreateIoCompletionPort(iocpObject->GetHandle(), _iocpHandle, 0, 0);
 }
 
-bool IocpCore::Dispatch(uint32_t timeoutMs)
+void IocpCore::Dispatch(uint32_t timeoutMs) const
 {
 	DWORD numOfBytes = 0;
 	ULONG_PTR key = 0;
@@ -32,7 +32,7 @@ bool IocpCore::Dispatch(uint32_t timeoutMs)
 		switch (errCode)
 		{
 		case WAIT_TIMEOUT:
-			return false;
+			break;
 		/*case ERROR_NETNAME_DELETED:
 		{
 			shared_ptr<IocpObject> iocpObject = iocpEvent->owner;
@@ -47,7 +47,4 @@ bool IocpCore::Dispatch(uint32_t timeoutMs)
 			break;
 		}
 	}
-
-
-	return true;
 }

@@ -11,7 +11,7 @@ SpriteRendererComponent::SpriteRendererComponent(Actor* owner, const std::wstrin
     ActorComponent(owner, kName),
     shape_(nullptr),
     sprite_(nullptr),
-    frame_index_(0),
+    current_frame_(L""),
     flip_x_(false),
     flip_y_(false),
     color_(Math::Color::White),
@@ -29,15 +29,33 @@ void SpriteRendererComponent::SetZOrder(int z_order)
     }
 }
 
+void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFrame)
+{
+    if (!sprite) return;
+    sprite_ = sprite;
+    
+    current_frame_ = kFrame;
+
+    if (HasBegunPlay())
+    {
+        shape_->SetVertices(sprite_->GetVertices());
+        shape_->SetIndices(sprite_->GetIndices());
+        shape_->SetTexture(sprite_);
+    }
+}
+
 void SpriteRendererComponent::InitializeComponent()
 {
     ActorComponent::InitializeComponent();
-    if (!sprite_) return;
 
     shape_ = std::make_shared<Shape>();
-    shape_->SetVertices(sprite_->GetVertices());
-    shape_->SetIndices(sprite_->GetIndices());
-    shape_->SetTexture(sprite_);
+    if (sprite_)
+    {
+        shape_->SetVertices(sprite_->GetVertices());
+        shape_->SetIndices(sprite_->GetIndices());
+        shape_->SetTexture(sprite_);
+    }
+    
     shape_->SetZOrder(z_order_);
     
     World::Get()->AddShape(shape_);
@@ -58,10 +76,10 @@ void SpriteRendererComponent::Render(float alpha)
     const TransformComponent* transform = GetOwner()->GetTransform();
     if (!transform) return;
 
-    const std::vector<SpriteFrame>& frames = sprite_->GetFrames();
-    if (frames.empty() || frame_index_ >= frames.size()) return;
+    const std::map<std::wstring, SpriteFrame>& frames = sprite_->GetFrames();
+    if (frames.empty() || !frames.contains(current_frame_)) return;
 
-    const SpriteFrame& current_frame = frames[frame_index_];
+    const SpriteFrame& current_frame = frames.at(current_frame_);
 
     const float width = (sprite_->GetWidth() * current_frame.uv_scale.x / sprite_->GetPPU()) * transform->GetScale().x;
     const float height = (sprite_->GetHeight() * current_frame.uv_scale.y / sprite_->GetPPU()) * transform->GetScale().y;

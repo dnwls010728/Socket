@@ -19,10 +19,13 @@ class Actor : public std::enable_shared_from_this<Actor>
 public:
     Actor(const std::wstring& kName);
     virtual ~Actor() = default;
+    
+    virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer);
 
     void SetActive(bool is_active);
     void Destroy();
     void SetLifeSpan(float life_span);
+    void SetPersistent(bool is_persistent);
     
     bool CompareTag(ActorTag tag) const;
 
@@ -48,6 +51,12 @@ public:
 
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
+
+    FORCEINLINE void SetOwner(Actor* owner) { owner_ = owner; }
+    FORCEINLINE Actor* GetOwner() const { return owner_; }
+
+    FORCEINLINE void SetInstigator(Actor* instigator) { instigator_ = instigator; }
+    FORCEINLINE Actor* GetInstigator() const { return instigator_; }
 
 protected:
     friend class World;
@@ -100,6 +109,12 @@ protected:
     
     TimerHandle life_span_timer_;
 
+    Actor* owner_;
+    Actor* instigator_;
+
+private:
+    bool is_persistent_;
+
 };
 
 template <std::derived_from<ActorComponent> T>
@@ -125,7 +140,7 @@ T* Actor::SpawnActor(const std::wstring& kName)
     return World::Get()->SpawnActor<T>(kName);
 }
 
-FORCEINLINE bool IsValid(Actor* actor)
+FORCEINLINE bool IsValid(const Actor* actor)
 {
     return actor && !actor->IsPendingDeletion();
 }

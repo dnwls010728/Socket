@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <memory>
-#include "../../Common/Packet.h"
+#include "../../CommonDLL/Packet.h"
 #include "SocketSession.h"
 
 using PacketHandlerFunc = std::function<void(BYTE*, int32_t)>;
@@ -13,12 +13,19 @@ enum PacketNumber : uint16_t
     C_PKT_MOVING=1002,
     S_PKT_MOVING=1003,
     S_PKT_BROADCASTING_ENTER=1004,
+    S_PKT_ENTER_OTHER_USER=1005,
+    C_PKT_ENTER_OTHER_USER=1006,
+    S_PKT_LEAVE_OTHER_USER=1007,
+    C_PKT_ENTER_ROOM=1008,
+    S_PKT_ENTER_ROOM=1009,
+    C_PKT_ENTER_CHANNEL=1010,
+    S_PKT_ENTER_CHANNEL=1011,
+    S_PKT_LEAVE_CHANNEL=1012,
+    
 };
 
 void HandleInvalid(BYTE* buf, int32_t len);
-void HandleEnter(S_EnterPacket& pkt);
-void HandleMoving(S_MovingPacket& pkt);
-void HandleBroadcastEnter(S_BroadcastingEnterPacket& pkt);
+
 
 class ServerPacketHandler
 {
@@ -27,12 +34,25 @@ public:
     {
         for(int32_t i=0; i<UINT16_MAX; i++)
             GPacketHandler[i] = HandleInvalid;
-        GPacketHandler[S_PKT_ENTER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_EnterPacket>(HandleEnter,buffer,len);};
+        /*GPacketHandler[S_PKT_ENTER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_Enter>(HandleEnter,buffer,len);};
         GPacketHandler[S_PKT_MOVING] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_MovingPacket>(HandleMoving,buffer,len);};
+        {return HandlePacket<S_Moving>(HandleMoving,buffer,len);};
         GPacketHandler[S_PKT_BROADCASTING_ENTER] = [](BYTE* buffer,int32_t len)
-        {return HandlePacket<S_BroadcastingEnterPacket>(HandleBroadcastEnter,buffer,len);};
+        {return HandlePacket<S_BroadcastingEnter>(HandleBroadcastEnter,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_OTHER_USER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterOtherUser>(HandleEnterOtherUser,buffer,len);};
+        GPacketHandler[S_PKT_LEAVE_OTHER_USER] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_LeaveOtherUser>(HandleLeaveOtherUser,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_ROOM] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterRoom>(HandleEnterRoom,buffer,len);};
+        GPacketHandler[S_PKT_ENTER_CHANNEL] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_EnterChannel>(HandleEnterChannel,buffer,len);};
+        GPacketHandler[S_PKT_LEAVE_CHANNEL] = [](BYTE* buffer,int32_t len)
+        {return HandlePacket<S_LeaveChannel>(HandleLeaveChannel,buffer,len);};*/
+        
+        
+        
         
     }
     static void HandlePacket(BYTE* buffer, int32_t len)
@@ -45,9 +65,10 @@ public:
     template<typename PacketType, typename ProcessFunc>
     static void HandlePacket(ProcessFunc func,BYTE* buffer,int32_t len)
     {
-        PacketType pkt;
-        pkt.Deserialize(buffer + sizeof(PacketHeader),len-sizeof(PacketHeader));
-        return func(pkt);
+        std::shared_ptr<PacketType> pkt = std::make_shared<PacketType>();
+        
+        pkt->Deserialize(buffer + sizeof(PacketHeader),len-sizeof(PacketHeader));
+        return func(std::move(pkt));
     }
 
     template<typename T>

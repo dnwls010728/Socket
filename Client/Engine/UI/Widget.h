@@ -10,9 +10,10 @@
 
 class Widget;
 
-DECLARE_DELEGATE(OnWidgetEvent)
-DECLARE_DELEGATE(OnDragEvent, const Math::Vector2&)
-DECLARE_DELEGATE(OnDropEvent, const Math::Vector2&)
+DECLARE_DELEGATE(BeginDragDelegate, const Math::Vector2&)
+DECLARE_DELEGATE(DragDelegate, const Math::Vector2&, const Math::Vector2&)
+DECLARE_DELEGATE(EndDragDelegate, const Math::Vector2&)
+DECLARE_DELEGATE(DropDelegate, const Math::Vector2&, const Widget*)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -59,6 +60,8 @@ public:
     
     Math::Vector2 GetPivotPosition() const;
 
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+
     FORCEINLINE const Math::Rect& GetRect() const { return rect_; }
 
     FORCEINLINE const Math::Vector2& GetAnchoredPosition() const { return position_; }
@@ -71,21 +74,13 @@ public:
     FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
 
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
-
-    FORCEINLINE void SetRayCastTarget(bool value) { is_ray_cast_target_ = value; }
-    FORCEINLINE bool IsRayCastTarget() const { return is_ray_cast_target_; }
-
-    FORCEINLINE bool IsHovered() const { return is_hovered_; }
+    FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
-    OnWidgetEvent OnMousePressed;
-    OnWidgetEvent OnMouseReleased;
-
-    OnDragEvent OnDragStart;
-    OnDragEvent OnDrag;
-    OnDragEvent OnDragEnd;
-
-    OnDropEvent OnDrop;
+    BeginDragDelegate BeginDragHandler;
+    DragDelegate DragHandler;
+    EndDragDelegate EndDragHandler;
+    DropDelegate DropHandler;
 
 protected:
     friend class Canvas;
@@ -93,10 +88,22 @@ protected:
     virtual void BeginPlay();
     virtual void Tick(float delta_time);
     virtual void Render();
+    virtual void OnWidgetAttached(Widget* child);
     virtual void UpdateRect();
-    virtual void OnFocusChanged(bool is_focused);
-    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed);
-    virtual void OnInputText(wchar_t character);
+
+    // Input Events
+    virtual bool OnFocus(bool is_focused);
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseLeave();
+    virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+    virtual bool OnBeginDrag(const Math::Vector2& kPosition);
+    virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnEndDrag(const Math::Vector2& kPosition);
+    virtual bool OnDrop(const Math::Vector2& kPosition, const Widget* kWidget);
+    virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+    virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
+    virtual bool OnChar(wchar_t character);
 
     std::wstring name_;
 
@@ -114,8 +121,7 @@ protected:
     std::vector<Widget*> children_;
 
     bool has_begun_play_;
-    bool is_ray_cast_target_;
-    bool is_hovered_;
+    bool is_active_;
     bool is_focused_;
     
 };

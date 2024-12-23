@@ -12,19 +12,19 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void Tick(float delta_time) override;
     virtual void Render() override;
     virtual void UpdateRect() override;
 
+    virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
+
 private:
-    friend class Canvas;
-    
-    void OnScroll(float x, float y);
+    void UpdateChildrenPosition(float scroll_delta);
     
     float content_width_;
     float content_height_;
-    float scroll_offset_x_;
-    float scroll_offset_y_;
 
-    Math::Rect thumb_rect_;
+    float scroll_offset_y_;
+    float min_allowed_scroll_y_;
     
 };

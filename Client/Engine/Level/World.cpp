@@ -7,6 +7,7 @@
 #include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
+#include "Network/NetworkManager.h"
 #include "Time/TimerManager.h"
 #include "UI/Canvas.h"
 #include "Windows/WindowsWindow.h"
@@ -28,6 +29,7 @@ World::World() :
     shape_batch_(nullptr),
     shapes_(),
     current_level_(nullptr),
+    persistent_level_(nullptr),
     pending_level_(nullptr),
     levels_(),
     pending_actors_(),
@@ -118,6 +120,8 @@ void World::Tick(float delta_time)
     
     if (current_level_)
     {
+        NetworkManager::Get()->Tick(delta_time);
+        
         current_level_->Tick(delta_time);
         
         ProcessActorActivation();
@@ -227,7 +231,7 @@ void World::TransitionLevel()
 
     current_level_->AddActor<Camera>(L"Main Camera");
     current_level_->Load();
-    
+
     Canvas::Get()->BeginPlay();
     current_level_->InitializeActors();
     

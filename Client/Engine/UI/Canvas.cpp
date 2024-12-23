@@ -3,7 +3,6 @@
 
 #include "Logger.h"
 #include "Widget.h"
-#include "Widget/ScrollBox.h"
 
 Canvas::Canvas() :
     width_(0.f),
@@ -12,11 +11,12 @@ Canvas::Canvas() :
     reference_resolution_height_(ProjectSettings::kCanvasReferenceHeight),
     match_mode_(ProjectSettings::kMatchMode),
     widgets_(),
+    focus_widgets_(),
     root_widget_(nullptr),
-    hovered_widget_(nullptr),
-    focused_widget_(nullptr),
     dragging_widget_(nullptr),
-    previous_mouse_position_(Math::Vector2::Zero())
+    is_dragging_(false),
+    has_begun_drag_(false),
+    mouse_position_(Math::Vector2::Zero())
 {
 }
 
@@ -38,6 +38,28 @@ void Canvas::GetWidgets(std::vector<Widget*>& widgets) const
     }
 }
 
+void Canvas::SetWidgetFocus(Widget* widget)
+{
+    for (const auto& focus_widget : focus_widgets_)
+    {
+        if (!focus_widget->IsFocused()) continue;
+        focus_widget->OnFocus(false);
+    }
+
+    focus_widgets_.clear();
+
+    while (widget)
+    {
+        focus_widgets_.push_back(widget);
+        widget = widget->GetParent();
+    }
+
+    for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+    {
+        (*it)->OnFocus(true);
+    }
+}
+
 float Canvas::GetScaleRatio() const
 {
     const float width_ratio = width_ / static_cast<float>(reference_resolution_width_);
@@ -52,11 +74,10 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     for (auto it = widget->children_.rbegin(); it != widget->children_.rend(); ++it)
     {
         Widget* child = *it;
-        Widget* result = RayCast(child, kPoint);
-        if (result) return result;
+        if (child->is_active_ && child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
-    if (widget->is_ray_cast_target_ && widget->HitTest(kPoint)) return widget;
+    if (widget->HitTest(kPoint)) return widget;
     return nullptr;
 }
 
@@ -86,93 +107,101 @@ void Canvas::OnEvent(const Event& kEvent)
 
     if (type == static_cast<Type::uint32>(EventType::kWindowSize))
     {
-        width_ = kEvent.window.data1;
-        height_ = kEvent.window.data2;
+        const WindowEvent& kWindow = kEvent.window;
+        
+        width_ = kWindow.data1;
+        height_ = kWindow.data2;
 
         for (const auto& widget : widgets_)
         {
             widget->UpdateRect();
         }
     }
-    else if (type == static_cast<Type::uint32>(EventType::kMousePressed))
-    {
-        if (kEvent.button.button == MouseButton::kLeft)
-        {
-            if (focused_widget_ != hovered_widget_)
-            {
-                if (focused_widget_)
-                {
-                    focused_widget_->is_focused_ = false;
-                    focused_widget_->OnFocusChanged(false);
-                }
-                
-                focused_widget_ = hovered_widget_;
-                if (focused_widget_)
-                {
-                    focused_widget_->is_focused_ = true;
-                    focused_widget_->OnFocusChanged(true);
-                }
-            }
-            
-            if (hovered_widget_)
-            {
-                hovered_widget_->OnMousePressed.Execute();
-                
-                previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
-                
-                dragging_widget_ = hovered_widget_;
-                dragging_widget_->OnDragStart.Execute(previous_mouse_position_);
-            }
-        }
-    }
-    else if (type == static_cast<Type::uint32>(EventType::kMouseReleased))
-    {
-        if (focused_widget_ && focused_widget_ == hovered_widget_)
-        {
-            focused_widget_->OnMouseReleased.Execute();
-        }
-        
-        if (dragging_widget_)
-        {
-            previous_mouse_position_ = {kEvent.button.x, kEvent.button.y};
-            
-            dragging_widget_->OnDragEnd.Execute(previous_mouse_position_);
-            dragging_widget_ = nullptr;
-
-            if (hovered_widget_) hovered_widget_->OnDrop.Execute(previous_mouse_position_);
-        }
-    }
     else if (type == static_cast<Type::uint32>(EventType::kMouseMotion))
     {
-        if (dragging_widget_)
+        Math::Vector2 mouse_position = {kEvent.motion.x, kEvent.motion.y};
+        Math::Vector2 mouse_delta = mouse_position - mouse_position_;
+
+        if (root_widget_)
         {
-            const Math::Vector2 mouse_position = {kEvent.motion.x, kEvent.motion.y};
+            bool is_handled = false;
             
-            Math::Vector2 delta = mouse_position - previous_mouse_position_;
-            previous_mouse_position_ = mouse_position;
+            if (is_dragging_)
+            {
+                if (!has_begun_drag_)
+                {
+                    is_handled |= dragging_widget_->OnBeginDrag(mouse_position);
+                    has_begun_drag_ = true;
+                }
+                else is_handled |= dragging_widget_->OnDrag(mouse_position, mouse_delta);
+            }
             
-            dragging_widget_->OnDrag.Execute(delta);
+            if (!is_handled) root_widget_->OnMouseMotion(mouse_position, mouse_delta);
+        }
+        
+        mouse_position_ = mouse_position;
+    }
+    else if (type & static_cast<Type::uint32>(EventType::kMousePressed | EventType::kMouseReleased))
+    {
+        const MouseButtonEvent& kButton = kEvent.button;
+        const Math::Vector2 mouse_position = {kButton.x, kButton.y};
+        
+        if (root_widget_)
+        {
+            Widget* drop_widget = RayCast(root_widget_, {kButton.x, kButton.y});
+            if (is_dragging_ && !kButton.is_pressed && drop_widget != dragging_widget_)
+            {
+                if (drop_widget) drop_widget->OnDrop(mouse_position, dragging_widget_);
+            }
+            
+            if (!is_dragging_ && kButton.is_pressed && kButton.button == MouseButton::kLeft)
+            {
+                dragging_widget_ = RayCast(root_widget_, {kButton.x, kButton.y});
+                is_dragging_ = dragging_widget_ != nullptr;
+                if (!is_dragging_) SetWidgetFocus(nullptr);
+            }
+            else if (is_dragging_ && !kButton.is_pressed && kButton.button == MouseButton::kLeft)
+            {
+                if (has_begun_drag_)
+                {
+                    dragging_widget_->OnEndDrag(mouse_position);
+                    has_begun_drag_ = false;
+                }
+                
+                is_dragging_ = false;
+                dragging_widget_ = nullptr;
+            }
+            
+            root_widget_->OnMouseButton({kButton.x, kButton.y}, kButton.button, kButton.is_pressed);
+        }
+    }
+    else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
+    {
+        const MouseWheelEvent& kWheel = kEvent.wheel;
+        if (root_widget_)
+        {
+            root_widget_->OnScroll({kWheel.mouse_x, kWheel.mouse_y}, {kWheel.x, kWheel.y});
         }
     }
     else if (type & static_cast<Type::uint32>(EventType::kKeyPressed | EventType::kKeyReleased))
     {
-        if (focused_widget_) focused_widget_->OnInputKey(kEvent.key.key_code, kEvent.key.is_repeat);
+        if (focus_widgets_.size() > 0)
+        {
+            for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+            {
+                const KeyboardEvent kKey = kEvent.key;
+                if ((*it)->IsFocused() && (*it)->OnKey(kKey.key_code, kKey.is_repeat)) break;
+            }
+        }
     }
     else if (type == static_cast<Type::uint32>(EventType::kText))
     {
-        if (focused_widget_) focused_widget_->OnInputText(kEvent.text.character);
-    }
-    else if (type == static_cast<Type::uint32>(EventType::kMouseWheel))
-    {
-        Widget* scroll_widget;
-        
-        if (IsWidgetType(hovered_widget_, ScrollBox::StaticClass())) scroll_widget = hovered_widget_;
-        else scroll_widget = FindWidgetParentOfType(hovered_widget_, ScrollBox::StaticClass());
-
-        if (scroll_widget)
+        if (focus_widgets_.size() > 0)
         {
-            ScrollBox* scroll_box = dynamic_cast<ScrollBox*>(scroll_widget);
-            scroll_box->OnScroll(kEvent.wheel.x, kEvent.wheel.y);
+            for (auto it = focus_widgets_.rbegin(); it != focus_widgets_.rend(); ++it)
+            {
+                if ((*it)->IsFocused() && (*it)->OnChar(kEvent.text.character)) break;
+            }
         }
     }
 }
@@ -187,19 +216,8 @@ void Canvas::BeginPlay()
 
 void Canvas::Tick(float delta_time)
 {
-    Mouse* mouse = Mouse::Get();
-    Math::Vector2 mouse_position = mouse->GetMousePosition();
-    
     if (root_widget_)
     {
-        Widget* hovered_widget = RayCast(root_widget_, mouse_position);
-        if (hovered_widget != hovered_widget_)
-        {
-            if (hovered_widget_) hovered_widget_->is_hovered_ = false;
-            hovered_widget_ = hovered_widget;
-            if (hovered_widget_) hovered_widget_->is_hovered_ = true;
-        }
-        
         root_widget_->Tick(delta_time);
     }
 }
@@ -214,12 +232,10 @@ void Canvas::Render()
 
 void Canvas::Clear()
 {
-    previous_mouse_position_ = Math::Vector2::Zero();
+    mouse_position_ = Math::Vector2::Zero();
     
     root_widget_ = nullptr;
-    hovered_widget_ = nullptr;
-    focused_widget_ = nullptr;
-    dragging_widget_ = nullptr;
     
     widgets_.clear();
+    focus_widgets_.clear();
 }

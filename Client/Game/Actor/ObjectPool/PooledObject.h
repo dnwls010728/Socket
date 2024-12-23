@@ -3,7 +3,7 @@
 
 class PooledObject;
 
-DECLARE_DELEGATE(OnPooledObjectDespawn, PooledObject*);
+DECLARE_DELEGATE(PooledObjectDespawnDelegate, PooledObject*);
 
 class PooledObject : public Actor
 {
@@ -14,16 +14,14 @@ public:
     PooledObject(const std::wstring& kName);
     virtual ~PooledObject() override = default;
 
-    void Deactivate();
+    virtual void Deactivate();
 
-    OnPooledObjectDespawn OnDespawn;
+    PooledObjectDespawnDelegate DespawnHandler;
 
     FORCEINLINE void SetPoolIndex(int index) { pool_index_ = index; }
     FORCEINLINE int GetPoolIndex() const { return pool_index_; }
 
 protected:
-    virtual void OnEnable() override;
-    
     int pool_index_;
     
 };

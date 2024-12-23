@@ -27,16 +27,30 @@ private:
         float pivot_y;
     };
 
+    struct AnimationData
+    {
+        std::string name;
+        int frame_rate;
+        bool is_loop;
+        std::vector<std::string> frame_indexes;
+    };
+
     void OpenTextureSettings(bool* is_open);
     void OpenTextureEditor(bool* is_open);
+    void OpenSpriteAnimator(bool* is_open);
 
     bool show_texture_settings_;
     bool show_texture_editor_;
+    bool show_sprite_animator_;
 
     int selected_wrap_mode_;
     int selected_filter_mode_;
     int ppu_;
     int selected_frame_;
+    int selected_index_;
+    int selected_animation_;
+
+    char frame_name_[256];
 
     float left_;
     float top_;
@@ -50,5 +64,7 @@ private:
     std::unique_ptr<Texture> loaded_texture_;
 
     std::vector<FrameData> frames_;
+    std::vector<std::string> frame_indexes_;
+    std::vector<AnimationData> animations_;
     
 };

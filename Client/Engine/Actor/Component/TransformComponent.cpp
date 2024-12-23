@@ -57,9 +57,9 @@ Math::Vector2 TransformComponent::GetUpVector() const
     return {-s, c};
 }
 
-void TransformComponent::PhysicsTickComponent(float delta_time)
+void TransformComponent::TickComponent(float delta_time)
 {
-    ActorComponent::PhysicsTickComponent(delta_time);
+    ActorComponent::TickComponent(delta_time);
     
     b2BodyId  body_id = GetOwner()->body_id_;
     if (b2Body_IsValid(body_id) && b2Body_GetType(body_id) != b2_staticBody)

@@ -1,43 +1,73 @@
 ﻿#include "pch.h"
 #include "Bullet.h"
 
+#include "Logger.h"
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Resource/ResourceManager.h"
+#include "Asset/AssetManager.h"
+#include "Character/CharacterBase.h"
+#include "Misc/GameplayStatics.h"
+#include "Physics/Physics2D.h"
 #include "Windows/DX/Sprite.h"
 
 Bullet::Bullet(const std::wstring& kName) :
-    PooledObject(kName)
+    PooledObject(kName),
+    life_timer_()
 {
     SetLayer(ActorLayer::kBullet);
     
     circle_collider_ = AddComponent<CircleColliderComponent>(L"Collider");
     circle_collider_->SetRadius(.125f);
-    // circle_collider_->SetTrigger(true);
+    circle_collider_->SetTrigger(true);
     
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
     rigid_body_->SetCollisionDetectionMode(CollisionDetectionMode::kContinuous);
+    rigid_body_->SetFreezeRotation(true);
+    rigid_body_->SetGravityScale(0.f);
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
 
-    sprite_ = ResourceManager::Get()->Load<Sprite>(L"Sprites\\Default\\Circle.png");
-    sprite_->SetPPU(256);
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Bullet\\02.png");
+    renderer_->SetSprite(sprite_, L"02_0");
+}
 
-    sprite_->Split(1, 1, Sprite::kCenter);
-    sprite_->SetFilterMode(FilterMode::kBilinear);
+void Bullet::Deactivate()
+{
+    PooledObject::Deactivate();
 
-    renderer_->SetSprite(sprite_);
+    TimerManager* timer_manager = TimerManager::Get();
+    if (timer_manager->GetTimerRemaining(life_timer_) > 0.f)
+        timer_manager->ClearTimer(life_timer_);
+}
 
-    GetTransform()->SetScale({.25f, .25f});
+void Bullet::PhysicsTick(float delta_time)
+{
+    PooledObject::PhysicsTick(delta_time);
+
+    std::vector<Actor*> out_actors;
+    bool is_hit = Physics2D::OverlapCircleAll(GetTransform()->GetPosition(), .125f, out_actors, static_cast<Type::uint16>(ActorLayer::kMob));
+    if (is_hit)
+    {
+        CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
+        if (character)
+        {
+            GameplayStatics::ApplyDamage(character, 10.f, GetInstigator(), GetOwner());
+            Deactivate();
+        }
+    }
 }
 
 void Bullet::OnEnable()
 {
     PooledObject::OnEnable();
 
-    rigid_body_->AddForceX(20.f, ForceMode::kImpulse);
+    life_timer_ = TimerManager::Get()->SetTimer(this, &Bullet::Deactivate, 1.f);
+
+    Math::Vector2 direction = GetTransform()->GetRightVector();
+
+    rigid_body_->AddForce(direction * 20.f, ForceMode::kImpulse);
 }
 
 RTTR_REGISTRATION

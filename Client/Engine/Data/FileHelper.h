@@ -12,5 +12,6 @@ public:
     static std::wstring GetFilename(const std::wstring& kPath);
     static std::wstring GetFilenameWithoutExtension(const std::wstring& kPath);
     static std::wstring GetPath(const std::wstring& kPath);
+    static std::wstring GetRelativePath(const std::wstring& kPath);
     
 };

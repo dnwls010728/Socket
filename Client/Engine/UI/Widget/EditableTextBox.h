@@ -22,6 +22,9 @@ public:
 
     FORCEINLINE const std::wstring& GetText() const { return text_; }
 
+    FORCEINLINE void SetFontFamily(const std::wstring& kFontFamily) { font_family_ = kFontFamily; }
+    FORCEINLINE const std::wstring& GetFontFamily() const { return font_family_; }
+
     FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
     FORCEINLINE void SetContentType(ContentType content_type) { content_type_ = content_type; }
 
@@ -31,9 +34,10 @@ protected:
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
     virtual void UpdateRect() override;
-    virtual void OnFocusChanged(bool is_focused) override;
-    virtual void OnInputKey(Type::uint16 key_code, bool is_pressed) override;
-    virtual void OnInputText(wchar_t character) override;
+
+    virtual bool OnFocus(bool is_focused) override;
+    virtual bool OnKey(Type::uint16 key_code, bool is_pressed) override;
+    virtual bool OnChar(wchar_t character) override;
 
 private:
     friend class Canvas;
@@ -42,6 +46,7 @@ private:
     
     std::wstring text_;
     std::wstring placeholder_;
+    std::wstring font_family_;
 
     Math::Rect text_rect_;
 

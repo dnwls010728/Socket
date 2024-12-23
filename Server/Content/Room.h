@@ -5,18 +5,24 @@
 
 class User;
 
+
+
 class Room : public JobQueue
 {
 public:
-    bool Enter(shared_ptr<User> userRef);
-    void Leave(shared_ptr<User> userRef);
-    void Broadcast(shared_ptr<SendBuffer> sendBufferRef);
-
-public:
+    static void Init();
+    Room(uint32_t roomIdentifyKey,string roomName);
+    bool Enter(const shared_ptr<User>& userRef);
+    void Leave(const shared_ptr<User>& userRef);
+    void Broadcast(const shared_ptr<SendBuffer>& sendBufferRef);
+    
+    uint32_t roomIdentifyKey;
+    string roomName;
+    
     map<int, shared_ptr<User>> users;
     
 private:
     USE_LOCK;
 };
 
-extern shared_ptr<Room> GRoom;
+extern map<int, shared_ptr<Room>>* GRoomMap;

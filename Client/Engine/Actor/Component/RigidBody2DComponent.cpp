@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "Actor/Actor.h"
 #include "box2d/box2d.h"
+#include "Math/Math.h"
 #include "Math/Vector2.h"
 
 RigidBody2DComponent::RigidBody2DComponent(Actor* owner, const std::wstring& kName) :
@@ -94,6 +95,20 @@ void RigidBody2DComponent::SetMass(float mass)
         b2BodyId body_id = GetValidBodyId();
         SetMassInternal(body_id);
     }
+}
+
+void RigidBody2DComponent::SetPosition(const Math::Vector2& kPosition)
+{
+    b2BodyId body_id = GetValidBodyId();
+
+    b2Body_SetTransform(body_id, {kPosition.x, kPosition.y}, b2Body_GetRotation(body_id));
+}
+
+void RigidBody2DComponent::SetAngle(float angle)
+{
+    b2BodyId body_id = GetValidBodyId();
+
+    b2Body_SetTransform(body_id, b2Body_GetPosition(body_id), b2MakeRot(angle * MATH_PI / 180.f));
 }
 
 void RigidBody2DComponent::SetLinearVelocity(const Math::Vector2& kLinearVelocity)
@@ -218,12 +233,27 @@ void RigidBody2DComponent::WakeUp()
     b2Body_SetAwake(body_id, true);
 }
 
+Math::Vector2 RigidBody2DComponent::GetPosition() const
+{
+    b2BodyId body_id = GetValidBodyId();
+
+    b2Vec2 position = b2Body_GetPosition(body_id);
+    return {position.x, position.y};
+}
+
 Math::Vector2 RigidBody2DComponent::GetLinearVelocity() const
 {
     b2BodyId body_id = GetValidBodyId();
 
     b2Vec2 velocity = b2Body_GetLinearVelocity(body_id);
     return {velocity.x, velocity.y};
+}
+
+float RigidBody2DComponent::GetAngle() const
+{
+    b2BodyId body_id = GetValidBodyId();
+
+    return b2Rot_GetAngle(b2Body_GetRotation(body_id)) * 180.f / MATH_PI;
 }
 
 float RigidBody2DComponent::GetAngularVelocity() const

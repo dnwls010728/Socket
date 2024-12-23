@@ -20,7 +20,7 @@ public:
 			};
 	}
 
-	void Execute()
+	void Execute() const
 	{
 		_callback();
 	}

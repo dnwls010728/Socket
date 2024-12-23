@@ -16,8 +16,12 @@ using SessionFactory = function<shared_ptr<Session>(void)>;
 class Service : public enable_shared_from_this<Service>
 {
 public:
-	Service(ServiceType type, NetworkConnector address, shared_ptr<IocpCore> core, SessionFactory factory, int maxSessionCount = 1);
-	virtual ~Service();
+	Service(ServiceType type, NetworkConnector address, const shared_ptr<IocpCore>& core, SessionFactory factory, int maxSessionCount = 1);
+	virtual ~Service()=default;
+	Service(const Service&) = delete;
+	Service& operator=(const Service&) = delete;
+	Service(Service&&) = delete;
+	Service& operator=(Service&&) = delete;
 
 	virtual bool		Start() abstract;
 	bool				CanStart() const { return _sessionFactory != nullptr; }
@@ -25,16 +29,16 @@ public:
 	virtual void		CloseService();
 	void				SetSessionFactory(SessionFactory func) { _sessionFactory = func; }
 
-	void				Broadcast(shared_ptr<SendBuffer> buffer);
+	void				Broadcast(const shared_ptr<SendBuffer>& buffer);
 	shared_ptr<Session>			CreateSession();
-	void				AddSession(shared_ptr<Session> session);
-	void				ReleaseSession(shared_ptr<Session> session);
+	void				AddSession(const shared_ptr<Session>& session);
+	void				ReleaseSession(const shared_ptr<Session>& session);
 	int				GetCurrentSessionCount() const { return _sessionCount; }
 	int				GetMaxSessionCount() const { return _maxSessionCount; }
 
 public:
-	ServiceType			GetServiceType() { return _type; }
-	NetworkConnector			GetNetAddress() { return _netAddress; }
+	ServiceType			GetServiceType() const { return _type; }
+	NetworkConnector			GetNetAddress() const { return _netAddress; }
 	shared_ptr<IocpCore>& GetIocpCore() { return _iocpCore; }
 
 protected:
@@ -50,21 +54,30 @@ protected:
 
 };
 
-class ClientService : public Service
+class ClientService final : public Service
 {
 public:
 	ClientService(NetworkConnector targetAddress, shared_ptr<IocpCore> core, SessionFactory factory, int maxSessionCount = 1);
-	virtual ~ClientService(){}
-
+	virtual ~ClientService() override = default;
+	ClientService(const ClientService&) = delete;
+	ClientService& operator=(const ClientService&) = delete;
+	ClientService(ClientService&&) = delete;
+	ClientService& operator=(ClientService&&) = delete;
+	
 	virtual bool Start() override;
 };
 
-class ServerService : public Service
+class ServerService final : public Service
 {
 public:
 	ServerService(NetworkConnector targetAddress, shared_ptr<IocpCore> core, SessionFactory factory, int maxSessionCount = 1);
-	virtual ~ServerService() {};
-
+	virtual ~ServerService() override;
+	ServerService(const ServerService&) = delete;
+	ServerService& operator=(const ServerService&) = delete;
+	ServerService(ServerService&&) = delete;
+	ServerService& operator=(ServerService&&) = delete;
+	
+	
 	virtual bool Start() override;
 	virtual void CloseService() override;
 

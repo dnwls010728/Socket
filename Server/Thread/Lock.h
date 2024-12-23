@@ -42,6 +42,10 @@ class ReadLockGuard
 public:
     ReadLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.ReadLock(name); }
     ~ReadLockGuard() { _lock.ReadUnlock(_name); }
+    ReadLockGuard(const ReadLockGuard&) = delete;
+    ReadLockGuard& operator=(const ReadLockGuard&) = delete;
+    ReadLockGuard(ReadLockGuard&&) = delete;
+    ReadLockGuard& operator=(ReadLockGuard&&) = delete;
 
 private:
     Lock& _lock;
@@ -53,6 +57,10 @@ class WriteLockGuard
 public:
     WriteLockGuard(Lock& lock, const char* name) : _lock(lock), _name(name) { _lock.WriteLock(name); }
     ~WriteLockGuard() { _lock.WriteUnlock(_name); }
+    WriteLockGuard(const WriteLockGuard&) = delete;
+    WriteLockGuard& operator=(const WriteLockGuard&) = delete;
+    WriteLockGuard(WriteLockGuard&&) = delete;
+    WriteLockGuard& operator=(WriteLockGuard&&) = delete;
 
 private:
     Lock& _lock;

@@ -12,6 +12,7 @@ Actor::Actor(const std::wstring& kName) :
     layer_(ActorLayer::kDefault),
     is_active_(true),
     is_pending_destroy_(false),
+    is_persistent_(false),
     components_(),
     transform_(nullptr)
 {
@@ -101,6 +102,11 @@ void Actor::OnDisable()
     }
 }
 
+float Actor::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
+{
+    return damage_amount;
+}
+
 void Actor::SetActive(bool is_active)
 {
     World::Get()->ActivateActor(this, is_active);
@@ -121,6 +127,11 @@ void Actor::SetLifeSpan(float life_span)
     {
         TimerManager::Get()->ClearTimer(life_span_timer_);
     }
+}
+
+void Actor::SetPersistent(bool is_persistent)
+{
+    is_persistent_ = is_persistent;
 }
 
 bool Actor::CompareTag(ActorTag tag) const

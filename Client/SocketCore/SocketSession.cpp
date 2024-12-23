@@ -1,18 +1,20 @@
 #include "pch.h"
 #include "SocketSession.h"
-#include "../../Common/RecvBuffer.h"
+#include "../../CommonDLL/RecvBuffer.h"
 #include <mutex>
 #include <vector>
 #include <thread>
-#include "../../Common/SendBuffer.h"
+#include "../../CommonDLL/SendBuffer.h"
 #include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>
 #include <atomic>
 #pragma comment(lib,"ws2_32.lib")
 #include "ServerPacketHandler.h"
-SocketSession* GSocketSession = new SocketSession();
-SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(IOContext{})
+//여기서 하나 날 수 있음 근데 이건 상관 없음
+//글로벌 소켓 세션이라
+//SocketSession* GSocketSession = new SocketSession();
+SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(new IOContext())
 {
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -20,11 +22,21 @@ SocketSession::SocketSession():_recvBuffer(BUFFER_SIZE),_context(IOContext{})
 
 SocketSession::~SocketSession()
 {
-	for (auto& worker : _workers) {
-		worker.join();
-	}
 
+	// IOCP 스레드 종료 요청
+	for (size_t i = 0; i < _workers.size(); ++i) {
+		PostQueuedCompletionStatus(_hIocp, 0, 0, nullptr);
+	}
+	
+	for (auto& worker : _workers) {
+		if(worker.joinable())
+			worker.join();
+	}
+	
+	delete _context;
+	
 	closesocket(_socket);
+	CloseHandle(_hIocp);
 	WSACleanup();
 }
 
@@ -40,10 +52,11 @@ bool SocketSession::Connect()
 		return false;
 	};
 
-	HANDLE hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+	HANDLE hIocp = _hIocp;
 	CreateIoCompletionPort((HANDLE)_socket, hIocp, 0, 0);
 
-	IOContext* ioContext = new IOContext;
+	IOContext* ioContext = _context;
 	ZeroMemory(&ioContext->overlapped, sizeof(OVERLAPPED));
 	ioContext->wsabuf.buf = reinterpret_cast<char*>(_recvBuffer.WritePos());
 	ioContext->wsabuf.len = _recvBuffer.FreeSize();
@@ -52,13 +65,16 @@ bool SocketSession::Connect()
 	DWORD numOfBytes = 0;
 	DWORD flags = 0;
 	_connected.exchange(true);
-	WSARecv(_socket, &ioContext->wsabuf, 1, &numOfBytes, &flags, &ioContext->overlapped, NULL);
+	WSARecv(_socket, &ioContext->wsabuf, 1, &numOfBytes, &flags, (LPWSAOVERLAPPED)&ioContext->overlapped, NULL);
 
+	std::lock_guard<std::mutex> lock(_mutex);
 	_workers.reserve(2);
 	for (int i = 0; i < 2; i++)
 	{
-		_workers.emplace_back([this, hIocp]() { this->WorkerThread(hIocp); });
+		_workers.emplace_back([=]() { this->WorkerThread(hIocp,ioContext); });
 	}
+
+	//delete ioContext;
 	return true;
 }
 
@@ -85,6 +101,7 @@ void SocketSession::Disconnect(const char* cause)
 	OnDisconnected();
 }
 
+
 void SocketSession::ProcessConnect()
 {
 }
@@ -93,9 +110,9 @@ void SocketSession::ProcessDisconnect()
 {
 }
 
-void SocketSession::ProcessRecv(int numOfBytes)
+void SocketSession::ProcessRecv(int numOfBytes, IOContext* ioContext)
 {
-	IOContext* ioContext = new IOContext;
+	
 	ZeroMemory(&ioContext->overlapped, sizeof(OVERLAPPED));
 	ioContext->wsabuf.buf = reinterpret_cast<char*>(_recvBuffer.WritePos());
 	ioContext->wsabuf.len = _recvBuffer.FreeSize();
@@ -104,7 +121,9 @@ void SocketSession::ProcessRecv(int numOfBytes)
 	DWORD nob = 0;
 	DWORD flags = 0;
 
-	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, &ioContext->overlapped, nullptr);
+	WSARecv(_socket, &ioContext->wsabuf, 1, &nob, &flags, (LPWSAOVERLAPPED)&ioContext->overlapped, nullptr);
+
+	//delete ioContext;
 }
 
 void SocketSession::ProcessSend(int numOfBytes)
@@ -149,7 +168,7 @@ int SocketSession::OnRecv(BYTE* buffer, int len)
 
 void SocketSession::OnSend(int len)
 {
-	std::cout<< "Message Send : " << len << std::endl;
+	//std::cout<< "Message Send : " << len << std::endl;
 }
 
 void SocketSession::OnDisconnected()

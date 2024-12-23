@@ -10,14 +10,7 @@ PooledObject::PooledObject(const std::wstring& kName) :
 void PooledObject::Deactivate()
 {
     SetActive(false);
-    OnDespawn.Execute(this);
-}
-
-void PooledObject::OnEnable()
-{
-    Actor::OnEnable();
-
-    TimerManager::Get()->SetTimer(this, &PooledObject::Deactivate, 2.f);
+    DespawnHandler.Execute(this);
 }
 
 RTTR_REGISTRATION

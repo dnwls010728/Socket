@@ -1,15 +1,8 @@
 #include "pch.h"
 #include "GlobalQueue.h"
 
-GlobalQueue::GlobalQueue()
-{
-}
 
-GlobalQueue::~GlobalQueue()
-{
-}
-
-void GlobalQueue::Push(shared_ptr<JobQueue> jobQueue)
+void GlobalQueue::Push(const shared_ptr<JobQueue>& jobQueue)
 {
 	_jobQueues.Push(jobQueue);
 }

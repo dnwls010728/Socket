@@ -37,7 +37,6 @@ protected:
 
 private:
     friend class Actor;
-    friend class PlayerController;
 
     bool has_begun_play_;
     
