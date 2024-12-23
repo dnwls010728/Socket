@@ -12,8 +12,6 @@ class CharacterBase : public NetworkActor
 public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
-    
-    virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer);
 
     FORCEINLINE SpriteRendererComponent* GetRenderer() const { return renderer_; }
     FORCEINLINE CapsuleColliderComponent* GetCollider() const { return collider_; }

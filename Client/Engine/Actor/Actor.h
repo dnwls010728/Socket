@@ -19,6 +19,8 @@ class Actor : public std::enable_shared_from_this<Actor>
 public:
     Actor(const std::wstring& kName);
     virtual ~Actor() = default;
+    
+    virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer);
 
     void SetActive(bool is_active);
     void Destroy();

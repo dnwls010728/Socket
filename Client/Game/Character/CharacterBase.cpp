@@ -20,11 +20,6 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
 }
 
-float CharacterBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
-{
-    return damage_amount;
-}
-
 void CharacterBase::OnHit()
 {
 }
