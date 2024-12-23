@@ -50,6 +50,12 @@ public:
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
 
+    FORCEINLINE void SetOwner(Actor* owner) { owner_ = owner; }
+    FORCEINLINE Actor* GetOwner() const { return owner_; }
+
+    FORCEINLINE void SetInstigator(Actor* instigator) { instigator_ = instigator; }
+    FORCEINLINE Actor* GetInstigator() const { return instigator_; }
+
 protected:
     friend class World;
     friend class Level;
@@ -101,6 +107,9 @@ protected:
     
     TimerHandle life_span_timer_;
 
+    Actor* owner_;
+    Actor* instigator_;
+
 private:
     bool is_persistent_;
 
@@ -129,7 +138,7 @@ T* Actor::SpawnActor(const std::wstring& kName)
     return World::Get()->SpawnActor<T>(kName);
 }
 
-FORCEINLINE bool IsValid(Actor* actor)
+FORCEINLINE bool IsValid(const Actor* actor)
 {
     return actor && !actor->IsPendingDeletion();
 }
