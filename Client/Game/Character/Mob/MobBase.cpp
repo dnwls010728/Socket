@@ -4,7 +4,8 @@
 #include "Logger.h"
 
 MobBase::MobBase(const std::wstring& kName) :
-    CharacterBase(kName)
+    CharacterBase(kName),
+    hp_(0.f)
 {
     SetLayer(ActorLayer::kMob);
 }
@@ -12,6 +13,15 @@ MobBase::MobBase(const std::wstring& kName) :
 float MobBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
 {
     Logger::Print(L"Event Instigator: %s, Damage Causer: %s", event_instigator->GetName().c_str(), damage_causer->GetName().c_str());
+
+    hp_ -= damage_amount;
+    OnHit();
+    
+    if (hp_ <= 0.f)
+    {
+        OnDeath();
+    }
+    
     return damage_amount;
 }
 

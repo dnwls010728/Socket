@@ -6,7 +6,8 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    NetworkActor(kName)
+    NetworkActor(kName),
+    is_dead_(false)
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
@@ -29,6 +30,15 @@ float CharacterBase::ApplyDamage(CharacterBase* damaged_character, float base_da
 float CharacterBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
 {
     return damage_amount;
+}
+
+void CharacterBase::OnHit()
+{
+}
+
+void CharacterBase::OnDeath()
+{
+    is_dead_ = true;
 }
 
 RTTR_REGISTRATION

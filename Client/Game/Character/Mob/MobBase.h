@@ -12,5 +12,7 @@ public:
 
 protected:
     virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer) override;
+
+    float hp_;
     
 };
