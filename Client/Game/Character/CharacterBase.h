@@ -10,11 +10,11 @@ public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
 
-    float ApplyDamage(CharacterBase* damaged_character, float base_damage, CharacterBase* event_instigator, CharacterBase* damage_causer);
-    
-    virtual float TakeDamage(float damage_amount, CharacterBase* event_instigator, CharacterBase* damage_causer);
+    static float ApplyDamage(CharacterBase* damaged_character, float base_damage, Actor* event_instigator, Actor* damage_causer);
 
 protected:
+    virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer);
+    
     class SpriteRendererComponent* renderer_;
     class CapsuleColliderComponent* collider_;
     class RigidBody2DComponent* rigid_body_;

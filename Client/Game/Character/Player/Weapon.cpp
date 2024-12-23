@@ -33,6 +33,8 @@ void Weapon::Shot(const Math::Vector2& kDirection)
     PooledObject* bullet = bullet_pool_->SpawnPooledObject();
     if (bullet)
     {
+        bullet->SetOwner(this);
+        bullet->SetInstigator(GetOwner());
         bullet->GetTransform()->SetPosition(position + kDirection * .5f);
         bullet->GetTransform()->SetAngle(theta * Math::Rad2Deg());
     }

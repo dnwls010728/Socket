@@ -2,7 +2,6 @@
 #include "Core.h"
 
 #include "GameEngine.h"
-#include "../SocketCore/SocketEventManager.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
 #include "Input/Keyboard.h"

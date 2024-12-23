@@ -1,9 +1,18 @@
 ﻿#include "pch.h"
 #include "MobBase.h"
 
+#include "Logger.h"
+
 MobBase::MobBase(const std::wstring& kName) :
     CharacterBase(kName)
 {
+    SetLayer(ActorLayer::kMob);
+}
+
+float MobBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
+{
+    Logger::Print(L"Event Instigator: %s, Damage Causer: %s", event_instigator->GetName().c_str(), damage_causer->GetName().c_str());
+    return damage_amount;
 }
 
 RTTR_REGISTRATION

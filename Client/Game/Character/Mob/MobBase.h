@@ -9,5 +9,8 @@ class MobBase : public CharacterBase
 public:
     MobBase(const std::wstring& kName);
     virtual ~MobBase() override = default;
+
+protected:
+    virtual float TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer) override;
     
 };

@@ -16,7 +16,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_->SetFreezeRotation(true);
 }
 
-float CharacterBase::ApplyDamage(CharacterBase* damaged_character, float base_damage, CharacterBase* event_instigator, CharacterBase* damage_causer)
+float CharacterBase::ApplyDamage(CharacterBase* damaged_character, float base_damage, Actor* event_instigator, Actor* damage_causer)
 {
     if (IsValid(damaged_character) && base_damage != 0.f)
     {
@@ -26,7 +26,7 @@ float CharacterBase::ApplyDamage(CharacterBase* damaged_character, float base_da
     return 0.f;
 }
 
-float CharacterBase::TakeDamage(float damage_amount, CharacterBase* event_instigator, CharacterBase* damage_causer)
+float CharacterBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
 {
     return damage_amount;
 }
