@@ -15,6 +15,8 @@
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
 #include "Character/Component/FSM/StateMachine.h"
+#include "Data/CSVReader.h"
+#include "Data/WeaponData.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
@@ -54,6 +56,9 @@ void PlayerCharacter::BeginPlay()
     
     weapon_ = World::Get()->SpawnActor<Weapon>(Weapon::StaticClass(), L"Weapon");
     if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
+
+    std::vector<WeaponData> weapon_data;
+    CSVReader::Parse(L"Data\\WeaponData.csv", weapon_data);
     
 }
 

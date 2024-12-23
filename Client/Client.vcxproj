@@ -228,8 +228,7 @@
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Character\Player\Weapon.h" />
-    <ClInclude Include="Game\Combat\Interface\IAttackable.h" />
-    <ClInclude Include="Game\Combat\Interface\IDamageable.h" />
+    <ClInclude Include="Game\Data\WeaponData.h" />
     <ClInclude Include="Game\Map\EditorMap.h" />
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
@@ -918,6 +917,7 @@
       <SDLCheck>false</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Game\Data\WeaponData.cpp" />
     <ClCompile Include="Game\Map\EditorMap.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
