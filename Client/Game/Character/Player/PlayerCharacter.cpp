@@ -49,15 +49,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
-
-    if (is_mine_)
-    {
-        Camera::Get()->SetTarget(this);
-    }
-    else
-    {
-        rigid_body_->SetBodyType(BodyType::kStatic);
-    }
+    
+    Camera::Get()->SetTarget(this);
     
     weapon_ = World::Get()->SpawnActor<Weapon>(Weapon::StaticClass(), L"Weapon");
     if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
@@ -78,12 +71,9 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
 
-    if (is_mine_)
+    if (horizontal_axis_ != 0)
     {
-        if (horizontal_axis_ != 0)
-        {
-            rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
-        }
+        rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
     }
     
 }
@@ -92,66 +82,43 @@ void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
 
-    if (is_mine_)
+    Keyboard* keyboard = Keyboard::Get();
+    horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
+        
+    if (keyboard->GetKeyDown(VK_SPACE))
     {
-        Keyboard* keyboard = Keyboard::Get();
-        horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
-        
-        if (keyboard->GetKeyDown(VK_SPACE))
-        {
-            rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
-        }
-
-        Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * .4f;
-
-        Mouse* mouse = Mouse::Get();
-        Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
-        Math::Vector2 direction = (mouse_position - position).Normalized();
-        
-        renderer_->SetFlipX(direction.x < 0);
-
-        if (IsValid(weapon_))
-        {
-            Math::Vector2 offset = direction * .2f;
-            Math::Vector2 new_position = position + offset;
-            
-            weapon_->GetRenderer()->SetFlipX(direction.x < 0);
-            
-            float theta = std::atan2f(direction.y, direction.x);
-    
-            float degree;
-            if (direction.x < 0.f) degree = theta * Math::Rad2Deg() - 135.f;
-            else degree = theta * Math::Rad2Deg() - 45.f;
-
-            weapon_->GetTransform()->SetPosition(new_position);
-            weapon_->GetTransform()->SetAngle(degree);
-
-            if (mouse->GetMouseButtonDown(MouseButton::kLeft))
-            {
-                AudioManager::Get()->PlayOneShot(audio_);
-                weapon_->Shot(direction);
-            }
-        }
-
-        static float send_timer = 0.f;
-        send_timer += delta_time;
-
-        // 1초에 10번 동기화
-        if (send_timer > 1.f / 10.f)
-        {
-            send_timer = 0.f;
-            
-            C_Moving pkt;
-            pkt._locationX = transform_->GetPosition().x;
-            pkt._locationY = transform_->GetPosition().y;
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Moving>(pkt,C_PKT_MOVING);
-            GSocketSession->Send(sendBuffer);
-        }
+        rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
     }
-    else
+
+    Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * .4f;
+
+    Mouse* mouse = Mouse::Get();
+    Math::Vector2 mouse_position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+    Math::Vector2 direction = (mouse_position - position).Normalized();
+        
+    renderer_->SetFlipX(direction.x < 0);
+
+    if (IsValid(weapon_))
     {
-        Math::Vector2 position = Math::Vector2::Lerp(GetTransform()->GetPosition(), received_position_, delta_time * 10.f);
-        transform_->SetPosition(position);
+        Math::Vector2 offset = direction * .2f;
+        Math::Vector2 new_position = position + offset;
+            
+        weapon_->GetRenderer()->SetFlipX(direction.x < 0);
+            
+        float theta = std::atan2f(direction.y, direction.x);
+    
+        float degree;
+        if (direction.x < 0.f) degree = theta * Math::Rad2Deg() - 135.f;
+        else degree = theta * Math::Rad2Deg() - 45.f;
+
+        weapon_->GetTransform()->SetPosition(new_position);
+        weapon_->GetTransform()->SetAngle(degree);
+
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            AudioManager::Get()->PlayOneShot(audio_);
+            weapon_->Shot(direction);
+        }
     }
 }
 
@@ -164,11 +131,6 @@ void PlayerCharacter::PostTick(float delta_time)
     Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(position);
     
     // nickname_text_->SetPosition(screen_position);
-    
-    if (!is_mine_)
-    {
-        if (IsValid(weapon_)) weapon_->GetTransform()->SetPosition(GetTransform()->GetPosition() + Math::Vector2::Up() * .4f);
-    }
 }
 
 RTTR_REGISTRATION

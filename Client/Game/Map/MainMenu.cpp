@@ -85,18 +85,17 @@ void MainMenu::Load()
     login_button->SetDrawMode(DrawMode::kSliced);
     login_button->ClickHandler.Add([]()
     {
-        if(!GSocketSession->Connect())
-        {
-            //TODO: 여기서 튕기는 코드 작성 해 주세요
-        }
-        else
-        {
-            /*C_Enter pkt;
-            pkt._id = "Sundaekyung";
-            pkt._name = "Sundaekyung";
-            std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Enter>(pkt,C_PKT_ENTER);
-            GSocketSession->Send(sendBuffer);*/
-        }
+        // if(!GSocketSession->Connect())
+        // {
+        // }
+        // else
+        // {
+        //     C_Enter pkt;
+        //     pkt._id = "Sundaekyung";
+        //     pkt._name = "Sundaekyung";
+        //     std::shared_ptr<SendBuffer> sendBuffer = ServerPacketHandler::MakeSendBuffer<C_Enter>(pkt,C_PKT_ENTER);
+        //     GSocketSession->Send(sendBuffer);
+        // }
         
         World::Get()->OpenLevel(LevelType::kDefault);
     });
