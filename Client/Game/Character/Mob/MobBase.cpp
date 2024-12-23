@@ -12,19 +12,22 @@ MobBase::MobBase(const std::wstring& kName) :
 
 float MobBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
 {
+    float actual_damage = CharacterBase::TakeDamage(damage_amount, event_instigator, damage_causer);
     if (is_dead_) return 0.f;
     
-    hp_ -= damage_amount;
-    OnHit();
-    
-    Logger::Print(L"Event Instigator: %s, Damage Causer: %s, Current HP: %.f", event_instigator->GetName().c_str(), damage_causer->GetName().c_str(), hp_);
-    
-    if (hp_ <= 0.f)
+    if (actual_damage > 0.f)
     {
-        OnDeath();
+        hp_ -= actual_damage;
+        OnHit();
+
+        if (hp_ <= 0.f)
+        {
+            OnDeath();
+        }
     }
     
-    return damage_amount;
+    Logger::Print(L"Event Instigator: %s, Damage Causer: %s, Current HP: %.f", event_instigator->GetName().c_str(), damage_causer->GetName().c_str(), hp_);
+    return actual_damage;
 }
 
 RTTR_REGISTRATION
