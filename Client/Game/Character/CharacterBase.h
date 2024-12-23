@@ -31,6 +31,7 @@ protected:
     class SpriteRendererComponent* renderer_;
     class CapsuleColliderComponent* collider_;
     class RigidBody2DComponent* rigid_body_;
+    class AnimatorComponent* animator_;
 
     bool is_dead_;
     

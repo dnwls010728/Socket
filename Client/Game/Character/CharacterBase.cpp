@@ -4,6 +4,7 @@
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
     NetworkActor(kName),
@@ -15,6 +16,8 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody2D");
     rigid_body_->UseAutoMass(false);
     rigid_body_->SetFreezeRotation(true);
+
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
 }
 
 float CharacterBase::ApplyDamage(CharacterBase* damaged_character, float base_damage, Actor* event_instigator, Actor* damage_causer)

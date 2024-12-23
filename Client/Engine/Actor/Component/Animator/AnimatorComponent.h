@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Actor/Component/ActorComponent.h"
 
+class Animation;
 class AnimationPack;
 
 class AnimatorComponent : public ActorComponent
@@ -16,6 +17,8 @@ public:
 
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
 
+    FORCEINLINE Animation* GetCurrentAnimation() const { return current_animation_; }
+
     FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
 protected:
@@ -27,7 +30,7 @@ private:
     
     AnimationPack* animation_pack_;
 
-    class Animation* current_animation_;
+    Animation* current_animation_;
 
     float timer_;
 

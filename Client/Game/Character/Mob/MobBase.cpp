@@ -12,10 +12,12 @@ MobBase::MobBase(const std::wstring& kName) :
 
 float MobBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
 {
-    Logger::Print(L"Event Instigator: %s, Damage Causer: %s", event_instigator->GetName().c_str(), damage_causer->GetName().c_str());
-
+    if (is_dead_) return 0.f;
+    
     hp_ -= damage_amount;
     OnHit();
+    
+    Logger::Print(L"Event Instigator: %s, Damage Causer: %s, Current HP: %.f", event_instigator->GetName().c_str(), damage_causer->GetName().c_str(), hp_);
     
     if (hp_ <= 0.f)
     {

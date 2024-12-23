@@ -10,7 +10,12 @@ public:
     Dummy(const std::wstring& kName);
     virtual ~Dummy() override = default;
 
+protected:
+    virtual void Tick(float delta_time) override;
+    virtual void OnHit() override;
+
 private:
     class Sprite* sprite_;
+    class AnimationPack* animation_pack_;
     
 };
