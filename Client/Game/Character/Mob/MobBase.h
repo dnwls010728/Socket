@@ -15,4 +15,6 @@ protected:
 
     float hp_;
     
+    bool is_infinite_hp_;
+    
 };

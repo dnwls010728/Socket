@@ -2,10 +2,13 @@
 #include "MobBase.h"
 
 #include "Logger.h"
+#include "Actor/Component/RigidBody2DComponent.h"
+#include "Actor/Component/TransformComponent.h"
 
 MobBase::MobBase(const std::wstring& kName) :
     CharacterBase(kName),
-    hp_(0.f)
+    hp_(0.f),
+    is_infinite_hp_(false)
 {
     SetLayer(ActorLayer::kMob);
 }
@@ -17,12 +20,16 @@ float MobBase::TakeDamage(float damage_amount, Actor* event_instigator, Actor* d
     
     if (actual_damage > 0.f)
     {
-        hp_ -= actual_damage;
         OnHit();
-
-        if (hp_ <= 0.f)
+        
+        if (!is_infinite_hp_)
         {
-            OnDeath();
+            hp_ -= actual_damage;
+
+            if (hp_ <= 0.f)
+            {
+                OnDeath();
+            }
         }
     }
     

@@ -24,7 +24,7 @@ Dummy::Dummy(const std::wstring& kName) :
     animator_->SetAnimationPack(animation_pack_);
     animator_->PlayAnimation(L"Idle");
 
-    hp_ = 100.f;
+    is_infinite_hp_ = true;
 }
 
 void Dummy::Tick(float delta_time)
