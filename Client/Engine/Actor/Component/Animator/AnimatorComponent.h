@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Actor/Component/ActorComponent.h"
+#include "Misc/DelegateMacros.h"
+
+DECLARE_DELEGATE(OnAnimationDelegate)
 
 class Animation;
 class AnimationPack;
@@ -20,6 +23,8 @@ public:
     FORCEINLINE Animation* GetCurrentAnimation() const { return current_animation_; }
 
     FORCEINLINE bool IsPlaying() const { return is_playing_; }
+
+    OnAnimationDelegate OnEndHandler;
 
 protected:
     virtual void BeginPlay() override;

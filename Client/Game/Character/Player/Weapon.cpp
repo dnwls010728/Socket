@@ -18,7 +18,7 @@ Weapon::Weapon(const std::wstring& kName) :
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Weapon\\Icon29_12.png");
     if (sprite_) renderer_->SetSprite(sprite_, L"Icon29_12_0");
 
-    bullet_pool_ = AddComponent<ObjectPool>(L"Bullet Pool");
+    bullet_pool_ = AddComponent<ObjectPool>(L"BulletPool");
     bullet_pool_->SetPooledObjectClass(Bullet::StaticClass());
 
     GetTransform()->SetScale({.75f, .75f});

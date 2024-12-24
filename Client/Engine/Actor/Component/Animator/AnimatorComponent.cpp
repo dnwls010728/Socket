@@ -67,6 +67,7 @@ void AnimatorComponent::TickComponent(float delta_time)
         {
             if (!current_animation_->is_loop_)
             {
+                if (OnEndHandler.IsBound()) OnEndHandler.Execute();
                 is_playing_ = false;
                 return;
             }
