@@ -58,6 +58,13 @@ float Math::Deg2Rad()
 
 float Math::Random(float min, float max)
 {
+    if (min > max)
+    {
+        float temp = min;
+        min = max;
+        max = temp;
+    }
+    
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> dis(min, max);
@@ -67,6 +74,13 @@ float Math::Random(float min, float max)
 
 int Math::Random(int min, int max)
 {
+    if (min > max)
+    {
+        float temp = min;
+        min = max;
+        max = temp;
+    }
+    
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dis(min, max);
