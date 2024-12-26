@@ -9,7 +9,7 @@ Tilemap::Tilemap(const std::wstring& kName) : Actor(kName)
     SetLayer(ActorLayer::kGround);
     
     tilemap_component_ = AddComponent<TilemapComponent>(L"Tilemap");
-    tilemap_component_->LoadMap(".\\Content\\Tilemaps\\Dummy.tmx");
+    tilemap_component_->LoadMap(".\\Content\\Tilemaps\\untitled.tmx");
 }
 
 RTTR_REGISTRATION
