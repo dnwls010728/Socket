@@ -34,7 +34,6 @@ protected:
 private:
     void GeneratePhysics(const tmx::ObjectGroup& object);
 
-    Texture* tilemap_texture_;
     tmx::Map map_;
     Math::Vector2 map_size_;
 

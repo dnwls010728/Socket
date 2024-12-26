@@ -7,14 +7,10 @@
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/Texture.h"
 
-TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, const tmx::Tileset* kTileset, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, Texture* kTexture, std::map<std::wstring, Texture*>& tileset_textures) :
+TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Texture*>& tileset_textures) :
     tile_count_(kTileCount),
-    texture_(kTexture),
     chunk_tile_ids_(),
-    chunk_arrays_(),
-    vertices_(),
-    indices_(),
-    shape_(nullptr)
+    chunk_arrays_()
 {
     for (const auto& kTileset : tilesets)
     {
@@ -39,7 +35,7 @@ TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, const tmx::Tileset* kTi
         }
     }
 
-    GenerateTiles(kTileset, pos_x, pos_y, kTileSize);
+    GenerateTiles(pos_x, pos_y, kTileSize);
 }
 
 void TilemapChunk::UpdateShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot)
@@ -57,7 +53,7 @@ int TilemapChunk::GetTileIndex(int x, int y) const
     return y * tile_count_.x + x;
 }
 
-void TilemapChunk::GenerateTiles(const tmx::Tileset* kTileset, const Type::uint32& kPosX, const Type::uint32& kPosY, const Math::Vector2& kTileSize)
+void TilemapChunk::GenerateTiles(const Type::uint32& kPosX, const Type::uint32& kPosY, const Math::Vector2& kTileSize)
 {
     for (const auto& chunk_array : chunk_arrays_)
     {
@@ -65,6 +61,9 @@ void TilemapChunk::GenerateTiles(const tmx::Tileset* kTileset, const Type::uint3
 
         const float u_normal = chunk_array->GetTilesetSize().x / chunk_array->GetTextureSize().x;
         const float v_normal = chunk_array->GetTilesetSize().y / chunk_array->GetTextureSize().y;
+
+        std::vector<DefaultVertex> vertices;
+        std::vector<Type::uint32> indices;
         
         for (Type::uint32 y = kPosY; y < kPosY + tile_count_.y; ++y)
         {
@@ -86,27 +85,30 @@ void TilemapChunk::GenerateTiles(const tmx::Tileset* kTileset, const Type::uint3
                     const float tile_pos_y = static_cast<float>(y) * kTileSize.y + kTileSize.y;
                     
                     DefaultVertex vertex = { {tile_pos_x, -tile_pos_y, 0.f}, {1.f, 1.f, 1.f, 1.f}, {u, v + v_normal} };
-                    vertices_.push_back(vertex);
+                    vertices.push_back(vertex);
                     vertex = { {tile_pos_x + chunk_array->GetTilesetSize().x, -tile_pos_y, 0.f}, {1.f, 1.f, 1.f, 1.f}, {u + u_normal, v + v_normal } };
-                    vertices_.push_back(vertex);
+                    vertices.push_back(vertex);
                     vertex = { {tile_pos_x, -tile_pos_y + chunk_array->GetTilesetSize().y, 0.f}, {1.f, 1.f, 1.f, 1.f}, {u, v } };
-                    vertices_.push_back(vertex);
+                    vertices.push_back(vertex);
                     vertex = { {tile_pos_x + chunk_array->GetTilesetSize().x, -tile_pos_y + chunk_array->GetTilesetSize().y, 0.f}, {1.f, 1.f, 1.f, 1.f}, {u + u_normal, v } };
-                    vertices_.push_back(vertex);
+                    vertices.push_back(vertex);
 
-                    Type::uint32 base_index = static_cast<Type::uint32>(vertices_.size() - 4);
-                    indices_.push_back(base_index);
-                    indices_.push_back(base_index + 1);
-                    indices_.push_back(base_index + 2);
-                    indices_.push_back(base_index + 2);
-                    indices_.push_back(base_index + 1);
-                    indices_.push_back(base_index + 3);
+                    Type::uint32 base_index = static_cast<Type::uint32>(vertices.size() - 4);
+                    indices.push_back(base_index);
+                    indices.push_back(base_index + 1);
+                    indices.push_back(base_index + 2);
+                    indices.push_back(base_index + 2);
+                    indices.push_back(base_index + 1);
+                    indices.push_back(base_index + 3);
                 }
 
                 ++idx;
             }
         }
 
-        chunk_array->SetShape(vertices_, indices_);
+        chunk_array->SetShape(vertices, indices);
+        
+        vertices.clear();
+        indices.clear();
     }
 }

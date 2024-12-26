@@ -36,8 +36,5 @@ void TilemapChunkArray::SetShape(const std::vector<DefaultVertex>& kVertices, co
 
 Math::Vector2 TilemapChunkArray::GetTextureSize()
 {
-    return Math::Vector2(
-        static_cast<float>(texture_->GetWidth()),
-        static_cast<float>(texture_->GetHeight())
-    );
+    return {static_cast<float>(texture_->GetWidth()), static_cast<float>(texture_->GetHeight())};
 }

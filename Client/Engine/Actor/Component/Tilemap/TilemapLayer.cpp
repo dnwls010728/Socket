@@ -7,7 +7,7 @@
 #include "tmxlite/Map.hpp"
 #include "Windows/DX/Texture.h"
 
-TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, Texture* texture, const Math::Vector2& chunk_size) :
+TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& chunk_size) :
     chunk_size_(chunk_size),
     chunk_count_(Math::Vector2::Zero()),
     chunks_()
@@ -19,7 +19,7 @@ TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, Tex
     chunk_size_.x = std::floor(chunk_size_.x / tile_size.x) * tile_size.x;
     chunk_size_.y = std::floor(chunk_size_.y / tile_size.y) * tile_size.y;
 
-    CreateChunks(map, layer, texture, map_tile_size_);
+    CreateChunks(map, layer, map_tile_size_);
 }
 
 void TilemapLayer::UpdateShapes(const Math::Vector2& position, const Math::Vector2& scale, const Math::Vector2& pivot)
@@ -48,7 +48,7 @@ TilemapChunk* TilemapLayer::GetChunk(int x, int y, Math::Vector2& tile_relative_
     return chunks_[chunk_y * chunk_count_.x + chunk_x].get();
 }
 
-void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer, Texture* texture, const Math::Vector2& tile_size)
+void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& tile_size)
 {
     const std::vector<tmx::Tileset>& tilesets = map.getTilesets();
     const std::vector<tmx::TileLayer::Tile>& tiles = layer.getTiles();
@@ -101,7 +101,7 @@ void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer
                 tile_count.y = (bounds.height - y * chunk_size_.y) / tile_size.y;
             }
 
-            chunks_.push_back(std::make_unique<TilemapChunk>(layer, &map.getTilesets()[0], used_tilesets, Math::Vector2(x * chunk_size_.x, y * chunk_size_.y), tile_count, tile_size, map.getTileCount().x, texture, tileset_textures_));
+            chunks_.push_back(std::make_unique<TilemapChunk>(layer, used_tilesets, Math::Vector2(x * chunk_size_.x, y * chunk_size_.y), tile_count, tile_size, map.getTileCount().x, tileset_textures_));
         }
     }
 }

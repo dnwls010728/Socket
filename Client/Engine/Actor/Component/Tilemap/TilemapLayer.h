@@ -16,7 +16,7 @@ class Texture;
 class TilemapLayer
 {
 public:
-    TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, Texture* texture, const Math::Vector2& chunk_size);
+    TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& chunk_size);
     ~TilemapLayer() = default;
 
     void UpdateShapes(const Math::Vector2& position, const Math::Vector2& scale, const Math::Vector2& pivot = Math::Vector2::Zero());
@@ -25,7 +25,7 @@ public:
     TilemapChunk* GetChunk(int tile_x, int tile_y, Math::Vector2& tile_relative_position);
 
 private:
-    void CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer, Texture* texture, const Math::Vector2& tile_size);
+    void CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& tile_size);
 
     Math::Vector2 chunk_size_;
     Math::Vector2 chunk_count_;
