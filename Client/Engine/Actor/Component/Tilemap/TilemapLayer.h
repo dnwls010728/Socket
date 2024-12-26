@@ -31,6 +31,8 @@ private:
     Math::Vector2 chunk_count_;
     Math::Vector2 map_tile_size_;
 
+    std::map<std::wstring, Texture*> tileset_textures_;
+    
     std::vector<std::unique_ptr<TilemapChunk>> chunks_;
     
 };

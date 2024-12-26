@@ -153,6 +153,7 @@
     <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
     <ClInclude Include="Engine\Actor\Component\SpriteRendererComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunkArray.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
     <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
@@ -492,6 +493,7 @@
     <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\SpriteRendererComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunkArray.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
     <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
