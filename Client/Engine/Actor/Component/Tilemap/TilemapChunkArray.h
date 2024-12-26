@@ -15,7 +15,7 @@ class Texture;
 class TilemapChunkArray
 {
 public:
-    TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset);
+    TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset, int order);
     ~TilemapChunkArray() = default;
 
     void SetShape(const std::vector<DefaultVertex>& kVertices, const std::vector<Type::uint32>& kIndices);
@@ -32,6 +32,8 @@ public:
 
 private:
     Texture* texture_;
+
+    int order_;
     
     Math::Vector2 tileset_size_;
     Math::Vector2 tile_count_;

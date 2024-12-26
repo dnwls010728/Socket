@@ -12,6 +12,18 @@ TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::
     chunk_tile_ids_(),
     chunk_arrays_()
 {
+    const std::vector<tmx::Property> kProperties = kLayer.getProperties();
+    
+    int order = 0;
+    for (const auto& kProperty : kProperties)
+    {
+        if (kProperty.getName() == "Order")
+        {
+            order = kProperty.getIntValue();
+            break;
+        }
+    }
+    
     for (const auto& kTileset : tilesets)
     {
         const std::string kPath = kTileset->getImagePath();
@@ -20,7 +32,7 @@ TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::
         to_wide_string = FileHelper::GetRelativePath(to_wide_string);
 
         if (kTileset->getImagePath().empty()) continue;
-        chunk_arrays_.emplace_back(std::make_unique<TilemapChunkArray>(tileset_textures.find(to_wide_string)->second, *kTileset));
+        chunk_arrays_.emplace_back(std::make_unique<TilemapChunkArray>(tileset_textures.find(to_wide_string)->second, *kTileset, order));
     }
     
     Type::uint32 pos_x = static_cast<Type::uint32>(kPosition.x / kTileSize.x);

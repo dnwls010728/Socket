@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="80" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="23">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="80" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="23">
  <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Sprites/Tilesets/TemplateTileset.png" width="224" height="256"/>
- </tileset>
- <tileset firstgid="57" name="TX Props" tilewidth="32" tileheight="32" tilecount="256" columns="16">
-  <image source="../Sprites/Tilesets/TX Props.png" width="512" height="512"/>
  </tileset>
  <layer id="7" name="Tile Layer 1" width="80" height="20">
   <data encoding="base64" compression="zlib">
@@ -16,9 +13,9 @@
    eJztmEEKgDAMBHvw6BcEr+L//ycFpUWqaNNoNDOw14YdSgMNAQCgHYNiPKDVE382z7UG/s556536kz9Pc1uDPxk1PcZCnphrEe6fDPaHLviTgT8Zd3pOIe2TOUu3pq8898tc7Zm7iyn5yx3iL7F3F3Pkb3PoyR//Vz5YAKZTDjk=
   </data>
  </layer>
- <layer id="8" name="Tile Layer 3" width="80" height="20">
+ <layer id="9" name="Tile Layer 3" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJztzsEJg1AQANFfm4LmbECtwFioWkG0ApM6nAa8JSwL82DuU4okSZL+ZaGVtuiRpN600xE9ktRJH/pGj0j6uYZaekSPJNXTQCNVVMfupDPRi2bq6Bm7I0nSrQsIjQu3
+   eJztwQENAAAAwqD3T20PBxQAAAAAAMCXARkAAAE=
   </data>
  </layer>
  <objectgroup id="5" name="Object Layer 1">
@@ -36,4 +33,20 @@
    <polygon points="0,0 -94,-96.75 -320,-96.75 -415.5,-1.01842"/>
   </object>
  </objectgroup>
+ <layer id="10" name="Tile Layer 4" width="80" height="20">
+  <properties>
+   <property name="Order" type="int" value="100"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzkENADAQA6CTUv8qZ2G/pgko4A4AAABYk3ZgXNqBcWkHAODDAxMtAGE=
+  </data>
+ </layer>
+ <layer id="11" name="Tile Layer 5" width="80" height="20">
+  <properties>
+   <property name="Order" type="int" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0EENAAAIxDA04F8sInjAJa2CZVUAAABAqr4OCOffjn8AfDbD/wA3
+  </data>
+ </layer>
 </map>

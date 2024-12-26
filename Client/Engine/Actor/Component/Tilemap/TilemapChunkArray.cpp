@@ -5,8 +5,9 @@
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/Texture.h"
 
-TilemapChunkArray::TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset) :
+TilemapChunkArray::TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset, int order) :
     texture_(texture),
+    order_(order),
     shape_(nullptr)
 {
     Math::Vector2 texture_size(
@@ -30,6 +31,7 @@ void TilemapChunkArray::SetShape(const std::vector<DefaultVertex>& kVertices, co
     shape_->SetVertices(kVertices);
     shape_->SetIndices(kIndices);
     shape_->SetTexture(texture_);
+    shape_->SetZOrder(order_);
 
     World::Get()->AddShape(shape_);
 }
