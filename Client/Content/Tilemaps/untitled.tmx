@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="5">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="7">
  <tileset firstgid="1" name="TX Chest Animation" tilewidth="32" tileheight="32" tilecount="256" columns="16">
   <image source="../Sprites/Tilesets/TX Chest Animation.png" width="512" height="512"/>
  </tileset>
@@ -18,9 +18,17 @@
  <tileset firstgid="1589" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Sprites/Tilesets/TemplateTileset.png" width="224" height="256"/>
  </tileset>
- <objectgroup id="12" name="Object Layer 1">
+ <objectgroup id="12" name="Collision">
   <object id="3" x="1" y="447" width="959" height="194"/>
   <object id="4" x="670" y="384" width="290" height="63"/>
+ </objectgroup>
+ <objectgroup id="13" name="Spawn">
+  <object id="5" name="Player" type="PlayerCharacter" x="22" y="448">
+   <point/>
+  </object>
+  <object id="6" name="Dummy" type="Dummy" x="77.3333" y="398.667">
+   <point/>
+  </object>
  </objectgroup>
  <layer id="6" name="Default" width="30" height="20">
   <properties>

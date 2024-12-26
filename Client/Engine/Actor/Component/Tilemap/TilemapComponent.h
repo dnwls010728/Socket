@@ -31,6 +31,7 @@ protected:
 
 private:
     void GeneratePhysics(const tmx::ObjectGroup& object);
+    void GenerateSpawn(const tmx::ObjectGroup& object);
 
     tmx::Map map_;
     Math::Vector2 map_size_;

@@ -28,7 +28,9 @@ void TilemapComponent::LoadMap(const char* kPath)
 		if (layer->getType() == tmx::Layer::Type::Object)
 		{
 			const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
-			GeneratePhysics(object);
+			
+			if (layer->getName() == "Collision") GeneratePhysics(object);
+			else if (layer->getName() == "Spawn") GenerateSpawn(object);
 		}
 		else if (layer->getType() == tmx::Layer::Type::Tile)
 		{
@@ -111,6 +113,31 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
 	}
 
 	b2Body_Disable(tilemap_body_id_);
+}
+
+void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& object)
+{
+	const auto& objects = object.getObjects();
+
+	for (const auto& temp : objects)
+	{
+		if (temp.getShape() == tmx::Object::Shape::Point)
+		{
+			rttr::type type = rttr::type::get_by_name(temp.getClass());
+			if (type.is_valid())
+			{
+				const std::string& name = temp.getName();
+				
+				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
+				Actor* actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
+				if (IsValid(actor))
+				{
+					TransformComponent* transform = actor->GetTransform();
+					transform->SetPosition({temp.getPosition().x / PPU - map_size_.x / 2.f, -1 * temp.getPosition().y / PPU + map_size_.y / 2.f});
+				}
+			}
+		}
+	}
 }
 
 RTTR_REGISTRATION
