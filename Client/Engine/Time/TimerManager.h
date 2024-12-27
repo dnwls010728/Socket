@@ -8,7 +8,7 @@ struct TimerData;
 struct TimerHandle;
 
 #pragma region MACRO
-#define SET_TIMERBASE(rate, loop, delay) \
+#define SET_TIMER_BASE(rate, loop, delay) \
 const float first_delay = delay >= 0.f ? delay : rate; \
 data.loop = loop; \
 data.rate = rate; \
@@ -112,19 +112,19 @@ template<typename M>
 const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void), float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    SET_TIMERBASE(rate, loop, delay)
+    SET_TIMER_BASE(rate, loop, delay)
 }
 
 template<typename M>
 const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void) const, float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    SET_TIMERBASE(rate, loop, delay)
+    SET_TIMER_BASE(rate, loop, delay)
 }
 
 template<typename L>
 const TimerHandle& TimerManager::SetTimer(L&& lambda, float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(std::move(lambda))));
-    SET_TIMERBASE(rate, loop, delay)
+    SET_TIMER_BASE(rate, loop, delay)
 }
