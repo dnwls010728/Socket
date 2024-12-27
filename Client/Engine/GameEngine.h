@@ -27,3 +27,5 @@ private:
     float accumulator_;
     
 };
+
+extern Type::uint32 g_frame_counter;

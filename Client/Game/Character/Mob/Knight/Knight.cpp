@@ -7,6 +7,7 @@
 #include "Asset/AssetManager.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "State/KnightIdle.h"
+#include "State/KnightRun.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -17,7 +18,10 @@ Knight::Knight(const std::wstring& kName) :
 
     animator_->SetAnimationPack(animation_pack_);
 
-    idle_state_ = std::make_shared<KnightIdle>(state_machine_);
+    {
+        idle_state_ = std::make_shared<KnightIdle>(state_machine_);
+        run_state_ = std::make_shared<KnightRun>(state_machine_);
+    }
 
     state_machine_->ChangeState(idle_state_.get());
 }

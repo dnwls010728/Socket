@@ -1,20 +1,19 @@
 ﻿#include "pch.h"
-#include "KnightIdle.h"
-
 #include "KnightRun.h"
+
+#include "KnightIdle.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
-#include "Character/CharacterBase.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Character/Mob/Knight/Knight.h"
 
-KnightIdle::KnightIdle(StateMachine* state_machine) :
+KnightRun::KnightRun(StateMachine* state_machine) :
     State(state_machine),
     character_(nullptr),
     animator_(nullptr)
 {
 }
 
-void KnightIdle::Enter()
+void KnightRun::Enter()
 {
     if (!IsValid(character_))
     {
@@ -25,13 +24,24 @@ void KnightIdle::Enter()
         }
     }
 
-    animator_->PlayAnimation(L"Idle");
+    animator_->PlayAnimation(L"Run");
 }
 
-void KnightIdle::Tick(float delta_time)
+void KnightRun::Tick(float delta_time)
 {
 }
 
-void KnightIdle::Exit()
+void KnightRun::Exit()
 {
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<KnightRun>("KnightRun")
+        .constructor<StateMachine*>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

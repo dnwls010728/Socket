@@ -4,7 +4,11 @@
 #include "Misc/Type.h"
 
 TimerManager::TimerManager() :
-    internal_time_(0.f)
+    last_ticked_frame_(-1),
+    internal_time_(0.f),
+    timers_(),
+    active_timers_(),
+    pending_timers_()
 {
 }
 
@@ -48,18 +52,20 @@ void TimerManager::Tick(float delta_time)
             ++it;
         }
     }
+    
+    last_ticked_frame_ = g_frame_counter;
 }
 
 const TimerHandle& TimerManager::SetTimer(Function<void(void)>&& func, float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(func)));
-    SET_TIMER_BASE(rate, loop, delay)
+    return SetTimer_Internal(data, rate, loop, delay);
 }
 
 const TimerHandle& TimerManager::SetTimer(void(*func)(void), float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(func)));
-    SET_TIMER_BASE(rate, loop, delay)
+    return SetTimer_Internal(data, rate, loop, delay);
 }
 
 void TimerManager::ClearTimer(const TimerHandle& kHandle)
@@ -179,6 +185,29 @@ bool TimerManager::IsTimerPaused(const TimerHandle& kHandle)
 {
     TimerData* timer = FindTimer(kHandle);
     return timer && timer->status == TimerStatus::Paused;
+}
+
+const TimerHandle& TimerManager::SetTimer_Internal(TimerData& data, float rate, bool loop, float delay)
+{
+    const float first_delay = delay >= 0.f ? delay : rate;
+    data.loop = loop;
+    data.rate = rate;
+
+    if (HasBeenTickedThisFrame())
+    {
+        data.expire_time = internal_time_ + first_delay;
+        data.status = TimerStatus::Active;
+        active_timers_.push_back(data.handle);
+    }
+    else
+    {
+        data.expire_time = first_delay;
+        data.status = TimerStatus::Pending;
+        pending_timers_.push_back(data.handle);
+    }
+    
+    timers_.push_back(data);
+    return data.handle;
 }
 
 void TimerManager::RemoveTimer(const TimerData& kTimer)

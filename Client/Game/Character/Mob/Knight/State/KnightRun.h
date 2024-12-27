@@ -1,20 +1,20 @@
 ﻿#pragma once
 #include "Character/Component/FSM/State.h"
 
-class KnightIdle : public State
+class KnightRun : public State
 {
-    SHADER_CLASS_HELPER(KnightIdle)
-    GENERATED_BODY(KnightIdle, State)
+    SHADER_CLASS_HELPER(KnightRun)
+    GENERATED_BODY(KnightRun, State)
     
 public:
-    KnightIdle(StateMachine* state_machine);
-    virtual ~KnightIdle() override = default;
+    KnightRun(StateMachine* state_machine);
+    virtual ~KnightRun() override = default;
     
 protected:
     virtual void Enter() override;
     virtual void Tick(float delta_time) override;
     virtual void Exit() override;
-
+    
 private:
     class Knight* character_;
     class AnimatorComponent* animator_;

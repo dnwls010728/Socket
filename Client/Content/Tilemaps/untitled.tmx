@@ -29,7 +29,7 @@
   <object id="6" name="Dummy" type="Dummy" x="77.3333" y="398.667">
    <point/>
   </object>
-  <object id="7" name="Knight" type="Knight" x="577" y="415">
+  <object id="7" name="Knight" type="Knight" x="144" y="422">
    <point/>
   </object>
  </objectgroup>

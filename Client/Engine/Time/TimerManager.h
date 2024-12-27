@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "GameEngine.h"
 #include "Singleton.h"
 #include "Misc/Type.h"
 #include "Misc/DelegateMacros.h"
@@ -7,18 +8,9 @@
 struct TimerData;
 struct TimerHandle;
 
-#pragma region MACRO
-#define SET_TIMER_BASE(rate, loop, delay) \
-const float first_delay = delay >= 0.f ? delay : rate; \
-data.loop = loop; \
-data.rate = rate; \
-data.expire_time = internal_time_ + first_delay; \
-timers_.push_back(data); \
-return data.handle;
-#pragma endregion
-
 enum class TimerStatus : Type::uint8
 {
+    Pending,
     Active,
     Paused,
     Executing,
@@ -101,30 +93,37 @@ public:
 
     bool IsTimerActive(const TimerHandle& kHandle);
     bool IsTimerPaused(const TimerHandle& kHandle);
+
+    FORCEINLINE bool HasBeenTickedThisFrame() const { return last_ticked_frame_ == g_frame_counter; }
 private:
+    const TimerHandle& SetTimer_Internal(TimerData& data, float rate, bool loop, float delay);
+    void RemoveTimer(const TimerData& kTimer);
+    
+    Type::uint64 last_ticked_frame_;
     float internal_time_;
     std::vector<TimerData> timers_;
-
-    void RemoveTimer(const TimerData& kTimer);
+    std::vector<TimerHandle> active_timers_;
+    std::vector<TimerHandle> pending_timers_;
+    
 };
 
 template<typename M>
 const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void), float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    SET_TIMER_BASE(rate, loop, delay)
+    return SetTimer_Internal(data, rate, loop, delay);
 }
 
 template<typename M>
 const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void) const, float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    SET_TIMER_BASE(rate, loop, delay)
+    return SetTimer_Internal(data, rate, loop, delay);
 }
 
 template<typename L>
 const TimerHandle& TimerManager::SetTimer(L&& lambda, float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(std::move(lambda))));
-    SET_TIMER_BASE(rate, loop, delay)
+    return SetTimer_Internal(data, rate, loop, delay);
 }

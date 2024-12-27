@@ -232,6 +232,7 @@
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\Knight\State\KnightIdle.h" />
+    <ClInclude Include="Game\Character\Mob\Knight\State\KnightRun.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Character\Player\Weapon.h" />
@@ -782,6 +783,7 @@
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\State\KnightIdle.cpp" />
+    <ClCompile Include="Game\Character\Mob\Knight\State\KnightRun.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerCharacter.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>

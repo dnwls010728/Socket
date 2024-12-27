@@ -16,6 +16,8 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
 
+Type::uint32 g_frame_counter = 0;
+
 GameEngine::GameEngine() :
     game_window_(nullptr),
     shape_batch_(nullptr),
@@ -99,8 +101,9 @@ void GameEngine::Tick(float delta_time)
     }
 
     World::Get()->Tick(delta_time);
+    g_frame_counter++;
+    
     World::Get()->PostTick(delta_time);
-
     Canvas::Get()->Tick(delta_time);
 }
 
