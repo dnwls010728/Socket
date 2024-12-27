@@ -30,9 +30,6 @@ private:
     class AnimationPack* animation_pack_;
     class Audio* audio_;
     
-    AnimatorComponent* animator_;
-    class StateMachine* state_machine_;
-    
     int horizontal_axis_;
     
     float move_speed_;

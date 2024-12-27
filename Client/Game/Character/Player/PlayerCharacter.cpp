@@ -41,10 +41,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     collider_->SetOffset({0.f, .5f});
     collider_->SetSize({.5f, .5f});
     
-    animator_ = AddComponent<AnimatorComponent>(L"Animator");
     animator_->SetAnimationPack(animation_pack_);
-
-    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     
 }
 

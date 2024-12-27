@@ -1,0 +1,30 @@
+target: Sprites\Character\Mob\Knight\KnightSheet.png
+animations:
+  - name: Idle
+    frame_rate: 8
+    loop: true
+    frames:
+      - KnightSheet_0
+      - KnightSheet_1
+      - KnightSheet_2
+      - KnightSheet_3
+      - KnightSheet_4
+      - KnightSheet_5
+      - KnightSheet_6
+      - KnightSheet_7
+      - KnightSheet_8
+      - KnightSheet_9
+  - name: Run
+    frame_rate: 8
+    loop: true
+    frames:
+      - KnightSheet_10
+      - KnightSheet_11
+      - KnightSheet_12
+      - KnightSheet_13
+      - KnightSheet_14
+      - KnightSheet_15
+      - KnightSheet_16
+      - KnightSheet_17
+      - KnightSheet_18
+      - KnightSheet_19
