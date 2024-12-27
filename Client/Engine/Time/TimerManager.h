@@ -10,11 +10,11 @@ struct TimerHandle;
 
 enum class TimerStatus : Type::uint8
 {
-    Pending,
-    Active,
-    Paused,
-    Executing,
-    Removal
+    kPending,
+    kActive,
+    kPaused,
+    kExecuting,
+    kRemoval
 };
 
 struct TimerHandle
@@ -40,12 +40,12 @@ struct TimerData
     TimerData() = delete;
 
     TimerData(Function<void(void)>&& func) 
-        : callback(std::forward<Function<void(void)>>(func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::Active)
+        : callback(std::forward<Function<void(void)>>(func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
     {}
 
     template<typename M>
     TimerData(M* target, Function<void(void)>&& func)
-        : callback(std::forward<Function<void(void)>>(target, func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::Active)
+        : callback(std::forward<Function<void(void)>>(target, func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
     {}
 
     bool operator==(const TimerData& kInput) const

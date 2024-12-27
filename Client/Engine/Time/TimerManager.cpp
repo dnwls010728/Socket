@@ -20,15 +20,15 @@ void TimerManager::Tick(float delta_time)
     {
         TimerData& timer = *it;
     
-        if (timer.status == TimerStatus::Removal)
+        if (timer.status == TimerStatus::kRemoval)
         {
             it = timers_.erase(it);
             continue;
         }
 
-        if (timer.status == TimerStatus::Active && internal_time_ >= timer.expire_time)
+        if (timer.status == TimerStatus::kActive && internal_time_ >= timer.expire_time)
         {
-            timer.status = TimerStatus::Executing;
+            timer.status = TimerStatus::kExecuting;
         
             Type::uint32 cell_count = timer.loop ? static_cast<int>(trunc(internal_time_ - timer.expire_time) / timer.rate) + 1 : 1;
             for (Type::uint32 i = 0; i < cell_count; ++i)
@@ -39,7 +39,7 @@ void TimerManager::Tick(float delta_time)
             if (timer.loop)
             {
                 timer.expire_time += timer.rate * cell_count;
-                timer.status = TimerStatus::Active;
+                timer.status = TimerStatus::kActive;
                 ++it;
             }
             else
@@ -74,14 +74,14 @@ void TimerManager::ClearTimer(const TimerHandle& kHandle)
 
     switch (timer->status)
     {
-    case TimerStatus::Active:
+    case TimerStatus::kActive:
         {
-            timer->status = TimerStatus::Removal;
+            timer->status = TimerStatus::kRemoval;
         }
         break;
 
-    case TimerStatus::Executing:
-    case TimerStatus::Paused:
+    case TimerStatus::kExecuting:
+    case TimerStatus::kPaused:
         {
             RemoveTimer(*timer);
         }
@@ -92,15 +92,15 @@ void TimerManager::ClearTimer(const TimerHandle& kHandle)
 void TimerManager::PauseTimer(const TimerHandle& kHandle)
 {
     TimerData* timer = FindTimer(kHandle);
-    if (!timer || timer->status == TimerStatus::Paused) return;
+    if (!timer || timer->status == TimerStatus::kPaused) return;
 
-    if (timer->status == TimerStatus::Executing && !timer->loop)
+    if (timer->status == TimerStatus::kExecuting && !timer->loop)
     {
         RemoveTimer(*timer);
     }
     else
     {
-        timer->status = TimerStatus::Paused;
+        timer->status = TimerStatus::kPaused;
         timer->expire_time -= internal_time_;
     }
 }
@@ -108,10 +108,10 @@ void TimerManager::PauseTimer(const TimerHandle& kHandle)
 void TimerManager::UnPauseTimer(const TimerHandle& kHandle)
 {
     TimerData* timer = FindTimer(kHandle);
-    if (!timer || timer->status != TimerStatus::Paused) return;
+    if (!timer || timer->status != TimerStatus::kPaused) return;
 
     timer->expire_time += internal_time_;
-    timer->status = TimerStatus::Active;
+    timer->status = TimerStatus::kActive;
 }
 
 void TimerManager::ClearAllTimers()
@@ -119,7 +119,7 @@ void TimerManager::ClearAllTimers()
     // 추후 개발하면서 상황을 보고, 수정해야 할 수 있음
     for (auto& timer : timers_)
     {
-        timer.status = TimerStatus::Removal;
+        timer.status = TimerStatus::kRemoval;
     }
 }
 
@@ -142,8 +142,8 @@ float TimerManager::GetTimerElapsed(const TimerHandle& kHandle)
     {
         switch (timer->status)
         {
-        case TimerStatus::Active:
-        case TimerStatus::Executing:
+        case TimerStatus::kActive:
+        case TimerStatus::kExecuting:
             return timer->rate - (timer->expire_time - internal_time_);
 
         default:
@@ -161,10 +161,10 @@ float TimerManager::GetTimerRemaining(const TimerHandle& kHandle)
     {
         switch (timer->status)
         {
-        case TimerStatus::Active:
+        case TimerStatus::kActive:
             return timer->expire_time - internal_time_;
             
-        case TimerStatus::Executing:
+        case TimerStatus::kExecuting:
             return 0.f;
 
         default:
@@ -178,13 +178,13 @@ float TimerManager::GetTimerRemaining(const TimerHandle& kHandle)
 bool TimerManager::IsTimerActive(const TimerHandle& kHandle)
 {
     TimerData* timer = FindTimer(kHandle);
-    return timer && timer->status != TimerStatus::Paused;
+    return timer && timer->status != TimerStatus::kPaused;
 }
 
 bool TimerManager::IsTimerPaused(const TimerHandle& kHandle)
 {
     TimerData* timer = FindTimer(kHandle);
-    return timer && timer->status == TimerStatus::Paused;
+    return timer && timer->status == TimerStatus::kPaused;
 }
 
 const TimerHandle& TimerManager::SetTimer_Internal(TimerData& data, float rate, bool loop, float delay)
@@ -196,13 +196,13 @@ const TimerHandle& TimerManager::SetTimer_Internal(TimerData& data, float rate, 
     if (HasBeenTickedThisFrame())
     {
         data.expire_time = internal_time_ + first_delay;
-        data.status = TimerStatus::Active;
+        data.status = TimerStatus::kActive;
         active_timers_.push_back(data.handle);
     }
     else
     {
         data.expire_time = first_delay;
-        data.status = TimerStatus::Pending;
+        data.status = TimerStatus::kPending;
         pending_timers_.push_back(data.handle);
     }
     
