@@ -3,7 +3,7 @@
 
 #include "Math/Color.h"
 #include "Math/Math.h"
-#include "UI/Canvas.h"
+#include "UI_OLD/Canvas.h"
 #include "Windows/DX/Renderer.h"
 
 ScrollBox::ScrollBox(const std::wstring& kName) :

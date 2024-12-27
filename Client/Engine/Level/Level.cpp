@@ -8,8 +8,8 @@
 #include "Actor/Camera.h"
 #include "Audio/AudioManager.h"
 #include "Event/Events.h"
-#include "UI/Canvas.h"
-#include "UI/Widget.h"
+#include "UI_OLD/Canvas.h"
+#include "UI_OLD/Widget.h"
 
 Level::Level(const std::wstring& kName) :
     name_(kName),
