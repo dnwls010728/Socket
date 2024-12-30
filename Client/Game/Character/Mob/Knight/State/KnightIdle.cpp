@@ -50,4 +50,16 @@ void KnightIdle::PostTick(float delta_time)
 
 void KnightIdle::Exit()
 {
+    // TimerManager::Get()->ClearTimer(timer_handle_);
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<KnightIdle>("KnightIdle")
+        .constructor<StateMachine*>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

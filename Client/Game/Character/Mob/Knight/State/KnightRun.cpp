@@ -56,6 +56,7 @@ void KnightRun::PostTick(float delta_time)
 
 void KnightRun::Exit()
 {
+    // TimerManager::Get()->ClearTimer(timer_handle_);
 }
 
 RTTR_REGISTRATION
