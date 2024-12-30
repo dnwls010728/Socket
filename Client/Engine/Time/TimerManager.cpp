@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "TimerManager.h"
 
+#include "Logger.h"
 #include "Misc/Type.h"
+
+Type::uint64 TimerManager::last_handle_ = 0;
 
 TimerManager::TimerManager() :
     last_ticked_frame_(-1),
@@ -189,9 +192,13 @@ bool TimerManager::IsTimerPaused(const TimerHandle& kHandle)
 
 const TimerHandle& TimerManager::SetTimer_Internal(TimerData& data, float rate, bool loop, float delay)
 {
+    TimerHandle handle;
+    handle.handle = ++last_handle_;
+    
     const float first_delay = delay >= 0.f ? delay : rate;
     data.loop = loop;
     data.rate = rate;
+    data.handle = handle;
 
     if (HasBeenTickedThisFrame())
     {

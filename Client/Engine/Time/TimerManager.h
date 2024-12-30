@@ -19,20 +19,31 @@ enum class TimerStatus : Type::uint8
 
 struct TimerHandle
 {
-    TimerHandle() 
-        : addr_(0)
+    TimerHandle() :
+        handle(0)
     {}
 
-    TimerHandle(TimerData& data)
-        : addr_(reinterpret_cast<std::uintptr_t&>(data))
-    {}
-
-    bool operator==(const TimerHandle& kInput) const
+    bool IsValid() const
     {
-        return addr_ == kInput.addr_;
+        return handle != 0;
     }
 
-    std::uintptr_t addr_;
+    void Invalidate()
+    {
+        handle = 0;
+    }
+
+    bool operator==(const TimerHandle& kOther) const
+    {
+        return handle == kOther.handle;
+    }
+
+    bool operator!=(const TimerHandle& kOther) const
+    {
+        return handle != kOther.handle;
+    }
+
+    Type::uint64 handle;
 };
 
 struct TimerData
@@ -48,16 +59,16 @@ struct TimerData
         : callback(std::forward<Function<void(void)>>(target, func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
     {}
 
-    bool operator==(const TimerData& kInput) const
+    bool operator==(const TimerData& kOther) const
     {
-        return kInput.handle == handle;
+        return kOther.handle == handle;
     }
 
     bool loop;
     float rate;
     double expire_time;
     Function<void(void)> callback;
-    TimerHandle handle{ *this };
+    TimerHandle handle;
     TimerStatus status;
 };
 
@@ -66,8 +77,6 @@ class TimerManager : public Singleton<TimerManager>
 public:
     TimerManager();
     virtual ~TimerManager() override = default;
-    
-    void Tick(float delta_time);
 
     template<typename M>
     const TimerHandle& SetTimer(M* target, void(M::* func)(void), float rate, bool loop = false, float delay = -1.f, typename std::enable_if<std::is_class<M>::value>::type* = nullptr);
@@ -96,7 +105,11 @@ public:
 
     FORCEINLINE bool HasBeenTickedThisFrame() const { return last_ticked_frame_ == g_frame_counter; }
 private:
+    friend class World;
+    
     const TimerHandle& SetTimer_Internal(TimerData& data, float rate, bool loop, float delay);
+    
+    void Tick(float delta_time);
     void RemoveTimer(const TimerData& kTimer);
     
     Type::uint64 last_ticked_frame_;
@@ -104,6 +117,8 @@ private:
     std::vector<TimerData> timers_;
     std::vector<TimerHandle> active_timers_;
     std::vector<TimerHandle> pending_timers_;
+
+    static Type::uint64 last_handle_;
     
 };
 
