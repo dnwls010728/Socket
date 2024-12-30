@@ -50,13 +50,13 @@ struct TimerData
 {
     TimerData() = delete;
 
-    TimerData(Function<void(void)>&& func) 
-        : callback(std::forward<Function<void(void)>>(func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
+    TimerData(Function<void(void)>&& func) :
+        callback(std::forward<Function<void(void)>>(func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
     {}
 
     template<typename M>
-    TimerData(M* target, Function<void(void)>&& func)
-        : callback(std::forward<Function<void(void)>>(target, func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
+    TimerData(M* target, Function<void(void)>&& func) :
+        callback(std::forward<Function<void(void)>>(target, func)), loop(false), rate(0.f), expire_time(0.f), status(TimerStatus::kActive)
     {}
 
     bool operator==(const TimerData& kOther) const
@@ -90,33 +90,37 @@ public:
     void SetTimer(TimerHandle& handle, Function<void(void)>&& func, float rate, bool loop = false, float delay = -1.f);
     void SetTimer(TimerHandle& handle, void(*func)(void), float rate, bool loop = false, float delay = -1.f);
 
-    void ClearTimer(TimerHandle& kHandle);
-    void PauseTimer(const TimerHandle& kHandle);
-    void UnPauseTimer(const TimerHandle& kHandle);
+    void ClearTimer(TimerHandle& handle);
+    void PauseTimer(TimerHandle handle);
+    void UnPauseTimer(TimerHandle handle);
     void ClearAllTimers();
-    
+
+    TimerData& GetTimer(const TimerHandle& handle);
     TimerData* FindTimer(const TimerHandle& kHandle);
 
-    float GetTimerElapsed(const TimerHandle& kHandle);
-    float GetTimerRemaining(const TimerHandle& kHandle);
+    float GetTimerElapsed(TimerHandle handle);
+    float GetTimerRemaining(TimerHandle handle);
 
-    bool IsTimerActive(const TimerHandle& kHandle);
-    bool IsTimerPaused(const TimerHandle& kHandle);
+    bool IsTimerActive(TimerHandle handle);
+    bool IsTimerPaused(TimerHandle handle);
 
     FORCEINLINE bool HasBeenTickedThisFrame() const { return last_ticked_frame_ == g_frame_counter; }
 private:
     friend class World;
     
     void SetTimer_Internal(TimerHandle& handle, TimerData& data, float rate, bool loop, float delay);
-    void ClearTimer_Internal(const TimerHandle& kHandle);
+    void ClearTimer_Internal(TimerHandle handle);
     
     void Tick(float delta_time);
-    void RemoveTimer(const TimerData& kTimer);
+    void RemoveTimer(TimerHandle handle);
     
     Type::uint64 last_ticked_frame_;
+    
     float internal_time_;
+    
     std::vector<TimerData> timers_;
     std::vector<TimerHandle> active_timers_;
+    std::vector<TimerHandle> paused_timers_;
     std::vector<TimerHandle> pending_timers_;
 
     static Type::uint64 last_handle_;

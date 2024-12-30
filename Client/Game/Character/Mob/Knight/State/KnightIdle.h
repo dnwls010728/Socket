@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Character/Component/FSM/State.h"
+#include "Time/TimerManager.h"
 
 class KnightIdle : public State
 {
@@ -18,5 +19,7 @@ protected:
 private:
     class Knight* character_;
     class AnimatorComponent* animator_;
+
+    TimerHandle timer_handle_;
     
 };

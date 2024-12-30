@@ -25,6 +25,11 @@ void KnightRun::Enter()
     }
 
     animator_->PlayAnimation(L"Run");
+
+    TimerManager::Get()->SetTimer(timer_handle_, [&]()
+    {
+        state_machine_->ChangeState(character_->GetIdleState());
+    }, 2.f);
 }
 
 void KnightRun::Tick(float delta_time)

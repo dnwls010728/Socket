@@ -26,6 +26,11 @@ void KnightIdle::Enter()
     }
 
     animator_->PlayAnimation(L"Idle");
+
+    TimerManager::Get()->SetTimer(timer_handle_, [&]()
+    {
+        state_machine_->ChangeState(character_->GetRunState());
+    }, 2.f);
 }
 
 void KnightIdle::Tick(float delta_time)
