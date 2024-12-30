@@ -1,13 +1,18 @@
 ﻿#include "pch.h"
 #include "Bullet.h"
 
+#include "HitEffect.h"
 #include "Logger.h"
+#include "ObjectPool.h"
+#include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Character/CharacterBase.h"
+#include "Math/Bounds.h"
+#include "Math/Math.h"
 #include "Misc/GameplayStatics.h"
 #include "Physics/Physics2D.h"
 #include "Windows/DX/Sprite.h"
@@ -31,6 +36,9 @@ Bullet::Bullet(const std::wstring& kName) :
 
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Bullet\\02.png");
     renderer_->SetSprite(sprite_, L"02_0");
+
+    hit_effect_pool_ = AddComponent<ObjectPool>(L"HitEffectPool");
+    hit_effect_pool_->SetPooledObjectClass(HitEffect::StaticClass());
 }
 
 void Bullet::Deactivate()
@@ -38,7 +46,7 @@ void Bullet::Deactivate()
     PooledObject::Deactivate();
 
     TimerManager* timer_manager = TimerManager::Get();
-    if (timer_manager->GetTimerRemaining(life_timer_) > 0.f)
+    if (life_timer_.IsValid() && timer_manager->GetTimerRemaining(life_timer_) > 0.f)
         timer_manager->ClearTimer(life_timer_);
 }
 
@@ -53,6 +61,19 @@ void Bullet::PhysicsTick(float delta_time)
         CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
         if (character)
         {
+            Bounds bounds = {GetTransform()->GetPosition(), {.125f, .125f}};
+            Bounds character_bounds = character->GetCollider()->GetBounds();
+            Bounds intersect_bounds = Bounds::Intersect(bounds, character_bounds);
+
+            float x = Math::RandRange(-intersect_bounds.extents.x, intersect_bounds.extents.x);
+            float y = Math::RandRange(-intersect_bounds.extents.y, intersect_bounds.extents.y);
+
+            PooledObject* hit_effect = hit_effect_pool_->SpawnPooledObject();
+            if (hit_effect)
+            {
+                hit_effect->GetTransform()->SetPosition(intersect_bounds.center + Math::Vector2(x, y));
+            }
+            
             GameplayStatics::ApplyDamage(character, 10.f, GetInstigator(), GetOwner());
             Deactivate();
         }
@@ -63,7 +84,7 @@ void Bullet::OnEnable()
 {
     PooledObject::OnEnable();
 
-    life_timer_ = TimerManager::Get()->SetTimer(this, &Bullet::Deactivate, 1.f);
+    TimerManager::Get()->SetTimer(life_timer_, this, &Bullet::Deactivate, 1.f);
 
     Math::Vector2 direction = GetTransform()->GetRightVector();
 

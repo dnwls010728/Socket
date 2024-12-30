@@ -17,11 +17,25 @@ void StateMachine::ChangeState(State* new_state)
     if (current_state_) current_state_->Enter();
 }
 
+void StateMachine::PhysicsTickComponent(float delta_time)
+{
+    ActorComponent::PhysicsTickComponent(delta_time);
+
+    if (current_state_) current_state_->PhysicsTick(delta_time);
+}
+
 void StateMachine::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
 
     if (current_state_) current_state_->Tick(delta_time);
+}
+
+void StateMachine::PostTickComponent(float delta_time)
+{
+    ActorComponent::PostTickComponent(delta_time);
+
+    if (current_state_) current_state_->PostTick(delta_time);
 }
 
 RTTR_REGISTRATION

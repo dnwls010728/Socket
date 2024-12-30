@@ -9,7 +9,7 @@
 #include "Map/MainMenu.h"
 #include "Network/NetworkManager.h"
 #include "Time/TimerManager.h"
-#include "UI/Canvas.h"
+#include "UI_OLD/Canvas.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/ShapeBatch.h"

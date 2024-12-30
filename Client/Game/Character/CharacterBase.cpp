@@ -5,6 +5,7 @@
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Component/FSM/StateMachine.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
     NetworkActor(kName),
@@ -18,6 +19,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_->SetFreezeRotation(true);
 
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
+    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
 }
 
 void CharacterBase::OnHit()

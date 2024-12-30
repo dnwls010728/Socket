@@ -1,0 +1,11 @@
+target: Sprites\Effect\Hit\HitEffect.png
+animations:
+  - name: Effect
+    frame_rate: 12
+    loop: false
+    frames:
+      - HitEffect_0
+      - HitEffect_1
+      - HitEffect_2
+      - HitEffect_3
+      - HitEffect_4

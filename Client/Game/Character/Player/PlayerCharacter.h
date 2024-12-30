@@ -30,9 +30,6 @@ private:
     class AnimationPack* animation_pack_;
     class Audio* audio_;
     
-    AnimatorComponent* animator_;
-    class StateMachine* state_machine_;
-    
     int horizontal_axis_;
     
     float move_speed_;
@@ -40,5 +37,9 @@ private:
     Math::Vector2 previous_position_;
 
     class Weapon* weapon_;
+
+    TimerHandle timer_handle_;
+
+    Math::Vector2 shot_direction_;
     
 };

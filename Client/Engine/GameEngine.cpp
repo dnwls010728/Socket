@@ -10,10 +10,13 @@
 #include "Input/Keyboard.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
-#include "UI/Canvas.h"
+#include "UI/UICanvas.h"
+#include "UI_OLD/Canvas.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
+
+Type::uint32 g_frame_counter = 0;
 
 GameEngine::GameEngine() :
     game_window_(nullptr),
@@ -98,8 +101,9 @@ void GameEngine::Tick(float delta_time)
     }
 
     World::Get()->Tick(delta_time);
+    g_frame_counter++;
+    
     World::Get()->PostTick(delta_time);
-
     Canvas::Get()->Tick(delta_time);
 }
 
@@ -112,6 +116,7 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRenderD2D(game_window_);
     Canvas::Get()->Render();
+    UICanvas::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

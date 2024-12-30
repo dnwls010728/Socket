@@ -22,26 +22,22 @@ void TilemapComponent::LoadMap(const char* kPath)
 	map_size_.x = static_cast<float>(map_.getTileCount().x);
 	map_size_.y = static_cast<float>(map_.getTileCount().y);
 	
-	const auto& tilesets = map_.getTilesets();
-	std::wstring tileset_path = std::wstring(tilesets[0].getImagePath().begin(), tilesets[0].getImagePath().end());
-	tileset_path = tileset_path.substr(10);
-
-	tilemap_texture_ = AssetManager::Get()->Load<Texture>(tileset_path);
-	
 	const auto& layers = map_.getLayers();
 	for (const auto& layer : layers)
 	{
 		if (layer->getType() == tmx::Layer::Type::Object)
 		{
 			const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
-			GeneratePhysics(object);
+			
+			if (layer->getName() == "Collision") GeneratePhysics(object);
+			else if (layer->getName() == "Spawn") GenerateSpawn(object);
 		}
 		else if (layer->getType() == tmx::Layer::Type::Tile)
 		{
 			const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
 			
 			Math::Vector2 chunk_size = {512.f, 512.f};
-			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, tilemap_texture_, chunk_size));
+			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, chunk_size));
 		}
 	}
 }
@@ -117,6 +113,31 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
 	}
 
 	b2Body_Disable(tilemap_body_id_);
+}
+
+void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& object)
+{
+	const auto& objects = object.getObjects();
+
+	for (const auto& temp : objects)
+	{
+		if (temp.getShape() == tmx::Object::Shape::Point)
+		{
+			rttr::type type = rttr::type::get_by_name(temp.getClass());
+			if (type.is_valid())
+			{
+				const std::string& name = temp.getName();
+				
+				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
+				Actor* actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
+				if (IsValid(actor))
+				{
+					TransformComponent* transform = actor->GetTransform();
+					transform->SetPosition({temp.getPosition().x / PPU - map_size_.x / 2.f, -1 * temp.getPosition().y / PPU + map_size_.y / 2.f});
+				}
+			}
+		}
+	}
 }
 
 RTTR_REGISTRATION

@@ -18,8 +18,6 @@ class TilemapComponent : public ActorComponent
     GENERATED_BODY(TilemapComponent, ActorComponent)
     
     const float PPU = 32.f;
-    const Type::uint32 VertexBufferSize = 2048;
-    const Type::uint32 IndexBufferSize = 2048 * 6 / 4;
     
 public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
@@ -33,8 +31,8 @@ protected:
 
 private:
     void GeneratePhysics(const tmx::ObjectGroup& object);
+    void GenerateSpawn(const tmx::ObjectGroup& object);
 
-    Texture* tilemap_texture_;
     tmx::Map map_;
     Math::Vector2 map_size_;
 

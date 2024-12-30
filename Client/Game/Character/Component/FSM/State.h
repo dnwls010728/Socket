@@ -17,7 +17,9 @@ protected:
     friend class StateMachine;
     
     virtual void Enter() = 0;
+    virtual void PhysicsTick(float delta_time) = 0;
     virtual void Tick(float delta_time) = 0;
+    virtual void PostTick(float delta_time) = 0;
     virtual void Exit() = 0;
 
 protected:

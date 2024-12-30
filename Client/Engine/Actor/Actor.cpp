@@ -121,7 +121,7 @@ void Actor::SetLifeSpan(float life_span)
 {
     if (life_span > 0.f)
     {
-        life_span_timer_ = TimerManager::Get()->SetTimer(this, &Actor::OnLifeSpanExpired, life_span);
+         TimerManager::Get()->SetTimer(life_span_timer_, this, &Actor::OnLifeSpanExpired, life_span);
     }
     else
     {
