@@ -127,10 +127,9 @@ void PlayerCharacter::Tick(float delta_time)
 
         if (mouse->GetMouseButtonDown(MouseButton::kLeft))
         {
-            AudioManager::Get()->PlayOneShot(audio_);
-
             TimerManager::Get()->SetTimer(timer_handle_, [&]()
             {
+                AudioManager::Get()->PlayOneShot(audio_);
                 weapon_->Shot(shot_direction_);
             }, .1f, true);
         }
