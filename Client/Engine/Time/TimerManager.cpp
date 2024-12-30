@@ -59,37 +59,26 @@ void TimerManager::Tick(float delta_time)
     last_ticked_frame_ = g_frame_counter;
 }
 
-const TimerHandle& TimerManager::SetTimer(Function<void(void)>&& func, float rate, bool loop, float delay)
+void TimerManager::SetTimer(TimerHandle& handle, Function<void(void)>&& func, float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(func)));
-    return SetTimer_Internal(data, rate, loop, delay);
+    return SetTimer_Internal(handle, data, rate, loop, delay);
 }
 
-const TimerHandle& TimerManager::SetTimer(void(*func)(void), float rate, bool loop, float delay)
+void TimerManager::SetTimer(TimerHandle& handle, void(*func)(void), float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(func)));
-    return SetTimer_Internal(data, rate, loop, delay);
+    return SetTimer_Internal(handle, data, rate, loop, delay);
 }
 
-void TimerManager::ClearTimer(const TimerHandle& kHandle)
+void TimerManager::ClearTimer(TimerHandle& kHandle)
 {
-    TimerData* timer = FindTimer(kHandle);
-
-    switch (timer->status)
+    if (const TimerData* kTimer = FindTimer(kHandle))
     {
-    case TimerStatus::kActive:
-        {
-            timer->status = TimerStatus::kRemoval;
-        }
-        break;
-
-    case TimerStatus::kExecuting:
-    case TimerStatus::kPaused:
-        {
-            RemoveTimer(*timer);
-        }
-        break;
+        ClearTimer_Internal(kHandle);
     }
+
+    kHandle.Invalidate();
 }
 
 void TimerManager::PauseTimer(const TimerHandle& kHandle)
@@ -128,13 +117,17 @@ void TimerManager::ClearAllTimers()
 
 TimerData* TimerManager::FindTimer(const TimerHandle& kHandle)
 {
+    if (!kHandle.IsValid()) return nullptr;
+    
     for (auto& timer : timers_)
     {
         if (timer.handle == kHandle)
         {
+            if (timer.status == TimerStatus::kRemoval) return nullptr;
             return &timer;
         }
     }
+    
     return nullptr;
 }
 
@@ -190,31 +183,66 @@ bool TimerManager::IsTimerPaused(const TimerHandle& kHandle)
     return timer && timer->status == TimerStatus::kPaused;
 }
 
-const TimerHandle& TimerManager::SetTimer_Internal(TimerData& data, float rate, bool loop, float delay)
+void TimerManager::SetTimer_Internal(TimerHandle& handle, TimerData& data, float rate, bool loop, float delay)
 {
-    TimerHandle handle;
-    handle.handle = ++last_handle_;
-    
-    const float first_delay = delay >= 0.f ? delay : rate;
-    data.loop = loop;
-    data.rate = rate;
-    data.handle = handle;
-
-    if (HasBeenTickedThisFrame())
+    if (FindTimer(handle))
     {
-        data.expire_time = internal_time_ + first_delay;
-        data.status = TimerStatus::kActive;
-        active_timers_.push_back(data.handle);
+        ClearTimer_Internal(handle);
+    }
+
+    if (rate > 0.f)
+    {
+        const float first_delay = delay >= 0.f ? delay : rate;
+        
+        data.loop = loop;
+        data.rate = rate;
+
+        if (HasBeenTickedThisFrame())
+        {
+            data.expire_time = internal_time_ + first_delay;
+            data.status = TimerStatus::kActive;
+            active_timers_.push_back(data.handle);
+        }
+        else
+        {
+            data.expire_time = first_delay;
+            data.status = TimerStatus::kPending;
+            pending_timers_.push_back(data.handle);
+        }
+    
+        TimerHandle new_handle;
+        new_handle.handle = ++last_handle_;
+    
+        data.handle = new_handle;
+        handle = new_handle;
+        
+        timers_.push_back(data);
     }
     else
     {
-        data.expire_time = first_delay;
-        data.status = TimerStatus::kPending;
-        pending_timers_.push_back(data.handle);
+        handle.Invalidate();
     }
-    
-    timers_.push_back(data);
-    return data.handle;
+}
+
+void TimerManager::ClearTimer_Internal(const TimerHandle& kHandle)
+{
+    TimerData* timer = FindTimer(kHandle);
+
+    switch (timer->status)
+    {
+    case TimerStatus::kActive:
+        {
+            timer->status = TimerStatus::kRemoval;
+        }
+        break;
+
+    case TimerStatus::kExecuting:
+    case TimerStatus::kPaused:
+        {
+            RemoveTimer(*timer);
+        }
+        break;
+    }
 }
 
 void TimerManager::RemoveTimer(const TimerData& kTimer)

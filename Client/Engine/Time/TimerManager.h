@@ -79,18 +79,18 @@ public:
     virtual ~TimerManager() override = default;
 
     template<typename M>
-    const TimerHandle& SetTimer(M* target, void(M::* func)(void), float rate, bool loop = false, float delay = -1.f, typename std::enable_if<std::is_class<M>::value>::type* = nullptr);
+    void SetTimer(TimerHandle& handle, M* target, void(M::* func)(void), float rate, bool loop = false, float delay = -1.f, typename std::enable_if<std::is_class<M>::value>::type* = nullptr);
     
     template<typename M>
-    const TimerHandle& SetTimer(M* target, void(M::* func)(void) const, float rate, bool loop = false, float delay = -1.f, typename std::enable_if<std::is_class<M>::value>::type* = nullptr);
+    void SetTimer(TimerHandle& handle, M* target, void(M::* func)(void) const, float rate, bool loop = false, float delay = -1.f, typename std::enable_if<std::is_class<M>::value>::type* = nullptr);
     
     template<typename L>
-    const TimerHandle& SetTimer(L&& lambda, float rate, bool loop = false, float delay = -1.f);
+    void SetTimer(TimerHandle& handle, L&& lambda, float rate, bool loop = false, float delay = -1.f);
     
-    const TimerHandle& SetTimer(Function<void(void)>&& func, float rate, bool loop = false, float delay = -1.f);
-    const TimerHandle& SetTimer(void(*func)(void), float rate, bool loop = false, float delay = -1.f);
+    void SetTimer(TimerHandle& handle, Function<void(void)>&& func, float rate, bool loop = false, float delay = -1.f);
+    void SetTimer(TimerHandle& handle, void(*func)(void), float rate, bool loop = false, float delay = -1.f);
 
-    void ClearTimer(const TimerHandle& kHandle);
+    void ClearTimer(TimerHandle& kHandle);
     void PauseTimer(const TimerHandle& kHandle);
     void UnPauseTimer(const TimerHandle& kHandle);
     void ClearAllTimers();
@@ -107,7 +107,8 @@ public:
 private:
     friend class World;
     
-    const TimerHandle& SetTimer_Internal(TimerData& data, float rate, bool loop, float delay);
+    void SetTimer_Internal(TimerHandle& handle, TimerData& data, float rate, bool loop, float delay);
+    void ClearTimer_Internal(const TimerHandle& kHandle);
     
     void Tick(float delta_time);
     void RemoveTimer(const TimerData& kTimer);
@@ -123,22 +124,22 @@ private:
 };
 
 template<typename M>
-const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void), float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
+void TimerManager::SetTimer(TimerHandle& handle, M* target, void(M::* func)(void), float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    return SetTimer_Internal(data, rate, loop, delay);
+    SetTimer_Internal(handle, data, rate, loop, delay);
 }
 
 template<typename M>
-const TimerHandle& TimerManager::SetTimer(M* target, void(M::* func)(void) const, float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
+void TimerManager::SetTimer(TimerHandle& handle, M* target, void(M::* func)(void) const, float rate, bool loop, float delay, typename std::enable_if<std::is_class<M>::value>::type*)
 {
     TimerData data(std::move(Function<void(void)>(target, func)));
-    return SetTimer_Internal(data, rate, loop, delay);
+    SetTimer_Internal(handle, data, rate, loop, delay);
 }
 
 template<typename L>
-const TimerHandle& TimerManager::SetTimer(L&& lambda, float rate, bool loop, float delay)
+void TimerManager::SetTimer(TimerHandle& handle, L&& lambda, float rate, bool loop, float delay)
 {
     TimerData data(std::move(Function<void(void)>(std::move(lambda))));
-    return SetTimer_Internal(data, rate, loop, delay);
+    SetTimer_Internal(handle, data, rate, loop, delay);
 }

@@ -46,7 +46,7 @@ void Bullet::Deactivate()
     PooledObject::Deactivate();
 
     TimerManager* timer_manager = TimerManager::Get();
-    if (timer_manager->GetTimerRemaining(life_timer_) > 0.f)
+    if (life_timer_.IsValid() && timer_manager->GetTimerRemaining(life_timer_) > 0.f)
         timer_manager->ClearTimer(life_timer_);
 }
 
@@ -84,7 +84,7 @@ void Bullet::OnEnable()
 {
     PooledObject::OnEnable();
 
-    life_timer_ = TimerManager::Get()->SetTimer(this, &Bullet::Deactivate, 1.f);
+    TimerManager::Get()->SetTimer(life_timer_, this, &Bullet::Deactivate, 1.f);
 
     Math::Vector2 direction = GetTransform()->GetRightVector();
 
