@@ -65,8 +65,8 @@ void Bullet::PhysicsTick(float delta_time)
             Bounds character_bounds = character->GetCollider()->GetBounds();
             Bounds intersect_bounds = Bounds::Intersect(bounds, character_bounds);
 
-            float x = Math::Random(-intersect_bounds.extents.x, intersect_bounds.extents.x);
-            float y = Math::Random(-intersect_bounds.extents.y, intersect_bounds.extents.y);
+            float x = Math::RandRange(-intersect_bounds.extents.x, intersect_bounds.extents.x);
+            float y = Math::RandRange(-intersect_bounds.extents.y, intersect_bounds.extents.y);
 
             PooledObject* hit_effect = hit_effect_pool_->SpawnPooledObject();
             if (hit_effect)

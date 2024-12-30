@@ -6,6 +6,7 @@
 #include "Character/CharacterBase.h"
 #include "Character/Component/FSM/StateMachine.h"
 #include "Character/Mob/Knight/Knight.h"
+#include "Math/Math.h"
 
 KnightIdle::KnightIdle(StateMachine* state_machine) :
     State(state_machine),
@@ -27,13 +28,23 @@ void KnightIdle::Enter()
 
     animator_->PlayAnimation(L"Idle");
 
+    float duration = Math::RandRange(1.f, 3.f);
+
     TimerManager::Get()->SetTimer(timer_handle_, [&]()
     {
         state_machine_->ChangeState(character_->GetRunState());
-    }, 2.f);
+    }, duration);
+}
+
+void KnightIdle::PhysicsTick(float delta_time)
+{
 }
 
 void KnightIdle::Tick(float delta_time)
+{
+}
+
+void KnightIdle::PostTick(float delta_time)
 {
 }
 

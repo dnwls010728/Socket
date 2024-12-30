@@ -15,7 +15,9 @@ public:
     void ChangeState(State* new_state);
 
 protected:
+    virtual void PhysicsTickComponent(float delta_time) override;
     virtual void TickComponent(float delta_time) override;
+    virtual void PostTickComponent(float delta_time) override;
 
 private:
     State* current_state_;

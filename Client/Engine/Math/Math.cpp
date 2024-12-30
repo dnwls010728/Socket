@@ -56,7 +56,7 @@ float Math::Deg2Rad()
     return (MATH_PI * 2.f) / 360.f;
 }
 
-float Math::Random(float min, float max)
+float Math::RandRange(float min, float max)
 {
     if (min > max)
     {
@@ -72,7 +72,7 @@ float Math::Random(float min, float max)
     return dis(gen);
 }
 
-int Math::Random(int min, int max)
+int Math::RandRange(int min, int max)
 {
     if (min > max)
     {
