@@ -72,7 +72,7 @@ void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2
 void PhysicsDebugDrawHelper::AddCircle(b2Vec2 center, float radius, b2HexColor color)
 {
     const int kSegments = 16;
-    const float kIncrement = 2.f * b2_pi / kSegments;
+    const float kIncrement = 2.f * B2_PI / kSegments;
     float sin_increment = sinf(kIncrement);
     float cos_increment = cosf(kIncrement);
 
@@ -100,7 +100,7 @@ void PhysicsDebugDrawHelper::AddSolidCircle(b2Transform transform, b2Vec2 center
     b2Vec2 final_center = b2Add(transform.p, b2RotateVector(transform.q, center));
 
     const int kSegments = 16;
-    const float kIncrement = 2.f * b2_pi / kSegments;
+    const float kIncrement = 2.f * B2_PI / kSegments;
     float sin_increment = sinf(kIncrement);
     float cos_increment = cosf(kIncrement);
 
@@ -150,7 +150,7 @@ void PhysicsDebugDrawHelper::AddCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2He
     b2Vec2 axis = b2GetLengthAndNormalize(&length, b2Sub(p2, p1));
 
     const int kSegments = 16.f;
-    const float kIncremnt = b2_pi / kSegments;
+    const float kIncremnt = B2_PI / kSegments;
     float sin_incremnt = sinf(kIncremnt);
     float cos_incremnt = cosf(kIncremnt);
 
@@ -203,7 +203,7 @@ void PhysicsDebugDrawHelper::AddSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius,
     b2Vec2 axis = b2GetLengthAndNormalize(&length, b2Sub(p2, p1));
 
     const int kSegments = 16.f;
-    const float kIncremnt = b2_pi / kSegments;
+    const float kIncremnt = B2_PI / kSegments;
     float sin_incremnt = sinf(kIncremnt);
     float cos_incremnt = cosf(kIncremnt);
 

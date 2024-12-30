@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
+#include "Logger.h"
 #include "Weapon.h"
 #include "../../CommonDLL/Packet.h"
 #include "../../CommonDLL/SendBuffer.h"
@@ -27,7 +28,9 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     horizontal_axis_(0),
     move_speed_(2.f),
     previous_position_(Math::Vector2::Zero()),
-    weapon_(nullptr)
+    weapon_(nullptr),
+    timer_handle_(),
+    shot_direction_(Math::Vector2::Zero())
 {
     AssetManager* asset_manager = AssetManager::Get();
     sprite_ = asset_manager->Load<Sprite>(L"Sprites\\Character\\Player\\PlayerSheet.png");
@@ -120,10 +123,21 @@ void PlayerCharacter::Tick(float delta_time)
         weapon_->GetTransform()->SetPosition(new_position);
         weapon_->GetTransform()->SetAngle(degree);
 
+        shot_direction_ = direction;
+
         if (mouse->GetMouseButtonDown(MouseButton::kLeft))
         {
             AudioManager::Get()->PlayOneShot(audio_);
-            weapon_->Shot(direction);
+
+            TimerManager::Get()->SetTimer(timer_handle_, [&]()
+            {
+                weapon_->Shot(shot_direction_);
+            }, .1f, true);
+        }
+
+        if (mouse->GetMouseButtonUp(MouseButton::kLeft))
+        {
+            TimerManager::Get()->ClearTimer(timer_handle_);
         }
     }
 }

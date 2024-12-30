@@ -37,5 +37,9 @@ private:
     Math::Vector2 previous_position_;
 
     class Weapon* weapon_;
+
+    TimerHandle timer_handle_;
+
+    Math::Vector2 shot_direction_;
     
 };
