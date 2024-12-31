@@ -22,6 +22,11 @@ public:
     FORCEINLINE bool IsDead() const { return is_dead_; }
 
 protected:
+    /**
+     * 현재 사용하지 않음
+     */
+    void AdjustPosition() const;
+    
     virtual void OnHit();
     virtual void OnDeath();
     

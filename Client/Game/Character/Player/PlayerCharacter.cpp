@@ -79,11 +79,8 @@ void PlayerCharacter::EndPlay(EndPlayReason type)
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
-
-    if (horizontal_axis_ != 0)
-    {
-        rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
-    }
+    
+    rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
     
 }
 

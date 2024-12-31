@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ActorComponent.h"
+#include "Math/Bounds.h"
 #include "Math/Color.h"
 
 class Sprite;
@@ -16,12 +17,16 @@ public:
     void SetZOrder(int z_order);
     void SetSprite(Sprite* sprite, const std::wstring& kFrame);
 
+    Bounds GetBounds() const;
+
     FORCEINLINE Sprite* GetSprite() const { return sprite_; }
+    
+    FORCEINLINE std::wstring GetFrame() const { return current_frame_; }
 
     FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
-    FORCEINLINE bool GetFlipX() const { return flip_x_; }
+    FORCEINLINE bool IsFlipX() const { return flip_x_; }
 
-    FORCEINLINE void IsFlipX(bool flip_y) { flip_y_ = flip_y; }
+    FORCEINLINE void SetFlipY(bool flip_y) { flip_y_ = flip_y; }
     FORCEINLINE bool IsFlipY() const { return flip_y_; }
 
     FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }

@@ -24,6 +24,8 @@ public:
     void SetMaterial(const PhysicsMaterial2D& kMaterial);
     void SetTrigger(bool is_trigger);
 
+    FORCEINLINE const Math::Vector2& GetOffset() const { return offset_; }
+
     const Bounds& GetBounds();
 
 protected:
