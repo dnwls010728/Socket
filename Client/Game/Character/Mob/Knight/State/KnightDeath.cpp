@@ -37,7 +37,7 @@ void KnightDeath::PhysicsTick(float delta_time)
 void KnightDeath::Tick(float delta_time)
 {
     alpha_ = Math::Lerp(alpha_, 0.f, 2.f * delta_time);
-    if (alpha_ <= 0.01f)
+    if (alpha_ <= .01f)
     {
         character_->Destroy();
     }
