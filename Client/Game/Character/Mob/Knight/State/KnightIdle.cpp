@@ -50,7 +50,7 @@ void KnightIdle::PostTick(float delta_time)
 
 void KnightIdle::Exit()
 {
-    // TimerManager::Get()->ClearTimer(timer_handle_);
+    TimerManager::Get()->ClearTimer(timer_handle_);
 }
 
 RTTR_REGISTRATION

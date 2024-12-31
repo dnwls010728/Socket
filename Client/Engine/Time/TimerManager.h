@@ -122,6 +122,8 @@ private:
     std::vector<TimerHandle> active_timers_;
     std::vector<TimerHandle> paused_timers_;
     std::vector<TimerHandle> pending_timers_;
+    
+    TimerHandle executing_timer_;
 
     static Type::uint64 last_handle_;
     
