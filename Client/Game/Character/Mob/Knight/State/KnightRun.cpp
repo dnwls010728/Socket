@@ -43,7 +43,7 @@ void KnightRun::Enter()
 
 void KnightRun::PhysicsTick(float delta_time)
 {
-    character_->GetRigidBody()->SetLinearVelocityX(direction_);
+    character_->GetRigidBody()->SetLinearVelocityX(direction_ * 2.f);
 }
 
 void KnightRun::Tick(float delta_time)
