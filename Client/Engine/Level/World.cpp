@@ -252,7 +252,7 @@ void World::ProcessCollisionEvents()
         Actor* actor_a = static_cast<Actor*>(b2Body_GetUserData(body_id_a));
         Actor* actor_b = static_cast<Actor*>(b2Body_GetUserData(body_id_b));
 
-        if (!actor_a || !actor_b) continue;
+        if (!IsValid(actor_a) || !IsValid(actor_b)) continue;
         
         actor_a->OnCollisionEnter(actor_b);
         actor_b->OnCollisionEnter(actor_a);
@@ -267,7 +267,7 @@ void World::ProcessCollisionEvents()
         Actor* actor_a = static_cast<Actor*>(b2Body_GetUserData(body_id_a));
         Actor* actor_b = static_cast<Actor*>(b2Body_GetUserData(body_id_b));
 
-        if (!actor_a || !actor_b) continue;
+        if (!IsValid(actor_a) || !IsValid(actor_b)) continue;
         
         actor_a->OnCollisionExit(actor_b);
         actor_b->OnCollisionExit(actor_a);
@@ -286,7 +286,7 @@ void World::ProcessTriggerEvents()
         Actor* actor_a = static_cast<Actor*>(b2Body_GetUserData(body_id_a));
         Actor* actor_b = static_cast<Actor*>(b2Body_GetUserData(body_id_b));
         
-        if (!actor_a || !actor_b) continue;
+        if (!IsValid(actor_a) || !IsValid(actor_b)) continue;
         actor_a->OnTriggerEnter(actor_b);
         actor_b->OnTriggerEnter(actor_a);
     }
@@ -300,7 +300,7 @@ void World::ProcessTriggerEvents()
         Actor* actor_a = static_cast<Actor*>(b2Body_GetUserData(body_id_a));
         Actor* actor_b = static_cast<Actor*>(b2Body_GetUserData(body_id_b));
         
-        if (!actor_a || !actor_b) continue;
+        if (!IsValid(actor_a) || !IsValid(actor_b)) continue;
         actor_a->OnTriggerExit(actor_b);
         actor_b->OnTriggerExit(actor_a);
     }

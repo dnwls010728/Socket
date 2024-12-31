@@ -23,5 +23,7 @@ private:
     class AnimatorComponent* animator_;
 
     TimerHandle timer_handle_;
+
+    float alpha_;
     
 };
