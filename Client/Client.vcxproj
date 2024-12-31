@@ -231,6 +231,8 @@
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
+    <ClInclude Include="Game\Character\Mob\Knight\State\KnightDeath.h" />
+    <ClInclude Include="Game\Character\Mob\Knight\State\KnightHit.h" />
     <ClInclude Include="Game\Character\Mob\Knight\State\KnightIdle.h" />
     <ClInclude Include="Game\Character\Mob\Knight\State\KnightRun.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
@@ -782,6 +784,8 @@
     </ClCompile>
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
+    <ClCompile Include="Game\Character\Mob\Knight\State\KnightDeath.cpp" />
+    <ClCompile Include="Game\Character\Mob\Knight\State\KnightHit.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\State\KnightIdle.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\State\KnightRun.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />

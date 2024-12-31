@@ -55,14 +55,24 @@ void Bullet::PhysicsTick(float delta_time)
     PooledObject::PhysicsTick(delta_time);
 
     std::vector<Actor*> out_actors;
-    bool is_hit = Physics2D::OverlapCircleAll(GetTransform()->GetPosition(), .125f, out_actors, static_cast<Type::uint16>(ActorLayer::kMob));
+    bool is_hit = Physics2D::OverlapCircleAll(GetTransform()->GetPosition(), .2, out_actors, static_cast<Type::uint16>(ActorLayer::kMob));
     if (is_hit)
     {
-        CharacterBase* character = static_cast<CharacterBase*>(out_actors[0]);
-        if (character)
+        CharacterBase* result = nullptr;
+        for (Actor* actor : out_actors)
         {
-            Bounds bounds = {GetTransform()->GetPosition(), {.125f, .125f}};
-            Bounds character_bounds = character->GetCollider()->GetBounds();
+            CharacterBase* character = static_cast<CharacterBase*>(actor);
+            if (IsValid(character) && !character->IsDead())
+            {
+                result = character;
+                break;
+            }
+        }
+        
+        if (IsValid(result))
+        {
+            Bounds bounds = {GetTransform()->GetPosition(), {.2, .2}};
+            Bounds character_bounds = result->GetCollider()->GetBounds();
             Bounds intersect_bounds = Bounds::Intersect(bounds, character_bounds);
 
             float x = Math::RandRange(-intersect_bounds.extents.x, intersect_bounds.extents.x);
@@ -74,7 +84,7 @@ void Bullet::PhysicsTick(float delta_time)
                 hit_effect->GetTransform()->SetPosition(intersect_bounds.center + Math::Vector2(x, y));
             }
             
-            GameplayStatics::ApplyDamage(character, 10.f, GetInstigator(), GetOwner());
+            GameplayStatics::ApplyDamage(result, 10.f, GetInstigator(), GetOwner());
             Deactivate();
         }
     }

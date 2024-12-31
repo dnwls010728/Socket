@@ -14,6 +14,8 @@ public:
 
     void ChangeState(State* new_state);
 
+    bool IsCurrentState(State* state) const;
+
 protected:
     virtual void PhysicsTickComponent(float delta_time) override;
     virtual void TickComponent(float delta_time) override;
