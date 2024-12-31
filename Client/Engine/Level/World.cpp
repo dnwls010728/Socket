@@ -246,6 +246,8 @@ void World::ProcessCollisionEvents()
     for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2ContactBeginTouchEvent event = events.beginEvents[i];
+        if (!b2Shape_IsValid(event.shapeIdA) || !b2Shape_IsValid(event.shapeIdB)) continue;
+        
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
         b2BodyId body_id_b = b2Shape_GetBody(event.shapeIdB);
 
@@ -263,6 +265,8 @@ void World::ProcessCollisionEvents()
     for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2ContactEndTouchEvent event = events.endEvents[i];
+        if (!b2Shape_IsValid(event.shapeIdA) || !b2Shape_IsValid(event.shapeIdB)) continue;
+        
         b2BodyId body_id_a = b2Shape_GetBody(event.shapeIdA);
         b2BodyId body_id_b = b2Shape_GetBody(event.shapeIdB);
         
@@ -284,6 +288,8 @@ void World::ProcessTriggerEvents()
     for (Type::uint32 i = 0; i < events.beginCount; ++i)
     {
         b2SensorBeginTouchEvent event = events.beginEvents[i];
+        if (!b2Shape_IsValid(event.sensorShapeId) || !b2Shape_IsValid(event.visitorShapeId)) continue;
+        
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);
         b2BodyId body_id_b = b2Shape_GetBody(event.visitorShapeId);
         
@@ -300,6 +306,8 @@ void World::ProcessTriggerEvents()
     for (Type::uint32 i = 0; i < events.endCount; ++i)
     {
         b2SensorEndTouchEvent event = events.endEvents[i];
+        if (!b2Shape_IsValid(event.sensorShapeId) || !b2Shape_IsValid(event.visitorShapeId)) continue;
+        
         b2BodyId body_id_a = b2Shape_GetBody(event.sensorShapeId);
         b2BodyId body_id_b = b2Shape_GetBody(event.visitorShapeId);
         
