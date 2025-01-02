@@ -305,10 +305,16 @@ void PhysicsDebugDrawHelper::AddString(b2Vec2 p, const char* string, ...)
 void PhysicsDebugDrawHelper::Init()
 {
     polygon_ = std::make_shared<Shape>();
+    polygon_->SetZOrder(32767);
+    
     circle_ = std::make_shared<Shape>();
+    circle_->SetZOrder(32767);
+    
     capsule_ = std::make_shared<Shape>();
+    capsule_->SetZOrder(32767);
     
     segment_ = std::make_shared<Shape>();
+    segment_->SetZOrder(32767);
     segment_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     
     World::Get()->AddShape(polygon_);
