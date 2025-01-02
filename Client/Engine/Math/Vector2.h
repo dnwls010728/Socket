@@ -100,6 +100,14 @@ namespace Math
         static float Dot(Vector2 a, Vector2 b);
 
         /**
+         * \brief 두 백터의 외적을 반환합니다.
+         * \param a 첫번째 백터
+         * \param b 두번째 백터
+         * \return float
+         */
+        static float Cross(Vector2 a, Vector2 b);
+
+        /**
          * \brief 두 백터의 가장 큰 값으로 이루어진 백터를 반환합니다.
          * \param a 첫번째 백터
          * \param b 두번째 백터

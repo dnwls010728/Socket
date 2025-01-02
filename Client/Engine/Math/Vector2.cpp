@@ -209,8 +209,12 @@ float Math::Vector2::Distance(Vector2 a, Vector2 b)
 
 float Math::Vector2::Dot(Vector2 a, Vector2 b)
 {
-    const float theta = (a.x * b.x) + (a.y * b.y);
-    return theta;
+    return (a.x * b.x) + (a.y * b.y);
+}
+
+float Math::Vector2::Cross(Vector2 a, Vector2 b)
+{
+    return (a.x * b.y) - (a.y * b.x);
 }
 
 Math::Vector2 Math::Vector2::Max(Vector2 a, Vector2 b)
