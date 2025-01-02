@@ -35,8 +35,6 @@ namespace Math
 
         bool operator==(const Vector2& kVector) const;
         bool operator!=(const Vector2& kVector) const;
-        bool operator==(float val) const;
-        bool operator!=(float val) const;
 
         ~Vector2() = default;
 
@@ -165,4 +163,9 @@ namespace Math
         float x;
         float y;
     };
+
+    Vector2 operator+(float val, const Vector2& kVector);
+    Vector2 operator-(float val, const Vector2& kVector);
+    Vector2 operator*(float val, const Vector2& kVector);
+    Vector2 operator/(float val, const Vector2& kVector);
 }

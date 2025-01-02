@@ -16,7 +16,8 @@ Knight::Knight(const std::wstring& kName) :
 {
     animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Mob\\Knight\\KnightSheet.png.animpack");
 
-    collider_->SetOffset({0.f, 1.f});
+    collider_->SetSize({.5f, .5f});
+    collider_->SetOffset({0.f, .5f});
 
     animator_->SetAnimationPack(animation_pack_);
 

@@ -302,28 +302,33 @@ void PhysicsDebugDrawHelper::AddString(b2Vec2 p, const char* string, ...)
 {
 }
 
+void PhysicsDebugDrawHelper::Init()
+{
+    polygon_ = std::make_shared<Shape>();
+    circle_ = std::make_shared<Shape>();
+    capsule_ = std::make_shared<Shape>();
+    
+    segment_ = std::make_shared<Shape>();
+    segment_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+    
+    World::Get()->AddShape(polygon_);
+    World::Get()->AddShape(circle_);
+    World::Get()->AddShape(capsule_);
+    World::Get()->AddShape(segment_);
+}
+
 void PhysicsDebugDrawHelper::Clear()
 {
-    std::shared_ptr<Shape> polygon = std::make_shared<Shape>();
-    polygon->SetVertices(polygon_vertices_);
-    polygon->SetIndices(polygon_indices_);
+    polygon_->SetVertices(polygon_vertices_);
+    polygon_->SetIndices(polygon_indices_);
 
-    std::shared_ptr<Shape> circle = std::make_shared<Shape>();
-    circle->SetVertices(circle_vertices_);
-    circle->SetIndices(circle_indices_);
+    circle_->SetVertices(circle_vertices_);
+    circle_->SetIndices(circle_indices_);
 
-    std::shared_ptr<Shape> capsule = std::make_shared<Shape>();
-    capsule->SetVertices(capsule_vertices_);
-    capsule->SetIndices(capsule_indices_);
+    capsule_->SetVertices(capsule_vertices_);
+    capsule_->SetIndices(capsule_indices_);
 
-    std::shared_ptr<Shape> segment = std::make_shared<Shape>();
-    segment->SetVertices(segment_vertices_);
-    segment->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    
-    // World::Get()->AddShape(polygon);
-    // World::Get()->AddShape(circle);
-    // World::Get()->AddShape(capsule);
-    // World::Get()->AddShape(segment);
+    segment_->SetVertices(segment_vertices_);
     
     polygon_vertices_.clear();
     polygon_indices_.clear();

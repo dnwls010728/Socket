@@ -62,7 +62,7 @@ World::World() :
         DrawString,
         bounds,
         false,
-        false,
+        true,
         false,
         false,
         false,
@@ -91,6 +91,9 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
     
     OpenLevel(LevelType::kMainMenu);
+
+    debug_draw_helper_.Init();
+    DebugDrawHelper::Get()->Init();
 }
 
 void World::OpenLevel(LevelType type)
@@ -149,7 +152,7 @@ void World::Render(float alpha)
     
     b2World_Draw(world_id_, &debug_draw_);
     debug_draw_helper_.Clear();
-
+    
     DebugDrawHelper::Get()->Clear();
 
     std::vector<std::shared_ptr<Shape>> shapes;

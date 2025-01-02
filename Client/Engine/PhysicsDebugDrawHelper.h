@@ -4,6 +4,8 @@
 #include "box2d/types.h"
 #include "Windows/DX/Vertex.h"
 
+class Shape;
+
 class PhysicsDebugDrawHelper
 {
 public:
@@ -34,8 +36,14 @@ private:
     void AddTransform(b2Transform transform);
     void AddPoint(b2Vec2 p, float size, b2HexColor color);
     void AddString(b2Vec2 p, const char* string, ...);
-    
+
+    void Init();
     void Clear();
+    
+    std::shared_ptr<Shape> polygon_;
+    std::shared_ptr<Shape> circle_;
+    std::shared_ptr<Shape> capsule_;
+    std::shared_ptr<Shape> segment_;
     
     std::vector<DefaultVertex> polygon_vertices_;
     std::vector<Type::uint32> polygon_indices_;

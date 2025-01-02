@@ -22,6 +22,7 @@ public:
 private:
     friend class World;
 
+    void Init();
     void Clear();
     
     std::shared_ptr<Shape> polygon_shape_;
