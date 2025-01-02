@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
-#include "UIElement.h"
+#include "UIWidget.h"
 
-UIElement::UIElement()
+UIWidget::UIWidget()
 {
 }
 
-void UIElement::Render()
+void UIWidget::Render()
 {
 }
 
@@ -13,7 +13,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UIElement>("UIElement")
+    registration::class_<UIWidget>("UIWidget")
         .constructor<>()
         (
             policy::ctor::as_std_shared_ptr

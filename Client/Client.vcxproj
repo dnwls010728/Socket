@@ -194,7 +194,7 @@
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
     <ClInclude Include="Engine\UI\UICanvas.h" />
-    <ClInclude Include="Engine\UI\UIElement.h" />
+    <ClInclude Include="Engine\UI\UIWidget.h" />
     <ClInclude Include="Engine\UI_OLD\Canvas.h" />
     <ClInclude Include="Engine\UI_OLD\Widget.h" />
     <ClInclude Include="Engine\UI_OLD\Widget\Button.h" />
@@ -532,7 +532,7 @@
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Engine\UI\UICanvas.cpp" />
-    <ClCompile Include="Engine\UI\UIElement.cpp" />
+    <ClCompile Include="Engine\UI\UIWidget.cpp" />
     <ClCompile Include="Engine\UI_OLD\Canvas.cpp" />
     <ClCompile Include="Engine\UI_OLD\Widget.cpp" />
     <ClCompile Include="Engine\UI_OLD\Widget\Button.cpp" />
