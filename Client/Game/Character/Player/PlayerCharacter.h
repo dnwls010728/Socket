@@ -3,6 +3,8 @@
 #include "Character/CharacterBase.h"
 #include "Level/World.h"
 
+class PlayerWalk;
+class PlayerIdle;
 class AnimatorComponent;
 
 class PlayerCharacter : public CharacterBase
@@ -16,7 +18,10 @@ public:
 
     FORCEINLINE AnimatorComponent* GetAnimator() const { return animator_; }
     
-    FORCEINLINE int GetHorizontalAxis() const { return horizontal_axis_; }
+    FORCEINLINE int GetHAxis() const { return h_axis_; }
+
+    FORCEINLINE PlayerIdle* GetIdleState() const { return idle_state_.get(); }
+    FORCEINLINE PlayerWalk* GetWalkState() const { return walk_state_.get(); }
 
 protected:
     virtual void BeginPlay() override;
@@ -30,7 +35,7 @@ private:
     class AnimationPack* animation_pack_;
     class Audio* audio_;
     
-    int horizontal_axis_;
+    int h_axis_;
     
     float move_speed_;
 
@@ -41,5 +46,8 @@ private:
     TimerHandle timer_handle_;
 
     Math::Vector2 shot_direction_;
+
+    std::shared_ptr<PlayerIdle> idle_state_;
+    std::shared_ptr<PlayerWalk> walk_state_;
     
 };

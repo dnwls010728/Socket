@@ -21,11 +21,13 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
+#include "State/PlayerIdle.h"
+#include "State/PlayerWalk.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
-    horizontal_axis_(0),
+    h_axis_(0),
     move_speed_(2.f),
     previous_position_(Math::Vector2::Zero()),
     weapon_(nullptr),
@@ -45,6 +47,13 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     collider_->SetSize({.5f, .5f});
     
     animator_->SetAnimationPack(animation_pack_);
+
+    {
+        idle_state_ = std::make_shared<PlayerIdle>(state_machine_);
+        walk_state_ = std::make_shared<PlayerWalk>(state_machine_);
+    }
+
+    state_machine_->ChangeState(idle_state_.get());
     
 }
 
@@ -80,7 +89,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
     
-    rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
+    rigid_body_->SetLinearVelocityX(h_axis_ * move_speed_);
     
 }
 
@@ -89,7 +98,7 @@ void PlayerCharacter::Tick(float delta_time)
     CharacterBase::Tick(delta_time);
 
     Keyboard* keyboard = Keyboard::Get();
-    horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
+    h_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
         
     if (keyboard->GetKeyDown(VK_SPACE))
     {

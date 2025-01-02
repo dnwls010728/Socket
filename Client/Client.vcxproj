@@ -237,6 +237,8 @@
     <ClInclude Include="Game\Character\Mob\Knight\State\KnightRun.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
+    <ClInclude Include="Game\Character\Player\State\PlayerIdle.h" />
+    <ClInclude Include="Game\Character\Player\State\PlayerWalk.h" />
     <ClInclude Include="Game\Character\Player\Weapon.h" />
     <ClInclude Include="Game\Data\WeaponData.h" />
     <ClInclude Include="Game\Map\EditorMap.h" />
@@ -863,6 +865,8 @@
       <SDLCheck>false</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Game\Character\Player\State\PlayerIdle.cpp" />
+    <ClCompile Include="Game\Character\Player\State\PlayerWalk.cpp" />
     <ClCompile Include="Game\Character\Player\Weapon.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
