@@ -6,10 +6,11 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "BehaviourTree/WanderStrategy.h"
+#include "BehaviourTree/IdleStrategy.h"
+#include "BehaviourTree/WalkStrategy.h"
 #include "Character/BehaviourTree/BehaviourTree.h"
 #include "Character/BehaviourTree/Leaf.h"
-#include "Character/BehaviourTree/Selector.h"
+#include "Character/BehaviourTree/Sequence.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -26,11 +27,15 @@ Knight::Knight(const std::wstring& kName) :
 
     behaviour_tree_ = std::make_shared<BT::BehaviourTree>(L"Knight");
     
-    std::shared_ptr<BT::Selector> actions = std::make_shared<BT::Selector>(L"Agent Logic");
+    std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
 
-    std::shared_ptr<BT::WanderStrategy> wander_strategy = std::make_shared<BT::WanderStrategy>();
-    std::shared_ptr<BT::Leaf> wander = std::make_shared<BT::Leaf>(L"Wander", wander_strategy);
-    actions->AddChild(wander);
+    std::shared_ptr<BT::IdleStrategy> idle_strategy = std::make_shared<BT::IdleStrategy>(animator_);
+    std::shared_ptr<BT::Leaf> idle = std::make_shared<BT::Leaf>(L"Wander", idle_strategy);
+    actions->AddChild(idle);
+
+    std::shared_ptr<BT::WalkStrategy> walk_strategy = std::make_shared<BT::WalkStrategy>(animator_);
+    std::shared_ptr<BT::Leaf> walk = std::make_shared<BT::Leaf>(L"Walk", walk_strategy);
+    actions->AddChild(walk);
     
     behaviour_tree_->AddChild(actions);
 }

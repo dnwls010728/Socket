@@ -36,15 +36,6 @@
   <object id="7" name="Knight" type="Knight" x="144" y="422">
    <point/>
   </object>
-  <object id="8" name="Knight" type="Knight" x="175.333" y="415.333">
-   <point/>
-  </object>
-  <object id="9" name="Knight" type="Knight" x="254.667" y="405">
-   <point/>
-  </object>
-  <object id="10" name="Knight" type="Knight" x="303" y="412.333">
-   <point/>
-  </object>
  </objectgroup>
  <layer id="6" name="Default" width="30" height="20">
   <properties>
