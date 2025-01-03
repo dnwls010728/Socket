@@ -17,8 +17,6 @@ namespace BT
 
     private:
         AnimatorComponent* animator_;
-        
-        float start_time_;
     
     };
 }

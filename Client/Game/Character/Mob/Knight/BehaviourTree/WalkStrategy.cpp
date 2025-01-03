@@ -5,28 +5,16 @@
 #include "Time/Time.h"
 
 BT::WalkStrategy::WalkStrategy(AnimatorComponent* animator) :
-    animator_(animator),
-    start_time_(0.f)
+    animator_(animator)
 {
 }
 
 BT::Node::Status BT::WalkStrategy::Process()
 {
-    if (start_time_ == 0.f)
-    {
-        animator_->PlayAnimation(L"Run");
-        start_time_ = Time::Seconds();
-    }
-    
-    if (Time::Seconds() - start_time_ > 1.f)
-    {
-        return Node::Status::kSuccess;
-    }
-    
-    return Node::Status::kRunning;
+    animator_->PlayAnimation(L"Run");
+    return Node::Status::kSuccess;
 }
 
 void BT::WalkStrategy::Reset()
 {
-    start_time_ = 0.f;
 }

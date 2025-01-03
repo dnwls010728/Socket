@@ -11,6 +11,7 @@
 #include "Character/BehaviourTree/BehaviourTree.h"
 #include "Character/BehaviourTree/Leaf.h"
 #include "Character/BehaviourTree/Sequence.h"
+#include "Character/BehaviourTree/Wait.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -33,9 +34,15 @@ Knight::Knight(const std::wstring& kName) :
     std::shared_ptr<BT::Leaf> idle = std::make_shared<BT::Leaf>(L"Wander", idle_strategy);
     actions->AddChild(idle);
 
+    std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 1.f);
+    actions->AddChild(wait);
+
     std::shared_ptr<BT::WalkStrategy> walk_strategy = std::make_shared<BT::WalkStrategy>(animator_);
     std::shared_ptr<BT::Leaf> walk = std::make_shared<BT::Leaf>(L"Walk", walk_strategy);
     actions->AddChild(walk);
+
+    std::shared_ptr<BT::Wait> wait2 = std::make_shared<BT::Wait>(L"Wait", 1.f);
+    actions->AddChild(wait2);
     
     behaviour_tree_->AddChild(actions);
 }

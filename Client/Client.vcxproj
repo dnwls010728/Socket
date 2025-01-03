@@ -236,6 +236,7 @@
     <ClInclude Include="Game\Character\BehaviourTree\Selector.h" />
     <ClInclude Include="Game\Character\BehaviourTree\Sequence.h" />
     <ClInclude Include="Game\Character\BehaviourTree\UntilFall.h" />
+    <ClInclude Include="Game\Character\BehaviourTree\Wait.h" />
     <ClInclude Include="Game\Character\CharacterBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
@@ -579,6 +580,7 @@
     <ClCompile Include="Game\Character\BehaviourTree\Selector.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\Sequence.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\UntilFall.cpp" />
+    <ClCompile Include="Game\Character\BehaviourTree\Wait.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
