@@ -29,20 +29,10 @@ Knight::Knight(const std::wstring& kName) :
     behaviour_tree_ = std::make_shared<BT::BehaviourTree>(L"Knight");
     
     std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
-
-    std::shared_ptr<BT::IdleStrategy> idle_strategy = std::make_shared<BT::IdleStrategy>(animator_);
-    std::shared_ptr<BT::Leaf> idle = std::make_shared<BT::Leaf>(L"Wander", idle_strategy);
-    actions->AddChild(idle);
-
-    std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 1.f);
-    actions->AddChild(wait);
-
-    std::shared_ptr<BT::WalkStrategy> walk_strategy = std::make_shared<BT::WalkStrategy>(animator_);
-    std::shared_ptr<BT::Leaf> walk = std::make_shared<BT::Leaf>(L"Walk", walk_strategy);
-    actions->AddChild(walk);
-
-    std::shared_ptr<BT::Wait> wait2 = std::make_shared<BT::Wait>(L"Wait", 1.f);
-    actions->AddChild(wait2);
+    actions->AddChild(std::make_shared<BT::Leaf>(L"Wander", std::make_shared<BT::IdleStrategy>(animator_)));
+    actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
+    actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
+    actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
     
     behaviour_tree_->AddChild(actions);
 }
