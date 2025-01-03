@@ -23,6 +23,11 @@ public:
     FORCEINLINE PlayerIdle* GetIdleState() const { return idle_state_.get(); }
     FORCEINLINE PlayerWalk* GetWalkState() const { return walk_state_.get(); }
 
+    bool M(bool b);
+    bool C(bool b) const;
+    
+    static bool S(bool b);
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(EndPlayReason type) override;

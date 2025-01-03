@@ -2,10 +2,13 @@
 #include "Knight.h"
 
 #include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 #include "Character/BehaviourTree/BehaviourTree.h"
+#include "Character/BehaviourTree/Condition.h"
+#include "Character/BehaviourTree/Leaf.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -16,8 +19,10 @@ Knight::Knight(const std::wstring& kName) :
     collider_->SetOffset({0.f, .5f});
 
     animator_->SetAnimationPack(animation_pack_);
+    animator_->PlayAnimation(L"Idle");
 
-    hp_ = 100.f;
+    // hp_ = 100.f;
+    is_infinite_hp_ = true;
 
     behaviour_tree_ = std::make_shared<BT::BehaviourTree>(L"Knight");
 }

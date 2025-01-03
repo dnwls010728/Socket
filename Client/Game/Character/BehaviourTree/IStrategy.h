@@ -7,7 +7,8 @@ namespace BT
     {
     public:
         virtual Node::Status Process() = 0;
-        virtual void Reset() = 0;
+        
+        FORCEINLINE virtual void Reset() {};
         
     };
 }

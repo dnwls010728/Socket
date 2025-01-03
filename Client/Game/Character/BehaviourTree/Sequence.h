@@ -1,0 +1,15 @@
+﻿#pragma once
+#include "Node.h"
+
+namespace BT
+{
+    class Sequence : public Node
+    {
+    public:
+        Sequence(const std::wstring& kName);
+        virtual ~Sequence() override = default;
+
+        virtual Status Process() override;
+        
+    };
+}

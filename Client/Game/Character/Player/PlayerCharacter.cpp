@@ -58,6 +58,21 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
 }
 
+bool PlayerCharacter::M(bool b)
+{
+    return b;
+}
+
+bool PlayerCharacter::C(bool b) const
+{
+    return b;
+}
+
+bool PlayerCharacter::S(bool b)
+{
+    return b;
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();

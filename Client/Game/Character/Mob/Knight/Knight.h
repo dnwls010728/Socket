@@ -15,6 +15,8 @@ public:
     Knight(const std::wstring& kName);
     virtual ~Knight() override = default;
 
+    bool M();
+
 protected:
     virtual void Tick(float delta_time) override;
     
