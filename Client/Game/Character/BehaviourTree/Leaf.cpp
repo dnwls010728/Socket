@@ -3,7 +3,7 @@
 
 #include "IStrategy.h"
 
-BT::Leaf::Leaf(const std::wstring& kName, IStrategy* strategy) :
+BT::Leaf::Leaf(const std::wstring& kName, const std::shared_ptr<IStrategy>& strategy) :
     Node(kName),
     strategy_(strategy)
 {

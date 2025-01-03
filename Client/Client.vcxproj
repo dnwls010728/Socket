@@ -240,6 +240,7 @@
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
+    <ClInclude Include="Game\Character\Mob\Knight\BehaviourTree\WanderStrategy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
@@ -800,6 +801,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
+    <ClCompile Include="Game\Character\Mob\Knight\BehaviourTree\WanderStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerCharacter.cpp">

@@ -5,6 +5,7 @@ namespace BT
 {
     class Selector : public Node
     {
+    public:
         Selector(const std::wstring& kName);
         virtual ~Selector() override = default;
 

@@ -6,9 +6,10 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
+#include "BehaviourTree/WanderStrategy.h"
 #include "Character/BehaviourTree/BehaviourTree.h"
-#include "Character/BehaviourTree/Condition.h"
 #include "Character/BehaviourTree/Leaf.h"
+#include "Character/BehaviourTree/Selector.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -19,12 +20,19 @@ Knight::Knight(const std::wstring& kName) :
     collider_->SetOffset({0.f, .5f});
 
     animator_->SetAnimationPack(animation_pack_);
-    animator_->PlayAnimation(L"Idle");
 
     // hp_ = 100.f;
     is_infinite_hp_ = true;
 
     behaviour_tree_ = std::make_shared<BT::BehaviourTree>(L"Knight");
+    
+    std::shared_ptr<BT::Selector> actions = std::make_shared<BT::Selector>(L"Agent Logic");
+
+    std::shared_ptr<BT::WanderStrategy> wander_strategy = std::make_shared<BT::WanderStrategy>();
+    std::shared_ptr<BT::Leaf> wander = std::make_shared<BT::Leaf>(L"Wander", wander_strategy);
+    actions->AddChild(wander);
+    
+    behaviour_tree_->AddChild(actions);
 }
 
 void Knight::Tick(float delta_time)

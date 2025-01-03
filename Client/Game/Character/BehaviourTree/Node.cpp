@@ -8,9 +8,9 @@ BT::Node::Node(const std::wstring& kName) :
 {
 }
 
-void BT::Node::AddChild(Node* child)
+void BT::Node::AddChild(const std::shared_ptr<Node>& kChild)
 {
-    children_.push_back(child);
+    children_.push_back(kChild);
 }
 
 void BT::Node::Reset()

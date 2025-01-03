@@ -11,14 +11,14 @@ namespace BT
     class Leaf : public Node
     {
     public:
-        Leaf(const std::wstring& kName, IStrategy* strategy);
+        Leaf(const std::wstring& kName, const std::shared_ptr<IStrategy>& strategy);
         virtual ~Leaf() override = default;
 
         virtual void Reset() override;
         virtual Status Process() override;
 
     protected:
-        IStrategy* strategy_;
+        std::shared_ptr<IStrategy> strategy_;
     
     };
 }

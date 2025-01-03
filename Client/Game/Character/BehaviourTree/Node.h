@@ -15,7 +15,7 @@ namespace BT
         Node(const std::wstring& kName);
         virtual ~Node() = default;
 
-        void AddChild(Node* child);
+        void AddChild(const std::shared_ptr<Node>& kChild);
 
         virtual void Reset();
 
@@ -24,7 +24,7 @@ namespace BT
     protected:
         std::wstring name_;
 
-        std::vector<Node*> children_;
+        std::vector<std::shared_ptr<Node>> children_;
 
         int current_child_;
     };
