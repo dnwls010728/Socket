@@ -1,12 +1,12 @@
 ﻿#include "pch.h"
-#include "Sequence.h"
+#include "Selector.h"
 
-BT::Sequence::Sequence(const std::wstring& kName) :
+BT::Selector::Selector(const std::wstring& kName) :
     Node(kName)
 {
 }
 
-BT::Node::Status BT::Sequence::Process()
+BT::Node::Status BT::Selector::Process()
 {
     if (current_child_ < children_.size())
     {
@@ -16,21 +16,21 @@ BT::Node::Status BT::Sequence::Process()
             {
                 return Status::kRunning;
             }
-            
-        case Status::kFailure:
+
+        case Status::kSuccess:
             {
                 Reset();
-                return Status::kFailure;
+                return Status::kSuccess;
             }
-            
+
         default:
             {
                 current_child_++;
-                return current_child_ == children_.size() ? Status::kSuccess : Status::kRunning;
+                return Status::kRunning;
             }
         }
     }
 
     Reset();
-    return Status::kSuccess;
+    return Status::kFailure;
 }

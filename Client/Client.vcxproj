@@ -226,11 +226,13 @@
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
+    <ClInclude Include="Game\Character\BehaviourTree\ActionStrategy.h" />
     <ClInclude Include="Game\Character\BehaviourTree\BehaviourTree.h" />
     <ClInclude Include="Game\Character\BehaviourTree\Condition.h" />
     <ClInclude Include="Game\Character\BehaviourTree\IStrategy.h" />
     <ClInclude Include="Game\Character\BehaviourTree\Leaf.h" />
     <ClInclude Include="Game\Character\BehaviourTree\Node.h" />
+    <ClInclude Include="Game\Character\BehaviourTree\Selector.h" />
     <ClInclude Include="Game\Character\BehaviourTree\Sequence.h" />
     <ClInclude Include="Game\Character\CharacterBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
@@ -564,10 +566,12 @@
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
+    <ClCompile Include="Game\Character\BehaviourTree\ActionStrategy.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\BehaviourTree.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\Condition.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\Leaf.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\Node.cpp" />
+    <ClCompile Include="Game\Character\BehaviourTree\Selector.cpp" />
     <ClCompile Include="Game\Character\BehaviourTree\Sequence.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>

@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "Condition.h"
 
-BT::Condition::Condition(const Function<bool()>& func) :
-    func_(func)
+BT::Condition::Condition(const Function<bool()>& kFunc) :
+    func_(kFunc)
 {
 }
 

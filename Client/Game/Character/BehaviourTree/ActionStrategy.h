@@ -4,16 +4,15 @@
 
 namespace BT
 {
-    class Condition : public IStrategy
+    class ActionStrategy : public IStrategy
     {
     public:
-        Condition(const Function<bool(void)>& kFunc);
-        ~Condition() = default;
+        ActionStrategy(const Function<void(void)>& kFunc);
 
         virtual Node::Status Process() override;
-    
+
     private:
-        Function<bool(void)> func_;
+        Function<void(void)> func_;
     
     };
 }
