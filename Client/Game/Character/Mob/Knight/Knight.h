@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Character/Mob/MobBase.h"
 
-class KnightDeath;
-class KnightHit;
-class KnightRun;
-class KnightIdle;
+namespace BT
+{
+    class BehaviourTree;
+}
 
 class Knight : public MobBase
 {
@@ -15,21 +15,15 @@ public:
     Knight(const std::wstring& kName);
     virtual ~Knight() override = default;
 
-    FORCEINLINE KnightIdle* GetIdleState() const { return idle_state_.get(); }
-    FORCEINLINE KnightRun* GetRunState() const { return run_state_.get(); }
-    FORCEINLINE KnightHit* GetHitState() const { return hit_state_.get(); }
-    FORCEINLINE KnightDeath* GetDeathState() const { return death_state_.get(); }
-
 protected:
+    virtual void Tick(float delta_time) override;
+    
     virtual void OnHit() override;
     virtual void OnDeath() override;
 
 private:
     class AnimationPack* animation_pack_;
 
-    std::shared_ptr<KnightIdle> idle_state_;
-    std::shared_ptr<KnightRun> run_state_;
-    std::shared_ptr<KnightHit> hit_state_;
-    std::shared_ptr<KnightDeath> death_state_;
+    std::shared_ptr<BT::BehaviourTree> behaviour_tree_;
     
 };
