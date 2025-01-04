@@ -7,14 +7,10 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "BehaviourTree/IdleStrategy.h"
-#include "BehaviourTree/WalkStrategy.h"
-#include "Character/BehaviorTree/ActionStrategy.h"
+#include "BehaviourTree/PatrolStrategy.h"
 #include "Character/BehaviorTree/BehaviorTree.h"
 #include "Character/BehaviorTree/Leaf.h"
-#include "Character/BehaviorTree/Repeat.h"
-#include "Character/BehaviorTree/Sequence.h"
-#include "Character/BehaviorTree/Wait.h"
+#include "Character/BehaviorTree/Selector.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -25,6 +21,7 @@ Knight::Knight(const std::wstring& kName) :
     collider_->SetOffset({0.f, .5f});
 
     animator_->SetAnimationPack(animation_pack_);
+    animator_->PlayAnimation(L"Idle");
 
     // hp_ = 100.f;
     is_infinite_hp_ = true;
@@ -32,22 +29,13 @@ Knight::Knight(const std::wstring& kName) :
     behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
     
     {
-        std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
-    
+        std::shared_ptr<BT::Selector> actions = std::make_shared<BT::Selector>(L"Agent Logic");
+
         {
-            std::shared_ptr<BT::Repeat> repeat = std::make_shared<BT::Repeat>(L"Repeat", 3);
-            
-            {
-                repeat->AddChild(std::make_shared<BT::Leaf>(L"Log", std::make_shared<BT::ActionStrategy>([](){Logger::Print(L"Repeat");})));
-                actions->AddChild(repeat);
-            }
-            
-            actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
-            actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
-            actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
-            actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
+            std::shared_ptr<BT::Leaf> patrol = std::make_shared<BT::Leaf>(L"Patrol", std::make_shared<BT::PatrolStrategy>(animator_, rigid_body_));
+            actions->AddChild(patrol);
         }
-    
+        
         behavior_tree_->AddChild(actions);
     }
 }
