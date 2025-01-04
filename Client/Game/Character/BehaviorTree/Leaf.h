@@ -14,8 +14,9 @@ namespace BT
         Leaf(const std::wstring& kName, const std::shared_ptr<IStrategy>& strategy);
         virtual ~Leaf() override = default;
 
-        virtual void Reset() override;
         virtual Status TickNode(float delta_time) override;
+        
+        virtual void Reset() override;
 
     protected:
         std::shared_ptr<IStrategy> strategy_;
