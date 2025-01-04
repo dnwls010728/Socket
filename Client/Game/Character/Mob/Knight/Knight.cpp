@@ -28,21 +28,30 @@ Knight::Knight(const std::wstring& kName) :
 
     // hp_ = 100.f;
     is_infinite_hp_ = true;
-
+    
     behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
     
-    std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
+    {
+        std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
     
-    std::shared_ptr<BT::Repeat> repeat = std::make_shared<BT::Repeat>(L"Repeat", 3);
-    repeat->AddChild(std::make_shared<BT::Leaf>(L"Log", std::make_shared<BT::ActionStrategy>([](){Logger::Print(L"Repeat");})));
-    actions->AddChild(repeat);
+        {
+            std::shared_ptr<BT::Repeat> repeat = std::make_shared<BT::Repeat>(L"Repeat", 3);
+            
+            {
+                repeat->AddChild(std::make_shared<BT::Leaf>(L"Log", std::make_shared<BT::ActionStrategy>([](){Logger::Print(L"Repeat");})));
+                actions->AddChild(repeat);
+            }
+        }
     
-    actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
-    actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
-    actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
-    actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
+        {
+            actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
+            actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
+            actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
+            actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
+        }
     
-    behavior_tree_->AddChild(actions);
+        behavior_tree_->AddChild(actions);
+    }
 }
 
 void Knight::Tick(float delta_time)
