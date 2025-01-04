@@ -41,9 +41,7 @@ Knight::Knight(const std::wstring& kName) :
                 repeat->AddChild(std::make_shared<BT::Leaf>(L"Log", std::make_shared<BT::ActionStrategy>([](){Logger::Print(L"Repeat");})));
                 actions->AddChild(repeat);
             }
-        }
-    
-        {
+            
             actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
             actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
             actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
