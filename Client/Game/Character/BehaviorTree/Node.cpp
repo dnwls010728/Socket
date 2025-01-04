@@ -22,7 +22,7 @@ void BT::Node::Reset()
     }
 }
 
-BT::Node::Status BT::Node::Process()
+BT::Node::Status BT::Node::TickNode(float delta_time)
 {
     return Status::kSuccess;
 }

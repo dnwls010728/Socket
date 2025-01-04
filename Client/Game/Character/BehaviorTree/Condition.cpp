@@ -6,7 +6,7 @@ BT::Condition::Condition(const Function<bool()>& kFunc) :
 {
 }
 
-BT::Node::Status BT::Condition::Process()
+BT::Node::Status BT::Condition::TickNode(float delta_time)
 {
     return func_() ? Node::Status::kSuccess : Node::Status::kFailure;
 }

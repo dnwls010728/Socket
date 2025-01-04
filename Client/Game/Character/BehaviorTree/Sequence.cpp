@@ -6,11 +6,11 @@ BT::Sequence::Sequence(const std::wstring& kName) :
 {
 }
 
-BT::Node::Status BT::Sequence::Process()
+BT::Node::Status BT::Sequence::TickNode(float delta_time)
 {
     if (current_child_ < children_.size())
     {
-        switch (children_[current_child_]->Process())
+        switch (children_[current_child_]->TickNode(delta_time))
         {
         case Status::kRunning:
             {

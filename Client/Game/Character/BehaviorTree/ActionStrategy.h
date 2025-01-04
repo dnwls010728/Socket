@@ -9,7 +9,7 @@ namespace BT
     public:
         ActionStrategy(const Function<void(void)>& kFunc);
 
-        virtual Node::Status Process() override;
+        virtual Node::Status TickNode(float delta_time) override;
 
     private:
         Function<void(void)> func_;

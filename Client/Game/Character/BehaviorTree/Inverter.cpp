@@ -6,9 +6,9 @@ BT::Inverter::Inverter(const std::wstring& kName) :
 {
 }
 
-BT::Node::Status BT::Inverter::Process()
+BT::Node::Status BT::Inverter::TickNode(float delta_time)
 {
-    switch (children_[0]->Process())
+    switch (children_[0]->TickNode(delta_time))
     {
         case Status::kRunning:
             {

@@ -6,11 +6,11 @@ BT::Selector::Selector(const std::wstring& kName) :
 {
 }
 
-BT::Node::Status BT::Selector::Process()
+BT::Node::Status BT::Selector::TickNode(float delta_time)
 {
     if (current_child_ < children_.size())
     {
-        switch (children_[current_child_]->Process())
+        switch (children_[current_child_]->TickNode(delta_time))
         {
         case Status::kRunning:
             {

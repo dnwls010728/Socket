@@ -234,9 +234,9 @@
     <ClInclude Include="Game\Character\BehaviorTree\Leaf.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Node.h" />
     <ClInclude Include="Game\Character\BehaviorTree\RandomSelector.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Repeat.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Selector.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Sequence.h" />
-    <ClInclude Include="Game\Character\BehaviorTree\UntilFall.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Wait.h" />
     <ClInclude Include="Game\Character\CharacterBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
@@ -579,9 +579,9 @@
     <ClCompile Include="Game\Character\BehaviorTree\Leaf.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Node.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\RandomSelector.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Repeat.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Selector.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Sequence.cpp" />
-    <ClCompile Include="Game\Character\BehaviorTree\UntilFall.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Wait.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>

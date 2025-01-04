@@ -14,7 +14,7 @@ void BT::Leaf::Reset()
     strategy_->Reset();
 }
 
-BT::Node::Status BT::Leaf::Process()
+BT::Node::Status BT::Leaf::TickNode(float delta_time)
 {
-    return strategy_->Process();
+    return strategy_->TickNode(delta_time);
 }

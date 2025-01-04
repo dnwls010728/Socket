@@ -3,19 +3,19 @@
 
 namespace BT
 {
-    class Wait : public Node
+    class Repeat : public Node
     {
     public:
-        Wait(const std::wstring& kName, float duration);
-        virtual ~Wait() override = default;
+        Repeat(const std::wstring& kName, int count);
+        virtual ~Repeat() override = default;
 
         virtual Status TickNode(float delta_time) override;
 
         virtual void Reset() override;
 
     private:
-        float duration_;
-        float start_time_;
+        int count_;
+        int current_count_;
     
     };
 }

@@ -19,7 +19,7 @@ namespace BT
 
         virtual void Reset();
 
-        virtual Status Process();
+        virtual Status TickNode(float delta_time);
 
     protected:
         std::wstring name_;

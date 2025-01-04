@@ -9,6 +9,6 @@ namespace BT
         Selector(const std::wstring& kName);
         virtual ~Selector() override = default;
 
-        virtual Status Process() override;
+        virtual Status TickNode(float delta_time) override;
     };
 }

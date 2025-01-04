@@ -9,7 +9,7 @@ namespace BT
         BehaviorTree(const std::wstring& kName);
         virtual ~BehaviorTree() override = default;
 
-        virtual Status Process() override;
+        virtual Status TickNode(float delta_time) override;
         
     };
 }

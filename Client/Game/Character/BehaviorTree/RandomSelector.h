@@ -9,7 +9,7 @@ namespace BT
         RandomSelector(const std::wstring& kName);
         virtual ~RandomSelector() override = default;
 
-        virtual Status Process() override;
+        virtual Status TickNode(float delta_time) override;
 
         virtual void Reset() override;
 

@@ -10,7 +10,7 @@ BT::Wait::Wait(const std::wstring& kName, float duration) :
 {
 }
 
-BT::Node::Status BT::Wait::Process()
+BT::Node::Status BT::Wait::TickNode(float delta_time)
 {
     if (start_time_ == 0.f) start_time_ = Time::Seconds();
     if (Time::Seconds() - start_time_ > duration_) return Status::kSuccess;

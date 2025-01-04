@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Knight.h"
 
+#include "Logger.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
@@ -8,8 +9,10 @@
 #include "Asset/AssetManager.h"
 #include "BehaviourTree/IdleStrategy.h"
 #include "BehaviourTree/WalkStrategy.h"
+#include "Character/BehaviorTree/ActionStrategy.h"
 #include "Character/BehaviorTree/BehaviorTree.h"
 #include "Character/BehaviorTree/Leaf.h"
+#include "Character/BehaviorTree/Repeat.h"
 #include "Character/BehaviorTree/Sequence.h"
 #include "Character/BehaviorTree/Wait.h"
 
@@ -29,6 +32,11 @@ Knight::Knight(const std::wstring& kName) :
     behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
     
     std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
+    
+    std::shared_ptr<BT::Repeat> repeat = std::make_shared<BT::Repeat>(L"Repeat", 3);
+    repeat->AddChild(std::make_shared<BT::Leaf>(L"Log", std::make_shared<BT::ActionStrategy>([](){Logger::Print(L"Repeat");})));
+    actions->AddChild(repeat);
+    
     actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
     actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
     actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
@@ -41,7 +49,7 @@ void Knight::Tick(float delta_time)
 {
     MobBase::Tick(delta_time);
 
-    behavior_tree_->Process();
+    behavior_tree_->TickNode(delta_time);
 }
 
 void Knight::OnHit()

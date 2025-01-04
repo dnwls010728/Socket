@@ -10,7 +10,7 @@ namespace BT
         Condition(const Function<bool(void)>& kFunc);
         ~Condition() = default;
 
-        virtual Node::Status Process() override;
+        virtual Node::Status TickNode(float delta_time) override;
     
     private:
         Function<bool(void)> func_;

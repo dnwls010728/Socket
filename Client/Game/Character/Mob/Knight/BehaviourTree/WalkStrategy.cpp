@@ -9,7 +9,7 @@ BT::WalkStrategy::WalkStrategy(AnimatorComponent* animator) :
 {
 }
 
-BT::Node::Status BT::WalkStrategy::Process()
+BT::Node::Status BT::WalkStrategy::TickNode(float delta_time)
 {
     animator_->PlayAnimation(L"Run");
     return Node::Status::kSuccess;

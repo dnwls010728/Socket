@@ -9,7 +9,7 @@ namespace BT
         Sequence(const std::wstring& kName);
         virtual ~Sequence() override = default;
 
-        virtual Status Process() override;
+        virtual Status TickNode(float delta_time) override;
         
     };
 }

@@ -8,7 +8,7 @@ namespace BT
     public:
         Inverter(const std::wstring& kName);
 
-        virtual Status Process() override;
+        virtual Status TickNode(float delta_time) override;
     
     };
 }

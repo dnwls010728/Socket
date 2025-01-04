@@ -10,7 +10,7 @@ BT::IdleStrategy::IdleStrategy(AnimatorComponent* animator) :
 {
 }
 
-BT::Node::Status BT::IdleStrategy::Process()
+BT::Node::Status BT::IdleStrategy::TickNode(float delta_time)
 {
     animator_->PlayAnimation(L"Idle");
     return Node::Status::kSuccess;

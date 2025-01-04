@@ -10,11 +10,11 @@ BT::RandomSelector::RandomSelector(const std::wstring& kName) :
 {
 }
 
-BT::Node::Status BT::RandomSelector::Process()
+BT::Node::Status BT::RandomSelector::TickNode(float delta_time)
 {
     for (const auto& child : GetShuffledChildren())
     {
-        switch (child->Process())
+        switch (child->TickNode(delta_time))
         {
         case Status::kRunning:
             {

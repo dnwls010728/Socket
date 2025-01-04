@@ -6,7 +6,7 @@ BT::ActionStrategy::ActionStrategy(const Function<void()>& kFunc) :
 {
 }
 
-BT::Node::Status BT::ActionStrategy::Process()
+BT::Node::Status BT::ActionStrategy::TickNode(float delta_time)
 {
     func_();
     return Node::Status::kSuccess;

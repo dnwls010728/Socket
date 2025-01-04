@@ -11,7 +11,7 @@ namespace BT
         IdleStrategy(AnimatorComponent* animator);
         ~IdleStrategy() = default;
 
-        virtual Node::Status Process() override;
+        virtual Node::Status TickNode(float delta_time) override;
         
         virtual void Reset() override;
 
