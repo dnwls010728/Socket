@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Character/BehaviourTree/IStrategy.h"
+#include "Character/BehaviorTree/IStrategy.h"
 
 class AnimatorComponent;
 

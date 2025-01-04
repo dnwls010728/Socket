@@ -8,10 +8,10 @@
 #include "Asset/AssetManager.h"
 #include "BehaviourTree/IdleStrategy.h"
 #include "BehaviourTree/WalkStrategy.h"
-#include "Character/BehaviourTree/BehaviourTree.h"
-#include "Character/BehaviourTree/Leaf.h"
-#include "Character/BehaviourTree/Sequence.h"
-#include "Character/BehaviourTree/Wait.h"
+#include "Character/BehaviorTree/BehaviorTree.h"
+#include "Character/BehaviorTree/Leaf.h"
+#include "Character/BehaviorTree/Sequence.h"
+#include "Character/BehaviorTree/Wait.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -26,7 +26,7 @@ Knight::Knight(const std::wstring& kName) :
     // hp_ = 100.f;
     is_infinite_hp_ = true;
 
-    behaviour_tree_ = std::make_shared<BT::BehaviourTree>(L"Knight");
+    behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
     
     std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
     actions->AddChild(std::make_shared<BT::Leaf>(L"Idle", std::make_shared<BT::IdleStrategy>(animator_)));
@@ -34,14 +34,14 @@ Knight::Knight(const std::wstring& kName) :
     actions->AddChild(std::make_shared<BT::Leaf>(L"Walk", std::make_shared<BT::WalkStrategy>(animator_)));
     actions->AddChild(std::make_shared<BT::Wait>(L"Wait", 1.f));
     
-    behaviour_tree_->AddChild(actions);
+    behavior_tree_->AddChild(actions);
 }
 
 void Knight::Tick(float delta_time)
 {
     MobBase::Tick(delta_time);
 
-    behaviour_tree_->Process();
+    behavior_tree_->Process();
 }
 
 void Knight::OnHit()

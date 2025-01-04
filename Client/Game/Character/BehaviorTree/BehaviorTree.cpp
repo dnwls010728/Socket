@@ -1,12 +1,12 @@
 ﻿#include "pch.h"
-#include "BehaviourTree.h"
+#include "BehaviorTree.h"
 
-BT::BehaviourTree::BehaviourTree(const std::wstring& kName) :
+BT::BehaviorTree::BehaviorTree(const std::wstring& kName) :
     Node(kName)
 {
 }
 
-BT::Node::Status BT::BehaviourTree::Process()
+BT::Node::Status BT::BehaviorTree::Process()
 {
     Status status = children_[current_child_]->Process();
     if (false) return status; // 추후 처리

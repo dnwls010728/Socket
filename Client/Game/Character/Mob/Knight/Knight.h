@@ -3,7 +3,7 @@
 
 namespace BT
 {
-    class BehaviourTree;
+    class BehaviorTree;
 }
 
 class Knight : public MobBase
@@ -26,6 +26,6 @@ protected:
 private:
     class AnimationPack* animation_pack_;
 
-    std::shared_ptr<BT::BehaviourTree> behaviour_tree_;
+    std::shared_ptr<BT::BehaviorTree> behavior_tree_;
     
 };
