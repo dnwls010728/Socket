@@ -238,6 +238,9 @@
     <ClInclude Include="Game\Character\BehaviorTree\Selector.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Sequence.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Wait.h" />
+    <ClInclude Include="Game\Character\Blackboard\Blackboard.h" />
+    <ClInclude Include="Game\Character\Blackboard\BlackboardEntry.h" />
+    <ClInclude Include="Game\Character\Blackboard\BlackboardKey.h" />
     <ClInclude Include="Game\Character\CharacterBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
@@ -582,6 +585,8 @@
     <ClCompile Include="Game\Character\BehaviorTree\Selector.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Sequence.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Wait.cpp" />
+    <ClCompile Include="Game\Character\Blackboard\Blackboard.cpp" />
+    <ClCompile Include="Game\Character\Blackboard\BlackboardKey.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

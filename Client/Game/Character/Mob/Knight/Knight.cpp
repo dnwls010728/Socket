@@ -11,6 +11,7 @@
 #include "Character/BehaviorTree/BehaviorTree.h"
 #include "Character/BehaviorTree/Leaf.h"
 #include "Character/BehaviorTree/Selector.h"
+#include "Character/Blackboard/Blackboard.h"
 
 Knight::Knight(const std::wstring& kName) :
     MobBase(kName)
@@ -38,6 +39,18 @@ Knight::Knight(const std::wstring& kName) :
         
         behavior_tree_->AddChild(actions);
     }
+
+    blackboard_ = std::make_shared<Blackboard::Blackboard>();
+    temp_key_ = blackboard_->GetOrRegisterKey(L"TempKey");
+    blackboard_->SetValue(temp_key_, 10);
+
+    int a = 0;
+    if (blackboard_->TryGetValue(temp_key_, a))
+    {
+    }
+
+    int t = 0;
+    
 }
 
 void Knight::Tick(float delta_time)

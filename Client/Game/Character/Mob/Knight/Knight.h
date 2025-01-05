@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Character/Blackboard/Blackboard.h"
 #include "Character/Mob/MobBase.h"
 
 namespace BT
@@ -15,8 +16,6 @@ public:
     Knight(const std::wstring& kName);
     virtual ~Knight() override = default;
 
-    bool M();
-
 protected:
     virtual void Tick(float delta_time) override;
     
@@ -27,5 +26,8 @@ private:
     class AnimationPack* animation_pack_;
 
     std::shared_ptr<BT::BehaviorTree> behavior_tree_;
+    std::shared_ptr<Blackboard::Blackboard> blackboard_;
+
+    Blackboard::BlackboardKey temp_key_;
     
 };
