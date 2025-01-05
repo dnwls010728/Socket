@@ -34,7 +34,7 @@ namespace Blackboard
     bool Blackboard::TryGetValue(const BlackboardKey& kKey, T& kValue) const
     {
         auto it = entries_.find(kKey);
-        if (it == entries_.end() || it->second.type() != typeid(T))
+        if (it == entries_.end() || it->second.type() != typeid(BlackboardEntry<T>))
         {
             kValue = T();
             return false;
@@ -42,8 +42,11 @@ namespace Blackboard
 
         try
         {
-            kValue = std::any_cast<T>(it->second);
-            return true;
+            if (auto entry = std::any_cast<BlackboardEntry<T>>(&it->second))
+            {
+                kValue = entry->value_;
+                return true;
+            }
         }
         catch (const std::bad_any_cast&)
         {
