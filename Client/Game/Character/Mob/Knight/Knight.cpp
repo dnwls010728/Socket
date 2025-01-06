@@ -16,6 +16,7 @@
 #include "Character/ContextSteering/IObstacle.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Input/Mouse.h"
+#include "Math/Math.h"
 #include "Physics/Physics2D.h"
 #include "Windows/DX/Renderer.h"
 
@@ -25,7 +26,8 @@ Knight::Knight(const std::wstring& kName) :
     obstacles_(),
     danger_(8),
     interest_(8),
-    target_(nullptr)
+    target_(nullptr),
+    direction_(Math::Vector2::Zero())
 {
     animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Mob\\Knight\\KnightSheet.png.animpack");
 
@@ -66,20 +68,21 @@ void Knight::BeginPlay()
 
 }
 
+void Knight::PhysicsTick(float delta_time)
+{
+    MobBase::PhysicsTick(delta_time);
+
+    rigid_body_->SetLinearVelocity(direction_ * 2.f);
+}
+
 void Knight::Tick(float delta_time)
 {
     MobBase::Tick(delta_time);
 
     behavior_tree_->TickNode(delta_time);
-
-    Mouse* mouse = Mouse::Get();
-
-    Math::Vector2 world = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
-    GetTransform()->SetPosition(world);
     
     DetectObstacle();
-    GetDangerSteering();
-    GetSeekSteering();
+    GetDirection();
 
     for (int i = 0; i < danger_.size(); ++i)
     {
@@ -90,6 +93,8 @@ void Knight::Tick(float delta_time)
     {
         DebugDrawHelper::Get()->DrawRay(GetTransform()->GetPosition(), directions_[i] * interest_[i] * 2.f, {0, 255, 0, 255});
     }
+
+    DebugDrawHelper::Get()->DrawRay(GetTransform()->GetPosition(), direction_ * 2.f, {255, 255, 0, 255});
 }
 
 void Knight::OnHit()
@@ -172,6 +177,28 @@ void Knight::GetSeekSteering()
             }
         }
     }
+}
+
+Math::Vector2 Knight::GetDirection()
+{
+    GetDangerSteering();
+    GetSeekSteering();
+
+    for (int i = 0; i < 8; ++i)
+    {
+        interest_[i] = Math::Clamp(interest_[i] - danger_[i], 0.f, 1.f);
+    }
+
+    Math::Vector2 direction = Math::Vector2::Zero();
+    for (int i = 0; i < 8; ++i)
+    {
+        direction += directions_[i] * interest_[i];
+    }
+
+    direction.Normalize();
+
+    direction_ = direction;
+    return direction;
 }
 
 RTTR_REGISTRATION
