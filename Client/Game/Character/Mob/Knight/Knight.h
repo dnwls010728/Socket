@@ -31,8 +31,6 @@ private:
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::BehaviorTree> behavior_tree_;
 
-#pragma region Context Steering
     Actor* target_;
-#pragma endregion
     
 };

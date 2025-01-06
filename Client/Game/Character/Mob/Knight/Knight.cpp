@@ -56,8 +56,11 @@ void Knight::Tick(float delta_time)
     MobBase::Tick(delta_time);
 
     behavior_tree_->TickNode(delta_time);
-
-    context_steering_->SetDestination(target_->GetTransform()->GetPosition());
+    
+    if (IsValid(target_) && context_steering_->IsStopped())
+    {
+        context_steering_->SetDestination(target_->GetTransform()->GetPosition());
+    }
     
 }
 

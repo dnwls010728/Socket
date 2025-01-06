@@ -23,10 +23,19 @@ std::vector<Math::Vector2> ContextSteering::directions_ = {
 
 ContextSteering::ContextSteering(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
+    rigid_body_(nullptr),
+    is_stopped(true),
     destination_(Math::Vector2::Zero()),
+    direction_(Math::Vector2::Zero()),
     obstacles_(),
     obstacle_layer_(ActorLayer::kBlock)
 {
+}
+
+void ContextSteering::SetDestination(const Math::Vector2& destination)
+{
+    destination_ = destination;
+    is_stopped = false;
 }
 
 void ContextSteering::BeginPlay()
@@ -40,18 +49,30 @@ void ContextSteering::BeginPlay()
 void ContextSteering::PhysicsTickComponent(float delta_time)
 {
     ActorComponent::PhysicsTickComponent(delta_time);
+    if (is_stopped) return;
 
     DetectObstacles();
+
+    if (rigid_body_)
+    {
+        rigid_body_->SetLinearVelocity(direction_);
+    }
 }
 
 void ContextSteering::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
+    if (is_stopped) return;
+    
+    direction_ = GetDirectionToMove();
 
-    Math::Vector2 direction = GetDirectionToMove();
-    DebugDrawHelper::Get()->DrawRay(GetOwner()->GetTransform()->GetPosition(), direction * 2.f, Math::Color::Yellow);
-
-    if (rigid_body_) rigid_body_->SetLinearVelocity(direction);
+    Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
+    float distance = (destination_ - position).Magnitude();
+    if (distance <= .1f)
+    {
+        is_stopped = true;
+        rigid_body_->SetLinearVelocity(Math::Vector2::Zero());
+    }
 }
 
 void ContextSteering::DetectObstacles()
@@ -141,6 +162,8 @@ Math::Vector2 ContextSteering::GetDirectionToMove()
     }
 
     result.Normalize();
+    
+    debug_draw->DrawRay(GetOwner()->GetTransform()->GetPosition(), result * 2.f, Math::Color::Yellow);
     return result;
 }
 

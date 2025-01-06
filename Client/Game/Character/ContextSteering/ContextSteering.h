@@ -11,7 +11,9 @@ public:
     ContextSteering(Actor* owner, const std::wstring& kName);
     virtual ~ContextSteering() override = default;
 
-    FORCEINLINE void SetDestination(const Math::Vector2& destination) { destination_ = destination; }
+    void SetDestination(const Math::Vector2& destination);
+
+    FORCEINLINE bool IsStopped() const { return is_stopped; }
 
 protected:
     virtual void BeginPlay() override;
@@ -22,12 +24,15 @@ private:
     void DetectObstacles();
     void GetDangerSteering(float (&danger)[8]);
     void GetSeekSteering(float (&interest)[8]);
+    
+    Math::Vector2 GetDirectionToMove();
 
     class RigidBody2DComponent* rigid_body_;
-
-    Math::Vector2 GetDirectionToMove();
+    
+    bool is_stopped;
     
     Math::Vector2 destination_;
+    Math::Vector2 direction_;
 
     std::vector<Actor*> obstacles_;
 
