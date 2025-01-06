@@ -16,7 +16,7 @@
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
-#include "Character/Component/FSM/StateMachine.h"
+#include "Character/FSM/StateMachine.h"
 #include "Data/CSVReader.h"
 #include "Data/WeaponData.h"
 #include "Input/Keyboard.h"

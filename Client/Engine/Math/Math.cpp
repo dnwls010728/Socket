@@ -29,6 +29,11 @@ float Math::Clamp(float value, float min, float max)
     return Max(min, Min(value, max));
 }
 
+float Math::Clamp01(float value)
+{
+    return Clamp(value, 0.f, 1.f);
+}
+
 float Math::Abs(float a)
 {
     return a < 0.f ? -a : a;

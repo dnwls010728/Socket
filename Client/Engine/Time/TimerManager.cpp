@@ -183,10 +183,11 @@ void TimerManager::UnPauseTimer(TimerHandle handle)
 
 void TimerManager::ClearAllTimers()
 {
-    for (auto& timer : timers_)
-    {
-        ClearTimer(timer.handle);
-    }
+    // 추후 재확인이 필요할 수 있음
+    timers_.clear();
+    active_timers_.clear();
+    paused_timers_.clear();
+    pending_timers_.clear();
 }
 
 TimerData& TimerManager::GetTimer(const TimerHandle& handle)
