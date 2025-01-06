@@ -12,12 +12,12 @@ namespace tmx
     class Tileset;
 }
 
-class Texture;
+class Sprite;
 
 class TilemapChunk
 {
 public:
-    TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Texture*>& tileset_textures);
+    TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Sprite*>& tileset_textures);
 
     void UpdateShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot = Math::Vector2::Zero());
     

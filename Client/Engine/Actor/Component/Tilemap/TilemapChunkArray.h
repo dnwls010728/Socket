@@ -10,12 +10,12 @@ namespace tmx
     class Tileset;
 }
 
-class Texture;
+class Sprite;
 
 class TilemapChunkArray
 {
 public:
-    TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset, int order);
+    TilemapChunkArray(Sprite* texture, const tmx::Tileset& kTileset, int order);
     ~TilemapChunkArray() = default;
 
     void SetShape(const std::vector<DefaultVertex>& kVertices, const std::vector<Type::uint32>& kIndices);
@@ -31,7 +31,7 @@ public:
     FORCEINLINE Shape* GetShape() const { return shape_.get(); }
 
 private:
-    Texture* texture_;
+    Sprite* texture_;
 
     int order_;
     

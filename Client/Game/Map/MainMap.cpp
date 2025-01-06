@@ -2,6 +2,7 @@
 #include "MainMap.h"
 
 #include "Actor/Tilemap.h"
+#include "Prop/Block.h"
 
 MainMap::MainMap(const std::wstring& kName) : Level(kName)
 {

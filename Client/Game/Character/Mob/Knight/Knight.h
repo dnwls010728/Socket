@@ -27,5 +27,14 @@ private:
 
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::BehaviorTree> behavior_tree_;
+
+#pragma region Context Steering
+    void DetectObstacle();
+    void GetSteering();
+
+    std::vector<Math::Vector2> directions_;
+    std::vector<Actor*> obstacles_;
+    std::vector<float> danger_;
+#pragma endregion
     
 };

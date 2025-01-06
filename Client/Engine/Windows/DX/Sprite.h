@@ -33,8 +33,6 @@ public:
     static const Math::Vector2 kBottomRight;
 
 private:
-    std::wstring name_;
-    
     std::map<std::wstring, SpriteFrame> frames_;
     
     Type::uint32 ppu_;

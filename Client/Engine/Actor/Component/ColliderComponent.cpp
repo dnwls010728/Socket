@@ -44,6 +44,14 @@ void ColliderComponent::SetTrigger(bool is_trigger)
     }
 }
 
+Math::Vector2 ColliderComponent::ClosestPoint(const Math::Vector2& kPoint) const
+{
+    if (!b2Shape_IsValid(shape_id_)) return Math::Vector2::Zero();
+    
+    b2Vec2 point = b2Shape_GetClosestPoint(shape_id_, {kPoint.x, kPoint.y});
+    return {point.x, point.y};
+}
+
 const Bounds& ColliderComponent::GetBounds()
 {
     if (!b2Shape_IsValid(shape_id_)) return Bounds();

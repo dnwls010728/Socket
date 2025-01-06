@@ -244,8 +244,8 @@
     <ClInclude Include="Game\Character\CharacterBase.h" />
     <ClInclude Include="Game\Character\Component\FSM\State.h" />
     <ClInclude Include="Game\Character\Component\FSM\StateMachine.h" />
+    <ClInclude Include="Game\Character\ContextSteering\IObstacle.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
-    <ClInclude Include="Game\Character\Mob\Knight\BehaviourTree\PatrolStrategy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
     <ClInclude Include="Game\Character\Player\PlayerCharacter.h" />
@@ -255,6 +255,7 @@
     <ClInclude Include="Game\Map\MainMap.h" />
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
+    <ClInclude Include="Game\Prop\Block.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -808,7 +809,6 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
-    <ClCompile Include="Game\Character\Mob\Knight\BehaviourTree\PatrolStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerCharacter.cpp">
@@ -963,6 +963,7 @@
     <ClCompile Include="Game\Map\EditorMap.cpp" />
     <ClCompile Include="Game\Map\MainMap.cpp" />
     <ClCompile Include="Game\Map\MainMenu.cpp" />
+    <ClCompile Include="Game\Prop\Block.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
