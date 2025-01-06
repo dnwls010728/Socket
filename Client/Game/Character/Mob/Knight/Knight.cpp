@@ -14,6 +14,7 @@
 #include "Character/BehaviorTree/Selector.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/IObstacle.h"
+#include "Character/Player/PlayerCharacter.h"
 #include "Input/Mouse.h"
 #include "Physics/Physics2D.h"
 #include "Windows/DX/Renderer.h"
@@ -22,7 +23,9 @@ Knight::Knight(const std::wstring& kName) :
     MobBase(kName),
     directions_(),
     obstacles_(),
-    danger_(8)
+    danger_(8),
+    interest_(8),
+    target_(nullptr)
 {
     animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Mob\\Knight\\KnightSheet.png.animpack");
 
@@ -55,6 +58,14 @@ Knight::Knight(const std::wstring& kName) :
     
 }
 
+void Knight::BeginPlay()
+{
+    MobBase::BeginPlay();
+
+    target_ = World::Get()->GetActor(PlayerCharacter::StaticClass());
+
+}
+
 void Knight::Tick(float delta_time)
 {
     MobBase::Tick(delta_time);
@@ -67,11 +78,17 @@ void Knight::Tick(float delta_time)
     GetTransform()->SetPosition(world);
     
     DetectObstacle();
-    GetSteering();
+    GetDangerSteering();
+    GetSeekSteering();
 
     for (int i = 0; i < danger_.size(); ++i)
     {
-        DebugDrawHelper::Get()->DrawRay(GetTransform()->GetPosition(), directions_[i] * danger_[i] * 2.f, {0, 255, 0, 255});
+        DebugDrawHelper::Get()->DrawRay(GetTransform()->GetPosition(), directions_[i] * danger_[i] * 2.f, {255, 0, 0, 255});
+    }
+
+    for (int i = 0; i < interest_.size(); ++i)
+    {
+        DebugDrawHelper::Get()->DrawRay(GetTransform()->GetPosition(), directions_[i] * interest_[i] * 2.f, {0, 255, 0, 255});
     }
 }
 
@@ -101,7 +118,7 @@ void Knight::DetectObstacle()
     }
 }
 
-void Knight::GetSteering()
+void Knight::GetDangerSteering()
 {
     Math::Vector2 position = GetTransform()->GetPosition();
 
@@ -128,6 +145,30 @@ void Knight::GetSteering()
                 {
                     danger_[i] = steering;
                 }
+            }
+        }
+    }
+}
+
+void Knight::GetSeekSteering()
+{
+    interest_.assign(danger_.size(), 0.f);
+    
+    Math::Vector2 position = GetTransform()->GetPosition();
+    Math::Vector2 target_position = target_->GetTransform()->GetPosition();
+
+    Math::Vector2 direction = target_position - position;
+    for (int i = 0; i < directions_.size(); ++i)
+    {
+        float result = Math::Vector2::Dot(direction.Normalized(), directions_[i]);
+
+        if (result > 0.f)
+        {
+            float steering = result;
+
+            if (steering > interest_[i])
+            {
+                interest_[i] = steering;
             }
         }
     }

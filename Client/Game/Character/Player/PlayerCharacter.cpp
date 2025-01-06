@@ -104,7 +104,7 @@ void PlayerCharacter::Tick(float delta_time)
     renderer_->SetFlipX(direction.x < 0);
 
     float length = (position - mouse_position).Magnitude();
-    DebugDrawHelper::Get()->DrawSegment(position, position + (length * direction), Math::Color::Red);
+    // DebugDrawHelper::Get()->DrawSegment(position, position + (length * direction), Math::Color::Red);
 
     if (IsValid(weapon_))
     {

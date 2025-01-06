@@ -17,6 +17,7 @@ public:
     virtual ~Knight() override = default;
 
 protected:
+    virtual void BeginPlay() override;
     virtual void Tick(float delta_time) override;
     
     virtual void OnHit() override;
@@ -30,11 +31,15 @@ private:
 
 #pragma region Context Steering
     void DetectObstacle();
-    void GetSteering();
+    void GetDangerSteering();
+    void GetSeekSteering();
+
+    Actor* target_;
 
     std::vector<Math::Vector2> directions_;
     std::vector<Actor*> obstacles_;
     std::vector<float> danger_;
+    std::vector<float> interest_;
 #pragma endregion
     
 };
