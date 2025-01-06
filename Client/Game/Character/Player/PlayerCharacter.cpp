@@ -8,7 +8,7 @@
 #include "../../CommonDLL/SendBuffer.h"
 #include "../SocketCore/ServerPacketHandler.h"
 #include "Actor/Camera.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
@@ -42,8 +42,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     renderer_->SetSprite(sprite_, L"PlayerSheet_0");
 
-    collider_->SetOffset({0.f, .5f});
-    collider_->SetSize({.5f, .5f});
+    collider_->SetRadius(.25f);
+    collider_->SetOffset({0.f, .25f});
     
     animator_->SetAnimationPack(animation_pack_);
 

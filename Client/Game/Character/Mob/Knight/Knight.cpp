@@ -2,7 +2,7 @@
 #include "Knight.h"
 
 #include "DebugDrawHelper.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
@@ -21,8 +21,8 @@ Knight::Knight(const std::wstring& kName) :
 {
     animation_pack_ = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Character\\Mob\\Knight\\KnightSheet.png.animpack");
 
-    collider_->SetSize({.5f, .5f});
-    collider_->SetOffset({0.f, .5f});
+    collider_->SetRadius(.25f);
+    collider_->SetOffset({0.f, .25f});
 
     animator_->SetAnimationPack(animation_pack_);
     animator_->PlayAnimation(L"Idle");

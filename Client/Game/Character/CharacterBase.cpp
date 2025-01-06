@@ -2,7 +2,7 @@
 #include "CharacterBase.h"
 
 #include "Actor/Component/SpriteRendererComponent.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Windows/DX/Sprite.h"
@@ -12,7 +12,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     is_dead_(false)
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
-    collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
+    collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
     
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody2D");
     rigid_body_->UseAutoMass(false);

@@ -62,7 +62,7 @@ World::World() :
         DrawString,
         bounds,
         false,
-        false,
+        true,
         false,
         false,
         false,
