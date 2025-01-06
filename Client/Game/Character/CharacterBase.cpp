@@ -4,10 +4,7 @@
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
-#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
-#include "Component/FSM/StateMachine.h"
-#include "Math/Math.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
@@ -20,9 +17,9 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody2D");
     rigid_body_->UseAutoMass(false);
     rigid_body_->SetFreezeRotation(true);
+    rigid_body_->SetGravityScale(0);
 
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
-    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
 }
 
 void CharacterBase::OnHit()

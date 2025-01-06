@@ -17,16 +17,6 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     FORCEINLINE AnimatorComponent* GetAnimator() const { return animator_; }
-    
-    FORCEINLINE int GetHAxis() const { return h_axis_; }
-
-    FORCEINLINE PlayerIdle* GetIdleState() const { return idle_state_.get(); }
-    FORCEINLINE PlayerWalk* GetWalkState() const { return walk_state_.get(); }
-
-    bool M(bool b);
-    bool C(bool b) const;
-    
-    static bool S(bool b);
 
 protected:
     virtual void BeginPlay() override;
@@ -39,8 +29,10 @@ private:
     class Sprite* sprite_;
     class AnimationPack* animation_pack_;
     class Audio* audio_;
-    
-    int h_axis_;
+
+    class StateMachine* state_machine_;
+
+    Math::Vector2 input_axis_;
     
     float move_speed_;
 
@@ -51,8 +43,5 @@ private:
     TimerHandle timer_handle_;
 
     Math::Vector2 shot_direction_;
-
-    std::shared_ptr<PlayerIdle> idle_state_;
-    std::shared_ptr<PlayerWalk> walk_state_;
     
 };

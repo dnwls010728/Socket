@@ -27,6 +27,8 @@ Knight::Knight(const std::wstring& kName) :
     // hp_ = 100.f;
     is_infinite_hp_ = true;
     
+    blackboard_ = std::make_shared<Blackboard::Blackboard>();
+    
     behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
     
     {
@@ -39,17 +41,6 @@ Knight::Knight(const std::wstring& kName) :
         
         behavior_tree_->AddChild(actions);
     }
-
-    blackboard_ = std::make_shared<Blackboard::Blackboard>();
-    temp_key_ = blackboard_->GetOrRegisterKey(L"TempKey");
-    blackboard_->SetValue(temp_key_, 10);
-
-    int a = 0;
-    if (blackboard_->TryGetValue(temp_key_, a))
-    {
-    }
-
-    int t = 0;
     
 }
 

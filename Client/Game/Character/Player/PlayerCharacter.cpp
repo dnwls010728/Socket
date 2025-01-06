@@ -22,13 +22,11 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
-#include "State/PlayerIdle.h"
-#include "State/PlayerWalk.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
-    h_axis_(0),
+    input_axis_(Math::Vector2::Zero()),
     move_speed_(2.f),
     previous_position_(Math::Vector2::Zero()),
     weapon_(nullptr),
@@ -49,28 +47,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
     animator_->SetAnimationPack(animation_pack_);
 
-    {
-        idle_state_ = std::make_shared<PlayerIdle>(state_machine_);
-        walk_state_ = std::make_shared<PlayerWalk>(state_machine_);
-    }
-
-    state_machine_->ChangeState(idle_state_.get());
+    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     
-}
-
-bool PlayerCharacter::M(bool b)
-{
-    return b;
-}
-
-bool PlayerCharacter::C(bool b) const
-{
-    return b;
-}
-
-bool PlayerCharacter::S(bool b)
-{
-    return b;
 }
 
 void PlayerCharacter::BeginPlay()
@@ -104,8 +82,8 @@ void PlayerCharacter::EndPlay(EndPlayReason type)
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
-    
-    rigid_body_->SetLinearVelocityX(h_axis_ * move_speed_);
+
+    rigid_body_->SetLinearVelocity(input_axis_ * move_speed_);
     
 }
 
@@ -114,12 +92,8 @@ void PlayerCharacter::Tick(float delta_time)
     CharacterBase::Tick(delta_time);
 
     Keyboard* keyboard = Keyboard::Get();
-    h_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
-        
-    if (keyboard->GetKeyDown(VK_SPACE))
-    {
-        rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
-    }
+    input_axis_.x = keyboard->GetKey('D') - keyboard->GetKey('A');
+    input_axis_.y = keyboard->GetKey('W') - keyboard->GetKey('S');
 
     Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * .4f;
 

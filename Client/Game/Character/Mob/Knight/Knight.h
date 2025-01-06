@@ -25,9 +25,7 @@ protected:
 private:
     class AnimationPack* animation_pack_;
 
-    std::shared_ptr<BT::BehaviorTree> behavior_tree_;
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
-
-    Blackboard::BlackboardKey temp_key_;
+    std::shared_ptr<BT::BehaviorTree> behavior_tree_;
     
 };

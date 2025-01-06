@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Actor/NetworkActor.h"
 
-class StateMachine;
 class AnimatorComponent;
 class SpriteRendererComponent;
 
@@ -29,7 +28,6 @@ protected:
     CapsuleColliderComponent* collider_;
     RigidBody2DComponent* rigid_body_;
     AnimatorComponent* animator_;
-    StateMachine* state_machine_;
 
     bool is_dead_;
     
