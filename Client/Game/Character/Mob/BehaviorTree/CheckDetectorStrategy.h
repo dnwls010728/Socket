@@ -8,11 +8,11 @@ namespace Blackboard
 
 namespace BT
 {
-    class CheckDetector : public IStrategy
+    class CheckDetectorStrategy : public IStrategy
     {
     public:
-        CheckDetector(Blackboard::Blackboard* blackboard);
-        ~CheckDetector() = default;
+        CheckDetectorStrategy(Blackboard::Blackboard* blackboard);
+        ~CheckDetectorStrategy() = default;
 
         virtual Node::Status TickNode(float delta_time) override;
 

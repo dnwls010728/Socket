@@ -1,14 +1,13 @@
 ﻿#include "pch.h"
-#include "MoveToTarget.h"
+#include "MoveToTargetStrategy.h"
 
 #include "Actor/Actor.h"
 #include "Actor/Component/ColliderComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/ContextSteering.h"
-#include "Math/Math.h"
 
-BT::MoveToTarget::MoveToTarget(Blackboard::Blackboard* blackboard) :
+BT::MoveToTargetStrategy::MoveToTargetStrategy(Blackboard::Blackboard* blackboard) :
     blackboard_(blackboard),
     is_init_(false),
     self_(nullptr),
@@ -22,7 +21,7 @@ BT::MoveToTarget::MoveToTarget(Blackboard::Blackboard* blackboard) :
 {
 }
 
-BT::Node::Status BT::MoveToTarget::TickNode(float delta_time)
+BT::Node::Status BT::MoveToTargetStrategy::TickNode(float delta_time)
 {
     if (!blackboard_) return Node::Status::kFailure;
     
@@ -99,7 +98,7 @@ BT::Node::Status BT::MoveToTarget::TickNode(float delta_time)
     return Node::Status::kRunning;
 }
 
-void BT::MoveToTarget::Reset()
+void BT::MoveToTargetStrategy::Reset()
 {
     if (context_steering_)
     {
@@ -111,14 +110,14 @@ void BT::MoveToTarget::Reset()
     is_init_ = false;
 }
 
-BT::Node::Status BT::MoveToTarget::Validate()
+BT::Node::Status BT::MoveToTargetStrategy::Validate()
 {
     if (!blackboard_->TryGetValue(self_key_, self_) || !self_) return Node::Status::kFailure;
     if (!blackboard_->TryGetValue(target_key_, target_) || !target_) return Node::Status::kFailure;
     return Node::Status::kRunning;
 }
 
-Math::Vector2 BT::MoveToTarget::GetPositionColliderAdjusted() const
+Math::Vector2 BT::MoveToTargetStrategy::GetPositionColliderAdjusted() const
 {
     ActorComponent* component = target_->GetComponent(ColliderComponent::StaticClass());
     if (!component)
@@ -130,7 +129,7 @@ Math::Vector2 BT::MoveToTarget::GetPositionColliderAdjusted() const
     return target_->GetTransform()->GetPosition();
 }
 
-float BT::MoveToTarget::GetDistance()
+float BT::MoveToTargetStrategy::GetDistance()
 {
     return Math::Vector2::Distance(self_->GetTransform()->GetPosition(), collider_adjusted_position_);
 }

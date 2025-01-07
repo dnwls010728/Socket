@@ -2,7 +2,6 @@
 #include "Knight.h"
 
 #include "DebugDrawHelper.h"
-#include "Logger.h"
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -17,8 +16,9 @@
 #include "Character/BehaviorTree/Sequence.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/ContextSteering.h"
-#include "Character/Mob/BehaviorTree/CheckDetector.h"
-#include "Character/Mob/BehaviorTree/MoveToTarget.h"
+#include "Character/Mob/BehaviorTree/CheckDetectorStrategy.h"
+#include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
+#include "Character/Mob/BehaviorTree/MoveToTargetStrategy.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
@@ -48,22 +48,46 @@ Knight::Knight(const std::wstring& kName) :
     
     target_key_ = blackboard_->GetOrRegisterKey(L"Target");
     blackboard_->SetValue(target_key_, nullptr);
+
+    location_key_ = blackboard_->GetOrRegisterKey(L"Location");
+    blackboard_->SetValue(location_key_, Math::Vector2::Zero());
     
     behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
-    
+
+    std::shared_ptr<BT::Selector> selector = std::make_shared<BT::Selector>(L"Selector");
+
     {
-        std::shared_ptr<BT::Sequence> actions = std::make_shared<BT::Sequence>(L"Agent Logic");
-
         {
-            std::shared_ptr<BT::Leaf> check_detector = std::make_shared<BT::Leaf>(L"Check Detector", std::make_shared<BT::CheckDetector>(blackboard_.get()));
-            actions->AddChild(check_detector);
+            std::shared_ptr<BT::Sequence> chase_sequence = std::make_shared<BT::Sequence>(L"Chase Sequence");
 
-            std::shared_ptr<BT::Leaf> move_to_target = std::make_shared<BT::Leaf>(L"Move To Target", std::make_shared<BT::MoveToTarget>(blackboard_.get()));
-            actions->AddChild(move_to_target);
-        }
+            {
+                std::shared_ptr<BT::Leaf> check_detector = std::make_shared<BT::Leaf>(L"Check Detector", std::make_shared<BT::CheckDetectorStrategy>(blackboard_.get()));
+                chase_sequence->AddChild(check_detector);
+
+                std::shared_ptr<BT::Leaf> move_to_target = std::make_shared<BT::Leaf>(L"Move To Target", std::make_shared<BT::MoveToTargetStrategy>(blackboard_.get()));
+                chase_sequence->AddChild(move_to_target);
+            }
         
-        behavior_tree_->AddChild(actions);
+            selector->AddChild(chase_sequence);
+
+            std::shared_ptr<BT::Sequence> patrol_sequence = std::make_shared<BT::Sequence>(L"Patrol Sequence");
+
+            {
+                std::shared_ptr<BT::Leaf> random_location = std::make_shared<BT::Leaf>(L"Random Location", std::make_shared<BT::ActionStrategy>([&]()
+                {
+                    SetRandomLocation();
+                }));
+                patrol_sequence->AddChild(random_location);
+                
+                std::shared_ptr<BT::Leaf> move_to_location = std::make_shared<BT::Leaf>(L"Move To Location", std::make_shared<BT::MoveToLocationStrategy>(blackboard_.get()));
+                patrol_sequence->AddChild(move_to_location);
+            }
+            
+            selector->AddChild(patrol_sequence);
+        }
     }
+
+    behavior_tree_->AddChild(selector);
     
 }
 
@@ -80,12 +104,12 @@ void Knight::PhysicsTick(float delta_time)
     Math::Vector2 position = GetTransform()->GetPosition();
 
     Actor* target = nullptr;
-    if (Physics2D::OverlapCircle(position, 5.f, &target, static_cast<Type::uint16>(ActorLayer::kPlayer)))
+    if (Physics2D::OverlapCircle(position, 2.f, &target, static_cast<Type::uint16>(ActorLayer::kPlayer)))
     {
         Math::Vector2 direction = (target->GetTransform()->GetPosition() - GetTransform()->GetPosition()).Normalized();
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, position, direction, 5.f, static_cast<Type::uint16>(ActorLayer::kBlock)))
+        if (Physics2D::RayCast(hit_result, position, direction, 2.f, static_cast<Type::uint16>(ActorLayer::kBlock)))
         {
             target = nullptr;
         }
@@ -137,6 +161,25 @@ void Knight::OnDeath()
 {
     MobBase::OnDeath();
     
+}
+
+void Knight::SetRandomLocation()
+{
+    Math::Vector2 position = GetTransform()->GetPosition();
+    
+    Math::Vector2 destination = position;
+    destination += Math::RandRange(-1.f, 1.f) * Math::Vector2::Right();
+    destination += Math::RandRange(-1.f, 1.f) * Math::Vector2::Up();
+
+    Math::Vector2 direction = (destination - position).Normalized();
+
+    HitResult hit_result;
+    if (Physics2D::RayCast(hit_result, position, direction, 2.f, static_cast<Type::uint16>(ActorLayer::kBlock)))
+    {
+        return;
+    }
+
+    blackboard_->SetValue(location_key_, destination);
 }
 
 RTTR_REGISTRATION

@@ -247,8 +247,9 @@
     <ClInclude Include="Game\Character\ContextSteering\IObstacle.h" />
     <ClInclude Include="Game\Character\FSM\State.h" />
     <ClInclude Include="Game\Character\FSM\StateMachine.h" />
-    <ClInclude Include="Game\Character\Mob\BehaviorTree\CheckDetector.h" />
-    <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToTarget.h" />
+    <ClInclude Include="Game\Character\Mob\BehaviorTree\CheckDetectorStrategy.h" />
+    <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.h" />
+    <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
@@ -668,8 +669,9 @@
     <ClCompile Include="Game\Character\ContextSteering\ContextSteering.cpp" />
     <ClCompile Include="Game\Character\FSM\State.cpp" />
     <ClCompile Include="Game\Character\FSM\StateMachine.cpp" />
-    <ClCompile Include="Game\Character\Mob\BehaviorTree\CheckDetector.cpp" />
-    <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToTarget.cpp" />
+    <ClCompile Include="Game\Character\Mob\BehaviorTree\CheckDetectorStrategy.cpp" />
+    <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.cpp" />
+    <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />

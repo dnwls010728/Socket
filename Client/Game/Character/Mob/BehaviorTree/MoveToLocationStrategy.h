@@ -13,11 +13,11 @@ namespace Blackboard
 
 namespace BT
 {
-    class MoveToTarget : public IStrategy
+    class MoveToLocationStrategy : public IStrategy
     {
     public:
-        MoveToTarget(Blackboard::Blackboard* blackboard);
-        ~MoveToTarget() = default;
+        MoveToLocationStrategy(Blackboard::Blackboard* blackboard);
+        ~MoveToLocationStrategy() = default;
 
         virtual Node::Status TickNode(float delta_time) override;
 
@@ -27,24 +27,19 @@ namespace BT
         Blackboard::Blackboard* blackboard_;
         
         Node::Status Validate();
-        
-        Math::Vector2 GetPositionColliderAdjusted() const;
 
-        float GetDistance();
+        float GetDistanceToLcoation(Math::Vector2& agent_position, Math::Vector2& location_position);
 
         bool is_init_;
 
         Blackboard::BlackboardKey self_key_;
-        Blackboard::BlackboardKey target_key_;
+        Blackboard::BlackboardKey location_key_;
 
         Actor* self_;
-        Actor* target_;
 
-        Math::Vector2 last_position_;
-        Math::Vector2 collider_adjusted_position_;
+        Math::Vector2 destination_;
 
         float distance_threshold_;
-        float collider_offset_;
         float previous_stopping_distance_;
 
         ContextSteering* context_steering_;

@@ -26,6 +26,8 @@ protected:
     virtual void OnDeath() override;
 
 private:
+    void SetRandomLocation();
+    
     class AnimationPack* animation_pack_;
 
     class ContextSteering* context_steering_;
@@ -34,5 +36,6 @@ private:
     std::shared_ptr<BT::BehaviorTree> behavior_tree_;
 
     Blackboard::BlackboardKey target_key_;
+    Blackboard::BlackboardKey location_key_;
     
 };
