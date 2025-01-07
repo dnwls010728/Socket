@@ -109,9 +109,12 @@ void Knight::PhysicsTick(float delta_time)
         Math::Vector2 direction = (target->GetTransform()->GetPosition() - GetTransform()->GetPosition()).Normalized();
 
         HitResult hit_result;
-        if (Physics2D::RayCast(hit_result, position, direction, 2.f, static_cast<Type::uint16>(ActorLayer::kBlock)))
+        if (Physics2D::RayCast(hit_result, position, direction, 2.f, static_cast<Type::uint16>(ActorLayer::kBlock | ActorLayer::kPlayer)))
         {
-            target = nullptr;
+            if (static_cast<Type::uint16>(ActorLayer::kPlayer & hit_result.actor->GetLayer()) == 0)
+            {
+                target = nullptr;
+            }
         }
     }
     
