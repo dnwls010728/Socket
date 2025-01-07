@@ -239,6 +239,7 @@
     <ClInclude Include="Game\Character\BehaviorTree\Sequence.h" />
     <ClInclude Include="Game\Character\BehaviorTree\TimeOut.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Wait.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\WaitRange.h" />
     <ClInclude Include="Game\Character\Blackboard\Blackboard.h" />
     <ClInclude Include="Game\Character\Blackboard\BlackboardEntry.h" />
     <ClInclude Include="Game\Character\Blackboard\BlackboardKey.h" />
@@ -590,6 +591,7 @@
     <ClCompile Include="Game\Character\BehaviorTree\Sequence.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\TimeOut.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Wait.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\WaitRange.cpp" />
     <ClCompile Include="Game\Character\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Character\Blackboard\BlackboardKey.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp">

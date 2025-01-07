@@ -14,6 +14,7 @@
 #include "Character/BehaviorTree/Leaf.h"
 #include "Character/BehaviorTree/Selector.h"
 #include "Character/BehaviorTree/Sequence.h"
+#include "Character/BehaviorTree/Wait.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/ContextSteering.h"
 #include "Character/Mob/BehaviorTree/CheckDetectorStrategy.h"
@@ -81,6 +82,9 @@ Knight::Knight(const std::wstring& kName) :
                 
                 std::shared_ptr<BT::Leaf> move_to_location = std::make_shared<BT::Leaf>(L"Move To Location", std::make_shared<BT::MoveToLocationStrategy>(blackboard_.get()));
                 patrol_sequence->AddChild(move_to_location);
+
+                std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 2.f);
+                patrol_sequence->AddChild(wait);
             }
             
             selector->AddChild(patrol_sequence);
@@ -126,8 +130,6 @@ void Knight::Tick(float delta_time)
     MobBase::Tick(delta_time);
 
     behavior_tree_->TickNode(delta_time);
-
-    Math::Vector2 velocity = rigid_body_->GetLinearVelocity();
     
     if (rigid_body_->GetLinearVelocity() != Math::Vector2::Zero())
     {
