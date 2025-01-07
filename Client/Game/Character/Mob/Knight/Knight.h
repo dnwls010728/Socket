@@ -18,7 +18,9 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
+    virtual void PostTick(float delta_time) override;
     
     virtual void OnHit() override;
     virtual void OnDeath() override;
@@ -31,6 +33,6 @@ private:
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::BehaviorTree> behavior_tree_;
 
-    Actor* target_;
+    Blackboard::BlackboardKey target_key_;
     
 };

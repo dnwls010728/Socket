@@ -17,6 +17,6 @@ namespace Math
     float RandRange(float min, float max);
     
     int RandRange(int min, int max);
-
+    
     bool IsValid(float f);
 }

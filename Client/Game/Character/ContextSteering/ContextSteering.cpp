@@ -24,7 +24,9 @@ std::vector<Math::Vector2> ContextSteering::directions_ = {
 ContextSteering::ContextSteering(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     rigid_body_(nullptr),
-    is_stopped(true),
+    speed_(3.5f),
+    stopping_distance_(0.f),
+    is_stopped_(true),
     destination_(Math::Vector2::Zero()),
     direction_(Math::Vector2::Zero()),
     obstacles_(),
@@ -35,7 +37,20 @@ ContextSteering::ContextSteering(Actor* owner, const std::wstring& kName) :
 void ContextSteering::SetDestination(const Math::Vector2& destination)
 {
     destination_ = destination;
-    is_stopped = false;
+    is_stopped_ = false;
+}
+
+void ContextSteering::Stop()
+{
+    is_stopped_ = true;
+    if (rigid_body_) rigid_body_->SetLinearVelocity(Math::Vector2::Zero());
+}
+
+bool ContextSteering::IsComplete()
+{
+    Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
+    float distance = Math::Vector2::Distance(position, destination_);
+    return distance <= stopping_distance_;
 }
 
 void ContextSteering::BeginPlay()
@@ -49,28 +64,26 @@ void ContextSteering::BeginPlay()
 void ContextSteering::PhysicsTickComponent(float delta_time)
 {
     ActorComponent::PhysicsTickComponent(delta_time);
-    if (is_stopped) return;
+    if (is_stopped_) return;
 
     DetectObstacles();
 
     if (rigid_body_)
     {
-        rigid_body_->SetLinearVelocity(direction_);
+        rigid_body_->SetLinearVelocity(direction_ * speed_);
     }
 }
 
 void ContextSteering::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
-    if (is_stopped) return;
+    if (is_stopped_) return;
     
     direction_ = GetDirectionToMove();
 
-    Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
-    float distance = (destination_ - position).Magnitude();
-    if (distance <= .1f)
+    if (IsComplete())
     {
-        is_stopped = true;
+        is_stopped_ = true;
         rigid_body_->SetLinearVelocity(Math::Vector2::Zero());
     }
 }

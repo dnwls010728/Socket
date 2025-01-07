@@ -237,6 +237,7 @@
     <ClInclude Include="Game\Character\BehaviorTree\Repeat.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Selector.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Sequence.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\TimeOut.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Wait.h" />
     <ClInclude Include="Game\Character\Blackboard\Blackboard.h" />
     <ClInclude Include="Game\Character\Blackboard\BlackboardEntry.h" />
@@ -246,6 +247,8 @@
     <ClInclude Include="Game\Character\ContextSteering\IObstacle.h" />
     <ClInclude Include="Game\Character\FSM\State.h" />
     <ClInclude Include="Game\Character\FSM\StateMachine.h" />
+    <ClInclude Include="Game\Character\Mob\BehaviorTree\CheckDetector.h" />
+    <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToTarget.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
@@ -584,6 +587,7 @@
     <ClCompile Include="Game\Character\BehaviorTree\Repeat.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Selector.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Sequence.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\TimeOut.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Wait.cpp" />
     <ClCompile Include="Game\Character\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Character\Blackboard\BlackboardKey.cpp" />
@@ -664,6 +668,8 @@
     <ClCompile Include="Game\Character\ContextSteering\ContextSteering.cpp" />
     <ClCompile Include="Game\Character\FSM\State.cpp" />
     <ClCompile Include="Game\Character\FSM\StateMachine.cpp" />
+    <ClCompile Include="Game\Character\Mob\BehaviorTree\CheckDetector.cpp" />
+    <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToTarget.cpp" />
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />

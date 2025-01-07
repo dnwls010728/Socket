@@ -3,11 +3,11 @@
 
 namespace BT
 {
-    class Wait : public Node
+    class TimeOut : public Node
     {
     public:
-        Wait(const std::wstring& kName, float duration);
-        virtual ~Wait() override = default;
+        TimeOut(const std::wstring& kName, float duration);
+        virtual ~TimeOut() override = default;
 
         virtual Status TickNode(float delta_time) override;
 

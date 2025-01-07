@@ -12,8 +12,17 @@ public:
     virtual ~ContextSteering() override = default;
 
     void SetDestination(const Math::Vector2& destination);
+    void Stop();
 
-    FORCEINLINE bool IsStopped() const { return is_stopped; }
+    bool IsComplete();
+
+    FORCEINLINE void SetSpeed(float speed) { speed_ = speed; }
+    FORCEINLINE void SetStoppingDistance(float distance) { stopping_distance_ = distance; }
+
+    FORCEINLINE float GetSpeed() const { return speed_; }
+    FORCEINLINE float GetStoppingDistance() const { return stopping_distance_; }
+
+    FORCEINLINE bool IsStopped() const { return is_stopped_; }
 
 protected:
     virtual void BeginPlay() override;
@@ -28,8 +37,11 @@ private:
     Math::Vector2 GetDirectionToMove();
 
     class RigidBody2DComponent* rigid_body_;
+
+    float speed_;
+    float stopping_distance_;
     
-    bool is_stopped;
+    bool is_stopped_;
     
     Math::Vector2 destination_;
     Math::Vector2 direction_;
