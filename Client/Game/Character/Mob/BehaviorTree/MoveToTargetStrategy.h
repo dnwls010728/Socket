@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Character/BehaviorTree/IStrategy.h"
+#include "Character/BehaviorTree/Actions/IStrategy.h"
 #include "Character/Blackboard/BlackboardKey.h"
 #include "Math/Vector2.h"
 

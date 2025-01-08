@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Node.h"
+#include "Character/BehaviorTree/Node.h"
 #include "Misc/Function.h"
 
 namespace BT
