@@ -11,6 +11,7 @@
 #include "Asset/AssetManager.h"
 #include "Character/BehaviorTree/Actions/ActionStrategy.h"
 #include "Character/BehaviorTree/Actions/Leaf.h"
+#include "Character/BehaviorTree/Actions/Wait.h"
 #include "Character/BehaviorTree/Composites/Selector.h"
 #include "Character/BehaviorTree/Composites/Sequence.h"
 #include "Character/BehaviorTree/Decorators/Abort.h"
@@ -45,6 +46,9 @@ Knight::Knight(const std::wstring& kName) :
     
     Blackboard::BlackboardKey self_key = blackboard_->GetOrRegisterKey(L"Self");
     blackboard_->SetValue(self_key, static_cast<Actor*>(this));
+
+    state_key_ = blackboard_->GetOrRegisterKey(L"State");
+    blackboard_->SetValue(state_key_, KnightState::kPatrol);
     
     target_key_ = blackboard_->GetOrRegisterKey(L"Target");
     blackboard_->SetValue(target_key_, nullptr);
@@ -59,15 +63,22 @@ Knight::Knight(const std::wstring& kName) :
     {
         std::shared_ptr<BT::Abort> patrol_abort = std::make_shared<BT::Abort>(L"Target Not Found", [&]()
         {
-            Actor* target = nullptr;
-            blackboard_->TryGetValue(target_key_, target);
-            return target != nullptr;
+            // Actor* target = nullptr;
+            // blackboard_->TryGetValue(target_key_, target);
+            // return target != nullptr;
+
+            KnightState state = KnightState::kPatrol;
+            blackboard_->TryGetValue(state_key_, state);
+            return state != KnightState::kPatrol;
         });
 
         {
             std::shared_ptr<BT::Sequence> patrol_sequence = std::make_shared<BT::Sequence>(L"Patrol Sequence");
 
             {
+                std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 1.f);
+                patrol_sequence->AddChild(wait);
+                
                 std::shared_ptr<BT::Leaf> random_location = std::make_shared<BT::Leaf>(L"Random Location", std::make_shared<BT::ActionStrategy>([&]()
                 {
                     SetRandomLocation();
@@ -86,9 +97,13 @@ Knight::Knight(const std::wstring& kName) :
 
         std::shared_ptr<BT::Abort> chase_abort = std::make_shared<BT::Abort>(L"Target Found", [&]()
         {
-            Actor* target = nullptr;
-            blackboard_->TryGetValue(target_key_, target);
-            return target == nullptr;
+            // Actor* target = nullptr;
+            // blackboard_->TryGetValue(target_key_, target);
+            // return target == nullptr;
+            
+            KnightState state = KnightState::kPatrol;
+            blackboard_->TryGetValue(state_key_, state);
+            return state != KnightState::kChase;
         });
 
         {
@@ -135,7 +150,8 @@ void Knight::PhysicsTick(float delta_time)
             }
         }
     }
-    
+
+    blackboard_->SetValue(state_key_, target == nullptr ? KnightState::kPatrol : KnightState::kChase);
     blackboard_->SetValue(target_key_, target);
 }
 
