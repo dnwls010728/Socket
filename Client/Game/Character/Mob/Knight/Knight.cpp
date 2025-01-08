@@ -10,7 +10,7 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 #include "Character/BehaviorTree/ActionStrategy.h"
-#include "Character/BehaviorTree/BehaviorTree.h"
+#include "Character/BehaviorTree/Root.h"
 #include "Character/BehaviorTree/Leaf.h"
 #include "Character/BehaviorTree/Selector.h"
 #include "Character/BehaviorTree/Sequence.h"
@@ -53,7 +53,7 @@ Knight::Knight(const std::wstring& kName) :
     location_key_ = blackboard_->GetOrRegisterKey(L"Location");
     blackboard_->SetValue(location_key_, Math::Vector2::Zero());
     
-    behavior_tree_ = std::make_shared<BT::BehaviorTree>(L"Knight");
+    behavior_tree_ = std::make_shared<BT::Root>(L"Knight");
 
     std::shared_ptr<BT::Selector> selector = std::make_shared<BT::Selector>(L"Selector");
 

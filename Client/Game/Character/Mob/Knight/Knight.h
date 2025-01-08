@@ -4,7 +4,7 @@
 
 namespace BT
 {
-    class BehaviorTree;
+    class Root;
 }
 
 class Knight : public MobBase
@@ -33,7 +33,7 @@ private:
     class ContextSteering* context_steering_;
 
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
-    std::shared_ptr<BT::BehaviorTree> behavior_tree_;
+    std::shared_ptr<BT::Root> behavior_tree_;
 
     Blackboard::BlackboardKey target_key_;
     Blackboard::BlackboardKey location_key_;

@@ -227,7 +227,7 @@
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
     <ClInclude Include="Game\Character\BehaviorTree\ActionStrategy.h" />
-    <ClInclude Include="Game\Character\BehaviorTree\BehaviorTree.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Root.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Condition.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Inverter.h" />
     <ClInclude Include="Game\Character\BehaviorTree\IStrategy.h" />
@@ -580,7 +580,7 @@
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\ActionStrategy.cpp" />
-    <ClCompile Include="Game\Character\BehaviorTree\BehaviorTree.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Root.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Condition.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Inverter.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Leaf.cpp" />

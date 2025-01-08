@@ -11,7 +11,7 @@ BT::Repeat::Repeat(const std::wstring& kName, int count) :
 BT::Node::Status BT::Repeat::TickNode(float delta_time)
 {
     Status status = children_[0]->TickNode(delta_time);
-    if (status != Status::kRunning)
+    if (status == Status::kFailure || status == Status::kSuccess)
     {
         if (count_ != 0 && ++current_count_ >= count_)
         {
