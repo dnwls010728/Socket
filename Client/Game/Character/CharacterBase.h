@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Actor/NetworkActor.h"
 
-class StateMachine;
 class AnimatorComponent;
 class SpriteRendererComponent;
 
@@ -15,7 +14,7 @@ public:
     virtual ~CharacterBase() override = default;
 
     FORCEINLINE SpriteRendererComponent* GetRenderer() const { return renderer_; }
-    FORCEINLINE CapsuleColliderComponent* GetCollider() const { return collider_; }
+    FORCEINLINE CircleColliderComponent* GetCollider() const { return collider_; }
     FORCEINLINE RigidBody2DComponent* GetRigidBody() const { return rigid_body_; }
     FORCEINLINE AnimatorComponent* GetAnimator() const { return animator_; }
 
@@ -26,10 +25,9 @@ protected:
     virtual void OnDeath();
     
     SpriteRendererComponent* renderer_;
-    CapsuleColliderComponent* collider_;
+    CircleColliderComponent* collider_;
     RigidBody2DComponent* rigid_body_;
     AnimatorComponent* animator_;
-    StateMachine* state_machine_;
 
     bool is_dead_;
     

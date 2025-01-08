@@ -165,28 +165,6 @@ bool Math::Vector2::operator!=(const Vector2& kVector) const
     return false;
 }
 
-bool Math::Vector2::operator==(float val) const
-{
-    if (std::fabsf(x - val) <= FLT_EPSILON &&
-        std::fabsf(y - val) <= FLT_EPSILON)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-bool Math::Vector2::operator!=(float val) const
-{
-    if (std::fabsf(x - val) > FLT_EPSILON ||
-        std::fabsf(y - val) > FLT_EPSILON)
-    {
-        return true;
-    }
-
-    return false;
-}
-
 Math::Vector2 Math::Vector2::Zero()
 {
     return {0.f, 0.f};
@@ -231,8 +209,12 @@ float Math::Vector2::Distance(Vector2 a, Vector2 b)
 
 float Math::Vector2::Dot(Vector2 a, Vector2 b)
 {
-    const float theta = (a.x * b.x) + (a.y * b.y);
-    return theta;
+    return (a.x * b.x) + (a.y * b.y);
+}
+
+float Math::Vector2::Cross(Vector2 a, Vector2 b)
+{
+    return (a.x * b.y) - (a.y * b.x);
 }
 
 Math::Vector2 Math::Vector2::Max(Vector2 a, Vector2 b)
@@ -309,4 +291,24 @@ void Math::Vector2::Normalize()
         x = 0.f;
         y = 0.f;
     }
+}
+
+Math::Vector2 Math::operator+(float val, const Vector2& kVector)
+{
+    return kVector * val;
+}
+
+Math::Vector2 Math::operator-(float val, const Vector2& kVector)
+{
+    return kVector - val;
+}
+
+Math::Vector2 Math::operator*(float val, const Vector2& kVector)
+{
+    return kVector * val;
+}
+
+Math::Vector2 Math::operator/(float val, const Vector2& kVector)
+{
+    return kVector / val;
 }

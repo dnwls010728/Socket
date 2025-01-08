@@ -44,6 +44,12 @@ void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFra
     }
 }
 
+Bounds SpriteRendererComponent::GetBounds() const
+{
+    if (!shape_) return Bounds();
+    return shape_->GetBounds();
+}
+
 void SpriteRendererComponent::InitializeComponent()
 {
     ActorComponent::InitializeComponent();

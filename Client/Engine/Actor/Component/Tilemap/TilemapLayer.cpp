@@ -5,7 +5,7 @@
 #include "Asset/AssetManager.h"
 #include "Data/FileHelper.h"
 #include "tmxlite/Map.hpp"
-#include "Windows/DX/Texture.h"
+#include "Windows/DX/Sprite.h"
 
 TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& chunk_size) :
     chunk_size_(chunk_size),
@@ -78,7 +78,7 @@ void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer
         std::wstring to_wide_string = std::wstring(kPath.begin(), kPath.end());
         to_wide_string = FileHelper::GetRelativePath(to_wide_string);
 
-        Texture* temp = AssetManager::Get()->Load<Texture>(to_wide_string);
+        Sprite* temp = AssetManager::Get()->Load<Sprite>(to_wide_string);
         tileset_textures_[to_wide_string] = temp;
     }
     

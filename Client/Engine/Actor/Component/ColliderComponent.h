@@ -24,6 +24,10 @@ public:
     void SetMaterial(const PhysicsMaterial2D& kMaterial);
     void SetTrigger(bool is_trigger);
 
+    Math::Vector2 ClosestPoint(const Math::Vector2& kPoint) const;
+
+    FORCEINLINE const Math::Vector2& GetOffset() const { return offset_; }
+
     const Bounds& GetBounds();
 
 protected:

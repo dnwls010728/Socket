@@ -13,11 +13,10 @@ Actor::Actor(const std::wstring& kName) :
     is_active_(true),
     is_pending_destroy_(false),
     is_persistent_(false),
-    components_(),
-    transform_(nullptr)
+    components_()
 {
-    TransformComponent* transform = AddComponent<TransformComponent>(L"Transform");
-    transform_ = transform->GetSharedThis();
+    transform_ = AddComponent<TransformComponent>(L"Transform");
+    CHECK(transform_);
 }
 
 void Actor::BeginPlay()

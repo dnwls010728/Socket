@@ -17,7 +17,8 @@ enum class ActorLayer : Type::uint16
     kGround = (0x01<<1),
     kPlayer = (0x01<<2),
     kMob = (0x01<<3),
-    kBullet = (0x01<<4)
+    kBullet = (0x01<<4),
+    kBlock = (0x01<<5),
 };
 
 ENUM_CLASS_FLAGS(ActorLayer)
@@ -39,11 +40,12 @@ public:
     inline static constexpr float kFixedTimeStep = .02f; // 고정 프레임 간격
 
     inline static const std::map<ActorLayer, ActorLayer> kLayerCollisionMatrix = { // 레이어 충돌 매트릭스
-        {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
-        {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet},
-        {ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault},
-        {ActorLayer::kMob, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault},
-        {ActorLayer::kBullet, ActorLayer::kMob}
+        {ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet | ActorLayer::kBlock},
+        {ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet | ActorLayer::kBlock},
+        {ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kBlock},
+        {ActorLayer::kMob, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kBlock},
+        {ActorLayer::kBullet, ActorLayer::kMob | ActorLayer::kBlock},
+        {ActorLayer::kBlock, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet}
     };
     
 };

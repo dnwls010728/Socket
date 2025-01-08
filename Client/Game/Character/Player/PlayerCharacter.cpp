@@ -1,13 +1,14 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
+#include "DebugDrawHelper.h"
 #include "Logger.h"
 #include "Weapon.h"
 #include "../../CommonDLL/Packet.h"
 #include "../../CommonDLL/SendBuffer.h"
 #include "../SocketCore/ServerPacketHandler.h"
 #include "Actor/Camera.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
@@ -15,7 +16,7 @@
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
-#include "Character/Component/FSM/StateMachine.h"
+#include "Character/FSM/StateMachine.h"
 #include "Data/CSVReader.h"
 #include "Data/WeaponData.h"
 #include "Input/Keyboard.h"
@@ -25,7 +26,7 @@
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
-    horizontal_axis_(0),
+    input_axis_(Math::Vector2::Zero()),
     move_speed_(2.f),
     previous_position_(Math::Vector2::Zero()),
     weapon_(nullptr),
@@ -41,10 +42,12 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     renderer_->SetSprite(sprite_, L"PlayerSheet_0");
 
-    collider_->SetOffset({0.f, .5f});
-    collider_->SetSize({.5f, .5f});
+    collider_->SetRadius(.25f);
+    collider_->SetOffset({0.f, .25f});
     
     animator_->SetAnimationPack(animation_pack_);
+
+    state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     
 }
 
@@ -80,10 +83,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
 
-    if (horizontal_axis_ != 0)
-    {
-        rigid_body_->SetLinearVelocityX(horizontal_axis_ * move_speed_);
-    }
+    rigid_body_->SetLinearVelocity(input_axis_ * move_speed_);
     
 }
 
@@ -92,12 +92,8 @@ void PlayerCharacter::Tick(float delta_time)
     CharacterBase::Tick(delta_time);
 
     Keyboard* keyboard = Keyboard::Get();
-    horizontal_axis_ = keyboard->GetKey('D') - keyboard->GetKey('A');
-        
-    if (keyboard->GetKeyDown(VK_SPACE))
-    {
-        rigid_body_->AddForceY(7.f, ForceMode::kImpulse);
-    }
+    input_axis_.x = keyboard->GetKey('D') - keyboard->GetKey('A');
+    input_axis_.y = keyboard->GetKey('W') - keyboard->GetKey('S');
 
     Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * .4f;
 
@@ -106,6 +102,9 @@ void PlayerCharacter::Tick(float delta_time)
     Math::Vector2 direction = (mouse_position - position).Normalized();
         
     renderer_->SetFlipX(direction.x < 0);
+
+    float length = (position - mouse_position).Magnitude();
+    // DebugDrawHelper::Get()->DrawSegment(position, position + (length * direction), Math::Color::Red);
 
     if (IsValid(weapon_))
     {

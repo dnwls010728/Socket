@@ -3,6 +3,8 @@
 #include "Character/CharacterBase.h"
 #include "Level/World.h"
 
+class PlayerWalk;
+class PlayerIdle;
 class AnimatorComponent;
 
 class PlayerCharacter : public CharacterBase
@@ -15,8 +17,6 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     FORCEINLINE AnimatorComponent* GetAnimator() const { return animator_; }
-    
-    FORCEINLINE int GetHorizontalAxis() const { return horizontal_axis_; }
 
 protected:
     virtual void BeginPlay() override;
@@ -29,8 +29,10 @@ private:
     class Sprite* sprite_;
     class AnimationPack* animation_pack_;
     class Audio* audio_;
-    
-    int horizontal_axis_;
+
+    class StateMachine* state_machine_;
+
+    Math::Vector2 input_axis_;
     
     float move_speed_;
 

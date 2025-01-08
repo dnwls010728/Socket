@@ -47,7 +47,7 @@ public:
     FORCEINLINE ActorTag GetTag() const { return tag_; }
     FORCEINLINE ActorLayer GetLayer() const { return layer_; }
 
-    FORCEINLINE TransformComponent* GetTransform() const { return transform_.get(); }
+    FORCEINLINE TransformComponent* GetTransform() const { return transform_; }
 
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
@@ -105,7 +105,7 @@ protected:
 
     std::vector<std::shared_ptr<ActorComponent>> components_;
 
-    std::shared_ptr<TransformComponent> transform_;
+    TransformComponent* transform_;
     
     TimerHandle life_span_timer_;
 

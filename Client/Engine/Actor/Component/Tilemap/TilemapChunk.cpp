@@ -5,9 +5,9 @@
 #include "Level/World.h"
 #include "tmxlite/Tileset.hpp"
 #include "Windows/DX/Shape.h"
-#include "Windows/DX/Texture.h"
+#include "Windows/DX/Sprite.h"
 
-TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Texture*>& tileset_textures) :
+TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Sprite*>& tileset_textures) :
     tile_count_(kTileCount),
     chunk_tile_ids_(),
     chunk_arrays_()

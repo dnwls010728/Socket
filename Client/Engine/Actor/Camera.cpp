@@ -15,15 +15,15 @@ Camera::Camera(const std::wstring& kName) :
     size_(3.f),
     near_z_(.3f),
     far_z_(1000.f),
+    vertical_offset_(1.f),
+    half_width_(0.f),
+    half_height_(0.f),
+    limit_half_width_(15.f),
+    limit_half_height_(10.f),
     target_(nullptr),
     target_collider_(nullptr),
     focus_area_(),
-    focus_area_size_({1.f, 3.f}),
-    vertical_offset_(1.f),
-    half_width_(0),
-    half_height_(0),
-    limit_half_width_(0),
-    limit_half_height_(0)
+    focus_area_size_({1.f, 3.f})
 {
 }
 
@@ -64,8 +64,8 @@ void Camera::PhysicsTick(float delta_time)
         
         float clamp_x = Math::Clamp(new_position.x, -limit_x, limit_x);
         
-        float limit_y = limit_half_height_ - half_width_;
-        if (limit_y < 0.f) limit_y = half_width_;
+        float limit_y = limit_half_height_ - half_height_;
+        if (limit_y < 0.f) limit_y = half_height_;
         
         float clamp_y = Math::Clamp(new_position.y, -limit_y, limit_y);
         GetTransform()->SetPosition({ clamp_x, clamp_y });;

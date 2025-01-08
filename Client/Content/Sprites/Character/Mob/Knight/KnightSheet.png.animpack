@@ -28,3 +28,22 @@ animations:
       - KnightSheet_17
       - KnightSheet_18
       - KnightSheet_19
+  - name: Hit
+    frame_rate: 8
+    loop: false
+    frames:
+      - KnightSheet_20
+  - name: Death
+    frame_rate: 8
+    loop: false
+    frames:
+      - KnightSheet_30
+      - KnightSheet_31
+      - KnightSheet_32
+      - KnightSheet_33
+      - KnightSheet_34
+      - KnightSheet_35
+      - KnightSheet_36
+      - KnightSheet_37
+      - KnightSheet_38
+      - KnightSheet_39

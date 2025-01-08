@@ -17,6 +17,11 @@ void StateMachine::ChangeState(State* new_state)
     if (current_state_) current_state_->Enter();
 }
 
+bool StateMachine::IsCurrentState(State* state) const
+{
+    return current_state_ == state;
+}
+
 void StateMachine::PhysicsTickComponent(float delta_time)
 {
     ActorComponent::PhysicsTickComponent(delta_time);

@@ -14,12 +14,6 @@ DebugDrawHelper::DebugDrawHelper() :
     capsule_indices_(),
     segment_vertices_()
 {
-    polygon_shape_ = std::make_shared<Shape>();
-    circle_shape_ = std::make_shared<Shape>();
-    capsule_shape_ = std::make_shared<Shape>();
-
-    segment_shape_ = std::make_shared<Shape>();
-    segment_shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, const Math::Color& kColor)
 {
@@ -91,6 +85,27 @@ void DebugDrawHelper::DrawRay(const Math::Vector2& kStart, const Math::Vector2& 
     DrawSegment(kStart, kStart + kDirection, kColor);
 }
 
+void DebugDrawHelper::Init()
+{
+    polygon_shape_ = std::make_shared<Shape>();
+    polygon_shape_->SetZOrder(32767);
+    
+    circle_shape_ = std::make_shared<Shape>();
+    circle_shape_->SetZOrder(32767);
+    
+    capsule_shape_ = std::make_shared<Shape>();
+    capsule_shape_->SetZOrder(32767);
+
+    segment_shape_ = std::make_shared<Shape>();
+    segment_shape_->SetZOrder(32767);
+    segment_shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+    
+    World::Get()->AddShape(polygon_shape_);
+    World::Get()->AddShape(circle_shape_);
+    World::Get()->AddShape(capsule_shape_);
+    World::Get()->AddShape(segment_shape_);
+}
+
 void DebugDrawHelper::Clear()
 {
     polygon_shape_->SetVertices(polygon_vertices_);
@@ -103,11 +118,6 @@ void DebugDrawHelper::Clear()
     capsule_shape_->SetIndices(capsule_indices_);
 
     segment_shape_->SetVertices(segment_vertices_);
-
-    // World::Get()->AddShape(polygon_shape_);
-    // World::Get()->AddShape(circle_shape_);
-    // World::Get()->AddShape(capsule_shape_);
-    // World::Get()->AddShape(segment_shape_);
 
     polygon_vertices_.clear();
     polygon_indices_.clear();

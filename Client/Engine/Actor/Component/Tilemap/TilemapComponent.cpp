@@ -7,7 +7,7 @@
 #include "box2d/box2d.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
-#include "Windows/DX/Texture.h"
+#include "Windows/DX/Sprite.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),

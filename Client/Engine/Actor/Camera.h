@@ -92,6 +92,11 @@ private:
     float size_;
     float near_z_;
     float far_z_;
+    float vertical_offset_;
+    float half_width_;
+    float half_height_;
+    float limit_half_width_;
+    float limit_half_height_;
 
     Actor* target_;
 
@@ -100,12 +105,5 @@ private:
     FocusArea focus_area_;
     
     Math::Vector2 focus_area_size_;
-    
-    float vertical_offset_;
-
-    Type::uint32 half_width_;
-    Type::uint32 half_height_;
-    Type::uint32 limit_half_width_;
-    Type::uint32 limit_half_height_;
     
 };

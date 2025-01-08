@@ -12,7 +12,8 @@ TimerManager::TimerManager() :
     timers_(),
     active_timers_(),
     paused_timers_(),
-    pending_timers_()
+    pending_timers_(),
+    executing_timer_()
 {
 }
 
@@ -23,43 +24,53 @@ void TimerManager::Tick(float delta_time)
     for (auto it = active_timers_.begin(); it != active_timers_.end();)
     {
         TimerHandle handle = *it;
-        TimerData* timer_data = nullptr;
+        TimerData* data = nullptr;
         for (auto& timer : timers_)
         {
             if (timer.handle == handle)
             {
-                timer_data = &timer;
+                data = &timer;
                 break;
             }
         }
     
-        if (timer_data->status == TimerStatus::kRemoval)
+        if (data->status == TimerStatus::kRemoval)
         {
             RemoveTimer(handle);
             it = active_timers_.erase(it);
             continue;
         }
 
-        if (internal_time_ >= timer_data->expire_time)
+        if (internal_time_ >= data->expire_time)
         {
-            timer_data->status = TimerStatus::kExecuting;
+            executing_timer_ = handle;
+            it = active_timers_.erase(it);
+            
+            data->status = TimerStatus::kExecuting;
         
-            Type::uint32 cell_count = timer_data->loop ? static_cast<int>(trunc(internal_time_ - timer_data->expire_time) / timer_data->rate) + 1 : 1;
+            Type::uint32 cell_count = data->loop ? static_cast<int>(std::trunc(internal_time_ - data->expire_time) / data->rate) + 1 : 1;
             for (Type::uint32 i = 0; i < cell_count; ++i)
             {
-                timer_data->callback();
+                data->callback();
+
+                data = FindTimer(executing_timer_);
+                if (!data || data->status != TimerStatus::kExecuting) break;
             }
 
-            if (timer_data->loop)
+            if (data)
             {
-                timer_data->expire_time += timer_data->rate * cell_count;
-                timer_data->status = TimerStatus::kActive;
-                ++it;
-            }
-            else
-            {
-                RemoveTimer(handle);
-                it = active_timers_.erase(it);
+                if (data->loop)
+                {
+                    data->expire_time += data->rate * cell_count;
+                    data->status = TimerStatus::kActive;
+                    it = active_timers_.insert(it, handle);
+                }
+                else
+                {
+                    RemoveTimer(handle);
+                }
+
+                executing_timer_.Invalidate();
             }
         }
         else
@@ -106,10 +117,10 @@ void TimerManager::ClearTimer(TimerHandle& handle)
 
 void TimerManager::PauseTimer(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    if (!timer || timer->status == TimerStatus::kPaused) return;
+    TimerData* data = FindTimer(handle);
+    if (!data || data->status == TimerStatus::kPaused) return;
 
-    TimerStatus status = timer->status;
+    TimerStatus status = data->status;
 
     switch (status)
     {
@@ -124,9 +135,16 @@ void TimerManager::PauseTimer(TimerHandle handle)
             std::erase(pending_timers_, handle);
         }
         break;
+
+        case TimerStatus::kExecuting:
+        {
+            CHECK(executing_timer_ == handle);
+                
+            executing_timer_.Invalidate();
+        }
     }
 
-    if (status == TimerStatus::kExecuting && !timer->loop)
+    if (status == TimerStatus::kExecuting && !data->loop)
     {
         RemoveTimer(handle);
     }
@@ -134,29 +152,29 @@ void TimerManager::PauseTimer(TimerHandle handle)
     {
         paused_timers_.push_back(handle);
         
-        timer->status = TimerStatus::kPaused;
+        data->status = TimerStatus::kPaused;
 
         if (status != TimerStatus::kPending)
         {
-            timer->expire_time -= internal_time_;
+            data->expire_time -= internal_time_;
         }
     }
 }
 
 void TimerManager::UnPauseTimer(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    if (!timer || timer->status != TimerStatus::kPaused) return;
+    TimerData* data = FindTimer(handle);
+    if (!data || data->status != TimerStatus::kPaused) return;
 
     if (HasBeenTickedThisFrame())
     {
-        timer->expire_time += internal_time_;
-        timer->status = TimerStatus::kActive;
+        data->expire_time += internal_time_;
+        data->status = TimerStatus::kActive;
         active_timers_.push_back(handle);
     }
     else
     {
-        timer->status = TimerStatus::kPending;
+        data->status = TimerStatus::kPending;
         pending_timers_.push_back(handle);
     }
 
@@ -165,10 +183,11 @@ void TimerManager::UnPauseTimer(TimerHandle handle)
 
 void TimerManager::ClearAllTimers()
 {
-    for (auto& timer : timers_)
-    {
-        ClearTimer(timer.handle);
-    }
+    // 추후 재확인이 필요할 수 있음
+    timers_.clear();
+    active_timers_.clear();
+    paused_timers_.clear();
+    pending_timers_.clear();
 }
 
 TimerData& TimerManager::GetTimer(const TimerHandle& handle)
@@ -202,17 +221,17 @@ TimerData* TimerManager::FindTimer(const TimerHandle& kHandle)
 
 float TimerManager::GetTimerElapsed(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    if (timer)
+    TimerData* data = FindTimer(handle);
+    if (data)
     {
-        switch (timer->status)
+        switch (data->status)
         {
         case TimerStatus::kActive:
         case TimerStatus::kExecuting:
-            return timer->rate - (timer->expire_time - internal_time_);
+            return data->rate - (data->expire_time - internal_time_);
 
         default:
-            return timer->rate - timer->expire_time;
+            return data->rate - data->expire_time;
         }
     }
     
@@ -221,19 +240,19 @@ float TimerManager::GetTimerElapsed(TimerHandle handle)
 
 float TimerManager::GetTimerRemaining(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    if (timer)
+    TimerData* data = FindTimer(handle);
+    if (data)
     {
-        switch (timer->status)
+        switch (data->status)
         {
         case TimerStatus::kActive:
-            return timer->expire_time - internal_time_;
+            return data->expire_time - internal_time_;
             
         case TimerStatus::kExecuting:
             return 0.f;
 
         default:
-            return timer->expire_time;
+            return data->expire_time;
         }
     }
     
@@ -242,14 +261,14 @@ float TimerManager::GetTimerRemaining(TimerHandle handle)
 
 bool TimerManager::IsTimerActive(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    return timer && timer->status != TimerStatus::kPaused;
+    TimerData* data = FindTimer(handle);
+    return data && data->status != TimerStatus::kPaused;
 }
 
 bool TimerManager::IsTimerPaused(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
-    return timer && timer->status == TimerStatus::kPaused;
+    TimerData* data = FindTimer(handle);
+    return data && data->status == TimerStatus::kPaused;
 }
 
 void TimerManager::SetTimer_Internal(TimerHandle& handle, TimerData& data, float rate, bool loop, float delay)
@@ -294,9 +313,9 @@ void TimerManager::SetTimer_Internal(TimerHandle& handle, TimerData& data, float
 
 void TimerManager::ClearTimer_Internal(TimerHandle handle)
 {
-    TimerData* timer = FindTimer(handle);
+    TimerData& data = GetTimer(handle);
 
-    switch (timer->status)
+    switch (data.status)
     {
     case TimerStatus::kPending:
         {
@@ -307,13 +326,22 @@ void TimerManager::ClearTimer_Internal(TimerHandle handle)
         
     case TimerStatus::kActive:
         {
-            timer->status = TimerStatus::kRemoval;
+            data.status = TimerStatus::kRemoval;
+        }
+        break;
+
+    case TimerStatus::kPaused:
+        {
+            std::erase(paused_timers_, handle);
+            RemoveTimer(handle);
         }
         break;
 
     case TimerStatus::kExecuting:
-    case TimerStatus::kPaused:
         {
+            CHECK(executing_timer_ == handle);
+            
+            executing_timer_.Invalidate();
             RemoveTimer(handle);
         }
         break;
@@ -322,8 +350,6 @@ void TimerManager::ClearTimer_Internal(TimerHandle handle)
 
 void TimerManager::RemoveTimer(TimerHandle handle)
 {
-    const TimerData* kTimer = FindTimer(handle);
-    if (!kTimer) return;
-
-    std::erase(timers_, *kTimer);
+    const TimerData& kData = GetTimer(handle);
+    std::erase(timers_, kData);
 }

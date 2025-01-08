@@ -3,9 +3,9 @@
 
 #include "tmxlite/Tileset.hpp"
 #include "Windows/DX/Shape.h"
-#include "Windows/DX/Texture.h"
+#include "Windows/DX/Sprite.h"
 
-TilemapChunkArray::TilemapChunkArray(Texture* texture, const tmx::Tileset& kTileset, int order) :
+TilemapChunkArray::TilemapChunkArray(Sprite* texture, const tmx::Tileset& kTileset, int order) :
     texture_(texture),
     order_(order),
     shape_(nullptr)

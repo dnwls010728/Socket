@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Dummy.h"
 
-#include "Actor/Component/CapsuleColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/Animation.h"
 #include "Actor/Component/Animator/AnimationPack.h"
@@ -16,8 +16,8 @@ Dummy::Dummy(const std::wstring& kName) :
     sprite_ = asset_manager->Load<Sprite>(L"Sprites\\Character\\Mob\\Dummy\\DummySheet.png");
     animation_pack_ = asset_manager->Load<AnimationPack>(L"Sprites\\Character\\Mob\\Dummy\\DummySheet.png.animpack");
 
-    collider_->SetOffset({0.f, .5f});
-    collider_->SetSize({.5f, .5f});
+    collider_->SetRadius(.25f);
+    collider_->SetOffset({0.f, .25f});
     
     if (sprite_) renderer_->SetSprite(sprite_, L"DummySheet_5");
 

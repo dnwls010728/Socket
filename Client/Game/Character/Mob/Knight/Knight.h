@@ -1,8 +1,11 @@
 ﻿#pragma once
+#include "Character/Blackboard/Blackboard.h"
 #include "Character/Mob/MobBase.h"
 
-class KnightRun;
-class KnightIdle;
+namespace BT
+{
+    class Root;
+}
 
 class Knight : public MobBase
 {
@@ -13,13 +16,26 @@ public:
     Knight(const std::wstring& kName);
     virtual ~Knight() override = default;
 
-    FORCEINLINE KnightIdle* GetIdleState() const { return idle_state_.get(); }
-    FORCEINLINE KnightRun* GetRunState() const { return run_state_.get(); }
+protected:
+    virtual void BeginPlay() override;
+    virtual void PhysicsTick(float delta_time) override;
+    virtual void Tick(float delta_time) override;
+    virtual void PostTick(float delta_time) override;
+    
+    virtual void OnHit() override;
+    virtual void OnDeath() override;
 
 private:
+    void SetRandomLocation();
+    
     class AnimationPack* animation_pack_;
 
-    std::shared_ptr<KnightIdle> idle_state_;
-    std::shared_ptr<KnightRun> run_state_;
+    class ContextSteering* context_steering_;
+
+    std::shared_ptr<Blackboard::Blackboard> blackboard_;
+    std::shared_ptr<BT::Root> behavior_tree_;
+
+    Blackboard::BlackboardKey target_key_;
+    Blackboard::BlackboardKey location_key_;
     
 };
