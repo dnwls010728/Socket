@@ -9,15 +9,14 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
+#include "Character/BehaviorTree/Abort.h"
 #include "Character/BehaviorTree/ActionStrategy.h"
 #include "Character/BehaviorTree/Root.h"
 #include "Character/BehaviorTree/Leaf.h"
 #include "Character/BehaviorTree/Selector.h"
 #include "Character/BehaviorTree/Sequence.h"
-#include "Character/BehaviorTree/Wait.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/ContextSteering.h"
-#include "Character/Mob/BehaviorTree/CheckDetectorStrategy.h"
 #include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
 #include "Character/Mob/BehaviorTree/MoveToTargetStrategy.h"
 #include "Character/Player/PlayerCharacter.h"
@@ -58,19 +57,14 @@ Knight::Knight(const std::wstring& kName) :
     std::shared_ptr<BT::Selector> selector = std::make_shared<BT::Selector>(L"Selector");
 
     {
+        std::shared_ptr<BT::Abort> patrol_abort = std::make_shared<BT::Abort>(L"Target Not Found", [&]()
         {
-            std::shared_ptr<BT::Sequence> chase_sequence = std::make_shared<BT::Sequence>(L"Chase Sequence");
+            Actor* target = nullptr;
+            blackboard_->TryGetValue(target_key_, target);
+            return target != nullptr;
+        });
 
-            {
-                std::shared_ptr<BT::Leaf> check_detector = std::make_shared<BT::Leaf>(L"Check Detector", std::make_shared<BT::CheckDetectorStrategy>(blackboard_.get()));
-                chase_sequence->AddChild(check_detector);
-
-                std::shared_ptr<BT::Leaf> move_to_target = std::make_shared<BT::Leaf>(L"Move To Target", std::make_shared<BT::MoveToTargetStrategy>(blackboard_.get()));
-                chase_sequence->AddChild(move_to_target);
-            }
-        
-            selector->AddChild(chase_sequence);
-
+        {
             std::shared_ptr<BT::Sequence> patrol_sequence = std::make_shared<BT::Sequence>(L"Patrol Sequence");
 
             {
@@ -78,17 +72,37 @@ Knight::Knight(const std::wstring& kName) :
                 {
                     SetRandomLocation();
                 }));
+
                 patrol_sequence->AddChild(random_location);
-                
+
                 std::shared_ptr<BT::Leaf> move_to_location = std::make_shared<BT::Leaf>(L"Move To Location", std::make_shared<BT::MoveToLocationStrategy>(blackboard_.get()));
                 patrol_sequence->AddChild(move_to_location);
-
-                std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 2.f);
-                patrol_sequence->AddChild(wait);
             }
             
-            selector->AddChild(patrol_sequence);
+            patrol_abort->AddChild(patrol_sequence);
         }
+
+        selector->AddChild(patrol_abort);
+
+        std::shared_ptr<BT::Abort> chase_abort = std::make_shared<BT::Abort>(L"Target Found", [&]()
+        {
+            Actor* target = nullptr;
+            blackboard_->TryGetValue(target_key_, target);
+            return target == nullptr;
+        });
+
+        {
+            std::shared_ptr<BT::Sequence> chase_sequence = std::make_shared<BT::Sequence>(L"Chase Sequence");
+
+            {
+                std::shared_ptr<BT::Leaf> move_to_target = std::make_shared<BT::Leaf>(L"Move To Target", std::make_shared<BT::MoveToTargetStrategy>(blackboard_.get()));
+                chase_sequence->AddChild(move_to_target);
+            }
+
+            chase_abort->AddChild(chase_sequence);
+        }
+
+        selector->AddChild(chase_abort);
     }
 
     behavior_tree_->AddChild(selector);

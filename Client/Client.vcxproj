@@ -226,6 +226,7 @@
     <ClInclude Include="Game\Actor\ObjectPool\ObjectPool.h" />
     <ClInclude Include="Game\Actor\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\Actor\Tilemap.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Abort.h" />
     <ClInclude Include="Game\Character\BehaviorTree\ActionStrategy.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Root.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Condition.h" />
@@ -248,7 +249,6 @@
     <ClInclude Include="Game\Character\ContextSteering\IObstacle.h" />
     <ClInclude Include="Game\Character\FSM\State.h" />
     <ClInclude Include="Game\Character\FSM\StateMachine.h" />
-    <ClInclude Include="Game\Character\Mob\BehaviorTree\CheckDetectorStrategy.h" />
     <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.h" />
     <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
@@ -579,6 +579,7 @@
     <ClCompile Include="Game\Actor\ObjectPool\ObjectPool.cpp" />
     <ClCompile Include="Game\Actor\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Game\Actor\Tilemap.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Abort.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\ActionStrategy.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Root.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Condition.cpp" />
@@ -671,7 +672,6 @@
     <ClCompile Include="Game\Character\ContextSteering\ContextSteering.cpp" />
     <ClCompile Include="Game\Character\FSM\State.cpp" />
     <ClCompile Include="Game\Character\FSM\StateMachine.cpp" />
-    <ClCompile Include="Game\Character\Mob\BehaviorTree\CheckDetectorStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
