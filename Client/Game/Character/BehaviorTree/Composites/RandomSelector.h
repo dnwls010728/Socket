@@ -16,7 +16,7 @@ namespace BT
     private:
         const std::vector<std::shared_ptr<Node>>& GetShuffledChildren();
         
-        const std::vector<std::shared_ptr<Node>>& ShuffleChildren() const;
+        std::vector<std::shared_ptr<Node>> ShuffleChildren() const;
 
         std::vector<std::shared_ptr<Node>> shuffled_children_;
     

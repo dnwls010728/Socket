@@ -12,6 +12,7 @@
 #include "Character/BehaviorTree/Actions/ActionStrategy.h"
 #include "Character/BehaviorTree/Actions/Leaf.h"
 #include "Character/BehaviorTree/Actions/Wait.h"
+#include "Character/BehaviorTree/Composites/RandomSelector.h"
 #include "Character/BehaviorTree/Composites/Selector.h"
 #include "Character/BehaviorTree/Composites/Sequence.h"
 #include "Character/BehaviorTree/Decorators/Abort.h"
@@ -20,6 +21,7 @@
 #include "Character/ContextSteering/ContextSteering.h"
 #include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
 #include "Character/Mob/BehaviorTree/MoveToTargetStrategy.h"
+#include "Character/Mob/BehaviorTree/WaitForAnimationStrategy.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
@@ -47,6 +49,9 @@ Knight::Knight(const std::wstring& kName) :
     Blackboard::BlackboardKey self_key = blackboard_->GetOrRegisterKey(L"Self");
     blackboard_->SetValue(self_key, static_cast<Actor*>(this));
 
+    animator_speed_key_ = blackboard_->GetOrRegisterKey(L"AnimatorSpeed");
+    blackboard_->SetValue(animator_speed_key_, 0.f);
+
     state_key_ = blackboard_->GetOrRegisterKey(L"State");
     blackboard_->SetValue(state_key_, KnightState::kPatrol);
     
@@ -63,10 +68,6 @@ Knight::Knight(const std::wstring& kName) :
     {
         std::shared_ptr<BT::Abort> patrol_abort = std::make_shared<BT::Abort>(L"Target Not Found", [&]()
         {
-            // Actor* target = nullptr;
-            // blackboard_->TryGetValue(target_key_, target);
-            // return target != nullptr;
-
             KnightState state = KnightState::kPatrol;
             blackboard_->TryGetValue(state_key_, state);
             return state != KnightState::kPatrol;
@@ -97,10 +98,6 @@ Knight::Knight(const std::wstring& kName) :
 
         std::shared_ptr<BT::Abort> chase_abort = std::make_shared<BT::Abort>(L"Target Found", [&]()
         {
-            // Actor* target = nullptr;
-            // blackboard_->TryGetValue(target_key_, target);
-            // return target == nullptr;
-            
             KnightState state = KnightState::kPatrol;
             blackboard_->TryGetValue(state_key_, state);
             return state != KnightState::kChase;
@@ -118,16 +115,39 @@ Knight::Knight(const std::wstring& kName) :
         }
 
         selector->AddChild(chase_abort);
+
+        std::shared_ptr<BT::Abort> attack_abort = std::make_shared<BT::Abort>(L"Attack", [&]()
+        {
+            KnightState state = KnightState::kPatrol;
+            blackboard_->TryGetValue(state_key_, state);
+            return state != KnightState::kAttack;
+        });
+
+        {
+            std::shared_ptr<BT::Sequence> attack_sequence = std::make_shared<BT::Sequence>(L"Attack Sequence");
+
+            {
+                std::shared_ptr<BT::RandomSelector> random_selector = std::make_shared<BT::RandomSelector>(L"Random Selector");
+
+                {
+                    std::shared_ptr<BT::Leaf> attack = std::make_shared<BT::Leaf>(L"Attack", std::make_shared<BT::WaitForAnimationStrategy>(animator_, L"Attack_1"));
+                    random_selector->AddChild(attack);
+
+                    std::shared_ptr<BT::Leaf> attack_2 = std::make_shared<BT::Leaf>(L"Attack 2", std::make_shared<BT::WaitForAnimationStrategy>(animator_, L"Attack_2"));
+                    random_selector->AddChild(attack_2);
+                }
+
+                attack_abort->AddChild(random_selector);
+            }
+
+            attack_abort->AddChild(attack_sequence);
+        }
+
+        selector->AddChild(attack_abort);
     }
 
     behavior_tree_->AddChild(selector);
     
-}
-
-void Knight::BeginPlay()
-{
-    MobBase::BeginPlay();
-
 }
 
 void Knight::PhysicsTick(float delta_time)
@@ -151,7 +171,21 @@ void Knight::PhysicsTick(float delta_time)
         }
     }
 
-    blackboard_->SetValue(state_key_, target == nullptr ? KnightState::kPatrol : KnightState::kChase);
+    if (target)
+    {
+        float distance = (target->GetTransform()->GetPosition() - position).Magnitude();
+        if (distance <= 1.f)
+        {
+            blackboard_->SetValue(state_key_, KnightState::kAttack);
+        } else
+        {
+            blackboard_->SetValue(state_key_, KnightState::kChase);
+        }
+    } else
+    {
+        blackboard_->SetValue(state_key_, KnightState::kPatrol);
+    }
+
     blackboard_->SetValue(target_key_, target);
 }
 
@@ -160,21 +194,30 @@ void Knight::Tick(float delta_time)
     MobBase::Tick(delta_time);
 
     behavior_tree_->TickNode(delta_time);
-    
-    if (rigid_body_->GetLinearVelocity() != Math::Vector2::Zero())
-    {
-        renderer_->SetFlipX(rigid_body_->GetLinearVelocity().x < 0.f);
 
-        if (animator_->GetCurrentAnimation()->GetName() != L"Run")
-        {
-            animator_->PlayAnimation(L"Run");
-        }
-    }
-    else
+    KnightState state = KnightState::kPatrol;
+    blackboard_->TryGetValue(state_key_, state);
+
+    if (state == KnightState::kPatrol || state == KnightState::kChase)
     {
-        if (animator_->GetCurrentAnimation()->GetName() != L"Idle")
+        float animator_speed = 0.f;
+        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
+    
+        if (animator_speed > 0.f)
         {
-            animator_->PlayAnimation(L"Idle");
+            renderer_->SetFlipX(rigid_body_->GetLinearVelocity().x < 0.f);
+
+            if (animator_->GetCurrentAnimation()->GetName() != L"Run")
+            {
+                animator_->PlayAnimation(L"Run");
+            }
+        }
+        else
+        {
+            if (animator_->GetCurrentAnimation()->GetName() != L"Idle")
+            {
+                animator_->PlayAnimation(L"Idle");
+            }
         }
     }
     

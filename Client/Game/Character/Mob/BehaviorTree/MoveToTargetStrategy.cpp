@@ -31,6 +31,7 @@ BT::Node::Status BT::MoveToTargetStrategy::TickNode(float delta_time)
         
         self_key_ = blackboard_->GetOrRegisterKey(L"Self");
         target_key_ = blackboard_->GetOrRegisterKey(L"Target");
+        animator_speed_key_ = blackboard_->GetOrRegisterKey(L"AnimatorSpeed");
 
         if (Validate() != Node::Status::kRunning)
         {
@@ -47,6 +48,8 @@ BT::Node::Status BT::MoveToTargetStrategy::TickNode(float delta_time)
             Reset();
             return Node::Status::kSuccess;
         }
+
+        blackboard_->SetValue(animator_speed_key_, 1.f);
 
         ActorComponent* component = self_->GetComponent(ContextSteering::StaticClass());
         if (component)
@@ -100,6 +103,8 @@ BT::Node::Status BT::MoveToTargetStrategy::TickNode(float delta_time)
 
 void BT::MoveToTargetStrategy::Reset()
 {
+    blackboard_->SetValue(animator_speed_key_, 0.f);
+    
     if (context_steering_)
     {
         context_steering_->SetStoppingDistance(previous_stopping_distance_);

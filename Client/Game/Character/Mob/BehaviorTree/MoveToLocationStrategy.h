@@ -34,6 +34,7 @@ namespace BT
 
         Blackboard::BlackboardKey self_key_;
         Blackboard::BlackboardKey location_key_;
+        Blackboard::BlackboardKey animator_speed_key_;
 
         Actor* self_;
 

@@ -10,7 +10,8 @@ namespace BT
 enum class KnightState
 {
     kPatrol,
-    kChase
+    kChase,
+    kAttack
 };
 
 class Knight : public MobBase
@@ -23,7 +24,6 @@ public:
     virtual ~Knight() override = default;
 
 protected:
-    virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
     virtual void PostTick(float delta_time) override;
@@ -41,6 +41,7 @@ private:
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::Root> behavior_tree_;
 
+    Blackboard::BlackboardKey animator_speed_key_;
     Blackboard::BlackboardKey state_key_;
     Blackboard::BlackboardKey target_key_;
     Blackboard::BlackboardKey location_key_;
