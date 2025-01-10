@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "EditorMap.h"
 
-#include "Actor/Editor/Editor.h"
+#include "Editor/Editor.h"
 
 EditorMap::EditorMap(const std::wstring& kName) :
     Level(kName)

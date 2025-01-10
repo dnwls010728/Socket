@@ -3,7 +3,6 @@
 
 #include "WindowsWindow.h"
 #include "combaseapi.h"
-#include "../../SocketCore/Util/GlobalFreeManager.h"
 
 WindowsApplication::WindowsApplication() :
     instance_handle_(nullptr),

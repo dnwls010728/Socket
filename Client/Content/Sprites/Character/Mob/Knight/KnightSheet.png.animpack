@@ -47,3 +47,21 @@ animations:
       - KnightSheet_37
       - KnightSheet_38
       - KnightSheet_39
+  - name: Attack_1
+    frame_rate: 8
+    loop: false
+    frames:
+      - KnightSheet_60
+      - KnightSheet_61
+      - KnightSheet_62
+      - KnightSheet_63
+  - name: Attack_2
+    frame_rate: 8
+    loop: false
+    frames:
+      - KnightSheet_70
+      - KnightSheet_71
+      - KnightSheet_72
+      - KnightSheet_73
+      - KnightSheet_74
+      - KnightSheet_75

@@ -45,7 +45,7 @@ const std::vector<std::shared_ptr<BT::Node>>& BT::RandomSelector::GetShuffledChi
     return shuffled_children_;
 }
 
-const std::vector<std::shared_ptr<BT::Node>>& BT::RandomSelector::ShuffleChildren() const
+std::vector<std::shared_ptr<BT::Node>> BT::RandomSelector::ShuffleChildren() const
 {
     std::random_device rd;
     std::mt19937 g(rd());
