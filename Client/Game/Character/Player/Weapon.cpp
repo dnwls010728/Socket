@@ -3,8 +3,8 @@
 
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Actor/ObjectPool/Bullet.h"
-#include "Actor/ObjectPool/ObjectPool.h"
+#include "ObjectPool/Bullet.h"
+#include "ObjectPool/ObjectPool.h"
 #include "Asset/AssetManager.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
