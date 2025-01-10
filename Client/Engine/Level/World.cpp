@@ -7,7 +7,6 @@
 #include "Map/EditorMap.h"
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
-#include "Network/NetworkManager.h"
 #include "Time/TimerManager.h"
 #include "UI_OLD/Canvas.h"
 #include "Windows/WindowsWindow.h"
@@ -123,8 +122,6 @@ void World::Tick(float delta_time)
     
     if (current_level_)
     {
-        NetworkManager::Get()->Tick(delta_time);
-        
         current_level_->Tick(delta_time);
         
         ProcessActorActivation();
