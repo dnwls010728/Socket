@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include "Actor/NetworkActor.h"
+#include "Actor/Actor.h"
 
 class AnimatorComponent;
 class SpriteRendererComponent;
 
-class CharacterBase : public NetworkActor
+class CharacterBase : public Actor
 {
     SHADER_CLASS_HELPER(CharacterBase)
-    GENERATED_BODY(CharacterBase, NetworkActor)
+    GENERATED_BODY(CharacterBase, Actor)
     
 public:
     CharacterBase(const std::wstring& kName);

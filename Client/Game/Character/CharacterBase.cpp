@@ -8,7 +8,7 @@
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    NetworkActor(kName),
+    Actor(kName),
     is_dead_(false)
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
