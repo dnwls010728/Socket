@@ -4,6 +4,11 @@
 
 namespace UI
 {
+    class Widget;
+}
+
+namespace UI
+{
     class Canvas : public Singleton<Canvas>
     {
     public:
@@ -13,10 +18,12 @@ namespace UI
     private:
         friend class Core;
         friend class GameEngine;
+        friend class Widget;
         
         void OnEvent(const Event& kEvent);
-        void Tick(float delta_time);
         void Render();
+
+        std::vector<std::shared_ptr<Widget>> widgets_;
     
     };
 }

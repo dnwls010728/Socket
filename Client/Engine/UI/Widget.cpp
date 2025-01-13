@@ -1,18 +1,48 @@
 ﻿#include "pch.h"
 #include "Widget.h"
 
+#include "Canvas.h"
+
 UI::Widget::Widget() :
     parent_(nullptr),
     children_()
 {
 }
 
-void UI::Widget::Tick(float delta_time)
+void UI::Widget::AttachCanvas()
 {
+    Canvas* canvas = Canvas::Get();
+    canvas->widgets_.push_back(GetSharedThis());
+}
+
+void UI::Widget::DetachCanvas()
+{
+    Canvas* canvas = Canvas::Get();
+    std::erase(canvas->widgets_, GetSharedThis());
+}
+
+void UI::Widget::AttachParent(Widget* parent)
+{
+    if (parent_) DetachParent();
+    
+    parent_ = parent;
+    if (parent_) parent_->children_.push_back(GetSharedThis());
+}
+
+void UI::Widget::DetachParent()
+{
+    if (!parent_) return;
+
+    std::erase(parent_->children_, GetSharedThis());
+    parent_ = nullptr;
 }
 
 void UI::Widget::Render()
 {
+    for (const auto& child : children_)
+    {
+        child->Render();
+    }
 }
 
 RTTR_REGISTRATION

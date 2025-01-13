@@ -13,8 +13,14 @@ namespace UI
         Widget();
         virtual ~Widget() = default;
 
+        void AttachCanvas();
+        void DetachCanvas();
+        void AttachParent(Widget* parent);
+        void DetachParent();
+
     protected:
-        virtual void Tick(float delta_time);
+        friend class Canvas;
+        
         virtual void Render();
 
         Widget* parent_;

@@ -104,7 +104,6 @@ void GameEngine::Tick(float delta_time)
     
     World::Get()->PostTick(delta_time);
     Canvas_OLD::Get()->Tick(delta_time);
-    UI::Canvas::Get()->Tick(delta_time);
 }
 
 void GameEngine::Render(float alpha)
