@@ -21,6 +21,8 @@ public:
     FORCEINLINE bool IsDead() const { return is_dead_; }
 
 protected:
+    virtual void Tick(float delta_time) override;
+    
     virtual void OnHit();
     virtual void OnDeath();
     
