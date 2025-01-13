@@ -9,7 +9,6 @@
 #include "Math/Vector2.h"
 #include "Asset/AssetManager.h"
 #include "Time/Time.h"
-#include "UI/UICanvas.h"
 #include "UI_OLD/Canvas.h"
 #include "Windows/WindowDefinition.h"
 #include "Windows/WindowsWindow.h"
@@ -146,7 +145,6 @@ void Core::MainThread()
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
                 Canvas::Get()->OnEvent(event);
-                UICanvas::Get()->OnEvent(event);
                 World::Get()->OnEvent(event);
             }
             

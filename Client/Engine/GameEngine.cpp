@@ -7,10 +7,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include "Input/Keyboard.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
-#include "UI/UICanvas.h"
 #include "UI_OLD/Canvas.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -116,7 +114,6 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRenderD2D(game_window_);
     Canvas::Get()->Render();
-    UICanvas::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
