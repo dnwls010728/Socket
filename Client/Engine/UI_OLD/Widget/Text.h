@@ -2,7 +2,7 @@
 #include <DWrite.h>
 
 #include "Math/Color.h"
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Widget_OLD.h"
 
 enum class TextAnchor : Type::uint8
 {
@@ -16,10 +16,10 @@ enum class TextAnchor : Type::uint8
 
 ENUM_CLASS_FLAGS(TextAnchor)
 
-class Text : public Widget
+class Text : public Widget_OLD
 {
     SHADER_CLASS_HELPER(Text)
-    GENERATED_BODY(Text, Widget)
+    GENERATED_BODY(Text, Widget_OLD)
 
 public:
     Text(const std::wstring& kName);

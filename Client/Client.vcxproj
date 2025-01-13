@@ -192,8 +192,10 @@
     <ClInclude Include="Engine\PhysicsDebugDrawHelper.h" />
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
-    <ClInclude Include="Engine\UI_OLD\Canvas.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget.h" />
+    <ClInclude Include="Engine\UI\Canvas.h" />
+    <ClInclude Include="Engine\UI\Widget.h" />
+    <ClInclude Include="Engine\UI_OLD\Canvas_OLD.h" />
+    <ClInclude Include="Engine\UI_OLD\Widget_OLD.h" />
     <ClInclude Include="Engine\UI_OLD\Widget\Button.h" />
     <ClInclude Include="Engine\UI_OLD\Widget\EditableTextBox.h" />
     <ClInclude Include="Engine\UI_OLD\Widget\Image.h" />
@@ -540,8 +542,10 @@
     <ClCompile Include="Engine\PhysicsDebugDrawHelper.cpp" />
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Canvas.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget.cpp" />
+    <ClCompile Include="Engine\UI\Canvas.cpp" />
+    <ClCompile Include="Engine\UI\Widget.cpp" />
+    <ClCompile Include="Engine\UI_OLD\Canvas_OLD.cpp" />
+    <ClCompile Include="Engine\UI_OLD\Widget_OLD.cpp" />
     <ClCompile Include="Engine\UI_OLD\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI_OLD\Widget\EditableTextBox.cpp" />
     <ClCompile Include="Engine\UI_OLD\Widget\Image.cpp" />

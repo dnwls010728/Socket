@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
-#include "Canvas.h"
+#include "Canvas_OLD.h"
 
 #include "Logger.h"
-#include "Widget.h"
+#include "Widget_OLD.h"
 
-Canvas::Canvas() :
+Canvas_OLD::Canvas_OLD() :
     width_(0.f),
     height_(0.f),
     reference_resolution_width_(ProjectSettings::kCanvasReferenceWidth),
@@ -20,7 +20,7 @@ Canvas::Canvas() :
 {
 }
 
-Widget* Canvas::FindWidget(const std::wstring& kName)
+Widget_OLD* Canvas_OLD::FindWidget(const std::wstring& kName)
 {
     for (const auto& widget : widgets_)
     {
@@ -30,7 +30,7 @@ Widget* Canvas::FindWidget(const std::wstring& kName)
     return nullptr;
 }
 
-void Canvas::GetWidgets(std::vector<Widget*>& widgets) const
+void Canvas_OLD::GetWidgets(std::vector<Widget_OLD*>& widgets) const
 {
     for (const auto& widget : widgets_)
     {
@@ -38,7 +38,7 @@ void Canvas::GetWidgets(std::vector<Widget*>& widgets) const
     }
 }
 
-void Canvas::SetWidgetFocus(Widget* widget)
+void Canvas_OLD::SetWidgetFocus(Widget_OLD* widget)
 {
     for (const auto& focus_widget : focus_widgets_)
     {
@@ -60,7 +60,7 @@ void Canvas::SetWidgetFocus(Widget* widget)
     }
 }
 
-float Canvas::GetScaleRatio() const
+float Canvas_OLD::GetScaleRatio() const
 {
     const float width_ratio = width_ / static_cast<float>(reference_resolution_width_);
     const float height_ratio = height_ / static_cast<float>(reference_resolution_height_);
@@ -68,12 +68,12 @@ float Canvas::GetScaleRatio() const
     return width_ratio * (1.f - match_mode_) + height_ratio * match_mode_;
 }
 
-Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
+Widget_OLD* Canvas_OLD::RayCast(Widget_OLD* widget, const Math::Vector2& kPoint)
 {
     if (!widget) return nullptr;
     for (auto it = widget->children_.rbegin(); it != widget->children_.rend(); ++it)
     {
-        Widget* child = *it;
+        Widget_OLD* child = *it;
         if (child->is_active_ && child->HitTest(kPoint)) return RayCast(child, kPoint);
     }
 
@@ -81,11 +81,11 @@ Widget* Canvas::RayCast(Widget* widget, const Math::Vector2& kPoint)
     return nullptr;
 }
 
-Widget* Canvas::FindWidgetParentOfType(Widget* widget, const rttr::type& kType)
+Widget_OLD* Canvas_OLD::FindWidgetParentOfType(Widget_OLD* widget, const rttr::type& kType)
 {
     if (!widget) return nullptr;
     
-    Widget* parent = widget->parent_;
+    Widget_OLD* parent = widget->parent_;
     if (!parent) return nullptr;
 
     rttr::type parent_type = rttr::type::get(*parent);
@@ -93,7 +93,7 @@ Widget* Canvas::FindWidgetParentOfType(Widget* widget, const rttr::type& kType)
     return FindWidgetParentOfType(parent, kType);
 }
 
-bool Canvas::IsWidgetType(Widget* widget, const rttr::type& kType)
+bool Canvas_OLD::IsWidgetType(Widget_OLD* widget, const rttr::type& kType)
 {
     if (!widget) return false;
 
@@ -101,7 +101,7 @@ bool Canvas::IsWidgetType(Widget* widget, const rttr::type& kType)
     return widget_type.is_derived_from(kType);
 }
 
-void Canvas::OnEvent(const Event& kEvent)
+void Canvas_OLD::OnEvent(const Event& kEvent)
 {
     const Type::uint32& type = kEvent.type;
 
@@ -148,7 +148,7 @@ void Canvas::OnEvent(const Event& kEvent)
         
         if (root_widget_)
         {
-            Widget* drop_widget = RayCast(root_widget_, {kButton.x, kButton.y});
+            Widget_OLD* drop_widget = RayCast(root_widget_, {kButton.x, kButton.y});
             if (is_dragging_ && !kButton.is_pressed && drop_widget != dragging_widget_)
             {
                 if (drop_widget) drop_widget->OnDrop(mouse_position, dragging_widget_);
@@ -206,7 +206,7 @@ void Canvas::OnEvent(const Event& kEvent)
     }
 }
 
-void Canvas::BeginPlay()
+void Canvas_OLD::BeginPlay()
 {
     if (root_widget_)
     {
@@ -214,7 +214,7 @@ void Canvas::BeginPlay()
     }
 }
 
-void Canvas::Tick(float delta_time)
+void Canvas_OLD::Tick(float delta_time)
 {
     if (root_widget_)
     {
@@ -222,7 +222,7 @@ void Canvas::Tick(float delta_time)
     }
 }
 
-void Canvas::Render()
+void Canvas_OLD::Render()
 {
     if (root_widget_)
     {
@@ -230,7 +230,7 @@ void Canvas::Render()
     }
 }
 
-void Canvas::Clear()
+void Canvas_OLD::Clear()
 {
     mouse_position_ = Math::Vector2::Zero();
     

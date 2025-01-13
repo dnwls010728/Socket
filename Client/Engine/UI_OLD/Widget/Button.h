@@ -1,14 +1,14 @@
 ﻿#pragma once
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Widget_OLD.h"
 
 DECLARE_DELEGATE(ClickDelegate)
 
 class UITexture;
 
-class Button : public Widget
+class Button : public Widget_OLD
 {
     SHADER_CLASS_HELPER(Button)
-    GENERATED_BODY(Button, Widget)
+    GENERATED_BODY(Button, Widget_OLD)
     
 public:
     Button(const std::wstring& kName);

@@ -8,12 +8,12 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-class Widget;
+class Widget_OLD;
 
 DECLARE_DELEGATE(BeginDragDelegate, const Math::Vector2&)
 DECLARE_DELEGATE(DragDelegate, const Math::Vector2&, const Math::Vector2&)
 DECLARE_DELEGATE(EndDragDelegate, const Math::Vector2&)
-DECLARE_DELEGATE(DropDelegate, const Math::Vector2&, const Widget*)
+DECLARE_DELEGATE(DropDelegate, const Math::Vector2&, const Widget_OLD*)
 
 enum class AnchorPreset : Type::uint16
 {
@@ -34,14 +34,14 @@ enum class DrawMode : Type::uint8
     kSliced
 };
 
-class Widget : public std::enable_shared_from_this<Widget>
+class Widget_OLD : public std::enable_shared_from_this<Widget_OLD>
 {
-    SHADER_CLASS_HELPER(Widget)
-    GENERATED_BODY(Widget)
+    SHADER_CLASS_HELPER(Widget_OLD)
+    GENERATED_BODY(Widget_OLD)
     
 public:
-    Widget(const std::wstring& kName);
-    virtual ~Widget() = default;
+    Widget_OLD(const std::wstring& kName);
+    virtual ~Widget_OLD() = default;
 
     void SetAnchoredPosition(const Math::Vector2& kPosition);
     void SetPosition(const Math::Vector2& kPosition);
@@ -51,7 +51,7 @@ public:
     void SetPivot(const Math::Vector2& kPivot);
     void SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax);
     void SetAnchorPreset(AnchorPreset anchor, bool match_pivot = false);
-    void AttachToWidget(Widget* parent);
+    void AttachToWidget(Widget_OLD* parent);
     void DetachFromWidget();
 
     bool HitTest(const Math::Vector2& kPoint) const;
@@ -70,8 +70,8 @@ public:
     
     FORCEINLINE float GetAngle() const { return angle_; }
     
-    FORCEINLINE Widget* GetParent() const { return parent_; }
-    FORCEINLINE const std::vector<Widget*>& GetChildren() const { return children_; }
+    FORCEINLINE Widget_OLD* GetParent() const { return parent_; }
+    FORCEINLINE const std::vector<Widget_OLD*>& GetChildren() const { return children_; }
 
     FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
     FORCEINLINE bool IsActive() const { return is_active_; }
@@ -83,12 +83,12 @@ public:
     DropDelegate DropHandler;
 
 protected:
-    friend class Canvas;
+    friend class Canvas_OLD;
 
     virtual void BeginPlay();
     virtual void Tick(float delta_time);
     virtual void Render();
-    virtual void OnWidgetAttached(Widget* child);
+    virtual void OnWidgetAttached(Widget_OLD* child);
     virtual void UpdateRect();
 
     // Input Events
@@ -100,7 +100,7 @@ protected:
     virtual bool OnBeginDrag(const Math::Vector2& kPosition);
     virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnEndDrag(const Math::Vector2& kPosition);
-    virtual bool OnDrop(const Math::Vector2& kPosition, const Widget* kWidget);
+    virtual bool OnDrop(const Math::Vector2& kPosition, const Widget_OLD* kWidget);
     virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
     virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);
@@ -117,8 +117,8 @@ protected:
 
     float angle_;
 
-    Widget* parent_;
-    std::vector<Widget*> children_;
+    Widget_OLD* parent_;
+    std::vector<Widget_OLD*> children_;
 
     bool has_begun_play_;
     bool is_active_;

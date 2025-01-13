@@ -17,7 +17,7 @@ const TextAnchor Text::kLowerCenter = TextAnchor::kBottom | TextAnchor::kCenter;
 const TextAnchor Text::kLowerRight = TextAnchor::kBottom | TextAnchor::kRight;
 
 Text::Text(const std::wstring& kName) :
-    Widget(kName),
+    Widget_OLD(kName),
     text_(L"New Text"),
     font_family_(L"Nanum18"),
     text_alignment_(DWRITE_TEXT_ALIGNMENT_LEADING),
@@ -50,12 +50,12 @@ void Text::Render()
 
     renderer->DrawString(window, text_, rect_, pivot_position, color_, angle_, font_family_, text_alignment_, paragraph_alignment_);
     
-    Widget::Render();
+    Widget_OLD::Render();
 }
 
 bool Text::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
-    return Widget::OnMouseButton(kPosition, button, is_pressed);
+    return Widget_OLD::OnMouseButton(kPosition, button, is_pressed);
 }
 
 RTTR_REGISTRATION

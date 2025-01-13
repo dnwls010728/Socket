@@ -8,7 +8,7 @@
 #include "Windows/DX/UITexture.h"
 
 Image::Image(const std::wstring& kName) :
-    Widget(kName),
+    Widget_OLD(kName),
     texture_(nullptr),
     draw_mode_(DrawMode::kSimple),
     color_(Math::Color::White)
@@ -37,7 +37,7 @@ void Image::Render()
         renderer->DrawSolidBox(window, rect_, pivot_position, color_);
     }
     
-    Widget::Render();
+    Widget_OLD::Render();
 }
 
 RTTR_REGISTRATION

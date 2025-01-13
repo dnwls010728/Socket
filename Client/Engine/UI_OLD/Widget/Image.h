@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "Math/Color.h"
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Widget_OLD.h"
 
 class UITexture;
 
-class Image : public Widget
+class Image : public Widget_OLD
 {
     SHADER_CLASS_HELPER(Image)
-    GENERATED_BODY(Image, Widget);
+    GENERATED_BODY(Image, Widget_OLD);
     
 public:
     Image(const std::wstring& kName);

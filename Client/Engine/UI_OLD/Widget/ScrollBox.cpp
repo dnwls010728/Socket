@@ -3,11 +3,11 @@
 
 #include "Math/Color.h"
 #include "Math/Math.h"
-#include "UI_OLD/Canvas.h"
+#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/DX/Renderer.h"
 
 ScrollBox::ScrollBox(const std::wstring& kName) :
-    Widget(kName),
+    Widget_OLD(kName),
     content_width_(0.f),
     content_height_(0.f),
     scroll_offset_y_(0.f),
@@ -17,7 +17,7 @@ ScrollBox::ScrollBox(const std::wstring& kName) :
 
 void ScrollBox::BeginPlay()
 {
-    Widget::BeginPlay();
+    Widget_OLD::BeginPlay();
 
     float offset_y = 0.f;
     for (const auto& child : children_)
@@ -36,7 +36,7 @@ void ScrollBox::BeginPlay()
 
 void ScrollBox::Tick(float delta_time)
 {
-    Widget::Tick(delta_time);
+    Widget_OLD::Tick(delta_time);
 
     float previous_scroll_offset_y = scroll_offset_y_;
     float target_scroll_y = scroll_offset_y_;
@@ -62,17 +62,17 @@ void ScrollBox::Render()
     if (!window) return;
 
     renderer->BeginLayer(rect_);
-    Widget::Render();
+    Widget_OLD::Render();
     renderer->EndLayer();
 
-    const float ratio = Canvas::Get()->GetScaleRatio();
+    const float ratio = Canvas_OLD::Get()->GetScaleRatio();
 
     renderer->DrawBox(window, {rect_.x, rect_.y + scroll_offset_y_ * ratio, content_width_, content_height_}, {0, 0}, Math::Color::Red);
 }
 
 void ScrollBox::UpdateRect()
 {
-    Widget::UpdateRect();
+    Widget_OLD::UpdateRect();
     if (!has_begun_play_) return;
 
     content_width_ = 0.f;
@@ -87,7 +87,7 @@ void ScrollBox::UpdateRect()
 
 bool ScrollBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
-    if (rect_.y >= content_height_) return Widget::OnScroll(kPosition, kDelta);
+    if (rect_.y >= content_height_) return Widget_OLD::OnScroll(kPosition, kDelta);
     
     if (kDelta.y != 0.f)
     {
