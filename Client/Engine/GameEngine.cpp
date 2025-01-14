@@ -128,4 +128,7 @@ void GameEngine::EndFrame()
     World::Get()->SpawnActors();
     World::Get()->ProcessActorActivation();
     World::Get()->DestroyActors();
+
+    UI::Canvas::Get()->AttachWidgets();
+    UI::Canvas::Get()->DetachWidgets();
 }

@@ -11,14 +11,12 @@ UI::Widget::Widget() :
 
 void UI::Widget::AttachCanvas()
 {
-    Canvas* canvas = Canvas::Get();
-    canvas->widgets_.push_back(GetSharedThis());
+    Canvas::Get()->AttachWidget(GetSharedThis());
 }
 
 void UI::Widget::DetachCanvas()
 {
-    Canvas* canvas = Canvas::Get();
-    std::erase(canvas->widgets_, GetSharedThis());
+    Canvas::Get()->DetachWidget(GetSharedThis());
 }
 
 void UI::Widget::AttachParent(Widget* parent)

@@ -22,8 +22,14 @@ namespace UI
         
         void OnEvent(const Event& kEvent);
         void Render();
+        void AttachWidget(const std::shared_ptr<Widget>& widget);
+        void DetachWidget(const std::shared_ptr<Widget>& widget);
+        void AttachWidgets();
+        void DetachWidgets();
 
         std::vector<std::shared_ptr<Widget>> widgets_;
+        std::vector<std::shared_ptr<Widget>> pending_widgets_;
+        std::vector<std::shared_ptr<Widget>> pending_detach_widgets_;
     
     };
 }
