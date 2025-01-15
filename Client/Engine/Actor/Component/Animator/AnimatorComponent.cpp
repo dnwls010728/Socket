@@ -18,6 +18,8 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     current_frame_(0),
     transitions_(),
     bool_parameters_(),
+    float_parameters_(),
+    int_parameters_(),
     trigger_parameters_()
 {
 }
@@ -56,6 +58,16 @@ void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
     bool_parameters_[kName] = value;
 }
 
+void AnimatorComponent::SetFloat(const std::wstring& kName, float value)
+{
+    float_parameters_[kName] = value;
+}
+
+void AnimatorComponent::SetInt(const std::wstring& kName, int value)
+{
+    int_parameters_[kName] = value;
+}
+
 void AnimatorComponent::SetTrigger(const std::wstring& kName)
 {
     trigger_parameters_[kName] = true;
@@ -75,6 +87,16 @@ bool AnimatorComponent::GetTrigger(const std::wstring& kName)
     }
     
     return false;
+}
+
+float AnimatorComponent::GetFloat(const std::wstring& kName)
+{
+    return float_parameters_[kName];
+}
+
+int AnimatorComponent::GetInt(const std::wstring& kName)
+{
+    return int_parameters_[kName];
 }
 
 void AnimatorComponent::BeginPlay()

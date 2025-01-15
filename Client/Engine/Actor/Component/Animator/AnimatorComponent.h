@@ -31,10 +31,15 @@ public:
     void AddTransition(const std::wstring& kFrom, const std::wstring& kTo);
 
     void SetBool(const std::wstring& kName, bool value);
+    void SetFloat(const std::wstring& kName, float value);
+    void SetInt(const std::wstring& kName, int value);
     void SetTrigger(const std::wstring& kName);
 
     bool GetBool(const std::wstring& kName);
     bool GetTrigger(const std::wstring& kName);
+    
+    float GetFloat(const std::wstring& kName);
+    int GetInt(const std::wstring& kName);
 
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
 
@@ -71,6 +76,8 @@ private:
 
     std::unordered_map<std::wstring, std::vector<Transition>> transitions_;
     std::unordered_map<std::wstring, bool> bool_parameters_;
+    std::unordered_map<std::wstring, float> float_parameters_;
+    std::unordered_map<std::wstring, int> int_parameters_;
     std::unordered_map<std::wstring, bool> trigger_parameters_;
     
 };
