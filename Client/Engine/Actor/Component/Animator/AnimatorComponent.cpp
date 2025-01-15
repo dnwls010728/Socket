@@ -17,10 +17,7 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     is_playing_(false),
     current_frame_(0),
     transitions_(),
-    bool_parameters_(),
-    float_parameters_(),
-    int_parameters_(),
-    trigger_parameters_()
+    parameters_()
 {
 }
 
@@ -55,35 +52,41 @@ void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstr
 
 void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
 {
-    bool_parameters_[kName] = value;
+    parameters_[kName] = value;
 }
 
 void AnimatorComponent::SetFloat(const std::wstring& kName, float value)
 {
-    float_parameters_[kName] = value;
+    parameters_[kName] = value;
 }
 
 void AnimatorComponent::SetInt(const std::wstring& kName, int value)
 {
-    int_parameters_[kName] = value;
+    parameters_[kName] = value;
 }
 
 void AnimatorComponent::SetTrigger(const std::wstring& kName)
 {
-    trigger_parameters_[kName] = true;
+    parameters_[kName] = true;
 }
 
 bool AnimatorComponent::GetBool(const std::wstring& kName)
 {
-    return bool_parameters_[kName];
+    if (std::get_if<bool>(&parameters_[kName]))
+        return std::get<bool>(parameters_[kName]);
+
+    return false;
 }
 
 bool AnimatorComponent::GetTrigger(const std::wstring& kName)
 {
-    if (trigger_parameters_[kName])
+    if (std::get_if<bool>(&parameters_[kName]))
     {
-        trigger_parameters_[kName] = false;
-        return true;
+        if (std::get<bool>(parameters_[kName]))
+        {
+            parameters_[kName] = false;
+            return true;
+        }
     }
     
     return false;
@@ -91,12 +94,18 @@ bool AnimatorComponent::GetTrigger(const std::wstring& kName)
 
 float AnimatorComponent::GetFloat(const std::wstring& kName)
 {
-    return float_parameters_[kName];
+    if (std::get_if<float>(&parameters_[kName]))
+        return std::get<float>(parameters_[kName]);
+
+    return 0.f;
 }
 
 int AnimatorComponent::GetInt(const std::wstring& kName)
 {
-    return int_parameters_[kName];
+    if (std::get_if<int>(&parameters_[kName]))
+        return std::get<int>(parameters_[kName]);
+
+    return 0;
 }
 
 void AnimatorComponent::BeginPlay()

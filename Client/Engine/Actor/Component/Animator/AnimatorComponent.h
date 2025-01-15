@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <variant>
+
 #include "Actor/Component/ActorComponent.h"
 #include "Misc/DelegateMacros.h"
 
@@ -6,6 +8,8 @@ DECLARE_DELEGATE(OnAnimationDelegate)
 
 class Animation;
 class AnimationPack;
+
+using ParameterType = std::variant<bool, float, int>;
 
 class AnimatorComponent : public ActorComponent
 {
@@ -75,10 +79,7 @@ private:
     int current_frame_;
 
     std::unordered_map<std::wstring, std::vector<Transition>> transitions_;
-    std::unordered_map<std::wstring, bool> bool_parameters_;
-    std::unordered_map<std::wstring, float> float_parameters_;
-    std::unordered_map<std::wstring, int> int_parameters_;
-    std::unordered_map<std::wstring, bool> trigger_parameters_;
+    std::unordered_map<std::wstring, ParameterType> parameters_;
     
 };
 
