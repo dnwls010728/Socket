@@ -10,6 +10,7 @@
 #include "Asset/AssetManager.h"
 #include "Character/BehaviorTree/Actions/ActionStrategy.h"
 #include "Character/BehaviorTree/Actions/Leaf.h"
+#include "Character/BehaviorTree/Actions/SetAnimationTriggerStrategy.h"
 #include "Character/BehaviorTree/Actions/Wait.h"
 #include "Character/BehaviorTree/Composites/RandomSelector.h"
 #include "Character/BehaviorTree/Composites/Selector.h"
@@ -37,38 +38,34 @@ Knight::Knight(const std::wstring& kName) :
     animator_->SetAnimationPack(animation_pack_);
     animator_->PlayAnimation(L"Idle");
     
-    animator_->AddTransition(L"Idle", L"Run", [&]()
+    animator_->AddTransition(L"Idle", L"Run", [](AnimatorComponent* animator)
     {
-        float animator_speed = 0.f;
-        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
-        return animator_speed > 0.f;
+        return animator->GetFloat(L"Speed") > 0.f;
     });
     
-    animator_->AddTransition(L"Run", L"Idle", [&]()
+    animator_->AddTransition(L"Run", L"Idle", [](AnimatorComponent* animator)
     {
-        float animator_speed = 0.f;
-        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
-        return animator_speed <= 0.f;
+        return animator->GetFloat(L"Speed") == 0.f;
     });
 
-    animator_->AddTransition(L"Run", L"Attack_1", [&]()
+    animator_->AddTransition(L"Run", L"Attack_1", [](AnimatorComponent* animator)
     {
-        return animator_->GetTrigger(L"Attack_1");
+        return animator->GetTrigger(L"Attack_1");
     });
 
-    animator_->AddTransition(L"Idle", L"Attack_1", [&]()
+    animator_->AddTransition(L"Idle", L"Attack_1", [](AnimatorComponent* animator)
     {
-        return animator_->GetTrigger(L"Attack_1");
+        return animator->GetTrigger(L"Attack_1");
     });
     
-    animator_->AddTransition(L"Run", L"Attack_2", [&]()
+    animator_->AddTransition(L"Run", L"Attack_2", [](AnimatorComponent* animator)
     {
-        return animator_->GetTrigger(L"Attack_2");
+        return animator->GetTrigger(L"Attack_2");
     });
 
-    animator_->AddTransition(L"Idle", L"Attack_2", [&]()
+    animator_->AddTransition(L"Idle", L"Attack_2", [](AnimatorComponent* animator)
     {
-        return animator_->GetTrigger(L"Attack_2");
+        return animator->GetTrigger(L"Attack_2");
     });
 
     animator_->AddTransition(L"Attack_1", L"Idle");
@@ -83,9 +80,6 @@ Knight::Knight(const std::wstring& kName) :
     
     Blackboard::BlackboardKey self_key = blackboard_->GetOrRegisterKey(L"Self");
     blackboard_->SetValue(self_key, static_cast<Actor*>(this));
-
-    animator_speed_key_ = blackboard_->GetOrRegisterKey(L"AnimatorSpeed");
-    blackboard_->SetValue(animator_speed_key_, 0.f);
 
     state_key_ = blackboard_->GetOrRegisterKey(L"State");
     blackboard_->SetValue(state_key_, KnightState::kPatrol);
@@ -115,11 +109,7 @@ Knight::Knight(const std::wstring& kName) :
                 std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 1.f);
                 patrol_sequence->AddChild(wait);
                 
-                std::shared_ptr<BT::Leaf> random_location = std::make_shared<BT::Leaf>(L"Random Location", std::make_shared<BT::ActionStrategy>([&]()
-                {
-                    SetRandomLocation();
-                }));
-
+                std::shared_ptr<BT::Leaf> random_location = std::make_shared<BT::Leaf>(L"Random Location", std::make_shared<BT::ActionStrategy>(this, &Knight::SetRandomLocation));
                 patrol_sequence->AddChild(random_location);
 
                 std::shared_ptr<BT::Leaf> move_to_location = std::make_shared<BT::Leaf>(L"Move To Location", std::make_shared<BT::MoveToLocationStrategy>(blackboard_.get()));
@@ -165,16 +155,10 @@ Knight::Knight(const std::wstring& kName) :
                 std::shared_ptr<BT::RandomSelector> random_selector = std::make_shared<BT::RandomSelector>(L"Random Selector");
 
                 {
-                    std::shared_ptr<BT::Leaf> attack = std::make_shared<BT::Leaf>(L"Attack_1", std::make_shared<BT::ActionStrategy>([&]()
-                    {
-                        animator_->SetTrigger(L"Attack_1");
-                    }));
-                    random_selector->AddChild(attack);
+                    std::shared_ptr<BT::Leaf> attack_1 = std::make_shared<BT::Leaf>(L"Attack_1", std::make_shared<BT::SetAnimationTriggerStrategy>(animator_, L"Attack_1"));
+                    random_selector->AddChild(attack_1);
                     
-                    std::shared_ptr<BT::Leaf> attack_2 = std::make_shared<BT::Leaf>(L"Attack_2", std::make_shared<BT::ActionStrategy>([&]()
-                    {
-                        animator_->SetTrigger(L"Attack_2");
-                    }));
+                    std::shared_ptr<BT::Leaf> attack_2 = std::make_shared<BT::Leaf>(L"Attack_2", std::make_shared<BT::SetAnimationTriggerStrategy>(animator_, L"Attack_2"));
                     random_selector->AddChild(attack_2);
                 }
 
@@ -239,12 +223,10 @@ void Knight::Tick(float delta_time)
 
     behavior_tree_->TickNode(delta_time);
 
-    float animator_speed = 0.f;
-    blackboard_->TryGetValue(animator_speed_key_, animator_speed);
-    
-    if (animator_speed > 0.f)
+    float vel_x = rigid_body_->GetLinearVelocity().x;
+    if (vel_x != 0.f)
     {
-        renderer_->SetFlipX(rigid_body_->GetLinearVelocity().x < 0.f);
+        renderer_->SetFlipX(vel_x < 0.f);
     }
 }
 

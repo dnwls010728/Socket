@@ -43,7 +43,7 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
     }
 }
 
-void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(* func)())
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(* func)(AnimatorComponent*))
 {
     transitions_[kFrom].push_back({kTo, func});
 }
@@ -142,7 +142,7 @@ void AnimatorComponent::TickComponent(float delta_time)
 
     for (const auto& transition : transitions_[current_animation_->name_])
     {
-        if (transition.condition())
+        if (transition.condition(this))
         {
             PlayAnimation(transition.name);
             break;
@@ -150,7 +150,7 @@ void AnimatorComponent::TickComponent(float delta_time)
     }
 }
 
-bool AnimatorComponent::IsEnd()
+bool AnimatorComponent::IsEnd(AnimatorComponent* animator)
 {
     return current_frame_ >= current_animation_->frames_.size() - 1;
 }

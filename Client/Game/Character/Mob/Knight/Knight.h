@@ -43,7 +43,6 @@ private:
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::Root> behavior_tree_;
 
-    Blackboard::BlackboardKey animator_speed_key_;
     Blackboard::BlackboardKey state_key_;
     Blackboard::BlackboardKey target_key_;
     Blackboard::BlackboardKey location_key_;

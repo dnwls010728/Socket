@@ -3,6 +3,7 @@
 #include "Character/Blackboard/BlackboardKey.h"
 #include "Math/Vector2.h"
 
+class AnimatorComponent;
 class ContextSteering;
 class Actor;
 
@@ -36,7 +37,6 @@ namespace BT
 
         Blackboard::BlackboardKey self_key_;
         Blackboard::BlackboardKey target_key_;
-        Blackboard::BlackboardKey animator_speed_key_;
 
         Actor* self_;
         Actor* target_;
@@ -48,6 +48,7 @@ namespace BT
         float collider_offset_;
         float previous_stopping_distance_;
 
+        AnimatorComponent* animator_;
         ContextSteering* context_steering_;
     
     };

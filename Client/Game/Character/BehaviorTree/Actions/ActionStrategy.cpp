@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "ActionStrategy.h"
 
-BT::ActionStrategy::ActionStrategy(const Function<void()>& kFunc) :
-    func_(kFunc)
+BT::ActionStrategy::ActionStrategy(void(* func)()) :
+    func_(func)
 {
 }
 

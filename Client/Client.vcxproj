@@ -222,6 +222,10 @@
     <ClInclude Include="Game\Character\BehaviorTree\Actions\Condition.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Actions\IStrategy.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Actions\Leaf.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Actions\SetAnimationBoolStrategy.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Actions\SetAnimationFloatStrategy.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Actions\SetAnimationIntStrategy.h" />
+    <ClInclude Include="Game\Character\BehaviorTree\Actions\SetAnimationTriggerStrategy.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Actions\TimeOut.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Actions\Wait.h" />
     <ClInclude Include="Game\Character\BehaviorTree\Actions\WaitRange.h" />
@@ -566,6 +570,10 @@
     <ClCompile Include="Game\Character\BehaviorTree\Actions\ActionStrategy.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Actions\Condition.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Actions\Leaf.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Actions\SetAnimationBoolStrategy.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Actions\SetAnimationFloatStrategy.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Actions\SetAnimationIntStrategy.cpp" />
+    <ClCompile Include="Game\Character\BehaviorTree\Actions\SetAnimationTriggerStrategy.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Actions\TimeOut.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Actions\Wait.cpp" />
     <ClCompile Include="Game\Character\BehaviorTree\Actions\WaitRange.cpp" />

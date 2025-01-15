@@ -7,7 +7,16 @@ namespace BT
     class ActionStrategy : public IStrategy
     {
     public:
-        ActionStrategy(const Function<void(void)>& kFunc);
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
+        ActionStrategy(F&& func);
+        
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        ActionStrategy(M* target, void(M::*func)(void));
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        ActionStrategy(M* target, void(M::*func)(void) const);
+
+        ActionStrategy(void(*func)(void));
 
         virtual Node::Status TickNode(float delta_time) override;
 
@@ -15,4 +24,25 @@ namespace BT
         Function<void(void)> func_;
     
     };
+
+    template <typename F, typename>
+    ActionStrategy::ActionStrategy(F&& func) :
+        func_([](){})
+    {
+        func_ = std::forward<F>(func);
+    }
+
+    template <typename M, typename>
+    ActionStrategy::ActionStrategy(M* target, void(M::* func)()) :
+        func_([](){})
+    {
+        func_ = {target, func};
+    }
+
+    template <typename M, typename>
+    ActionStrategy::ActionStrategy(M* target, void(M::* func)() const) :
+        func_([](){})
+    {
+        func_ = {target, func};
+    }
 }
