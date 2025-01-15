@@ -33,6 +33,8 @@ protected:
 
 private:
     void SetRandomLocation();
+
+    bool CheckSpeed();
     
     class AnimationPack* animation_pack_;
 

@@ -15,7 +15,10 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     current_animation_(nullptr),
     timer_(0.f),
     is_playing_(false),
-    current_frame_(0)
+    current_frame_(0),
+    transitions_(),
+    bool_parameters_(),
+    trigger_parameters_()
 {
 }
 
@@ -36,6 +39,42 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
+}
+
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(* func)())
+{
+    transitions_[kFrom].push_back({kTo, func});
+}
+
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo)
+{
+    AddTransition(kFrom, kTo, this, &AnimatorComponent::IsEnd);
+}
+
+void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
+{
+    bool_parameters_[kName] = value;
+}
+
+void AnimatorComponent::SetTrigger(const std::wstring& kName)
+{
+    trigger_parameters_[kName] = true;
+}
+
+bool AnimatorComponent::GetBool(const std::wstring& kName)
+{
+    return bool_parameters_[kName];
+}
+
+bool AnimatorComponent::GetTrigger(const std::wstring& kName)
+{
+    if (trigger_parameters_[kName])
+    {
+        trigger_parameters_[kName] = false;
+        return true;
+    }
+    
+    return false;
 }
 
 void AnimatorComponent::BeginPlay()
@@ -72,12 +111,26 @@ void AnimatorComponent::TickComponent(float delta_time)
                 return;
             }
         }
-        
+
         current_frame_ = (current_frame_ + 1) % current_animation_->frames_.size();
 
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[current_frame_]);
     }
+
+    for (const auto& transition : transitions_[current_animation_->name_])
+    {
+        if (transition.condition())
+        {
+            PlayAnimation(transition.name);
+            break;
+        }
+    }
+}
+
+bool AnimatorComponent::IsEnd()
+{
+    return current_frame_ >= current_animation_->frames_.size() - 1;
 }
 
 RTTR_REGISTRATION

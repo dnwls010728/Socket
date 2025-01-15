@@ -16,6 +16,7 @@ Block::Block(const std::wstring& kName) :
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
     renderer_->SetSprite(sprite_, L"TX Plant_0");
+    renderer_->SetColor({255, 255, 255, 100});
 
     collider_ = AddComponent<CircleColliderComponent>(L"Collider");
     collider_->SetRadius(.2f);

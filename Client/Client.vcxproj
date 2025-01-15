@@ -243,7 +243,6 @@
     <ClInclude Include="Game\Character\FSM\StateMachine.h" />
     <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.h" />
     <ClInclude Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.h" />
-    <ClInclude Include="Game\Character\Mob\BehaviorTree\WaitForAnimationStrategy.h" />
     <ClInclude Include="Game\Character\Mob\Dummy\Dummy.h" />
     <ClInclude Include="Game\Character\Mob\Knight\Knight.h" />
     <ClInclude Include="Game\Character\Mob\MobBase.h" />
@@ -586,7 +585,6 @@
     <ClCompile Include="Game\Character\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToTargetStrategy.cpp" />
-    <ClCompile Include="Game\Character\Mob\BehaviorTree\WaitForAnimationStrategy.cpp" />
     <ClCompile Include="Game\Character\Mob\Dummy\Dummy.cpp" />
     <ClCompile Include="Game\Character\Mob\Knight\Knight.cpp" />
     <ClCompile Include="Game\Character\Mob\MobBase.cpp" />

@@ -5,7 +5,6 @@
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
-#include "Actor/Component/Animator/Animation.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
@@ -21,7 +20,6 @@
 #include "Character/ContextSteering/ContextSteering.h"
 #include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
 #include "Character/Mob/BehaviorTree/MoveToTargetStrategy.h"
-#include "Character/Mob/BehaviorTree/WaitForAnimationStrategy.h"
 #include "Character/Player/PlayerCharacter.h"
 #include "Input/Mouse.h"
 #include "Math/Math.h"
@@ -38,6 +36,43 @@ Knight::Knight(const std::wstring& kName) :
 
     animator_->SetAnimationPack(animation_pack_);
     animator_->PlayAnimation(L"Idle");
+    
+    animator_->AddTransition(L"Idle", L"Run", [&]()
+    {
+        float animator_speed = 0.f;
+        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
+        return animator_speed > 0.f;
+    });
+    
+    animator_->AddTransition(L"Run", L"Idle", [&]()
+    {
+        float animator_speed = 0.f;
+        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
+        return animator_speed <= 0.f;
+    });
+
+    animator_->AddTransition(L"Run", L"Attack_1", [&]()
+    {
+        return animator_->GetTrigger(L"Attack_1");
+    });
+
+    animator_->AddTransition(L"Idle", L"Attack_1", [&]()
+    {
+        return animator_->GetTrigger(L"Attack_1");
+    });
+    
+    animator_->AddTransition(L"Run", L"Attack_2", [&]()
+    {
+        return animator_->GetTrigger(L"Attack_2");
+    });
+
+    animator_->AddTransition(L"Idle", L"Attack_2", [&]()
+    {
+        return animator_->GetTrigger(L"Attack_2");
+    });
+
+    animator_->AddTransition(L"Attack_1", L"Idle");
+    animator_->AddTransition(L"Attack_2", L"Idle");
 
     // hp_ = 100.f;
     is_infinite_hp_ = true;
@@ -130,14 +165,23 @@ Knight::Knight(const std::wstring& kName) :
                 std::shared_ptr<BT::RandomSelector> random_selector = std::make_shared<BT::RandomSelector>(L"Random Selector");
 
                 {
-                    std::shared_ptr<BT::Leaf> attack = std::make_shared<BT::Leaf>(L"Attack", std::make_shared<BT::WaitForAnimationStrategy>(animator_, L"Attack_1"));
+                    std::shared_ptr<BT::Leaf> attack = std::make_shared<BT::Leaf>(L"Attack_1", std::make_shared<BT::ActionStrategy>([&]()
+                    {
+                        animator_->SetTrigger(L"Attack_1");
+                    }));
                     random_selector->AddChild(attack);
-
-                    std::shared_ptr<BT::Leaf> attack_2 = std::make_shared<BT::Leaf>(L"Attack 2", std::make_shared<BT::WaitForAnimationStrategy>(animator_, L"Attack_2"));
+                    
+                    std::shared_ptr<BT::Leaf> attack_2 = std::make_shared<BT::Leaf>(L"Attack_2", std::make_shared<BT::ActionStrategy>([&]()
+                    {
+                        animator_->SetTrigger(L"Attack_2");
+                    }));
                     random_selector->AddChild(attack_2);
                 }
 
-                attack_abort->AddChild(random_selector);
+                attack_sequence->AddChild(random_selector);
+
+                std::shared_ptr<BT::Wait> wait = std::make_shared<BT::Wait>(L"Wait", 1.f);
+                attack_sequence->AddChild(wait);
             }
 
             attack_abort->AddChild(attack_sequence);
@@ -195,32 +239,13 @@ void Knight::Tick(float delta_time)
 
     behavior_tree_->TickNode(delta_time);
 
-    KnightState state = KnightState::kPatrol;
-    blackboard_->TryGetValue(state_key_, state);
-
-    if (state == KnightState::kPatrol || state == KnightState::kChase)
+    float animator_speed = 0.f;
+    blackboard_->TryGetValue(animator_speed_key_, animator_speed);
+    
+    if (animator_speed > 0.f)
     {
-        float animator_speed = 0.f;
-        blackboard_->TryGetValue(animator_speed_key_, animator_speed);
-    
-        if (animator_speed > 0.f)
-        {
-            renderer_->SetFlipX(rigid_body_->GetLinearVelocity().x < 0.f);
-
-            if (animator_->GetCurrentAnimation()->GetName() != L"Run")
-            {
-                animator_->PlayAnimation(L"Run");
-            }
-        }
-        else
-        {
-            if (animator_->GetCurrentAnimation()->GetName() != L"Idle")
-            {
-                animator_->PlayAnimation(L"Idle");
-            }
-        }
+        renderer_->SetFlipX(rigid_body_->GetLinearVelocity().x < 0.f);
     }
-    
 }
 
 void Knight::PostTick(float delta_time)
@@ -258,6 +283,11 @@ void Knight::SetRandomLocation()
     }
 
     blackboard_->SetValue(location_key_, destination);
+}
+
+bool Knight::CheckSpeed()
+{
+    return false;
 }
 
 RTTR_REGISTRATION

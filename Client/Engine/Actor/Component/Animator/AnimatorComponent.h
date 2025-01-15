@@ -18,6 +18,24 @@ public:
 
     void PlayAnimation(const std::wstring& kName);
 
+    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<bool(void)>, std::decay_t<F>>>>
+    void AddTransition(const std::wstring& kFrom, const std::wstring& kTo, F&& func);
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void AddTransition(const std::wstring& kFrom, const std::wstring& kTo, M* target, bool(M::*func)(void));
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void AddTransition(const std::wstring& kFrom, const std::wstring& kTo, M* target, bool(M::*func)(void) const);
+
+    void AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(*func)(void));
+    void AddTransition(const std::wstring& kFrom, const std::wstring& kTo);
+
+    void SetBool(const std::wstring& kName, bool value);
+    void SetTrigger(const std::wstring& kName);
+
+    bool GetBool(const std::wstring& kName);
+    bool GetTrigger(const std::wstring& kName);
+
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
 
     FORCEINLINE Animation* GetCurrentAnimation() const { return current_animation_; }
@@ -31,6 +49,14 @@ protected:
     virtual void TickComponent(float delta_time) override;
 
 private:
+    struct Transition
+    {
+        std::wstring name;
+        Function<bool(void)> condition;
+    };
+    
+    bool IsEnd();
+    
     class SpriteRendererComponent* renderer_;
     
     AnimationPack* animation_pack_;
@@ -42,5 +68,37 @@ private:
     bool is_playing_;
 
     int current_frame_;
+
+    std::unordered_map<std::wstring, std::vector<Transition>> transitions_;
+    std::unordered_map<std::wstring, bool> bool_parameters_;
+    std::unordered_map<std::wstring, bool> trigger_parameters_;
     
 };
+
+template <typename F, typename>
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, F&& func)
+{
+    transitions_[kFrom].push_back({
+        kTo,
+        std::forward<F>(func)
+    });
+}
+
+template <typename M, typename>
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, M* target, bool(M::* func)())
+{
+    transitions_[kFrom].push_back({
+        kTo,
+        {target, func}
+    });
+}
+
+template <typename M, typename>
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, M* target,
+    bool(M::* func)() const)
+{
+    transitions_[kFrom].push_back({
+        kTo,
+        {target, func}
+    });
+}
