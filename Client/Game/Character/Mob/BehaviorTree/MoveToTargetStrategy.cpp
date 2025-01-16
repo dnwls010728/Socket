@@ -6,7 +6,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Character/Blackboard/Blackboard.h"
-#include "Character/ContextSteering/ContextSteering.h"
+#include "Character/ContextSteering/ContextSteeringComponent.h"
 
 BT::MoveToTargetStrategy::MoveToTargetStrategy(Blackboard::Blackboard* blackboard) :
     blackboard_(blackboard),
@@ -57,10 +57,10 @@ BT::Node::Status BT::MoveToTargetStrategy::TickNode(float delta_time)
             if (animator_) animator_->SetFloat(L"Speed", 1.f);
         }
 
-        ActorComponent* context_steering_component = self_->GetComponent(ContextSteering::StaticClass());
+        ActorComponent* context_steering_component = self_->GetComponent(ContextSteeringComponent::StaticClass());
         if (context_steering_component)
         {
-            context_steering_ = static_cast<ContextSteering*>(context_steering_component);
+            context_steering_ = static_cast<ContextSteeringComponent*>(context_steering_component);
             if (context_steering_)
             {
                 if (!context_steering_->IsStopped()) context_steering_->Stop();

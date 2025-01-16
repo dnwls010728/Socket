@@ -4,7 +4,7 @@
 #include "Math/Vector2.h"
 
 class AnimatorComponent;
-class ContextSteering;
+class ContextSteeringComponent;
 class Actor;
 
 namespace Blackboard
@@ -44,7 +44,7 @@ namespace BT
         float previous_stopping_distance_;
 
         AnimatorComponent* animator_;
-        ContextSteering* context_steering_;
+        ContextSteeringComponent* context_steering_;
     
     };
 }

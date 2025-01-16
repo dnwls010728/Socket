@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "ContextSteering.h"
+#include "ContextSteeringComponent.h"
 
 #include "DebugDrawHelper.h"
 #include "IObstacle.h"
@@ -10,7 +10,7 @@
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
 
-std::vector<Math::Vector2> ContextSteering::directions_ = {
+std::vector<Math::Vector2> ContextSteeringComponent::directions_ = {
     Math::Vector2(0.f, 1.f).Normalized(),
     Math::Vector2(1.f, 1.f).Normalized(),
     Math::Vector2(1.f, 0.f).Normalized(),
@@ -21,7 +21,7 @@ std::vector<Math::Vector2> ContextSteering::directions_ = {
     Math::Vector2(-1.f, 1.f).Normalized()
 };
 
-ContextSteering::ContextSteering(Actor* owner, const std::wstring& kName) :
+ContextSteeringComponent::ContextSteeringComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     rigid_body_(nullptr),
     speed_(3.5f),
@@ -34,26 +34,26 @@ ContextSteering::ContextSteering(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void ContextSteering::SetDestination(const Math::Vector2& destination)
+void ContextSteeringComponent::SetDestination(const Math::Vector2& destination)
 {
     destination_ = destination;
     is_stopped_ = false;
 }
 
-void ContextSteering::Stop()
+void ContextSteeringComponent::Stop()
 {
     is_stopped_ = true;
     if (rigid_body_) rigid_body_->SetLinearVelocity(Math::Vector2::Zero());
 }
 
-bool ContextSteering::IsComplete()
+bool ContextSteeringComponent::IsComplete()
 {
     Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
     float distance = Math::Vector2::Distance(position, destination_);
     return distance <= stopping_distance_;
 }
 
-void ContextSteering::BeginPlay()
+void ContextSteeringComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
@@ -61,7 +61,7 @@ void ContextSteering::BeginPlay()
     if (component) rigid_body_ = static_cast<RigidBody2DComponent*>(component);
 }
 
-void ContextSteering::PhysicsTickComponent(float delta_time)
+void ContextSteeringComponent::PhysicsTickComponent(float delta_time)
 {
     ActorComponent::PhysicsTickComponent(delta_time);
     if (is_stopped_) return;
@@ -74,7 +74,7 @@ void ContextSteering::PhysicsTickComponent(float delta_time)
     }
 }
 
-void ContextSteering::TickComponent(float delta_time)
+void ContextSteeringComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
     if (is_stopped_) return;
@@ -88,7 +88,7 @@ void ContextSteering::TickComponent(float delta_time)
     }
 }
 
-void ContextSteering::DetectObstacles()
+void ContextSteeringComponent::DetectObstacles()
 {
     Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
 
@@ -97,7 +97,7 @@ void ContextSteering::DetectObstacles()
     obstacles_ = out_actors;
 }
 
-void ContextSteering::GetDangerSteering(float (&danger)[8])
+void ContextSteeringComponent::GetDangerSteering(float (&danger)[8])
 {
     Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
 
@@ -126,7 +126,7 @@ void ContextSteering::GetDangerSteering(float (&danger)[8])
     }
 }
 
-void ContextSteering::GetSeekSteering(float (&interest)[8])
+void ContextSteeringComponent::GetSeekSteering(float (&interest)[8])
 {
     Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
     Math::Vector2 direction = destination_ - position;
@@ -145,7 +145,7 @@ void ContextSteering::GetSeekSteering(float (&interest)[8])
     }
 }
 
-Math::Vector2 ContextSteering::GetDirectionToMove()
+Math::Vector2 ContextSteeringComponent::GetDirectionToMove()
 {
     float danger[8] = {0.f};
     float interest[8] = {0.f};
@@ -184,7 +184,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<ContextSteering>("ContextSteering")
+    registration::class_<ContextSteeringComponent>("ContextSteeringComponent")
         .constructor<Actor*, const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

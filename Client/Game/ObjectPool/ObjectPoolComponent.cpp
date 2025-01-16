@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
-#include "ObjectPool.h"
+#include "ObjectPoolComponent.h"
 
 #include "Bullet.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Level/World.h"
 
-ObjectPool::ObjectPool(Actor* owner, const std::wstring& kName) :
+ObjectPoolComponent::ObjectPoolComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     pooled_object_class_(rttr::type::get<void>()),
     object_pool_(),
@@ -13,7 +13,7 @@ ObjectPool::ObjectPool(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void ObjectPool::BeginPlay()
+void ObjectPoolComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
@@ -27,14 +27,14 @@ void ObjectPool::BeginPlay()
             {
                 poolable_actor->SetActive(false);
                 poolable_actor->SetPoolIndex(i);
-                poolable_actor->DespawnHandler.Add(this, &ObjectPool::OnPooledObjectDespawn);
+                poolable_actor->DespawnHandler.Add(this, &ObjectPoolComponent::OnPooledObjectDespawn);
                 object_pool_.push_back(poolable_actor);
             }
         }
     }
 }
 
-PooledObject* ObjectPool::SpawnPooledObject()
+PooledObject* ObjectPoolComponent::SpawnPooledObject()
 {
     for (const auto& poolable_actor : object_pool_)
     {
@@ -69,7 +69,7 @@ PooledObject* ObjectPool::SpawnPooledObject()
     return nullptr;
 }
 
-void ObjectPool::OnPooledObjectDespawn(PooledObject* pool_actor)
+void ObjectPoolComponent::OnPooledObjectDespawn(PooledObject* pool_actor)
 {
     std::erase(spawned_pool_indexes_, pool_actor->GetPoolIndex());
 }
@@ -78,7 +78,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<ObjectPool>("ObjectPool")
+    registration::class_<ObjectPoolComponent>("ObjectPoolComponent")
         .constructor<Actor*, const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

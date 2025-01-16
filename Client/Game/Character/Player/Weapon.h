@@ -19,7 +19,7 @@ public:
 
 private:
     SpriteRendererComponent* renderer_;
-    class ObjectPool* bullet_pool_;
+    class ObjectPoolComponent* bullet_pool_;
     
     class Sprite* sprite_;
     

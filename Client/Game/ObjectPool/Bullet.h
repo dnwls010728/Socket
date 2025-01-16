@@ -22,7 +22,7 @@ private:
     class CircleColliderComponent* circle_collider_;
     RigidBody2DComponent* rigid_body_;
     class SpriteRendererComponent* renderer_;
-    class ObjectPool* hit_effect_pool_;
+    class ObjectPoolComponent* hit_effect_pool_;
 
     class Sprite* sprite_;
 

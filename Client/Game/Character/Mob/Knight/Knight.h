@@ -38,7 +38,7 @@ private:
     
     class AnimationPack* animation_pack_;
 
-    class ContextSteering* context_steering_;
+    class ContextSteeringComponent* context_steering_;
 
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
     std::shared_ptr<BT::Start> start_;

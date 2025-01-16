@@ -241,7 +241,7 @@
     <ClInclude Include="Game\Character\Blackboard\BlackboardEntry.h" />
     <ClInclude Include="Game\Character\Blackboard\BlackboardKey.h" />
     <ClInclude Include="Game\Character\CharacterBase.h" />
-    <ClInclude Include="Game\Character\ContextSteering\ContextSteering.h" />
+    <ClInclude Include="Game\Character\ContextSteering\ContextSteeringComponent.h" />
     <ClInclude Include="Game\Character\ContextSteering\IObstacle.h" />
     <ClInclude Include="Game\Character\FSM\State.h" />
     <ClInclude Include="Game\Character\FSM\StateMachine.h" />
@@ -259,7 +259,7 @@
     <ClInclude Include="Game\Map\MainMenu.h" />
     <ClInclude Include="Game\ObjectPool\Bullet.h" />
     <ClInclude Include="Game\ObjectPool\HitEffect.h" />
-    <ClInclude Include="Game\ObjectPool\ObjectPool.h" />
+    <ClInclude Include="Game\ObjectPool\ObjectPoolComponent.h" />
     <ClInclude Include="Game\ObjectPool\PooledObject.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Prop\Block.h" />
@@ -588,7 +588,7 @@
     <ClCompile Include="Game\Character\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Character\Blackboard\BlackboardKey.cpp" />
     <ClCompile Include="Game\Character\CharacterBase.cpp" />
-    <ClCompile Include="Game\Character\ContextSteering\ContextSteering.cpp" />
+    <ClCompile Include="Game\Character\ContextSteering\ContextSteeringComponent.cpp" />
     <ClCompile Include="Game\Character\FSM\State.cpp" />
     <ClCompile Include="Game\Character\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\Character\Mob\BehaviorTree\MoveToLocationStrategy.cpp" />
@@ -605,7 +605,7 @@
     <ClCompile Include="Game\Map\MainMenu.cpp" />
     <ClCompile Include="Game\ObjectPool\Bullet.cpp" />
     <ClCompile Include="Game\ObjectPool\HitEffect.cpp" />
-    <ClCompile Include="Game\ObjectPool\ObjectPool.cpp" />
+    <ClCompile Include="Game\ObjectPool\ObjectPoolComponent.cpp" />
     <ClCompile Include="Game\ObjectPool\PooledObject.cpp" />
     <ClCompile Include="Game\Prop\Block.cpp" />
     <ClCompile Include="Game\Tilemap.cpp" />

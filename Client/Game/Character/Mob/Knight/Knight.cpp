@@ -18,7 +18,7 @@
 #include "Character/BehaviorTree/Decorators/Abort.h"
 #include "Character/BehaviorTree/Decorators/Start.h"
 #include "Character/Blackboard/Blackboard.h"
-#include "Character/ContextSteering/ContextSteering.h"
+#include "Character/ContextSteering/ContextSteeringComponent.h"
 #include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
 #include "Character/Mob/BehaviorTree/MoveToTargetStrategy.h"
 #include "Character/Player/PlayerCharacter.h"
@@ -74,7 +74,7 @@ Knight::Knight(const std::wstring& kName) :
     // hp_ = 100.f;
     is_infinite_hp_ = true;
 
-    context_steering_ = AddComponent<ContextSteering>(L"Context Steering");
+    context_steering_ = AddComponent<ContextSteeringComponent>(L"Context Steering");
     
     blackboard_ = std::make_shared<Blackboard::Blackboard>();
     

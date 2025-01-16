@@ -3,7 +3,7 @@
 
 #include "HitEffect.h"
 #include "Logger.h"
-#include "ObjectPool.h"
+#include "ObjectPoolComponent.h"
 #include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
@@ -37,7 +37,7 @@ Bullet::Bullet(const std::wstring& kName) :
     sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Bullet\\02.png");
     renderer_->SetSprite(sprite_, L"02_0");
 
-    hit_effect_pool_ = AddComponent<ObjectPool>(L"HitEffectPool");
+    hit_effect_pool_ = AddComponent<ObjectPoolComponent>(L"HitEffectPool");
     hit_effect_pool_->SetPooledObjectClass(HitEffect::StaticClass());
 }
 
