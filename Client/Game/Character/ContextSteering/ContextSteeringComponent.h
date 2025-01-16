@@ -2,14 +2,14 @@
 #include "Actor/Component/ActorComponent.h"
 #include "Math/Vector2.h"
 
-class ContextSteering : public ActorComponent
+class ContextSteeringComponent : public ActorComponent
 {
-    SHADER_CLASS_HELPER(ContextSteering)
-    GENERATED_BODY(ContextSteering, ActorComponent)
+    SHADER_CLASS_HELPER(ContextSteeringComponent)
+    GENERATED_BODY(ContextSteeringComponent, ActorComponent)
     
 public:
-    ContextSteering(Actor* owner, const std::wstring& kName);
-    virtual ~ContextSteering() override = default;
+    ContextSteeringComponent(Actor* owner, const std::wstring& kName);
+    virtual ~ContextSteeringComponent() override = default;
 
     void SetDestination(const Math::Vector2& destination);
     void Stop();

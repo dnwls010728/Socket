@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Widget_OLD.h"
 
-class ScrollBox : public Widget
+class ScrollBox : public Widget_OLD
 {
     SHADER_CLASS_HELPER(ScrollBox)
-    GENERATED_BODY(ScrollBox, Widget)
+    GENERATED_BODY(ScrollBox, Widget_OLD)
     
 public:
     ScrollBox(const std::wstring& kName);

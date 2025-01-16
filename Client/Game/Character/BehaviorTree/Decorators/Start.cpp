@@ -1,13 +1,13 @@
 ﻿#include "pch.h"
-#include "Root.h"
+#include "Start.h"
 
-BT::Root::Root(const std::wstring& kName) :
+BT::Start::Start(const std::wstring& kName) :
     Node(kName),
     is_repeat_(true)
 {
 }
 
-BT::Node::Status BT::Root::TickNode(float delta_time)
+BT::Node::Status BT::Start::TickNode(float delta_time)
 {
     if (children_.empty()) return Status::kSuccess;
     

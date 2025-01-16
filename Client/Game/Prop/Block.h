@@ -13,10 +13,13 @@ public:
 
     virtual ColliderComponent* GetCollider() const override;
 
+protected:
+    virtual void Tick(float delta_time) override;
+
 private:
     class Sprite* sprite_;
 
     class SpriteRendererComponent* renderer_;
-    class BoxColliderComponent* collider_;
+    class CircleColliderComponent* collider_;
     
 };

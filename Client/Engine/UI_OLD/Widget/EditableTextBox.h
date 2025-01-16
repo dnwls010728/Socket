@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Widget_OLD.h"
 
 DECLARE_DELEGATE(OnTextEvent, wchar_t)
 
@@ -9,10 +9,10 @@ enum class ContentType
     Password
 };
 
-class EditableTextBox : public Widget
+class EditableTextBox : public Widget_OLD
 {
     SHADER_CLASS_HELPER(EditableTextBox)
-    GENERATED_BODY(EditableTextBox, Widget)
+    GENERATED_BODY(EditableTextBox, Widget_OLD)
     
 public:
     EditableTextBox(const std::wstring& kName);
@@ -40,7 +40,7 @@ protected:
     virtual bool OnChar(wchar_t character) override;
 
 private:
-    friend class Canvas;
+    friend class Canvas_OLD;
 
     void UpdateAdvances(const std::wstring& kString);
     

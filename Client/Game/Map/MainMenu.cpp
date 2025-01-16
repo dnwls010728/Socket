@@ -4,8 +4,8 @@
 #include "Input/Keyboard.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
-#include "UI_OLD/Canvas.h"
-#include "UI_OLD/Widget.h"
+#include "UI_OLD/Canvas_OLD.h"
+#include "UI_OLD/Widget_OLD.h"
 #include "UI_OLD/Widget/Button.h"
 #include "UI_OLD/Widget/EditableTextBox.h"
 #include "UI_OLD/Widget/Image.h"
@@ -23,7 +23,7 @@ void MainMenu::Load()
 {
     Level::Load();
     
-    Canvas* canvas = Canvas::Get();
+    Canvas_OLD* canvas = Canvas_OLD::Get();
 
     UITexture* texture = AssetManager::Get()->Load<UITexture>(L"Sprites\\UI\\Panel.png");
     texture->SetSlice9Rect({10.f, 10.f, 44.f, 44.f});

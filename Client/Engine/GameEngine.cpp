@@ -7,11 +7,10 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include "Input/Keyboard.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
-#include "UI/UICanvas.h"
-#include "UI_OLD/Canvas.h"
+#include "UI/Canvas.h"
+#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
@@ -104,7 +103,7 @@ void GameEngine::Tick(float delta_time)
     g_frame_counter++;
     
     World::Get()->PostTick(delta_time);
-    Canvas::Get()->Tick(delta_time);
+    Canvas_OLD::Get()->Tick(delta_time);
 }
 
 void GameEngine::Render(float alpha)
@@ -115,8 +114,8 @@ void GameEngine::Render(float alpha)
     World::Get()->Render(alpha);
     
     Renderer::Get()->BeginRenderD2D(game_window_);
-    Canvas::Get()->Render();
-    UICanvas::Get()->Render();
+    Canvas_OLD::Get()->Render();
+    UI::Canvas::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -129,4 +128,7 @@ void GameEngine::EndFrame()
     World::Get()->SpawnActors();
     World::Get()->ProcessActorActivation();
     World::Get()->DestroyActors();
+
+    UI::Canvas::Get()->AttachWidgets();
+    UI::Canvas::Get()->DetachWidgets();
 }

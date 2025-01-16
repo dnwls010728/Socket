@@ -42,6 +42,17 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     collider_->SetOffset({0.f, .25f});
     
     animator_->SetAnimationPack(animation_pack_);
+    animator_->PlayAnimation(L"Idle");
+
+    animator_->AddTransition(L"Idle", L"Run", [](AnimatorComponent* animator)
+    {
+        return animator->GetFloat(L"Speed") > 0.f;
+    });
+
+    animator_->AddTransition(L"Run", L"Idle", [](AnimatorComponent* animator)
+    {
+        return animator->GetFloat(L"Speed") == 0.f;
+    });
 
     state_machine_ = AddComponent<StateMachine>(L"StateMachine");
     
@@ -101,6 +112,8 @@ void PlayerCharacter::Tick(float delta_time)
 
     float length = (position - mouse_position).Magnitude();
     // DebugDrawHelper::Get()->DrawSegment(position, position + (length * direction), Math::Color::Red);
+    
+    animator_->SetFloat(L"Speed", rigid_body_->GetLinearVelocity().Magnitude());
 
     if (IsValid(weapon_))
     {

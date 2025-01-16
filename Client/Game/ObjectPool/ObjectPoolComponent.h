@@ -2,14 +2,14 @@
 #include "PooledObject.h"
 #include "Actor/Component/ActorComponent.h"
 
-class ObjectPool : public ActorComponent
+class ObjectPoolComponent : public ActorComponent
 {
-    SHADER_CLASS_HELPER(ObjectPool)
-    GENERATED_BODY(ObjectPool, ActorComponent)
+    SHADER_CLASS_HELPER(ObjectPoolComponent)
+    GENERATED_BODY(ObjectPoolComponent, ActorComponent)
     
 public:
-    ObjectPool(Actor* owner, const std::wstring& kName);
-    virtual ~ObjectPool() override = default;
+    ObjectPoolComponent(Actor* owner, const std::wstring& kName);
+    virtual ~ObjectPoolComponent() override = default;
 
     virtual void BeginPlay() override;
 

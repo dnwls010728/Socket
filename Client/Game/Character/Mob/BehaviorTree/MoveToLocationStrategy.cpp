@@ -4,8 +4,9 @@
 #include "Actor/Actor.h"
 #include "Actor/Component/ColliderComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Character/Blackboard/Blackboard.h"
-#include "Character/ContextSteering/ContextSteering.h"
+#include "Character/ContextSteering/ContextSteeringComponent.h"
 
 BT::MoveToLocationStrategy::MoveToLocationStrategy(Blackboard::Blackboard* blackboard) :
     blackboard_(blackboard),
@@ -13,7 +14,8 @@ BT::MoveToLocationStrategy::MoveToLocationStrategy(Blackboard::Blackboard* black
     self_(nullptr),
     distance_threshold_(.2f),
     previous_stopping_distance_(0.f),
-    context_steering_(nullptr)
+    context_steering_(nullptr),
+    animator_(nullptr)
 {
 }
 
@@ -27,7 +29,6 @@ BT::Node::Status BT::MoveToLocationStrategy::TickNode(float delta_time)
         
         self_key_ = blackboard_->GetOrRegisterKey(L"Self");
         location_key_ = blackboard_->GetOrRegisterKey(L"Location");
-        animator_speed_key_ = blackboard_->GetOrRegisterKey(L"AnimatorSpeed");
 
         if (Validate() != Node::Status::kRunning)
         {
@@ -43,12 +44,17 @@ BT::Node::Status BT::MoveToLocationStrategy::TickNode(float delta_time)
             return Node::Status::kFailure;
         }
 
-        blackboard_->SetValue(animator_speed_key_, 1.f);
-        
-        ActorComponent* component = self_->GetComponent(ContextSteering::StaticClass());
-        if (component)
+        ActorComponent* animator_component = self_->GetComponent(AnimatorComponent::StaticClass());
+        if (animator_component)
         {
-            context_steering_ = static_cast<ContextSteering*>(component);
+            animator_ = static_cast<AnimatorComponent*>(animator_component);
+            if (animator_) animator_->SetFloat(L"Speed", 1.f);
+        }
+        
+        ActorComponent* context_steering_component = self_->GetComponent(ContextSteeringComponent::StaticClass());
+        if (context_steering_component)
+        {
+            context_steering_ = static_cast<ContextSteeringComponent*>(context_steering_component);
             if (context_steering_)
             {
                 if (!context_steering_->IsStopped()) context_steering_->Stop();
@@ -82,7 +88,7 @@ BT::Node::Status BT::MoveToLocationStrategy::TickNode(float delta_time)
 
 void BT::MoveToLocationStrategy::Reset()
 {
-    blackboard_->SetValue(animator_speed_key_, 0.f);
+    if (animator_) animator_->SetFloat(L"Speed", 0.f);
     
     if (context_steering_)
     {

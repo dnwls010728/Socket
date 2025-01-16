@@ -15,7 +15,9 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     current_animation_(nullptr),
     timer_(0.f),
     is_playing_(false),
-    current_frame_(0)
+    current_frame_(0),
+    transitions_(),
+    parameters_()
 {
 }
 
@@ -36,6 +38,74 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[0]);
     }
+}
+
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(* func)(AnimatorComponent*))
+{
+    transitions_[kFrom].push_back({kTo, func});
+}
+
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo)
+{
+    AddTransition(kFrom, kTo, this, &AnimatorComponent::IsEnd);
+}
+
+void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
+{
+    parameters_[kName] = value;
+}
+
+void AnimatorComponent::SetFloat(const std::wstring& kName, float value)
+{
+    parameters_[kName] = value;
+}
+
+void AnimatorComponent::SetInt(const std::wstring& kName, int value)
+{
+    parameters_[kName] = value;
+}
+
+void AnimatorComponent::SetTrigger(const std::wstring& kName)
+{
+    parameters_[kName] = true;
+}
+
+bool AnimatorComponent::GetBool(const std::wstring& kName)
+{
+    if (std::get_if<bool>(&parameters_[kName]))
+        return std::get<bool>(parameters_[kName]);
+
+    return false;
+}
+
+bool AnimatorComponent::GetTrigger(const std::wstring& kName)
+{
+    if (std::get_if<bool>(&parameters_[kName]))
+    {
+        if (std::get<bool>(parameters_[kName]))
+        {
+            parameters_[kName] = false;
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+float AnimatorComponent::GetFloat(const std::wstring& kName)
+{
+    if (std::get_if<float>(&parameters_[kName]))
+        return std::get<float>(parameters_[kName]);
+
+    return 0.f;
+}
+
+int AnimatorComponent::GetInt(const std::wstring& kName)
+{
+    if (std::get_if<int>(&parameters_[kName]))
+        return std::get<int>(parameters_[kName]);
+
+    return 0;
 }
 
 void AnimatorComponent::BeginPlay()
@@ -72,12 +142,26 @@ void AnimatorComponent::TickComponent(float delta_time)
                 return;
             }
         }
-        
+
         current_frame_ = (current_frame_ + 1) % current_animation_->frames_.size();
 
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_->SetSprite(sprite, current_animation_->frames_[current_frame_]);
     }
+
+    for (const auto& transition : transitions_[current_animation_->name_])
+    {
+        if (transition.condition(this))
+        {
+            PlayAnimation(transition.name);
+            break;
+        }
+    }
+}
+
+bool AnimatorComponent::IsEnd(AnimatorComponent* animator)
+{
+    return current_frame_ >= current_animation_->frames_.size() - 1;
 }
 
 RTTR_REGISTRATION

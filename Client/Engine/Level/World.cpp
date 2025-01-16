@@ -8,7 +8,7 @@
 #include "Map/MainMap.h"
 #include "Map/MainMenu.h"
 #include "Time/TimerManager.h"
-#include "UI_OLD/Canvas.h"
+#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/ShapeBatch.h"
@@ -223,7 +223,7 @@ void World::TransitionLevel()
     {
         current_level_->Unload(EndPlayReason::kLevelTransition);
         TimerManager::Get()->ClearAllTimers();
-        Canvas::Get()->Clear();
+        Canvas_OLD::Get()->Clear();
     }
 
     current_level_ = pending_level_;
@@ -232,7 +232,7 @@ void World::TransitionLevel()
     current_level_->AddActor<Camera>(L"Main Camera");
     current_level_->Load();
 
-    Canvas::Get()->BeginPlay();
+    Canvas_OLD::Get()->BeginPlay();
     current_level_->InitializeActors();
     
     SpawnActors();

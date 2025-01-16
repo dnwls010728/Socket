@@ -4,7 +4,7 @@
 
 namespace BT
 {
-    class Root;
+    class Start;
 }
 
 enum class KnightState
@@ -33,15 +33,16 @@ protected:
 
 private:
     void SetRandomLocation();
+
+    bool CheckSpeed();
     
     class AnimationPack* animation_pack_;
 
-    class ContextSteering* context_steering_;
+    class ContextSteeringComponent* context_steering_;
 
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
-    std::shared_ptr<BT::Root> behavior_tree_;
+    std::shared_ptr<BT::Start> start_;
 
-    Blackboard::BlackboardKey animator_speed_key_;
     Blackboard::BlackboardKey state_key_;
     Blackboard::BlackboardKey target_key_;
     Blackboard::BlackboardKey location_key_;

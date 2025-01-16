@@ -8,7 +8,7 @@
 #include "Windows/DX/UITexture.h"
 
 Button::Button(const std::wstring& kName) :
-    Widget(kName),
+    Widget_OLD(kName),
     texture_(nullptr),
     draw_mode_(DrawMode::kSimple)
 {
@@ -33,7 +33,7 @@ void Button::Render()
         else renderer->DrawBitmap(window, texture_->GetTexture(), rect_, pivot_position, angle_, true, texture_->GetSlice9Rect());
     }
     
-    Widget::Render();
+    Widget_OLD::Render();
 }
 
 bool Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)

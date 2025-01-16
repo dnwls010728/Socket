@@ -1,13 +1,13 @@
 ﻿#include "pch.h"
-#include "Widget.h"
+#include "Widget_OLD.h"
 
-#include "Canvas.h"
+#include "Canvas_OLD.h"
 #include "Level/World.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
 #include "Windows/DX/Renderer.h"
 
-Widget::Widget(const std::wstring& kName) :
+Widget_OLD::Widget_OLD(const std::wstring& kName) :
     name_(kName),
     rect_(),
     position_(Math::Vector2::Zero()),
@@ -24,15 +24,15 @@ Widget::Widget(const std::wstring& kName) :
 {
 }
 
-void Widget::SetAnchoredPosition(const Math::Vector2& kPosition)
+void Widget_OLD::SetAnchoredPosition(const Math::Vector2& kPosition)
 {
     position_ = kPosition;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetPosition(const Math::Vector2& kPosition)
+void Widget_OLD::SetPosition(const Math::Vector2& kPosition)
 {
-    Canvas* canvas = Canvas::Get();
+    Canvas_OLD* canvas = Canvas_OLD::Get();
     const Type::uint32 canvas_width = canvas->width_;
     const Type::uint32 canvas_height = canvas->height_;
 
@@ -45,38 +45,38 @@ void Widget::SetPosition(const Math::Vector2& kPosition)
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetSize(const Math::Vector2& kSize)
+void Widget_OLD::SetSize(const Math::Vector2& kSize)
 {
     size_ = kSize;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetAnchorMin(const Math::Vector2& kAnchorMin)
+void Widget_OLD::SetAnchorMin(const Math::Vector2& kAnchorMin)
 {
     anchor_min_ = kAnchorMin;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetAnchorMax(const Math::Vector2& kAnchorMax)
+void Widget_OLD::SetAnchorMax(const Math::Vector2& kAnchorMax)
 {
     anchor_max_ = kAnchorMax;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetPivot(const Math::Vector2& kPivot)
+void Widget_OLD::SetPivot(const Math::Vector2& kPivot)
 {
     pivot_ = kPivot;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax)
+void Widget_OLD::SetAnchors(const Math::Vector2& kAnchorMin, const Math::Vector2& kAnchorMax)
 {
     anchor_min_ = kAnchorMin;
     anchor_max_ = kAnchorMax;
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
+void Widget_OLD::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
 {
     if (EnumHasAllFlags(anchor, AnchorPreset::kLeft | AnchorPreset::kTop)) SetAnchors({0.f, 1.f}, {0.f, 1.f});
     else if (EnumHasAllFlags(anchor, AnchorPreset::kRight | AnchorPreset::kTop)) SetAnchors({1.f, 1.f}, {1.f, 1.f});
@@ -109,7 +109,7 @@ void Widget::SetAnchorPreset(AnchorPreset anchor, bool match_pivot)
     }
 }
 
-void Widget::AttachToWidget(Widget* parent)
+void Widget_OLD::AttachToWidget(Widget_OLD* parent)
 {
     parent_ = parent;
     parent_->children_.push_back(this);
@@ -117,7 +117,7 @@ void Widget::AttachToWidget(Widget* parent)
     if (has_begun_play_) UpdateRect();
 }
 
-void Widget::DetachFromWidget()
+void Widget_OLD::DetachFromWidget()
 {
     if (!parent_) return;
 
@@ -128,14 +128,14 @@ void Widget::DetachFromWidget()
 }
 
 
-bool Widget::HitTest(const Math::Vector2& kPoint) const
+bool Widget_OLD::HitTest(const Math::Vector2& kPoint) const
 {
     return Math::Rect::Contains(rect_, kPoint);
 }
 
-Math::Vector2 Widget::GetPosition() const
+Math::Vector2 Widget_OLD::GetPosition() const
 {
-    Canvas* canvas = Canvas::Get();
+    Canvas_OLD* canvas = Canvas_OLD::Get();
     const Type::uint32 canvas_width = canvas->width_;
     const Type::uint32 canvas_height = canvas->height_;
 
@@ -146,12 +146,12 @@ Math::Vector2 Widget::GetPosition() const
     return {x, y};
 }
 
-Math::Vector2 Widget::GetPivotPosition() const
+Math::Vector2 Widget_OLD::GetPivotPosition() const
 {
     return {rect_.x + rect_.width * pivot_.x, rect_.y + rect_.height * (1.f - pivot_.y)};
 }
 
-void Widget::BeginPlay()
+void Widget_OLD::BeginPlay()
 {
     UpdateRect();
     has_begun_play_ = true;
@@ -162,7 +162,7 @@ void Widget::BeginPlay()
     }
 }
 
-void Widget::Tick(float delta_time)
+void Widget_OLD::Tick(float delta_time)
 {
     for (const auto& child : children_)
     {
@@ -170,7 +170,7 @@ void Widget::Tick(float delta_time)
     }
 }
 
-void Widget::Render()
+void Widget_OLD::Render()
 {
     if (is_focused_)
     {
@@ -193,18 +193,18 @@ void Widget::Render()
     }
 }
 
-void Widget::OnWidgetAttached(Widget* child)
+void Widget_OLD::OnWidgetAttached(Widget_OLD* child)
 {
 }
 
-void Widget::UpdateRect()
+void Widget_OLD::UpdateRect()
 {
     Type::uint32 parent_width;
     Type::uint32 parent_height;
     
     Math::Vector2 parent_position = {0.f, 0.f};
 
-    Canvas* canvas = Canvas::Get();
+    Canvas_OLD* canvas = Canvas_OLD::Get();
     const float scale_ratio = canvas->GetScaleRatio();
 
     if (parent_)
@@ -263,34 +263,34 @@ void Widget::UpdateRect()
 
     rect_ = {left, top, right, bottom};
 
-    for (Widget* child : children_)
+    for (Widget_OLD* child : children_)
     {
         child->UpdateRect();
     }
 }
 
-bool Widget::OnFocus(bool is_focused)
+bool Widget_OLD::OnFocus(bool is_focused)
 {
     is_focused_ = is_focused;
     return false;
 }
 
-bool Widget::OnMouseEnter()
+bool Widget_OLD::OnMouseEnter()
 {
     return false;
 }
 
-bool Widget::OnMouseLeave()
+bool Widget_OLD::OnMouseLeave()
 {
     return false;
 }
 
-bool Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool Widget_OLD::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     bool is_handled = false;
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
-        Widget* child = *it;
+        Widget_OLD* child = *it;
         if (!child->is_active_) continue;
 
         bool is_result = child->HitTest(kPosition);
@@ -309,20 +309,20 @@ bool Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& 
     return is_handled;
 }
 
-bool Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool Widget_OLD::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
-        Widget* child = *it;
+        Widget_OLD* child = *it;
         if (child->is_active_ && child->HitTest(kPosition) && child->OnMouseButton(kPosition, button, is_pressed))
             return true;
     }
 
-    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas::Get()->SetWidgetFocus(this);
+    if (button == MouseButton::kLeft && is_pressed && !is_focused_) Canvas_OLD::Get()->SetWidgetFocus(this);
     return false;
 }
 
-bool Widget::OnBeginDrag(const Math::Vector2& kPosition)
+bool Widget_OLD::OnBeginDrag(const Math::Vector2& kPosition)
 {
     if (BeginDragHandler.IsBound())
     {
@@ -333,7 +333,7 @@ bool Widget::OnBeginDrag(const Math::Vector2& kPosition)
     return false;
 }
 
-bool Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool Widget_OLD::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     if (DragHandler.IsBound())
     {
@@ -344,7 +344,7 @@ bool Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
     return false;
 }
 
-bool Widget::OnEndDrag(const Math::Vector2& kPosition)
+bool Widget_OLD::OnEndDrag(const Math::Vector2& kPosition)
 {
     if (EndDragHandler.IsBound())
     {
@@ -355,7 +355,7 @@ bool Widget::OnEndDrag(const Math::Vector2& kPosition)
     return false;
 }
 
-bool Widget::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
+bool Widget_OLD::OnDrop(const Math::Vector2& kPosition, const Widget_OLD* kWidget)
 {
     if (DropHandler.IsBound())
     {
@@ -366,11 +366,11 @@ bool Widget::OnDrop(const Math::Vector2& kPosition, const Widget* kWidget)
     return false;
 }
 
-bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool Widget_OLD::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     for (auto it = children_.rbegin(); it != children_.rend(); ++it)
     {
-        Widget* child = *it;
+        Widget_OLD* child = *it;
         if (!child->is_active_) continue;
         
         if (child->HitTest(kPosition) && child->OnScroll(kPosition, kDelta))
@@ -380,12 +380,12 @@ bool Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelt
     return false;
 }
 
-bool Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+bool Widget_OLD::OnKey(Type::uint16 key_code, bool is_pressed)
 {
     return false;
 }
 
-bool Widget::OnChar(wchar_t character)
+bool Widget_OLD::OnChar(wchar_t character)
 {
     return false;
 }
@@ -394,7 +394,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Widget>("Widget")
+    registration::class_<Widget_OLD>("Widget_OLD")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

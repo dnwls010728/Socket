@@ -5,12 +5,12 @@
 
 #include "Level/World.h"
 #include "Math/Color.h"
-#include "UI_OLD/Canvas.h"
+#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 
 EditableTextBox::EditableTextBox(const std::wstring& kName) :
-    Widget(kName),
+    Widget_OLD(kName),
     text_(L""),
     placeholder_(L""),
     font_family_(L"Nanum18"),
@@ -34,7 +34,7 @@ void EditableTextBox::SetText(const std::wstring& kText)
 
 void EditableTextBox::Tick(float delta_time)
 {
-    Widget::Tick(delta_time);
+    Widget_OLD::Tick(delta_time);
     if (!is_focused_) return;
 
     elapsed_time_ += delta_time;
@@ -74,7 +74,7 @@ void EditableTextBox::Render()
             advance = std::accumulate(advances_.begin(), advances_.begin() + cursor_index_, 0.f);
         }
 
-        const float scale_ratio = Canvas::Get()->GetScaleRatio();
+        const float scale_ratio = Canvas_OLD::Get()->GetScaleRatio();
 
         Math::Vector2 start = {text_rect_.x + advance + 1.f, text_rect_.y + 40.f * scale_ratio};
         Math::Vector2 end = start + Math::Vector2(0.f, text_rect_.height - 80.f * scale_ratio);
@@ -82,14 +82,14 @@ void EditableTextBox::Render()
     }
     renderer->EndLayer();
     
-    Widget::Render();
+    Widget_OLD::Render();
 }
 
 void EditableTextBox::UpdateRect()
 {
-    Widget::UpdateRect();
+    Widget_OLD::UpdateRect();
 
-    const float scale_ratio = Canvas::Get()->GetScaleRatio();
+    const float scale_ratio = Canvas_OLD::Get()->GetScaleRatio();
 
     // 텍스트 영역의 크기를 계산
     float left = rect_.x;
@@ -109,7 +109,7 @@ bool EditableTextBox::OnFocus(bool is_focused)
 {
     elapsed_time_ = 0.f;
     cursor_visible_ = is_focused;
-    return Widget::OnFocus(is_focused);
+    return Widget_OLD::OnFocus(is_focused);
 }
 
 bool EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)

@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "Block.h"
 
-#include "Actor/Component/BoxColliderComponent.h"
+#include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
 
@@ -11,17 +12,26 @@ Block::Block(const std::wstring& kName) :
 {
     SetLayer(ActorLayer::kBlock);
 
-    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Tilesets\\TemplateTileset.png");
+    sprite_ = AssetManager::Get()->Load<Sprite>(L"Sprites\\Tilesets\\TX Plant.png");
 
     renderer_ = AddComponent<SpriteRendererComponent>(L"Renderer");
-    renderer_->SetSprite(sprite_, L"TemplateTileset_0");
+    renderer_->SetSprite(sprite_, L"TX Plant_0");
+    renderer_->SetColor({255, 255, 255, 100});
 
-    collider_ = AddComponent<BoxColliderComponent>(L"Collider");
+    collider_ = AddComponent<CircleColliderComponent>(L"Collider");
+    collider_->SetRadius(.2f);
 }
 
 ColliderComponent* Block::GetCollider() const
 {
     return collider_;
+}
+
+void Block::Tick(float delta_time)
+{
+    Actor::Tick(delta_time);
+
+    renderer_->SetZOrder(static_cast<int>(std::round(GetTransform()->GetPosition().y)) * -1.f);
 }
 
 RTTR_REGISTRATION
