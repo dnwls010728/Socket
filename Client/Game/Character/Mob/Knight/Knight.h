@@ -4,7 +4,7 @@
 
 namespace BT
 {
-    class Root;
+    class Start;
 }
 
 enum class KnightState
@@ -41,7 +41,7 @@ private:
     class ContextSteering* context_steering_;
 
     std::shared_ptr<Blackboard::Blackboard> blackboard_;
-    std::shared_ptr<BT::Root> behavior_tree_;
+    std::shared_ptr<BT::Start> start_;
 
     Blackboard::BlackboardKey state_key_;
     Blackboard::BlackboardKey target_key_;

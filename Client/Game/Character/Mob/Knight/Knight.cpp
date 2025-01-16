@@ -16,7 +16,7 @@
 #include "Character/BehaviorTree/Composites/Selector.h"
 #include "Character/BehaviorTree/Composites/Sequence.h"
 #include "Character/BehaviorTree/Decorators/Abort.h"
-#include "Character/BehaviorTree/Decorators/Root.h"
+#include "Character/BehaviorTree/Decorators/Start.h"
 #include "Character/Blackboard/Blackboard.h"
 #include "Character/ContextSteering/ContextSteering.h"
 #include "Character/Mob/BehaviorTree/MoveToLocationStrategy.h"
@@ -90,7 +90,7 @@ Knight::Knight(const std::wstring& kName) :
     location_key_ = blackboard_->GetOrRegisterKey(L"Location");
     blackboard_->SetValue(location_key_, Math::Vector2::Zero());
     
-    behavior_tree_ = std::make_shared<BT::Root>(L"Knight");
+    start_ = std::make_shared<BT::Start>(L"Knight");
 
     std::shared_ptr<BT::Selector> selector = std::make_shared<BT::Selector>(L"Selector");
 
@@ -174,7 +174,7 @@ Knight::Knight(const std::wstring& kName) :
         selector->AddChild(attack_abort);
     }
 
-    behavior_tree_->AddChild(selector);
+    start_->AddChild(selector);
     
 }
 
@@ -221,7 +221,7 @@ void Knight::Tick(float delta_time)
 {
     MobBase::Tick(delta_time);
 
-    behavior_tree_->TickNode(delta_time);
+    start_->TickNode(delta_time);
 
     float vel_x = rigid_body_->GetLinearVelocity().x;
     if (vel_x != 0.f)

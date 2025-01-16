@@ -3,11 +3,11 @@
 
 namespace BT
 {
-    class Root : public Node
+    class Start : public Node
     {
     public:
-        Root(const std::wstring& kName);
-        virtual ~Root() override = default;
+        Start(const std::wstring& kName);
+        virtual ~Start() override = default;
 
         virtual Status TickNode(float delta_time) override;
 
