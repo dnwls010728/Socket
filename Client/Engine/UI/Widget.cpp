@@ -10,7 +10,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UI::Widget>("UI::Widget")
-        .constructor<const std::wstring&>()
+        .constructor<>()
         (
             policy::ctor::as_std_shared_ptr
         );
