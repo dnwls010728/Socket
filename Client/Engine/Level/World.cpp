@@ -21,7 +21,7 @@ void DrawSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2HexColor color, void
 void DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* context);
 void DrawTransform(b2Transform transform, void* context);
 void DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context);
-void DrawString(b2Vec2 p, const char* s, void* context);
+void DrawString(b2Vec2 p, const char* s, b2HexColor color, void* context);
 
 World::World() :
     window_(nullptr),
@@ -48,31 +48,33 @@ World::World() :
         {-FLT_MAX, -FLT_MAX},
         {FLT_MAX, FLT_MAX},
     };
+    
+    debug_draw_ = {};
 
-    debug_draw_ = {
-        DrawPolygon,
-        DrawSolidPolygon,
-        DrawCircle,
-        DrawSolidCircle,
-        DrawSolidCapsule,
-        DrawSegment,
-        DrawTransform,
-        DrawPoint,
-        DrawString,
-        bounds,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        this
-    };
+    debug_draw_.DrawPolygon = DrawPolygon;
+    debug_draw_.DrawSolidPolygon = DrawSolidPolygon;
+    debug_draw_.DrawCircle = DrawCircle;
+    debug_draw_.DrawSolidCircle = DrawSolidCircle;
+    debug_draw_.DrawSolidCapsule = DrawSolidCapsule;
+    debug_draw_.DrawSegment = DrawSegment;
+    debug_draw_.DrawTransform = DrawTransform;
+    debug_draw_.DrawPoint = DrawPoint;
+    debug_draw_.DrawString = DrawString;
+    debug_draw_.drawingBounds = bounds;
+
+    debug_draw_.useDrawingBounds = false;
+    debug_draw_.drawShapes = true;
+    debug_draw_.drawJoints = true;
+    debug_draw_.drawJointExtras = false;
+    debug_draw_.drawAABBs = false;
+    debug_draw_.drawMass = false;
+    debug_draw_.drawContacts = false;
+    debug_draw_.drawGraphColors = false;
+    debug_draw_.drawContactNormals = false;
+    debug_draw_.drawContactImpulses = false;
+    debug_draw_.drawFrictionImpulses = false;
+
+    debug_draw_.context = this;
 }
 
 World::~World()
@@ -418,7 +420,7 @@ void DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context)
     static_cast<World*>(context)->debug_draw_helper_.AddPoint(p, size, color);
 }
 
-void DrawString(b2Vec2 p, const char* s, void* context)
+void DrawString(b2Vec2 p, const char* s, b2HexColor color, void* context)
 {
     static_cast<World*>(context)->debug_draw_helper_.AddString(p, s);
 }

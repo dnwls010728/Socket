@@ -61,7 +61,7 @@ private:
     friend void DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* context);
     friend void DrawTransform(b2Transform transform, void* context);
     friend void DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context);
-    friend void DrawString(b2Vec2 p, const char* s, void* context);
+    friend void DrawString(b2Vec2 p, const char* s, b2HexColor color, void* context);
 
     friend class Core;
     friend class GameEngine;
