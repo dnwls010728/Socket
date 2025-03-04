@@ -9,7 +9,6 @@
 #include "imgui/imgui_impl_win32.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
-#include "UI/Canvas.h"
 #include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -115,7 +114,6 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRenderD2D(game_window_);
     Canvas_OLD::Get()->Render();
-    UI::Canvas::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -128,7 +126,4 @@ void GameEngine::EndFrame()
     World::Get()->SpawnActors();
     World::Get()->ProcessActorActivation();
     World::Get()->DestroyActors();
-
-    UI::Canvas::Get()->AttachWidgets();
-    UI::Canvas::Get()->DetachWidgets();
 }

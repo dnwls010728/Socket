@@ -24,7 +24,7 @@ private:
     friend void DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* context);
     friend void DrawTransform(b2Transform transform, void* context);
     friend void DrawPoint(b2Vec2 p, float size, b2HexColor color, void* context);
-    friend void DrawString(b2Vec2 p, const char* s, void* context);
+    friend void DrawString(b2Vec2 p, const char* s, b2HexColor color, void* context);
     
     void AddPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color);
     void AddSolidPolygon(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color);

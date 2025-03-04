@@ -12,19 +12,6 @@ namespace UI
     public:
         Widget();
         virtual ~Widget() = default;
-
-        void AttachCanvas();
-        void DetachCanvas();
-        void AttachParent(Widget* parent);
-        void DetachParent();
-
-    protected:
-        friend class Canvas;
-        
-        virtual void Render();
-
-        Widget* parent_;
-        std::vector<std::shared_ptr<Widget>> children_;
     
     };
 }
