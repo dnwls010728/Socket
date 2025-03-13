@@ -14,4 +14,4 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Solution
-        run: msbuild Socket.sln /p:Configuration=Release /p:Platform=x64
+        run: msbuild D:\Rider Projects\Socket\Socket.sln /p:Configuration=Release /p:Platform=x64
