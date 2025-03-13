@@ -3,7 +3,7 @@ name: Build Own Engine Project
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
