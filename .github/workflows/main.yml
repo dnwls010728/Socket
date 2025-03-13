@@ -1,0 +1,17 @@
+name: Build Own Engine Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build Own Engine Game
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Solution
+        run: msbuild Socket.sln /p:Configuration=Release /p:Platform=x64
