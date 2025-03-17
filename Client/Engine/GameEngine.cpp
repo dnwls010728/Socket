@@ -54,6 +54,8 @@ void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     ImGui_ImplWin32_Init(game_window_->GetHWnd());
     ImGui_ImplDX11_Init(Renderer::Get()->GetDevice(), Renderer::Get()->GetDeviceContext());
 #pragma endregion
+
+    ProjectSettings::Get()->Init();
     
 }
 
@@ -66,7 +68,7 @@ void GameEngine::GameLoop(float delta_time)
     Tick(delta_time);
 
     // 물리 시뮬레이션으로 인해 발생한 오차를 보정하기 위해 alpha를 계산
-    float alpha = accumulator_ / ProjectSettings::kFixedTimeStep;
+    float alpha = accumulator_ / EngineSettings::Get()->GetFixedTimeStep();
     Render(alpha);
     
     EndFrame();
@@ -92,10 +94,11 @@ void GameEngine::Tick(float delta_time)
     
     AudioManager::Get()->Tick();
 
-    while (accumulator_ >= ProjectSettings::kFixedTimeStep)
+    EngineSettings* settings = EngineSettings::Get();
+    while (accumulator_ >= settings->GetFixedTimeStep())
     {
-        World::Get()->PhysicsTick(ProjectSettings::kFixedTimeStep);
-        accumulator_ -= ProjectSettings::kFixedTimeStep;
+        World::Get()->PhysicsTick(settings->GetFixedTimeStep());
+        accumulator_ -= settings->GetFixedTimeStep();
     }
 
     World::Get()->Tick(delta_time);

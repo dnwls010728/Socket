@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ActorTag.h"
 #include "box2d/id.h"
 #include "Misc/DelegateMacros.h"
 #include "Misc/EngineMacros.h"

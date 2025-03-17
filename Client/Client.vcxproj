@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Engine\ActorLayer.h" />
+    <ClInclude Include="Engine\ActorTag.h" />
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Camera.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Engine\Data\FileHelper.h" />
     <ClInclude Include="Engine\Data\RegistryHelper.h" />
     <ClInclude Include="Engine\DebugDrawHelper.h" />
+    <ClInclude Include="Engine\EngineSettings.h" />
     <ClInclude Include="Engine\Enums.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
     <ClInclude Include="Engine\Event\Events.h" />
@@ -260,6 +263,7 @@
     <ClInclude Include="Game\ObjectPool\HitEffect.h" />
     <ClInclude Include="Game\ObjectPool\ObjectPoolComponent.h" />
     <ClInclude Include="Game\ObjectPool\PooledObject.h" />
+    <ClInclude Include="Game\OLD_ProjectSettings.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Prop\Block.h" />
     <ClInclude Include="Game\Tilemap.h" />
@@ -525,6 +529,7 @@
     <ClCompile Include="Engine\Data\FileHelper.cpp" />
     <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
     <ClCompile Include="Engine\DebugDrawHelper.cpp" />
+    <ClCompile Include="Engine\EngineSettings.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Input\Keyboard.cpp" />
@@ -605,6 +610,7 @@
     <ClCompile Include="Game\ObjectPool\HitEffect.cpp" />
     <ClCompile Include="Game\ObjectPool\ObjectPoolComponent.cpp" />
     <ClCompile Include="Game\ObjectPool\PooledObject.cpp" />
+    <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Prop\Block.cpp" />
     <ClCompile Include="Game\Tilemap.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">

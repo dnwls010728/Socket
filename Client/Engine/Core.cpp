@@ -37,13 +37,15 @@ void Core::Init()
     const int screen_width = GetSystemMetrics(SM_CXSCREEN);
     const int screen_height = GetSystemMetrics(SM_CYSCREEN);
 
+    EngineSettings* settings = EngineSettings::Get();
+
     // 게임 윈도우 정의 생성
     std::shared_ptr<WindowDefinition> definition = std::make_shared<WindowDefinition>();
-    definition->title = ProjectSettings::kWindowTitle;
-    definition->screen_x = screen_width * .5f - ProjectSettings::kScreenWidth * .5f;
-    definition->screen_y = screen_height * .5f - ProjectSettings::kScreenHeight * .5f;
-    definition->width = ProjectSettings::kScreenWidth;
-    definition->height = ProjectSettings::kScreenHeight;
+    definition->title = settings->GetWindowTitle();
+    definition->screen_x = screen_width * .5f - settings->GetScreenWidth() * .5f;
+    definition->screen_y = screen_height * .5f - settings->GetScreenHeight() * .5f;
+    definition->width = settings->GetScreenWidth();
+    definition->height = settings->GetScreenHeight();
 
     // 게임 윈도우 생성
     std::shared_ptr<WindowsWindow> new_window = application->MakeWindow();

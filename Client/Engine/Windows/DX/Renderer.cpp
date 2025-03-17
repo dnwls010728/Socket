@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Renderer.h"
 
-#include "ProjectSettings.h"
+#include "OLD_ProjectSettings.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
 #include "Math/Vector2.h"
@@ -392,7 +392,7 @@ void Renderer::EndRender()
     CHECK_IF(current_viewport_, L"Not Set current viewport.");
 
     d3d_device_context_->OMSetRenderTargets(0, nullptr, nullptr);
-    current_viewport_->dxgi_swap_chain->Present(ProjectSettings::kUseVSync, 0);
+    current_viewport_->dxgi_swap_chain->Present(EngineSettings::Get()->IsUseVSync(), 0);
 
     current_viewport_ = nullptr;
 }
