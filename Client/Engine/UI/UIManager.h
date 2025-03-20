@@ -12,9 +12,11 @@ namespace UI
 
         void Tick(float delta_time);
         void Render();
+        void AddWidget(std::shared_ptr<Widget> widget);
+        void RemoveWidget(std::shared_ptr<Widget> widget);
 
     private:
-        std::vector<std::shared_ptr<UI::Widget>> widgets_;
+        std::vector<std::shared_ptr<Widget>> widgets_;
     
     };
 }

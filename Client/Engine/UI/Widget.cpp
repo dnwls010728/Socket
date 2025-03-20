@@ -1,7 +1,17 @@
 ﻿#include "pch.h"
 #include "Widget.h"
 
+#include "Input/Keyboard.h"
+
 UI::Widget::Widget()
+{
+}
+
+void UI::Widget::Tick(float delta_time)
+{
+}
+
+void UI::Widget::Render()
 {
 }
 

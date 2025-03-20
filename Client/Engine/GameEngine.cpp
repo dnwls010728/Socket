@@ -9,7 +9,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
-#include "UI/Manager.h"
+#include "UI/UIManager.h"
 #include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"

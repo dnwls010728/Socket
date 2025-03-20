@@ -12,6 +12,9 @@ namespace UI
     public:
         Widget();
         virtual ~Widget() = default;
+
+        void Tick(float delta_time);
+        void Render();
     
     };
 }
