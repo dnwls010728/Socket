@@ -9,6 +9,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
+#include "UI/Manager.h"
 #include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -106,6 +107,7 @@ void GameEngine::Tick(float delta_time)
     
     World::Get()->PostTick(delta_time);
     Canvas_OLD::Get()->Tick(delta_time);
+    UI::Manager::Get()->Tick(delta_time);
 }
 
 void GameEngine::Render(float alpha)
@@ -117,6 +119,7 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRenderD2D(game_window_);
     Canvas_OLD::Get()->Render();
+    UI::Manager::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
