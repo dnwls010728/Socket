@@ -4,9 +4,6 @@
 #include "DebugDrawHelper.h"
 #include "Actor/Camera.h"
 #include "box2d/box2d.h"
-#include "Map/EditorMap.h"
-#include "Map/MainMap.h"
-#include "Map/MainMenu.h"
 #include "Time/TimerManager.h"
 #include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
@@ -86,12 +83,6 @@ World::~World()
 void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
-
-    AddLevel<EditorMap>(LevelType::kEditor, L"Editor");
-    AddLevel<MainMenu>(LevelType::kMainMenu, L"Main Menu");
-    AddLevel<MainMap>(LevelType::kDefault, L"Unknown");
-    
-    OpenLevel(LevelType::kMainMenu);
 
     debug_draw_helper_.Init();
     DebugDrawHelper::Get()->Init();

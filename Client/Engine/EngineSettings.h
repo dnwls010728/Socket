@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ActorLayer.h"
+#include "Singleton.h"
 
 class EngineSettings : public Singleton<EngineSettings>
 {

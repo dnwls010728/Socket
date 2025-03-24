@@ -77,7 +77,8 @@ void GameEngine::GameLoop(float delta_time)
 
 void GameEngine::OnQuit()
 {
-    World::Get()->GetLevel()->Unload(EndPlayReason::kQuit);
+    Level* level = World::Get()->GetLevel();
+    if (level) level->Unload(EndPlayReason::kQuit);
 }
 
 void GameEngine::StartFrame()

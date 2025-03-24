@@ -19,11 +19,6 @@ void ProjectSettings::Init()
     settings->SetFixedTimeStep(.02f);
 
     // 레이어 충돌 매트릭스 설정
-    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet | ActorLayer::kBlock);
-    settings->AddCollisionLayer(ActorLayer::kGround, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet | ActorLayer::kBlock);
-    settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kBlock);
-    settings->AddCollisionLayer(ActorLayer::kMob, ActorLayer::kBullet | ActorLayer::kGround | ActorLayer::kDefault | ActorLayer::kBlock);
-    settings->AddCollisionLayer(ActorLayer::kBullet, ActorLayer::kMob | ActorLayer::kBlock);
-    settings->AddCollisionLayer(ActorLayer::kBlock, ActorLayer::kDefault | ActorLayer::kGround | ActorLayer::kPlayer | ActorLayer::kMob | ActorLayer::kBullet);
+    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
     
 }

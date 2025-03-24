@@ -7,9 +7,9 @@
 Canvas_OLD::Canvas_OLD() :
     width_(0.f),
     height_(0.f),
-    reference_resolution_width_(OLD_ProjectSettings::kCanvasReferenceWidth),
-    reference_resolution_height_(OLD_ProjectSettings::kCanvasReferenceHeight),
-    match_mode_(OLD_ProjectSettings::kMatchMode),
+    reference_resolution_width_(640),
+    reference_resolution_height_(480),
+    match_mode_(0.f),
     widgets_(),
     focus_widgets_(),
     root_widget_(nullptr),
