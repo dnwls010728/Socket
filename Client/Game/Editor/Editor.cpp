@@ -48,7 +48,7 @@ void Editor::Tick(float delta_time)
         {
             if (ImGui::MenuItem("Exit"))
             {
-                World::Get()->OpenLevel(LevelType::kMainMenu);
+                // World::Get()->OpenLevel(LevelType::kMainMenu);
             }
 
             ImGui::EndMenu();

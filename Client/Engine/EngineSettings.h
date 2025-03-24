@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "ActorLayer.h"
 #include "Singleton.h"
+#include "Level/World.h"
+
+class Level;
 
 class EngineSettings : public Singleton<EngineSettings>
 {
@@ -10,8 +13,14 @@ public:
 
     void SetScreenSize(Type::uint32 width, Type::uint32 height);
 
+    template<std::derived_from<Level> T>
+    void AddLevel(const std::wstring& kName);
+
     FORCEINLINE void SetWindowTitle(const std::wstring& kWindowTitle) { window_title_ = kWindowTitle; }
     FORCEINLINE const std::wstring& GetWindowTitle() const { return window_title_; }
+
+    FORCEINLINE void SetDefaultLevel(const std::wstring& kLevel) { default_level_ = kLevel; }
+    FORCEINLINE const std::wstring& GetDefaultLevel() const { return default_level_; }
 
     FORCEINLINE Type::uint32 GetScreenWidth() const { return screen_width_; }
     FORCEINLINE Type::uint32 GetScreenHeight() const { return screen_height_; }
@@ -27,6 +36,7 @@ public:
 
 private:
     std::wstring window_title_;
+    std::wstring default_level_;
     
     Type::uint32 screen_width_;
     Type::uint32 screen_height_;
@@ -38,3 +48,9 @@ private:
     std::unordered_map<ActorLayer, ActorLayer> layer_collision_matrix_;
     
 };
+
+template <std::derived_from<Level> T>
+void EngineSettings::AddLevel(const std::wstring& kName)
+{
+    World::Get()->AddLevel<T>(kName);
+}

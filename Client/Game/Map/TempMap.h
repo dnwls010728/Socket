@@ -8,5 +8,9 @@ class TempMap : public Level
     
 public:
     TempMap(const std::wstring& kName);
+    virtual ~TempMap() override = default;
+
+protected:
+    virtual void Tick(float delta_time) override;
     
 };

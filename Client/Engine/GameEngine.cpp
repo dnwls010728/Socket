@@ -33,6 +33,7 @@ GameEngine::~GameEngine()
 
 void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
+    ProjectSettings::Get()->Init();
     CHECK(AudioManager::Get()->Init());
     
     game_window_ = kWindow;
@@ -55,8 +56,6 @@ void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     ImGui_ImplWin32_Init(game_window_->GetHWnd());
     ImGui_ImplDX11_Init(Renderer::Get()->GetDevice(), Renderer::Get()->GetDeviceContext());
 #pragma endregion
-
-    ProjectSettings::Get()->Init();
     
 }
 

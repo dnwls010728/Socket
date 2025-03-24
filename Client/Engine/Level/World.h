@@ -31,7 +31,7 @@ public:
     virtual ~World() override;
 
     void Init(const std::shared_ptr<WindowsWindow>& kWindow);
-    void OpenLevel(LevelType type);
+    void OpenLevel(const std::wstring& kName);
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
     void PostTick(float delta_time);
@@ -47,7 +47,7 @@ public:
     T* SpawnActor(const rttr::type& kType, const std::wstring& kName = L"");
 
     template<std::derived_from<Level> T>
-    T* AddLevel(LevelType type, std::wstring name);
+    void AddLevel(const std::wstring& kName);
 
     FORCEINLINE WindowsWindow* GetWindow() const { return window_.get(); }
     FORCEINLINE Level* GetLevel() const { return current_level_; }
@@ -98,8 +98,8 @@ private:
     Level* current_level_;
     Level* persistent_level_;
     Level* pending_level_;
-    
-    std::shared_ptr<Level> levels_[static_cast<Type::uint64>(LevelType::kEnd)];
+
+    std::unordered_map<std::wstring, std::shared_ptr<Level>> levels_;
 
     std::queue<std::shared_ptr<Actor>> pending_actors_;
     std::queue<std::shared_ptr<Actor>> pending_destroy_actors_;
@@ -136,8 +136,8 @@ T* World::SpawnActor(const rttr::type& kType, const std::wstring& kName)
 }
 
 template <std::derived_from<Level> T>
-T* World::AddLevel(LevelType type, std::wstring name)
+void World::AddLevel(const std::wstring& kName)
 {
-    levels_[static_cast<Type::uint64>(type)] = std::make_shared<T>(name);
-    return static_cast<T*>(levels_[static_cast<Type::uint64>(type)].get());
+    std::shared_ptr<Level> level = std::make_shared<T>(kName);
+    levels_[kName] = level;
 }

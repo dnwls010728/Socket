@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
+#include "Map/TempMap.h"
+
 ProjectSettings::ProjectSettings()
 {
 }
@@ -20,5 +22,9 @@ void ProjectSettings::Init()
 
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
+
+    settings->AddLevel<TempMap>(L"TempMap");
+
+    settings->SetDefaultLevel(L"TempMap");
     
 }

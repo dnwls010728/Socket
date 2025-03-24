@@ -3,6 +3,7 @@
 
 EngineSettings::EngineSettings() :
     window_title_(L"Untitled"),
+    default_level_(L""),
     screen_width_(640),
     screen_height_(480),
     use_vsync_(false),

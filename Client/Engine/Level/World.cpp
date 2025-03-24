@@ -84,13 +84,18 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
 
+    OpenLevel(EngineSettings::Get()->GetDefaultLevel());
+
     debug_draw_helper_.Init();
     DebugDrawHelper::Get()->Init();
 }
 
-void World::OpenLevel(LevelType type)
+void World::OpenLevel(const std::wstring& kName)
 {
-    pending_level_ = levels_[static_cast<Type::uint64>(type)].get();
+    const auto it = levels_.find(kName);
+    if (it == levels_.end()) return;
+
+    pending_level_ = it->second.get();
 }
 
 void World::PhysicsTick(float delta_time)
