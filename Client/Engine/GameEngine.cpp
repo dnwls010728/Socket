@@ -106,7 +106,6 @@ void GameEngine::Tick(float delta_time)
     g_frame_counter++;
     
     World::Get()->PostTick(delta_time);
-    Canvas_OLD::Get()->Tick(delta_time);
     UI::Manager::Get()->Tick(delta_time);
 }
 
@@ -118,7 +117,6 @@ void GameEngine::Render(float alpha)
     World::Get()->Render(alpha);
     
     Renderer::Get()->BeginRenderD2D(game_window_);
-    Canvas_OLD::Get()->Render();
     UI::Manager::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     

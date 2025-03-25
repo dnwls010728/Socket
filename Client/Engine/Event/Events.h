@@ -14,7 +14,10 @@ enum class EventType : Type::uint32
     kMousePressed = (0x01<<4),
     kMouseReleased = (0x01<<5),
     kMouseMotion = (0x01<<6),
-    kMouseWheel = (0x01<<7)
+    kMouseWheel = (0x01<<7),
+
+    kKeyChanged = kKeyPressed | kKeyReleased,
+    kMouseChanged = kMousePressed | kMouseReleased,
 };
 
 ENUM_CLASS_FLAGS(EventType)

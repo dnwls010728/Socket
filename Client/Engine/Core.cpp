@@ -147,7 +147,6 @@ void Core::MainThread()
 
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
-                Canvas_OLD::Get()->OnEvent(event);
                 UI::Manager::Get()->OnEvent(event);
                 World::Get()->OnEvent(event);
             }

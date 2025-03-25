@@ -27,29 +27,46 @@ void UI::Manager::Render()
     }
 }
 
-void UI::Manager::AddWidget(std::shared_ptr<Widget> widget)
+void UI::Manager::AddWidget(const std::shared_ptr<Widget>& widget)
 {
     widgets_.push_back(widget);
-    Logger::Print(L"New widget added.");
 }
 
-void UI::Manager::RemoveWidget(std::shared_ptr<Widget> widget)
+void UI::Manager::RemoveWidget(const std::shared_ptr<Widget>& widget)
 {
-    // TODO: 테스트 필요
-    for (auto& x : widgets_)
-    {
-        if (x == widget)
-        {
-            x = widgets_.back();
-            widgets_.pop_back();
-            break;
-        }
-    }
+    std::erase(widgets_, widget);
 }
 
 void UI::Manager::OnEvent(const Event& kEvent)
 {
     const Type::uint32& kType = kEvent.type;
 
-    Logger::Print(L"UI Manager received event: %d", kType);
+    if (kType & static_cast<Type::uint32>(EventType::kMouseChanged))
+    {
+        const MouseButtonEvent& kButton = kEvent.button;
+        const Math::Vector2& kMousePosition = {kButton.x, kButton.y};
+
+        bool is_handled = false;
+        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        {
+            Widget* widget = widgets_[widgets_.size() - i - 1].get();
+            
+            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
+            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
+            {
+                Widget* child = kChildren[kChildren.size() - j - 1].get();
+                if (child->Contains(kMousePosition) && child->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed))
+                {
+                    is_handled = true;
+                    break;
+                }
+            }
+
+            if (is_handled) break;
+            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed))
+            {
+                break;
+            }
+        }
+    }
 }

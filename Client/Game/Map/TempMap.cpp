@@ -5,6 +5,7 @@
 #include "Input/Keyboard.h"
 #include "UI/UIManager.h"
 #include "UI/Widget.h"
+#include "UI/Widget/TestWidget.h"
 
 using WidgetPtr = std::shared_ptr<UI::Widget>;
 
@@ -20,14 +21,23 @@ void TempMap::Load()
     Level::Load();
 
     w1 = UI::Widget::Create(L"W1");
-    WidgetPtr w2 = UI::Widget::Create(L"W2");
-    w2->AttachToWidget(w1.get());
+    w1->SetPosition({0, 0});
+    w1->SetSize({100, 100});
     
-    WidgetPtr w3 = UI::Widget::Create(L"W3");
-    w3->AttachToWidget(w1.get());
+    // WidgetPtr w2 = UI::Widget::Create(L"W2");
+    // w2->AttachToWidget(w1.get());
+    // w2->SetPosition({10, 10});
+    // w2->SetSize({100, 100});
+    //
+    // WidgetPtr w3 = UI::Widget::Create(L"W3");
+    // w3->AttachToWidget(w1.get());
+    // w3->SetPosition({20, 20});
+    // w3->SetSize({100, 100});
     
-    WidgetPtr w4 = UI::Widget::Create(L"W4");
+    WidgetPtr w4 = UI::TestWidget::Create(L"W4");
     w4->AttachToWidget(w1.get());
+    w4->SetPosition({30, 30});
+    w4->SetSize({100, 100});
     
 }
 
