@@ -3,6 +3,8 @@
 
 #include "Logger.h"
 #include "Input/Keyboard.h"
+#include "Math/Color.h"
+#include "Windows/DX/Renderer.h"
 
 UI::Widget::Widget(const std::wstring& kName) :
     name_(kName),
@@ -51,6 +53,12 @@ void UI::Widget::Render()
     }
 
     // Logger::Print(L"WIDGET RENDER: %s", name_.c_str());
+
+    // 테스트 코드
+    Renderer* renderer = Renderer::Get();
+    WindowsWindow* window = World::Get()->GetWindow();
+    
+    renderer->DrawBox(window, {100, 100, 100, 100}, {50, 50}, Math::Color::Black);
 }
 
 RTTR_REGISTRATION
