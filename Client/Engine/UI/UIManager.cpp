@@ -3,7 +3,7 @@
 
 #include "Logger.h"
 #include "Widget.h"
-#include "Input/Keyboard.h"
+#include "Event/Events.h"
 
 UI::Manager::Manager()
 {
@@ -11,17 +11,6 @@ UI::Manager::Manager()
 
 void UI::Manager::Tick(float delta_time)
 {
-    if (widgets_.empty())
-    {
-        // Test 코드
-        Keyboard* keyboard = Keyboard::Get();
-        if (keyboard->GetKeyDown(VK_SPACE))
-        {
-            std::shared_ptr<Widget> widget = std::make_shared<Widget>();
-            AddWidget(widget);
-        }
-    }
-    
     for (Type::uint64 i = 0; i < widgets_.size(); ++i)
     {
         Widget* widget = widgets_[i].get();
@@ -56,4 +45,11 @@ void UI::Manager::RemoveWidget(std::shared_ptr<Widget> widget)
             break;
         }
     }
+}
+
+void UI::Manager::OnEvent(const Event& kEvent)
+{
+    const Type::uint32& kType = kEvent.type;
+
+    Logger::Print(L"UI Manager received event: %d", kType);
 }

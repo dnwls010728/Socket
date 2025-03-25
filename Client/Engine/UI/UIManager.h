@@ -16,6 +16,10 @@ namespace UI
         void RemoveWidget(std::shared_ptr<Widget> widget);
 
     private:
+        friend class Core;
+
+        void OnEvent(const Event& kEvent);
+        
         std::vector<std::shared_ptr<Widget>> widgets_;
     
     };

@@ -11,6 +11,7 @@ public:
     virtual ~TempMap() override = default;
 
 protected:
+    virtual void Load() override;
     virtual void Tick(float delta_time) override;
     
 };

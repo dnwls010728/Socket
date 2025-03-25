@@ -10,11 +10,26 @@ namespace UI
         GENERATED_BODY(Widget)
         
     public:
-        Widget();
+        Widget(const std::wstring& kName);
         virtual ~Widget() = default;
 
+        void AttachToWidget(Widget* parent);
+        void DetachFromWidget();
+
+        FORCEINLINE const std::wstring& GetName() const { return name_; }
+
+        static std::shared_ptr<Widget> Create(const std::wstring& kName);
+
+    protected:
+        friend class Manager;
+        
         void Tick(float delta_time);
         void Render();
+
+        std::wstring name_;
+        
+        Widget* parent_;
+        std::vector<std::shared_ptr<Widget>> children_;
     
     };
 }
