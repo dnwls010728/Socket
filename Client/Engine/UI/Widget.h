@@ -41,6 +41,9 @@ namespace UI
         virtual void Tick(float delta_time);
         virtual void Render();
 
+        virtual bool OnMouseEnter();
+        virtual bool OnMouseLeave();
+        virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
 
         std::wstring name_;

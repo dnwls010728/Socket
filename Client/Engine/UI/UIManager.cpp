@@ -5,7 +5,9 @@
 #include "Widget.h"
 #include "Event/Events.h"
 
-UI::Manager::Manager()
+UI::Manager::Manager() :
+    widgets_(),
+    last_mouse_position_(Math::Vector2::Zero())
 {
 }
 
@@ -41,7 +43,54 @@ void UI::Manager::OnEvent(const Event& kEvent)
 {
     const Type::uint32& kType = kEvent.type;
 
-    if (kType & static_cast<Type::uint32>(EventType::kMouseChanged))
+    if (kType == static_cast<Type::uint32>(EventType::kMouseMotion))
+    {
+        const Math::Vector2 kMousePosition = {kEvent.motion.x, kEvent.motion.y};
+        const Math::Vector2 kMouseDelta = kMousePosition - last_mouse_position_;
+
+        bool is_handled = false;
+        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        {
+            Widget* widget = widgets_[widgets_.size() - i - 1].get();
+            
+            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
+            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
+            {
+                Widget* child = kChildren[kChildren.size() - j - 1].get();
+
+                bool is_result = child->Contains(kMousePosition);
+                bool is_previous_result = child->Contains(kMousePosition - kMouseDelta);
+                
+                if (is_result && !is_previous_result) is_handled |= child->OnMouseEnter();
+                if (!is_result && is_previous_result)
+                {
+                    is_handled |= child->OnMouseLeave();
+                    break;
+                }
+
+                if (is_result || is_previous_result) is_handled |= child->OnMouseMotion(kMousePosition, kMouseDelta);
+                if (is_handled) break;
+            }
+
+            if (is_handled) break;
+
+            bool is_result = widget->Contains(kMousePosition);
+            bool is_previous_result = widget->Contains(kMousePosition - kMouseDelta);
+
+            if (is_result && !is_previous_result) is_handled |= widget->OnMouseEnter();
+            if (!is_result && is_previous_result)
+            {
+                widget->OnMouseLeave();
+                break;
+            }
+
+            if (is_result || is_previous_result) is_handled |= widget->OnMouseMotion(kMousePosition, kMouseDelta);
+            if (is_handled) break;
+        }
+        
+        last_mouse_position_ = kMousePosition;
+    }
+    else if (kType & static_cast<Type::uint32>(EventType::kMouseChanged))
     {
         const MouseButtonEvent& kButton = kEvent.button;
         const Math::Vector2& kMousePosition = {kButton.x, kButton.y};

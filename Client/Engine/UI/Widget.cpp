@@ -73,6 +73,39 @@ void UI::Widget::Render()
     renderer->DrawBox(window, {position_.x, position_.y, size_.x, size_.y}, size_ * .5f, Math::Color::Black);
 }
 
+bool UI::Widget::OnMouseEnter()
+{
+    return false;
+}
+
+bool UI::Widget::OnMouseLeave()
+{
+    return false;
+}
+
+bool UI::Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    bool is_handled = false;
+    for (Type::uint32 i = 0; i < children_.size(); ++i)
+    {
+        Widget* widget = children_[children_.size() - i - 1].get();
+
+        bool is_result = widget->Contains(kPosition);
+        bool is_previous_result = widget->Contains(kPosition - kDelta);
+
+        if (is_result && !is_previous_result) is_handled |= widget->OnMouseEnter();
+        if (!is_result && is_previous_result)
+        {
+            widget->OnMouseLeave();
+            return true;
+        }
+
+        if (is_result || is_previous_result) is_handled |= widget->OnMouseMotion(kPosition, kDelta);
+    }
+    
+    return is_handled;
+}
+
 bool UI::Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
     for (Type::uint32 i = 0; i < children_.size(); ++i)

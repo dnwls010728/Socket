@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Math/Vector2.h"
 
 namespace UI
 {
@@ -21,6 +22,8 @@ namespace UI
         void OnEvent(const Event& kEvent);
         
         std::vector<std::shared_ptr<Widget>> widgets_;
+
+        Math::Vector2 last_mouse_position_;
     
     };
 }

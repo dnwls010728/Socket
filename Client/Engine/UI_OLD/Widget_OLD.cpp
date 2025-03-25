@@ -299,7 +299,7 @@ bool Widget_OLD::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vecto
         if (is_result != is_previous_result)
         {
             is_handled |= child->OnMouseEnter();
-            is_handled |= child->OnMouseLeave();
+            // is_handled |= child->OnMouseLeave();
         }
 
         if (is_result || is_previous_result)

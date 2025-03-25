@@ -15,6 +15,9 @@ namespace UI
         static std::shared_ptr<TestWidget> Create(const std::wstring& kName);
 
     protected:
+        virtual bool OnMouseEnter() override;
+        virtual bool OnMouseLeave() override;
+        virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
     
     };
