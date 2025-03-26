@@ -7,26 +7,9 @@
 
 UI::Widget::Widget(const std::wstring& kName) :
     name_(kName),
-    parent_(nullptr),
-    children_(),
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::One())
 {
-}
-
-void UI::Widget::AttachToWidget(Widget* parent)
-{
-    parent_ = parent;
-    parent_->children_.push_back(GetSharedThis());
-}
-
-void UI::Widget::DetachFromWidget()
-{
-    if (!parent_)
-    {
-        parent_ = nullptr;
-        std::erase(parent_->children_, GetSharedThis());
-    }
 }
 
 Math::Rect UI::Widget::GetRect() const
@@ -46,20 +29,10 @@ std::shared_ptr<UI::Widget> UI::Widget::Create(const std::wstring& kName)
 
 void UI::Widget::Tick(float delta_time)
 {
-    for (Type::uint32 i = 0; i < children_.size(); ++i)
-    {
-        Widget* widget = children_[i].get();
-        widget->Tick(delta_time);
-    }
 }
 
 void UI::Widget::Render(Renderer* renderer, WindowsWindow* window)
 {
-    for (Type::uint32 i = 0; i < children_.size(); ++i)
-    {
-        Widget* widget = children_[children_.size() - i - 1].get();
-        widget->Render(renderer, window);
-    }
 }
 
 bool UI::Widget::OnMouseEnter()
@@ -74,46 +47,16 @@ bool UI::Widget::OnMouseLeave()
 
 bool UI::Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
-    bool is_handled = false;
-    for (Type::uint32 i = 0; i < children_.size(); ++i)
-    {
-        Widget* widget = children_[children_.size() - i - 1].get();
-
-        bool is_result = widget->Contains(kPosition);
-        bool is_previous_result = widget->Contains(kPosition - kDelta);
-
-        if (is_result && !is_previous_result) is_handled |= widget->OnMouseEnter();
-        if (!is_result && is_previous_result)
-        {
-            widget->OnMouseLeave();
-            return true;
-        }
-
-        if (is_result || is_previous_result) is_handled |= widget->OnMouseMotion(kPosition, kDelta);
-    }
-    
-    return is_handled;
+    return false;
 }
 
 bool UI::Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
-    for (Type::uint32 i = 0; i < children_.size(); ++i)
-    {
-        Widget* widget = children_[children_.size() - i - 1].get();
-        if (widget->Contains(kPosition) && widget->OnMouseButton(kPosition, button, is_pressed)) return true;
-    }
-
     return false;
 }
 
 bool UI::Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
-    for (Type::uint32 i = 0; i < children_.size(); ++i)
-    {
-        Widget* widget = children_[children_.size() - i - 1].get();
-        if (widget->Contains(kPosition) && widget->OnScroll(kPosition, kDelta)) return true;
-    }
-
     return false;
 }
 

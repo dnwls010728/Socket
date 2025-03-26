@@ -52,27 +52,6 @@ void UI::Manager::OnEvent(const Event& kEvent)
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
-            
-            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
-            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
-            {
-                Widget* child = kChildren[kChildren.size() - j - 1].get();
-
-                bool is_result = child->Contains(kMousePosition);
-                bool is_previous_result = child->Contains(kMousePosition - kMouseDelta);
-                
-                if (is_result && !is_previous_result) is_handled |= child->OnMouseEnter();
-                if (!is_result && is_previous_result)
-                {
-                    is_handled |= child->OnMouseLeave(); 
-                    break;
-                }
-
-                if (is_result || is_previous_result) is_handled |= child->OnMouseMotion(kMousePosition, kMouseDelta);
-                if (is_handled) break;
-            }
-
-            if (is_handled) break;
 
             bool is_result = widget->Contains(kMousePosition);
             bool is_previous_result = widget->Contains(kMousePosition - kMouseDelta);
@@ -95,23 +74,9 @@ void UI::Manager::OnEvent(const Event& kEvent)
         const MouseButtonEvent& kButton = kEvent.button;
         const Math::Vector2& kMousePosition = {kButton.x, kButton.y};
 
-        bool is_handled = false;
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
-            
-            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
-            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
-            {
-                Widget* child = kChildren[kChildren.size() - j - 1].get();
-                if (child->Contains(kMousePosition) && child->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed))
-                {
-                    is_handled = true;
-                    break;
-                }
-            }
-
-            if (is_handled) break;
             if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed)) break;
         }
     }
@@ -121,23 +86,9 @@ void UI::Manager::OnEvent(const Event& kEvent)
         const Math::Vector2 kMousePosition = {kWheel.mouse_x, kWheel.mouse_y};
         const Math::Vector2 kMouseDelta = {kWheel.x, kWheel.y};
 
-        bool is_handled = false;
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
-            
-            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
-            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
-            {
-                Widget* child = kChildren[kChildren.size() - j - 1].get();
-                if (child->Contains(kMousePosition) && child->OnScroll(kMousePosition, kMouseDelta))
-                {
-                    is_handled = true;
-                    break;
-                }
-            }
-
-            if (is_handled) break;
             if (widget->Contains(kMousePosition) && widget->OnScroll(kMousePosition, kMouseDelta)) break;
         }
     }

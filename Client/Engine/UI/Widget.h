@@ -18,9 +18,6 @@ namespace UI
         Widget(const std::wstring& kName);
         virtual ~Widget() = default;
 
-        void AttachToWidget(Widget* parent);
-        void DetachFromWidget();
-
         Math::Rect GetRect() const;
 
         bool Contains(const Math::Vector2& kPosition) const;
@@ -32,8 +29,6 @@ namespace UI
 
         FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
         FORCEINLINE void SetSize(const Math::Vector2& kSize) { size_ = kSize; }
-
-        FORCEINLINE const std::vector<std::shared_ptr<Widget>>& GetChildren() const { return children_; }
 
         static std::shared_ptr<Widget> Create(const std::wstring& kName);
 
@@ -50,9 +45,6 @@ namespace UI
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
 
         std::wstring name_;
-        
-        Widget* parent_;
-        std::vector<std::shared_ptr<Widget>> children_;
 
         Math::Vector2 position_;
         Math::Vector2 size_;
