@@ -5,7 +5,6 @@
 #include "Actor/Camera.h"
 #include "box2d/box2d.h"
 #include "Time/TimerManager.h"
-#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/ShapeBatch.h"
@@ -221,7 +220,6 @@ void World::TransitionLevel()
     {
         current_level_->Unload(EndPlayReason::kLevelTransition);
         TimerManager::Get()->ClearAllTimers();
-        Canvas_OLD::Get()->Clear();
     }
 
     current_level_ = pending_level_;
@@ -230,7 +228,6 @@ void World::TransitionLevel()
     current_level_->AddActor<Camera>(L"Main Camera");
     current_level_->Load();
 
-    Canvas_OLD::Get()->BeginPlay();
     current_level_->InitializeActors();
     
     SpawnActors();

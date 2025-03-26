@@ -8,8 +8,6 @@
 #include "Actor/Camera.h"
 #include "Audio/AudioManager.h"
 #include "Event/Events.h"
-#include "UI_OLD/Canvas_OLD.h"
-#include "UI_OLD/Widget_OLD.h"
 
 Level::Level(const std::wstring& kName) :
     name_(kName),
@@ -20,13 +18,6 @@ Level::Level(const std::wstring& kName) :
 
 void Level::Load()
 {
-    Canvas_OLD* canvas = Canvas_OLD::Get();
-    
-    Widget_OLD* root_widget = canvas->AddWidget<Widget_OLD>(L"Root");
-    root_widget->SetAnchorPreset(AnchorPreset::kStretch);
-    root_widget->SetSize({0.f, 0.f});
-
-    canvas->SetRootWidget(root_widget);
 }
 
 void Level::Unload(EndPlayReason type)

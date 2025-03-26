@@ -4,7 +4,6 @@
 #include <fstream>
 #include <ShObjIdl.h>
 
-#include "Logger.h"
 #include "Data/FileHelper.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"

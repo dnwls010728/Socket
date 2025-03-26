@@ -10,7 +10,6 @@
 #include "Asset/AssetManager.h"
 #include "Time/Time.h"
 #include "UI/UIManager.h"
-#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowDefinition.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"

@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "TimerManager.h"
 
-#include "Logger.h"
 #include "Misc/Type.h"
 
 Type::uint64 TimerManager::last_handle_ = 0;

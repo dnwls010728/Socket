@@ -10,7 +10,6 @@
 #include "Level/Level.h"
 #include "Math/Math.h"
 #include "UI/UIManager.h"
-#include "UI_OLD/Canvas_OLD.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"

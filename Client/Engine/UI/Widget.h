@@ -5,6 +5,8 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
+class Renderer;
+
 namespace UI
 {
     class Widget : public std::enable_shared_from_this<Widget>
@@ -39,12 +41,13 @@ namespace UI
         friend class Manager;
 
         virtual void Tick(float delta_time);
-        virtual void Render();
+        virtual void Render(Renderer* renderer, WindowsWindow* window);
 
         virtual bool OnMouseEnter();
         virtual bool OnMouseLeave();
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+        virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
 
         std::wstring name_;
         

@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
-#include "Logger.h"
 #include "Input/Keyboard.h"
 #include "UI/UIManager.h"
 #include "UI/Widget.h"
@@ -38,6 +37,11 @@ void TempMap::Load()
     w4->AttachToWidget(w1.get());
     w4->SetPosition({30, 30});
     w4->SetSize({100, 100});
+
+    WidgetPtr w5 = UI::TestWidget::Create(L"W5");
+    w5->AttachToWidget(w1.get());
+    w5->SetPosition({40, 40});
+    w5->SetSize({100, 100});
     
 }
 

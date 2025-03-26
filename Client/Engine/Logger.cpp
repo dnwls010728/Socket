@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-#include "Logger.h"
 
 #include <cstdarg>
 #include <Windows.h>

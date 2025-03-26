@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
 #include "UIManager.h"
 
-#include "Logger.h"
 #include "Widget.h"
 #include "Event/Events.h"
+#include "Windows/DX/Renderer.h"
 
 UI::Manager::Manager() :
     widgets_(),
@@ -25,7 +25,7 @@ void UI::Manager::Render()
     for (Type::uint64 i = 0; i < widgets_.size(); ++i)
     {
         Widget* widget = widgets_[widgets_.size() - i - 1].get();
-        widget->Render();
+        widget->Render(Renderer::Get(), World::Get()->GetWindow());
     }
 }
 
@@ -64,7 +64,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
                 if (is_result && !is_previous_result) is_handled |= child->OnMouseEnter();
                 if (!is_result && is_previous_result)
                 {
-                    is_handled |= child->OnMouseLeave();
+                    is_handled |= child->OnMouseLeave(); 
                     break;
                 }
 
@@ -112,10 +112,33 @@ void UI::Manager::OnEvent(const Event& kEvent)
             }
 
             if (is_handled) break;
-            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed))
+            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed)) break;
+        }
+    }
+    else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))
+    {
+        const MouseWheelEvent& kWheel = kEvent.wheel;
+        const Math::Vector2 kMousePosition = {kWheel.mouse_x, kWheel.mouse_y};
+        const Math::Vector2 kMouseDelta = {kWheel.x, kWheel.y};
+
+        bool is_handled = false;
+        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        {
+            Widget* widget = widgets_[widgets_.size() - i - 1].get();
+            
+            const std::vector<std::shared_ptr<Widget>>& kChildren = widget->GetChildren();
+            for (Type::uint64 j = 0; j < kChildren.size(); ++j)
             {
-                break;
+                Widget* child = kChildren[kChildren.size() - j - 1].get();
+                if (child->Contains(kMousePosition) && child->OnScroll(kMousePosition, kMouseDelta))
+                {
+                    is_handled = true;
+                    break;
+                }
             }
+
+            if (is_handled) break;
+            if (widget->Contains(kMousePosition) && widget->OnScroll(kMousePosition, kMouseDelta)) break;
         }
     }
 }

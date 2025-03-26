@@ -198,13 +198,6 @@
     <ClInclude Include="Engine\UI\UIManager.h" />
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\UI\Widget\TestWidget.h" />
-    <ClInclude Include="Engine\UI_OLD\Canvas_OLD.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget_OLD.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget\Button.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget\EditableTextBox.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget\Image.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget\ScrollBox.h" />
-    <ClInclude Include="Engine\UI_OLD\Widget\Text.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\Material.h" />
@@ -510,13 +503,6 @@
     <ClCompile Include="Engine\UI\UIManager.cpp" />
     <ClCompile Include="Engine\UI\Widget.cpp" />
     <ClCompile Include="Engine\UI\Widget\TestWidget.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Canvas_OLD.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget_OLD.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget\Button.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget\EditableTextBox.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget\Image.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget\ScrollBox.cpp" />
-    <ClCompile Include="Engine\UI_OLD\Widget\Text.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Material.cpp" />
     <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
