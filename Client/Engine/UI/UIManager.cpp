@@ -11,6 +11,23 @@ UI::Manager::Manager() :
 {
 }
 
+void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& widget)
+{
+    if (!widget) return;
+    widgets_.push_back(widget);
+}
+
+void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& widget)
+{
+    if (!widget) return;
+    std::erase(widgets_, widget);
+}
+
+bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& widget)
+{
+    return std::ranges::find(widgets_, widget) != widgets_.end();
+}
+
 void UI::Manager::Tick(float delta_time)
 {
     for (Type::uint64 i = 0; i < widgets_.size(); ++i)
@@ -27,18 +44,6 @@ void UI::Manager::Render()
         Widget* widget = widgets_[widgets_.size() - i - 1].get();
         widget->Render(Renderer::Get(), World::Get()->GetWindow());
     }
-}
-
-void UI::Manager::AddWidget(const std::shared_ptr<Widget>& widget)
-{
-    if (!widget) return;
-    widgets_.push_back(widget);
-}
-
-void UI::Manager::RemoveWidget(const std::shared_ptr<Widget>& widget)
-{
-    if (!widget) return;
-    std::erase(widgets_, widget);
 }
 
 void UI::Manager::OnEvent(const Event& kEvent)

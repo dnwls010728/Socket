@@ -11,13 +11,17 @@ namespace UI
         Manager();
         virtual ~Manager() override = default;
 
-        void Tick(float delta_time);
-        void Render();
-        void AddWidget(const std::shared_ptr<Widget>& widget);
-        void RemoveWidget(const std::shared_ptr<Widget>& widget);
+        void AddToViewport(const std::shared_ptr<Widget>& widget);
+        void RemoveFromViewport(const std::shared_ptr<Widget>& widget);
+
+        bool IsInViewport(const std::shared_ptr<Widget>& widget);
 
     private:
         friend class Core;
+        friend class GameEngine;
+        
+        void Tick(float delta_time);
+        void Render();
 
         void OnEvent(const Event& kEvent);
         

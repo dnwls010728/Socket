@@ -38,18 +38,21 @@ void TempMap::Tick(float delta_time)
         is_open = !is_open;
         if (is_open)
         {
-            UI::Manager::Get()->AddWidget(w1);
+            UI::Manager::Get()->AddToViewport(w1);
         }
         else
         {
-            UI::Manager::Get()->RemoveWidget(w1);
+            UI::Manager::Get()->RemoveFromViewport(w1);
         }
     }
 
-    static int size[2] = {300, 300};
-    if (ImGui::SliderInt2("Size", size, 0, 1000))
+    if (UI::Manager::Get()->IsInViewport(w1))
     {
-        w1->SetSize({static_cast<float>(size[0]), static_cast<float>(size[1])});
+        static int size[2] = {300, 300};
+        if (ImGui::SliderInt2("Size", size, 0, 1000))
+        {
+            w1->SetSize({static_cast<float>(size[0]), static_cast<float>(size[1])});
+        }
     }
 
 }
