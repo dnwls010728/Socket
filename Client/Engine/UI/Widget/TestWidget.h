@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "UI/Widget.h"
 
+class UITexture;
+
 namespace UI
 {
     class TestWidget : public Widget
@@ -22,6 +24,8 @@ namespace UI
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
+
+        UITexture* texture_;
     
     };
 }

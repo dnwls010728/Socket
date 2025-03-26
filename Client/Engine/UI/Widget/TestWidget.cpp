@@ -1,12 +1,15 @@
 ﻿#include "pch.h"
 #include "TestWidget.h"
 
-#include "Math/Color.h"
+#include "Asset/AssetManager.h"
 #include "Windows/DX/Renderer.h"
+#include "Windows/DX/UITexture.h"
 
 UI::TestWidget::TestWidget(const std::wstring& kName) :
     Widget(kName)
 {
+    texture_ = AssetManager::Get()->Load<UITexture>(L"Sprites\\UI\\UISprite.png");
+    texture_->SetSlice9Rect({10.f, 10.f, 22.f, 22.f});
 }
 
 std::shared_ptr<UI::TestWidget> UI::TestWidget::Create(const std::wstring& kName)
@@ -18,7 +21,8 @@ void UI::TestWidget::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    renderer->DrawBox(window, {position_.x, position_.y, size_.x, size_.y}, size_ * .5f, Math::Color::Black);
+    // renderer->DrawBox(window, {position_.x, position_.y, size_.x, size_.y}, size_ * .5f, Math::Color::Black);
+    renderer->DrawBitmap(window, texture_->GetTexture(), {position_.x, position_.y, size_.x, size_.y}, size_ * .5f, 0.f, true, texture_->GetSlice9Rect());
 }
 
 bool UI::TestWidget::OnMouseEnter()

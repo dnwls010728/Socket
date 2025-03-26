@@ -31,11 +31,13 @@ void UI::Manager::Render()
 
 void UI::Manager::AddWidget(const std::shared_ptr<Widget>& widget)
 {
+    if (!widget) return;
     widgets_.push_back(widget);
 }
 
 void UI::Manager::RemoveWidget(const std::shared_ptr<Widget>& widget)
 {
+    if (!widget) return;
     std::erase(widgets_, widget);
 }
 
