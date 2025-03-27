@@ -493,7 +493,7 @@ Math::Vector2 Renderer::ConvertWorldToScreen(const Math::Vector2& kWorldPosition
     return { x, y };
 }
 
-void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float rotation_z, float stroke)
+void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle, float stroke)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -512,14 +512,14 @@ void Renderer::DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Mat
     if (FAILED(hr)) return;
 
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
 
     d2d_viewport->d2d_render_target->DrawRectangle(rect, brush.Get(), stroke);
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
 void Renderer::DrawSolidBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot,
-    const Math::Color& kColor, float rotation_z)
+    const Math::Color& kColor, float angle)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -538,14 +538,14 @@ void Renderer::DrawSolidBox(WindowsWindow* window, const Math::Rect& kRect, cons
     if (FAILED(hr)) return;
 
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
 
     d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
 void Renderer::DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot,
-    const Math::Color& kColor, float radius, float rotation_z, float stroke)
+    const Math::Color& kColor, float radius, float angle, float stroke)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -564,14 +564,14 @@ void Renderer::DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, cons
     if (FAILED(hr)) return;
 
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
 
     d2d_viewport->d2d_render_target->DrawRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get(), stroke);
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
 void Renderer::DrawSolidRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot,
-                                 const Math::Color& kColor, float radius, float rotation_z)
+                                 const Math::Color& kColor, float radius, float angle)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -590,7 +590,7 @@ void Renderer::DrawSolidRoundBox(WindowsWindow* window, const Math::Rect& kRect,
     if (FAILED(hr)) return;
 
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
 
     d2d_viewport->d2d_render_target->FillRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
@@ -643,7 +643,7 @@ void Renderer::DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector
     d2d_viewport->d2d_render_target->DrawLine(D2D1::Point2F(start.x, start.y), D2D1::Point2F(end.x, end.y), brush.Get(), stroke);
 }
 
-void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float rotation_z, const std::wstring& kFontName, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
+void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle, const std::wstring& kFontName, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -671,14 +671,14 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
     //
     // D2D1_POINT_2F center = D2D1::Point2F(kRect.x + pivot_x, kRect.y + pivot_y);
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
 
     d2d_viewport->d2d_render_target->DrawTextW(kString.c_str(), static_cast<UINT32>(kString.size()),
                                                text_format.Get(), rect, brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float rotation_z, bool use_slice9, const Math::Rect& kSlice9Rect)
+void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float angle, bool use_slice9, const Math::Rect& kSlice9Rect)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -705,10 +705,10 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     d2d_viewport->d2d_render_target->GetTransform(&transform);
     
     D2D1_POINT_2F center = D2D1::Point2F(kPivot.x, kPivot.y);
-    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
     
     // const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
-    // device_context->SetTransform(D2D1::Matrix3x2F::Rotation(rotation_z, center));
+    // device_context->SetTransform(D2D1::Matrix3x2F::Rotation(angle, center));
     // device_context->DrawImage(effect.Get(), {kTempRect.left, kTempRect.top});
 
     // D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR - Point

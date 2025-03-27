@@ -7,6 +7,7 @@
 
 UI::Manager::Manager() :
     widgets_(),
+    focused_widget_(),
     last_mouse_position_(Math::Vector2::Zero())
 {
 }
@@ -21,6 +22,15 @@ void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& widget)
 {
     if (!widget) return;
     std::erase(widgets_, widget);
+}
+
+void UI::Manager::SetFocus(const std::shared_ptr<Widget>& widget)
+{
+    if (!widget) return;
+    if (const std::shared_ptr<Widget> widget_ptr = focused_widget_.lock()) widget_ptr->OnFocus(false);
+
+    focused_widget_ = widget;
+    widget->OnFocus(true);
 }
 
 bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& widget)

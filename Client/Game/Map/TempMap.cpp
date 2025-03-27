@@ -5,11 +5,9 @@
 #include "Input/Keyboard.h"
 #include "UI/UIManager.h"
 #include "UI/Widget.h"
-#include "UI/Widget/TestWidget.h"
+#include "UI/Widget/Button.h"
 
-using WidgetPtr = std::shared_ptr<UI::Widget>;
-
-WidgetPtr w1 = nullptr;
+UI_ButtonPtr button = nullptr;
 
 TempMap::TempMap(const std::wstring& kName) :
     Level(kName)
@@ -20,9 +18,14 @@ void TempMap::Load()
 {
     Level::Load();
 
-    w1 = UI::TestWidget::Create(L"W1");
-    w1->SetPosition({0, 0});
-    w1->SetSize({300, 300});
+    button = UI::Button::Create(L"Button");
+    button->SetPosition({100.f, 100.f});
+    button->SetSize({100.f, 50.f});
+    button->SetPivot({.5f, .5f});
+    button->AddEvent([&]()
+    {
+        Logger::Print(L"Button clicked");
+    });
     
 }
 
@@ -38,20 +41,11 @@ void TempMap::Tick(float delta_time)
         is_open = !is_open;
         if (is_open)
         {
-            UI::Manager::Get()->AddToViewport(w1);
+            UI::Manager::Get()->AddToViewport(button);
         }
         else
         {
-            UI::Manager::Get()->RemoveFromViewport(w1);
-        }
-    }
-
-    if (UI::Manager::Get()->IsInViewport(w1))
-    {
-        static int size[2] = {300, 300};
-        if (ImGui::SliderInt2("Size", size, 0, 1000))
-        {
-            w1->SetSize({static_cast<float>(size[0]), static_cast<float>(size[1])});
+            UI::Manager::Get()->RemoveFromViewport(button);
         }
     }
 
