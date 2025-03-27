@@ -8,34 +8,48 @@
 UI::Manager::Manager() :
     widgets_(),
     focused_widget_(),
-    last_mouse_position_(Math::Vector2::Zero())
+    dragging_widget_(),
+    last_mouse_position_(Math::Vector2::Zero()),
+    is_dragging_(false),
+    has_begun_drag_(false)
 {
 }
 
-void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& widget)
+void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& kWidget)
 {
-    if (!widget) return;
-    widgets_.push_back(widget);
+    if (!kWidget) return;
+    widgets_.push_back(kWidget);
 }
 
-void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& widget)
+void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& kWidget)
 {
-    if (!widget) return;
-    std::erase(widgets_, widget);
+    if (!kWidget) return;
+    std::erase(widgets_, kWidget);
 }
 
-void UI::Manager::SetFocus(const std::shared_ptr<Widget>& widget)
+void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
 {
-    if (!widget) return;
+    if (!kWidget) return;
     if (const std::shared_ptr<Widget> widget_ptr = focused_widget_.lock()) widget_ptr->OnFocus(false);
 
-    focused_widget_ = widget;
-    widget->OnFocus(true);
+    focused_widget_ = kWidget;
+    kWidget->OnFocus(true);
 }
 
-bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& widget)
+bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& kWidget)
 {
-    return std::ranges::find(widgets_, widget) != widgets_.end();
+    return std::ranges::find(widgets_, kWidget) != widgets_.end();
+}
+
+std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition) const
+{
+    for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+    {
+        Widget* widget = widgets_[widgets_.size() - i - 1].get();
+        if (widget->Contains(kPosition)) return widget->GetSharedThis();
+    }
+    
+    return nullptr;
 }
 
 void UI::Manager::Tick(float delta_time)
@@ -66,22 +80,39 @@ void UI::Manager::OnEvent(const Event& kEvent)
         const Math::Vector2 kMouseDelta = kMousePosition - last_mouse_position_;
 
         bool is_handled = false;
-        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        if (is_dragging_)
         {
-            Widget* widget = widgets_[widgets_.size() - i - 1].get();
-
-            bool is_result = widget->Contains(kMousePosition);
-            bool is_previous_result = widget->Contains(kMousePosition - kMouseDelta);
-
-            if (is_result && !is_previous_result) is_handled |= widget->OnMouseEnter();
-            if (!is_result && is_previous_result)
+            std::shared_ptr<Widget> dragging_widget = dragging_widget_.lock();
+            if (dragging_widget)
             {
-                widget->OnMouseLeave();
-                break;
+                if (!has_begun_drag_)
+                {
+                    is_handled |= dragging_widget->OnDragBegin();
+                    has_begun_drag_ = true;
+                }
+                else is_handled |= dragging_widget->OnDrag();
             }
+        }
 
-            if (is_result || is_previous_result) is_handled |= widget->OnMouseMotion(kMousePosition, kMouseDelta);
-            if (is_handled) break;
+        if (!is_handled)
+        {
+            for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+            {
+                Widget* widget = widgets_[widgets_.size() - i - 1].get();
+
+                bool is_result = widget->Contains(kMousePosition);
+                bool is_previous_result = widget->Contains(kMousePosition - kMouseDelta);
+
+                if (is_result && !is_previous_result) is_handled |= widget->OnMouseEnter();
+                if (!is_result && is_previous_result)
+                {
+                    widget->OnMouseLeave();
+                    break;
+                }
+
+                if (is_result || is_previous_result) is_handled |= widget->OnMouseMotion(kMousePosition, kMouseDelta);
+                if (is_handled) break;
+            }
         }
         
         last_mouse_position_ = kMousePosition;
@@ -90,6 +121,37 @@ void UI::Manager::OnEvent(const Event& kEvent)
     {
         const MouseButtonEvent& kButton = kEvent.button;
         const Math::Vector2& kMousePosition = {kButton.x, kButton.y};
+
+        if (kButton.button == MouseButton::kLeft && !kButton.is_pressed)
+        {
+            std::shared_ptr<Widget> dragging_widget = dragging_widget_.lock();
+            if (is_dragging_ && dragging_widget)
+            {
+                std::shared_ptr<Widget> drop_widget = RayCast(kMousePosition);
+                if (drop_widget && drop_widget != dragging_widget)
+                {
+                    drop_widget->OnDrop(dragging_widget);
+                }
+
+                if (has_begun_drag_)
+                {
+                    dragging_widget->OnDragEnd();
+                    has_begun_drag_ = false;
+                }
+
+                is_dragging_ = false;
+                dragging_widget_.reset();
+            }
+        }
+        else if (kButton.button == MouseButton::kLeft && kButton.is_pressed)
+        {
+            if (!is_dragging_)
+            {
+                std::shared_ptr<Widget> drag_widget = RayCast(kMousePosition);
+                dragging_widget_ = drag_widget;
+                is_dragging_ = drag_widget != nullptr;
+            }
+        }
 
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {

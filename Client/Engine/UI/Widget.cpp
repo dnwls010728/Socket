@@ -77,6 +77,26 @@ bool UI::Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& k
     return false;
 }
 
+bool UI::Widget::OnDragBegin()
+{
+    return false;
+}
+
+bool UI::Widget::OnDrag()
+{
+    return false;
+}
+
+bool UI::Widget::OnDragEnd()
+{
+    return false;
+}
+
+bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget)
+{
+    return false;
+}
+
 void UI::Widget::OnFocus(bool is_focus)
 {
     is_focused_ = is_focus;
