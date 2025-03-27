@@ -27,8 +27,8 @@ Math::Rect UI::Widget::GetRect() const
 
 Math::Vector2 UI::Widget::GetPivotPosition() const
 {
-    const Math::Rect& kRect = GetRect();
-    const Math::Vector2& kPivot = GetPivot();
+    const Math::Rect kRect = GetRect();
+    const Math::Vector2 kPivot = GetPivot();
 
     return {kRect.x + kRect.width * kPivot.x, kRect.y + kRect.height * (1.f - kPivot.y)};
 }
@@ -82,7 +82,7 @@ bool UI::Widget::OnDragBegin()
     return false;
 }
 
-bool UI::Widget::OnDrag()
+bool UI::Widget::OnDrag(const Math::Vector2& kPosition)
 {
     return false;
 }

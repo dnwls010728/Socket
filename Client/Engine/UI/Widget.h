@@ -11,10 +11,12 @@ namespace UI
 {
     class Widget;
     class Button;
+    class Slider;
 }
     
 using UI_WidgetPtr = std::shared_ptr<UI::Widget>;
 using UI_ButtonPtr = std::shared_ptr<UI::Button>;
+using UI_SliderPtr = std::shared_ptr<UI::Slider>;
 
 namespace UI
 {
@@ -63,7 +65,7 @@ namespace UI
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnDragBegin();
-        virtual bool OnDrag();
+        virtual bool OnDrag(const Math::Vector2& kPosition);
         virtual bool OnDragEnd();
         virtual bool OnDrop(const std::shared_ptr<Widget>& kWidget);
         

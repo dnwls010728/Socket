@@ -90,7 +90,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
                     is_handled |= dragging_widget->OnDragBegin();
                     has_begun_drag_ = true;
                 }
-                else is_handled |= dragging_widget->OnDrag();
+                else is_handled |= dragging_widget->OnDrag(kMousePosition);
             }
         }
 
