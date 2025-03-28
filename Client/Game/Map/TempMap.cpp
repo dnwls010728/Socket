@@ -6,10 +6,12 @@
 #include "UI/UIManager.h"
 #include "UI/Widget.h"
 #include "UI/Widget/Button.h"
+#include "UI/Widget/CheckBox.h"
 #include "UI/Widget/Slider.h"
 
 UI_ButtonPtr b1 = nullptr;
 UI_SliderPtr s1 = nullptr;
+UI_CheckBoxPtr c1 = nullptr;
 
 TempMap::TempMap(const std::wstring& kName) :
     Level(kName)
@@ -37,8 +39,17 @@ void TempMap::Load()
     {
         Logger::Print(L"%f", value);
     });
+
+    c1 = UI::CheckBox::Create(L"CheckBox1");
+    c1->SetPosition({300.f, 300.f});
+    c1->SetSize({32.f, 32.f});
+    c1->AddCheckEvent([&](bool value)
+    {
+        Logger::Print(L"%s", value ? L"true" : L"false");
+    });
     
     UI::Manager::Get()->AddToViewport(s1);
+    UI::Manager::Get()->AddToViewport(c1);
 }
 
 void TempMap::Tick(float delta_time)
