@@ -70,9 +70,9 @@ void TilemapComponent::Render(float alpha)
 	}
 }
 
-void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
+void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 {
-	const auto& objects = object.getObjects();
+	const auto& objects = kObject.getObjects();
 
 	b2BodyDef body_def = b2DefaultBodyDef();
 	body_def.userData = GetOwner();
@@ -115,9 +115,9 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& object)
 	b2Body_Disable(tilemap_body_id_);
 }
 
-void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& object)
+void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 {
-	const auto& objects = object.getObjects();
+	const auto& objects = kObject.getObjects();
 
 	for (const auto& temp : objects)
 	{

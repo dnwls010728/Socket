@@ -7,26 +7,26 @@
 #include "tmxlite/Map.hpp"
 #include "Windows/DX/Sprite.h"
 
-TilemapLayer::TilemapLayer(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& chunk_size) :
-    chunk_size_(chunk_size),
+TilemapLayer::TilemapLayer(const tmx::Map& kMap, const tmx::TileLayer& kLayer, const Math::Vector2& kChunkSize) :
+    chunk_size_(kChunkSize),
     chunk_count_(Math::Vector2::Zero()),
     chunks_()
 {
-    const tmx::Vector2u tile_size = map.getTileSize();
+    const tmx::Vector2u tile_size = kMap.getTileSize();
     map_tile_size_.x = tile_size.x;
     map_tile_size_.y = tile_size.y;
 
     chunk_size_.x = std::floor(chunk_size_.x / tile_size.x) * tile_size.x;
     chunk_size_.y = std::floor(chunk_size_.y / tile_size.y) * tile_size.y;
 
-    CreateChunks(map, layer, map_tile_size_);
+    CreateChunks(kMap, kLayer, map_tile_size_);
 }
 
-void TilemapLayer::UpdateShapes(const Math::Vector2& position, const Math::Vector2& scale, const Math::Vector2& pivot)
+void TilemapLayer::UpdateShapes(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot)
 {
     for (const auto& chunk : chunks_)
     {
-        chunk->UpdateShape(position, scale, pivot);
+        chunk->UpdateShape(kPosition, kScale, kPivot);
     }
 }
 
@@ -48,10 +48,10 @@ TilemapChunk* TilemapLayer::GetChunk(int x, int y, Math::Vector2& tile_relative_
     return chunks_[chunk_y * chunk_count_.x + chunk_x].get();
 }
 
-void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer, const Math::Vector2& tile_size)
+void TilemapLayer::CreateChunks(const tmx::Map& kMap, const tmx::TileLayer& kLayer, const Math::Vector2& kTileSize)
 {
-    const std::vector<tmx::Tileset>& tilesets = map.getTilesets();
-    const std::vector<tmx::TileLayer::Tile>& tiles = layer.getTiles();
+    const std::vector<tmx::Tileset>& tilesets = kMap.getTilesets();
+    const std::vector<tmx::TileLayer::Tile>& tiles = kLayer.getTiles();
 
     Type::uint32 max_id = UINT_MAX;
 
@@ -82,26 +82,26 @@ void TilemapLayer::CreateChunks(const tmx::Map& map, const tmx::TileLayer& layer
         tileset_textures_[to_wide_string] = temp;
     }
     
-    const auto bounds = map.getBounds();
+    const auto bounds = kMap.getBounds();
     chunk_count_.x = std::ceil(bounds.width / chunk_size_.x);
     chunk_count_.y = std::ceil(bounds.height / chunk_size_.y);
 
     for (auto y = 0u; y < chunk_count_.y; ++y)
     {
-        Math::Vector2 tile_count = {chunk_size_.x / tile_size.x, chunk_size_.y / tile_size.y};
+        Math::Vector2 tile_count = {chunk_size_.x / kTileSize.x, chunk_size_.y / kTileSize.y};
         for (auto x = 0u; x < chunk_count_.x; ++x)
         {
             if ((x + 1) * chunk_size_.x > bounds.width)
             {
-                tile_count.x = (bounds.width - x * chunk_size_.x) / tile_size.x;
+                tile_count.x = (bounds.width - x * chunk_size_.x) / kTileSize.x;
             }
 
             if ((y + 1) * chunk_size_.y > bounds.height)
             {
-                tile_count.y = (bounds.height - y * chunk_size_.y) / tile_size.y;
+                tile_count.y = (bounds.height - y * chunk_size_.y) / kTileSize.y;
             }
 
-            chunks_.push_back(std::make_unique<TilemapChunk>(layer, used_tilesets, Math::Vector2(x * chunk_size_.x, y * chunk_size_.y), tile_count, tile_size, map.getTileCount().x, tileset_textures_));
+            chunks_.push_back(std::make_unique<TilemapChunk>(kLayer, used_tilesets, Math::Vector2(x * chunk_size_.x, y * chunk_size_.y), tile_count, kTileSize, kMap.getTileCount().x, tileset_textures_));
         }
     }
 }

@@ -24,7 +24,7 @@ void UI::Button::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    renderer->DrawSolidBox(window, GetRect(), GetPivotPosition(), Math::Color::White, GetAngle());
+    renderer->DrawSolidBox(window, GetRect(), GetPivotPosition(), Math::Color::White, 0.f);
 }
 
 bool UI::Button::OnMouseEnter()

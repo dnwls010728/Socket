@@ -5,7 +5,6 @@
 #include "TilemapChunkArray.h"
 #include "Math/Vector2.h"
 #include "tmxlite/TileLayer.hpp"
-#include "Windows/DX/Vertex.h"
 
 namespace tmx
 {

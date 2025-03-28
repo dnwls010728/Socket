@@ -30,8 +30,8 @@ protected:
     virtual void Render(float alpha) override;
 
 private:
-    void GeneratePhysics(const tmx::ObjectGroup& object);
-    void GenerateSpawn(const tmx::ObjectGroup& object);
+    void GeneratePhysics(const tmx::ObjectGroup& kObject);
+    void GenerateSpawn(const tmx::ObjectGroup& kObject);
 
     tmx::Map map_;
     Math::Vector2 map_size_;

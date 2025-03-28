@@ -34,15 +34,15 @@ void UI::Slider::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    renderer->DrawBox(window, GetRect(), GetPivotPosition(), Math::Color::Black, GetAngle());
+    renderer->DrawBox(window, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f);
 
     const Math::Rect kRect = GetRect();
     float ratio = (value_ - min_value_) / (max_value_ - min_value_);
     ratio = Math::Clamp(ratio, 0.f, 1.f);
-    renderer->DrawSolidBox(window, {kRect.x, kRect.y, kRect.width * ratio, kRect.height}, GetPivotPosition(), Math::Color::White, GetAngle());
+    renderer->DrawSolidBox(window, {kRect.x, kRect.y, kRect.width * ratio, kRect.height}, GetPivotPosition(), Math::Color::White, 0.f);
 
     std::wstring text = std::to_wstring(value_);
-    renderer->DrawString(window, text, GetRect(), GetPivotPosition(), Math::Color::Black, GetAngle(), L"Nanum18");
+    renderer->DrawString(window, text, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f, L"Nanum18");
 }
 
 bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)

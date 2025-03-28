@@ -10,7 +10,6 @@ UI::Widget::Widget(const std::wstring& kName) :
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::One()),
     pivot_({.5f, .5f}),
-    angle_(0.f),
     is_focused_(false)
 {
 }

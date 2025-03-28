@@ -46,9 +46,6 @@ namespace UI
         FORCEINLINE const Math::Vector2& GetPivot() const { return pivot_; }
         FORCEINLINE void SetPivot(const Math::Vector2& kPivot) { pivot_ = kPivot; }
 
-        FORCEINLINE float GetAngle() const { return angle_; }
-        FORCEINLINE void SetAngle(float angle) { angle_ = angle; }
-
         FORCEINLINE bool IsFocused() const { return is_focused_; }
 
         static std::shared_ptr<Widget> Create(const std::wstring& kName);
@@ -76,8 +73,6 @@ namespace UI
         Math::Vector2 position_;
         Math::Vector2 size_;
         Math::Vector2 pivot_;
-
-        float angle_;
 
         bool is_focused_;
     
