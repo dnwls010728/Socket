@@ -8,7 +8,7 @@
 UI::Slider::Slider(const std::wstring& kName) :
     Widget(kName),
     value_(0.f),
-    min_value_(0.f),
+    min_value_(20.f),
     max_value_(100.f),
     value_changed_event_([&](float value) {})
 {
@@ -39,10 +39,8 @@ void UI::Slider::Render(Renderer* renderer, WindowsWindow* window)
     const Math::Rect kRect = GetRect();
     float ratio = (value_ - min_value_) / (max_value_ - min_value_);
     ratio = Math::Clamp(ratio, 0.f, 1.f);
+    // ratio = Math::Clamp(ratio, 0.f, 1.f);
     renderer->DrawSolidBox(window, {kRect.x, kRect.y, kRect.width * ratio, kRect.height}, GetPivotPosition(), Math::Color::White, 0.f);
-
-    std::wstring text = std::to_wstring(value_);
-    renderer->DrawString(window, text, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f, L"Nanum18");
 }
 
 bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
@@ -65,10 +63,13 @@ bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton butto
 bool UI::Slider::OnDrag(const Math::Vector2& kPosition)
 {
     const Math::Rect rect = GetRect();
+    
     const float x = kPosition.x - rect.x;
     const float y = kPosition.y - rect.y;
+    
     float value = x / rect.width;
     value = Math::Clamp(value, 0.f, 1.f);
+    
     SetValue(value * (max_value_ - min_value_) + min_value_);
     return true;
 }
