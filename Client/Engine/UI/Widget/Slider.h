@@ -26,17 +26,31 @@ namespace UI
 
         FORCEINLINE float GetValue() const { return value_; }
 
+        FORCEINLINE float GetMinValue() const { return min_value_; }
+        FORCEINLINE void SetMinValue(float value) { min_value_ = value; }
+
+        FORCEINLINE float GetMaxValue() const { return max_value_; }
+        FORCEINLINE void SetMaxValue(float value) { max_value_ = value; }
+
+        FORCEINLINE float GetStep() const { return step_; }
+        FORCEINLINE void SetStep(float value) { step_ = value; }
+
         static std::shared_ptr<Slider> Create(const std::wstring& kName);
 
     protected:
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
+        virtual bool OnDragBegin() override;
+        virtual bool OnDragEnd() override;
         virtual bool OnDrag(const Math::Vector2& kPosition) override;
+
+        void SetValueInternal(const Math::Vector2& kPosition);
 
         float value_;
         float min_value_;
         float max_value_;
+        float step_;
 
         Function<void(float)> value_changed_event_;
     };

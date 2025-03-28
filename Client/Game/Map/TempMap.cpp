@@ -31,7 +31,7 @@ void TempMap::Load()
 
     s1 = UI::Slider::Create(L"Slider1");
     s1->SetPosition({100.f, 200.f});
-    s1->SetSize({100.f, 50.f});
+    s1->SetSize({120.f, 16.f});
     s1->SetPivot({.5f, .5f});
     s1->AddValueChangedEvent([&](float value)
     {
