@@ -30,10 +30,12 @@ void UI::CheckBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    renderer->DrawBox(window, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f);
+    const Math::Rect kRect = GetRect();
+
+    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f);
     if (is_checked_)
     {
-        renderer->DrawSolidBox(window, { GetRect().x + 2.f, GetRect().y + 2.f, GetRect().width - 4.f, GetRect().height - 4.f }, GetPivotPosition(), Math::Color::White, 0.f);
+        renderer->DrawSolidBox(window, { kRect.x + 2.f, kRect.y + 2.f, kRect.width - 4.f, kRect.height - 4.f }, GetPivotPosition(), Math::Color::White, 0.f);
     }
 }
 

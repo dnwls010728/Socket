@@ -13,5 +13,7 @@ public:
 protected:
     virtual void Load() override;
     virtual void Tick(float delta_time) override;
+
+    bool is_open_;
     
 };

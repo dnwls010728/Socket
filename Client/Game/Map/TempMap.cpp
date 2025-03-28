@@ -14,7 +14,8 @@ UI_SliderPtr s1 = nullptr;
 UI_CheckBoxPtr c1 = nullptr;
 
 TempMap::TempMap(const std::wstring& kName) :
-    Level(kName)
+    Level(kName),
+    is_open_(false)
 {
 }
 
@@ -42,10 +43,10 @@ void TempMap::Load()
 
     c1 = UI::CheckBox::Create(L"CheckBox1");
     c1->SetPosition({300.f, 300.f});
-    c1->SetSize({32.f, 32.f});
+    c1->SetSize({16.f, 16.f});
     c1->AddCheckEvent([&](bool value)
     {
-        Logger::Print(L"%s", value ? L"true" : L"false");
+        is_open_ = value;
     });
     
     UI::Manager::Get()->AddToViewport(s1);
@@ -70,6 +71,13 @@ void TempMap::Tick(float delta_time)
         {
             UI::Manager::Get()->RemoveFromViewport(s1);
         }
+    }
+
+    if (is_open_)
+    {
+        ImGui::Begin("Settings");
+        ImGui::Text("Hello, world!");
+        ImGui::End();
     }
 
 }
