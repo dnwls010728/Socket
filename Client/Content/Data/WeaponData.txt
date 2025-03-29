@@ -1,2 +1,0 @@
-id,name,description,size,capacity,reload_time,speed,power,delay,range,spread
-0,Dummy,This is Dummy.,6,30,1.2,16,6,0,16,0
