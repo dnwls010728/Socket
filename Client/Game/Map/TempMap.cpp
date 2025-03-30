@@ -1,6 +1,9 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
+#include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Editor/Editor.h"
+
 TempMap::TempMap(const std::wstring& kName) :
     Level(kName)
 {
@@ -9,6 +12,9 @@ TempMap::TempMap(const std::wstring& kName) :
 void TempMap::Load()
 {
     Level::Load();
+    
+    AddActor<PlayerCharacter>(L"Player");
+    // AddActor<Editor>(L"Editor");
     
 }
 

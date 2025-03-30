@@ -1,0 +1,13 @@
+wrap_mode: 0
+filter_mode: 0
+ppu: 32
+frames:
+  - name: Bomb_0
+    rect:
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.5

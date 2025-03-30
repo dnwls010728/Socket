@@ -38,7 +38,7 @@ public:
     ActorComponent* GetComponent(const rttr::type& type);
 
     template <std::derived_from<Actor> T>
-    T* SpawnActor(const std::wstring& kName);
+    T* SpawnActor(const rttr::type& kType, const std::wstring& kName);
     
     FORCEINLINE void SetTag(ActorTag tag) { tag_ = tag; }
     FORCEINLINE void SetLayer(ActorLayer layer) { layer_ = layer; }
@@ -136,9 +136,9 @@ T* Actor::AddComponent(const std::wstring& kName)
 }
 
 template <std::derived_from<Actor> T>
-T* Actor::SpawnActor(const std::wstring& kName)
+T* Actor::SpawnActor(const rttr::type& kType, const std::wstring& kName)
 {
-    return World::Get()->SpawnActor<T>(kName);
+    return World::Get()->SpawnActor<T>(kType, kName);
 }
 
 FORCEINLINE bool IsValid(const Actor* actor)
