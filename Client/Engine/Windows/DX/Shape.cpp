@@ -14,7 +14,7 @@ Shape::Shape() :
     uv_offset_(Math::Vector2::Zero()),
     uv_scale_(Math::Vector2::One()),
     color_(Math::Color::White),
-    rotation_(0.f),
+    angle_(0.f),
     texture_(nullptr),
     z_order_(0)
 {
@@ -39,9 +39,9 @@ void Shape::SetPivot(const Math::Vector2& pivot)
     UpdateMatrixx();
 }
 
-void Shape::SetRotation(float rotation)
+void Shape::SetAngle(float angle)
 {
-    rotation_ = DirectX::XMConvertToRadians(rotation);
+    angle_ = DirectX::XMConvertToRadians(angle);
     UpdateMatrixx();
 }
 
@@ -58,7 +58,7 @@ Bounds Shape::GetBounds() const
     // 변환 행렬을 계산
     DirectX::XMMATRIX transform = DirectX::XMMatrixScaling(scale_.x, scale_.y, 1.f) * // 크기 조정
                                   DirectX::XMMatrixTranslation(-pivot_.x, -pivot_.y, 0.f) * // Pivot 위치로 이동
-                                  DirectX::XMMatrixRotationZ(rotation_) * // 회전
+                                  DirectX::XMMatrixRotationZ(angle_) * // 회전
                                   DirectX::XMMatrixTranslation(pivot_.x, pivot_.y, 0.f) * // 원래 위치로 이동
                                   DirectX::XMMatrixTranslation(position_.x - pivot_.x, position_.y - pivot_.y, 0.f); // 최종 위치로 이동
 
@@ -90,7 +90,7 @@ void Shape::UpdateMatrixx()
     
     world_matrix_ = DirectX::XMMatrixScaling(scale_.x, scale_.y, 1.f) * // 크기 조정
         DirectX::XMMatrixTranslation(-pivot_.x, -pivot_.y, 0.f) * // Pivot 위치로 이동
-        DirectX::XMMatrixRotationZ(rotation_) * // 회전
+        DirectX::XMMatrixRotationZ(angle_) * // 회전
         DirectX::XMMatrixTranslation(pivot_.x, pivot_.y, 0.f) * // 원래 위치로 이동
         DirectX::XMMatrixTranslation(position_.x - pivot_.x, position_.y - pivot_.y, 0.f); // 최종 위치로 이동
 }

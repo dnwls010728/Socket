@@ -97,7 +97,7 @@ void SpriteRendererComponent::Render(float alpha)
     const int flip_y = flip_y_ ? -1 : 1;
 
     shape_->SetPosition(transform->GetPosition());
-    shape_->SetRotation(transform->GetAngle());
+    shape_->SetAngle(transform->GetAngle());
     shape_->SetScale({width * flip_x, height * flip_y});
     shape_->SetUVOffset(current_frame.uv_offset);
     shape_->SetUVScale(current_frame.uv_scale);

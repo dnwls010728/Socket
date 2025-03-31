@@ -22,7 +22,7 @@ public:
     void SetPosition(const Math::Vector2& position);
     void SetScale(const Math::Vector2& scale);
     void SetPivot(const Math::Vector2& pivot);
-    void SetRotation(float rotation);
+    void SetAngle(float angle);
 
     Bounds GetBounds() const;
 
@@ -50,7 +50,7 @@ public:
     FORCEINLINE void SetColor(const Math::Color& kColor) { color_ = kColor; }
     FORCEINLINE const Math::Color& GetColor() const { return color_; }
     
-    FORCEINLINE float GetRotation() const { return rotation_; }
+    FORCEINLINE float GetRotation() const { return angle_; }
 
     FORCEINLINE void SetTexture(Texture* kTexture) { texture_ = kTexture; }
     FORCEINLINE const Texture* GetTexture() const { return texture_; }
@@ -78,7 +78,7 @@ protected:
 
     Math::Color color_;
     
-    float rotation_;
+    float angle_;
 
     Texture* texture_;
 
