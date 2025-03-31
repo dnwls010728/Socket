@@ -152,18 +152,11 @@ void UI::Manager::OnEvent(const Event& kEvent)
             }
         }
 
-        bool is_handled = false;
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
-            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed))
-            {
-                is_handled = true;
-                break;
-            }
+            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed)) break;
         }
-
-        if (!is_handled) SetFocus(nullptr);
     }
     else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))
     {
