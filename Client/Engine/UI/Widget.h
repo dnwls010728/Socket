@@ -9,19 +9,6 @@ class Renderer;
 
 namespace UI
 {
-    class Widget;
-    class Button;
-    class Slider;
-    class CheckBox;
-}
-    
-using UI_WidgetPtr = std::shared_ptr<UI::Widget>;
-using UI_ButtonPtr = std::shared_ptr<UI::Button>;
-using UI_SliderPtr = std::shared_ptr<UI::Slider>;
-using UI_CheckBoxPtr = std::shared_ptr<UI::CheckBox>;
-
-namespace UI
-{
     class Widget : public std::enable_shared_from_this<Widget>
     {
         SHADER_CLASS_HELPER(Widget)

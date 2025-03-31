@@ -224,8 +224,9 @@
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Tilemaps\DefaultTilemap.h" />
     <ClInclude Include="Game\Editor\Editor.h" />
-    <ClInclude Include="Game\Map\TempMap.h" />
+    <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
+    <ClInclude Include="Game\Widgets\ServerList.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -533,8 +534,9 @@
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Tilemaps\DefaultTilemap.cpp" />
     <ClCompile Include="Game\Editor\Editor.cpp" />
-    <ClCompile Include="Game\Map\TempMap.cpp" />
+    <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
+    <ClCompile Include="Game\Widgets\ServerList.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

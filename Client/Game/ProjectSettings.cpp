@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
-#include "Map/TempMap.h"
+#include "Maps/TempMap.h"
 
 ProjectSettings::ProjectSettings()
 {
