@@ -3,11 +3,14 @@
 
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
 
 BoomBase::BoomBase(const std::wstring& kName) :
-    Actor(kName)
+    Actor(kName),
+    direction_(Math::Vector2::Zero()),
+    length_(0)
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     collider_ = AddComponent<BoxColliderComponent>(L"Collider");
@@ -25,7 +28,20 @@ void BoomBase::BeginPlay()
 {
     Actor::BeginPlay();
 
-    SetLifeSpan(1.f);
+    TimerManager::Get()->SetTimer(timer_handle_, this, &BoomBase::OnBoom, .1f, false);
+    SetLifeSpan(.5f);
+
+}
+
+void BoomBase::OnBoom()
+{
+    if (direction_ != Math::Vector2::Zero() && length_ > 0)
+    {
+        BoomBase* boom = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Bomb");
+        boom->GetTransform()->SetPosition(GetTransform()->GetPosition() + direction_);
+        boom->SetDirection(direction_);
+        boom->SetLength(--length_);
+    }
 }
 
 

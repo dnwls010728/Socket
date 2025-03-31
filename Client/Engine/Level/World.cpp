@@ -59,8 +59,8 @@ World::World() :
     debug_draw_.drawingBounds = bounds;
 
     debug_draw_.useDrawingBounds = false;
-    debug_draw_.drawShapes = true;
-    debug_draw_.drawJoints = true;
+    debug_draw_.drawShapes = false;
+    debug_draw_.drawJoints = false;
     debug_draw_.drawJointExtras = false;
     debug_draw_.drawAABBs = false;
     debug_draw_.drawMass = false;

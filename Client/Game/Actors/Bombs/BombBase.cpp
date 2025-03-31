@@ -32,20 +32,28 @@ void BombBase::OnBoom()
 {
     Math::Vector2 position = GetTransform()->GetPosition();
 
-    Actor* center = SpawnActor<Actor>(BoomBase::StaticClass(), L"Boom");
+    BoomBase* center = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Boom");
     center->GetTransform()->SetPosition(position);
 
-    Actor* up = SpawnActor<Actor>(BoomBase::StaticClass(), L"Boom");
+    BoomBase* up = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Boom");
     up->GetTransform()->SetPosition(position + Math::Vector2::Up());
+    up->SetDirection(Math::Vector2::Up());
+    up->SetLength(5);
 
-    Actor* down = SpawnActor<Actor>(BoomBase::StaticClass(), L"Boom");
+    BoomBase* down = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Boom");
     down->GetTransform()->SetPosition(position + Math::Vector2::Down());
+    down->SetDirection(Math::Vector2::Down());
+    down->SetLength(5);
 
-    Actor* left = SpawnActor<Actor>(BoomBase::StaticClass(), L"Boom");
+    BoomBase* left = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Boom");
     left->GetTransform()->SetPosition(position + Math::Vector2::Left());
+    left->SetDirection(Math::Vector2::Left());
+    left->SetLength(5);
 
-    Actor* right = SpawnActor<Actor>(BoomBase::StaticClass(), L"Boom");
+    BoomBase* right = SpawnActor<BoomBase>(BoomBase::StaticClass(), L"Boom");
     right->GetTransform()->SetPosition(position + Math::Vector2::Right());
+    right->SetDirection(Math::Vector2::Right());
+    right->SetLength(5);
     
     Destroy();
 }
