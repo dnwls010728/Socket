@@ -15,6 +15,7 @@ protected:
     
 #pragma region COMPONENTS
     class SpriteRendererComponent* renderer_;
+    class BoxColliderComponent* collider_;
 #pragma endregion
     
 };

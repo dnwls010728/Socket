@@ -26,6 +26,7 @@ void PlayerController::TickComponent(float delta_time)
     {
         movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
         movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+        player_character_->OnMovement(movement_input_, delta_time);
 
         if (keyboard->GetKeyDown(VK_SPACE))
         {

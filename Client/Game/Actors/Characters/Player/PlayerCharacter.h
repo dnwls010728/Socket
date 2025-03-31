@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actors/Characters/CharacterBase.h"
+#include "Math/Vector2.h"
 
 class PlayerCharacter : public CharacterBase
 {
@@ -11,6 +12,7 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     void SpawnBomb();
+    void OnMovement(const Math::Vector2& kMovement, float delta_time);
 
 protected:
     virtual void BeginPlay() override;

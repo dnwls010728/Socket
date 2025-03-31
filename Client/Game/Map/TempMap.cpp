@@ -2,6 +2,7 @@
 #include "TempMap.h"
 
 #include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Actors/Tilemaps/DefaultTilemap.h"
 #include "Editor/Editor.h"
 
 TempMap::TempMap(const std::wstring& kName) :
@@ -14,6 +15,7 @@ void TempMap::Load()
     Level::Load();
     
     AddActor<PlayerCharacter>(L"Player");
+    AddActor<DefaultTilemap>(L"Tilemap");
     // AddActor<Editor>(L"Editor");
     
 }
