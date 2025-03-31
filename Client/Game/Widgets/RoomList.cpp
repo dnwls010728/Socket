@@ -1,16 +1,17 @@
 ﻿#include "pch.h"
-#include "ServerList.h"
+#include "RoomList.h"
 
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-UI::ServerList::ServerList(const std::wstring& kName) :
+UI::RoomList::RoomList(const std::wstring& kName) :
     Widget(kName),
+    is_over_(false),
     scroll_offset_y_(0.f)
 {
 }
 
-void UI::ServerList::Render(Renderer* renderer, WindowsWindow* window)
+void UI::RoomList::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -54,7 +55,19 @@ void UI::ServerList::Render(Renderer* renderer, WindowsWindow* window)
     renderer->EndLayer();
 }
 
-bool UI::ServerList::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::RoomList::OnMouseEnter()
+{
+    is_over_ = true;
+    return true;
+}
+
+bool UI::RoomList::OnMouseLeave()
+{
+    is_over_ = false;
+    return true;
+}
+
+bool UI::RoomList::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed);
 
@@ -83,7 +96,7 @@ bool UI::ServerList::OnMouseButton(const Math::Vector2& kPosition, MouseButton b
     return false;
 }
 
-bool UI::ServerList::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kVelocity)
+bool UI::RoomList::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kVelocity)
 {
     scroll_offset_y_ += kVelocity.y * 10.f;
     
@@ -94,7 +107,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::ServerList>("UI::ServerList")
+    registration::class_<UI::RoomList>("UI::ServerList")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

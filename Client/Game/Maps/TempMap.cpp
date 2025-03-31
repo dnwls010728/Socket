@@ -5,7 +5,7 @@
 #include "Actors/Tilemaps/DefaultTilemap.h"
 #include "Editor/Editor.h"
 #include "UI/UIManager.h"
-#include "Widgets/ServerList.h"
+#include "Widgets/RoomList.h"
 
 TempMap::TempMap(const std::wstring& kName) :
     Level(kName)
@@ -20,7 +20,7 @@ void TempMap::Load()
     // AddActor<DefaultTilemap>(L"Tilemap");
     // AddActor<Editor>(L"Editor");
 
-    std::shared_ptr<UI::ServerList> server_list = std::make_shared<UI::ServerList>(L"ServerList");
+    std::shared_ptr<UI::RoomList> server_list = std::make_shared<UI::RoomList>(L"ServerList");
     server_list->SetPosition({320.f, 240.f});
     server_list->SetSize({300.f, 150.f});
     
