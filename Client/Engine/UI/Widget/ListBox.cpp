@@ -115,7 +115,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
             30.f
         };
 
-        renderer->DrawString(window, kItem.name, kItemRect, {0.f, kItemRect.height}, Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
     if (selected_index_ >= 0)
@@ -127,7 +127,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
             30.f
         };
 
-        renderer->DrawSolidBox(window, kItemRect, {0.f, kItemRect.height}, {255, 255, 255, 100}, 0.f);
+        renderer->DrawSolidBox(window, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), {255, 255, 255, 100}, 0.f);
     }
     
     if (hovered_index_ >= 0)
@@ -139,7 +139,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
             30.f
         };
 
-        renderer->DrawSolidBox(window, kItemRect, {0.f, kItemRect.height}, {255, 255, 255, 100}, 0.f);
+        renderer->DrawSolidBox(window, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), {255, 255, 255, 100}, 0.f);
     }
     renderer->EndLayer();
 
@@ -150,7 +150,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
         kRect.height
     };
 
-    renderer->DrawBox(window, kScrollBarRect, {0.f, kScrollBarRect.height}, Math::Color::Gray, 0.f, 1.f);
+    renderer->DrawBox(window, kScrollBarRect, GetPivotPosition(kScrollBarRect, {0.f, 1.f}), Math::Color::Gray, 0.f, 1.f);
 
     renderer->BeginLayer(kScrollBarRect);
     float ratio = kRect.height / (items_.size() * 30.f);
@@ -163,7 +163,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
         scroll_thumb_height
     };
 
-    renderer->DrawSolidBox(window, kScrollThumbRect, {0.f, kScrollThumbRect.height}, Math::Color(255, 255, 255, 100), 0.f);
+    renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect), Math::Color(255, 255, 255, 100), 0.f);
     renderer->EndLayer();
 }
 

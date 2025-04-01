@@ -26,10 +26,7 @@ Math::Rect UI::Widget::GetRect() const
 
 Math::Vector2 UI::Widget::GetPivotPosition() const
 {
-    const Math::Rect kRect = GetRect();
-    const Math::Vector2 kPivot = GetPivot();
-
-    return {kRect.x + kRect.width * kPivot.x, kRect.y + kRect.height * (1.f - kPivot.y)};
+    return GetPivotPosition(GetRect(), pivot_);
 }
 
 bool UI::Widget::Contains(const Math::Vector2& kPosition) const
@@ -40,6 +37,11 @@ bool UI::Widget::Contains(const Math::Vector2& kPosition) const
 std::shared_ptr<UI::Widget> UI::Widget::Create(const std::wstring& kName)
 {
     return std::make_shared<Widget>(kName);
+}
+
+Math::Vector2 UI::Widget::GetPivotPosition(const Math::Rect& kRect, const Math::Vector2& kPivot)
+{
+    return {kRect.x + kRect.width * kPivot.x, kRect.y + kRect.height * (1.f - kPivot.y)};
 }
 
 void UI::Widget::Tick(float delta_time)
