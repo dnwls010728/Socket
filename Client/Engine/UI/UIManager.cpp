@@ -86,10 +86,10 @@ void UI::Manager::OnEvent(const Event& kEvent)
             {
                 if (!has_begun_drag_)
                 {
-                    is_handled |= dragging_widget->OnDragBegin();
+                    is_handled |= dragging_widget->OnDragBegin(kMousePosition);
                     has_begun_drag_ = true;
                 }
-                else is_handled |= dragging_widget->OnDrag(kMousePosition);
+                else is_handled |= dragging_widget->OnDrag(kMousePosition, kMouseDelta);
             }
         }
 
@@ -129,12 +129,12 @@ void UI::Manager::OnEvent(const Event& kEvent)
                 std::shared_ptr<Widget> drop_widget = RayCast(kMousePosition);
                 if (drop_widget && drop_widget != dragging_widget)
                 {
-                    drop_widget->OnDrop(dragging_widget);
+                    drop_widget->OnDrop(dragging_widget, kMousePosition);
                 }
 
                 if (has_begun_drag_)
                 {
-                    dragging_widget->OnDragEnd();
+                    dragging_widget->OnDragEnd(kMousePosition);
                     has_begun_drag_ = false;
                 }
 

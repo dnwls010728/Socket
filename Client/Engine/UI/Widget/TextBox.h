@@ -15,6 +15,8 @@ namespace UI
         FORCEINLINE void SetText(const std::wstring& kText) { text_ = kText; }
         FORCEINLINE const std::wstring& GetText() const { return text_; }
 
+        static std::shared_ptr<TextBox> Create(const std::wstring& kName);
+
     protected:
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 

@@ -57,17 +57,17 @@ bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton butto
     return false;
 }
 
-bool UI::Slider::OnDragBegin()
+bool UI::Slider::OnDragBegin(const Math::Vector2& kPosition)
 {
     return true;
 }
 
-bool UI::Slider::OnDragEnd()
+bool UI::Slider::OnDragEnd(const Math::Vector2& kPosition)
 {
     return true;
 }
 
-bool UI::Slider::OnDrag(const Math::Vector2& kPosition)
+bool UI::Slider::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     SetValueInternal(kPosition);
     return true;

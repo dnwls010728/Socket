@@ -7,24 +7,6 @@ namespace UI
     {
         SHADER_CLASS_HELPER(ListBox)
         GENERATED_BODY(ListBox, Widget)
-        
-    public:
-        ListBox(const std::wstring& kName);
-        virtual ~ListBox() override = default;
-
-        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(uint64_t)>, std::decay_t<F>>>>
-        void OnSelect(F&& func);
-
-        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnSelect(M* target, void(M::*func)(uint64_t));
-
-        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnSelect(M* target, void(M::*func)(uint64_t) const);
-
-        void OnSelect(void(*func)(uint64_t));
-
-        void AddItem(const std::wstring& kName, uint64_t user_data = 0);
-        void RemoveItem(int index);
 
     protected:
         struct Item
@@ -32,7 +14,34 @@ namespace UI
             std::wstring name;
             uint64_t user_data;
         };
+        
+    public:
+        ListBox(const std::wstring& kName);
+        virtual ~ListBox() override = default;
 
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Type::uint64)>, std::decay_t<F>>>>
+        void OnSelect(F&& func);
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void OnSelect(M* target, void(M::*func)(Type::uint64));
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void OnSelect(M* target, void(M::*func)(Type::uint64) const);
+
+        void OnSelect(void(*func)(Type::uint64));
+
+        void AddItem(const std::wstring& kName, Type::uint64 user_data = 0);
+        void RemoveItem(int index);
+        void ClearItems();
+
+        FORCEINLINE const std::vector<Item>& GetItems() const { return items_; }
+
+        FORCEINLINE int GetHoveredIndex() const { return hovered_index_; }
+        FORCEINLINE int GetSelectedIndex() const { return selected_index_; }
+
+        static std::shared_ptr<ListBox> Create(const std::wstring& kName);
+
+    protected:
         virtual void Tick(float delta_time) override;
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
@@ -40,16 +49,17 @@ namespace UI
         virtual bool OnMouseLeave() override;
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
+        virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
-        Function<void(uint64_t)> select_event_;
+        Function<void(Type::uint64)> select_event_;
 
         std::vector<Item> items_;
 
         bool is_hovered_;
         
-        int hovered_index_;
         int selected_index_;
+        int hovered_index_;
 
         float scroll_offset_y_;
         float min_allowed_scroll_offset_y_;
@@ -63,13 +73,13 @@ namespace UI
     }
 
     template <typename M, typename>
-    void ListBox::OnSelect(M* target, void(M::* func)(uint64_t))
+    void ListBox::OnSelect(M* target, void(M::* func)(Type::uint64))
     {
         select_event_ = { target, func };
     }
 
     template <typename M, typename>
-    void ListBox::OnSelect(M* target, void(M::* func)(uint64_t) const)
+    void ListBox::OnSelect(M* target, void(M::* func)(Type::uint64) const)
     {
         select_event_ = { target, func };
     }

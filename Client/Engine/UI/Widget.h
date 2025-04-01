@@ -50,10 +50,10 @@ namespace UI
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
-        virtual bool OnDragBegin();
-        virtual bool OnDrag(const Math::Vector2& kPosition);
-        virtual bool OnDragEnd();
-        virtual bool OnDrop(const std::shared_ptr<Widget>& kWidget);
+        virtual bool OnDragBegin(const Math::Vector2& kPosition);
+        virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
+        virtual bool OnDragEnd(const Math::Vector2& kPosition);
+        virtual bool OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vector2& kPosition);
         
         virtual void OnFocus(bool is_focus);
 

@@ -41,9 +41,9 @@ namespace UI
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
-        virtual bool OnDragBegin() override;
-        virtual bool OnDragEnd() override;
-        virtual bool OnDrag(const Math::Vector2& kPosition) override;
+        virtual bool OnDragBegin(const Math::Vector2& kPosition) override;
+        virtual bool OnDragEnd(const Math::Vector2& kPosition) override;
+        virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
         void SetValueInternal(const Math::Vector2& kPosition);
 

@@ -6,7 +6,8 @@
 
 UI::Button::Button(const std::wstring& kName) :
     Widget(kName),
-    click_event([]() {})
+    click_event([]() {}),
+    text_(L"Text")
 {
 }
 
@@ -24,7 +25,10 @@ void UI::Button::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    renderer->DrawSolidBox(window, GetRect(), GetPivotPosition(), Math::Color::White, 0.f);
+    const Math::Rect kRect = GetRect();
+
+    renderer->DrawSolidBox(window, kRect, GetPivotPosition(), Math::Color::White, 0.f);
+    renderer->DrawString(window, text_, kRect, GetPivotPosition(), Math::Color::Black, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
 bool UI::Button::OnMouseEnter()

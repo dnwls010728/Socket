@@ -23,6 +23,9 @@ namespace UI
 
         void OnClick(void(*func)(void));
 
+        FORCEINLINE void SetText(const std::wstring& kText) { text_ = kText; }
+        FORCEINLINE const std::wstring& GetText() const { return text_; }
+
         static std::shared_ptr<Button> Create(const std::wstring& kName);
 
     protected:
@@ -33,6 +36,8 @@ namespace UI
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
         
         Function<void(void)> click_event;
+
+        std::wstring text_;
     
     };
 

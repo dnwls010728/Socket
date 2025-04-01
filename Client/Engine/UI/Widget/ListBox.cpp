@@ -7,22 +7,22 @@
 
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
-    select_event_([&](uint64_t) {}),
+    select_event_([&](Type::uint64) {}),
     items_(),
     is_hovered_(false),
-    hovered_index_(-1),
     selected_index_(-1),
+    hovered_index_(-1),
     scroll_offset_y_(0.f),
     min_allowed_scroll_offset_y_(0.f)
 {
 }
 
-void UI::ListBox::OnSelect(void(* func)(uint64_t))
+void UI::ListBox::OnSelect(void(* func)(Type::uint64))
 {
     select_event_ = func;
 }
 
-void UI::ListBox::AddItem(const std::wstring& kName, uint64_t user_data)
+void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
 {
     Item new_item;
     new_item.name = kName;
@@ -35,7 +35,7 @@ void UI::ListBox::AddItem(const std::wstring& kName, uint64_t user_data)
         offset_y += 30.f;
     }
 
-    min_allowed_scroll_offset_y_ = size_.y - offset_y;
+    min_allowed_scroll_offset_y_ = Math::Min(size_.y - offset_y, 0.f);
 }
 
 void UI::ListBox::RemoveItem(int index)
@@ -51,7 +51,34 @@ void UI::ListBox::RemoveItem(int index)
         offset_y += 30.f;
     }
 
-    min_allowed_scroll_offset_y_ = size_.y - offset_y;
+    min_allowed_scroll_offset_y_ = Math::Min(size_.y - offset_y, 0.f);
+
+    if (selected_index_ > items_.size() - 1) selected_index_ = items_.size() - 1;
+    if (hovered_index_ > items_.size() - 1) hovered_index_ = items_.size() - 1;
+
+    if (items_.empty())
+    {
+        if (selected_index_ >= 0) selected_index_ = -1;
+        if (hovered_index_ >= 0) hovered_index_ = -1;
+    }
+    else
+    {
+        select_event_(items_[selected_index_].user_data);
+    }
+}
+
+void UI::ListBox::ClearItems()
+{
+    items_.clear();
+
+    min_allowed_scroll_offset_y_ = 0.f;
+    selected_index_ = -1;
+    hovered_index_ = -1;
+}
+
+std::shared_ptr<UI::ListBox> UI::ListBox::Create(const std::wstring& kName)
+{
+    return std::make_shared<ListBox>(kName);
 }
 
 void UI::ListBox::Tick(float delta_time)
@@ -78,7 +105,6 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f, 1.f);
 
     renderer->BeginLayer(GetRect());
-
     for (Type::uint32 i = 0; i < items_.size(); ++i)
     {
         const Item& kItem = items_[i];
@@ -91,6 +117,18 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
         renderer->DrawString(window, kItem.name, kItemRect, {0.f, kItemRect.height}, Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
+
+    if (selected_index_ >= 0)
+    {
+        const Math::Rect kItemRect = {
+            kRect.x,
+            kRect.y + (selected_index_ * 30.f) + scroll_offset_y_,
+            kRect.width,
+            30.f
+        };
+
+        renderer->DrawSolidBox(window, kItemRect, {0.f, kItemRect.height}, {255, 255, 255, 100}, 0.f);
+    }
     
     if (hovered_index_ >= 0)
     {
@@ -101,12 +139,10 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
             30.f
         };
 
-        renderer->DrawSolidBox(window, kItemRect, {0.f, kItemRect.height}, Math::Color(255, 255, 255, 100), 0.f);
+        renderer->DrawSolidBox(window, kItemRect, {0.f, kItemRect.height}, {255, 255, 255, 100}, 0.f);
     }
-    
     renderer->EndLayer();
 
-    // Draw scroll bar
     const Math::Rect kScrollBarRect = {
         kRect.x + kRect.width - 10.f,
         kRect.y,
@@ -117,8 +153,6 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBox(window, kScrollBarRect, {0.f, kScrollBarRect.height}, Math::Color::Gray, 0.f, 1.f);
 
     renderer->BeginLayer(kScrollBarRect);
-
-    // Draw scroll thumb
     float ratio = kRect.height / (items_.size() * 30.f);
     
     const float scroll_thumb_height = Math::Clamp(kRect.height * ratio, 10.f, kRect.height);
@@ -130,7 +164,6 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     };
 
     renderer->DrawSolidBox(window, kScrollThumbRect, {0.f, kScrollThumbRect.height}, Math::Color(255, 255, 255, 100), 0.f);
-    
     renderer->EndLayer();
 }
 
@@ -195,6 +228,12 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
         }
     }
     
+    return true;
+}
+
+bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+{
+    scroll_offset_y_ += kDelta.y;
     return true;
 }
 

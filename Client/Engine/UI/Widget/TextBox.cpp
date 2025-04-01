@@ -10,6 +10,11 @@ UI::TextBox::TextBox(const std::wstring& kName) :
 {
 }
 
+std::shared_ptr<UI::TextBox> UI::TextBox::Create(const std::wstring& kName)
+{
+    return std::make_shared<TextBox>(kName);
+}
+
 void UI::TextBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);

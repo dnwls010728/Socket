@@ -76,22 +76,22 @@ bool UI::Widget::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& k
     return false;
 }
 
-bool UI::Widget::OnDragBegin()
+bool UI::Widget::OnDragBegin(const Math::Vector2& kPosition)
 {
     return false;
 }
 
-bool UI::Widget::OnDrag(const Math::Vector2& kPosition)
+bool UI::Widget::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     return false;
 }
 
-bool UI::Widget::OnDragEnd()
+bool UI::Widget::OnDragEnd(const Math::Vector2& kPosition)
 {
     return false;
 }
 
-bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget)
+bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vector2& kPosition)
 {
     return false;
 }
