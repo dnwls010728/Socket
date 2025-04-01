@@ -5,7 +5,6 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
-// TODO: GetRect로 전체 교체 작업 필요
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
     select_event_([&](Type::uint64) {}),
@@ -120,35 +119,32 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
     if (selected_index_ >= 0)
     {
-        const Math::Rect kItemRect = {
-            kRect.x,
-            kRect.y + (selected_index_ * 30.f) + scroll_offset_y_,
-            kRect.width,
-            30.f
-        };
+        const Math::Rect kItemRect = GetRect(
+            {kRect.x, kRect.y + (selected_index_ * 30.f) + scroll_offset_y_},
+            {kRect.width, 30.f},
+            {0.f, 1.f}
+        );
 
         renderer->DrawSolidBox(window, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), {255, 255, 255, 100}, 0.f);
     }
     
     if (hovered_index_ >= 0)
     {
-        const Math::Rect kItemRect = {
-            kRect.x,
-            kRect.y + (hovered_index_ * 30.f) + scroll_offset_y_,
-            kRect.width,
-            30.f
-        };
+        const Math::Rect kItemRect = GetRect(
+            {kRect.x, kRect.y + (hovered_index_ * 30.f) + scroll_offset_y_},
+            {kRect.width, 30.f},
+            {0.f, 1.f}
+        );
 
         renderer->DrawSolidBox(window, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), {255, 255, 255, 100}, 0.f);
     }
     renderer->EndLayer();
-
-    const Math::Rect kScrollBarRect = {
-        kRect.x + kRect.width - 10.f,
-        kRect.y,
-        10.f,
-        kRect.height
-    };
+    
+    const Math::Rect kScrollBarRect = GetRect(
+        {kRect.x + kRect.width - 10.f, kRect.y},
+        {10.f, kRect.height},
+        {0.f, 1.f}
+    );
 
     renderer->DrawBox(window, kScrollBarRect, GetPivotPosition(kScrollBarRect, {0.f, 1.f}), Math::Color::Gray, 0.f, 1.f);
 
@@ -156,12 +152,11 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     float ratio = kRect.height / (items_.size() * 30.f);
     
     const float scroll_thumb_height = Math::Clamp(kRect.height * ratio, 10.f, kRect.height);
-    const Math::Rect kScrollThumbRect = {
-        kScrollBarRect.x,
-        kScrollBarRect.y + (scroll_offset_y_ / min_allowed_scroll_offset_y_) * (kScrollBarRect.height - scroll_thumb_height),
-        kScrollBarRect.width,
-        scroll_thumb_height
-    };
+    const Math::Rect kScrollThumbRect = GetRect(
+        {kScrollBarRect.x, kScrollBarRect.y + (scroll_offset_y_ / min_allowed_scroll_offset_y_) * (kScrollBarRect.height - scroll_thumb_height)},
+        {kScrollBarRect.width, scroll_thumb_height},
+        {0.f, 1.f}
+    );
 
     renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect), Math::Color(255, 255, 255, 100), 0.f);
     renderer->EndLayer();
@@ -186,12 +181,11 @@ bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vect
     const Math::Rect kRect = GetRect();
     for (Type::uint32 i = 0; i < items_.size(); ++i)
     {
-        const Math::Rect kItemRect = {
-            kRect.x,
-            kRect.y + (i * 30.f) + scroll_offset_y_,
-            kRect.width,
-            30.f
-        };
+        const Math::Rect kItemRect = GetRect(
+            {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
+            {kRect.width, 30.f},
+            {0.f, 1.f}
+        );
 
         if (Math::Rect::Contains(kItemRect, kPosition))
         {
@@ -211,12 +205,11 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
         const Math::Rect kRect = GetRect();
         for (Type::uint32 i = 0; i < items_.size(); ++i)
         {
-            const Math::Rect kItemRect = {
-                kRect.x,
-                kRect.y + (i * 30.f) + scroll_offset_y_,
-                kRect.width,
-                30.f
-            };
+            const Math::Rect kItemRect = GetRect(
+                {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
+                {kRect.width, 30.f},
+                {0.f, 1.f}
+            );
 
             if (Math::Rect::Contains(kItemRect, kPosition))
             {
