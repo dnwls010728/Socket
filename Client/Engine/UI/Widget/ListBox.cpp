@@ -5,6 +5,7 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
+// TODO: GetRect로 전체 교체 작업 필요
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
     select_event_([&](Type::uint64) {}),
@@ -108,12 +109,11 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     for (Type::uint32 i = 0; i < items_.size(); ++i)
     {
         const Item& kItem = items_[i];
-        const Math::Rect kItemRect = {
-            kRect.x,
-            kRect.y + (i * 30.f) + scroll_offset_y_,
-            kRect.width,
-            30.f
-        };
+        const Math::Rect kItemRect = GetRect(
+            {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
+            {kRect.width, 30.f},
+            {0.f, 1.f}
+        );
 
         renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }

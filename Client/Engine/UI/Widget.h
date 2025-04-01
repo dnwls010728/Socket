@@ -39,6 +39,7 @@ namespace UI
 
         static std::shared_ptr<Widget> Create(const std::wstring& kName);
 
+        static Math::Rect GetRect(const Math::Vector2& kPosition, const Math::Vector2& kSize, const Math::Vector2& kPivot = {.5f, .5f});
         static Math::Vector2 GetPivotPosition(const Math::Rect& kRect, const Math::Vector2& kPivot = {.5f, .5f});
 
     protected:

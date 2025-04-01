@@ -16,12 +16,7 @@ UI::Widget::Widget(const std::wstring& kName) :
 
 Math::Rect UI::Widget::GetRect() const
 {
-    float x = position_.x - size_.x * pivot_.x;
-    float y = position_.y - size_.y * (1.f - pivot_.y);
-    float width = size_.x;
-    float height = size_.y;
-
-    return {x, y, width, height};
+    return GetRect(position_, size_, pivot_);
 }
 
 Math::Vector2 UI::Widget::GetPivotPosition() const
@@ -37,6 +32,13 @@ bool UI::Widget::Contains(const Math::Vector2& kPosition) const
 std::shared_ptr<UI::Widget> UI::Widget::Create(const std::wstring& kName)
 {
     return std::make_shared<Widget>(kName);
+}
+
+Math::Rect UI::Widget::GetRect(const Math::Vector2& kPosition, const Math::Vector2& kSize, const Math::Vector2& kPivot)
+{
+    float x = kPosition.x - kSize.x * kPivot.x;
+    float y = kPosition.y - kSize.y * (1.f - kPivot.y);
+    return {x, y, kSize.x, kSize.y};
 }
 
 Math::Vector2 UI::Widget::GetPivotPosition(const Math::Rect& kRect, const Math::Vector2& kPivot)
