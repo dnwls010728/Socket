@@ -13,15 +13,15 @@ namespace UI
         virtual ~Slider() override = default;
 
         template <typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(float)>, std::decay_t<F>>>>
-        void AddValueChangedEvent(F&& func);
+        void OnSlide(F&& func);
 
         template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddValueChangedEvent(M* target, void (M::*func)(float));
+        void OnSlide(M* target, void (M::*func)(float));
 
         template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddValueChangedEvent(M* target, void (M::*func)(float) const);
+        void OnSlide(M* target, void (M::*func)(float) const);
 
-        void AddValueChangedEvent(void (*func)(float));
+        void OnSlide(void (*func)(float));
         void SetValue(float value);
 
         FORCEINLINE float GetValue() const { return value_; }
@@ -56,19 +56,19 @@ namespace UI
     };
 
     template <typename F, typename>
-    void Slider::AddValueChangedEvent(F&& func)
+    void Slider::OnSlide(F&& func)
     {
         value_changed_event_ = std::forward<F>(func);
     }
 
     template <typename M, typename>
-    void Slider::AddValueChangedEvent(M* target, void (M::*func)(float))
+    void Slider::OnSlide(M* target, void (M::*func)(float))
     {
         value_changed_event_ = {target, func};
     }
 
     template <typename M, typename>
-    void Slider::AddValueChangedEvent(M* target, void (M::*func)(float) const)
+    void Slider::OnSlide(M* target, void (M::*func)(float) const)
     {
         value_changed_event_ = {target, func};
     }

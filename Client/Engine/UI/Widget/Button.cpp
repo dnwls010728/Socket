@@ -10,7 +10,7 @@ UI::Button::Button(const std::wstring& kName) :
 {
 }
 
-void UI::Button::AddClickEvent(void(* func)())
+void UI::Button::OnClick(void(* func)())
 {
     click_event = func;
 }

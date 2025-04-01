@@ -11,7 +11,7 @@ UI::CheckBox::CheckBox(const std::wstring& kName) :
 {
 }
 
-void UI::CheckBox::AddCheckEvent(void(* func)(bool))
+void UI::CheckBox::OnClick(void(* func)(bool))
 {
     check_event = func;
 }

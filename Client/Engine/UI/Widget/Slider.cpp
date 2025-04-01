@@ -15,7 +15,7 @@ UI::Slider::Slider(const std::wstring& kName) :
 {
 }
 
-void UI::Slider::AddValueChangedEvent(void(* func)(float))
+void UI::Slider::OnSlide(void(* func)(float))
 {
     value_changed_event_ = func;
 }

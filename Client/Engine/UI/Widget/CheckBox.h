@@ -13,15 +13,15 @@ namespace UI
         virtual ~CheckBox() override = default;
         
         template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(bool)>, std::decay_t<F>>>>
-        void AddCheckEvent(F&& func);
+        void OnClick(F&& func);
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddCheckEvent(M* target, void(M::*func)(bool));
+        void OnClick(M* target, void(M::*func)(bool));
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddCheckEvent(M* target, void(M::*func)(bool) const);
+        void OnClick(M* target, void(M::*func)(bool) const);
 
-        void AddCheckEvent(void(*func)(bool));
+        void OnClick(void(*func)(bool));
 
         void SetCheck(bool value);
 
@@ -39,19 +39,19 @@ namespace UI
     };
 
     template <typename F, typename>
-    void CheckBox::AddCheckEvent(F&& func)
+    void CheckBox::OnClick(F&& func)
     {
         check_event = std::forward<F>(func);
     }
 
     template <typename M, typename>
-    void CheckBox::AddCheckEvent(M* target, void(M::* func)(bool))
+    void CheckBox::OnClick(M* target, void(M::* func)(bool))
     {
         check_event = { target, func };
     }
 
     template <typename M, typename>
-    void CheckBox::AddCheckEvent(M* target, void(M::* func)(bool) const)
+    void CheckBox::OnClick(M* target, void(M::* func)(bool) const)
     {
         check_event = { target, func };
     }

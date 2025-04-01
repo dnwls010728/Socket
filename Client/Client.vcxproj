@@ -199,7 +199,9 @@
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\CheckBox.h" />
+    <ClInclude Include="Engine\UI\Widget\ListBox.h" />
     <ClInclude Include="Engine\UI\Widget\Slider.h" />
+    <ClInclude Include="Engine\UI\Widget\TextBox.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\Material.h" />
@@ -226,7 +228,6 @@
     <ClInclude Include="Game\Editor\Editor.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
-    <ClInclude Include="Game\Widgets\RoomList.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -513,7 +514,9 @@
     <ClCompile Include="Engine\UI\Widget.cpp" />
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\CheckBox.cpp" />
+    <ClCompile Include="Engine\UI\Widget\ListBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
+    <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Material.cpp" />
     <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
@@ -536,7 +539,6 @@
     <ClCompile Include="Game\Editor\Editor.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
-    <ClCompile Include="Game\Widgets\RoomList.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

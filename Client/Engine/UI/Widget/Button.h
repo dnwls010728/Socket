@@ -13,15 +13,15 @@ namespace UI
         virtual ~Button() override = default;
 
         template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
-        void AddClickEvent(F&& func);
+        void OnClick(F&& func);
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddClickEvent(M* target, void(M::*func)(void));
+        void OnClick(M* target, void(M::*func)(void));
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void AddClickEvent(M* target, void(M::*func)(void) const);
+        void OnClick(M* target, void(M::*func)(void) const);
 
-        void AddClickEvent(void(*func)(void));
+        void OnClick(void(*func)(void));
 
         static std::shared_ptr<Button> Create(const std::wstring& kName);
 
@@ -37,19 +37,19 @@ namespace UI
     };
 
     template <typename F, typename>
-    void Button::AddClickEvent(F&& func)
+    void Button::OnClick(F&& func)
     {
         click_event = std::forward<F>(func);
     }
 
     template <typename M, typename>
-    void Button::AddClickEvent(M* target, void(M::* func)())
+    void Button::OnClick(M* target, void(M::* func)())
     {
         click_event = {target, func};
     }
 
     template <typename M, typename>
-    void Button::AddClickEvent(M* target, void(M::* func)() const)
+    void Button::OnClick(M* target, void(M::* func)() const)
     {
         click_event = {target, func};
     }
