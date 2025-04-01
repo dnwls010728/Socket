@@ -233,12 +233,16 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
 
 bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
+    if (items_.empty()) return false;
+    
     scroll_offset_y_ += kDelta.y;
     return true;
 }
 
 bool UI::ListBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
+    if (items_.empty()) return false;
+    
     const float scroll_amount = kDelta.y * 10.f;
     scroll_offset_y_ += scroll_amount;
     
