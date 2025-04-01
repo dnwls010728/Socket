@@ -96,6 +96,16 @@ bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vect
     return false;
 }
 
+bool UI::Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+{
+    return false;
+}
+
+bool UI::Widget::OnChar(wchar_t character)
+{
+    return false;
+}
+
 void UI::Widget::OnFocus(bool is_focus)
 {
     is_focused_ = is_focus;

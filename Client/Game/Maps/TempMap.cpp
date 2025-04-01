@@ -40,7 +40,7 @@ void TempMap::Load()
     UI::Manager::Get()->AddToViewport(text_box);
 
     std::shared_ptr<UI::Button> add_button = UI::Button::Create(L"AddRoom");
-    add_button->SetPosition({220.f, 460.f});
+    add_button->SetPosition({200.f, 460.f});
     add_button->SetSize({100.f, 50.f});
     add_button->SetText(L"Add Room");
     add_button->OnClick([&]()
@@ -51,7 +51,7 @@ void TempMap::Load()
     UI::Manager::Get()->AddToViewport(add_button);
 
     std::shared_ptr<UI::Button> remove_button = UI::Button::Create(L"RemoveRoom");
-    remove_button->SetPosition({420.f, 460.f});
+    remove_button->SetPosition({440.f, 460.f});
     remove_button->SetSize({100.f, 50.f});
     remove_button->SetText(L"Remove Room");
     remove_button->OnClick([&]()
@@ -60,6 +60,17 @@ void TempMap::Load()
     });
 
     UI::Manager::Get()->AddToViewport(remove_button);
+
+    std::shared_ptr<UI::Button> clear_button = UI::Button::Create(L"ClearRoom");
+    clear_button->SetPosition({320.f, 460.f});
+    clear_button->SetSize({100.f, 50.f});
+    clear_button->SetText(L"Clear Room");
+    clear_button->OnClick([&]()
+    {
+        room_list->ClearItems();
+    });
+
+    UI::Manager::Get()->AddToViewport(clear_button);
     
 }
 

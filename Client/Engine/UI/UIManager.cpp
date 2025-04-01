@@ -170,4 +170,23 @@ void UI::Manager::OnEvent(const Event& kEvent)
             if (widget->Contains(kMousePosition) && widget->OnScroll(kMousePosition, kMouseDelta)) break;
         }
     }
+    else if (kType == static_cast<Type::uint32>(EventType::kKeyChanged))
+    {
+        const KeyboardEvent& kKey = kEvent.key;
+        if (std::shared_ptr<Widget> widget = focused_widget_.lock())
+        {
+            if (widget->IsFocused() && widget->OnKey(kKey.key_code, kKey.is_repeat))
+            {
+            }
+        }
+    }
+    else if (kType == static_cast<Type::uint32>(EventType::kText))
+    {
+        if (std::shared_ptr<Widget> widget = focused_widget_.lock())
+        {
+            if (widget->IsFocused() && widget->OnChar(kEvent.text.character))
+            {
+            }
+        }
+    }
 }

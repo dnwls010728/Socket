@@ -54,6 +54,8 @@ namespace UI
         virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnDragEnd(const Math::Vector2& kPosition);
         virtual bool OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vector2& kPosition);
+        virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
+        virtual bool OnChar(wchar_t character);
         
         virtual void OnFocus(bool is_focus);
 

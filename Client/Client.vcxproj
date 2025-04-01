@@ -199,6 +199,7 @@
     <ClInclude Include="Engine\UI\Widget.h" />
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\CheckBox.h" />
+    <ClInclude Include="Engine\UI\Widget\EditableTextBox.h" />
     <ClInclude Include="Engine\UI\Widget\ListBox.h" />
     <ClInclude Include="Engine\UI\Widget\Slider.h" />
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
@@ -514,6 +515,7 @@
     <ClCompile Include="Engine\UI\Widget.cpp" />
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\CheckBox.cpp" />
+    <ClCompile Include="Engine\UI\Widget\EditableTextBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\ListBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
