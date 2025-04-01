@@ -27,6 +27,7 @@ struct WindowEvent
     EventType type;
     int data1;
     int data2;
+    double timestamp;
 };
 
 struct KeyboardEvent
@@ -34,12 +35,14 @@ struct KeyboardEvent
     EventType type;
     WORD key_code;
     bool is_repeat;
+    double timestamp;
 };
 
 struct TextEvent
 {
     EventType type;
     wchar_t character;
+    double timestamp;
 };
 
 struct MouseButtonEvent
@@ -49,6 +52,7 @@ struct MouseButtonEvent
     MouseButton button;
     float x;
     float y;
+    double timestamp;
 };
 
 struct MouseMotionEvent
@@ -56,6 +60,7 @@ struct MouseMotionEvent
     EventType type;
     float x;
     float y;
+    double timestamp;
 };
 
 struct MouseWheelEvent
@@ -65,6 +70,7 @@ struct MouseWheelEvent
     float mouse_y;
     float x;
     float y;
+    double timestamp;
 };
 
 union Event

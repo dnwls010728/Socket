@@ -3,6 +3,7 @@
 
 #include "WindowsWindow.h"
 #include "combaseapi.h"
+#include "Event/EventManager.h"
 
 WindowsApplication::WindowsApplication() :
     instance_handle_(nullptr),
@@ -73,6 +74,8 @@ void WindowsApplication::PumpMessages()
     {
         if (GetMessage(&msg, nullptr, 0, 0))
         {
+            EventManager::Get()->SetMessageTick(msg.time);
+            
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }

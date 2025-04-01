@@ -4,9 +4,11 @@
 #include <windowsx.h>
 
 #include "Input/Mouse.h"
+#include "Time/Time.h"
 
 EventManager::EventManager() :
-    events_()
+    events_(),
+    message_tick_(0)
 {
 }
 
@@ -33,6 +35,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.type = static_cast<Type::uint32>(EventType::kWindowSize);
         event.window.data1 = width;
         event.window.data2 = height;
+        event.window.timestamp = GetEventTimestamp();
 
         events_.push(event);
         return true;
@@ -57,6 +60,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.type = type;
         event.key.key_code = key_code;
         event.key.is_repeat = is_repeat;
+        event.key.timestamp = GetEventTimestamp();
 
         events_.push(event);
         return true;
@@ -70,6 +74,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         Event event;
         event.type = static_cast<Type::uint32>(EventType::kText);
         event.text.character = kCharacter;
+        event.text.timestamp = GetEventTimestamp();
 
         events_.push(event);
         return true;
@@ -111,6 +116,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.button.button = mouse_button;
         event.button.x = static_cast<float>(x);
         event.button.y = static_cast<float>(y);
+        event.button.timestamp = GetEventTimestamp();
 
         events_.push(event);
         return true;
@@ -125,6 +131,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.type = static_cast<Type::uint32>(EventType::kMouseMotion);
         event.motion.x = static_cast<float>(x);
         event.motion.y = static_cast<float>(y);
+        event.motion.timestamp = GetEventTimestamp();
 
         events_.push(event);
         return true;
@@ -157,11 +164,30 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
             event.wheel.y = 0.f;
         }
 
+        event.wheel.timestamp = GetEventTimestamp();
+
         events_.push(event);
         return true;
     }
     
     return false;
+}
+
+double EventManager::GetEventTimestamp()
+{
+    static double timestamp_offset = 0;
+
+    double now = Time::Seconds();
+    double timestamp = static_cast<double>(message_tick_) / 1000;
+    timestamp += timestamp_offset;
+
+    if (timestamp_offset == 0)
+    {
+        timestamp_offset = now - timestamp;
+        timestamp = now;
+    }
+
+    return timestamp;
 }
 
 void EventManager::Clear()
