@@ -44,9 +44,9 @@ void UI::Slider::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f);
 }
 
-bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
-    Widget::OnMouseButton(kPosition, button, is_pressed);
+    Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
 
     if (button == MouseButton::kLeft && is_pressed)
     {

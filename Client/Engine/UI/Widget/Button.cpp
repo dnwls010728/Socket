@@ -41,9 +41,9 @@ bool UI::Button::OnMouseLeave()
     return true;
 }
 
-bool UI::Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::Button::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
-    Widget::OnMouseButton(kPosition, button, is_pressed);
+    Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
     if (button == MouseButton::kLeft && is_pressed)
     {
         click_event();

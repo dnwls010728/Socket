@@ -155,7 +155,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
         for (Type::uint64 i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
-            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed)) break;
+            if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed, kButton.timestamp)) break;
         }
     }
     else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))

@@ -69,7 +69,7 @@ bool UI::Widget::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vecto
     return false;
 }
 
-bool UI::Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::Widget::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
     if (button == MouseButton::kLeft && is_pressed && !IsFocused()) Manager::Get()->SetFocus(GetSharedThis());
     return false;

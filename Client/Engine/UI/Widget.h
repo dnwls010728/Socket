@@ -51,7 +51,7 @@ namespace UI
         virtual bool OnMouseEnter();
         virtual bool OnMouseLeave();
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
-        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed);
+        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp);
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnDragBegin(const Math::Vector2& kPosition);
         virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);

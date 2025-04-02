@@ -39,9 +39,9 @@ void UI::CheckBox::Render(Renderer* renderer, WindowsWindow* window)
     }
 }
 
-bool UI::CheckBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::CheckBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
-    Widget::OnMouseButton(kPosition, button, is_pressed);
+    Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
     if (button == MouseButton::kLeft && is_pressed)
     {
         is_checked_ = !is_checked_;

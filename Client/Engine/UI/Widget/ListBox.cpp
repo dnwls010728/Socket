@@ -8,6 +8,7 @@
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
     select_event_([&](Type::uint64) {}),
+    double_click_event_([&](Type::uint64) {}),
     items_(),
     is_hovered_(false),
     selected_index_(-1),
@@ -20,6 +21,11 @@ UI::ListBox::ListBox(const std::wstring& kName) :
 void UI::ListBox::OnSelect(void(* func)(Type::uint64))
 {
     select_event_ = func;
+}
+
+void UI::ListBox::OnDoubleClick(void(* func)(Type::uint64))
+{
+    double_click_event_ = func;
 }
 
 void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
@@ -197,9 +203,11 @@ bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vect
     return false;
 }
 
-bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed)
+bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
-    Widget::OnMouseButton(kPosition, button, is_pressed);
+    Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
+    static double last_time = 0.f;
+    
     if (button == MouseButton::kLeft && is_pressed)
     {
         const Math::Rect kRect = GetRect();
@@ -216,6 +224,14 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
                 const Item& kItem = items_[i];
                 select_event_(kItem.user_data);
                 selected_index_ = i;
+
+                if (timestamp - last_time < .2f)
+                {
+                    double_click_event_(kItem.user_data);
+                    last_time = 0.f;
+                }
+                else last_time = timestamp;
+                
                 return true;
             }
         }

@@ -30,6 +30,17 @@ namespace UI
 
         void OnSelect(void(*func)(Type::uint64));
 
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Type::uint64)>, std::decay_t<F>>>>
+        void OnDoubleClick(F&& func);
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void OnDoubleClick(M* target, void(M::*func)(Type::uint64));
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void OnDoubleClick(M* target, void(M::*func)(Type::uint64) const);
+
+        void OnDoubleClick(void(*func)(Type::uint64));
+
         void AddItem(const std::wstring& kName, Type::uint64 user_data = 0);
         void RemoveItem(int index);
         void ClearItems();
@@ -48,11 +59,12 @@ namespace UI
         virtual bool OnMouseEnter() override;
         virtual bool OnMouseLeave() override;
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
-        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
+        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
         virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
         Function<void(Type::uint64)> select_event_;
+        Function<void(Type::uint64)> double_click_event_;
 
         std::vector<Item> items_;
 
@@ -82,5 +94,23 @@ namespace UI
     void ListBox::OnSelect(M* target, void(M::* func)(Type::uint64) const)
     {
         select_event_ = { target, func };
+    }
+
+    template <typename F, typename>
+    void ListBox::OnDoubleClick(F&& func)
+    {
+        double_click_event_ = std::forward<F>(func);
+    }
+
+    template <typename M, typename>
+    void ListBox::OnDoubleClick(M* target, void(M::* func)(Type::uint64))
+    {
+        double_click_event_ = { target, func };
+    }
+
+    template <typename M, typename>
+    void ListBox::OnDoubleClick(M* target, void(M::* func)(Type::uint64) const)
+    {
+        double_click_event_ = { target, func };
     }
 }

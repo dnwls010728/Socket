@@ -33,7 +33,7 @@ namespace UI
         
         virtual bool OnMouseEnter() override;
         virtual bool OnMouseLeave() override;
-        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed) override;
+        virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
         
         Function<void(void)> click_event;
 

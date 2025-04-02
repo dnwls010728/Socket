@@ -30,6 +30,10 @@ void TempMap::Load()
     room_list->OnSelect([&](uint64_t user_data) {
         text_box->SetText(L"ROOM " + std::to_wstring(user_data));
     });
+
+    room_list->OnDoubleClick([&](uint64_t user_data) {
+        text_box->SetText(L"DOUBLE CLICK ROOM " + std::to_wstring(user_data));
+    });
     
     UI::Manager::Get()->AddToViewport(room_list);
 
