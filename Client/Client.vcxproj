@@ -220,12 +220,6 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Game\Actors\Bombs\BombBase.h" />
-    <ClInclude Include="Game\Actors\Bombs\BoomBase.h" />
-    <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\Components\PlayerController.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
-    <ClInclude Include="Game\Actors\Tilemaps\DefaultTilemap.h" />
     <ClInclude Include="Game\Editor\Editor.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -532,12 +526,6 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Game\Actors\Bombs\BombBase.cpp" />
-    <ClCompile Include="Game\Actors\Bombs\BoomBase.cpp" />
-    <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\Components\PlayerController.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
-    <ClCompile Include="Game\Actors\Tilemaps\DefaultTilemap.cpp" />
     <ClCompile Include="Game\Editor\Editor.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />

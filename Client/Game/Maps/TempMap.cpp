@@ -18,10 +18,6 @@ TempMap::TempMap(const std::wstring& kName) :
 void TempMap::Load()
 {
     Level::Load();
-    
-    // AddActor<PlayerCharacter>(L"Player");
-    // AddActor<DefaultTilemap>(L"Tilemap");
-    // AddActor<Editor>(L"Editor");
 
     room_list = UI::ListBox::Create(L"RoomList");
     room_list->SetPosition({320.f, 240.f});
