@@ -60,7 +60,9 @@ namespace UI
         virtual bool OnMouseLeave() override;
         virtual bool OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
+        virtual bool OnDragBegin(const Math::Vector2& kPosition) override;
         virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
+        virtual bool OnDragEnd(const Math::Vector2& kPosition) override;
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
         Function<void(Type::uint64)> select_event_;

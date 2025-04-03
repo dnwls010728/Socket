@@ -74,8 +74,8 @@ void TempMap::Load()
     UI::Manager::Get()->AddToViewport(clear_button);
 
     std::shared_ptr<UI::EditableTextBox> editable_text_box = UI::EditableTextBox::Create(L"EditableTextBox");
-    editable_text_box->SetPosition({150.f, 25.f});
-    editable_text_box->SetSize({300.f, 50.f});
+    editable_text_box->SetPosition({100.f, 25.f});
+    editable_text_box->SetSize({200.f, 50.f});
     editable_text_box->OnValueChanged([&](const std::wstring& kValue)
     {
         Logger::Print(L"EditableTextBox Value Changed: %s", kValue.c_str());

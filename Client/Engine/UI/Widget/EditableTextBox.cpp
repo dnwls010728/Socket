@@ -6,16 +6,12 @@
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-// 테스트
-float start_position = 0.f;
-float end_position = 0.f;
-
-std::wstring selected_text = L"";
-
+// TODO: 코드 정리 필요
 UI::EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
     elapsed_time_(0.f),
+    total_advance_(0.f),
     cursor_visible_(false),
     cursor_position_(0),
     value_changed_event_([&](const std::wstring& kValue) {}),
@@ -58,40 +54,48 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
+    const Math::Rect kRect = GetRect();
+
     renderer->DrawBox(window, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f);
 
     renderer->BeginLayer(GetRect());
-    renderer->DrawString(window, text_, GetRect(), GetPivotPosition(), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+    float offset = 0.f;
+    float advance = 0.f;
+    if (cursor_position_ - 1 < advances_.size())
+    {
+        advance = std::accumulate(advances_.begin(), advances_.begin() + cursor_position_, 0.f);
+    }
+    if (kRect.width < advance)
+    {
+        offset = advance - kRect.width;
+    }
+
+    Math::Rect text_rect = GetRect(
+        {kRect.x - offset, kRect.y},
+        {total_advance_, kRect.height},
+        {0.f, 1.f}
+    );
+    
+    renderer->DrawString(window, text_, text_rect, GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     renderer->EndLayer();
+
+    if (cursor_visible_)
+    {
+        Math::Rect cursor_rect = GetRect(
+            {kRect.x + advance - offset, kRect.y},
+            {1.f, kRect.height},
+            {0.f, 1.f}
+        );
+
+        renderer->DrawBox(window, cursor_rect, GetPivotPosition(cursor_rect, {0.f, 1.f}), Math::Color::Red, 0.f);
+    }
 }
 
 bool UI::EditableTextBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed,
     double timestamp)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
-    return true;
-}
-
-bool UI::EditableTextBox::OnDragBegin(const Math::Vector2& kPosition)
-{
-    if (text_.empty()) return false;
-    start_position = kPosition.x;
-    
-    return true;
-}
-
-bool UI::EditableTextBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
-{
-    if (text_.empty()) return false;
-    
-    return true;
-}
-
-bool UI::EditableTextBox::OnDragEnd(const Math::Vector2& kPosition)
-{
-    if (text_.empty()) return false;
-    end_position = kPosition.x;
-    
     return true;
 }
 
@@ -136,8 +140,8 @@ bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
                 text_.erase(cursor_position_-- - 1, 1);
                 value_changed_event_(text_);
                 
-                float total_advance = GetAdvances(text_, advances_);
-                Logger::Print(L"Total Advance: %f", total_advance);
+                total_advance_ = GetAdvances(text_, advances_);
+                Logger::Print(L"Total Advance: %f", total_advance_);
 
                 elapsed_time_ = 0.f;
                 cursor_visible_ = true;
@@ -167,8 +171,8 @@ bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
                 text_.erase(cursor_position_, 1);
                 value_changed_event_(text_);
                 
-                float total_advance = GetAdvances(text_, advances_);
-                Logger::Print(L"Total Advance: %f", total_advance);
+                total_advance_ = GetAdvances(text_, advances_);
+                Logger::Print(L"Total Advance: %f", total_advance_);
 
                 elapsed_time_ = 0.f;
                 cursor_visible_ = true;
@@ -185,8 +189,8 @@ bool UI::EditableTextBox::OnChar(wchar_t character)
     text_.insert(cursor_position_++, 1, character);
     value_changed_event_(text_);
     
-    float total_advance = GetAdvances(text_, advances_);
-    Logger::Print(L"Total Advance: %f", total_advance);
+    total_advance_ = GetAdvances(text_, advances_);
+    Logger::Print(L"Total Advance: %f", total_advance_);
 
     // Space Bar
     if (character == 32)

@@ -41,9 +41,6 @@ namespace UI
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
-        virtual bool OnDragBegin(const Math::Vector2& kPosition) override;
-        virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
-        virtual bool OnDragEnd(const Math::Vector2& kPosition) override;
         virtual bool OnKey(Type::uint16 key_code, bool is_pressed) override;
         virtual bool OnChar(wchar_t character) override;
 
@@ -54,6 +51,7 @@ namespace UI
         std::wstring text_;
 
         float elapsed_time_;
+        float total_advance_;
 
         bool cursor_visible_;
 

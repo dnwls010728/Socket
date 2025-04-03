@@ -5,6 +5,16 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
+// 스크롤 가속도
+float scroll_acceleration = 0.1f;
+
+Math::Vector2 drag_direction = { 0.f, 0.f };
+
+// 스크롤 강도
+Math::Vector2 start_pos = { 0.f, 0.f };
+Math::Vector2 end_pos = { 0.f, 0.f };
+
+// TODO: 테스트 코드 정리 필요
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
     select_event_([&](Type::uint64) {}),
@@ -99,6 +109,20 @@ void UI::ListBox::Tick(float delta_time)
     if (target_scroll_offset_y != scroll_offset_y_)
     {
         scroll_offset_y_ = Math::Lerp(scroll_offset_y_, target_scroll_offset_y, delta_time * 5.f);
+    }
+
+    if (scroll_acceleration != 0.f)
+    {
+        if (drag_direction.y > 0.f)
+        {
+            scroll_offset_y_ += scroll_acceleration;
+        }
+        else if (drag_direction.y < 0.f)
+        {
+            scroll_offset_y_ -= scroll_acceleration;
+        }
+        
+        scroll_acceleration = Math::Lerp(scroll_acceleration, 0.f, delta_time * 5.f);
     }
 }
 
@@ -240,11 +264,27 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
     return true;
 }
 
+bool UI::ListBox::OnDragBegin(const Math::Vector2& kPosition)
+{
+    start_pos = kPosition;
+    return true;
+}
+
 bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     if (items_.empty()) return false;
     
     scroll_offset_y_ += kDelta.y;
+    return true;
+}
+
+bool UI::ListBox::OnDragEnd(const Math::Vector2& kPosition)
+{
+    float length = (kPosition - start_pos).Magnitude();
+    scroll_acceleration = length / 10.f;
+
+    drag_direction = (kPosition - start_pos).Normalized();
+    
     return true;
 }
 
