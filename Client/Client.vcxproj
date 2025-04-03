@@ -220,6 +220,7 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Editor\Editor.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -526,6 +527,7 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Editor\Editor.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />

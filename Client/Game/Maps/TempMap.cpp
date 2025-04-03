@@ -4,6 +4,7 @@
 #include "Editor/Editor.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
+#include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/ListBox.h"
 #include "UI/Widget/TextBox.h"
 
@@ -71,6 +72,21 @@ void TempMap::Load()
     });
 
     UI::Manager::Get()->AddToViewport(clear_button);
+
+    std::shared_ptr<UI::EditableTextBox> editable_text_box = UI::EditableTextBox::Create(L"EditableTextBox");
+    editable_text_box->SetPosition({150.f, 25.f});
+    editable_text_box->SetSize({300.f, 50.f});
+    editable_text_box->OnValueChanged([&](const std::wstring& kValue)
+    {
+        Logger::Print(L"EditableTextBox Value Changed: %s", kValue.c_str());
+    });
+
+    editable_text_box->OnReturn([&](const std::wstring& kValue)
+    {
+        Logger::Print(L"EditableTextBox Return: %s", kValue.c_str());
+    });
+
+    UI::Manager::Get()->AddToViewport(editable_text_box);
     
 }
 
