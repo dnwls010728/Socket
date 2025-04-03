@@ -78,7 +78,7 @@ namespace UI
 
         float scroll_offset_y_;
         float min_allowed_scroll_offset_y_;
-        float scroll_velocity_;
+        float drag_length_;
 
         Math::Vector2 drag_direction_;
     

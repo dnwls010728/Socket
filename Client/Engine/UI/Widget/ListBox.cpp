@@ -16,7 +16,7 @@ UI::ListBox::ListBox(const std::wstring& kName) :
     hovered_index_(-1),
     scroll_offset_y_(0.f),
     min_allowed_scroll_offset_y_(0.f),
-    scroll_velocity_(0.f),
+    drag_length_(0.f),
     drag_direction_(Math::Vector2::Zero())
 {
 }
@@ -106,10 +106,10 @@ void UI::ListBox::Tick(float delta_time)
             scroll_offset_y_ = Math::Lerp(scroll_offset_y_, target_scroll_offset_y, delta_time * 5.f);
         }
 
-        if (scroll_velocity_ > 0.f)
+        if (drag_length_ > 0.f)
         {
-            scroll_offset_y_ += drag_direction_.y * scroll_velocity_;
-            scroll_velocity_ = Math::Lerp(scroll_velocity_, 0.f, delta_time * 5.f);
+            scroll_offset_y_ += drag_direction_.y * drag_length_;
+            drag_length_ = Math::Lerp(drag_length_, 0.f, delta_time * 5.f);
         }
     }
 }
@@ -256,7 +256,7 @@ bool UI::ListBox::OnDragBegin(const Math::Vector2& kPosition)
 {
     if (items_.empty()) return false;
     
-    scroll_velocity_ = 0.f;
+    drag_length_ = 0.f;
     drag_direction_ = Math::Vector2::Zero();
     is_dragging_ = true;
     
@@ -267,7 +267,7 @@ bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kD
 {
     if (items_.empty()) return false;
     
-    scroll_velocity_ = kDelta.Magnitude();
+    drag_length_ = kDelta.Magnitude();
     drag_direction_ = kDelta.Normalized();
     scroll_offset_y_ += kDelta.y;
     
