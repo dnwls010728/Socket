@@ -5,26 +5,19 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
-// 스크롤 가속도
-float scroll_acceleration = 0.1f;
-
-Math::Vector2 drag_direction = { 0.f, 0.f };
-
-// 스크롤 강도
-Math::Vector2 start_pos = { 0.f, 0.f };
-Math::Vector2 end_pos = { 0.f, 0.f };
-
-// TODO: 테스트 코드 정리 필요
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
     select_event_([&](Type::uint64) {}),
     double_click_event_([&](Type::uint64) {}),
     items_(),
     is_hovered_(false),
+    is_dragging_(false),
     selected_index_(-1),
     hovered_index_(-1),
     scroll_offset_y_(0.f),
-    min_allowed_scroll_offset_y_(0.f)
+    min_allowed_scroll_offset_y_(0.f),
+    scroll_velocity_(0.f),
+    drag_direction_(Math::Vector2::Zero())
 {
 }
 
@@ -101,28 +94,23 @@ void UI::ListBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
 
-    float target_scroll_offset_y = scroll_offset_y_;
-
-    if (scroll_offset_y_ > 0.f) target_scroll_offset_y = 0.f;
-    else if (scroll_offset_y_ < min_allowed_scroll_offset_y_) target_scroll_offset_y = min_allowed_scroll_offset_y_;
-
-    if (target_scroll_offset_y != scroll_offset_y_)
+    if (!is_dragging_)
     {
-        scroll_offset_y_ = Math::Lerp(scroll_offset_y_, target_scroll_offset_y, delta_time * 5.f);
-    }
+        float target_scroll_offset_y = scroll_offset_y_;
 
-    if (scroll_acceleration != 0.f)
-    {
-        if (drag_direction.y > 0.f)
+        if (scroll_offset_y_ > 0.f) target_scroll_offset_y = 0.f;
+        else if (scroll_offset_y_ < min_allowed_scroll_offset_y_) target_scroll_offset_y = min_allowed_scroll_offset_y_;
+
+        if (target_scroll_offset_y != scroll_offset_y_)
         {
-            scroll_offset_y_ += scroll_acceleration;
+            scroll_offset_y_ = Math::Lerp(scroll_offset_y_, target_scroll_offset_y, delta_time * 5.f);
         }
-        else if (drag_direction.y < 0.f)
+
+        if (scroll_velocity_ > 0.f)
         {
-            scroll_offset_y_ -= scroll_acceleration;
+            scroll_offset_y_ += drag_direction_.y * scroll_velocity_;
+            scroll_velocity_ = Math::Lerp(scroll_velocity_, 0.f, delta_time * 5.f);
         }
-        
-        scroll_acceleration = Math::Lerp(scroll_acceleration, 0.f, delta_time * 5.f);
     }
 }
 
@@ -266,7 +254,12 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
 
 bool UI::ListBox::OnDragBegin(const Math::Vector2& kPosition)
 {
-    start_pos = kPosition;
+    if (items_.empty()) return false;
+    
+    scroll_velocity_ = 0.f;
+    drag_direction_ = Math::Vector2::Zero();
+    is_dragging_ = true;
+    
     return true;
 }
 
@@ -274,16 +267,17 @@ bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kD
 {
     if (items_.empty()) return false;
     
+    scroll_velocity_ = kDelta.Magnitude();
+    drag_direction_ = kDelta.Normalized();
     scroll_offset_y_ += kDelta.y;
+    
     return true;
 }
 
 bool UI::ListBox::OnDragEnd(const Math::Vector2& kPosition)
 {
-    float length = (kPosition - start_pos).Magnitude();
-    scroll_acceleration = length / 10.f;
-
-    drag_direction = (kPosition - start_pos).Normalized();
+    if (items_.empty()) return false;
+    is_dragging_ = false;
     
     return true;
 }

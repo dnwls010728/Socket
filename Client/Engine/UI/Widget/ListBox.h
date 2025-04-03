@@ -71,12 +71,16 @@ namespace UI
         std::vector<Item> items_;
 
         bool is_hovered_;
+        bool is_dragging_;
         
         int selected_index_;
         int hovered_index_;
 
         float scroll_offset_y_;
         float min_allowed_scroll_offset_y_;
+        float scroll_velocity_;
+
+        Math::Vector2 drag_direction_;
     
     };
 
