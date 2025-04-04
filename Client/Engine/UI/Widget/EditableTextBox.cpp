@@ -79,14 +79,11 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
 
     if (cursor_visible_)
     {
-        const Math::Rect cursor_rect = GetRect(
-            {kRect.x + cursor_advance - text_offset, kRect.y},
-            {2.f, kRect.height},
-            {0.f, 1.f}
-        );
+        float font_size = renderer->GetTextFormat(L"Nanum18")->GetFontSize();
+        float padding = (kRect.height - font_size) * .5f;
 
-        Math::Vector2 start = {kRect.x + cursor_advance - text_offset, kRect.y + 16.f};
-        Math::Vector2 end = {kRect.x + cursor_advance - text_offset, kRect.y + kRect.height - 16.f};
+        Math::Vector2 start = {kRect.x + cursor_advance - text_offset, kRect.y + padding};
+        Math::Vector2 end = {kRect.x + cursor_advance - text_offset, kRect.y + kRect.height - padding};
 
         renderer->DrawLine(window, start, end, Math::Color::White, 2.f);
     }
