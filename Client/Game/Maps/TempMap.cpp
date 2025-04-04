@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
-#include "Editor/Editor.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"

@@ -35,7 +35,7 @@ protected:
     virtual void Render(float alpha);
     
     template<std::derived_from<Actor> T>
-    T* AddActor(const std::wstring& kName);
+    T* AddActor(const rttr::type& kType, const std::wstring& kName);
 
 private:
     friend class World;
@@ -51,10 +51,29 @@ private:
 };
 
 template <std::derived_from<Actor> T>
-T* Level::AddActor(const std::wstring& kName)
+T* Level::AddActor(const rttr::type& kType, const std::wstring& kName)
 {
-    std::shared_ptr<Actor> actor = std::make_shared<T>(kName);
-    actors_.push_back(actor);
+    rttr::variant var = kType.create({ kName });
+    if (var.is_valid())
+    {
+        std::shared_ptr<Actor> actor = var.get_value<std::shared_ptr<Actor>>();
+        actors_.push_back(actor);
 
-    return static_cast<T*>(actor.get());
+        rttr::type actor_type = rttr::type::get<T>();
+        if (kType.is_derived_from(actor_type))
+        {
+            return static_cast<T*>(actor.get());
+        }
+
+        return nullptr;
+    }
 }
+
+// template <std::derived_from<Actor> T>
+// T* Level::AddActor(const std::wstring& kName)
+// {
+//     std::shared_ptr<Actor> actor = std::make_shared<T>(kName);
+//     actors_.push_back(actor);
+//
+//     return static_cast<T*>(actor.get());
+// }

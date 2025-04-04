@@ -14,7 +14,7 @@ void ProjectSettings::Init()
 
     // 윈도우 설정
     settings->SetWindowTitle(L"Untitled");
-    settings->SetScreenSize(640, 480);
+    settings->SetScreenSize(800, 600);
     settings->UseVSync(false);
 
     // 물리 설정

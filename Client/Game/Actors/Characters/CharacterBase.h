@@ -9,5 +9,10 @@ class CharacterBase : public Actor
 public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
+
+protected:
+#pragma region 컴포넌트
+    class SpriteRendererComponent* renderer_;
+#pragma endregion
     
 };

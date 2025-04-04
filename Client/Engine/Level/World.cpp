@@ -31,9 +31,6 @@ World::World() :
     pending_destroy_actors_(),
     pending_actor_activation_()
 {
-    shape_batch_ = std::make_shared<ShapeBatch>();
-    shape_batch_->Init();
-    
     b2Vec2 gravity(0.f, -20.f);
     b2WorldDef world_def = b2DefaultWorldDef();
     world_def.gravity = gravity;
@@ -82,6 +79,10 @@ World::~World()
 void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     window_ = kWindow;
+    
+    shape_batch_ = std::make_shared<ShapeBatch>();
+    CHECK_IF(shape_batch_, L"Failed to create ShapeBatch.");
+    shape_batch_->Init();
 
     OpenLevel(EngineSettings::Get()->GetDefaultLevel());
 
@@ -225,7 +226,7 @@ void World::TransitionLevel()
     current_level_ = pending_level_;
     pending_level_ = nullptr;
 
-    current_level_->AddActor<Camera>(L"Main Camera");
+    current_level_->AddActor<Actor>(Camera::StaticClass(), L"Main Camera");
     current_level_->Load();
 
     current_level_->InitializeActors();

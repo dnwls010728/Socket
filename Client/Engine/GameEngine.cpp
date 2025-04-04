@@ -32,15 +32,10 @@ GameEngine::~GameEngine()
 
 void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
-    ProjectSettings::Get()->Init();
     CHECK(AudioManager::Get()->Init());
     
     game_window_ = kWindow;
     World::Get()->Init(game_window_);
-
-    shape_batch_ = std::make_shared<ShapeBatch>();
-    CHECK_IF(shape_batch_, L"Failed to create ShapeBatch.");
-    shape_batch_->Init();
     
 #pragma region ImGui 초기화
     IMGUI_CHECKVERSION();

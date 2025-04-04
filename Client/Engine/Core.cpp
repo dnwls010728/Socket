@@ -28,6 +28,8 @@ Core::Core() :
 
 void Core::Init()
 {
+    ProjectSettings::Get()->Init();
+    
     WindowsApplication* application = WindowsApplication::Get();
     application->AddMessageHandler(*this);
 
