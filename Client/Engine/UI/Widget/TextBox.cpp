@@ -6,7 +6,8 @@
 
 UI::TextBox::TextBox(const std::wstring& kName) :
     Widget(kName),
-    text_(L"Text")
+    text_(L"Text"),
+    color_(Math::Color::White)
 {
 }
 
@@ -21,7 +22,7 @@ void UI::TextBox::Render(Renderer* renderer, WindowsWindow* window)
 
     renderer->DrawBox(window, GetRect(), GetPivotPosition(), Math::Color::Black, 0.f, 1.f);
 
-    renderer->DrawString(window, text_, GetRect(), GetPivotPosition(), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    renderer->DrawString(window, text_, GetRect(), GetPivotPosition(), color_, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     
 }
 

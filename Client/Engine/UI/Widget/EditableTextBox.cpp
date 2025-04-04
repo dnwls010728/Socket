@@ -9,6 +9,7 @@
 UI::EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     text_(L""),
+    placeholder_(L""),
     elapsed_time_(0.f),
     total_advance_(0.f),
     cursor_visible_(false),
@@ -27,6 +28,12 @@ void UI::EditableTextBox::OnValueChanged(void(* func)(const std::wstring&))
 void UI::EditableTextBox::OnReturn(void(* func)(const std::wstring&))
 {
     return_event_ = func;
+}
+
+void UI::EditableTextBox::SetText(const std::wstring& kText)
+{
+    text_ = kText;
+    total_advance_ = GetAdvances(text_, advances_);
 }
 
 std::shared_ptr<UI::EditableTextBox> UI::EditableTextBox::Create(const std::wstring& kName)
@@ -69,11 +76,22 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
 
     Math::Rect text_rect = GetRect(
         {kRect.x - text_offset, kRect.y},
-        {total_advance_, kRect.height},
+        {total_advance_ + 1.f, kRect.height},
+        {0.f, 1.f}
+    );
+
+    Math::Rect placeholder_rect = GetRect(
+        {kRect.x, kRect.y},
+        {kRect.width, kRect.height},
         {0.f, 1.f}
     );
 
     renderer->DrawString(window, text_, text_rect,GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    
+    if (text_.empty())
+    {
+        renderer->DrawString(window, placeholder_, placeholder_rect,GetPivotPosition(placeholder_rect, {0.f, 1.f}), Math::Color::Gray, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    }
     
     renderer->EndLayer();
 
@@ -138,7 +156,6 @@ bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
                 value_changed_event_(text_);
                 
                 total_advance_ = GetAdvances(text_, advances_);
-                Logger::Print(L"Total Advance: %f", total_advance_);
 
                 elapsed_time_ = 0.f;
                 cursor_visible_ = true;
@@ -169,7 +186,6 @@ bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
                 value_changed_event_(text_);
                 
                 total_advance_ = GetAdvances(text_, advances_);
-                Logger::Print(L"Total Advance: %f", total_advance_);
 
                 elapsed_time_ = 0.f;
                 cursor_visible_ = true;
@@ -187,7 +203,6 @@ bool UI::EditableTextBox::OnChar(wchar_t character)
     value_changed_event_(text_);
     
     total_advance_ = GetAdvances(text_, advances_);
-    Logger::Print(L"Total Advance: %f", total_advance_);
 
     // Space Bar
     if (character == 32)

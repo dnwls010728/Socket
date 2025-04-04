@@ -11,3 +11,4 @@ const Math::Color Math::Color::Yellow = Math::Color(255, 255, 0, 255);
 const Math::Color Math::Color::Cyan = Math::Color(0, 255, 255, 255);
 const Math::Color Math::Color::Magenta = Math::Color(255, 0, 255, 255);
 const Math::Color Math::Color::Pink = Math::Color(255, 192, 203, 255);
+const Math::Color Math::Color::Orange = Math::Color(255, 165, 0, 255);

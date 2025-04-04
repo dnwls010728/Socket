@@ -27,7 +27,7 @@ void UI::Button::Render(Renderer* renderer, WindowsWindow* window)
 
     const Math::Rect kRect = GetRect();
 
-    renderer->DrawSolidBox(window, kRect, GetPivotPosition(), Math::Color::White, 0.f);
+    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f);
     renderer->DrawString(window, text_, kRect, GetPivotPosition(), Math::Color::Black, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 

@@ -33,6 +33,12 @@ namespace UI
         void OnReturn(M* target, void(M::*func)(const std::wstring&) const);
 
         void OnReturn(void(*func)(const std::wstring&));
+        void SetText(const std::wstring& kText);
+
+        FORCEINLINE const std::wstring& GetText() const { return text_; }
+
+        FORCEINLINE void SetPlaceholder(const std::wstring& kPlaceholder) { placeholder_ = kPlaceholder; }
+        FORCEINLINE const std::wstring& GetPlaceholder() const { return placeholder_; }
 
         static std::shared_ptr<EditableTextBox> Create(const std::wstring& kName);
 
@@ -49,6 +55,7 @@ namespace UI
         float GetAdvances(const std::wstring& kString, std::vector<float>& advances);
         
         std::wstring text_;
+        std::wstring placeholder_;
 
         float elapsed_time_;
         float total_advance_;
