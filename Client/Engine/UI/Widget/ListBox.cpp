@@ -243,6 +243,9 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
                     last_time = 0.f;
                 }
                 else last_time = timestamp;
+
+                drag_length_ = 0.f;
+                drag_direction_ = Math::Vector2::Zero();
                 
                 return true;
             }
