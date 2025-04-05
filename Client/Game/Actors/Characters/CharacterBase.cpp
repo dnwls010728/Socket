@@ -10,11 +10,6 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
 {
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
 
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Player.png");
-    if (sprite)
-    {
-        renderer_->SetSprite(sprite, L"Player_0");
-    }
 }
 
 RTTR_REGISTRATION
