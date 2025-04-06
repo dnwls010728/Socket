@@ -1,12 +1,24 @@
 ﻿#include "pch.h"
 #include "PlayerController.h"
 
+#include "Actors/Characters/Player/PlayerCharacter.h"
+#include "DirectXTK/Mouse.h"
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 
 PlayerController::PlayerController(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
+    character_(nullptr),
     movement_input_(Math::Vector2::Zero())
 {
+}
+
+void PlayerController::BeginPlay()
+{
+    ActorComponent::BeginPlay();
+
+    character_ = dynamic_cast<PlayerCharacter*>(GetOwner());
+
 }
 
 void PlayerController::TickComponent(float delta_time)
@@ -20,6 +32,14 @@ void PlayerController::TickComponent(float delta_time)
 
         if (movement_input_ != Math::Vector2::Zero())
         {
+        }
+    }
+
+    if (Mouse* mouse = Mouse::Get())
+    {
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            if (character_) character_->OnAttack();
         }
     }
     

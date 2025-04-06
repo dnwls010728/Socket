@@ -11,6 +11,10 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
 }
 
+void PlayerCharacter::OnAttack()
+{
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();

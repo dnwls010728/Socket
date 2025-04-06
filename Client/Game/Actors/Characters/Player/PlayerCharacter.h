@@ -12,6 +12,8 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
+    void OnAttack();
+
 protected:
     virtual void BeginPlay() override;
 

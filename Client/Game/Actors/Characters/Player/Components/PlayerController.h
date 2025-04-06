@@ -12,9 +12,12 @@ public:
     virtual ~PlayerController() override = default;
 
 protected:
+    virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
 
 private:
+    class PlayerCharacter* character_;
+    
     Math::Vector2 movement_input_;
     
 };
