@@ -56,6 +56,13 @@ struct FocusArea
     float bottom;
 };
 
+enum class TickType
+{
+    kPhysicsTick,
+    kTick,
+    kPostTick,
+};
+
 class CameraManager : public Singleton<CameraManager>
 {
 public:
@@ -73,12 +80,16 @@ public:
 
     const Bounds& GetBounds();
 
+    inline void SetTickType(TickType kTickType) { tick_type_ = kTickType; }
+    inline TickType GetTickType() const { return tick_type_; }
+
 private:
     friend class World;
     
     void Init();
-    void PhysicsTick(float deltaTime);
+    void PhysicsTick(float delta_time);
     void Tick(float delta_time);
+    void PostTick(float delta_time);
     void UpdateProjectionMatrix();
     void UpdateViewMatrix();
     void MoveToTarget(float delta_time);
@@ -98,5 +109,7 @@ private:
 
     Math::Vector2 position_;
     Math::Vector2 focus_area_size_;
+
+    TickType tick_type_;
     
 };

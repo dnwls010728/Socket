@@ -111,6 +111,7 @@ void World::PhysicsTick(float delta_time)
         ProcessTriggerEvents();
         
         current_level_->PhysicsTick(delta_time);
+        CameraManager::Get()->PhysicsTick(delta_time);
         
         ProcessActorActivation();
         DestroyActors();
@@ -124,6 +125,7 @@ void World::Tick(float delta_time)
     if (current_level_)
     {
         current_level_->Tick(delta_time);
+        CameraManager::Get()->Tick(delta_time);
         
         ProcessActorActivation();
         DestroyActors();
@@ -135,6 +137,7 @@ void World::PostTick(float delta_time)
     if (current_level_)
     {
         current_level_->PostTick(delta_time);
+        CameraManager::Get()->PostTick(delta_time);
         
         ProcessActorActivation();
         DestroyActors();

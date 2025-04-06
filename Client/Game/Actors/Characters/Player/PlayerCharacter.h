@@ -9,5 +9,8 @@ class PlayerCharacter : public CharacterBase
 public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
+
+protected:
+    virtual void BeginPlay() override;
     
 };

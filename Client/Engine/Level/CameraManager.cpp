@@ -17,7 +17,8 @@ CameraManager::CameraManager() :
     limit_half_width_(15.f),
     limit_half_height_(10.f),
     position_(Math::Vector2::Zero()),
-    focus_area_size_({1.f, 3.f})
+    focus_area_size_({1.f, 3.f}),
+    tick_type_(TickType::kTick)
 {
 }
 
@@ -90,12 +91,19 @@ void CameraManager::Init()
     UpdateProjectionMatrix();
 }
 
-void CameraManager::PhysicsTick(float deltaTime)
+void CameraManager::PhysicsTick(float delta_time)
 {
+    if (tick_type_ == TickType::kPhysicsTick) MoveToTarget(delta_time);
 }
 
 void CameraManager::Tick(float delta_time)
 {
+    if (tick_type_ == TickType::kTick) MoveToTarget(delta_time);
+}
+
+void CameraManager::PostTick(float delta_time)
+{
+    if (tick_type_ == TickType::kPostTick) MoveToTarget(delta_time);
 }
 
 void CameraManager::UpdateProjectionMatrix()

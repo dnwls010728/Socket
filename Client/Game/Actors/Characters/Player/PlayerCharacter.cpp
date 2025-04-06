@@ -1,9 +1,18 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
+#include "Level/CameraManager.h"
+
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName)
 {
+}
+
+void PlayerCharacter::BeginPlay()
+{
+    CharacterBase::BeginPlay();
+
+    CameraManager::Get()->SetTarget(GetSharedThis());
 }
 
 RTTR_REGISTRATION
