@@ -225,6 +225,7 @@
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Data\PropData.h" />
+    <ClInclude Include="Game\GameInstance.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Include\box2d\base.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />
+    <ClCompile Include="Game\GameInstance.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">

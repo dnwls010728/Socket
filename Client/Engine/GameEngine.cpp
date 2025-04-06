@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "GameEngine.h"
 
+#include "GameInstance.h"
 #include "Level/World.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
@@ -33,6 +34,8 @@ GameEngine::~GameEngine()
 void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 {
     CHECK(AudioManager::Get()->Init());
+
+    GameInstance::Get()->Init();
     
     game_window_ = kWindow;
     World::Get()->Init(game_window_);
@@ -72,6 +75,8 @@ void GameEngine::OnQuit()
 {
     Level* level = World::Get()->GetLevel();
     if (level) level->Unload(EndPlayReason::kQuit);
+
+    GameInstance::Get()->Release();
 }
 
 void GameEngine::StartFrame()
