@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
@@ -86,6 +87,8 @@ void TempMap::Load()
     });
 
     UI::Manager::Get()->AddToViewport(editable_text_box);
+
+    AddActor<Actor>(PlayerCharacter::StaticClass(), L"PlayerCharacter");
     
 }
 

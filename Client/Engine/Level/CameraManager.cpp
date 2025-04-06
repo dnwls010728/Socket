@@ -110,12 +110,12 @@ void CameraManager::UpdateProjectionMatrix()
 {
     if (Viewport* viewport = Renderer::Get()->FindViewport(World::Get()->GetWindow()))
     {
-        const float kAspect = GetAspect();
-        const float kLeft = -size_ * kAspect;
-        const float kRight = size_ * kAspect;
+        const float aspect = GetAspect();
+        const float left = -size_ * aspect;
+        const float right = size_ * aspect;
 
         viewport->projection_matrix = DirectX::XMMatrixOrthographicOffCenterLH(
-            kLeft, kRight, -size_, size_, near_z_, far_z_);
+            left, right, -size_, size_, near_z_, far_z_);
     }
 }
 
@@ -131,10 +131,10 @@ void CameraManager::UpdateViewMatrix()
 void CameraManager::MoveToTarget(float delta_time)
 {
     std::shared_ptr<Actor> target_ptr = target_weak_ptr.lock();
-    std::shared_ptr<ColliderComponent> collider_ptr = collider_weak_ptr_.lock();
-    if (!target_ptr || !collider_ptr) return;
+    std::shared_ptr<ColliderComponent> collider = collider_weak_ptr_.lock();
+    if (!target_ptr || !collider) return;
 
-    const Bounds kBounds = collider_ptr->GetBounds();
+    const Bounds kBounds = collider->GetBounds();
     focus_area_.Update(kBounds);
 
     Math::Vector2 focus_position = focus_area_.center + Math::Vector2::Up() * vertical_offset_;

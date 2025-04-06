@@ -12,7 +12,7 @@ public:
 
 protected:
 #pragma region 컴포넌트
-    class SpriteRendererComponent* renderer_;
+    std::shared_ptr<class SpriteRendererComponent> renderer_;
 #pragma endregion
     
 };

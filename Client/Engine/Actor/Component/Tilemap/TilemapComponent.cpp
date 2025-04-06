@@ -132,7 +132,7 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 				Actor* actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
 				if (IsValid(actor))
 				{
-					TransformComponent* transform = actor->GetTransform();
+					std::shared_ptr<TransformComponent> transform = actor->GetTransform();
 					transform->SetPosition({temp.getPosition().x / PPU - map_size_.x / 2.f, -1 * temp.getPosition().y / PPU + map_size_.y / 2.f});
 				}
 			}

@@ -79,7 +79,7 @@ void SpriteRendererComponent::Render(float alpha)
     ActorComponent::Render(alpha);
     if (!sprite_) return;
 
-    const TransformComponent* transform = GetOwner()->GetTransform();
+    const std::shared_ptr<TransformComponent> transform = GetOwner()->GetTransform();
     if (!transform) return;
 
     const std::map<std::wstring, SpriteFrame>& frames = sprite_->GetFrames();

@@ -116,11 +116,11 @@ void AnimatorComponent::BeginPlay()
     std::shared_ptr<ActorComponent> component = owner_->GetComponent(SpriteRendererComponent::StaticClass());
     if (component) renderer_weak_ptr_ = std::static_pointer_cast<SpriteRendererComponent>(component);
 
-    std::shared_ptr<SpriteRendererComponent> renderer_ptr = renderer_weak_ptr_.lock();
-    if (renderer_ptr && animation_pack_ && current_animation_)
+    std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
+    if (renderer && animation_pack_ && current_animation_)
     {
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[0]);
+        if (sprite) renderer->SetSprite(sprite, current_animation_->frames_[0]);
     }
 }
 

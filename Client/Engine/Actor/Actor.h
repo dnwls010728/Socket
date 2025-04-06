@@ -31,7 +31,7 @@ public:
     bool CompareTag(ActorTag tag) const;
 
     template <std::derived_from<ActorComponent> T>
-    T* AddComponent(const std::wstring& kName);
+    std::shared_ptr<T> AddComponent(const std::wstring& kName);
 
     void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components);
 
@@ -48,7 +48,7 @@ public:
     FORCEINLINE ActorTag GetTag() const { return tag_; }
     FORCEINLINE ActorLayer GetLayer() const { return layer_; }
 
-    FORCEINLINE TransformComponent* GetTransform() const { return transform_; }
+    FORCEINLINE std::shared_ptr<TransformComponent> GetTransform() const { return transform_; }
 
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
@@ -106,7 +106,7 @@ protected:
 
     std::vector<std::shared_ptr<ActorComponent>> components_;
 
-    TransformComponent* transform_;
+    std::shared_ptr<TransformComponent> transform_;
     
     TimerHandle life_span_timer_;
 
@@ -119,7 +119,7 @@ private:
 };
 
 template <std::derived_from<ActorComponent> T>
-T* Actor::AddComponent(const std::wstring& kName)
+std::shared_ptr<T> Actor::AddComponent(const std::wstring& kName)
 {
     // rttr::type type = rttr::type::get<T>();
     // for (const auto& kComponent : components_)
@@ -132,7 +132,7 @@ T* Actor::AddComponent(const std::wstring& kName)
     // }
     
     components_.push_back(std::make_shared<T>(this, kName));
-    return static_cast<T*>(components_.back().get());
+    return std::static_pointer_cast<T>(components_.back());
 }
 
 template <std::derived_from<Actor> T>

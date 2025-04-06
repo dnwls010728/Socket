@@ -57,17 +57,17 @@ void Actor::PhysicsTick(float delta_time)
 
 void Actor::Tick(float delta_time)
 {
-    for (const auto& component : components_)
+    for (const auto& kComponent : components_)
     {
-        component->TickComponent(delta_time);
+        kComponent->TickComponent(delta_time);
     }
 }
 
 void Actor::PostTick(float delta_time)
 {
-    for (const auto& component : components_)
+    for (const auto& kComponent : components_)
     {
-        component->PostTickComponent(delta_time);
+        kComponent->PostTickComponent(delta_time);
     }
 }
 

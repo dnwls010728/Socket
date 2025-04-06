@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Actors/Characters/CharacterBase.h"
 
+class PlayerController;
+
 class PlayerCharacter : public CharacterBase
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
@@ -12,5 +14,9 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+
+#pragma region 컴포넌트
+    std::shared_ptr<PlayerController> controller_;
+#pragma endregion
     
 };
