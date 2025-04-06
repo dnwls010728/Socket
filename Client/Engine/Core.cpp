@@ -149,7 +149,6 @@ void Core::MainThread()
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
                 UI::Manager::Get()->OnEvent(event);
-                World::Get()->OnEvent(event);
             }
             
             game_engine_->GameLoop(delta_time_);

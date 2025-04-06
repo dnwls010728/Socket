@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "Actor.h"
 #include "Math/Bounds.h"
+
+class Actor;
 
 struct FocusArea
 {
@@ -55,55 +56,47 @@ struct FocusArea
     float bottom;
 };
 
-class Camera : public Actor
+class CameraManager : public Singleton<CameraManager>
 {
-    SHADER_CLASS_HELPER(Camera)
-    GENERATED_BODY(Camera, Actor)
-    
 public:
-    Camera(const std::wstring& kName);
-    virtual ~Camera() override = default;
+    CameraManager();
+    virtual ~CameraManager() override = default;
 
-    virtual void PreInitializeComponents() override;
-    virtual void PhysicsTick(float delta_time) override;
+    float GetAspect();
 
-    static Camera* Get();
-
+    void SetPosition(const Math::Vector2& kPosition);
+    void SetAngle(float angle);
     void SetSize(float size);
     void SetNearZ(float near_z);
     void SetFarZ(float far_z);
-    void SetTarget(Actor* target);
+    void SetTarget(const std::shared_ptr<Actor>& kActor);
 
-    float GetAspect() const;
-
-    Bounds GetBounds() const;
-
-    FORCEINLINE float GetSize() const { return size_; }
-    FORCEINLINE float GetNearZ() const { return near_z_; }
-    FORCEINLINE float GetFarZ() const { return far_z_; }
+    const Bounds& GetBounds();
 
 private:
-    friend class Level;
+    friend class World;
     
-    void UpdateProjectionMatrix() const;
-    
-    static std::weak_ptr<Camera> camera_;
-    
+    void Init();
+    void PhysicsTick(float deltaTime);
+    void Tick(float delta_time);
+    void UpdateProjectionMatrix();
+    void UpdateViewMatrix();
+    void MoveToTarget(float delta_time);
+
     float size_;
     float near_z_;
     float far_z_;
+    float angle_;
     float vertical_offset_;
-    float half_width_;
-    float half_height_;
     float limit_half_width_;
     float limit_half_height_;
 
-    Actor* target_;
-
-    class ColliderComponent* target_collider_;
-
     FocusArea focus_area_;
-    
+
+    std::weak_ptr<Actor> target_weak_ptr;
+    std::weak_ptr<class ColliderComponent> collider_weak_ptr_;
+
+    Math::Vector2 position_;
     Math::Vector2 focus_area_size_;
     
 };

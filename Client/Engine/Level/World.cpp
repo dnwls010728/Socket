@@ -1,9 +1,10 @@
 ﻿#include "pch.h"
 #include "World.h"
 
+#include "CameraManager.h"
 #include "DebugDrawHelper.h"
-#include "Actor/Camera.h"
 #include "box2d/box2d.h"
+#include "DirectXTK/CommonStates.h"
 #include "Time/TimerManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
@@ -88,6 +89,8 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
 
     debug_draw_helper_.Init();
     DebugDrawHelper::Get()->Init();
+
+    CameraManager::Get()->Init();
 }
 
 void World::OpenLevel(const std::wstring& kName)
@@ -152,15 +155,12 @@ void World::Render(float alpha)
 
     std::vector<std::shared_ptr<Shape>> shapes;
 
-    if (Camera* camera = Camera::Get())
+    Bounds bounds = CameraManager::Get()->GetBounds();
+    for (const auto& kShape : shapes_)
     {
-        Bounds bounds = camera->GetBounds();
-        for (const auto& kShape : shapes_)
+        if (Bounds::Contains(bounds, kShape->GetBounds()))
         {
-            if (Bounds::Contains(bounds, kShape->GetBounds()))
-            {
-                shapes.push_back(kShape);
-            }
+            shapes.push_back(kShape);
         }
     }
     
@@ -205,14 +205,6 @@ Actor* World::GetActor(const rttr::type& type)
     return nullptr;
 }
 
-void World::OnEvent(const Event& kEvent)
-{
-    if (current_level_)
-    {
-        current_level_->OnEvent(kEvent);
-    }
-}
-
 void World::TransitionLevel()
 {
     if (!pending_level_) return;
@@ -225,8 +217,6 @@ void World::TransitionLevel()
 
     current_level_ = pending_level_;
     pending_level_ = nullptr;
-
-    current_level_->AddActor<Actor>(Camera::StaticClass(), L"Main Camera");
     current_level_->Load();
 
     current_level_->InitializeActors();

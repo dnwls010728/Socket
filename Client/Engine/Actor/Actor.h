@@ -35,7 +35,7 @@ public:
 
     void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components);
 
-    ActorComponent* GetComponent(const rttr::type& type);
+    std::shared_ptr<ActorComponent> GetComponent(const rttr::type& type);
 
     template <std::derived_from<Actor> T>
     T* SpawnActor(const rttr::type& kType, const std::wstring& kName);

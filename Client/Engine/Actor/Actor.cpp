@@ -150,14 +150,14 @@ void Actor::GetComponents(const rttr::type& type, std::vector<ActorComponent*>& 
     }
 }
 
-ActorComponent* Actor::GetComponent(const rttr::type& type)
+std::shared_ptr<ActorComponent> Actor::GetComponent(const rttr::type& type)
 {
     for (const auto& component : components_)
     {
         rttr::type component_type = rttr::type::get(*component);
         if (component_type.is_derived_from(type))
         {
-            return component.get();
+            return component;
         }
     }
 

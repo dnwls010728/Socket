@@ -5,7 +5,6 @@
 #include "World.h"
 
 #include "Actor/Actor.h"
-#include "Actor/Camera.h"
 #include "Audio/AudioManager.h"
 #include "Event/Events.h"
 
@@ -86,17 +85,6 @@ void Level::Render(float alpha)
     {
         if (!actor->is_active_) continue;
         actor->Render(alpha);
-    }
-}
-
-void Level::OnEvent(const Event& event)
-{
-    if (has_begun_play_)
-    {
-        if (event.type == static_cast<Type::uint32>(EventType::kWindowSize))
-        {
-            Camera::Get()->UpdateProjectionMatrix();
-        }
     }
 }
 

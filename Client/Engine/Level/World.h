@@ -71,9 +71,7 @@ private:
     friend class Actor;
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
-    friend class CameraComponent;
-
-    void OnEvent(const Event& kEvent);
+    
     void TransitionLevel();
     void ProcessCollisionEvents();
     void ProcessTriggerEvents();

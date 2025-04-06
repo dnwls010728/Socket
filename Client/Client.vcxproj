@@ -143,7 +143,6 @@
     <ClInclude Include="Engine\ActorLayer.h" />
     <ClInclude Include="Engine\ActorTag.h" />
     <ClInclude Include="Engine\Actor\Actor.h" />
-    <ClInclude Include="Engine\Actor\Camera.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\Animation.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationPack.h" />
@@ -173,6 +172,7 @@
     <ClInclude Include="Engine\GameEngine.h" />
     <ClInclude Include="Engine\Input\Keyboard.h" />
     <ClInclude Include="Engine\Input\Mouse.h" />
+    <ClInclude Include="Engine\Level\CameraManager.h" />
     <ClInclude Include="Engine\Level\Level.h" />
     <ClInclude Include="Engine\Level\World.h" />
     <ClInclude Include="Engine\Logger.h" />
@@ -465,7 +465,6 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Engine\Actor\Actor.cpp" />
-    <ClCompile Include="Engine\Actor\Camera.cpp" />
     <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\Animation.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationPack.cpp" />
@@ -493,6 +492,7 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Input\Keyboard.cpp" />
     <ClCompile Include="Engine\Input\Mouse.cpp" />
+    <ClCompile Include="Engine\Level\CameraManager.cpp" />
     <ClCompile Include="Engine\Level\Level.cpp" />
     <ClCompile Include="Engine\Level\World.cpp" />
     <ClCompile Include="Engine\Logger.cpp" />

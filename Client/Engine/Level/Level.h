@@ -40,8 +40,6 @@ protected:
 private:
     friend class World;
     friend class Editor;
-
-    void OnEvent(const Event& event);
     
     std::wstring name_;
 

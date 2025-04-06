@@ -66,7 +66,7 @@ private:
     
     bool IsEnd(AnimatorComponent* animator);
     
-    class SpriteRendererComponent* renderer_;
+    std::weak_ptr<class SpriteRendererComponent> renderer_weak_ptr_;
     
     AnimationPack* animation_pack_;
 
