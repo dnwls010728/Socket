@@ -37,8 +37,8 @@ void BoxColliderComponent::SetShape()
         
         b2ShapeDef shape_def = b2DefaultShapeDef();
         shape_def.density = 1.f;
-        shape_def.friction = material_.friction;
-        shape_def.restitution = material_.bounciness;
+        shape_def.material.friction = material_.friction;
+        shape_def.material.restitution = material_.bounciness;
         shape_def.filter = filter;
         shape_def.userData = this;
         shape_def.isSensor = is_trigger_;
@@ -55,8 +55,8 @@ void BoxColliderComponent::SetTriggerInternal()
     
     b2ShapeDef shape_def = b2DefaultShapeDef();
     shape_def.density = b2Shape_GetDensity(shape_id_);
-    shape_def.friction = b2Shape_GetFriction(shape_id_);
-    shape_def.restitution = b2Shape_GetRestitution(shape_id_);
+    shape_def.material.friction = b2Shape_GetFriction(shape_id_);
+    shape_def.material.restitution = b2Shape_GetRestitution(shape_id_);
     shape_def.filter = b2Shape_GetFilter(shape_id_);
     shape_def.isSensor = is_trigger_;
 

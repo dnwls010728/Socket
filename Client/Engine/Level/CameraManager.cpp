@@ -134,20 +134,20 @@ void CameraManager::MoveToTarget(float delta_time)
     std::shared_ptr<ColliderComponent> collider = collider_weak_ptr_.lock();
     if (!target_ptr || !collider) return;
 
-    const Bounds kBounds = collider->GetBounds();
-    focus_area_.Update(kBounds);
+    const Bounds bounds = collider->GetBounds();
+    focus_area_.Update(bounds);
 
     Math::Vector2 focus_position = focus_area_.center + Math::Vector2::Up() * vertical_offset_;
     Math::Vector2 new_position = Math::Vector2::Lerp(position_, focus_position, delta_time * 2.f);
 
-    const float kHalfHeight = size_;
-    const float lHalfWidth = GetAspect() * kHalfHeight;
+    const float half_height = size_;
+    const float half_width = GetAspect() * half_height;
     
-    float limit_x = limit_half_width_ - lHalfWidth;
-    if (limit_x < 0.f) limit_x = lHalfWidth;
+    float limit_x = limit_half_width_ - half_width;
+    if (limit_x < 0.f) limit_x = half_width;
 
-    float limit_y = limit_half_height_ - kHalfHeight;
-    if (limit_y < 0.f) limit_y = kHalfHeight;
+    float limit_y = limit_half_height_ - half_height;
+    if (limit_y < 0.f) limit_y = half_height;
 
     float clamp_x = Math::Clamp(new_position.x, -limit_x, limit_x);
     float clamp_y = Math::Clamp(new_position.y, -limit_y, limit_y);

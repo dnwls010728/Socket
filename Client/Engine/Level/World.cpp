@@ -32,43 +32,6 @@ World::World() :
     pending_destroy_actors_(),
     pending_actor_activation_()
 {
-    b2Vec2 gravity(0.f, -20.f);
-    b2WorldDef world_def = b2DefaultWorldDef();
-    world_def.gravity = gravity;
-
-    world_id_ = b2CreateWorld(&world_def);
-
-    b2AABB bounds = {
-        {-FLT_MAX, -FLT_MAX},
-        {FLT_MAX, FLT_MAX},
-    };
-    
-    debug_draw_ = {};
-
-    debug_draw_.DrawPolygon = DrawPolygon;
-    debug_draw_.DrawSolidPolygon = DrawSolidPolygon;
-    debug_draw_.DrawCircle = DrawCircle;
-    debug_draw_.DrawSolidCircle = DrawSolidCircle;
-    debug_draw_.DrawSolidCapsule = DrawSolidCapsule;
-    debug_draw_.DrawSegment = DrawSegment;
-    debug_draw_.DrawTransform = DrawTransform;
-    debug_draw_.DrawPoint = DrawPoint;
-    debug_draw_.DrawString = DrawString;
-    debug_draw_.drawingBounds = bounds;
-
-    debug_draw_.useDrawingBounds = false;
-    debug_draw_.drawShapes = false;
-    debug_draw_.drawJoints = false;
-    debug_draw_.drawJointExtras = false;
-    debug_draw_.drawAABBs = false;
-    debug_draw_.drawMass = false;
-    debug_draw_.drawContacts = false;
-    debug_draw_.drawGraphColors = false;
-    debug_draw_.drawContactNormals = false;
-    debug_draw_.drawContactImpulses = false;
-    debug_draw_.drawFrictionImpulses = false;
-
-    debug_draw_.context = this;
 }
 
 World::~World()
@@ -85,12 +48,63 @@ void World::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     CHECK_IF(shape_batch_, L"Failed to create ShapeBatch.");
     shape_batch_->Init();
 
+    InitPhysicsWorld();
+
     OpenLevel(EngineSettings::Get()->GetDefaultLevel());
 
     debug_draw_helper_.Init();
     DebugDrawHelper::Get()->Init();
 
     CameraManager::Get()->Init();
+}
+
+void World::InitPhysicsWorld()
+{
+    b2Vec2 gravity(0.f, -20.f);
+    b2WorldDef world_def = b2DefaultWorldDef();
+    world_def.gravity = gravity;
+
+    world_id_ = b2CreateWorld(&world_def);
+
+    // b2AABB bounds = {
+    //     {-FLT_MAX, -FLT_MAX},
+    //     {FLT_MAX, FLT_MAX},
+    // };
+
+    const Bounds camera_bounds = CameraManager::Get()->GetBounds();
+    b2AABB bounds = {
+        {camera_bounds.min.x, camera_bounds.min.y},
+        {camera_bounds.max.x, camera_bounds.max.y},
+    };
+    
+    debug_draw_ = {};
+
+    debug_draw_.DrawPolygonFcn = DrawPolygon;
+    debug_draw_.DrawSolidPolygonFcn = DrawSolidPolygon;
+    debug_draw_.DrawCircleFcn = DrawCircle;
+    debug_draw_.DrawSolidCircleFcn = DrawSolidCircle;
+    debug_draw_.DrawSolidCapsuleFcn = DrawSolidCapsule;
+    debug_draw_.DrawSegmentFcn = DrawSegment;
+    debug_draw_.DrawTransformFcn = DrawTransform;
+    debug_draw_.DrawPointFcn = DrawPoint;
+    debug_draw_.DrawStringFcn = DrawString;
+    debug_draw_.drawingBounds = bounds;
+
+    debug_draw_.drawShapes = true;
+    debug_draw_.drawJoints = false;
+    debug_draw_.drawJointExtras = false;
+    debug_draw_.drawBounds = true;
+    debug_draw_.drawMass = false;
+    debug_draw_.drawBodyNames = false;
+    debug_draw_.drawContacts = false;
+    debug_draw_.drawGraphColors = false;
+    debug_draw_.drawContactNormals = false;
+    debug_draw_.drawContactImpulses = false;
+    debug_draw_.drawContactFeatures = false;
+    debug_draw_.drawFrictionImpulses = false;
+    debug_draw_.drawIslands = false;
+
+    debug_draw_.context = this;
 }
 
 void World::OpenLevel(const std::wstring& kName)

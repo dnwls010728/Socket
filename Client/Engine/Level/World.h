@@ -31,6 +31,7 @@ public:
     virtual ~World() override;
 
     void Init(const std::shared_ptr<WindowsWindow>& kWindow);
+    void InitPhysicsWorld();
     void OpenLevel(const std::wstring& kName);
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
