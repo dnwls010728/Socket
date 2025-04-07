@@ -16,7 +16,9 @@ Renderer::Renderer() :
     viewports_(),
     d2d_viewports_(),
     current_viewport_(nullptr),
-    current_d2d_viewport_(nullptr)
+    current_d2d_viewport_(nullptr),
+    font_set_builder_(nullptr),
+    text_formats_()
 {
 }
 
@@ -69,40 +71,25 @@ bool Renderer::CreateDWrite()
                                      reinterpret_cast<IUnknown**>(dwrite_factory_.GetAddressOf()));
     if (FAILED(hr)) return false;
 
-    Microsoft::WRL::ComPtr<IDWriteFontSetBuilder1> font_set_builder;
-    hr = dwrite_factory_->CreateFontSetBuilder(font_set_builder.GetAddressOf());
+    // Begin Font Load
+    hr = dwrite_factory_->CreateFontSetBuilder(font_set_builder_.GetAddressOf());
     if (FAILED(hr)) return false;
 
-    Microsoft::WRL::ComPtr<IDWriteFontFile> silver_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\Silver.ttf", nullptr, silver_font.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (!AddFont(L".\\Content\\Fonts\\Silver.ttf")) return false;
+    if (!AddFont(L".\\Content\\Fonts\\NanumBarunGothic.ttf")) return false;
 
-    hr = font_set_builder->AddFontFile(silver_font.Get());
-    if (FAILED(hr)) return false;
-
-    Microsoft::WRL::ComPtr<IDWriteFontFile> nanum_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\NanumBarunGothic.ttf", nullptr,
-                                                  nanum_font.GetAddressOf());
-    if (FAILED(hr)) return false;
-
-    hr = font_set_builder->AddFontFile(nanum_font.Get());
-    if (FAILED(hr)) return false;
-
+    // End Font Load
     Microsoft::WRL::ComPtr<IDWriteFontSet> font_set;
-    hr = font_set_builder->CreateFontSet(font_set.GetAddressOf());
+    hr = font_set_builder_->CreateFontSet(font_set.GetAddressOf());
     if (FAILED(hr)) return false;
 
     hr = dwrite_factory_->CreateFontCollectionFromFontSet(font_set.Get(), dwrite_font_collection_.GetAddressOf());
     if (FAILED(hr)) return false;
 
-    hr = AddFont(L"Silver", 24.f);
-    if (FAILED(hr)) return false;
-    
-    hr = AddFont(L"NanumBarunGothic", 12.f);
-    if (FAILED(hr)) return false;
-    
-    hr = AddFont(L"NanumBarunGothic", 18.f);
-    if (FAILED(hr)) return false;
+    // Add TextFormat
+    if (!AddTextFormat(L"Silver", 24.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 12.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 18.f)) return false;
 
     return SUCCEEDED(hr);
 }
@@ -280,7 +267,17 @@ bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Typ
     return false;
 }
 
-bool Renderer::AddFont(const std::wstring& kName, float size)
+bool Renderer::AddFont(const std::wstring& kPath)
+{
+    Microsoft::WRL::ComPtr<IDWriteFontFile> font_file;
+    HRESULT hr = dwrite_factory_->CreateFontFileReference(kPath.c_str(), nullptr, font_file.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    hr = font_set_builder_->AddFontFile(font_file.Get());
+    return SUCCEEDED(hr);
+}
+
+bool Renderer::AddTextFormat(const std::wstring& kName, float size)
 {
     HRESULT hr = dwrite_factory_->CreateTextFormat(kName.c_str(), dwrite_font_collection_.Get(),
                                         DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,

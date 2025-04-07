@@ -60,7 +60,8 @@ public:
     bool CreateD2DViewport(std::shared_ptr<WindowsWindow> window);
     bool CreateDepthStencilBuffer(Viewport& viewport);
     bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width, Type::uint32 height);
-    bool AddFont(const std::wstring& kName, float size);
+    bool AddFont(const std::wstring& kPath);
+    bool AddTextFormat(const std::wstring& kName, float size);
     
     // TEST
     bool CreateRenderToTexture();
@@ -130,6 +131,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D> texture_;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_;
+
+    Microsoft::WRL::ComPtr<IDWriteFontSetBuilder1> font_set_builder_;
 
     // Text Format
     std::unordered_map<std::wstring, std::unordered_map<float, Microsoft::WRL::ComPtr<IDWriteTextFormat>>> text_formats_;
