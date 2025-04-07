@@ -88,12 +88,14 @@ void World::InitPhysicsWorld()
     debug_draw_.DrawTransformFcn = DrawTransform;
     debug_draw_.DrawPointFcn = DrawPoint;
     debug_draw_.DrawStringFcn = DrawString;
+    
     debug_draw_.drawingBounds = bounds;
+    debug_draw_.useDrawingBounds = true;
 
     debug_draw_.drawShapes = true;
     debug_draw_.drawJoints = false;
     debug_draw_.drawJointExtras = false;
-    debug_draw_.drawBounds = true;
+    debug_draw_.drawBounds = false;
     debug_draw_.drawMass = false;
     debug_draw_.drawBodyNames = false;
     debug_draw_.drawContacts = false;
