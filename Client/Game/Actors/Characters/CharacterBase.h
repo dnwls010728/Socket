@@ -15,6 +15,7 @@ protected:
     
 #pragma region 컴포넌트
     std::shared_ptr<class CircleColliderComponent> collider_;
+    std::shared_ptr<class RigidBody2DComponent> rigid_body_;
     std::shared_ptr<class SpriteRendererComponent> renderer_;
 #pragma endregion
     

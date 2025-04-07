@@ -166,6 +166,16 @@ void World::Render(float alpha)
     {
         current_level_->Render(alpha);
     }
+
+    {
+        const Bounds camera_bounds = CameraManager::Get()->GetBounds();
+        b2AABB bounds = {
+            {camera_bounds.min.x, camera_bounds.min.y},
+            {camera_bounds.max.x, camera_bounds.max.y},
+        };
+
+        debug_draw_.drawingBounds = bounds;
+    }
     
     b2World_Draw(world_id_, &debug_draw_);
     debug_draw_helper_.Clear();

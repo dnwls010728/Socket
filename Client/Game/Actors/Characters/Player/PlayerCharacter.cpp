@@ -2,6 +2,7 @@
 #include "PlayerCharacter.h"
 
 #include "GameInstance.h"
+#include "Actor/Component/RigidBody2DComponent.h"
 #include "Components/PlayerController.h"
 #include "Data/PropData.h"
 #include "Level/CameraManager.h"
@@ -11,6 +12,11 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 {
     controller_ = AddComponent<PlayerController>(L"PlayerController");
     
+}
+
+void PlayerCharacter::OnMovement(const Math::Vector2& kDirection, float delta_time)
+{
+    rigid_body_->SetLinearVelocity(kDirection);
 }
 
 void PlayerCharacter::OnAttack()

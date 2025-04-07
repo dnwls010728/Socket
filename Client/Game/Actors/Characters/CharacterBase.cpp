@@ -3,6 +3,7 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/CircleColliderComponent.h"
+#include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
@@ -13,6 +14,10 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
 {
     collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
     collider_->SetRadius(.5f);
+
+    rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
+    rigid_body_->SetGravityScale(0.f);
+    rigid_body_->SetFreezeRotation(true);
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
 

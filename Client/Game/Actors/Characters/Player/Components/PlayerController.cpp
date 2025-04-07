@@ -21,6 +21,13 @@ void PlayerController::BeginPlay()
 
 }
 
+void PlayerController::PhysicsTickComponent(float delta_time)
+{
+    ActorComponent::PhysicsTickComponent(delta_time);
+    
+    if (IsValid(character_)) character_->OnMovement(movement_input_, delta_time);
+}
+
 void PlayerController::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
@@ -29,17 +36,13 @@ void PlayerController::TickComponent(float delta_time)
     {
         movement_input_.x = keyboard->GetKey('D') - keyboard->GetKey('A');
         movement_input_.y = keyboard->GetKey('W') - keyboard->GetKey('S');
-
-        if (movement_input_ != Math::Vector2::Zero())
-        {
-        }
     }
 
     if (Mouse* mouse = Mouse::Get())
     {
         if (mouse->GetMouseButtonDown(MouseButton::kLeft))
         {
-            if (character_) character_->OnAttack();
+            if (IsValid(character_)) character_->OnAttack();
         }
     }
     
