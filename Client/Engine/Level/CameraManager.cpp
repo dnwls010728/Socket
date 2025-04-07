@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CameraManager.h"
 
+#include "DebugDrawHelper.h"
 #include "Actor/Component/ColliderComponent.h"
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
@@ -10,14 +11,14 @@ CameraManager::CameraManager() :
     near_z_(.3f),
     far_z_(1000.f),
     angle_(0.f),
-    vertical_offset_(1.f),
+    vertical_offset_(0.f),
     focus_area_(),
     target_weak_ptr(),
     collider_weak_ptr_(),
     limit_half_width_(15.f),
     limit_half_height_(10.f),
     position_(Math::Vector2::Zero()),
-    focus_area_size_({1.f, 3.f}),
+    focus_area_size_({2.f, 2.f}),
     tick_type_(TickType::kTick)
 {
 }
@@ -154,4 +155,6 @@ void CameraManager::MoveToTarget(float delta_time)
     float clamp_x = Math::Clamp(new_position.x, -limit_x, limit_x);
     float clamp_y = Math::Clamp(new_position.y, -limit_y, limit_y);
     SetPosition({clamp_x, clamp_y});
+
+    DebugDrawHelper::Get()->DrawBox(focus_area_.center, focus_area_size_, Math::Color::Red);
 }

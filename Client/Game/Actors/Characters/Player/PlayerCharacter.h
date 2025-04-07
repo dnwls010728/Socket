@@ -2,6 +2,11 @@
 #include "Actors/Characters/CharacterBase.h"
 #include "Math/Vector2.h"
 
+namespace UI
+{
+    class TextBox;
+}
+
 class PlayerController;
 
 class PlayerCharacter : public CharacterBase
@@ -22,5 +27,11 @@ protected:
 #pragma region 컴포넌트
     std::shared_ptr<PlayerController> controller_;
 #pragma endregion
+
+    float move_speed_;
+
+    std::shared_ptr<UI::TextBox> nickname_text_box_;
+
+    TimerHandle timer_handle_;
     
 };

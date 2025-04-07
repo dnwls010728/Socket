@@ -224,6 +224,7 @@
     <ClInclude Include="Game\Actors\Characters\Player\Components\PlayerController.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
+    <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
     <ClInclude Include="Game\Data\PropData.h" />
     <ClInclude Include="Game\GameInstance.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="Game\Actors\Characters\Player\Components\PlayerController.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
+    <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />
     <ClCompile Include="Game\GameInstance.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
