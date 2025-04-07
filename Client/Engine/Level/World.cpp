@@ -66,11 +66,6 @@ void World::InitPhysicsWorld()
 
     world_id_ = b2CreateWorld(&world_def);
 
-    // b2AABB bounds = {
-    //     {-FLT_MAX, -FLT_MAX},
-    //     {FLT_MAX, FLT_MAX},
-    // };
-
     const Bounds camera_bounds = CameraManager::Get()->GetBounds();
     b2AABB bounds = {
         {camera_bounds.min.x, camera_bounds.min.y},
@@ -165,16 +160,6 @@ void World::Render(float alpha)
     if (current_level_)
     {
         current_level_->Render(alpha);
-    }
-
-    {
-        const Bounds camera_bounds = CameraManager::Get()->GetBounds();
-        b2AABB bounds = {
-            {camera_bounds.min.x, camera_bounds.min.y},
-            {camera_bounds.max.x, camera_bounds.max.y},
-        };
-
-        debug_draw_.drawingBounds = bounds;
     }
     
     b2World_Draw(world_id_, &debug_draw_);
@@ -391,6 +376,17 @@ void World::ActivateActor(Actor* actor, bool is_active)
 void World::SortZOrder()
 {
     std::ranges::sort(shapes_, Shape::CompareZOrder);
+}
+
+void World::UpdateCameraBounds()
+{
+    const Bounds camera_bounds = CameraManager::Get()->GetBounds();
+    b2AABB bounds = {
+        {camera_bounds.min.x, camera_bounds.min.y},
+        {camera_bounds.max.x, camera_bounds.max.y},
+    };
+
+    debug_draw_.drawingBounds = bounds;
 }
 
 void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context)

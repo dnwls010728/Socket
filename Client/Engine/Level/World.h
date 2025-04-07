@@ -72,6 +72,7 @@ private:
     friend class Actor;
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
+    friend class CameraManager;
     
     void TransitionLevel();
     void ProcessCollisionEvents();
@@ -82,6 +83,7 @@ private:
     void DestroyActors();
     void ActivateActor(Actor* actor, bool is_active);
     void SortZOrder();
+    void UpdateCameraBounds();
 
     std::shared_ptr<WindowsWindow> window_;
     
