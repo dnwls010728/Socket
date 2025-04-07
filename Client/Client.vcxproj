@@ -226,6 +226,10 @@
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
     <ClInclude Include="Game\Data\PropData.h" />
+    <ClInclude Include="Game\FSM\Condition.h" />
+    <ClInclude Include="Game\FSM\IState.h" />
+    <ClInclude Include="Game\FSM\StateMachine.h" />
+    <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\GameInstance.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -538,6 +542,9 @@
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />
+    <ClCompile Include="Game\FSM\Condition.cpp" />
+    <ClCompile Include="Game\FSM\StateMachine.cpp" />
+    <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\GameInstance.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
