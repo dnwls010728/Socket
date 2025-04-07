@@ -10,6 +10,7 @@
 #include "Actor/Actor.h"
 #include "box2d/id.h"
 #include "box2d/types.h"
+#include "Math/Bounds.h"
 
 union Event;
 class ShapeBatch;
@@ -83,7 +84,7 @@ private:
     void DestroyActors();
     void ActivateActor(Actor* actor, bool is_active);
     void SortZOrder();
-    void UpdateCameraBounds();
+    void UpdateCameraBounds(const Bounds& kBounds);
 
     std::shared_ptr<WindowsWindow> window_;
     

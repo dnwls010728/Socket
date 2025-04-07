@@ -37,7 +37,7 @@ void CameraManager::SetPosition(const Math::Vector2& kPosition)
     position_ = kPosition;
     UpdateViewMatrix();
 
-    World::Get()->UpdateCameraBounds();
+    World::Get()->UpdateCameraBounds(GetBounds());
 }
 
 void CameraManager::SetAngle(float angle)
