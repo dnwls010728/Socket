@@ -3,6 +3,7 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/Dummy.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Characters/Player/States/PlayerDashState.h"
 #include "Actors/Characters/Player/States/PlayerIdleState.h"
@@ -127,6 +128,13 @@ void PlayerController::UpdateInteraction()
                 if (degree < 45.f)
                 {
                     DebugDrawHelper::Get()->DrawCircle(kActor->GetTransform()->GetPosition(), 1.f, Math::Color::Red);
+                    Dummy* dummy = dynamic_cast<Dummy*>(kActor);
+                    dummy->Show();
+                }
+                else
+                {
+                    Dummy* dummy = dynamic_cast<Dummy*>(kActor);
+                    dummy->Hide();
                 }
             }
         }
