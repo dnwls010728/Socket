@@ -648,6 +648,18 @@
     <Content Include="Include\rttr\registration" />
     <Content Include="Include\rttr\registration_friend" />
     <Content Include="Include\rttr\type" />
+    <Content Include="Lib\box2d.lib" />
+    <Content Include="Lib\Debug\box2dd.lib" />
+    <Content Include="Lib\Debug\DirectXTK.lib" />
+    <Content Include="Lib\Debug\fmod_vc.lib" />
+    <Content Include="Lib\Debug\libtmxlite-s-d.lib" />
+    <Content Include="Lib\Debug\rttr_core_d.lib" />
+    <Content Include="Lib\Debug\yaml-cppd.lib" />
+    <Content Include="Lib\DirectXTK.lib" />
+    <Content Include="Lib\fmod_vc.lib" />
+    <Content Include="Lib\libtmxlite-s.lib" />
+    <Content Include="Lib\rttr_core.lib" />
+    <Content Include="Lib\yaml-cpp.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
