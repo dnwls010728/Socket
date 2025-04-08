@@ -223,10 +223,12 @@
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Player\Components\PlayerController.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\States\PlayerDashState.h" />
     <ClInclude Include="Game\Actors\Characters\Player\States\PlayerIdleState.h" />
     <ClInclude Include="Game\Actors\Characters\Player\States\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
+    <ClInclude Include="Game\Actors\Dummy.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
     <ClInclude Include="Game\Data\PropData.h" />
@@ -543,10 +545,12 @@
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\Components\PlayerController.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\States\PlayerDashState.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\States\PlayerIdleState.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\States\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
+    <ClCompile Include="Game\Actors\Dummy.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />

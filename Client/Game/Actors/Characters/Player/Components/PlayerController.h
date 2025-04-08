@@ -17,11 +17,19 @@ protected:
     virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
 
+    void UpdateInteraction();
+
 private:
     class PlayerCharacter* character_;
 
     std::weak_ptr<class StateMachineComponent> state_machine_;
     
     Math::Vector2 movement_input_;
+    Math::Vector2 mouse_direction_;
+
+    float mouse_direction_angle_;
+    float mouse_distance_;
+
+    TimerHandle interaction_timer_;
     
 };

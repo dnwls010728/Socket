@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
+#include "Actors/Dummy.h"
 #include "Actors/PrototypeTilemap.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "UI/UIManager.h"
@@ -91,6 +92,7 @@ void TempMap::Load()
 
     AddActor<Actor>(PrototypeTilemap::StaticClass(), L"PrototypeTilemap");
     AddActor<Actor>(PlayerCharacter::StaticClass(), L"PlayerCharacter");
+    AddActor<Actor>(Dummy::StaticClass(), L"Dummy");
     
 }
 
