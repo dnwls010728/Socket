@@ -10,6 +10,7 @@
 #include "Actor/Actor.h"
 #include "box2d/id.h"
 #include "box2d/types.h"
+#include "Math/Bounds.h"
 
 union Event;
 class ShapeBatch;
@@ -31,6 +32,7 @@ public:
     virtual ~World() override;
 
     void Init(const std::shared_ptr<WindowsWindow>& kWindow);
+    void InitPhysicsWorld();
     void OpenLevel(const std::wstring& kName);
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
@@ -71,6 +73,7 @@ private:
     friend class Actor;
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
+    friend class CameraManager;
     
     void TransitionLevel();
     void ProcessCollisionEvents();
@@ -81,6 +84,7 @@ private:
     void DestroyActors();
     void ActivateActor(Actor* actor, bool is_active);
     void SortZOrder();
+    void UpdateCameraBounds(const Bounds& kBounds);
 
     std::shared_ptr<WindowsWindow> window_;
     

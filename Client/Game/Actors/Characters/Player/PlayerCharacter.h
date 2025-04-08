@@ -1,6 +1,11 @@
 ﻿#pragma once
 #include "Actors/Characters/CharacterBase.h"
 
+namespace UI
+{
+    class TextBox;
+}
+
 class PlayerController;
 
 class PlayerCharacter : public CharacterBase
@@ -13,12 +18,21 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     void OnAttack();
+    void OnMovement();
+    void ClearLinearVelocity();
 
 protected:
     virtual void BeginPlay() override;
+    virtual void PhysicsTick(float delta_time) override;
 
 #pragma region 컴포넌트
     std::shared_ptr<PlayerController> controller_;
 #pragma endregion
+
+    float move_speed_;
+
+    std::shared_ptr<UI::TextBox> nickname_text_box_;
+
+    TimerHandle timer_handle_;
     
 };

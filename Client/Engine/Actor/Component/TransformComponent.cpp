@@ -57,6 +57,13 @@ Math::Vector2 TransformComponent::GetUpVector() const
     return {-s, c};
 }
 
+void TransformComponent::BeginPlay()
+{
+    ActorComponent::BeginPlay();
+
+    UpdateBody();
+}
+
 void TransformComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);

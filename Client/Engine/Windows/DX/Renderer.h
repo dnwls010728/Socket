@@ -60,6 +60,8 @@ public:
     bool CreateD2DViewport(std::shared_ptr<WindowsWindow> window);
     bool CreateDepthStencilBuffer(Viewport& viewport);
     bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width, Type::uint32 height);
+    bool AddFont(const std::wstring& kPath);
+    bool AddTextFormat(const std::wstring& kName, float size);
     
     // TEST
     bool CreateRenderToTexture();
@@ -91,14 +93,14 @@ public:
     void DrawCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius, Math::Color color, float stroke = 1.f);
     void DrawSolidCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius, Math::Color color);
     void DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector2 end, Math::Color color, float stroke = 1.f);
-    void DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f, const std::wstring& kFontName = L"", DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    void DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f, const std::wstring& kFontName = L"", float font_size = 0.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     void DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float angle = 0.f, bool use_slice9 = false, const Math::Rect& kSlice9Rect = Math::Rect::Zero());
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 
-    Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName);
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName, float size);
 
-    bool GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances);
+    bool GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, float font_size, std::vector<float>& advances);
 
     FORCEINLINE ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
     FORCEINLINE ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
@@ -130,7 +132,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_;
 
+    Microsoft::WRL::ComPtr<IDWriteFontSetBuilder1> font_set_builder_;
+
     // Text Format
-    std::map<std::wstring, Microsoft::WRL::ComPtr<IDWriteTextFormat>> text_formats_;
+    std::unordered_map<std::wstring, std::unordered_map<float, Microsoft::WRL::ComPtr<IDWriteTextFormat>>> text_formats_;
     
 };
