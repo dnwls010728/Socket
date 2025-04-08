@@ -6,11 +6,12 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Asset/AssetManager.h"
+#include "Actors/Components/StateMachineComponent.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    Actor(kName)
+    Actor(kName),
+    state_machine_(nullptr)
 {
     collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
     collider_->SetRadius(.5f);
@@ -20,6 +21,8 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     rigid_body_->SetFreezeRotation(true);
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
+
+    state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
 }
 

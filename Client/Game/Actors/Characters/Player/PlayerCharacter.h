@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Actors/Characters/CharacterBase.h"
-#include "Math/Vector2.h"
 
 namespace UI
 {
@@ -18,8 +17,9 @@ public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
 
-    void OnMovement(const Math::Vector2& kDirection, float delta_time);
     void OnAttack();
+    void OnMovement();
+    void ClearLinearVelocity();
 
 protected:
     virtual void BeginPlay() override;

@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/Components/StateMachineComponent.h"
 #include "Components/PlayerController.h"
 #include "Data/PropData.h"
 #include "Level/CameraManager.h"
@@ -20,14 +21,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
 }
 
-void PlayerCharacter::OnMovement(const Math::Vector2& kDirection, float delta_time)
-{
-    rigid_body_->SetLinearVelocity(kDirection * move_speed_);
-
-    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
-    nickname_text_box_->SetPosition(screen_position + Math::Vector2::Up() * 50.f);
-}
-
 void PlayerCharacter::OnAttack()
 {
     const PropData* prop_data = GameInstance::Get()->GetPropData(0);
@@ -35,6 +28,16 @@ void PlayerCharacter::OnAttack()
     {
         Logger::Print(L"Prop ID: %d, Name: %s", prop_data->id, prop_data->name.c_str());
     }
+}
+
+void PlayerCharacter::OnMovement()
+{
+    rigid_body_->SetLinearVelocity(controller_->GetMovementInput() * move_speed_);
+}
+
+void PlayerCharacter::ClearLinearVelocity()
+{
+    rigid_body_->SetLinearVelocity(Math::Vector2::Zero());
 }
 
 void PlayerCharacter::BeginPlay()

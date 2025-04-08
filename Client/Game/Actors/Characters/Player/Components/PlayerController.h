@@ -10,6 +10,8 @@ class PlayerController : public ActorComponent
 public:
     PlayerController(Actor* owner, const std::wstring& kName);
     virtual ~PlayerController() override = default;
+    
+    FORCEINLINE const Math::Vector2& GetMovementInput() const { return movement_input_; }
 
 protected:
     virtual void BeginPlay() override;
@@ -18,6 +20,8 @@ protected:
 
 private:
     class PlayerCharacter* character_;
+
+    std::weak_ptr<class StateMachineComponent> state_machine_;
     
     Math::Vector2 movement_input_;
     
