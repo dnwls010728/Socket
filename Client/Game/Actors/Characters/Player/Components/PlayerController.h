@@ -15,7 +15,6 @@ public:
 
 protected:
     virtual void BeginPlay() override;
-    virtual void PhysicsTickComponent(float delta_time) override;
     virtual void TickComponent(float delta_time) override;
 
 private:

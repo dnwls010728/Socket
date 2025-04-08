@@ -54,17 +54,25 @@ void PlayerCharacter::BeginPlay()
 
     UI::Manager::Get()->AddToViewport(nickname_text_box_);
 
-    TimerManager::Get()->SetTimer(timer_handle_, [&]()
-    {
-        if (UI::Manager::Get()->IsInViewport(nickname_text_box_))
-        {
-            UI::Manager::Get()->RemoveFromViewport(nickname_text_box_);
-        }
-        else
-        {
-            UI::Manager::Get()->AddToViewport(nickname_text_box_);
-        }
-    }, 1.f, true);
+    // TimerManager::Get()->SetTimer(timer_handle_, [&]()
+    // {
+    //     if (UI::Manager::Get()->IsInViewport(nickname_text_box_))
+    //     {
+    //         UI::Manager::Get()->RemoveFromViewport(nickname_text_box_);
+    //     }
+    //     else
+    //     {
+    //         UI::Manager::Get()->AddToViewport(nickname_text_box_);
+    //     }
+    // }, 1.f, true);
+}
+
+void PlayerCharacter::PhysicsTick(float delta_time)
+{
+    CharacterBase::PhysicsTick(delta_time);
+
+    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
+    nickname_text_box_->SetPosition(screen_position + Math::Vector2::Up() * 32.f);
 }
 
 RTTR_REGISTRATION

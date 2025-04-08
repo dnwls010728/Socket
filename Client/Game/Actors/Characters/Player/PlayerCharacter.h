@@ -23,6 +23,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void PhysicsTick(float delta_time) override;
 
 #pragma region 컴포넌트
     std::shared_ptr<PlayerController> controller_;

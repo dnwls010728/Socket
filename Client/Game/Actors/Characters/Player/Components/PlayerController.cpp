@@ -48,12 +48,6 @@ void PlayerController::BeginPlay()
 
 }
 
-void PlayerController::PhysicsTickComponent(float delta_time)
-{
-    ActorComponent::PhysicsTickComponent(delta_time);
-    
-}
-
 void PlayerController::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
