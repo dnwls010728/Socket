@@ -16,7 +16,9 @@ Renderer::Renderer() :
     viewports_(),
     d2d_viewports_(),
     current_viewport_(nullptr),
-    current_d2d_viewport_(nullptr)
+    current_d2d_viewport_(nullptr),
+    font_set_builder_(nullptr),
+    text_formats_()
 {
 }
 
@@ -69,48 +71,25 @@ bool Renderer::CreateDWrite()
                                      reinterpret_cast<IUnknown**>(dwrite_factory_.GetAddressOf()));
     if (FAILED(hr)) return false;
 
-    Microsoft::WRL::ComPtr<IDWriteFontSetBuilder1> font_set_builder;
-    hr = dwrite_factory_->CreateFontSetBuilder(font_set_builder.GetAddressOf());
+    // Begin Font Load
+    hr = dwrite_factory_->CreateFontSetBuilder(font_set_builder_.GetAddressOf());
     if (FAILED(hr)) return false;
 
-    Microsoft::WRL::ComPtr<IDWriteFontFile> silver_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\Silver.ttf", nullptr, silver_font.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (!AddFont(L".\\Content\\Fonts\\Silver.ttf")) return false;
+    if (!AddFont(L".\\Content\\Fonts\\NanumBarunGothic.ttf")) return false;
 
-    hr = font_set_builder->AddFontFile(silver_font.Get());
-    if (FAILED(hr)) return false;
-
-    Microsoft::WRL::ComPtr<IDWriteFontFile> nanum_font;
-    hr = dwrite_factory_->CreateFontFileReference(L".\\Content\\Fonts\\NanumBarunGothic.ttf", nullptr,
-                                                  nanum_font.GetAddressOf());
-    if (FAILED(hr)) return false;
-
-    hr = font_set_builder->AddFontFile(nanum_font.Get());
-    if (FAILED(hr)) return false;
-
+    // End Font Load
     Microsoft::WRL::ComPtr<IDWriteFontSet> font_set;
-    hr = font_set_builder->CreateFontSet(font_set.GetAddressOf());
+    hr = font_set_builder_->CreateFontSet(font_set.GetAddressOf());
     if (FAILED(hr)) return false;
 
     hr = dwrite_factory_->CreateFontCollectionFromFontSet(font_set.Get(), dwrite_font_collection_.GetAddressOf());
     if (FAILED(hr)) return false;
 
-    hr = dwrite_factory_->CreateTextFormat(L"Silver", dwrite_font_collection_.Get(),
-                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
-                                                   DWRITE_FONT_STRETCH_NORMAL, 24.f, L"ko-kr",
-                                                   text_formats_[L"Silver24"].GetAddressOf());
-    if (FAILED(hr)) return false;
-
-    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
-                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
-                                                   DWRITE_FONT_STRETCH_NORMAL, 18.f, L"ko-kr",
-                                                   text_formats_[L"Nanum18"].GetAddressOf());
-    if (FAILED(hr)) return false;
-    
-    hr = dwrite_factory_->CreateTextFormat(L"NanumBarunGothic", dwrite_font_collection_.Get(),
-                                                   DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
-                                                   DWRITE_FONT_STRETCH_NORMAL, 12.f, L"ko-kr",
-                                                   text_formats_[L"Nanum12"].GetAddressOf());
+    // Add TextFormat
+    if (!AddTextFormat(L"Silver", 24.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 12.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 18.f)) return false;
 
     return SUCCEEDED(hr);
 }
@@ -286,6 +265,25 @@ bool Renderer::ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Typ
     }
 
     return false;
+}
+
+bool Renderer::AddFont(const std::wstring& kPath)
+{
+    Microsoft::WRL::ComPtr<IDWriteFontFile> font_file;
+    HRESULT hr = dwrite_factory_->CreateFontFileReference(kPath.c_str(), nullptr, font_file.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    hr = font_set_builder_->AddFontFile(font_file.Get());
+    return SUCCEEDED(hr);
+}
+
+bool Renderer::AddTextFormat(const std::wstring& kName, float size)
+{
+    HRESULT hr = dwrite_factory_->CreateTextFormat(kName.c_str(), dwrite_font_collection_.Get(),
+                                        DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+                                        DWRITE_FONT_STRETCH_NORMAL, size, L"ko-kr",
+                                        text_formats_[kName][size].GetAddressOf());
+    return SUCCEEDED(hr);
 }
 
 bool Renderer::CreateRenderToTexture()
@@ -643,7 +641,7 @@ void Renderer::DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector
     d2d_viewport->d2d_render_target->DrawLine(D2D1::Point2F(start.x, start.y), D2D1::Point2F(end.x, end.y), brush.Get(), stroke);
 }
 
-void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle, const std::wstring& kFontName, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
+void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle, const std::wstring& kFontName, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
@@ -653,7 +651,8 @@ void Renderer::DrawString(WindowsWindow* window, const std::wstring& kString, co
 
     const D2D1_RECT_F rect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
 
-    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName);
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName, font_size);
+    if (!text_format) return;
 
     text_format->SetTextAlignment(text_alignment);
     text_format->SetParagraphAlignment(paragraph_alignment);
@@ -801,16 +800,19 @@ bool Renderer::LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const s
     return SUCCEEDED(hr);
 }
 
-Microsoft::WRL::ComPtr<IDWriteTextFormat> Renderer::GetTextFormat(const std::wstring& kName)
+Microsoft::WRL::ComPtr<IDWriteTextFormat> Renderer::GetTextFormat(const std::wstring& kName, float size)
 {
-    const auto it = text_formats_.find(kName);
-    if (it != text_formats_.end()) return it->second;
+    const auto name_it = text_formats_.find(kName);
+    if (name_it == text_formats_.end()) return nullptr;
+
+    const auto size_it = name_it->second.find(size);
+    if (size_it != name_it->second.end()) return size_it->second;
     return nullptr;
 }
 
-bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, std::vector<float>& advances)
+bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, float font_size, std::vector<float>& advances)
 {
-    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName);
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName, font_size);
     if (!text_format) return false;
 
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;

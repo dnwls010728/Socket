@@ -86,18 +86,18 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
         {0.f, 1.f}
     );
 
-    renderer->DrawString(window, text_, text_rect,GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    renderer->DrawString(window, text_, text_rect,GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     
     if (text_.empty())
     {
-        renderer->DrawString(window, placeholder_, placeholder_rect,GetPivotPosition(placeholder_rect, {0.f, 1.f}), Math::Color::Gray, 0.f, L"Nanum18", DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, placeholder_, placeholder_rect,GetPivotPosition(placeholder_rect, {0.f, 1.f}), Math::Color::Gray, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
     
     renderer->EndLayer();
 
     if (cursor_visible_)
     {
-        float font_size = renderer->GetTextFormat(L"Nanum18")->GetFontSize();
+        float font_size = renderer->GetTextFormat(L"NanumBarunGothic", 18.f)->GetFontSize();
         float padding = (kRect.height - font_size) * .5f;
 
         Math::Vector2 start = {kRect.x + cursor_advance - text_offset, kRect.y + padding};
@@ -224,7 +224,7 @@ void UI::EditableTextBox::OnFocus(bool is_focus)
 float UI::EditableTextBox::GetAdvances(const std::wstring& kString, std::vector<float>& advances)
 {
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(kString, L"Nanum18", advances);
+    renderer->GetTextAdvances(kString, L"NanumBarunGothic", 18.f, advances);
 
     float total_advance = std::accumulate(advances.begin(), advances.end(), 0.f);
     return total_advance;

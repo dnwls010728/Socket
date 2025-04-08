@@ -3,10 +3,22 @@
 
 #include "Animation.h"
 #include "AnimationPack.h"
+#include "AnimationTransition.h"
 #include "Actor/Actor.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
+
+AnimatorComponent::StateNode::StateNode(const std::wstring& kState) :
+    state_(kState),
+    transitions_()
+{
+}
+
+void AnimatorComponent::StateNode::AddTransition(const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+{
+    transitions_.emplace(std::make_shared<AnimationTransition>(kTo, kCondition));
+}
 
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
@@ -16,9 +28,21 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     timer_(0.f),
     is_playing_(false),
     current_frame_(0),
-    transitions_(),
+    current_state_(nullptr),
+    nodes_(),
+    any_transitions_(),
     parameters_()
 {
+}
+
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+{
+    GetOrAddNode(kFrom)->AddTransition(kTo, kCondition);
+}
+
+void AnimatorComponent::AddAnyTransition(const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+{
+    any_transitions_.emplace(std::make_shared<AnimationTransition>(kTo, kCondition));
 }
 
 void AnimatorComponent::PlayAnimation(const std::wstring& kName)
@@ -39,16 +63,6 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[0]);
     }
-}
-
-void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, bool(* func)(AnimatorComponent*))
-{
-    transitions_[kFrom].push_back({kTo, func});
-}
-
-void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo)
-{
-    AddTransition(kFrom, kTo, this, &AnimatorComponent::IsEnd);
 }
 
 void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
@@ -109,6 +123,22 @@ int AnimatorComponent::GetInt(const std::wstring& kName)
     return 0;
 }
 
+std::shared_ptr<AnimatorComponent::StateNode> AnimatorComponent::GetOrAddNode(const std::wstring& kState)
+{
+    std::shared_ptr<StateNode> node = nullptr;
+
+    const auto it = nodes_.find(kState);
+    if (it != nodes_.end()) node = it->second;
+
+    if (!node)
+    {
+        node = std::make_shared<StateNode>(kState);
+        nodes_[kState] = node;
+    }
+
+    return node;
+}
+
 void AnimatorComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
@@ -127,6 +157,9 @@ void AnimatorComponent::BeginPlay()
 void AnimatorComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
+
+    std::shared_ptr<AnimationTransition> transition = GetTransition();
+    if (transition) PlayAnimation(transition->GetTo());
 
     std::shared_ptr<SpriteRendererComponent> renderer_ptr = renderer_weak_ptr_.lock();
     if (!renderer_ptr || !is_playing_ || !current_animation_) return;
@@ -152,20 +185,24 @@ void AnimatorComponent::TickComponent(float delta_time)
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[current_frame_]);
     }
-
-    for (const auto& transition : transitions_[current_animation_->name_])
-    {
-        if (transition.condition(this))
-        {
-            PlayAnimation(transition.name);
-            break;
-        }
-    }
 }
 
-bool AnimatorComponent::IsEnd(AnimatorComponent* animator)
+std::shared_ptr<AnimationTransition> AnimatorComponent::GetTransition()
 {
-    return current_frame_ >= current_animation_->frames_.size() - 1;
+    for (const auto& kTransition : any_transitions_)
+    {
+        if (kTransition->CheckCondition(this)) return kTransition;
+    }
+
+    if (current_state_)
+    {
+        for (const auto& kTransition : current_state_->GetTransitions())
+        {
+            if (kTransition->CheckCondition(this)) return kTransition;
+        }
+    }
+    
+    return nullptr;
 }
 
 RTTR_REGISTRATION
