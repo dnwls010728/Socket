@@ -26,6 +26,7 @@ public:
     FORCEINLINE float GetAngle() const { return angle_; }
 
 protected:
+    virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
 
 private:

@@ -1,9 +1,11 @@
 ﻿#include "pch.h"
 #include "TempMap.h"
 
+#include "Actor/Component/TransformComponent.h"
 #include "Actors/Dummy.h"
 #include "Actors/PrototypeTilemap.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Math/Math.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
@@ -92,7 +94,15 @@ void TempMap::Load()
 
     AddActor<Actor>(PrototypeTilemap::StaticClass(), L"PrototypeTilemap");
     AddActor<Actor>(PlayerCharacter::StaticClass(), L"PlayerCharacter");
-    AddActor<Actor>(Dummy::StaticClass(), L"Dummy");
+    
+    for (Type::uint32 i = 0; i < 10; ++i)
+    {
+        float x = Math::RandRange(-5.f, 5.f);
+        float y = Math::RandRange(-5.f, 5.f);
+        
+        Actor* new_actor = AddActor<Actor>(Dummy::StaticClass(), L"Dummy");
+        new_actor->GetTransform()->SetPosition({x, y});
+    }
     
 }
 

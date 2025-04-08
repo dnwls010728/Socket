@@ -94,13 +94,13 @@ void PlayerController::TickComponent(float delta_time)
     }
 
     // 범위 디버그
-    DebugDrawHelper::Get()->DrawRay(character_position, mouse_direction_ * mouse_distance_, Math::Color::Green);
+    DebugDrawHelper::Get()->DrawRay(character_position, mouse_direction_ * 5.f, Math::Color::Green);
     
     float angle = std::atan2f(mouse_direction_.y, mouse_direction_.x);
     float new_angle = angle - 22.5f * Math::Deg2Rad();
-    DebugDrawHelper::Get()->DrawRay(character_position, Math::Vector2(std::cos(new_angle), std::sin(new_angle)) * mouse_distance_, Math::Color::Green);
+    DebugDrawHelper::Get()->DrawRay(character_position, Math::Vector2(std::cos(new_angle), std::sin(new_angle)) * 5.f, Math::Color::Green);
     new_angle = angle + 22.5f * Math::Deg2Rad();
-    DebugDrawHelper::Get()->DrawRay(character_position, Math::Vector2(std::cos(new_angle), std::sin(new_angle)) * mouse_distance_, Math::Color::Green);
+    DebugDrawHelper::Get()->DrawRay(character_position, Math::Vector2(std::cos(new_angle), std::sin(new_angle)) * 5.f, Math::Color::Green);
     
 }
 
