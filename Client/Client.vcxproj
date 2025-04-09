@@ -234,7 +234,7 @@
     <ClInclude Include="Game\Actors\Dummy.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
-    <ClInclude Include="Game\BT\BehaviorTree.h" />
+    <ClInclude Include="Game\BT\Node.h" />
     <ClInclude Include="Game\Data\PropData.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
@@ -560,7 +560,7 @@
     <ClCompile Include="Game\Actors\Dummy.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
-    <ClCompile Include="Game\BT\BehaviorTree.cpp" />
+    <ClCompile Include="Game\BT\Node.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
