@@ -18,12 +18,8 @@ namespace BT
         virtual Status TickNode(float delta_time);
         virtual void Reset();
 
-        void AddChild(const std::shared_ptr<Node>& kNode);
-
     protected:
         std::wstring name_;
-        std::vector<std::shared_ptr<Node>> children_;
-        int current_child_;
     
     };
 }
