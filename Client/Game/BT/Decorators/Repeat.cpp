@@ -10,6 +10,8 @@ BT::Repeat::Repeat(const std::wstring& kName, int count) :
 
 BT::Node::Status BT::Repeat::TickNode(float delta_time)
 {
+    if (!child_) return Status::kFailure;
+    
     Status status = child_->TickNode(delta_time);
     if (status == Status::kFailure || status == Status::kSuccess)
     {
