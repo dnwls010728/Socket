@@ -234,6 +234,7 @@
     <ClInclude Include="Game\Actors\Dummy.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
+    <ClInclude Include="Game\BT\Actions\BTCondition.h" />
     <ClInclude Include="Game\BT\Actions\IStrategy.h" />
     <ClInclude Include="Game\BT\Actions\Leaf.h" />
     <ClInclude Include="Game\BT\Composites\Composite.h" />
@@ -571,6 +572,7 @@
     <ClCompile Include="Game\Actors\Dummy.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
+    <ClCompile Include="Game\BT\Actions\BTCondition.cpp" />
     <ClCompile Include="Game\BT\Actions\IStrategy.cpp" />
     <ClCompile Include="Game\BT\Actions\Leaf.cpp" />
     <ClCompile Include="Game\BT\Composites\Composite.cpp" />

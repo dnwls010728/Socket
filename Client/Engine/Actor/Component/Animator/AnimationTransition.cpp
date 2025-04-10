@@ -3,13 +3,13 @@
 
 #include "AnimationCondition.h"
 
-AnimationTransition::AnimationTransition(const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition) :
+Transition::Transition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition) :
     to_(kTo),
     condition_(kCondition)
 {
 }
 
-bool AnimationTransition::CheckCondition(AnimatorComponent* animator)
+bool Transition::CheckCondition(AnimatorComponent* animator)
 {
     return condition_->Evaluate(animator);
 }

@@ -1,21 +1,21 @@
 ﻿#pragma once
 #include "AnimatorComponent.h"
 
-class AnimationCondition
+class Condition
 {
 public:
     template <typename F, typename = std::enable_if_t<!std::is_same_v<Function<bool(AnimatorComponent*)>, std::decay_t<F>>>>
-    AnimationCondition(F&& func);
+    Condition(F&& func);
 
     template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    AnimationCondition(M* target, bool (M::*func)(AnimatorComponent*));
+    Condition(M* target, bool (M::*func)(AnimatorComponent*));
 
     template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    AnimationCondition(M* target, bool (M::*func)(AnimatorComponent*) const);
+    Condition(M* target, bool (M::*func)(AnimatorComponent*) const);
 
-    AnimationCondition(bool (*func)(AnimatorComponent*));
+    Condition(bool (*func)(AnimatorComponent*));
 
-    ~AnimationCondition() = default;
+    ~Condition() = default;
 
     bool Evaluate(AnimatorComponent* animator);
 
@@ -24,19 +24,19 @@ protected:
 };
 
 template <typename F, typename>
-AnimationCondition::AnimationCondition(F&& func) :
+Condition::Condition(F&& func) :
     function_(std::forward<F>(func))
 {
 }
 
 template <typename M, typename>
-AnimationCondition::AnimationCondition(M* target, bool (M::*func)(AnimatorComponent*)) :
+Condition::Condition(M* target, bool (M::*func)(AnimatorComponent*)) :
     function_(target, func)
 {
 }
 
 template <typename M, typename>
-AnimationCondition::AnimationCondition(M* target, bool (M::*func)(AnimatorComponent*) const) :
+Condition::Condition(M* target, bool (M::*func)(AnimatorComponent*) const) :
     function_(target, func)
 {
 }
