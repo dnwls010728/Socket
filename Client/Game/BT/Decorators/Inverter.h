@@ -10,6 +10,8 @@ namespace BT
         virtual ~Inverter() override = default;
 
         virtual Status TickNode(float delta_time) override;
+
+        static std::shared_ptr<Inverter> Create(const std::wstring& kName);
     
     };
 }

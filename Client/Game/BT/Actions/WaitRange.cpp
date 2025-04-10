@@ -37,3 +37,8 @@ void BT::WaitRange::Reset()
     
     Node::Reset();
 }
+
+std::shared_ptr<BT::WaitRange> BT::WaitRange::Create(const std::wstring& kName, float min, float max)
+{
+    return std::make_shared<WaitRange>(kName, min, max);
+}

@@ -10,6 +10,8 @@ namespace BT
         virtual ~Selector() override = default;
 
         virtual Status TickNode(float delta_time) override;
+
+        static std::shared_ptr<Selector> Create(const std::wstring& kName);
     
     };
 }

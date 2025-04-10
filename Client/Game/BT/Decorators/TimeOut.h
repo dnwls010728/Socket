@@ -13,6 +13,8 @@ namespace BT
 
         virtual void Reset() override;
 
+        static std::shared_ptr<TimeOut> Create(const std::wstring& kName, float duration);
+
     private:
         bool is_started_;
         

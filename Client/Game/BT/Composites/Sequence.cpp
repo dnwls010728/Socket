@@ -32,3 +32,8 @@ BT::Node::Status BT::Sequence::TickNode(float delta_time)
     Reset();
     return Status::kSuccess;
 }
+
+std::shared_ptr<BT::Sequence> BT::Sequence::Create(const std::wstring& kName)
+{
+    return std::make_shared<Sequence>(kName);
+}

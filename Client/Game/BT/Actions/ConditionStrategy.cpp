@@ -11,3 +11,8 @@ BT::Node::Status BT::ConditionStrategy::TickNode(float delta_time)
     if (condition_()) return Node::Status::kSuccess;
     return Node::Status::kFailure;
 }
+
+std::shared_ptr<BT::ConditionStrategy> BT::ConditionStrategy::Create(bool(* func)())
+{
+    return std::make_shared<ConditionStrategy>(func);
+}

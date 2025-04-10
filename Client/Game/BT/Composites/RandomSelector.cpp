@@ -37,6 +37,11 @@ void BT::RandomSelector::Reset()
     Selector::Reset();
 }
 
+std::shared_ptr<BT::RandomSelector> BT::RandomSelector::Create(const std::wstring& kName)
+{
+    return std::make_shared<RandomSelector>(kName);
+}
+
 const std::vector<std::shared_ptr<BT::Node>>& BT::RandomSelector::GetShuffledChildren()
 {
     if (shuffled_children_.empty()) shuffled_children_ = ShuffleChildren();

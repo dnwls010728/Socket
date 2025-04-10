@@ -13,6 +13,8 @@ namespace BT
 
         virtual void Reset() override;
 
+        static std::shared_ptr<RandomSelector> Create(const std::wstring& kName);
+
     private:
         const std::vector<std::shared_ptr<Node>>& GetShuffledChildren();
         

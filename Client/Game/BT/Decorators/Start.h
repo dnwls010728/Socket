@@ -14,6 +14,8 @@ namespace BT
         inline void SetRepeat(bool is_repeat) { is_repeat_ = is_repeat; }
         inline bool IsRepeat() const { return is_repeat_; }
 
+        static std::shared_ptr<Start> Create(const std::wstring& kName);
+
     private:
         bool is_repeat_;
     

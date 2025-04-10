@@ -38,3 +38,8 @@ void BT::TimeOut::Reset()
     
     Decorator::Reset();
 }
+
+std::shared_ptr<BT::TimeOut> BT::TimeOut::Create(const std::wstring& kName, float duration)
+{
+    return std::make_shared<TimeOut>(kName, duration);
+}

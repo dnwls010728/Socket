@@ -13,6 +13,8 @@ namespace BT
 
         virtual void Reset() override;
 
+        static std::shared_ptr<Wait> Create(const std::wstring& kName, float duration);
+
     protected:
         float duration_;
         float timer_;

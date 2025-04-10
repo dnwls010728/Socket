@@ -31,3 +31,8 @@ void BT::Repeat::Reset()
     
     Decorator::Reset();
 }
+
+std::shared_ptr<BT::Repeat> BT::Repeat::Create(const std::wstring& kName, int count)
+{
+    return std::make_shared<Repeat>(kName, count);
+}

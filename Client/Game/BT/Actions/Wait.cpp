@@ -34,3 +34,8 @@ void BT::Wait::Reset()
     
     Node::Reset();
 }
+
+std::shared_ptr<BT::Wait> BT::Wait::Create(const std::wstring& kName, float duration)
+{
+    return std::make_shared<Wait>(kName, duration);
+}

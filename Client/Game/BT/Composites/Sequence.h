@@ -10,6 +10,8 @@ namespace BT
         virtual ~Sequence() override = default;
 
         virtual Status TickNode(float delta_time) override;
+
+        static std::shared_ptr<Sequence> Create(const std::wstring& kName);
     
     };
 }

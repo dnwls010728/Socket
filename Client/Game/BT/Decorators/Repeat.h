@@ -13,6 +13,8 @@ namespace BT
 
         virtual void Reset() override;
 
+        static std::shared_ptr<Repeat> Create(const std::wstring& kName, int count = 0);
+
     private:
         int count_;
         int counter_;

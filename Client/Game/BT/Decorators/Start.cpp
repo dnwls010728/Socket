@@ -3,7 +3,7 @@
 
 BT::Start::Start(const std::wstring& kName) :
     Decorator(kName),
-    is_repeat_(false)
+    is_repeat_(true)
 {
 }
 
@@ -18,4 +18,9 @@ BT::Node::Status BT::Start::TickNode(float delta_time)
     }
 
     return Status::kRunning;
+}
+
+std::shared_ptr<BT::Start> BT::Start::Create(const std::wstring& kName)
+{
+    return std::make_shared<Start>(kName);
 }

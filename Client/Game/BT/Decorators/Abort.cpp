@@ -21,3 +21,8 @@ BT::Node::Status BT::Abort::TickNode(float delta_time)
     if (status == Status::kSuccess) return Status::kSuccess;
     return Status::kRunning;
 }
+
+std::shared_ptr<BT::Abort> BT::Abort::Create(const std::wstring& kName, bool(* func)())
+{
+    return std::make_shared<Abort>(kName, func);
+}

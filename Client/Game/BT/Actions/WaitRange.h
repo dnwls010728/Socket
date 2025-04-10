@@ -13,6 +13,8 @@ namespace BT
 
         virtual void Reset() override;
 
+        static std::shared_ptr<WaitRange> Create(const std::wstring& kName, float min, float max);
+
     private:
         float min_;
         float max_;

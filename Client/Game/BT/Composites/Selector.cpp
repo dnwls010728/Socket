@@ -30,3 +30,8 @@ BT::Node::Status BT::Selector::TickNode(float delta_time)
     Reset();
     return Status::kFailure;
 }
+
+std::shared_ptr<BT::Selector> BT::Selector::Create(const std::wstring& kName)
+{
+    return std::make_shared<Selector>(kName);
+}
