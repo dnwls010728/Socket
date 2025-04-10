@@ -6,7 +6,7 @@ BT::Selector::Selector(const std::wstring& kName) :
 {
 }
 
-BT::Node::Status BT::Selector::Tick(float delta_time)
+BT::Node::Status BT::Selector::TickNode(float delta_time)
 {
     if (current_child_ < children_.size())
     {
