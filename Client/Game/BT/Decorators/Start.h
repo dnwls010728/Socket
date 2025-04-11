@@ -11,8 +11,8 @@ namespace BT
 
         virtual Status TickNode(float delta_time) override;
 
-        inline void SetRepeat(bool is_repeat) { is_repeat_ = is_repeat; }
-        inline bool IsRepeat() const { return is_repeat_; }
+        FORCEINLINE void SetRepeat(bool is_repeat) { is_repeat_ = is_repeat; }
+        FORCEINLINE bool IsRepeat() const { return is_repeat_; }
 
         static std::shared_ptr<Start> Create(const std::wstring& kName);
 

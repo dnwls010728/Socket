@@ -28,8 +28,8 @@ private:
 
         void AddTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
 
-        inline const std::wstring& GetState() const { return state_; }
-        inline const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
+        FORCEINLINE const std::wstring& GetState() const { return state_; }
+        FORCEINLINE const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
 
     private:
         std::wstring state_;

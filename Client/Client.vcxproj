@@ -234,6 +234,9 @@
     <ClInclude Include="Game\Actors\Dummy.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
+    <ClInclude Include="Game\Blackboard\Blackboard.h" />
+    <ClInclude Include="Game\Blackboard\BlackboardEntry.h" />
+    <ClInclude Include="Game\Blackboard\BlackboardKey.h" />
     <ClInclude Include="Game\BT\Actions\ActionStrategy.h" />
     <ClInclude Include="Game\BT\Actions\ConditionStrategy.h" />
     <ClInclude Include="Game\BT\Actions\IStrategy.h" />
@@ -576,6 +579,9 @@
     <ClCompile Include="Game\Actors\Dummy.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
+    <ClCompile Include="Game\Blackboard\Blackboard.cpp" />
+    <ClCompile Include="Game\Blackboard\BlackboardEntry.cpp" />
+    <ClCompile Include="Game\Blackboard\BlackboardKey.cpp" />
     <ClCompile Include="Game\BT\Actions\ActionStrategy.cpp" />
     <ClCompile Include="Game\BT\Actions\ConditionStrategy.cpp" />
     <ClCompile Include="Game\BT\Actions\Leaf.cpp" />

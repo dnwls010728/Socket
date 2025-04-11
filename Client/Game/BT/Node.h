@@ -18,7 +18,7 @@ namespace BT
         virtual Status TickNode(float delta_time);
         virtual void Reset();
 
-        inline const std::wstring& GetName() const { return name_; }
+        FORCEINLINE const std::wstring& GetName() const { return name_; }
 
     protected:
         std::wstring name_;

@@ -5,6 +5,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
+#include "Blackboard/Blackboard.h"
 #include "Components/PlayerController.h"
 #include "Data/PropData.h"
 #include "Level/CameraManager.h"

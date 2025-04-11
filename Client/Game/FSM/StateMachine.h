@@ -21,8 +21,8 @@ namespace FSM
 
             void AddTransition(const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition);
 
-            inline const std::shared_ptr<IState>& GetState() const { return state_; }
-            inline const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
+            FORCEINLINE const std::shared_ptr<IState>& GetState() const { return state_; }
+            FORCEINLINE const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
 
         private:
             std::shared_ptr<IState> state_;

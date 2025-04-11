@@ -9,7 +9,7 @@ public:
     Transition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
     ~Transition() = default;
 
-    inline const std::wstring& GetTo() const { return to_; }
+    FORCEINLINE const std::wstring& GetTo() const { return to_; }
 
     bool CheckCondition(AnimatorComponent* animator);
 

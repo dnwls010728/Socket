@@ -12,7 +12,7 @@ namespace BT
 
         virtual Node::Status TickNode(float delta_time) = 0;
 
-        inline virtual void Reset() {}
+        FORCEINLINE virtual void Reset() {}
 
     protected:
         IStrategy() = default;
