@@ -25,10 +25,10 @@ namespace BT
         std::vector<std::shared_ptr<Node>> GetNodes();
 
         template <typename T>
-        void SetValue(const std::wstring& name, const T& value);
-
-        template <typename T>
         bool TryGetValue(const std::wstring& name, T& out_value) const;
+        
+        template <typename T>
+        void SetValue(const std::wstring& name, const T& value);
 
         FORCEINLINE void SetRoot(const std::shared_ptr<Node>& kNode) { root_ = kNode; }
         FORCEINLINE std::shared_ptr<Node> GetRoot() { return root_; }
@@ -43,6 +43,25 @@ namespace BT
         std::shared_ptr<Blackboard::Blackboard> blackboard_;
     
     };
+    
+    template <typename T>
+    bool BehaviorTree::TryGetValue(const std::wstring& name, T& out_value) const
+    {
+        if (!blackboard_)
+        {
+            out_value = T();
+            return false;
+        }
+        
+        Blackboard::BlackboardKey key = blackboard_->FindOrAdd(name);
+        if (!key.IsValid())
+        {
+            out_value = T();
+            return false;
+        }
+        
+        return blackboard_->TryGetValue<T>(key, out_value);
+    }
 
     template <typename T>
     void BehaviorTree::SetValue(const std::wstring& name, const T& value)
@@ -52,15 +71,5 @@ namespace BT
         
         if (!key.IsValid()) return;
         blackboard_->SetValue<T>(key, value);
-    }
-
-    template <typename T>
-    bool BehaviorTree::TryGetValue(const std::wstring& name, T& out_value) const
-    {
-        if (!blackboard_) return false;
-        Blackboard::BlackboardKey key = blackboard_->FindOrAdd(name);
-
-        if (!key.IsValid()) return false;
-        return blackboard_->TryGetValue<T>(key, out_value);
     }
 }

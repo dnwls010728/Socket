@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/Components/BehaviorTreeComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Blackboard/Blackboard.h"
 #include "BT/BehaviorTree.h"
@@ -25,6 +26,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     nickname_text_box_(nullptr)
 {
     controller_ = AddComponent<PlayerController>(L"PlayerController");
+    behavior_tree_ = AddComponent<BehaviorTreeComponent>(L"BehaviorTree");
     
 }
 

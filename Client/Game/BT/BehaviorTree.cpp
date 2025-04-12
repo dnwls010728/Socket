@@ -3,6 +3,7 @@
 
 #include "Composites/Composite.h"
 #include "Decorators/Decorator.h"
+#include "Decorators/Start.h"
 
 BT::BehaviorTree::BehaviorTree() :
     root_(nullptr)
@@ -29,7 +30,7 @@ void BT::BehaviorTree::Tick(float delta_time)
 std::vector<std::shared_ptr<BT::Node>> BT::BehaviorTree::GetNodes()
 {
     std::vector<std::shared_ptr<Node>> nodes;
-    CollectNodes(nodes, root_);
+    if (root_) CollectNodes(nodes, root_);
     return nodes;
 }
 
@@ -38,7 +39,7 @@ void BT::BehaviorTree::CollectNodes(std::vector<std::shared_ptr<Node>>& out_node
     out_nodes.push_back(node);
     if (const std::shared_ptr<Decorator> decorator = std::dynamic_pointer_cast<Decorator>(node))
     {
-        CollectNodes(out_nodes, decorator->GetChild());
+        if (decorator->GetChild()) CollectNodes(out_nodes, decorator->GetChild());
     }
     else if (const std::shared_ptr<Composite> composite = std::dynamic_pointer_cast<Composite>(node))
     {
