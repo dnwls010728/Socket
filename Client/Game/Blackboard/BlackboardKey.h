@@ -18,6 +18,8 @@ namespace Blackboard
         {
         }
 
+        FORCEINLINE bool IsValid() const { return hashed_key_ != 0; }
+
         FORCEINLINE bool operator==(const BlackboardKey& other) const { return hashed_key_ == other.hashed_key_; }
         FORCEINLINE bool operator!=(const BlackboardKey& other) const { return !(*this == other); }
 

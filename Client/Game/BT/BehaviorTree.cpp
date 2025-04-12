@@ -5,17 +5,24 @@
 #include "Decorators/Decorator.h"
 
 BT::BehaviorTree::BehaviorTree() :
-    root_(nullptr),
-    blackboard_(nullptr)
+    root_(nullptr)
 {
+    blackboard_ = std::make_shared<Blackboard::Blackboard>();
 }
 
-void BT::BehaviorTree::Init(const std::shared_ptr<Blackboard::Blackboard>& blackboard)
+void BT::BehaviorTree::Init()
 {
-    blackboard_ = blackboard;
     for (const auto& node : GetNodes())
     {
-        node->behavior_tree_ = this;
+        node->behavior_tree_ = shared_from_this();
+    }
+}
+
+void BT::BehaviorTree::Tick(float delta_time)
+{
+    if (root_)
+    {
+        Node::Status status = root_->TickNode(delta_time);
     }
 }
 

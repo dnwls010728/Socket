@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Blackboard/Blackboard.h"
 
 namespace Blackboard
 {
@@ -12,15 +13,22 @@ namespace BT
 
 namespace BT
 {
-    class BehaviorTree
+    class BehaviorTree : public std::enable_shared_from_this<BehaviorTree>
     {
     public:
         BehaviorTree();
         ~BehaviorTree() = default;
 
-        void Init(const std::shared_ptr<Blackboard::Blackboard>& blackboard);
+        void Init();
+        void Tick(float delta_time);
 
         std::vector<std::shared_ptr<Node>> GetNodes();
+
+        template <typename T>
+        void SetValue(const std::wstring& name, const T& value);
+
+        template <typename T>
+        bool TryGetValue(const std::wstring& name, T& out_value) const;
 
         FORCEINLINE void SetRoot(const std::shared_ptr<Node>& kNode) { root_ = kNode; }
         FORCEINLINE std::shared_ptr<Node> GetRoot() { return root_; }
@@ -35,4 +43,24 @@ namespace BT
         std::shared_ptr<Blackboard::Blackboard> blackboard_;
     
     };
+
+    template <typename T>
+    void BehaviorTree::SetValue(const std::wstring& name, const T& value)
+    {
+        if (!blackboard_) return;
+        Blackboard::BlackboardKey key = blackboard_->FindOrAdd(name);
+        
+        if (!key.IsValid()) return;
+        blackboard_->SetValue<T>(key, value);
+    }
+
+    template <typename T>
+    bool BehaviorTree::TryGetValue(const std::wstring& name, T& out_value) const
+    {
+        if (!blackboard_) return false;
+        Blackboard::BlackboardKey key = blackboard_->FindOrAdd(name);
+
+        if (!key.IsValid()) return false;
+        return blackboard_->TryGetValue<T>(key, out_value);
+    }
 }

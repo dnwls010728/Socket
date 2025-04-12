@@ -25,7 +25,7 @@ namespace BT
         
         std::wstring name_;
 
-        class BehaviorTree* behavior_tree_;
+        std::shared_ptr<BehaviorTree> behavior_tree_;
     
     };
 }
