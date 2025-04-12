@@ -12,6 +12,8 @@ namespace BT
         virtual void Reset() override;
 
         void AddChild(const std::shared_ptr<Node>& kNode);
+        
+        FORCEINLINE const std::shared_ptr<Node>& GetChild() const { return child_; }
 
     protected:
         std::shared_ptr<Node> child_;

@@ -13,6 +13,8 @@ namespace BT
 
         void AddChild(const std::shared_ptr<Node>& kNode);
 
+        FORCEINLINE const std::vector<std::shared_ptr<Node>>& GetChildren() const { return children_; }
+
     protected:
         std::vector<std::shared_ptr<Node>> children_;
         int current_child_;

@@ -21,7 +21,11 @@ namespace BT
         FORCEINLINE const std::wstring& GetName() const { return name_; }
 
     protected:
+        friend class BehaviorTree;
+        
         std::wstring name_;
+
+        class BehaviorTree* behavior_tree_;
     
     };
 }

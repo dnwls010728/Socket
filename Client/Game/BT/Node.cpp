@@ -2,7 +2,8 @@
 #include "Node.h"
 
 BT::Node::Node(const std::wstring& kName) :
-    name_(kName)
+    name_(kName),
+    behavior_tree_(nullptr)
 {
 }
 

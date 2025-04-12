@@ -243,6 +243,7 @@
     <ClInclude Include="Game\BT\Actions\Leaf.h" />
     <ClInclude Include="Game\BT\Actions\Wait.h" />
     <ClInclude Include="Game\BT\Actions\WaitRange.h" />
+    <ClInclude Include="Game\BT\BehaviorTree.h" />
     <ClInclude Include="Game\BT\Composites\Composite.h" />
     <ClInclude Include="Game\BT\Composites\RandomSelector.h" />
     <ClInclude Include="Game\BT\Composites\Selector.h" />
@@ -587,6 +588,7 @@
     <ClCompile Include="Game\BT\Actions\Leaf.cpp" />
     <ClCompile Include="Game\BT\Actions\Wait.cpp" />
     <ClCompile Include="Game\BT\Actions\WaitRange.cpp" />
+    <ClCompile Include="Game\BT\BehaviorTree.cpp" />
     <ClCompile Include="Game\BT\Composites\Composite.cpp" />
     <ClCompile Include="Game\BT\Composites\RandomSelector.cpp" />
     <ClCompile Include="Game\BT\Composites\Selector.cpp" />
