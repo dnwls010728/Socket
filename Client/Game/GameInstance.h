@@ -8,6 +8,7 @@ public:
     virtual ~GameInstance() override = default;
 
     void Init();
+    void Shutdown();
 
     const PropData* GetPropData(int id);
 

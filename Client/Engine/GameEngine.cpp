@@ -76,7 +76,9 @@ void GameEngine::OnQuit()
     Level* level = World::Get()->GetLevel();
     if (level) level->Unload(EndPlayReason::kQuit);
 
-    GameInstance::Get()->Release();
+    GameInstance* game_instance = GameInstance::Get();
+    game_instance->Shutdown();
+    game_instance->Release();
 }
 
 void GameEngine::StartFrame()

@@ -13,6 +13,10 @@ void GameInstance::Init()
     
 }
 
+void GameInstance::Shutdown()
+{
+}
+
 const PropData* GameInstance::GetPropData(int id)
 {
     auto it = std::ranges::find_if(prop_data_, [id](const PropData& data) {
