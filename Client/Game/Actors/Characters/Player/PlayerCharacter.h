@@ -27,9 +27,6 @@ protected:
 
 #pragma region 컴포넌트
     std::shared_ptr<PlayerController> controller_;
-
-    // 테스트
-    std::shared_ptr<class BehaviorTreeComponent> behavior_tree_;
 #pragma endregion
 
     float move_speed_;

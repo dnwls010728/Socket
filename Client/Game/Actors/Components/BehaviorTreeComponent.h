@@ -21,6 +21,8 @@ public:
     BehaviorTreeComponent(Actor* owner, const std::wstring& kName);
     virtual ~BehaviorTreeComponent() override = default;
 
+    void SetRoot(const std::shared_ptr<BT::Node>& root);
+
     std::shared_ptr<Blackboard::Blackboard> GetBlackboard();
     
     template <typename T>

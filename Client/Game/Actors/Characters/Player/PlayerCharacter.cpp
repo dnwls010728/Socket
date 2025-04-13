@@ -4,15 +4,6 @@
 #include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Actors/Components/BehaviorTreeComponent.h"
-#include "Actors/Components/StateMachineComponent.h"
-#include "Blackboard/Blackboard.h"
-#include "BT/BehaviorTree.h"
-#include "BT/Actions/ActionStrategy.h"
-#include "BT/Actions/Leaf.h"
-#include "BT/Composites/Selector.h"
-#include "BT/Composites/Sequence.h"
-#include "BT/Decorators/Start.h"
 #include "Components/PlayerController.h"
 #include "Data/PropData.h"
 #include "Level/CameraManager.h"
@@ -26,7 +17,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     nickname_text_box_(nullptr)
 {
     controller_ = AddComponent<PlayerController>(L"PlayerController");
-    behavior_tree_ = AddComponent<BehaviorTreeComponent>(L"BehaviorTree");
     
 }
 

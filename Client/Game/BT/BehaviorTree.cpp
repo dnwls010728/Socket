@@ -16,6 +16,7 @@ void BT::BehaviorTree::Init()
     for (const auto& node : GetNodes())
     {
         node->behavior_tree_ = shared_from_this();
+        Logger::Print(L"Node: %s", node->GetName().c_str());
     }
 }
 

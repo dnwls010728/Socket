@@ -9,6 +9,11 @@ BehaviorTreeComponent::BehaviorTreeComponent(Actor* owner, const std::wstring& k
     behavior_tree_ = std::make_shared<BT::BehaviorTree>();
 }
 
+void BehaviorTreeComponent::SetRoot(const std::shared_ptr<BT::Node>& root)
+{
+    behavior_tree_->SetRoot(root);
+}
+
 std::shared_ptr<Blackboard::Blackboard> BehaviorTreeComponent::GetBlackboard()
 {
     if (behavior_tree_) return behavior_tree_->GetBlackboard();
