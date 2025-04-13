@@ -7,6 +7,7 @@
 #include "Components/PlayerController.h"
 #include "Data/PropData.h"
 #include "Level/CameraManager.h"
+#include "Subsystems/TestSubsystem.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/TextBox.h"
 #include "Windows/DX/Renderer.h"
@@ -64,6 +65,8 @@ void PlayerCharacter::BeginPlay()
     //         UI::Manager::Get()->AddToViewport(nickname_text_box_);
     //     }
     // }, 1.f, true);
+
+    std::shared_ptr<TestSubsystem> test_subsystem = GameInstance::Get()->GetSubsystem<TestSubsystem>();
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
