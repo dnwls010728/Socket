@@ -1,25 +1,25 @@
 ﻿#include "pch.h"
-#include "TestWorldSubsystem.h"
+#include "NetworkSubsystem.h"
 
-TestWorldSubsystem::TestWorldSubsystem()
+NetworkSubsystem::NetworkSubsystem()
 {
 }
 
-void TestWorldSubsystem::Init()
+void NetworkSubsystem::Init()
 {
     WorldSubsystem::Init();
 
     Logger::Print(L"TestWorldSubsystem initialized.");
 }
 
-void TestWorldSubsystem::Deinit()
+void NetworkSubsystem::Deinit()
 {
     WorldSubsystem::Deinit();
 
     Logger::Print(L"TestWorldSubsystem deinitialized.");
 }
 
-void TestWorldSubsystem::Tick(float delta_time)
+void NetworkSubsystem::Tick(float delta_time)
 {
     Tickable::Tick(delta_time);
 
@@ -31,7 +31,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<TestWorldSubsystem>("TestWorldSubsystem")
+    registration::class_<NetworkSubsystem>("NetworkSubsystem")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

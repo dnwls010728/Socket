@@ -104,7 +104,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -112,8 +112,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Client\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration);$(SolutionDir)\Client\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libtmxlite-s-d.lib;box2dd.lib;DirectXTK.lib;fmod_vc.lib;rttr_core_d.lib;yaml-cppd.lib;NetworkLib_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -269,8 +269,8 @@
     <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
-    <ClInclude Include="Game\Subsystems\TestSubsystem.h" />
-    <ClInclude Include="Game\Subsystems\TestWorldSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -771,8 +771,8 @@
     <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
-    <ClCompile Include="Game\Subsystems\TestSubsystem.cpp" />
-    <ClCompile Include="Game\Subsystems\TestWorldSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -2,13 +2,13 @@
 #include "Subsystems/Tickable.h"
 #include "Subsystems/WorldSubsystem.h"
 
-class TestWorldSubsystem : public WorldSubsystem, public Tickable
+class NetworkSubsystem : public WorldSubsystem, public Tickable
 {
-    GENERATED_BODY(TestWorldSubsystem, WorldSubsystem)
+    GENERATED_BODY(NetworkSubsystem, WorldSubsystem)
     
 public:
-    TestWorldSubsystem();
-    virtual ~TestWorldSubsystem() override = default;
+    NetworkSubsystem();
+    virtual ~NetworkSubsystem() override = default;
 
     virtual void Init() override;
     virtual void Deinit() override;
