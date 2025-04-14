@@ -13,89 +13,103 @@ struct MessagePacket : public Net::IPacket
     REGISTER_PACKET(MessagePacket, 100)
 };
 
-// 방 목록 요청 패킷 -> RoomListPacketAck로 바로 응답
+// 방 목록 요청 패킷 ( 클라 > 서버 )
 struct RoomListPacketReq : public Net::IPacket
 {
-    int page_index;    // 방 목록 인덱스
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, page_index)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
     REGISTER_PACKET(RoomListPacketReq, 200)
 };
 
-// 방 목록 자동 동기화 요청 패킷 -> 해당 페이지가 갱신될 때 서버가 자동으로 RoomListPacketAck 전송
-// -1을 전송하면 자동 동기화 종료
-struct RoomListSyncPacket : public Net::IPacket
-{
-    int page_index;    // 방 목록 인덱스
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, page_index)
-    REGISTER_PACKET(RoomListSyncPacket, 201)
-};
-
-// 방 정보 요청 응답. 사용자가 요청한 인덱스의 방 목록이 없으면 가장 가까운 인덱스 전달
+// 방 목록 요청 응답 ( 서버 > 클라 )
 struct RoomListPacketAck : public Net::IPacket
 {
     RoomList room_list; 
 	SERIALIZABLE_PACKET_FIELDS(CustomSerializer, room_list)
-    REGISTER_PACKET(RoomListPacketAck, 202)
+    REGISTER_PACKET(RoomListPacketAck, 201)
 };
 
-// 방 생성 요청
+// 방 목록 변경 구독 ( 서버 > 클라 )
+struct ObserveRoomListPacket : public Net::IPacket
+{
+    bool is_observe;
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_observe)
+    REGISTER_PACKET(ObserveRoomListPacket, 202)
+};
+
+// 방 목록 자동 동기화 요청 패킷 ( 클라 > 서버 )
+struct OnUpdateRoomListPacket : public Net::IPacket
+{
+	RoomInfo room_info;
+    RoomListUpdateType update_type;
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, update_type, room_info)
+    REGISTER_PACKET(OnUpdateRoomListPacket, 203)
+};
+
+// 방 생성 요청 ( 클라 > 서버 )
 struct CreateRoomPacketReq : public Net::IPacket
 {
     std::wstring room_title;
     int max_user_count;
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, room_title, max_user_count)
-    REGISTER_PACKET(CreateRoomPacketReq, 203)
+    REGISTER_PACKET(CreateRoomPacketReq, 210)
 };
 
-// 방 생성 응답. result true시 생성한 사람은 바로 입장하면 됨
+// 방 생성 응답 ( 서버 > 클라 ) result true시 생성한 사람은 바로 입장하면 됨
 struct CreateRoomPacketAck : public Net::IPacket
 {
     int room_number;
-    int room_title;
+    std::wstring room_title;
     int max_user_count;
 	bool result;
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, room_number, result, room_title, max_user_count)
-    REGISTER_PACKET(CreateRoomPacketAck, 204)
+    REGISTER_PACKET(CreateRoomPacketAck, 211)
 };
 
-// 방 입장 요청
+// 방 입장 요청 ( 클라 > 서버 )
 struct RoomEnterPacketReq : public Net::IPacket
 {
     int room_number;
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, room_number)
-    REGISTER_PACKET(RoomEnterPacketReq, 205)
+    REGISTER_PACKET(RoomEnterPacketReq, 220)
 };
 
-// 방 입장 요청 응답
+// 방 입장 요청 응답 ( 서버 > 클라)
 struct RoomEnterPacketAck : public Net::IPacket
 {
     bool result;
-    // TODO : 유저 정보..
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result)
-    REGISTER_PACKET(RoomEnterPacketAck, 206)
+    RoomInfoEx room_info_ex;
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result, room_info_ex)
+    REGISTER_PACKET(RoomEnterPacketAck, 221)
 };
 
-// 방 퇴장
+// 방 퇴장 ( 클라 > 서버 )
 struct RoomExitPacket : public Net::IPacket
 {
-    int room_number;
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, room_number)
-    REGISTER_PACKET(RoomExitPacket, 207)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    REGISTER_PACKET(RoomExitPacket, 230)
+};
+
+// 다른 유저 방 퇴장 알림 ( 서버 > 클라 )
+struct OnRoomExitOtherPacket : public Net::IPacket
+{
+    ClientData client_data;
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, client_data)
+    REGISTER_PACKET(OnRoomExitOtherPacket, 231)
 };
 
 // 게임 시작 클릭 ( 클라 > 서버 )
 struct DoGameStartPacket : public Net::IPacket
 {
-    SERIALIZABLE_PACKET_NONE_FIELDS()
-    REGISTER_PACKET(DoGameStartPacket, 300)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    REGISTER_PACKET(DoGameStartPacket, 240)
 };
 
 // 게임 시작 ( 서버 > 클라 )
 struct GameStartPacket : public Net::IPacket
 {
     // 방장 정보
-    SERIALIZABLE_PACKET_NONE_FIELDS()
-    REGISTER_PACKET(GameStartPacket, 301)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    REGISTER_PACKET(GameStartPacket, 241)
 };
 
 
