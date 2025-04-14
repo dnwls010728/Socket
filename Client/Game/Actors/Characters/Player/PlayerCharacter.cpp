@@ -1,13 +1,10 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
-#include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Components/PlayerController.h"
-#include "Data/PropData.h"
 #include "Level/CameraManager.h"
-#include "Subsystems/TestSubsystem.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/TextBox.h"
 #include "Windows/DX/Renderer.h"
@@ -23,11 +20,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
 void PlayerCharacter::OnAttack()
 {
-    const PropData* prop_data = GameInstance::Get()->GetPropData(0);
-    if (prop_data)
-    {
-        Logger::Print(L"Prop ID: %d, Name: %s", prop_data->id, prop_data->name.c_str());
-    }
 }
 
 void PlayerCharacter::OnMovement()
@@ -65,8 +57,6 @@ void PlayerCharacter::BeginPlay()
     //         UI::Manager::Get()->AddToViewport(nickname_text_box_);
     //     }
     // }, 1.f, true);
-
-    TestSubsystem* test_subsystem = GameInstance::Get()->GetSubsystem<TestSubsystem>();
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)

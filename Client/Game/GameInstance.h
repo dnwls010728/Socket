@@ -13,8 +13,6 @@ public:
     void Init();
     void Shutdown();
 
-    const PropData* GetPropData(int id);
-
     template <typename T>
     T* GetSubsystem();
 
@@ -23,8 +21,6 @@ private:
     void DeinitSubsystems();
     
     std::unordered_map<rttr::type::type_id, std::unique_ptr<GameInstanceSubsystem>> subsystems_;
-    
-    std::vector<PropData> prop_data_;
     
 };
 
