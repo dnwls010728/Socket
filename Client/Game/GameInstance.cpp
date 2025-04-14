@@ -12,9 +12,26 @@ GameInstance::GameInstance() :
 
 void GameInstance::Init()
 {
+    CollectSubsystems();
+    
     CSVReader::Parse(L"Data\\PropData.csv", prop_data_);
+    
+}
 
-    // GameInstanceSubsystem을 상속받는 모든 클래스를 수집하고, 인스턴스를 생성한다.
+void GameInstance::Shutdown()
+{
+    auto it = subsystems_.begin();
+    while (it != subsystems_.end())
+    {
+        GameInstanceSubsystem* subsystem = it->second.get();
+        if (subsystem) subsystem->Deinit();
+    }
+
+    subsystems_.clear();
+}
+
+void GameInstance::CollectSubsystems()
+{
     for (auto& t : rttr::type::get<GameInstanceSubsystem>().get_derived_classes())
     {
         if (t.is_valid() && t.is_class())
@@ -31,19 +48,6 @@ void GameInstance::Init()
             }
         }
     }
-    
-}
-
-void GameInstance::Shutdown()
-{
-    auto it = subsystems_.begin();
-    while (it != subsystems_.end())
-    {
-        GameInstanceSubsystem* subsystem = it->second.get();
-        if (subsystem) subsystem->Deinit();
-    }
-
-    subsystems_.clear();
 }
 
 const PropData* GameInstance::GetPropData(int id)

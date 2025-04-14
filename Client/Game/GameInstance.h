@@ -19,6 +19,8 @@ public:
     T* GetSubsystem();
 
 private:
+    void CollectSubsystems();
+    
     std::unordered_map<rttr::type::type_id, std::unique_ptr<GameInstanceSubsystem>> subsystems_;
     
     std::vector<PropData> prop_data_;
