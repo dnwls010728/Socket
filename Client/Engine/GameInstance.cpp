@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GameInstance.h"
 
-#include "GameInstanceSubsystem.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 #include "Data/CSVReader.h"
 
 GameInstance::GameInstance() :
