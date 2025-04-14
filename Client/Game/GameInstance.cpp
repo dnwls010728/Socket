@@ -22,11 +22,11 @@ void GameInstance::Init()
             auto instance = t.create();
             if (instance.is_valid())
             {
-                std::shared_ptr<GameInstanceSubsystem> subsystem = instance.get_value<std::shared_ptr<GameInstanceSubsystem>>();
+                GameInstanceSubsystem* subsystem = instance.get_value<GameInstanceSubsystem*>();
                 if (subsystem)
                 {
                     subsystem->Init();
-                    subsystems_[t.get_id()] = subsystem;
+                    subsystems_[t.get_id()] = std::unique_ptr<GameInstanceSubsystem>(subsystem);
                 }
             }
         }
@@ -39,10 +39,11 @@ void GameInstance::Shutdown()
     auto it = subsystems_.begin();
     while (it != subsystems_.end())
     {
-        auto subsystem = it->second;
+        GameInstanceSubsystem* subsystem = it->second.get();
         if (subsystem) subsystem->Deinit();
-        it = subsystems_.erase(it);
     }
+
+    subsystems_.clear();
 }
 
 const PropData* GameInstance::GetPropData(int id)

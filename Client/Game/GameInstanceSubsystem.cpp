@@ -20,6 +20,6 @@ RTTR_REGISTRATION
     registration::class_<GameInstanceSubsystem>("GameInstanceSubsystem")
         .constructor<>()
         (
-            policy::ctor::as_std_shared_ptr
+            policy::ctor::as_raw_ptr
         );
 }

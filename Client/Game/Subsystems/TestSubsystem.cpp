@@ -5,6 +5,13 @@ TestSubsystem::TestSubsystem()
 {
 }
 
+void TestSubsystem::Init()
+{
+    GameInstanceSubsystem::Init();
+
+    Logger::Print(L"TestSubsystem initialized.");
+}
+
 
 RTTR_REGISTRATION
 {
@@ -13,6 +20,6 @@ RTTR_REGISTRATION
     registration::class_<TestSubsystem>("TestSubsystem")
         .constructor<>()
         (
-            policy::ctor::as_std_shared_ptr
+            policy::ctor::as_raw_ptr
         );
 }

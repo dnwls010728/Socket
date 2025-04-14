@@ -66,7 +66,7 @@ void PlayerCharacter::BeginPlay()
     //     }
     // }, 1.f, true);
 
-    std::shared_ptr<TestSubsystem> test_subsystem = GameInstance::Get()->GetSubsystem<TestSubsystem>();
+    TestSubsystem* test_subsystem = GameInstance::Get()->GetSubsystem<TestSubsystem>();
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
