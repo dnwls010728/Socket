@@ -77,6 +77,11 @@ void PlayerController::TickComponent(float delta_time)
     {
         movement_input_.x = keyboard->GetKey('D') - keyboard->GetKey('A');
         movement_input_.y = keyboard->GetKey('W') - keyboard->GetKey('S');
+
+        if (keyboard->GetKeyDown('R'))
+        {
+            World::Get()->OpenLevel(L"TempMap");
+        }
     }
 
     if (Mouse* mouse = Mouse::Get())

@@ -80,8 +80,8 @@ public:
 
     const Bounds& GetBounds();
 
-    inline void SetTickType(TickType kTickType) { tick_type_ = kTickType; }
-    inline TickType GetTickType() const { return tick_type_; }
+    FORCEINLINE void SetTickType(TickType kTickType) { tick_type_ = kTickType; }
+    FORCEINLINE TickType GetTickType() const { return tick_type_; }
 
 private:
     friend class World;

@@ -1,0 +1,40 @@
+﻿#pragma once
+
+#include "Data/PropData.h"
+
+class GameInstanceSubsystem;
+
+class GameInstance : public Singleton<GameInstance>
+{
+public:
+    GameInstance();
+    virtual ~GameInstance() override = default;
+
+    void Init();
+    void Shutdown();
+
+    template <typename T>
+    T* GetSubsystem();
+
+private:
+    void InitSubsystems();
+    void DeinitSubsystems();
+    
+    std::unordered_map<rttr::type::type_id, std::unique_ptr<GameInstanceSubsystem>> subsystems_;
+    
+};
+
+template <typename T>
+T* GameInstance::GetSubsystem()
+{
+    rttr::type t = rttr::type::get<T>();
+    if (!t.is_valid()) return nullptr;
+
+    auto it = subsystems_.find(t.get_id());
+    if (it != subsystems_.end())
+    {
+        return dynamic_cast<T*>(it->second.get());
+    }
+
+    return nullptr;
+}

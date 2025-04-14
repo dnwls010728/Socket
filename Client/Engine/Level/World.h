@@ -31,6 +31,9 @@ public:
     World();
     virtual ~World() override;
 
+    template<typename T>
+    T* GetSubsystem() const;
+
     void Init(const std::shared_ptr<WindowsWindow>& kWindow);
     void InitPhysicsWorld();
     void OpenLevel(const std::wstring& kName);
@@ -74,6 +77,9 @@ private:
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
     friend class CameraManager;
+
+    void InitSubsystems();
+    void DeinitSubsystems();
     
     void TransitionLevel();
     void ProcessCollisionEvents();
@@ -89,7 +95,8 @@ private:
     std::shared_ptr<WindowsWindow> window_;
     
     std::shared_ptr<ShapeBatch> shape_batch_;
-    
+
+    std::vector<class Tickable*> tickables_;
     std::vector<std::shared_ptr<Shape>> shapes_;
 
     b2WorldId world_id_;
@@ -101,12 +108,28 @@ private:
     Level* persistent_level_;
     Level* pending_level_;
 
+    std::unordered_map<rttr::type::type_id, std::unique_ptr<class WorldSubsystem>> subsystems_;
     std::unordered_map<std::wstring, std::shared_ptr<Level>> levels_;
 
     std::queue<std::shared_ptr<Actor>> pending_actors_;
     std::queue<std::shared_ptr<Actor>> pending_destroy_actors_;
     std::queue<ActorActivation> pending_actor_activation_;
 };
+
+template <typename T>
+T* World::GetSubsystem() const
+{
+    rttr::type t = rttr::type::get<T>();
+    if (!t.is_valid()) return nullptr;
+
+    auto it = subsystems_.find(t.get_id());
+    if (it != subsystems_.end())
+    {
+        return dynamic_cast<T*>(it->second.get());
+    }
+
+    return nullptr;
+}
 
 template <std::derived_from<Actor> T>
 T* World::SpawnActor(const rttr::type& kType, const std::wstring& kName)

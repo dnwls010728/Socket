@@ -15,9 +15,9 @@ AnimatorComponent::StateNode::StateNode(const std::wstring& kState) :
 {
 }
 
-void AnimatorComponent::StateNode::AddTransition(const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+void AnimatorComponent::StateNode::AddTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition)
 {
-    transitions_.emplace(std::make_shared<AnimationTransition>(kTo, kCondition));
+    transitions_.emplace(std::make_shared<Transition>(kTo, kCondition));
 }
 
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
@@ -35,14 +35,14 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+void AnimatorComponent::AddTransition(const std::wstring& kFrom, const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition)
 {
     GetOrAddNode(kFrom)->AddTransition(kTo, kCondition);
 }
 
-void AnimatorComponent::AddAnyTransition(const std::wstring& kTo, const std::shared_ptr<AnimationCondition>& kCondition)
+void AnimatorComponent::AddAnyTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition)
 {
-    any_transitions_.emplace(std::make_shared<AnimationTransition>(kTo, kCondition));
+    any_transitions_.emplace(std::make_shared<Transition>(kTo, kCondition));
 }
 
 void AnimatorComponent::PlayAnimation(const std::wstring& kName)
@@ -158,7 +158,7 @@ void AnimatorComponent::TickComponent(float delta_time)
 {
     ActorComponent::TickComponent(delta_time);
 
-    std::shared_ptr<AnimationTransition> transition = GetTransition();
+    std::shared_ptr<Transition> transition = GetTransition();
     if (transition) PlayAnimation(transition->GetTo());
 
     std::shared_ptr<SpriteRendererComponent> renderer_ptr = renderer_weak_ptr_.lock();
@@ -187,7 +187,7 @@ void AnimatorComponent::TickComponent(float delta_time)
     }
 }
 
-std::shared_ptr<AnimationTransition> AnimatorComponent::GetTransition()
+std::shared_ptr<Transition> AnimatorComponent::GetTransition()
 {
     for (const auto& kTransition : any_transitions_)
     {

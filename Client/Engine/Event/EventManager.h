@@ -14,7 +14,7 @@ public:
     bool PollEvent(Event& event);
     bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result);
 
-    inline void SetMessageTick(DWORD tick) { message_tick_ = tick; }
+    FORCEINLINE void SetMessageTick(DWORD tick) { message_tick_ = tick; }
 
     double GetEventTimestamp();
 

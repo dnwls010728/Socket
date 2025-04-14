@@ -1,0 +1,15 @@
+﻿#pragma once
+#include "Subsystems/GameInstanceSubsystem.h"
+
+class TestSubsystem : public GameInstanceSubsystem
+{
+    GENERATED_BODY(TestSubsystem, GameInstanceSubsystem)
+    
+public:
+    TestSubsystem();
+    virtual ~TestSubsystem() override = default;
+
+    virtual void Init() override;
+    virtual void Deinit() override;
+    
+};
