@@ -5,6 +5,8 @@
 #include "DebugDrawHelper.h"
 #include "box2d/box2d.h"
 #include "DirectXTK/CommonStates.h"
+#include "Subsystems/Tickable.h"
+#include "Subsystems/WorldSubsystem.h"
 #include "Time/TimerManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
@@ -23,10 +25,12 @@ void DrawString(b2Vec2 p, const char* s, b2HexColor color, void* context);
 World::World() :
     window_(nullptr),
     shape_batch_(nullptr),
+    tickables_(),
     shapes_(),
     current_level_(nullptr),
     persistent_level_(nullptr),
     pending_level_(nullptr),
+    subsystems_(),
     levels_(),
     pending_actors_(),
     pending_destroy_actors_(),
@@ -108,6 +112,11 @@ void World::OpenLevel(const std::wstring& kName)
 
 void World::PhysicsTick(float delta_time)
 {
+    for (const auto& tickable : tickables_)
+    {
+        tickable->PhysicsTick(delta_time);
+    }
+    
     b2World_Step(world_id_, delta_time, 4);
     
     if (current_level_)
@@ -125,6 +134,11 @@ void World::PhysicsTick(float delta_time)
 
 void World::Tick(float delta_time)
 {
+    for (const auto& tickable : tickables_)
+    {
+        tickable->Tick(delta_time);
+    }
+    
     TimerManager::Get()->Tick(delta_time);
     
     if (current_level_)
@@ -139,6 +153,11 @@ void World::Tick(float delta_time)
 
 void World::PostTick(float delta_time)
 {
+    for (const auto& tickable : tickables_)
+    {
+        tickable->PostTick(delta_time);
+    }
+    
     if (current_level_)
     {
         current_level_->PostTick(delta_time);
@@ -213,6 +232,40 @@ Actor* World::GetActor(const rttr::type& type)
     return nullptr;
 }
 
+void World::InitSubsystems()
+{
+    for (auto& t : rttr::type::get<WorldSubsystem>().get_derived_classes())
+    {
+        if (t.is_valid() && t.is_class())
+        {
+            auto instance = t.create();
+            if (instance.is_valid())
+            {
+                WorldSubsystem* subsystem = instance.get_value<WorldSubsystem*>();
+                if (subsystem)
+                {
+                    subsystem->Init();
+                    subsystems_[t.get_id()] = std::unique_ptr<WorldSubsystem>(subsystem);
+
+                    if (Tickable* tickable = dynamic_cast<Tickable*>(subsystem)) tickables_.push_back(tickable);
+                }
+            }
+        }
+    }
+}
+
+void World::DeinitSubsystems()
+{
+    auto it = subsystems_.begin();
+    for (; it != subsystems_.end(); ++it)
+    {
+        if (it->second) it->second->Deinit();
+    }
+
+    tickables_.clear();
+    subsystems_.clear();
+}
+
 void World::TransitionLevel()
 {
     if (!pending_level_) return;
@@ -221,7 +274,10 @@ void World::TransitionLevel()
     {
         current_level_->Unload(EndPlayReason::kLevelTransition);
         TimerManager::Get()->ClearAllTimers();
+        DeinitSubsystems();
     }
+
+    InitSubsystems();
 
     current_level_ = pending_level_;
     pending_level_ = nullptr;

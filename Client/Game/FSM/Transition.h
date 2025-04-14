@@ -14,7 +14,7 @@ namespace FSM
         Transition(const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition);
         ~Transition() = default;
 
-        inline const std::shared_ptr<IState>& GetTo() const { return to_; }
+        FORCEINLINE const std::shared_ptr<IState>& GetTo() const { return to_; }
         
         bool CheckCondition() const;
 

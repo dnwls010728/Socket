@@ -4,7 +4,7 @@
 
 class StateMachineComponent : public ActorComponent
 {
-    SHADER_CLASS_HELPER(ActorComponent)
+    SHADER_CLASS_HELPER(StateMachineComponent)
     GENERATED_BODY(StateMachineComponent, ActorComponent)
     
 public:
