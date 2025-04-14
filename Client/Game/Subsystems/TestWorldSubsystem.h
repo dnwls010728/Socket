@@ -10,6 +10,8 @@ public:
     TestWorldSubsystem();
     virtual ~TestWorldSubsystem() override = default;
 
+    virtual void Init() override;
+    virtual void Deinit() override;
     virtual void Tick(float delta_time) override;
     
 };

@@ -5,11 +5,25 @@ TestWorldSubsystem::TestWorldSubsystem()
 {
 }
 
+void TestWorldSubsystem::Init()
+{
+    WorldSubsystem::Init();
+
+    Logger::Print(L"TestWorldSubsystem initialized.");
+}
+
+void TestWorldSubsystem::Deinit()
+{
+    WorldSubsystem::Deinit();
+
+    Logger::Print(L"TestWorldSubsystem deinitialized.");
+}
+
 void TestWorldSubsystem::Tick(float delta_time)
 {
     Tickable::Tick(delta_time);
 
-    Logger::Print(L"TestWorldSubsystem Tick: %f", delta_time);
+    // Logger::Print(L"TestWorldSubsystem Tick: %f", delta_time);
 }
 
 
