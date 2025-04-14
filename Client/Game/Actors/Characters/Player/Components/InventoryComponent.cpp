@@ -6,11 +6,6 @@ InventoryComponent::InventoryComponent(Actor* owner, const std::wstring& name)
 {
 }
 
-void InventoryComponent::SetMaxWeight(float maxWeight)
-{
-    mMaxWeight = maxWeight;
-}
-
 bool InventoryComponent::AddItem(const PropData& propData)
 {
     const float itemWeight = propData.weight;

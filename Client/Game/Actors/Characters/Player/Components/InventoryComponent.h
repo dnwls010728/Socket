@@ -13,10 +13,13 @@ public:
     InventoryComponent(Actor* owner,const std::wstring&kName);
     virtual ~InventoryComponent() override=default;
 
-    void SetMaxWeight(float maxWeight);
-    FORCEINLINE bool AddItem(const PropData& propData);
+    FORCEINLINE void SetMaxWeight(float maxWeight)
+    {
+        mMaxWeight = maxWeight;
+    }
+    bool AddItem(const PropData& propData);
     FORCEINLINE float GetCurrentWeight() const{return mCurrentWeight;}
-    FORCEINLINE float GetMaxWeight(){return mMaxWeight;}
+    FORCEINLINE float GetMaxWeight() const{return mMaxWeight;}
 
 
 private:
