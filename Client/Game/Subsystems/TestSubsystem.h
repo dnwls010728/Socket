@@ -10,5 +10,6 @@ public:
     virtual ~TestSubsystem() override = default;
 
     virtual void Init() override;
+    virtual void Deinit() override;
     
 };

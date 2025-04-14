@@ -12,6 +12,13 @@ void TestSubsystem::Init()
     Logger::Print(L"TestSubsystem initialized.");
 }
 
+void TestSubsystem::Deinit()
+{
+    GameInstanceSubsystem::Deinit();
+
+    Logger::Print(L"TestSubsystem deinitialized.");
+}
+
 
 RTTR_REGISTRATION
 {

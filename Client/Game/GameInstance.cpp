@@ -21,10 +21,9 @@ void GameInstance::Init()
 void GameInstance::Shutdown()
 {
     auto it = subsystems_.begin();
-    while (it != subsystems_.end())
+    for (; it != subsystems_.end(); ++it)
     {
-        GameInstanceSubsystem* subsystem = it->second.get();
-        if (subsystem) subsystem->Deinit();
+        if (it->second) it->second->Deinit();
     }
 
     subsystems_.clear();
