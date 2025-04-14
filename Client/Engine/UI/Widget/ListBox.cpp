@@ -85,6 +85,12 @@ void UI::ListBox::ClearItems()
     hovered_index_ = -1;
 }
 
+void UI::ListBox::SetItem(int index, Type::uint64 user_data)
+{
+    if (index < 0 || index >= items_.size()) return;
+    items_[index].user_data = user_data;
+}
+
 std::shared_ptr<UI::ListBox> UI::ListBox::Create(const std::wstring& kName)
 {
     return std::make_shared<ListBox>(kName);

@@ -44,6 +44,9 @@ namespace UI
         void AddItem(const std::wstring& kName, Type::uint64 user_data = 0);
         void RemoveItem(int index);
         void ClearItems();
+        void SetItem(int index, Type::uint64 user_data = 0);
+
+        FORCEINLINE const Item& GetItem(int index) const { return items_[index]; }
 
         FORCEINLINE const std::vector<Item>& GetItems() const { return items_; }
 
