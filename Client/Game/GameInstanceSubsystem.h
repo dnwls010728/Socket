@@ -1,14 +1,12 @@
 ﻿#pragma once
+#include "Subsystems/Subsystem.h"
 
-class GameInstanceSubsystem
+class GameInstanceSubsystem : public Subsystem
 {
-    GENERATED_BODY(GameInstanceSubsystem)
+    GENERATED_BODY(GameInstanceSubsystem, Subsystem)
     
 public:
     GameInstanceSubsystem();
-    virtual ~GameInstanceSubsystem() = default;
-
-    virtual void Init();
-    virtual void Deinit();
+    virtual ~GameInstanceSubsystem() override = default;
     
 };

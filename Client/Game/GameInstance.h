@@ -19,7 +19,8 @@ public:
     T* GetSubsystem();
 
 private:
-    void CollectSubsystems();
+    void InitSubsystems();
+    void DeinitSubsystems();
     
     std::unordered_map<rttr::type::type_id, std::unique_ptr<GameInstanceSubsystem>> subsystems_;
     

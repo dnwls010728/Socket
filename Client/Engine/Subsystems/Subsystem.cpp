@@ -1,7 +1,15 @@
 ﻿#include "pch.h"
-#include "GameInstanceSubsystem.h"
+#include "Subsystem.h"
 
-GameInstanceSubsystem::GameInstanceSubsystem()
+Subsystem::Subsystem()
+{
+}
+
+void Subsystem::Init()
+{
+}
+
+void Subsystem::Deinit()
 {
 }
 
@@ -9,7 +17,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<GameInstanceSubsystem>("GameInstanceSubsystem")
+    registration::class_<Subsystem>("Subsystem")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

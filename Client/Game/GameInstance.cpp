@@ -12,7 +12,7 @@ GameInstance::GameInstance() :
 
 void GameInstance::Init()
 {
-    CollectSubsystems();
+    InitSubsystems();
     
     CSVReader::Parse(L"Data\\PropData.csv", prop_data_);
     
@@ -20,16 +20,10 @@ void GameInstance::Init()
 
 void GameInstance::Shutdown()
 {
-    auto it = subsystems_.begin();
-    for (; it != subsystems_.end(); ++it)
-    {
-        if (it->second) it->second->Deinit();
-    }
-
-    subsystems_.clear();
+    DeinitSubsystems();
 }
 
-void GameInstance::CollectSubsystems()
+void GameInstance::InitSubsystems()
 {
     for (auto& t : rttr::type::get<GameInstanceSubsystem>().get_derived_classes())
     {
@@ -47,6 +41,17 @@ void GameInstance::CollectSubsystems()
             }
         }
     }
+}
+
+void GameInstance::DeinitSubsystems()
+{
+    auto it = subsystems_.begin();
+    for (; it != subsystems_.end(); ++it)
+    {
+        if (it->second) it->second->Deinit();
+    }
+
+    subsystems_.clear();
 }
 
 const PropData* GameInstance::GetPropData(int id)

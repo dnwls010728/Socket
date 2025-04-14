@@ -74,6 +74,9 @@ private:
     friend class SpriteRendererComponent;
     friend class TilemapComponent;
     friend class CameraManager;
+
+    void InitSubsystems();
+    void DeinitSubsystems();
     
     void TransitionLevel();
     void ProcessCollisionEvents();
@@ -89,7 +92,8 @@ private:
     std::shared_ptr<WindowsWindow> window_;
     
     std::shared_ptr<ShapeBatch> shape_batch_;
-    
+
+    std::vector<class Tickable*> tickables_;
     std::vector<std::shared_ptr<Shape>> shapes_;
 
     b2WorldId world_id_;
@@ -101,6 +105,7 @@ private:
     Level* persistent_level_;
     Level* pending_level_;
 
+    std::unordered_map<rttr::type::type_id, std::unique_ptr<class WorldSubsystem>> subsystems_;
     std::unordered_map<std::wstring, std::shared_ptr<Level>> levels_;
 
     std::queue<std::shared_ptr<Actor>> pending_actors_;

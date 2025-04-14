@@ -1,15 +1,16 @@
 ﻿#include "pch.h"
-#include "GameInstanceSubsystem.h"
+#include "WorldSubsystem.h"
 
-GameInstanceSubsystem::GameInstanceSubsystem()
+WorldSubsystem::WorldSubsystem()
 {
 }
+
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<GameInstanceSubsystem>("GameInstanceSubsystem")
+    registration::class_<WorldSubsystem>("WorldSubsystem")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr
