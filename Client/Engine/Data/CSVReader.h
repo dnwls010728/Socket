@@ -2,7 +2,6 @@
 #include <fstream>
 #include <vector>
 
-#include "Singleton.h"
 #include "rttr/type.h"
 
 class CSVReader

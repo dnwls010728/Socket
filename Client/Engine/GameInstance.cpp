@@ -2,7 +2,6 @@
 #include "GameInstance.h"
 
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Data/CSVReader.h"
 
 GameInstance::GameInstance() :
     subsystems_()
@@ -12,7 +11,6 @@ GameInstance::GameInstance() :
 void GameInstance::Init()
 {
     InitSubsystems();
-    
 }
 
 void GameInstance::Shutdown()
