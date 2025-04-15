@@ -214,7 +214,8 @@
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
-    <ClCompile Include="Game\Subsystems\TestWorldSubsystem.cpp" />
+    <ClCompile Include="Game\Maps\LobbyMap.cpp" />
+    <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -781,7 +782,8 @@
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
-    <ClInclude Include="Game\Subsystems\TestWorldSubsystem.h" />
+    <ClInclude Include="Game\Maps\LobbyMap.h" />
+    <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">
