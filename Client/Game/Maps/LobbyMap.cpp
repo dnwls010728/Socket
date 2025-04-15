@@ -105,6 +105,8 @@ void LobbyMap::Unload(EndPlayReason type)
         ui_manager->RemoveFromViewport(room_name_editable_text_box_);
         ui_manager->RemoveFromViewport(back_button_);
     }
+    
+    UnsubscribeRoomRefresh();
 }
 
 void LobbyMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
@@ -125,6 +127,8 @@ void LobbyMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
                 break;
             }
 
+            room_list_box_->ClearItems();
+
             ui_manager->RemoveFromViewport(room_list_box_);
             ui_manager->RemoveFromViewport(room_name_editable_text_box_);
             ui_manager->AddToViewport(back_button_);
@@ -141,6 +145,8 @@ void LobbyMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
                 Logger::Print(L"방 입장에 실패했습니다.");
                 break;
             }
+            
+            room_list_box_->ClearItems();
             
             ui_manager->RemoveFromViewport(room_list_box_);
             ui_manager->RemoveFromViewport(room_name_editable_text_box_);
