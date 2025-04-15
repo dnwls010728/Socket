@@ -27,6 +27,7 @@ public:
 
     virtual void Load() override;
     virtual void Unload(EndPlayReason type) override;
+    virtual void Tick(float delta_time) override;
 
 private:
     void ProcessPackets(std::shared_ptr<Net::IPacket> packet);

@@ -109,6 +109,20 @@ void LobbyMap::Unload(EndPlayReason type)
     UnsubscribeRoomRefresh();
 }
 
+void LobbyMap::Tick(float delta_time)
+{
+    Level::Tick(delta_time);
+
+    Keyboard* keyboard = Keyboard::Get();
+    if (keyboard)
+    {
+        if (keyboard->GetKeyDown('R'))
+        {
+            World::Get()->OpenLevel(L"LobbyMap");
+        }
+    }
+}
+
 void LobbyMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
 {
     if (!packet) return;
