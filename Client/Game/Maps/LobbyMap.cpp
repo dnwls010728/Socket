@@ -7,13 +7,15 @@
 #include "Input/Keyboard.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIManager.h"
+#include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/ListBox.h"
 
 LobbyMap::LobbyMap(const std::wstring& kName) :
     Level(kName),
     room_list_box_(nullptr),
-    room_name_editable_text_box_(nullptr)
+    room_name_editable_text_box_(nullptr),
+    back_button_(nullptr)
 {
 }
 
@@ -50,10 +52,40 @@ void LobbyMap::Load()
         });
         room_list_box_->OnDoubleClick([&](Type::uint64 user_data)
         {
+            SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
+            if (!session_subsystem) return;
+            
             RoomInfo* room_info = reinterpret_cast<RoomInfo*>(user_data);
+
+            RoomEnterPacketReq room_enter_request;
+            room_enter_request.room_number = room_info->room_number;
+            session_subsystem->SendPacket(room_enter_request);
         });
 
         ui_manager->AddToViewport(room_name_editable_text_box_);
+
+        back_button_ = UI::Button::Create(L"BackButton");
+        back_button_->SetPosition({ 60.f, 35.f });
+        back_button_->SetSize({ 100.f, 50.f });
+        back_button_->SetText(L"방 나가기");
+        back_button_->OnClick([&]()
+        {
+            SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
+            if (!session_subsystem) return;
+            
+            RoomEnterPacketReq room_enter_request;
+            session_subsystem->SendPacket(room_enter_request);
+            
+            UI::Manager* ui_manager = UI::Manager::Get();
+            if (ui_manager)
+            {
+                ui_manager->RemoveFromViewport(back_button_);
+                ui_manager->AddToViewport(room_list_box_);
+                ui_manager->AddToViewport(room_name_editable_text_box_);
+            }
+            
+            SubscribeRoomRefresh();
+        });
     }
 }
 
@@ -65,19 +97,13 @@ void LobbyMap::Unload(EndPlayReason type)
     
     SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     if (session_subsystem) session_subsystem->packet_handler.Remove(this, &LobbyMap::ProcessPackets);
-}
 
-void LobbyMap::Tick(float delta_time)
-{
-    Level::Tick(delta_time);
-
-    Keyboard* keyboard = Keyboard::Get();
-    if (keyboard)
+    UI::Manager* ui_manager = UI::Manager::Get();
+    if (ui_manager)
     {
-        if (keyboard->GetKeyDown('R'))
-        {
-            World::Get()->OpenLevel(L"LobbyMap");
-        }
+        ui_manager->RemoveFromViewport(room_list_box_);
+        ui_manager->RemoveFromViewport(room_name_editable_text_box_);
+        ui_manager->RemoveFromViewport(back_button_);
     }
 }
 
@@ -101,6 +127,24 @@ void LobbyMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
 
             ui_manager->RemoveFromViewport(room_list_box_);
             ui_manager->RemoveFromViewport(room_name_editable_text_box_);
+            ui_manager->AddToViewport(back_button_);
+            
+            UnsubscribeRoomRefresh();
+        }
+        break;
+
+    case RoomEnterPacketAck::StaticPacketID:
+        {
+            std::shared_ptr<RoomEnterPacketAck > room_enter_packet = std::dynamic_pointer_cast<RoomEnterPacketAck>(packet);
+            if (room_enter_packet && !room_enter_packet->result)
+            {
+                Logger::Print(L"방 입장에 실패했습니다.");
+                break;
+            }
+            
+            ui_manager->RemoveFromViewport(room_list_box_);
+            ui_manager->RemoveFromViewport(room_name_editable_text_box_);
+            ui_manager->AddToViewport(back_button_);
             
             UnsubscribeRoomRefresh();
         }

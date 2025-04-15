@@ -2,6 +2,7 @@
 #include <CommonObject.h>
 
 #include "Level/Level.h"
+#include "UI/Widget.h"
 
 namespace Net
 {
@@ -10,6 +11,7 @@ namespace Net
 
 namespace UI
 {
+    class Button;
     class EditableTextBox;
     class ListBox;
 }
@@ -25,7 +27,6 @@ public:
 
     virtual void Load() override;
     virtual void Unload(EndPlayReason type) override;
-    virtual void Tick(float delta_time) override;
 
 private:
     void ProcessPackets(std::shared_ptr<Net::IPacket> packet);
@@ -38,6 +39,7 @@ private:
 #pragma region UI Widget
     std::shared_ptr<UI::ListBox> room_list_box_;
     std::shared_ptr<UI::EditableTextBox> room_name_editable_text_box_;
+    std::shared_ptr<UI::Button> back_button_;
 #pragma endregion
     
 };
