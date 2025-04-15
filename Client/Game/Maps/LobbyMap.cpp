@@ -73,8 +73,8 @@ void LobbyMap::Load()
             SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
             if (!session_subsystem) return;
             
-            RoomEnterPacketReq room_enter_request;
-            session_subsystem->SendPacket(room_enter_request);
+            RoomExitPacket room_exit_packet;
+            session_subsystem->SendPacket(room_exit_packet);
             
             UI::Manager* ui_manager = UI::Manager::Get();
             if (ui_manager)
@@ -94,6 +94,13 @@ void LobbyMap::Unload(EndPlayReason type)
     Level::Unload(type);
 
     UnsubscribeRoomRefresh();
+
+    const std::vector<UI::ListBox::Item>& items = room_list_box_->GetItems();
+    for (int i = 0; i < items.size(); ++i)
+    {
+        RoomInfo* room_info = reinterpret_cast<RoomInfo*>(items[i].user_data);
+        delete room_info;
+    }
     
     SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     if (session_subsystem) session_subsystem->packet_handler.Remove(this, &LobbyMap::ProcessPackets);
@@ -233,8 +240,9 @@ void LobbyMap::AddRoom(RoomInfo& room_info)
 {
     std::wstring room_title = room_info.room_title;
     room_title += L" (" + std::to_wstring(room_info.current_user_count) + L"/" + std::to_wstring(room_info.max_user_count) + L")";
-    
-    room_list_box_->AddItem(room_title, reinterpret_cast<uintptr_t>(&room_info));
+    RoomInfo* room_info_ptr = new RoomInfo();
+    *room_info_ptr = std::move(room_info);
+    room_list_box_->AddItem(room_title, reinterpret_cast<uintptr_t>(room_info_ptr));
 }
 
 void LobbyMap::RemoveRoom(int room_number)
@@ -245,6 +253,7 @@ void LobbyMap::RemoveRoom(int room_number)
         RoomInfo* room_info = reinterpret_cast<RoomInfo*>(items[i].user_data);
         if (room_info->room_number == room_number)
         {
+            delete room_info;
             room_list_box_->RemoveItem(i);
             break;
         }
@@ -259,8 +268,8 @@ void LobbyMap::ModifyRoom(RoomInfo& room_info)
         RoomInfo* room_info_ptr = reinterpret_cast<RoomInfo*>(items[i].user_data);
         if (room_info_ptr->room_number == room_info.room_number)
         {
-            std::wstring room_title = room_info_ptr->room_title;
-            room_title += L" (" + std::to_wstring(room_info_ptr->current_user_count) + L"/" + std::to_wstring(room_info_ptr->max_user_count) + L")";
+            std::wstring room_title = room_info.room_title;
+            room_title += L" (" + std::to_wstring(room_info.current_user_count) + L"/" + std::to_wstring(room_info.max_user_count) + L")";
             
             room_list_box_->SetItem(i, room_title, reinterpret_cast<uintptr_t>(room_info_ptr));
             break;

@@ -133,6 +133,15 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				create_result = false;
 				room_number = -1;
 			}
+			else
+			{
+				std::lock_guard<std::mutex> lock(client_map_mutex_);
+				auto it = client_map_.find(state.uniqueKey);
+				if (it != client_map_.end())
+				{
+					it->second.SetRoomNumber(room_number);
+				}
+			}
 		}
 
 		CreateRoomPacketAck create_room_ack;
@@ -150,43 +159,60 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 	{
 		RoomEnterPacketReq* room_enter_req = static_cast<RoomEnterPacketReq*>(packet.get());
 		int room_number = room_enter_req->room_number;
-
+		
 		bool join_room_result = room_manager_.EnterRoom(room_number, state.uniqueKey);
 
 		RoomEnterPacketAck room_enter_ack;
 		room_enter_ack.sequence = room_enter_req->sequence;
 		room_enter_ack.result = join_room_result;
 
-		if (join_room_result)
+		if (join_room_result == false)
 		{
 			std::lock_guard<std::mutex> lock(client_map_mutex_);
 
-			Room room;
-			bool get_roomm = room_manager_.GetRoom(room_number, room);
-			if (get_roomm == false)
-				return;
-
-			auto user_list = room.GetUserList();
-			user_list.erase(state.uniqueKey);
-			
-			for (const int& uniqueKey : user_list)
+			auto it = client_map_.find(state.uniqueKey);
+			if (it == client_map_.end())
 			{
-				auto find_result = client_map_.find(uniqueKey);
-				if (find_result != client_map_.end())
-				{
-					ClientData client_data;
-					client_data.client_name = find_result->second.GetClientName();
-					client_data.client_number = find_result->second.GetClientNumber();
+				// 비정상 오류
+				room_manager_.ExitRoom(room_number, state.uniqueKey);
+				room_enter_ack.result = false;
+			}
+			else
+			{
+				it->second.SetRoomNumber(room_number);
 
-					room_enter_ack.room_info_ex.client_list.push_back(std::move(client_data));
+				Room room;
+				bool get_room = room_manager_.GetRoom(room_number, room);
+				if (get_room == false)
+				{
+					room_manager_.ExitRoom(room_number, state.uniqueKey);
+					room_enter_ack.result = false;
+				}
+				else
+				{
+					auto user_list = room.GetUserList();
+					user_list.erase(state.uniqueKey);
+
+					// 방 정보 수집
+					for (const int& uniqueKey : user_list)
+					{
+						auto find_result = client_map_.find(uniqueKey);
+						if (find_result != client_map_.end())
+						{
+							ClientData client_data;
+							client_data.client_name = find_result->second.GetClientName();
+							client_data.client_number = find_result->second.GetClientNumber();
+
+							room_enter_ack.room_info_ex.client_list.push_back(std::move(client_data));
+						}
+					}
+					room_enter_ack.room_info_ex.room_number = room_number;
+					room_enter_ack.room_info_ex.current_user_count = room.GetCurrentUserCount();
+					room_enter_ack.room_info_ex.max_user_count = room.GetMaxUserCount();
+					room_enter_ack.room_info_ex.room_title = room.GetRoomTitle();
 				}
 			}
-			room_enter_ack.room_info_ex.room_number = room_number;
-			room_enter_ack.room_info_ex.current_user_count = room.GetCurrentUserCount();
-			room_enter_ack.room_info_ex.max_user_count = room.GetMaxUserCount();
-			room_enter_ack.room_info_ex.room_title = room.GetRoomTitle();
 		}
-
 		server_socket_.SendPacketToClient(state.uniqueKey, room_enter_ack);
 		break;
 	}
@@ -207,19 +233,20 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 			
 		}
 		room_number = it->second.GetRoomNumber();
-		room_manager_.ExitRoom(room_number, state.uniqueKey);
-
-		Room room;
+			
+		Room room;	
 		bool get_room = room_manager_.GetRoom(room_number, room);
 		if (get_room == false)
 			return;
+			
+		room_manager_.ExitRoom(room_number, state.uniqueKey);
 
 		for (const int& user_id : room.GetUserList())
 		{
 			auto find_result = client_map_.find(user_id);
 			if (find_result != client_map_.end())
 			{
-				OnRoomExitOtherPacket exit_other_packet;
+				RoomExitOtherPacket exit_other_packet;
 				exit_other_packet.client_data.client_number = it->second.GetClientNumber();
 				exit_other_packet.client_data.client_name = it->second.GetClientName();
 				server_socket_.SendPacketToClient(find_result->first, exit_other_packet);

@@ -101,21 +101,20 @@ bool RoomManager::ExitRoom(int room_number, int user_id)
 	Room& room = it->second;
 	bool result = room.ExitUser(user_id);
 
-	if (result && room.GetCurrentUserCount() == 0)
-	{
-		RemoveRoom(room.GetRoomNumber());
-		if (room_list_update_callback_)
-		{
-			room_list_update_callback_(room, kRoomRemove);
-		}
-	}
-	else if (result)
+	bool should_remove = result && room.GetCurrentUserCount() == 0;
+	Room room_copy = room; // 콜백용 복사
+
+	if (should_remove)
+		rooms_.erase(room.GetRoomNumber());
+
+	if (result)
 	{
 		if (room_list_update_callback_)
 		{
-			room_list_update_callback_(room, kRoomModify);
+			room_list_update_callback_(room_copy, should_remove ? kRoomRemove : kRoomModify);
 		}
 	}
+
 	return result;
 }
 

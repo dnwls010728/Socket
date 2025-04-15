@@ -90,11 +90,11 @@ struct RoomExitPacket : public Net::IPacket
 };
 
 // 다른 유저 방 퇴장 알림 ( 서버 > 클라 )
-struct OnRoomExitOtherPacket : public Net::IPacket
+struct RoomExitOtherPacket : public Net::IPacket
 {
     ClientData client_data;
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, client_data)
-    REGISTER_PACKET(OnRoomExitOtherPacket, 231)
+    REGISTER_PACKET(RoomExitOtherPacket, 231)
 };
 
 // 게임 시작 클릭 ( 클라 > 서버 )
