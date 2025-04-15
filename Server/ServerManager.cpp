@@ -1,4 +1,4 @@
-#include "ServerManager.h"
+ï»¿#include "ServerManager.h"
 #include <string>
 #include <iostream>
 #include "NetworkManager.h"	
@@ -9,7 +9,7 @@ ServerManager::ServerManager()
 {
 	server_socket_.SetSerializerFactory([]() { return std::make_unique<CustomSerializer>(); });
 
-	// Äİº¤ ¼³Á¤
+	// ì½œë²¡ ì„¤ì •file:/D:/Users/Desktop/íƒœì–‘/ê²Œì„ì—”ì§„/Socket/Server/ServerManager.h
 	server_socket_.SetClientAcceptedCallback(std::bind(&ServerManager::OnClientConnected, this, std::placeholders::_1));
 	server_socket_.SetClientDisconnectedCallback(std::bind(&ServerManager::OnClientDisconnected, this, std::placeholders::_1));
 	server_socket_.SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
@@ -27,7 +27,7 @@ bool ServerManager::Execute()
 		return false;
 	}
 	
-	// ¸í·É¾î ÀÔ·Â ·çÇÁ
+	// ëª…ë ¹ì–´ ì…ë ¥ ë£¨í”„
 	bool stop_flag = false;
 	while (stop_flag == false)
 	{
@@ -56,8 +56,8 @@ bool ServerManager::Execute()
 		}
 		else if(first_token == "/room")
 		{
-			// ÀÓ½Ã
-			room_manager_.CreateRoom(L"Test·ë", 5);
+			// ì„ì‹œ
+			room_manager_.CreateRoom(L"Testë£¸", 5);
 		}
 		else
 		{
@@ -120,12 +120,12 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 		std::wstring room_title = create_room_req->room_title;
 		int max_user_count = create_room_req->max_user_count;
 
-		// ¹æ »ı¼º
+		// ë°© ìƒì„±
 		int room_number = room_manager_.CreateRoom(room_title, max_user_count);
 		bool create_result = room_number != -1 ? true : false;
 		if (create_result)
 		{
-			// ¹æÀåÀº ÀÚµ¿ ÀÔÀå
+			// ë°©ì¥ì€ ìë™ ì…ì¥
 			bool join_room_result = room_manager_.EnterRoom(room_number, state.uniqueKey);
 			if (join_room_result == false)
 			{

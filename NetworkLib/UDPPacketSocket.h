@@ -1,4 +1,4 @@
-// UDPPacketSocket.h
+ï»¿// UDPPacketSocket.h
 #pragma once
 #include "NetUDPSocket.h"
 #include "NetDef.h"
@@ -20,20 +20,20 @@ namespace Net::UDP{
 
 #pragma pack(push, 1)
     struct PacketHeader {
-        uint32_t sequence_number; // µ¥ÀÌÅÍ ½ÃÄö½º ¹øÈ£
-        uint32_t ack_number;      // ACK ¹øÈ£
+        uint32_t sequence_number; // ë°ì´í„° ì‹œí€€ìŠ¤ ë²ˆí˜¸
+        uint32_t ack_number;      // ACK ë²ˆí˜¸
         uint8_t flags;            // PacketFlags
-        uint16_t data_length;     // payload ±æÀÌ
-        uint32_t checksum;        // ÆĞÅ¶ Ã¼Å©¼¶
+        uint16_t data_length;     // payload ê¸¸ì´
+        uint32_t checksum;        // íŒ¨í‚· ì²´í¬ì„¬
     };
 #pragma pack(pop)
 
-    // ÆĞÅ¶ ÇÃ·¡±×
+    // íŒ¨í‚· í”Œë˜ê·¸
     enum PacketFlags {
         FLAG_DATA = 0,
         FLAG_R_DATA = 1,
         FLAG_ACK = 2,
-        FLAG_CONNECT = 3, // ½Å±Ô ¿¬°á ¿äÃ»¿ë ÇÃ·¡±×
+        FLAG_CONNECT = 3, // ì‹ ê·œ ì—°ê²° ìš”ì²­ìš© í”Œë˜ê·¸
     };
 
     struct ReceivedPacketInfo
@@ -51,19 +51,19 @@ namespace Net::UDP{
         bool SendLossTest(const NetAddress& net_address, const BYTE* data, int data_length, int& sent_length);
 #endif
 
-        // ÆĞÅ¶ Àü¼Û
+        // íŒ¨í‚· ì „ì†¡
         bool SendPacket(const NetAddress& net_address, const IPacket& packet, bool reliable);
 
-        // ¼ö½ÅµÈ ÆĞÅ¶ Ã³¸® ÈÄ ¹İÈ¯
+        // ìˆ˜ì‹ ëœ íŒ¨í‚· ì²˜ë¦¬ í›„ ë°˜í™˜
         std::pair<bool, bool> RecvPacket(ReceivedPacketInfo& packetInfo);
 
-        // Áö±İ±îÁö ¼ö½ÅµÈ ÆĞÅ¶ Å¥¿¡ ÀúÀå ( RecvPacket ·¡ÆÛ )
+        // ì§€ê¸ˆê¹Œì§€ ìˆ˜ì‹ ëœ íŒ¨í‚· íì— ì €ì¥ ( RecvPacket ë˜í¼ )
         void ReceivePacketsToQueue();
 
-        // Å¥¿¡ ÀúÀåµÈ ÆĞÅ¶À» Äİ¹éÃ³¸®
+        // íì— ì €ì¥ëœ íŒ¨í‚·ì„ ì½œë°±ì²˜ë¦¬
         void ProcessPacketsFromQueue(const std::function<void(ReceivedPacketInfo&)>& callback);
 
-        // Àü¼Û ½ÇÆĞ, ACK ¹ŞÁö ¸øÇÑ ÆĞÅ¶ ÀçÀü¼Û
+        // ì „ì†¡ ì‹¤íŒ¨, ACK ë°›ì§€ ëª»í•œ íŒ¨í‚· ì¬ì „ì†¡
         void ProcessTimeouts();
 
         bool Create() {

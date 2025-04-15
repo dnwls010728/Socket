@@ -1,4 +1,4 @@
-#pragma once    
+ï»¿#pragma once    
 #include <vector>
 #include <string>
 #include <Windows.h>
@@ -6,7 +6,7 @@
 namespace Net {
 
     
-    // Á÷·ÄÈ­/¿ªÁ÷·ÄÈ­ ¸â¹ö ¼³Á¤. ÆÑÅä¸® ÇÔ¼ö¸¦  SerializerClassÈ¤Àº SerializerClassÀÇ ÀÚ½ÄÀ¸·Î ÁöÁ¤ÇÏÁö ¾ÊÀ¸¸é ¿À·ù ¹ß»ı. 
+    // ì§ë ¬í™”/ì—­ì§ë ¬í™” ë©¤ë²„ ì„¤ì •. íŒ©í† ë¦¬ í•¨ìˆ˜ë¥¼  SerializerClassí˜¹ì€ SerializerClassì˜ ìì‹ìœ¼ë¡œ ì§€ì •í•˜ì§€ ì•Šìœ¼ë©´ ì˜¤ë¥˜ ë°œìƒ. 
 #define SERIALIZABLE_FIELDS(SerializerClass, ...)                                           \
     void Serialize(Net::Serializer& serializer) const {                                     \
         SerializerClass* serializer_class = static_cast<SerializerClass*>(&serializer);     \

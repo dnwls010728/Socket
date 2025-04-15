@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <chrono>
 #include <mutex>
 #include <vector>
@@ -10,44 +10,44 @@
 
 namespace Net {
 
-    // Àü¼Û ÇÑ ÆĞÅ¶À» °ü¸®ÇÏ±â À§ÇÑ ±¸Á¶Ã¼
-    // ÆĞÅ¶ Àü¼Û ÈÄ RetransmittablePacket »óÅÂ·Î ÇØ´ç ÆĞÅ¶À» º¸°ü
-    // ´ë»óÀÌ sequence_number¿¡ ¸Â´Â ACK¸¦ º¸³»¸é »èÁ¦, ¹ŞÁö ¸øÇß´Ù°í ÆÇ´ÜµÇ¸é ÀçÀü¼Û
+    // ì „ì†¡ í•œ íŒ¨í‚·ì„ ê´€ë¦¬í•˜ê¸° ìœ„í•œ êµ¬ì¡°ì²´
+    // íŒ¨í‚· ì „ì†¡ í›„ RetransmittablePacket ìƒíƒœë¡œ í•´ë‹¹ íŒ¨í‚·ì„ ë³´ê´€
+    // ëŒ€ìƒì´ sequence_numberì— ë§ëŠ” ACKë¥¼ ë³´ë‚´ë©´ ì‚­ì œ, ë°›ì§€ ëª»í–ˆë‹¤ê³  íŒë‹¨ë˜ë©´ ì¬ì „ì†¡
     struct RetransmittablePacket
     {
-        uint32_t sequence_number;                           // µ¥ÀÌÅÍ ½ÃÄö½º ¹øÈ£       
-        std::chrono::steady_clock::time_point send_time;	// Àü¼Û ½Ã°£
-        std::vector<BYTE> data;							    // Àü¼ÛÇÑ µ¥ÀÌÅÍ 
-        int retransmission_count;                           // ÀçÀü¼Û È½¼ö
+        uint32_t sequence_number;                           // ë°ì´í„° ì‹œí€€ìŠ¤ ë²ˆí˜¸       
+        std::chrono::steady_clock::time_point send_time;	// ì „ì†¡ ì‹œê°„
+        std::vector<BYTE> data;							    // ì „ì†¡í•œ ë°ì´í„° 
+        int retransmission_count;                           // ì¬ì „ì†¡ íšŸìˆ˜
     };
 
     struct UDPConnectionState
     {
-        // ¼ö½Å °ü·Ã
-        uint32_t expected_sequence_number;                          // ´ÙÀ½¿¡ ¹Ş¾Æ¾ß ÇÒ ½ÃÄö½º ¹øÈ£
-        std::map<uint32_t, std::vector<BYTE>> reorder_buffer;         // ¼ö½ÅÇÏ¿´Áö¸¸ ¼ø¼­¿¡ ¸ÂÁö ¾ÊÀ» °æ¿ì reorder_buffer¿¡ ÀúÀå
-        std::map<uint32_t, int> duplicate_ack_counts;                 // Áßº¹ ACK Ä«¿îÆ®. ÀÏÁ¤ ¼ö ÀÌ»ó ¹ŞÀ¸¸é ºü¸¥ ÀçÀü¼Û
+        // ìˆ˜ì‹  ê´€ë ¨
+        uint32_t expected_sequence_number;                          // ë‹¤ìŒì— ë°›ì•„ì•¼ í•  ì‹œí€€ìŠ¤ ë²ˆí˜¸
+        std::map<uint32_t, std::vector<BYTE>> reorder_buffer;         // ìˆ˜ì‹ í•˜ì˜€ì§€ë§Œ ìˆœì„œì— ë§ì§€ ì•Šì„ ê²½ìš° reorder_bufferì— ì €ì¥
+        std::map<uint32_t, int> duplicate_ack_counts;                 // ì¤‘ë³µ ACK ì¹´ìš´íŠ¸. ì¼ì • ìˆ˜ ì´ìƒ ë°›ìœ¼ë©´ ë¹ ë¥¸ ì¬ì „ì†¡
 
-        // Àü¼Û °ü·Ã
-        uint32_t next_sequence_number;                                // ´ÙÀ½ Àü¼Û ½ÃÄö½º ¹øÈ£
-        std::map<uint32_t, RetransmittablePacket> unacknowledged_packets;   // Àü¼ÛÇÑ ÆĞÅ¶ ¸ñ·Ï
-        std::queue<std::pair<uint32_t, std::vector<BYTE>>> pending_packets_; // Àü¼Û ½ÇÆĞÇÑ ÆĞÅ¶ ¸ñ·Ï
+        // ì „ì†¡ ê´€ë ¨
+        uint32_t next_sequence_number;                                // ë‹¤ìŒ ì „ì†¡ ì‹œí€€ìŠ¤ ë²ˆí˜¸
+        std::map<uint32_t, RetransmittablePacket> unacknowledged_packets;   // ì „ì†¡í•œ íŒ¨í‚· ëª©ë¡
+        std::queue<std::pair<uint32_t, std::vector<BYTE>>> pending_packets_; // ì „ì†¡ ì‹¤íŒ¨í•œ íŒ¨í‚· ëª©ë¡
 
-        // ¿¬°á °ü¸®
-        std::chrono::steady_clock::time_point last_activity_time;   // ¸¶Áö¸· ÀÀ´ä ½Ã°£
+        // ì—°ê²° ê´€ë¦¬
+        std::chrono::steady_clock::time_point last_activity_time;   // ë§ˆì§€ë§‰ ì‘ë‹µ ì‹œê°„
         NetAddress remote_address;
-        std::mutex state_mutex;                                     // ConnectionState ¶ô
+        std::mutex state_mutex;                                     // ConnectionState ë½
     };
 
     class UDPConnectionManager
     {
     public:
-        // Å¬¶óÀÌ¾ğÆ® »óÅÂ ¹İÈ¯
+        // í´ë¼ì´ì–¸íŠ¸ ìƒíƒœ ë°˜í™˜
         UDPConnectionState* GetConnectionState(const NetAddress& net_address);
 
         UDPConnectionState& AddClient(const NetAddress& net_address);
 
-		// Å¬¶óÀÌ¾ğÆ® »èÁ¦
+		// í´ë¼ì´ì–¸íŠ¸ ì‚­ì œ
         void RemoveClient(const NetAddress& net_address);
 
         void SetOnConnectCallback(const std::function<void(const NetAddress&)>& callback) {
@@ -57,13 +57,13 @@ namespace Net {
             on_disconnect_callback_ = callback;
         }
 
-		// ¸ğµç Å¬¶óÀÌ¾ğÆ® ¹İÈ¯
+		// ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ ë°˜í™˜
         //std::map<std::string, UDPConnectionState> GetAllConnections();
 
-		// Å¬¶óÀÌ¾ğÆ® ÀÀ´ä ½Ã°£ ¾÷µ¥ÀÌÆ®
+		// í´ë¼ì´ì–¸íŠ¸ ì‘ë‹µ ì‹œê°„ ì—…ë°ì´íŠ¸
         void UpdateClientResponseTime(const NetAddress& net_address);
 
-		// Å¬¶óÀÌ¾ğÆ® ¼ö ¹İÈ¯   
+		// í´ë¼ì´ì–¸íŠ¸ ìˆ˜ ë°˜í™˜   
         size_t GetClientCount();
 
         template<typename Func>
@@ -77,7 +77,7 @@ namespace Net {
         std::function<void(const NetAddress& net_address)> on_connect_callback_;
         std::function<void(const NetAddress& net_address)> on_disconnect_callback_;
 
-        std::mutex connections_mutex_; // connections_ ¶ô
+        std::mutex connections_mutex_; // connections_ ë½
         std::map<std::string, UDPConnectionState> connections_;
     };
 } // namespace Net

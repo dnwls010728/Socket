@@ -1,11 +1,11 @@
-#pragma once
+Ôªø#pragma once
 #include "IPacket.h"
 #include "Serializer.h"
 #include "CustomSerializer.h"
 
-// TODO : ø¿∑˘ƒ⁄µÂ √ﬂ∞°«ÿº≠ ≈¨∂Û¿Ãæ∆Æø°º≠ ø¿∑˘ ∏ﬁΩ√¡ˆ √‚∑¬.......
+// TODO : Ïò§Î•òÏΩîÎìú Ï∂îÍ∞ÄÌï¥ÏÑú ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ÏóêÏÑú Ïò§Î•ò Î©îÏãúÏßÄ Ï∂úÎ†•.......
 
-// ∏ﬁΩ√¡ˆ ∆–≈∂
+// Î©îÏãúÏßÄ Ìå®ÌÇ∑
 struct MessagePacket : public Net::IPacket
 {
     std::string message;
@@ -13,14 +13,14 @@ struct MessagePacket : public Net::IPacket
     REGISTER_PACKET(MessagePacket, 100)
 };
 
-// πÊ ∏Ò∑œ ø‰√ª ∆–≈∂ ( ≈¨∂Û > º≠πˆ )
+// Î∞© Î™©Î°ù ÏöîÏ≤≠ Ìå®ÌÇ∑ ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct RoomListPacketReq : public Net::IPacket
 {
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
     REGISTER_PACKET(RoomListPacketReq, 200)
 };
 
-// πÊ ∏Ò∑œ ø‰√ª ¿¿¥‰ ( º≠πˆ > ≈¨∂Û )
+// Î∞© Î™©Î°ù ÏöîÏ≤≠ ÏùëÎãµ ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº )
 struct RoomListPacketAck : public Net::IPacket
 {
     RoomList room_list; 
@@ -28,7 +28,7 @@ struct RoomListPacketAck : public Net::IPacket
     REGISTER_PACKET(RoomListPacketAck, 201)
 };
 
-// πÊ ∏Ò∑œ ∫Ø∞Ê ±∏µ∂ ( º≠πˆ > ≈¨∂Û )
+// Î∞© Î™©Î°ù Î≥ÄÍ≤Ω Íµ¨ÎèÖ ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº )
 struct ObserveRoomListPacket : public Net::IPacket
 {
     bool is_observe;
@@ -36,7 +36,7 @@ struct ObserveRoomListPacket : public Net::IPacket
     REGISTER_PACKET(ObserveRoomListPacket, 202)
 };
 
-// πÊ ∏Ò∑œ ¿⁄µø µø±‚»≠ ø‰√ª ∆–≈∂ ( ≈¨∂Û > º≠πˆ )
+// Î∞© Î™©Î°ù ÏûêÎèô ÎèôÍ∏∞Ìôî ÏöîÏ≤≠ Ìå®ÌÇ∑ ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct OnUpdateRoomListPacket : public Net::IPacket
 {
 	RoomInfo room_info;
@@ -45,7 +45,7 @@ struct OnUpdateRoomListPacket : public Net::IPacket
     REGISTER_PACKET(OnUpdateRoomListPacket, 203)
 };
 
-// πÊ ª˝º∫ ø‰√ª ( ≈¨∂Û > º≠πˆ )
+// Î∞© ÏÉùÏÑ± ÏöîÏ≤≠ ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct CreateRoomPacketReq : public Net::IPacket
 {
     std::wstring room_title;
@@ -54,7 +54,7 @@ struct CreateRoomPacketReq : public Net::IPacket
     REGISTER_PACKET(CreateRoomPacketReq, 210)
 };
 
-// πÊ ª˝º∫ ¿¿¥‰ ( º≠πˆ > ≈¨∂Û ) result trueΩ√ ª˝º∫«— ªÁ∂˜¿∫ πŸ∑Œ ¿‘¿Â«œ∏È µ 
+// Î∞© ÏÉùÏÑ± ÏùëÎãµ ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº ) result trueÏãú ÏÉùÏÑ±Ìïú ÏÇ¨ÎûåÏùÄ Î∞îÎ°ú ÏûÖÏû•ÌïòÎ©¥ Îê®
 struct CreateRoomPacketAck : public Net::IPacket
 {
     int room_number;
@@ -65,7 +65,7 @@ struct CreateRoomPacketAck : public Net::IPacket
     REGISTER_PACKET(CreateRoomPacketAck, 211)
 };
 
-// πÊ ¿‘¿Â ø‰√ª ( ≈¨∂Û > º≠πˆ )
+// Î∞© ÏûÖÏû• ÏöîÏ≤≠ ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct RoomEnterPacketReq : public Net::IPacket
 {
     int room_number;
@@ -73,7 +73,7 @@ struct RoomEnterPacketReq : public Net::IPacket
     REGISTER_PACKET(RoomEnterPacketReq, 220)
 };
 
-// πÊ ¿‘¿Â ø‰√ª ¿¿¥‰ ( º≠πˆ > ≈¨∂Û)
+// Î∞© ÏûÖÏû• ÏöîÏ≤≠ ÏùëÎãµ ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº)
 struct RoomEnterPacketAck : public Net::IPacket
 {
     bool result;
@@ -82,14 +82,14 @@ struct RoomEnterPacketAck : public Net::IPacket
     REGISTER_PACKET(RoomEnterPacketAck, 221)
 };
 
-// πÊ ≈¿Â ( ≈¨∂Û > º≠πˆ )
+// Î∞© Ìá¥Ïû• ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct RoomExitPacket : public Net::IPacket
 {
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
     REGISTER_PACKET(RoomExitPacket, 230)
 };
 
-// ¥Ÿ∏• ¿Ø¿˙ πÊ ≈¿Â æÀ∏≤ ( º≠πˆ > ≈¨∂Û )
+// Îã§Î•∏ Ïú†Ï†Ä Î∞© Ìá¥Ïû• ÏïåÎ¶º ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº )
 struct OnRoomExitOtherPacket : public Net::IPacket
 {
     ClientData client_data;
@@ -97,17 +97,17 @@ struct OnRoomExitOtherPacket : public Net::IPacket
     REGISTER_PACKET(OnRoomExitOtherPacket, 231)
 };
 
-// ∞‘¿” Ω√¿€ ≈¨∏Ø ( ≈¨∂Û > º≠πˆ )
+// Í≤åÏûÑ ÏãúÏûë ÌÅ¥Î¶≠ ( ÌÅ¥Îùº > ÏÑúÎ≤Ñ )
 struct DoGameStartPacket : public Net::IPacket
 {
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
     REGISTER_PACKET(DoGameStartPacket, 240)
 };
 
-// ∞‘¿” Ω√¿€ ( º≠πˆ > ≈¨∂Û )
+// Í≤åÏûÑ ÏãúÏûë ( ÏÑúÎ≤Ñ > ÌÅ¥Îùº )
 struct GameStartPacket : public Net::IPacket
 {
-    // πÊ¿Â ¡§∫∏
+    // Î∞©Ïû• Ï†ïÎ≥¥
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
     REGISTER_PACKET(GameStartPacket, 241)
 };

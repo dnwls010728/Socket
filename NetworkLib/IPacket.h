@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Serializer.h"
 #include <functional>
 #include <unordered_map>
@@ -17,10 +17,10 @@ namespace Net {
     };
 #pragma pack(pop)
 
-// ÆĞÅ¶¿ë Á÷·ÄÈ­/¿ªÁ÷·ÄÈ­
+// íŒ¨í‚·ìš© ì§ë ¬í™”/ì—­ì§ë ¬í™”
 #define SERIALIZABLE_PACKET_FIELDS(SeriazerClass,...) SERIALIZABLE_FIELDS(SeriazerClass, sequence,__VA_ARGS__)
 
-// ÆĞÅ¶ µî·Ï. packet ID´Â »ç¿ëÀÚ°¡ ÀÓÀÇ·Î ÁöÁ¤ÇÏ¸ç Áßº¹µÇ¸é ¾ÈµÊ. 100 ÀÌ»óºÎÅÍ »ç¿ë °¡´É
+// íŒ¨í‚· ë“±ë¡. packet IDëŠ” ì‚¬ìš©ìê°€ ì„ì˜ë¡œ ì§€ì •í•˜ë©° ì¤‘ë³µë˜ë©´ ì•ˆë¨. 100 ì´ìƒë¶€í„° ì‚¬ìš© ê°€ëŠ¥
 #define REGISTER_PACKET(PacketType, PacketID) \
     inline static Net::PacketRegistrar<PacketType> registrar_##PacketType{PacketID};\
     uint16_t GetPacketID() const override { return PacketID; }\
@@ -47,7 +47,7 @@ struct TestPacket : public IPacket{
     };
     using PacketFactoryFunc = std::function<std::unique_ptr<IPacket>()>;
 
-    // ÆĞÅ¶ ÆÑÅä¸®
+    // íŒ¨í‚· íŒ©í† ë¦¬
     class PacketFactoryRegistry {
     public:
         static PacketFactoryRegistry& Instance() {
@@ -71,7 +71,7 @@ struct TestPacket : public IPacket{
     };
 
 
-    // ÆĞÅ¶ µî·Ï µµ¿ì¹Ì ÅÛÇÃ¸´. ÆĞÅ¶ Å¬·¡½º¿¡¼­ PacketRegistrar¸¦ ¼±¾ğÇÔÀ¸·Î ½á ÆĞÅ¶ µî·Ï
+    // íŒ¨í‚· ë“±ë¡ ë„ìš°ë¯¸ í…œí”Œë¦¿. íŒ¨í‚· í´ë˜ìŠ¤ì—ì„œ PacketRegistrarë¥¼ ì„ ì–¸í•¨ìœ¼ë¡œ ì¨ íŒ¨í‚· ë“±ë¡
     template<typename T>
     class PacketRegistrar {
     public:

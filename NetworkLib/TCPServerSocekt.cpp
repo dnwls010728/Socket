@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "TCPServerSocket.h"
 #include "IPacket.h"
 #include "PrePacketDef.h"   
@@ -40,23 +40,23 @@ namespace Net::TCP {
         num_worker_threads_ = thread_count > 0 ? thread_count : std::thread::hardware_concurrency();
 
         if (!listen_socket_.Create()) {
-            std::cerr << "¸®½¼ ¼ÒÄÏ »ı¼º ½ÇÆĞ" << std::endl;
+            std::cerr << "ë¦¬ìŠ¨ ì†Œì¼“ ìƒì„± ì‹¤íŒ¨" << std::endl;
             return false;
         }
 
         if (!listen_socket_.Bind(address, true)) {
-            std::cerr << "¹ÙÀÎµå ½ÇÆĞ" << std::endl;
+            std::cerr << "ë°”ì¸ë“œ ì‹¤íŒ¨" << std::endl;
             return false;
         }
 
         if (!listen_socket_.Listen(SOMAXCONN)) {
-            std::cerr << "Listen ½ÇÆĞ" << std::endl;
+            std::cerr << "Listen ì‹¤íŒ¨" << std::endl;
             return false;
         }
 
         iocp_handle_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, num_worker_threads_);
         if (iocp_handle_ == NULL) {
-            std::cerr << "CreateIoCompletionPort ½ÇÆĞ" << std::endl;
+            std::cerr << "CreateIoCompletionPort ì‹¤íŒ¨" << std::endl;
             return false;
         }
 
@@ -69,7 +69,7 @@ namespace Net::TCP {
         accept_thread_ = std::thread(&TCPServerSocket::AcceptThread, this);
         heartbeat_thread_ = std::thread(&TCPServerSocket::HeartbeatThread, this);
 
-        std::cout << "IOCP ¼­¹ö ½ÃÀÛ: " << address.ip_address << ":" << address.port << std::endl;
+        std::cout << "IOCP ì„œë²„ ì‹œì‘: " << address.ip_address << ":" << address.port << std::endl;
         return true;
     }
 
@@ -112,7 +112,7 @@ namespace Net::TCP {
     bool TCPServerSocket::RegisterClient(SOCKET client_socket)
     {
         if (CreateIoCompletionPort((HANDLE)client_socket, iocp_handle_, (ULONG_PTR)client_socket, 0) == NULL) {
-            std::cerr << "Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏ IOCP µî·Ï ½ÇÆĞ" << std::endl;
+            std::cerr << "í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ IOCP ë“±ë¡ ì‹¤íŒ¨" << std::endl;
             return false;
         }
         return true;
@@ -134,7 +134,7 @@ namespace Net::TCP {
             int err = WSAGetLastError();
             if (err != WSA_IO_PENDING)
             {
-                std::cerr << "ÃÊ±â WSARecv ½ÇÆĞ: " << err << std::endl;
+                std::cerr << "ì´ˆê¸° WSARecv ì‹¤íŒ¨: " << err << std::endl;
                 closesocket(client_socket);
                 delete[] p_context->wsabuf.buf;
                 delete p_context;
@@ -152,7 +152,7 @@ namespace Net::TCP {
             if (!listen_socket_.Accept(client_socket))
             {
                 if (!running_.load()) break;
-                std::cerr << "Å¬¶óÀÌ¾ğÆ® Accept ½ÇÆĞ: " << WSAGetLastError() << std::endl;
+                std::cerr << "í´ë¼ì´ì–¸íŠ¸ Accept ì‹¤íŒ¨: " << WSAGetLastError() << std::endl;
                 continue;
             }
 
@@ -173,7 +173,7 @@ namespace Net::TCP {
                     continue;
                 }
             }
-            std::cout << "Å¬¶óÀÌ¾ğÆ® Á¢¼Ó, Å°: " << client_key << ", UniqueKey: " << state.uniqueKey << std::endl;
+            std::cout << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì†, í‚¤: " << client_key << ", UniqueKey: " << state.uniqueKey << std::endl;
 
             if (!RegisterClient(s))
                 continue;
@@ -233,13 +233,13 @@ namespace Net::TCP {
             BOOL result = GetQueuedCompletionStatus(iocp_handle_, &bytes_transferred, &completion_key, (LPOVERLAPPED*)&p_context, INFINITE);
             if (!result)
             {
-                std::cerr << "GetQueuedCompletionStatus ½ÇÆĞ: " << GetLastError() << std::endl;
+                std::cerr << "GetQueuedCompletionStatus ì‹¤íŒ¨: " << GetLastError() << std::endl;
                 continue;
             }
 
             if (bytes_transferred == 0 || p_context == nullptr)
             {
-                std::cout << "Å¬¶óÀÌ¾ğÆ® Á¾·á, ¼ÒÄÏ: " << completion_key << std::endl;
+                std::cout << "í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ, ì†Œì¼“: " << completion_key << std::endl;
                 CloseClient((SOCKET)completion_key);
                 continue;
             }
@@ -267,7 +267,7 @@ namespace Net::TCP {
                 std::unique_ptr<IPacket> packet = PacketFactoryRegistry::Instance().CreatePacket(payloadHeader.packet_id);
                 if (!packet)
                 {
-                    std::cerr << "ÆĞÅ¶ »ı¼º ½ÇÆĞ, packet_id: " << payloadHeader.packet_id << std::endl;
+                    std::cerr << "íŒ¨í‚· ìƒì„± ì‹¤íŒ¨, packet_id: " << payloadHeader.packet_id << std::endl;
                     continue;
                 }
 
@@ -308,7 +308,7 @@ namespace Net::TCP {
                 int err = WSAGetLastError();
                 if (err != WSA_IO_PENDING)
                 {
-                    std::cerr << "WSARecv ÀçÈ£Ãâ ½ÇÆĞ: " << err << std::endl;
+                    std::cerr << "WSARecv ì¬í˜¸ì¶œ ì‹¤íŒ¨: " << err << std::endl;
                     CloseClient((SOCKET)completion_key);
                     delete[] p_context->wsabuf.buf;
                     delete p_context;
@@ -345,7 +345,7 @@ namespace Net::TCP {
         
         if (target_socket == 0)
         {
-            std::cerr << "SendPacketToClient: ´ë»ó Å¬¶óÀÌ¾ğÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù." << std::endl;
+            std::cerr << "SendPacketToClient: ëŒ€ìƒ í´ë¼ì´ì–¸íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." << std::endl;
             return false;
         }
 
@@ -368,7 +368,7 @@ namespace Net::TCP {
         int ret = send(target_socket, reinterpret_cast<const char*>(send_buffer.data()), static_cast<int>(send_buffer.size()), 0);
         if (ret == SOCKET_ERROR)
         {
-            std::cerr << "SendPacketToClient Àü¼Û ½ÇÆĞ: " << WSAGetLastError() << std::endl;
+            std::cerr << "SendPacketToClient ì „ì†¡ ì‹¤íŒ¨: " << WSAGetLastError() << std::endl;
 
             int err = WSAGetLastError();
             if (err == WSAECONNRESET || err == WSAECONNABORTED)
@@ -408,7 +408,7 @@ namespace Net::TCP {
 		bool is_processed = false;
         int sequence = packet->GetSequence();
         {
-            // ÀÀ´äÀ» ±â´Ù¸®´Â Äİ¹éÀÌ ÀÖÀ¸¸é ±×ÂÊÀ¸·Î ³Ñ°ÜÁÜ
+            // ì‘ë‹µì„ ê¸°ë‹¤ë¦¬ëŠ” ì½œë°±ì´ ìˆìœ¼ë©´ ê·¸ìª½ìœ¼ë¡œ ë„˜ê²¨ì¤Œ
             std::lock_guard<std::mutex> lock(pending_packets_mutex_);
             auto it = pending_packet_.find(sequence);
             if (it != pending_packet_.end())
@@ -435,7 +435,7 @@ namespace Net::TCP {
 			return;
 		}
         
-        // ¸¸·áµÈ ÆĞÅ¶ Á¦°Å
+        // ë§Œë£Œëœ íŒ¨í‚· ì œê±°
         {
             std::lock_guard<std::mutex> lock(pending_packets_mutex_);
             auto now = std::chrono::steady_clock::now();
@@ -456,13 +456,13 @@ namespace Net::TCP {
             }
         }
 
-        // ½×¿©ÀÖ´Â ÆĞÅ¶ Ã³¸®
+        // ìŒ“ì—¬ìˆëŠ” íŒ¨í‚· ì²˜ë¦¬
         ReceivedPacketInfo packet_info;
         while (recv_data_queue_.try_pop(packet_info))
         {
 			int sequence = packet_info.packet->GetSequence();
             {
-                // ÀÀ´äÀ» ±â´Ù¸®´Â Äİ¹éÀÌ ÀÖÀ¸¸é ±×ÂÊÀ¸·Î ³Ñ°ÜÁÜ
+                // ì‘ë‹µì„ ê¸°ë‹¤ë¦¬ëŠ” ì½œë°±ì´ ìˆìœ¼ë©´ ê·¸ìª½ìœ¼ë¡œ ë„˜ê²¨ì¤Œ
                 std::lock_guard<std::mutex> lock(pending_packets_mutex_);
 				auto it = pending_packet_.find(sequence);
                 if (it == pending_packet_.end())
@@ -484,7 +484,7 @@ namespace Net::TCP {
                 connection_manager_.UpdateClientResponseTime(packet_info.client_key);
             }
 
-			// ¾Æ´Ñ°æ¿ì »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ Äİ¹é È£Ãâ
+			// ì•„ë‹Œê²½ìš° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ì½œë°± í˜¸ì¶œ
             callback(packet_info);
         }
     }*/
@@ -502,7 +502,7 @@ namespace Net::TCP {
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - pair.second.lastResponseTime).count();
                 if (duration > heartbeat_timeout_ms_)
                 {
-                    std::cerr << "ÇÏÆ®ºñÆ® Å¸ÀÓ¾Æ¿ô: Å¬¶óÀÌ¾ğÆ® °íÀ¯Å° " << pair.second.uniqueKey << std::endl;
+                    std::cerr << "í•˜íŠ¸ë¹„íŠ¸ íƒ€ì„ì•„ì›ƒ: í´ë¼ì´ì–¸íŠ¸ ê³ ìœ í‚¤ " << pair.second.uniqueKey << std::endl;
                     to_close.push_back(pair.first);
                 }
                 else

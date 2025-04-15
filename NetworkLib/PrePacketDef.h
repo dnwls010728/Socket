@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "NetDef.h"
 
 #define NET_PACKET_ID_PING 5
@@ -7,21 +7,21 @@
 
 namespace Net {
 
-	// ¼­¹ö > Å¬¶óÀÌ¾ğÆ® ¿¬°á »óÅÂ È®ÀÎ
+	// ì„œë²„ > í´ë¼ì´ì–¸íŠ¸ ì—°ê²° ìƒíƒœ í™•ì¸
 	struct PingPacket : public IPacket 
 	{
 		SERIALIZABLE_PACKET_FIELDS(Serializer)
 		REGISTER_PACKET(PingPacket, NET_PACKET_ID_PING)
 	};
 
-	// Å¬¶óÀÌ¾ğÆ® > ¼­¹ö ÀÀ´ä
+	// í´ë¼ì´ì–¸íŠ¸ > ì„œë²„ ì‘ë‹µ
 	struct PongPacket : public IPacket
 	{
 		SERIALIZABLE_PACKET_FIELDS(Serializer)
 		REGISTER_PACKET(PongPacket, NET_PACKET_ID_PONG)
 	};
 
-	// ¼­¹ö > Å¬¶ó ¿¡·¯¸Ş½ÃÁö
+	// ì„œë²„ > í´ë¼ ì—ëŸ¬ë©”ì‹œì§€
 	struct ErrorPacket : public IPacket
 	{
 		uint16_t error_code;

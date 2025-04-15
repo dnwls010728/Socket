@@ -1,4 +1,4 @@
-// UDPServerSocket.cpp
+ï»¿// UDPServerSocket.cpp
 #include "pch.h"
 #include "UDPServerSocket.h"
 #include <iostream>
@@ -25,12 +25,12 @@ namespace Net::UDP {
     {
         if (!udpSocket_.Create())
         {
-            std::cerr << "UDPServerSocket: ¼ÒÄÏ »ı¼º ½ÇÆĞ" << std::endl;
+            std::cerr << "UDPServerSocket: ì†Œì¼“ ìƒì„± ì‹¤íŒ¨" << std::endl;
             return false;
         }
         if (!udpSocket_.Bind(bindAddress, true))
         {
-            std::cerr << "UDPServerSocket: ¹ÙÀÎµå ½ÇÆĞ" << std::endl;
+            std::cerr << "UDPServerSocket: ë°”ì¸ë“œ ì‹¤íŒ¨" << std::endl;
             return false;
         }
 
@@ -70,7 +70,7 @@ namespace Net::UDP {
             });
     }
 
-    // ³»ºÎ ¼ö½Å ½º·¹µå
+    // ë‚´ë¶€ ìˆ˜ì‹  ìŠ¤ë ˆë“œ
     void UDPServerSocket::RecvThread()
     {
         while (running_.load())
@@ -81,7 +81,7 @@ namespace Net::UDP {
         }
     }
 
-    // ÇÏÆ®ºñÆ® ½º·¹µå: ÁÖ±âÀûÀ¸·Î ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ PingPacket Àü¼Û, Å¸ÀÓ¾Æ¿ôµÈ Å¬¶óÀÌ¾ğÆ®´Â ¿¬°á Á¦°Å
+    // í•˜íŠ¸ë¹„íŠ¸ ìŠ¤ë ˆë“œ: ì£¼ê¸°ì ìœ¼ë¡œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— PingPacket ì „ì†¡, íƒ€ì„ì•„ì›ƒëœ í´ë¼ì´ì–¸íŠ¸ëŠ” ì—°ê²° ì œê±°
     void UDPServerSocket::HeartbeatThread()
     {
         while (running_.load())
@@ -90,7 +90,7 @@ namespace Net::UDP {
             std::vector<NetAddress> toRemove;
             std::vector<NetAddress> toPing;
 
-            // ForEachConnection ³»¿¡¼­ ÇÊ¿äÇÑ Á¤º¸¸¸ º¹»ç
+            // ForEachConnection ë‚´ì—ì„œ í•„ìš”í•œ ì •ë³´ë§Œ ë³µì‚¬
             udpSocket_.GetConnectionManager().ForEachConnection([&](UDPConnectionState& state) {
                 auto now = std::chrono::steady_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - state.last_activity_time).count();
@@ -104,13 +104,13 @@ namespace Net::UDP {
                 }
                 });
 
-            // ÇÎ Àü¼Û
+            // í•‘ ì „ì†¡
             for (const auto& addr : toPing)
             {
                 SendPacket(addr, PingPacket(), true);
             }
 
-            // Å¸ÀÓ¾Æ¿ôµÈ Å¬¶óÀÌ¾ğÆ® Á¦°Å
+            // íƒ€ì„ì•„ì›ƒëœ í´ë¼ì´ì–¸íŠ¸ ì œê±°
             for (const auto& addr : toRemove)
             {
                 udpSocket_.GetConnectionManager().RemoveClient(addr);

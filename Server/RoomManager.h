@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <vector>
 #include <map>
 #include <unordered_set>
@@ -43,17 +43,17 @@ public:
     RoomManager();
     ~RoomManager();
 
-    // ¹æ °ü¸®
+    // ë°© ê´€ë¦¬
     int CreateRoom(std::wstring title, int max_user_count);
     void RemoveRoom(int room_number);
     bool EnterRoom(int room_number, int user_id);
     bool ExitRoom(int room_number, int user_id);
     bool GetRoom(int room_number, Room& room);
 
-    // ·ë º¯°æ ¾Ë¸² Äİ¹é
+    // ë£¸ ë³€ê²½ ì•Œë¦¼ ì½œë°±
 	void SetRoomListUpdateCallback(std::function<void(Room, RoomListUpdateType)> callback){room_list_update_callback_ = callback;}
 
-    // ¹æ ¸ñ·Ï
+    // ë°© ëª©ë¡
     RoomList GetRoomList();
 
 private:

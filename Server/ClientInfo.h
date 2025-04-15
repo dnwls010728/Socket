@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 
 class ClientInfo
@@ -11,14 +11,14 @@ public:
 
 	int GetClientNumber() const { return client_number_; }
 
-	// ¾øÀ¸¸é -1
+	// ì—†ìœ¼ë©´ -1
 	int GetRoomNumber() const { return room_number_; }
 	void SetRoomNumber(int room_number) { room_number_ = room_number; }
 
 	void SetObserveRoomList(bool is_observe) { observed_room_list = is_observe; }
 	bool IsObserveRoomList() const { return observed_room_list; }
 
-	// ¾øÀ¸¸é -1
+	// ì—†ìœ¼ë©´ -1
 	int GetDBKey() { return db_key_; }
 	void SetDBKey(int db_key) { db_key_ = db_key; }
 

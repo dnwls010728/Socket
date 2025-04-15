@@ -1,4 +1,4 @@
-// UDPServerSocket.h
+ï»¿// UDPServerSocket.h
 #pragma once
 #include "UDPPacketSocket.h"
 #include "IPacket.h"
@@ -19,13 +19,13 @@ namespace Net::UDP {
         bool Start(const NetAddress& bindAddress);
         void Stop();
 
-        // Å¬¶óÀÌ¾ğÆ®¿¡°Ô ÆĞÅ¶ Àü¼Û (½Å·Ú¼º ¿É¼Ç ±âº» true)
+        // í´ë¼ì´ì–¸íŠ¸ì—ê²Œ íŒ¨í‚· ì „ì†¡ (ì‹ ë¢°ì„± ì˜µì…˜ ê¸°ë³¸ true)
         bool SendPacket(const NetAddress& clientAddress, const IPacket& packet, bool reliable = true);
 
-        // »ç¿ëÀÚ°¡ Á÷Á¢ ¼ö½ÅµÈ ÆĞÅ¶À» Ã³¸®ÇÏµµ·Ï È£ÃâÇÏ´Â ÇÔ¼ö
+        // ì‚¬ìš©ìê°€ ì§ì ‘ ìˆ˜ì‹ ëœ íŒ¨í‚·ì„ ì²˜ë¦¬í•˜ë„ë¡ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜
         void ProcessPacketsFromQueue(const std::function<void(ReceivedPacketInfo&)>& callback);
 
-        // ÇÏÆ®ºñÆ® ½º·¹µå °ü·Ã ¼³Á¤
+        // í•˜íŠ¸ë¹„íŠ¸ ìŠ¤ë ˆë“œ ê´€ë ¨ ì„¤ì •
         void SetHeartbeatInterval(int ms) { heartbeatIntervalMs_ = ms; }
         void SetHeartbeatTimeout(int ms) { heartbeatTimeoutMs_ = ms; }
 
@@ -45,8 +45,8 @@ namespace Net::UDP {
         std::thread recvThread_;
         std::thread heartbeatThread_;
 
-        int heartbeatIntervalMs_;  // ÇÏÆ®ºñÆ® Àü¼Û °£°İ
-        int heartbeatTimeoutMs_;   // Å¸ÀÓ¾Æ¿ô ±âÁØ ½Ã°£
+        int heartbeatIntervalMs_;  // í•˜íŠ¸ë¹„íŠ¸ ì „ì†¡ ê°„ê²©
+        int heartbeatTimeoutMs_;   // íƒ€ì„ì•„ì›ƒ ê¸°ì¤€ ì‹œê°„
     };
 
 } // namespace Net

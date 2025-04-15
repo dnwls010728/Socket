@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "TCPClientSocket.h"
 #include "IPacket.h"
 #include "PrePacketDef.h"
@@ -27,12 +27,12 @@ namespace Net::TCP {
 
         if (!socket_.Create()) 
         {
-            std::cerr << "TCPClientSocket: ¼ÒÄÏ »ı¼º ½ÇÆĞ" << std::endl;
+            std::cerr << "TCPClientSocket: ì†Œì¼“ ìƒì„± ì‹¤íŒ¨" << std::endl;
             return false;
         }
         if (!socket_.Connect(server_address))
         {
-            std::cerr << "TCPClientSocket: ¼­¹ö ¿¬°á ½ÇÆĞ" << std::endl;
+            std::cerr << "TCPClientSocket: ì„œë²„ ì—°ê²° ì‹¤íŒ¨" << std::endl;
             return false;
         }
         running_.store(true);
@@ -52,22 +52,22 @@ namespace Net::TCP {
 
     bool TCPClientSocket::SendPacket(IPacket& packet)
     {
-        // 1. IPacket Á÷·ÄÈ­
+        // 1. IPacket ì§ë ¬í™”
         std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
         packet.Serialize(*serializer);
         std::vector<BYTE> payload = serializer->GetData();
 
-        // 2. PayloadHeader ÀÛ¼º
+        // 2. PayloadHeader ì‘ì„±
         PayloadHeader header;
         header.packet_id = packet.GetPacketID();
 
-        // 3. [PayloadHeader][payload] °áÇÕ
+        // 3. [PayloadHeader][payload] ê²°í•©
         std::vector<BYTE> packet_data;
         BYTE* header_ptr = reinterpret_cast<BYTE*>(&header);
         packet_data.insert(packet_data.end(), header_ptr, header_ptr + sizeof(PayloadHeader));
         packet_data.insert(packet_data.end(), payload.begin(), payload.end());
 
-		// 4. ÀüÃ¼ ÆĞÅ¶ ±æÀÌ + [PayloadHeader][payload] Á¶ÇÕ
+		// 4. ì „ì²´ íŒ¨í‚· ê¸¸ì´ + [PayloadHeader][payload] ì¡°í•©
         uint32_t len = static_cast<uint32_t>(packet_data.size());
         uint32_t net_len = htonl(len);
         std::vector<BYTE> send_buffer;
@@ -75,12 +75,12 @@ namespace Net::TCP {
         send_buffer.insert(send_buffer.end(), lenPtr, lenPtr + sizeof(uint32_t));
         send_buffer.insert(send_buffer.end(), packet_data.begin(), packet_data.end());
 
-        // Àü¼Û
+        // ì „ì†¡
         int sent_length = 0;
         if (!socket_.Send(reinterpret_cast<const char*>(send_buffer.data()),
             static_cast<int>(send_buffer.size()), sent_length)) 
         {
-            std::cerr << "TCPClientSocket: SendPacket Àü¼Û ½ÇÆĞ, ¿¡·¯: " << WSAGetLastError() << std::endl;
+            std::cerr << "TCPClientSocket: SendPacket ì „ì†¡ ì‹¤íŒ¨, ì—ëŸ¬: " << WSAGetLastError() << std::endl;
             return false;
         }
         return true;
@@ -119,7 +119,7 @@ namespace Net::TCP {
             return;
         }
 
-        // ¸¸·áµÈ ÆĞÅ¶ Á¦°Å
+        // ë§Œë£Œëœ íŒ¨í‚· ì œê±°
         {
             std::lock_guard<std::mutex> lock(pending_packets_mutex_);
             auto now = std::chrono::steady_clock::now();
@@ -140,13 +140,13 @@ namespace Net::TCP {
             }
         }
 
-        // ½×¿©ÀÖ´Â ÆĞÅ¶ Ã³¸®
+        // ìŒ“ì—¬ìˆëŠ” íŒ¨í‚· ì²˜ë¦¬
         ReceivedPacketInfo packet_info;
         while (recv_data_queue_.try_pop(packet_info))
         {
             int sequence = packet_info.packet->GetSequence();
             {
-                // ÀÀ´äÀ» ±â´Ù¸®´Â Äİ¹éÀÌ ÀÖÀ¸¸é ±×ÂÊÀ¸·Î ³Ñ°ÜÁÜ
+                // ì‘ë‹µì„ ê¸°ë‹¤ë¦¬ëŠ” ì½œë°±ì´ ìˆìœ¼ë©´ ê·¸ìª½ìœ¼ë¡œ ë„˜ê²¨ì¤Œ
                 std::lock_guard<std::mutex> lock(pending_packets_mutex_);
                 auto it = pending_packet_.find(sequence);
                 if (it != pending_packet_.end())
@@ -166,7 +166,7 @@ namespace Net::TCP {
                 SendPacket(pong_packet);
             }
 
-            // ¾Æ´Ñ°æ¿ì »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ Äİ¹é È£Ãâ
+            // ì•„ë‹Œê²½ìš° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ì½œë°± í˜¸ì¶œ
             callback(packet_info);
         }
     }
@@ -180,13 +180,13 @@ namespace Net::TCP {
         memcpy(&net_length, recv_buffer_.data(), sizeof(uint32_t));
         uint32_t packet_length = ntohl(net_length);
 
-        // ÇÏ³ªÀÇ ÆĞÅ¶À» ÀüºÎ ¹ŞÁö ¸øÇÔ
+        // í•˜ë‚˜ì˜ íŒ¨í‚·ì„ ì „ë¶€ ë°›ì§€ ëª»í•¨
         if (recv_buffer_.size() < sizeof(uint32_t) + packet_length)
         {
             return false;
         }
 
-        // ÆĞÅ¶À» ÃßÃâÇÏ¿© packetData·Î ¹İÈ¯
+        // íŒ¨í‚·ì„ ì¶”ì¶œí•˜ì—¬ packetDataë¡œ ë°˜í™˜
         packet_data.assign(recv_buffer_.begin() + sizeof(uint32_t),
             recv_buffer_.begin() + sizeof(uint32_t) + packet_length);
         recv_buffer_.erase(recv_buffer_.begin(), recv_buffer_.begin() + sizeof(uint32_t) + packet_length);
@@ -203,15 +203,15 @@ namespace Net::TCP {
             {
                 if (received <= 0) 
                 {
-                    std::cerr << "TCPClientSocket: Recv ½ÇÆĞ ¶Ç´Â ¿¬°á Á¾·á" << std::endl;
+                    std::cerr << "TCPClientSocket: Recv ì‹¤íŒ¨ ë˜ëŠ” ì—°ê²° ì¢…ë£Œ" << std::endl;
                     running_.store(false);
                     break;
                 }
             }
-            // ´©Àû ¹öÆÛ¿¡ ¼ö½ÅµÈ µ¥ÀÌÅÍ¸¦ Ãß°¡
+            // ëˆ„ì  ë²„í¼ì— ìˆ˜ì‹ ëœ ë°ì´í„°ë¥¼ ì¶”ê°€
             recv_buffer_.insert(recv_buffer_.end(), temp_buffer, temp_buffer + received);
             std::vector<char> packet_data;
-            // ´©Àû µ¥ÀÌÅÍ¿¡¼­ ¿ÏÀüÇÑ ÆĞÅ¶ÀÌ ÀÖÀ¸¸é Ã³¸®
+            // ëˆ„ì  ë°ì´í„°ì—ì„œ ì™„ì „í•œ íŒ¨í‚·ì´ ìˆìœ¼ë©´ ì²˜ë¦¬
             while (ProcessBuffer(packet_data)) 
             {
                 if (packet_data.size() < sizeof(PayloadHeader)) 
@@ -223,11 +223,11 @@ namespace Net::TCP {
                 std::unique_ptr<IPacket> packet = PacketFactoryRegistry::Instance().CreatePacket(payload_header.packet_id);
                 if (!packet) 
                 {
-                    std::cerr << "TCPClientSocket: ÆĞÅ¶ »ı¼º ½ÇÆĞ, packet_id: " << payload_header.packet_id << std::endl;
+                    std::cerr << "TCPClientSocket: íŒ¨í‚· ìƒì„± ì‹¤íŒ¨, packet_id: " << payload_header.packet_id << std::endl;
                     continue;
                 }
 
-                // ¿ª¸¯·ÄÈ­
+                // ì—­ë¦­ë ¬í™”
                 std::vector<BYTE> payload(packet_data.begin() + sizeof(PayloadHeader), packet_data.end());
                 
 				std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();

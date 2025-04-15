@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "UDPConnectionManager.h"
 #include <string>
 #include <chrono>
@@ -42,7 +42,7 @@ namespace Net {
             }
             else
             {
-                // ±âÁ¸ ¿¬°áÀÇ ¸¶Áö¸· È°µ¿ ½Ã°£ ¾÷µ¥ÀÌÆ®
+                // ê¸°ì¡´ ì—°ê²°ì˜ ë§ˆì§€ë§‰ í™œë™ ì‹œê°„ ì—…ë°ì´íŠ¸
                 conn.last_activity_time = std::chrono::steady_clock::now();
             }
         }

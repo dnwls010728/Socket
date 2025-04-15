@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <vector>
 #include <thread>
@@ -17,45 +17,45 @@ namespace Net::TCP {
         TCPClientSocket();
         ~TCPClientSocket();
 
-        // Start: ¼ÒÄÏ »ı¼º, ¼­¹ö ¿¬°á ¹× ¼ö½Å ½º·¹µå ½ÃÀÛ
+        // Start: ì†Œì¼“ ìƒì„±, ì„œë²„ ì—°ê²° ë° ìˆ˜ì‹  ìŠ¤ë ˆë“œ ì‹œì‘
         bool Start(const NetAddress& serverAddress);
 
-        // Stop: ¿¬°á Á¾·á ¹× ¼ö½Å ½º·¹µå Á¤¸®
+        // Stop: ì—°ê²° ì¢…ë£Œ ë° ìˆ˜ì‹  ìŠ¤ë ˆë“œ ì •ë¦¬
         void Stop();
 
-        // IPacket Àü¼Û (ÆĞÅ¶ Çü½Ä: [4¹ÙÀÌÆ® ±æÀÌ][PayloadHeader][payload])
+        // IPacket ì „ì†¡ (íŒ¨í‚· í˜•ì‹: [4ë°”ì´íŠ¸ ê¸¸ì´][PayloadHeader][payload])
         bool SendPacket(IPacket& packet);
 
-        // IPacketÀ» º¸³½ ÈÄ ÀÀ´ä Äİ¹é. Äİ¹é µî·ÏÇÒ ¶§ this°¡ »ç¶óÁö´Â °Í ÁÖÀÇ
+        // IPacketì„ ë³´ë‚¸ í›„ ì‘ë‹µ ì½œë°±. ì½œë°± ë“±ë¡í•  ë•Œ thisê°€ ì‚¬ë¼ì§€ëŠ” ê²ƒ ì£¼ì˜
         bool SendAndReceivePacket(IPacket& request_packet, uint32_t timeout_ms, std::function<void(std::unique_ptr<IPacket>)> callback);
 
-		// ¼ö½ÅµÈ ÆĞÅ¶ Ã³¸®. client_keyÀº ¹«Á¶°Ç 0À¸·Î ³Ñ°ÜÁÜ
+		// ìˆ˜ì‹ ëœ íŒ¨í‚· ì²˜ë¦¬. client_keyì€ ë¬´ì¡°ê±´ 0ìœ¼ë¡œ ë„˜ê²¨ì¤Œ
         void ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback);
 
-        // Serializer ÆÑÅä¸® ÇÔ¼ö
+        // Serializer íŒ©í† ë¦¬ í•¨ìˆ˜
         void SetSerializerFactory(std::function<std::unique_ptr<Serializer>()> factory) { serializer_factory_ = factory; }
 
     private:
         NetTCPSocket socket_;
-        std::vector<char> recv_buffer_; // ´©Àû ¼ö½Å µ¥ÀÌÅÍ ¹öÆÛ
+        std::vector<char> recv_buffer_; // ëˆ„ì  ìˆ˜ì‹  ë°ì´í„° ë²„í¼
         int buffer_size_;
         std::atomic<bool> running_;
         std::thread recv_thread_;
 
-        std::atomic<uint32_t> next_pending_number_;                             // ÀÀ´äÀ» ±â´Ù¸®·Á´Â ÆĞÅ¶¿¡ ºÎ¿©ÇÒ ´ÙÀ½ ¹øÈ£
-        std::unordered_map<uint32_t, PendingPacketCallback> pending_packet_;    // ÆĞÅ¶ÀÇ ÀÀ´äÀÌ ¿Ã ¶§ È£ÃâµÉ Äİ¹é ÀúÀå
-        std::mutex pending_packets_mutex_;                                      // pending_packets_¿¡ ´ëÇÑ µ¿±âÈ­
+        std::atomic<uint32_t> next_pending_number_;                             // ì‘ë‹µì„ ê¸°ë‹¤ë¦¬ë ¤ëŠ” íŒ¨í‚·ì— ë¶€ì—¬í•  ë‹¤ìŒ ë²ˆí˜¸
+        std::unordered_map<uint32_t, PendingPacketCallback> pending_packet_;    // íŒ¨í‚·ì˜ ì‘ë‹µì´ ì˜¬ ë•Œ í˜¸ì¶œë  ì½œë°± ì €ì¥
+        std::mutex pending_packets_mutex_;                                      // pending_packets_ì— ëŒ€í•œ ë™ê¸°í™”
 
-        // Serialize ÆÑÅä¸®
+        // Serialize íŒ©í† ë¦¬
         std::function<std::unique_ptr<Serializer>()> serializer_factory_;
 
-        // ³»ºÎ ÇÔ¼ö: ¼ö½Å ½º·¹µå ·çÇÁ
+        // ë‚´ë¶€ í•¨ìˆ˜: ìˆ˜ì‹  ìŠ¤ë ˆë“œ ë£¨í”„
         void RecvThread();
 
-        // ³»ºÎ ÇÔ¼ö: ´©Àû ¹öÆÛ¿¡¼­ ¿ÏÀüÇÑ ÆĞÅ¶ ÃßÃâ ([4¹ÙÀÌÆ® ±æÀÌ][PayloadHeader][payload])
+        // ë‚´ë¶€ í•¨ìˆ˜: ëˆ„ì  ë²„í¼ì—ì„œ ì™„ì „í•œ íŒ¨í‚· ì¶”ì¶œ ([4ë°”ì´íŠ¸ ê¸¸ì´][PayloadHeader][payload])
         bool ProcessBuffer(std::vector<char>& packet_data);
 
-        // ¼ö½ÅµÈ ÆĞÅ¶À» ÀúÀåÇÏ´Â Å¥
+        // ìˆ˜ì‹ ëœ íŒ¨í‚·ì„ ì €ì¥í•˜ëŠ” í
         ConcurrentQueue<ReceivedPacketInfo> recv_data_queue_;
     };
 } // namespace Net

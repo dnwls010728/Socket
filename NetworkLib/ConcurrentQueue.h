@@ -1,4 +1,4 @@
-#ifndef CONCURRENT_QUEUE_H
+ï»¿#ifndef CONCURRENT_QUEUE_H
 #define CONCURRENT_QUEUE_H
 
 #include <queue>
@@ -12,16 +12,16 @@ public:
     ConcurrentQueue() = default;
     ~ConcurrentQueue() = default;
 
-    // µ¥ÀÌÅÍ¸¦ Å¥¿¡ º¹»çÇÏ¿© Ãß°¡
+    // ë°ì´í„°ë¥¼ íì— ë³µì‚¬í•˜ì—¬ ì¶”ê°€
     void push(const T& item) {
         {
             std::lock_guard<std::mutex> lock(mutex_);
             queue_.push(item);
         }
-        cond_.notify_one();  // ´ë±â ÁßÀÎ ½º·¹µå ÇÏ³ª¸¦ ±ú¿ò
+        cond_.notify_one();  // ëŒ€ê¸° ì¤‘ì¸ ìŠ¤ë ˆë“œ í•˜ë‚˜ë¥¼ ê¹¨ì›€
     }
 
-    // µ¥ÀÌÅÍ¸¦ Å¥¿¡ ÀÌµ¿(move semantics)ÇÏ¿© Ãß°¡
+    // ë°ì´í„°ë¥¼ íì— ì´ë™(move semantics)í•˜ì—¬ ì¶”ê°€
     void push(T&& item) {
         {
             std::lock_guard<std::mutex> lock(mutex_);
@@ -30,8 +30,8 @@ public:
         cond_.notify_one();
     }
 
-    // µ¥ÀÌÅÍ¸¦ Å¥°¡ ºñ¾îÀÖÁö ¾ÊÀ» ¶§±îÁö ´ë±âÇÏ°í ²¨³¿
-    // (µ¥ÀÌÅÍ°¡ ¹İµå½Ã µé¾î¿Ã ¶§±îÁö ºí·Ï)
+    // ë°ì´í„°ë¥¼ íê°€ ë¹„ì–´ìˆì§€ ì•Šì„ ë•Œê¹Œì§€ ëŒ€ê¸°í•˜ê³  êº¼ëƒ„
+    // (ë°ì´í„°ê°€ ë°˜ë“œì‹œ ë“¤ì–´ì˜¬ ë•Œê¹Œì§€ ë¸”ë¡)
     void pop(T& item) {
         std::unique_lock<std::mutex> lock(mutex_);
         cond_.wait(lock, [this] { return !queue_.empty(); });
@@ -39,20 +39,20 @@ public:
         queue_.pop();
     }
 
-    // ÁöÁ¤ÇÑ ½Ã°£(timeout) µ¿¾È ´ë±âÇÏ¿© µ¥ÀÌÅÍ¸¦ ²¨³»·Á°í ½Ãµµ
-    // timeout µ¿¾È µ¥ÀÌÅÍ°¡ µé¾î¿ÀÁö ¾ÊÀ¸¸é false¸¦ ¹İÈ¯
+    // ì§€ì •í•œ ì‹œê°„(timeout) ë™ì•ˆ ëŒ€ê¸°í•˜ì—¬ ë°ì´í„°ë¥¼ êº¼ë‚´ë ¤ê³  ì‹œë„
+    // timeout ë™ì•ˆ ë°ì´í„°ê°€ ë“¤ì–´ì˜¤ì§€ ì•Šìœ¼ë©´ falseë¥¼ ë°˜í™˜
     template<typename Rep, typename Period>
     bool pop_for(T& item, const std::chrono::duration<Rep, Period>& timeout) {
         std::unique_lock<std::mutex> lock(mutex_);
         if (!cond_.wait_for(lock, timeout, [this] { return !queue_.empty(); })) {
-            return false;  // timeout ¹ß»ı
+            return false;  // timeout ë°œìƒ
         }
         item = std::move(queue_.front());
         queue_.pop();
         return true;
     }
 
-    // Áï½Ã µ¥ÀÌÅÍ¸¦ ²¨³»·Á°í ½Ãµµ, ¼º°øÇÏ¸é true, Å¥°¡ ºñ¾úÀ¸¸é false ¹İÈ¯
+    // ì¦‰ì‹œ ë°ì´í„°ë¥¼ êº¼ë‚´ë ¤ê³  ì‹œë„, ì„±ê³µí•˜ë©´ true, íê°€ ë¹„ì—ˆìœ¼ë©´ false ë°˜í™˜
     bool try_pop(T& item) {
         std::lock_guard<std::mutex> lock(mutex_);
         if (queue_.empty()) {
@@ -63,7 +63,7 @@ public:
         return true;
     }
 
-    // Å¥°¡ ºñ¾ú´ÂÁö È®ÀÎ
+    // íê°€ ë¹„ì—ˆëŠ”ì§€ í™•ì¸
     bool empty() const {
         std::lock_guard<std::mutex> lock(mutex_);
         return queue_.empty();

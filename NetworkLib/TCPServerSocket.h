@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
@@ -16,13 +16,13 @@
 
 namespace Net::TCP {
 
-    // IOCP¿ë ÄÁÅØ½ºÆ® ±¸Á¶Ã¼
+    // IOCPìš© ì»¨í…ìŠ¤íŠ¸ êµ¬ì¡°ì²´
     struct TCPIOContext 
     {
-        OVERLAPPED overlapped;   // I/O ¿Ï·á ÅëÁö¿ë OVERLAPPED ±¸Á¶Ã¼
-        WSABUF wsabuf;           // ¼ö½Å ¹öÆÛ¿ë WSABUF
-        SOCKET clientSocket;     // Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏ (NetTCPSocket¿¡¼­ ¹Ş¾Æ¿Â ³»ºÎ ÇÚµé)
-        std::vector<char> recvAccumulated;  // ´©Àû ¼ö½Å µ¥ÀÌÅÍ¸¦ º¸°üÇÏ¿© ÆĞÅ¶ °æ°è¸¦ ¸ÂÃß±â À§ÇÑ ¹öÆÛ
+        OVERLAPPED overlapped;   // I/O ì™„ë£Œ í†µì§€ìš© OVERLAPPED êµ¬ì¡°ì²´
+        WSABUF wsabuf;           // ìˆ˜ì‹  ë²„í¼ìš© WSABUF
+        SOCKET clientSocket;     // í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ (NetTCPSocketì—ì„œ ë°›ì•„ì˜¨ ë‚´ë¶€ í•¸ë“¤)
+        std::vector<char> recvAccumulated;  // ëˆ„ì  ìˆ˜ì‹  ë°ì´í„°ë¥¼ ë³´ê´€í•˜ì—¬ íŒ¨í‚· ê²½ê³„ë¥¼ ë§ì¶”ê¸° ìœ„í•œ ë²„í¼
     };
 
     class TCPServerSocket {
@@ -30,38 +30,38 @@ namespace Net::TCP {
         TCPServerSocket();
         ~TCPServerSocket();
 
-        // ¼­¹ö ¼ÒÄÏ »ı¼º, ¹ÙÀÎµå, Listen. thread_count = 0ÀÌ¸é CPU ÄÚ¾î ¼ö¸¸Å­ ½º·¹µå »ı¼º
+        // ì„œë²„ ì†Œì¼“ ìƒì„±, ë°”ì¸ë“œ, Listen. thread_count = 0ì´ë©´ CPU ì½”ì–´ ìˆ˜ë§Œí¼ ìŠ¤ë ˆë“œ ìƒì„±
         bool Start(const NetAddress& address, int thread_count = 0);
 
-        // ¼­¹ö Á¾·á ¹× ¸®¼Ò½º ÇØÁ¦
+        // ì„œë²„ ì¢…ë£Œ ë° ë¦¬ì†ŒìŠ¤ í•´ì œ
         void Stop();
 
 		void SetClientAcceptedCallback(std::function<bool(const TCPConnectionState&)> callback) { OnClientAccepted = callback; }
 		void SetClientDisconnectedCallback(std::function<void(const TCPConnectionState&)> callback) { OnClientClosed = callback; }
         void SetPacketReceivedCallback(std::function<void(const TCPConnectionState&, std::unique_ptr<IPacket>)> callback) { OnPacketReceived = callback; }
 
-        // ¼Û/¼ö½Å ¹öÆÛ Å©±â ¼³Á¤
+        // ì†¡/ìˆ˜ì‹  ë²„í¼ í¬ê¸° ì„¤ì •
         void SetBufferSize(int size) { buffer_size_ = size; }
 
-        // ÇÏÆ®ºñÆ® ¼³Á¤: ÁÖ±â(ms)¿Í Å¸ÀÓ¾Æ¿ô(ms)
+        // í•˜íŠ¸ë¹„íŠ¸ ì„¤ì •: ì£¼ê¸°(ms)ì™€ íƒ€ì„ì•„ì›ƒ(ms)
         void SetHeartbeatParameters(int interval_ms, int timeout_ms) { heartbeat_Interval_ms_ = interval_ms; heartbeat_timeout_ms_ = timeout_ms; }
 
-        // Á¢¼Ó ÁßÀÎ Å¬¶óÀÌ¾ğÆ® ¼ö
+        // ì ‘ì† ì¤‘ì¸ í´ë¼ì´ì–¸íŠ¸ ìˆ˜
         size_t GetClientCount();
 
-        // Æ¯Á¤ °íÀ¯Å°¸¦ °¡Áø Å¬¶óÀÌ¾ğÆ®¿¡°Ô IPacket Àü¼Û
+        // íŠ¹ì • ê³ ìœ í‚¤ë¥¼ ê°€ì§„ í´ë¼ì´ì–¸íŠ¸ì—ê²Œ IPacket ì „ì†¡
         bool SendPacketToClient(uint32_t unique_key, const IPacket& kPacket);
 
-        // IPacketÀ» º¸³½ ÈÄ ÀÀ´ä Äİ¹é
+        // IPacketì„ ë³´ë‚¸ í›„ ì‘ë‹µ ì½œë°±
         bool SendAndReceivePacket(uint32_t unique_key, IPacket& request_packet, uint32_t timeout_ms, std::function<void(uint32_t, std::unique_ptr<IPacket>)> callback);
 
-        // ¼ö½ÅµÈ ÆĞÅ¶ Ã³¸®
+        // ìˆ˜ì‹ ëœ íŒ¨í‚· ì²˜ë¦¬
         // void ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback);
 
-		// ¼ö½ÅµÈ ÆĞÅ¶À» Ã³¸®ÇÏ´Â Äİ¹é. true¸¦ ¸®ÅÏÇÏ¸é ÆĞÅ¶ÀÌ Ã³¸®µÊ
+		// ìˆ˜ì‹ ëœ íŒ¨í‚·ì„ ì²˜ë¦¬í•˜ëŠ” ì½œë°±. trueë¥¼ ë¦¬í„´í•˜ë©´ íŒ¨í‚·ì´ ì²˜ë¦¬ë¨
         bool ProcessPendingPacket(TCPConnectionState client_state, std::unique_ptr<IPacket> &packet);
 
-        // Serializer ÆÑÅä¸® ÇÔ¼ö. ½ÇÆĞ½Ã ErrorPacket ¼ö½Å
+        // Serializer íŒ©í† ë¦¬ í•¨ìˆ˜. ì‹¤íŒ¨ì‹œ ErrorPacket ìˆ˜ì‹ 
         void SetSerializerFactory(std::function<std::unique_ptr<Serializer>()> factory) { serializer_factory_ = factory; }
 
     private:
@@ -75,50 +75,50 @@ namespace Net::TCP {
         std::thread accept_thread_;
         std::thread heartbeat_thread_;
 
-        // ÇÏÆ®ºñÆ® ÁÖ±â ¹× Å¸ÀÓ¾Æ¿ô (¹Ğ¸®ÃÊ)
+        // í•˜íŠ¸ë¹„íŠ¸ ì£¼ê¸° ë° íƒ€ì„ì•„ì›ƒ (ë°€ë¦¬ì´ˆ)
         int heartbeat_Interval_ms_;
         int heartbeat_timeout_ms_;
 
-		// ¼ö½ÅµÈ ÆĞÅ¶À» ÀúÀåÇÏ´Â Å¥
+		// ìˆ˜ì‹ ëœ íŒ¨í‚·ì„ ì €ì¥í•˜ëŠ” í
         //ConcurrentQueue<ReceivedPacketInfo> recv_data_queue_;
 
-        // Äİ¹é
+        // ì½œë°±
         std::function<void(const TCPConnectionState&, std::unique_ptr<IPacket> packet)> OnPacketReceived;
         std::function<bool(const TCPConnectionState&)> OnClientAccepted;
         std::function<void(const TCPConnectionState&)> OnClientClosed;
 
-        // Serialize ÆÑÅä¸®
+        // Serialize íŒ©í† ë¦¬
 		std::function<std::unique_ptr<Serializer>()> serializer_factory_;
 
-        // TCPConnectionManager¸¦ »ç¿ëÇÏ¿© Å¬¶óÀÌ¾ğÆ® Á¤º¸¸¦ °ü¸®
+        // TCPConnectionManagerë¥¼ ì‚¬ìš©í•˜ì—¬ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ë¥¼ ê´€ë¦¬
         TCPConnectionManager connection_manager_;
 
-		std::atomic<uint32_t> next_pending_number_;                             // ÀÀ´äÀ» ±â´Ù¸®·Á´Â ÆĞÅ¶¿¡ ºÎ¿©ÇÒ ´ÙÀ½ ¹øÈ£
-		std::unordered_map<uint32_t, PendingPacketCallback> pending_packet_;    // ÆĞÅ¶ÀÇ ÀÀ´äÀÌ ¿Ã ¶§ È£ÃâµÉ Äİ¹é ÀúÀå
-		std::mutex pending_packets_mutex_;                                     // pending_packets_¿¡ ´ëÇÑ µ¿±âÈ­
+		std::atomic<uint32_t> next_pending_number_;                             // ì‘ë‹µì„ ê¸°ë‹¤ë¦¬ë ¤ëŠ” íŒ¨í‚·ì— ë¶€ì—¬í•  ë‹¤ìŒ ë²ˆí˜¸
+		std::unordered_map<uint32_t, PendingPacketCallback> pending_packet_;    // íŒ¨í‚·ì˜ ì‘ë‹µì´ ì˜¬ ë•Œ í˜¸ì¶œë  ì½œë°± ì €ì¥
+		std::mutex pending_packets_mutex_;                                     // pending_packets_ì— ëŒ€í•œ ë™ê¸°í™”
 
-        // IOCP ¿öÄ¿ ½º·¹µå ÇÔ¼ö
+        // IOCP ì›Œì»¤ ìŠ¤ë ˆë“œ í•¨ìˆ˜
         void WorkerThread();
 
-        // Accept ½º·¹µå ÇÔ¼ö: Å¬¶óÀÌ¾ğÆ® ¿¬°á ¼ö¶ô ÈÄ IOCP µî·Ï, ÃÊ±â Recv ½ÃÀÛ, Å¬¶óÀÌ¾ğÆ® Á¤º¸ ÀúÀå
+        // Accept ìŠ¤ë ˆë“œ í•¨ìˆ˜: í´ë¼ì´ì–¸íŠ¸ ì—°ê²° ìˆ˜ë½ í›„ IOCP ë“±ë¡, ì´ˆê¸° Recv ì‹œì‘, í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì €ì¥
         void AcceptThread();
 
-        // ÇÏÆ®ºñÆ® ½º·¹µå ÇÔ¼ö: ÁÖ±âÀûÀ¸·Î PingPacket Àü¼Û ¹× Å¸ÀÓ¾Æ¿ô È®ÀÎ
+        // í•˜íŠ¸ë¹„íŠ¸ ìŠ¤ë ˆë“œ í•¨ìˆ˜: ì£¼ê¸°ì ìœ¼ë¡œ PingPacket ì „ì†¡ ë° íƒ€ì„ì•„ì›ƒ í™•ì¸
         void HeartbeatThread();
 
-        // Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏ¿¡ ´ëÇØ ÃÊ±â WSARecv È£Ãâ
+        // í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ì— ëŒ€í•´ ì´ˆê¸° WSARecv í˜¸ì¶œ
         bool StartRecv(SOCKET client_socket);
 
-        // Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏÀ» IOCP¿¡ µî·Ï
+        // í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ì„ IOCPì— ë“±ë¡
         bool RegisterClient(SOCKET client_socket);
 
-        // ³»ºÎ ÇÔ¼ö: ´©Àû µ¥ÀÌÅÍ(recvAccumulated)¿¡¼­ ¿ÏÀüÇÑ ÆĞÅ¶ ÃßÃâ ([4¹ÙÀÌÆ® ±æÀÌ][PayloadHeader][payload])
+        // ë‚´ë¶€ í•¨ìˆ˜: ëˆ„ì  ë°ì´í„°(recvAccumulated)ì—ì„œ ì™„ì „í•œ íŒ¨í‚· ì¶”ì¶œ ([4ë°”ì´íŠ¸ ê¸¸ì´][PayloadHeader][payload])
         bool ProcessAccumulatedData(TCPIOContext* context, std::vector<char>& packet_data);
 
-        // ³»ºÎ ÇÔ¼ö: clientSocketÀÇ IP, Port Á¤º¸ È¹µæ
+        // ë‚´ë¶€ í•¨ìˆ˜: clientSocketì˜ IP, Port ì •ë³´ íšë“
         bool GetClientAddress(SOCKET client_socket, NetAddress& address);
 
-        // ³»ºÎ ÇÔ¼ö: Å¬¶óÀÌ¾ğÆ® Á¾·á Ã³¸® (¼ÒÄÏ ´İ°í, TCPConnectionManager¿¡¼­ Á¦°Å ¹× Äİ¹é È£Ãâ)
+        // ë‚´ë¶€ í•¨ìˆ˜: í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ ì²˜ë¦¬ (ì†Œì¼“ ë‹«ê³ , TCPConnectionManagerì—ì„œ ì œê±° ë° ì½œë°± í˜¸ì¶œ)
         void CloseClient(SOCKET client_socket);
     };
 

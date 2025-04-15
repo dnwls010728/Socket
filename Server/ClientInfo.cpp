@@ -1,4 +1,4 @@
-#include "ClientInfo.h"
+﻿#include "ClientInfo.h"
 
 ClientInfo::ClientInfo(int client_number)
 	: client_number_(client_number)

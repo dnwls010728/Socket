@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
 #include <winsock2.h>
 #include "NetDef.h"
@@ -22,154 +22,154 @@ namespace Net::TCP {
     */
 
     /**
-     * @brief TCP ³×Æ®¿öÅ© ¼ÒÄÏÀ» °ü¸®ÇÏ´Â Å¬·¡½º.
+     * @brief TCP ë„¤íŠ¸ì›Œí¬ ì†Œì¼“ì„ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤.
      */
     class NetTCPSocket
     {
     public:
         /**
-         * @brief »ı¼ºÀÚ.
+         * @brief ìƒì„±ì.
          */
         NetTCPSocket();
 
         /**
-         * @brief ¼Ò¸êÀÚ.
+         * @brief ì†Œë©¸ì.
          */
         ~NetTCPSocket();
 
         /**
-         * @brief ¼ÒÄÏÀ» »ı¼ºÇÕ´Ï´Ù.
+         * @brief ì†Œì¼“ì„ ìƒì„±í•©ë‹ˆë‹¤.
          *
-         * Accept·Î ¹İÈ¯µÈ ¼ÒÄÏÀº È£ÃâÇÏ¸é ¾È µË´Ï´Ù.
+         * Acceptë¡œ ë°˜í™˜ëœ ì†Œì¼“ì€ í˜¸ì¶œí•˜ë©´ ì•ˆ ë©ë‹ˆë‹¤.
          *
-         * @return ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @return ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Create();
 
         /**
-         * @brief ¼ÒÄÏÀ» ´İ½À´Ï´Ù.
+         * @brief ì†Œì¼“ì„ ë‹«ìŠµë‹ˆë‹¤.
          *
-         * ¼ÒÄÏ »ç¿ë Á¾·á ÈÄ ¹İµå½Ã È£ÃâÇØ¾ß ÇÕ´Ï´Ù.
+         * ì†Œì¼“ ì‚¬ìš© ì¢…ë£Œ í›„ ë°˜ë“œì‹œ í˜¸ì¶œí•´ì•¼ í•©ë‹ˆë‹¤.
          */
         void Close();
 
         /**
-         * @brief ¼ÒÄÏÀ» ³íºí·Ï ¸ğµå·Î ¼³Á¤ÇÕ´Ï´Ù.
+         * @brief ì†Œì¼“ì„ ë…¼ë¸”ë¡ ëª¨ë“œë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
          *
-         * @param is_nonblock ³íºí·Ï ¸ğµå·Î ¼³Á¤ÇÒ °æ¿ì true, ±×·¸Áö ¾ÊÀ¸¸é false.
-         * @return ¼³Á¤ ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param is_nonblock ë…¼ë¸”ë¡ ëª¨ë“œë¡œ ì„¤ì •í•  ê²½ìš° true, ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ false.
+         * @return ì„¤ì • ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool SetNonBlockingMode(bool is_nonblock);
 
         /**
-         * @brief ¼ÒÄÏÀ» IOCP ÇÚµé°ú ¿¬°áÇÕ´Ï´Ù.
+         * @brief ì†Œì¼“ì„ IOCP í•¸ë“¤ê³¼ ì—°ê²°í•©ë‹ˆë‹¤.
          *
-         * @param iocp_handle IOCP ÇÚµé. NetworkManager::CreateIOCPHandle()·Î »ı¼ºÇÒ ¼ö ÀÖ½À´Ï´Ù.
-         * @return ¿¬°á ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-         * @warning ÇÑ¹ø ¿¬°áµÈ ¼ÒÄÏÀº ´Ù¸¥ IOCP ÇÚµé·Î º¯°æÇÒ ¼ö ¾ø½À´Ï´Ù.
+         * @param iocp_handle IOCP í•¸ë“¤. NetworkManager::CreateIOCPHandle()ë¡œ ìƒì„±í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+         * @return ì—°ê²° ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+         * @warning í•œë²ˆ ì—°ê²°ëœ ì†Œì¼“ì€ ë‹¤ë¥¸ IOCP í•¸ë“¤ë¡œ ë³€ê²½í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
          */
          //bool RegisterIOCPHandle(HANDLE iocp_handle);
 
          /**
-          * @brief ¼ÒÄÏÀ» IP ÁÖ¼Ò¿Í Æ÷Æ®¿¡ ¹ÙÀÎµùÇÕ´Ï´Ù.
+          * @brief ì†Œì¼“ì„ IP ì£¼ì†Œì™€ í¬íŠ¸ì— ë°”ì¸ë”©í•©ë‹ˆë‹¤.
           *
-          * @param net_address ¹ÙÀÎµùÇÒ IP ÁÖ¼Ò¿Í Æ÷Æ®.
-          * @param reuse_addr trueÀÏ °æ¿ì IP ¹× Æ÷Æ® Àç»ç¿ëÀ» Çã¿ëÇÏ¿© ¼ÒÄÏ Á¾·á ÈÄ ºü¸£°Ô Àç½ÃÀÛÇÒ ¼ö ÀÖ½À´Ï´Ù.
-          * @return ¹ÙÀÎµù ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+          * @param net_address ë°”ì¸ë”©í•  IP ì£¼ì†Œì™€ í¬íŠ¸.
+          * @param reuse_addr trueì¼ ê²½ìš° IP ë° í¬íŠ¸ ì¬ì‚¬ìš©ì„ í—ˆìš©í•˜ì—¬ ì†Œì¼“ ì¢…ë£Œ í›„ ë¹ ë¥´ê²Œ ì¬ì‹œì‘í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+          * @return ë°”ì¸ë”© ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
           */
         bool Bind(const Net::NetAddress& net_address, bool reuse_addr);
 
         /**
-         * @brief ¿¬°áÀ» ½ÃµµÇÏ´Â ¼ÒÄÏÀ» ´ë±â Å¥¿¡ Ãß°¡ÇÏ±â ½ÃÀÛÇÕ´Ï´Ù.
+         * @brief ì—°ê²°ì„ ì‹œë„í•˜ëŠ” ì†Œì¼“ì„ ëŒ€ê¸° íì— ì¶”ê°€í•˜ê¸° ì‹œì‘í•©ë‹ˆë‹¤.
          *
-         * @param backlog ´ë±â Å¥ÀÇ ÃÖ´ë ±æÀÌ (±âº»°ª: SOMAXCONN).
-         * @return ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param backlog ëŒ€ê¸° íì˜ ìµœëŒ€ ê¸¸ì´ (ê¸°ë³¸ê°’: SOMAXCONN).
+         * @return ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Listen(int backlog = SOMAXCONN);
 
         /**
-         * @brief Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏÀ» ¼ö¶ôÇÏ°í, ¿¬°áµÈ Å¬¶óÀÌ¾ğÆ®ÀÇ ¼ÒÄÏÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+         * @brief í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ì„ ìˆ˜ë½í•˜ê³ , ì—°ê²°ëœ í´ë¼ì´ì–¸íŠ¸ì˜ ì†Œì¼“ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
          *
-         * Å¬¶óÀÌ¾ğÆ®°¡ Á¢¼ÓÇÒ ¶§±îÁö ´ë±âÇÕ´Ï´Ù.
+         * í´ë¼ì´ì–¸íŠ¸ê°€ ì ‘ì†í•  ë•Œê¹Œì§€ ëŒ€ê¸°í•©ë‹ˆë‹¤.
          *
-         * @param[out] client_socket ¼ö¶ôµÈ Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏÀ» ÀúÀåÇÒ NetTCPSocket °´Ã¼.
-         * @return ¿¬°á ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param[out] client_socket ìˆ˜ë½ëœ í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ì„ ì €ì¥í•  NetTCPSocket ê°ì²´.
+         * @return ì—°ê²° ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Accept(NetTCPSocket& client_socket);
 
         /**
-         * @brief ¼­¹ö¿¡ ¿¬°áÇÕ´Ï´Ù.
+         * @brief ì„œë²„ì— ì—°ê²°í•©ë‹ˆë‹¤.
          *
-         * @param[in] net_address ¿¬°áÇÒ ¿ø°İ ÁÖ¼Ò (IP ¹× Æ÷Æ®).
-         * @return ¿¬°á ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param[in] net_address ì—°ê²°í•  ì›ê²© ì£¼ì†Œ (IP ë° í¬íŠ¸).
+         * @return ì—°ê²° ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Connect(const Net::NetAddress& net_address);
 
         /**
-         * @brief ¼ÒÄÏÀ» ÅëÇØ µ¥ÀÌÅÍ¸¦ Àü¼ÛÇÕ´Ï´Ù.
+         * @brief ì†Œì¼“ì„ í†µí•´ ë°ì´í„°ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
          *
-         * ±âº»ÀûÀ¸·Î ³íºí·Ï ¸ğµå·Î µ¿ÀÛÇÏ¸ç, »ó´ë¹æÀÇ ¹öÆÛ°¡ °¡µæ Â÷¸é ºí·ÏµÉ ¼ö ÀÖ½À´Ï´Ù.
+         * ê¸°ë³¸ì ìœ¼ë¡œ ë…¼ë¸”ë¡ ëª¨ë“œë¡œ ë™ì‘í•˜ë©°, ìƒëŒ€ë°©ì˜ ë²„í¼ê°€ ê°€ë“ ì°¨ë©´ ë¸”ë¡ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          *
-         * @param[in] data Àü¼ÛÇÒ µ¥ÀÌÅÍ.
-         * @param[in] data_length Àü¼ÛÇÒ µ¥ÀÌÅÍÀÇ ±æÀÌ.
-         * @param[out] sent_length ½ÇÁ¦ Àü¼ÛµÈ ¹ÙÀÌÆ® ¼ö¸¦ ÀúÀåÇÒ º¯¼ö.
-         * @return Àü¼Û ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param[in] data ì „ì†¡í•  ë°ì´í„°.
+         * @param[in] data_length ì „ì†¡í•  ë°ì´í„°ì˜ ê¸¸ì´.
+         * @param[out] sent_length ì‹¤ì œ ì „ì†¡ëœ ë°”ì´íŠ¸ ìˆ˜ë¥¼ ì €ì¥í•  ë³€ìˆ˜.
+         * @return ì „ì†¡ ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Send(const char* data, int data_length, int& sent_length);
 
         /**
-         * @brief ¼ÒÄÏÀ» ÅëÇØ µ¥ÀÌÅÍ¸¦ ¼ö½ÅÇÕ´Ï´Ù.
+         * @brief ì†Œì¼“ì„ í†µí•´ ë°ì´í„°ë¥¼ ìˆ˜ì‹ í•©ë‹ˆë‹¤.
          *
-         * ±âº»ÀûÀ¸·Î ºí·Ï ¸ğµå·Î µ¿ÀÛÇÏ¸ç, SetNonBlockingMode(true)¸¦ È£ÃâÇÏ¿© ³íºí·Ï ¸ğµå·Î ÀüÈ¯ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * ê¸°ë³¸ì ìœ¼ë¡œ ë¸”ë¡ ëª¨ë“œë¡œ ë™ì‘í•˜ë©°, SetNonBlockingMode(true)ë¥¼ í˜¸ì¶œí•˜ì—¬ ë…¼ë¸”ë¡ ëª¨ë“œë¡œ ì „í™˜í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          *
-         * @param[out] data ¼ö½ÅÇÑ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ¹öÆÛ.
-         * @param[in] data_length ¼ö½ÅÇÒ µ¥ÀÌÅÍÀÇ ±æÀÌ.
-         * @param[out] received_length ½ÇÁ¦ ¼ö½ÅµÈ ¹ÙÀÌÆ® ¼ö¸¦ ÀúÀåÇÒ º¯¼ö.
-         * @return ¼ö½Å ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param[out] data ìˆ˜ì‹ í•œ ë°ì´í„°ë¥¼ ì €ì¥í•  ë²„í¼.
+         * @param[in] data_length ìˆ˜ì‹ í•  ë°ì´í„°ì˜ ê¸¸ì´.
+         * @param[out] received_length ì‹¤ì œ ìˆ˜ì‹ ëœ ë°”ì´íŠ¸ ìˆ˜ë¥¼ ì €ì¥í•  ë³€ìˆ˜.
+         * @return ìˆ˜ì‹  ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
         bool Recv(char* data, int data_length, int& received_length);
 
         /**
-         * @brief IOCP ¹æ½ÄÀ¸·Î µ¥ÀÌÅÍ¸¦ ¼ö½ÅÇÕ´Ï´Ù.
+         * @brief IOCP ë°©ì‹ìœ¼ë¡œ ë°ì´í„°ë¥¼ ìˆ˜ì‹ í•©ë‹ˆë‹¤.
          *
-         * RegisterIOCPHandle()·Î IOCP ÇÚµéÀ» µî·ÏÇÑ ÈÄ, GetTCPIOStatus()·Î °á°ú¸¦ È®ÀÎÇØ¾ß ÇÕ´Ï´Ù.
+         * RegisterIOCPHandle()ë¡œ IOCP í•¸ë“¤ì„ ë“±ë¡í•œ í›„, GetTCPIOStatus()ë¡œ ê²°ê³¼ë¥¼ í™•ì¸í•´ì•¼ í•©ë‹ˆë‹¤.
          *
-         * @param[in] data_length ¼ö½ÅÇÒ µ¥ÀÌÅÍÀÇ ±æÀÌ.
-         * @return ¼ö½Å ¼º°ø ½Ã true, ½ÇÆĞ ½Ã false¸¦ ¹İÈ¯ÇÕ´Ï´Ù. ½ÇÆĞ ½Ã WSAGetLastError()·Î ¿À·ù¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.
+         * @param[in] data_length ìˆ˜ì‹ í•  ë°ì´í„°ì˜ ê¸¸ì´.
+         * @return ìˆ˜ì‹  ì„±ê³µ ì‹œ true, ì‹¤íŒ¨ ì‹œ falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤. ì‹¤íŒ¨ ì‹œ WSAGetLastError()ë¡œ ì˜¤ë¥˜ë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
          */
          //bool RecvIOCP(int data_length);
 
          /**
-          * @brief ¼ÒÄÏÀÇ ³×Æ®¿öÅ© ÁÖ¼Ò¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+          * @brief ì†Œì¼“ì˜ ë„¤íŠ¸ì›Œí¬ ì£¼ì†Œë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
           *
-          * @return ÇöÀç ¼ÒÄÏÀÇ ³×Æ®¿öÅ© ÁÖ¼Ò (IP ¹× Æ÷Æ®).
+          * @return í˜„ì¬ ì†Œì¼“ì˜ ë„¤íŠ¸ì›Œí¬ ì£¼ì†Œ (IP ë° í¬íŠ¸).
           */
         inline Net::NetAddress GetAddress() const { return net_address_; }
 
 
         /**
-        * @brief ¼ÒÄÏÀÇ ³»ºÎ ÇÚµéÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+        * @brief ì†Œì¼“ì˜ ë‚´ë¶€ í•¸ë“¤ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
         *
-        * @return ³»ºÎ ¼ÒÄÏ ÇÚµé.
+        * @return ë‚´ë¶€ ì†Œì¼“ í•¸ë“¤.
         */
         SOCKET GetInternalSocket() const { return internal_socket_; }
 
     private:
-        SOCKET internal_socket_; ///< ³»ºÎ ¼ÒÄÏ ÇÚµé.
-        Net::NetAddress net_address_; ///< ¼ÒÄÏÀÇ ³×Æ®¿öÅ© ÁÖ¼Ò.
+        SOCKET internal_socket_; ///< ë‚´ë¶€ ì†Œì¼“ í•¸ë“¤.
+        Net::NetAddress net_address_; ///< ì†Œì¼“ì˜ ë„¤íŠ¸ì›Œí¬ ì£¼ì†Œ.
     };
 
     /**
-     * @brief IOCP ÄÁÅØ½ºÆ® ±¸Á¶Ã¼.
+     * @brief IOCP ì»¨í…ìŠ¤íŠ¸ êµ¬ì¡°ì²´.
      *
-     * IOCP ¹æ½ÄÀÇ ºñµ¿±â ÀÛ¾÷¿¡¼­ »ç¿ëµË´Ï´Ù.
+     * IOCP ë°©ì‹ì˜ ë¹„ë™ê¸° ì‘ì—…ì—ì„œ ì‚¬ìš©ë©ë‹ˆë‹¤.
      */
     /*
     struct TCPIOContext
     {
-        OVERLAPPED overlapped; ///< IO ¿Ï·á ÅëÁö¿¡ »ç¿ëµÇ´Â OVERLAPPED ±¸Á¶Ã¼.
-        NetTCPSocket tcp_socket; ///< ÇØ´ç IO ÀÛ¾÷°ú °ü·ÃµÈ TCP ¼ÒÄÏ.
-        WSABUF buffer;         ///< µ¥ÀÌÅÍ¸¦ Àü¼ÛÇÏ°Å³ª ¼ö½ÅÇÏ±â À§ÇÑ ¹öÆÛ.
+        OVERLAPPED overlapped; ///< IO ì™„ë£Œ í†µì§€ì— ì‚¬ìš©ë˜ëŠ” OVERLAPPED êµ¬ì¡°ì²´.
+        NetTCPSocket tcp_socket; ///< í•´ë‹¹ IO ì‘ì—…ê³¼ ê´€ë ¨ëœ TCP ì†Œì¼“.
+        WSABUF buffer;         ///< ë°ì´í„°ë¥¼ ì „ì†¡í•˜ê±°ë‚˜ ìˆ˜ì‹ í•˜ê¸° ìœ„í•œ ë²„í¼.
     };
     */
 

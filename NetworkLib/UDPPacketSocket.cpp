@@ -1,4 +1,4 @@
-// UDPPacketSocket.cpp
+ï»¿// UDPPacketSocket.cpp
 #include "pch.h"
 #include "UDPPacketSocket.h"
 #include <iostream>
@@ -67,7 +67,7 @@ namespace Net::UDP {
             std::vector<BYTE> payload = serializer.GetData();
             uint32_t seq_num = conn.next_sequence_number;
             conn.pending_packets_.push({ seq_num, payload });
-            std::cout << "[SendPacket] À©µµ¿ì°¡ °¡µæ Âü. ÆĞÅ¶ ´ë±â¿­¿¡ Ãß°¡µÊ: " << seq_num << std::endl;
+            std::cout << "[SendPacket] ìœˆë„ìš°ê°€ ê°€ë“ ì°¸. íŒ¨í‚· ëŒ€ê¸°ì—´ì— ì¶”ê°€ë¨: " << seq_num << std::endl;
 
             return false;
         }
@@ -79,18 +79,18 @@ namespace Net::UDP {
     {
         std::vector<BYTE> data;
 
-        // Á÷·ÄÈ­
+        // ì§ë ¬í™”
         Serializer serializer;
         packet.Serialize(serializer);
         std::vector<BYTE> payload = serializer.GetData();
 
-        // ¹öÆÛ¿¡ Çì´õ »ğÀÔ
+        // ë²„í¼ì— í—¤ë” ì‚½ì…
         PayloadHeader payload_header;
         payload_header.packet_id = packet.GetPacketID();
         BYTE* header_ptr = reinterpret_cast<BYTE*>(&payload_header);
         data.insert(data.begin(), header_ptr, header_ptr + sizeof(PayloadHeader));
 
-        // ¹öÆÛ¿¡ Á÷·ÄÈ­ ÇÑ µ¥ÀÌÅÍ »ğÀÔ
+        // ë²„í¼ì— ì§ë ¬í™” í•œ ë°ì´í„° ì‚½ì…
         data.insert(data.end(), payload.begin(), payload.end());
 
         int data_length = static_cast<int>(data.size() + sizeof(PayloadHeader));
@@ -98,16 +98,16 @@ namespace Net::UDP {
         {
             std::lock_guard<std::mutex> lock(conn.state_mutex);
 
-            // ÆĞÅ¶ Çì´õ »ı¼º
+            // íŒ¨í‚· í—¤ë” ìƒì„±
             PacketHeader header{ 0, };
             header.data_length = htons(static_cast<uint16_t>(data_length));
             if (reliable)
             {
-                header.sequence_number = htonl(conn.next_sequence_number);  // ÆĞÅ¶ ¹øÈ£
+                header.sequence_number = htonl(conn.next_sequence_number);  // íŒ¨í‚· ë²ˆí˜¸
                 header.ack_number = 0;
                 header.flags = FLAG_R_DATA;
 
-                // µ¥ÀÌÅÍ¸¦ Àü¼ÛÇÏ±â Àü¿¡ ¹Ì¸® ÀúÀå
+                // ë°ì´í„°ë¥¼ ì „ì†¡í•˜ê¸° ì „ì— ë¯¸ë¦¬ ì €ì¥
                 RetransmittablePacket retrans_pkt;
                 retrans_pkt.sequence_number = ntohl(header.sequence_number);
                 retrans_pkt.send_time = std::chrono::steady_clock::now();
@@ -119,7 +119,7 @@ namespace Net::UDP {
             {
                 header.flags = FLAG_DATA;
             }
-            // Ã¼Å©¼¶ °è»ê
+            // ì²´í¬ì„¬ ê³„ì‚°
             header.checksum = htonl(CalculateChecksum(header, data.data(), data.size()));
 
             int headerSize = sizeof(PacketHeader);
@@ -134,10 +134,10 @@ namespace Net::UDP {
 #else
             bool ret = net_socket_.SendTo(conn.remote_address, reinterpret_cast<const char*>(packetBuffer.data()), packetSize, sent_length);
 #endif
-            // Àü¼Û ½ÇÆĞ
+            // ì „ì†¡ ì‹¤íŒ¨
             if (!ret || sent_length != packetSize)
             {
-                std::cerr << "[SendPacketInternal] Àü¼Û ½ÇÆĞ" << std::endl;
+                std::cerr << "[SendPacketInternal] ì „ì†¡ ì‹¤íŒ¨" << std::endl;
                 conn.unacknowledged_packets.erase(conn.next_sequence_number);
                 return false;
             }
@@ -183,7 +183,7 @@ namespace Net::UDP {
             return { true, false };
         }
 
-        // Ã¼Å©¼¶ °è»ê
+        // ì²´í¬ì„¬ ê³„ì‚°
         uint32_t calculated_checksum = CalculateChecksum(header, buffer.get() + sizeof(PacketHeader), payload_length);
         if (calculated_checksum != header.checksum)
         {
@@ -202,7 +202,7 @@ namespace Net::UDP {
 
             if (header.flags == FLAG_ACK)
             {
-                // µ¥ÀÎÅÍ ¼Û½Å¿¡ ´ëÇÑ ÀÀ´äÄÚµå ¼ö½Å
+                // ë°ì¸í„° ì†¡ì‹ ì— ëŒ€í•œ ì‘ë‹µì½”ë“œ ìˆ˜ì‹ 
                 if (conn.unacknowledged_packets.find(header.ack_number) != conn.unacknowledged_packets.end())
                 {
                     conn.unacknowledged_packets.erase(header.ack_number);
@@ -224,13 +224,13 @@ namespace Net::UDP {
             {
                 if (header.sequence_number < conn.expected_sequence_number)
                 {
-                    // ¿¹»óµÈ ÆĞÅ¶º¸´Ù ÀÌÀü ÆĞÅ¶ ¼ö½Å
+                    // ì˜ˆìƒëœ íŒ¨í‚·ë³´ë‹¤ ì´ì „ íŒ¨í‚· ìˆ˜ì‹ 
                     SendAck(net_address, header.sequence_number);
                     return { true, false };
                 }
                 else if (header.sequence_number == conn.expected_sequence_number)
                 {
-                    // ¿¹»óµÈ ÆĞÅ¶ ¼ö½Å
+                    // ì˜ˆìƒëœ íŒ¨í‚· ìˆ˜ì‹ 
                     SendAck(net_address, header.sequence_number);
                     conn.expected_sequence_number++;
 
@@ -252,7 +252,7 @@ namespace Net::UDP {
                     packetInfo.address = conn.remote_address;
                     packetInfo.packet = std::move(packet);
 
-                    // ÀÌÀü¿¡ ¸ÕÀú¿Â ÆĞÅ¶µé Ã³¸®
+                    // ì´ì „ì— ë¨¼ì €ì˜¨ íŒ¨í‚·ë“¤ ì²˜ë¦¬
                     while (true)
                     {
                         auto it = conn.reorder_buffer.find(conn.expected_sequence_number);
@@ -271,7 +271,7 @@ namespace Net::UDP {
                 }
                 else if (header.sequence_number > conn.expected_sequence_number)
                 {
-                    // ¿¹»óµÈ ÆĞÅ¶º¸´Ù ÀÌÈÄ ÆĞÅ¶ ÀúÀå
+                    // ì˜ˆìƒëœ íŒ¨í‚·ë³´ë‹¤ ì´í›„ íŒ¨í‚· ì €ì¥
                     SendAck(net_address, conn.expected_sequence_number - 1);
                     std::vector<BYTE> data;
                     BYTE* payload_start = buffer.get() + sizeof(PacketHeader);
@@ -282,7 +282,7 @@ namespace Net::UDP {
             }
             else if (header.flags == FLAG_DATA)
             {
-                // ºñ ½Å·Ú ÆĞÅ¶ ¼ö½Å
+                // ë¹„ ì‹ ë¢° íŒ¨í‚· ìˆ˜ì‹ 
                 PayloadHeader payload_header;
                 BYTE* payload_header_start = buffer.get() + sizeof(PacketHeader);
                 memcpy(&payload_header, payload_header_start, sizeof(PayloadHeader));

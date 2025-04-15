@@ -1,8 +1,8 @@
-#pragma	 once
+ï»¿#pragma	 once
 #include <vector>
 #include <string>
 
-// ¹æ Ã£±â(browse)È­¸é¿¡¼­ Á¦°øµÇ´Â ¹æ Á¤º¸
+// ë°© ì°¾ê¸°(browse)í™”ë©´ì—ì„œ ì œê³µë˜ëŠ” ë°© ì •ë³´
 struct RoomInfo
 {
 	int room_number;
@@ -11,20 +11,20 @@ struct RoomInfo
 	std::wstring room_title;
 };
 
-// ¹æ Ã£±â(browse)È­¸é¿¡¼­ Á¦°øµÇ´Â ¹æ ¸ñ·Ï
+// ë°© ì°¾ê¸°(browse)í™”ë©´ì—ì„œ ì œê³µë˜ëŠ” ë°© ëª©ë¡
 struct RoomList
 {
 	std::vector<RoomInfo> room_list;
 };
 
-// Å¬¶óÀÌ¾ğÆ® Á¤º¸
+// í´ë¼ì´ì–¸íŠ¸ ì •ë³´
 struct ClientData
 {
 	int client_number;
 	std::wstring client_name;
 };
 
-// ¹æ ÀÔÀå½Ã Á¦°øµÇ´Â ¹æ Á¤º¸
+// ë°© ì…ì¥ì‹œ ì œê³µë˜ëŠ” ë°© ì •ë³´
 struct RoomInfoEx
 {
 	int room_number;

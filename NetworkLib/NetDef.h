@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "IPacket.h"
 #include "string"
@@ -35,7 +35,7 @@ namespace Net {
 	};
 
 
-	// ÀÓ½Ã
+	// ì„ì‹œ
 	namespace TCP {
 		struct ReceivedPacketInfo
 		{
@@ -43,13 +43,13 @@ namespace Net {
 			std::unique_ptr<IPacket> packet;
 		};
 
-		// ÆĞÅ¶ Àü¼Û ÈÄ ÀÀ´äÀÌ ¿Ã ¶§ È£ÃâµÉ Äİ¹é
+		// íŒ¨í‚· ì „ì†¡ í›„ ì‘ë‹µì´ ì˜¬ ë•Œ í˜¸ì¶œë  ì½œë°±
 		struct PendingPacketCallback
 		{
 			uint32_t sequence;
 			std::function<void(uint32_t client_key, std::unique_ptr<IPacket>)> callback;
 
-			// ÀÀ´ä ¸¸·á ½Ã°£
+			// ì‘ë‹µ ë§Œë£Œ ì‹œê°„
 			std::chrono::steady_clock::time_point expiration_time;
 		};
 	}
