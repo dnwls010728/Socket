@@ -85,9 +85,10 @@ void UI::ListBox::ClearItems()
     hovered_index_ = -1;
 }
 
-void UI::ListBox::SetItem(int index, Type::uint64 user_data)
+void UI::ListBox::SetItem(int index, const std::wstring& kName, Type::uint64 user_data)
 {
     if (index < 0 || index >= items_.size()) return;
+    items_[index].name = kName;
     items_[index].user_data = user_data;
 }
 
@@ -174,7 +175,8 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
     renderer->BeginLayer(kScrollBarRect);
     float ratio = kRect.height / (items_.size() * 30.f);
-    
+
+    // TODO: Y 좌표 값이 NaN이 나오는 문제 해결 필요
     const float scroll_thumb_height = Math::Clamp(kRect.height * ratio, 10.f, kRect.height);
     const Math::Rect kScrollThumbRect = GetRect(
         {kScrollBarRect.x, kScrollBarRect.y + (scroll_offset_y_ / min_allowed_scroll_offset_y_) * (kScrollBarRect.height - scroll_thumb_height)},
@@ -182,7 +184,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
         {0.f, 1.f}
     );
 
-    renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect), Math::Color(255, 255, 255, 100), 0.f);
+    renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect, {0.f, 1.f}), Math::Color(255, 255, 255, 100), 0.f);
     renderer->EndLayer();
 }
 

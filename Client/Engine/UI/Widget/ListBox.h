@@ -7,15 +7,14 @@ namespace UI
     {
         SHADER_CLASS_HELPER(ListBox)
         GENERATED_BODY(ListBox, Widget)
-
-    protected:
+        
+    public:
         struct Item
         {
             std::wstring name;
             uint64_t user_data;
         };
         
-    public:
         ListBox(const std::wstring& kName);
         virtual ~ListBox() override = default;
 
@@ -44,7 +43,7 @@ namespace UI
         void AddItem(const std::wstring& kName, Type::uint64 user_data = 0);
         void RemoveItem(int index);
         void ClearItems();
-        void SetItem(int index, Type::uint64 user_data = 0);
+        void SetItem(int index, const std::wstring& kName, Type::uint64 user_data = 0);
 
         FORCEINLINE const Item& GetItem(int index) const { return items_[index]; }
 

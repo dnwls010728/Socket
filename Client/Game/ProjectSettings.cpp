@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
+#include "Maps/LobbyMap.h"
 #include "Maps/TempMap.h"
 
 ProjectSettings::ProjectSettings()
@@ -24,7 +25,8 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
 
     settings->AddLevel<TempMap>(L"TempMap");
+    settings->AddLevel<LobbyMap>(L"LobbyMap");
 
-    settings->SetDefaultLevel(L"TempMap");
+    settings->SetDefaultLevel(L"LobbyMap");
     
 }

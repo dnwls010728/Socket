@@ -12,10 +12,8 @@ void NetworkSubsystem::Init()
 {
     WorldSubsystem::Init();
 
-    Logger::Print(L"TestWorldSubsystem initialized.");
-
     SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (session_subsystem) session_subsystem->OnPacketReceived(this, &NetworkSubsystem::ProcessPackets);
+    if (session_subsystem) session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
     
 }
 
@@ -23,7 +21,8 @@ void NetworkSubsystem::Deinit()
 {
     WorldSubsystem::Deinit();
 
-    Logger::Print(L"TestWorldSubsystem deinitialized.");
+    SessionSubsystem* session_subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
+    if (session_subsystem) session_subsystem->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
 }
 
 void NetworkSubsystem::Tick(float delta_time)
@@ -37,10 +36,9 @@ void NetworkSubsystem::Tick(float delta_time)
     }
 }
 
-bool NetworkSubsystem::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
+void NetworkSubsystem::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
 {
     Logger::Print(L"Packet ID: %d", packet->GetPacketID());
-    return false;
 }
 
 

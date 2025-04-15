@@ -6,8 +6,7 @@
 #include "NetworkManager.h"
 #include "Windows/WindowsApplication.h"
 
-SessionSubsystem::SessionSubsystem() :
-    packet_received_event_([](std::shared_ptr<Net::IPacket>){ return false; })
+SessionSubsystem::SessionSubsystem()
 {
 }
 
@@ -36,18 +35,18 @@ void SessionSubsystem::Deinit()
     Disconnect();
 }
 
-void SessionSubsystem::OnPacketReceived(bool(* func)(std::shared_ptr<Net::IPacket>))
-{
-    packet_received_event_ = func;
-}
-
 void SessionSubsystem::ProcessPackets()
 {
     client_socket_.ProcessPacketsFromQueue([&](Net::TCP::ReceivedPacketInfo& received_packet)
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
-        bool result = packet_received_event_(packet);
+        packet_handler.Execute(packet);
     });
+}
+
+void SessionSubsystem::SendPacket(Net::IPacket& packet)
+{
+    client_socket_.SendPacket(packet);
 }
 
 bool SessionSubsystem::Connect(const Net::NetAddress& address)
