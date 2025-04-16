@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
-#include "Maps/LobbyMap.h"
-
 ProjectSettings::ProjectSettings()
 {
 }
@@ -23,8 +21,6 @@ void ProjectSettings::Init()
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
 
-    settings->AddLevel<LobbyMap>(L"LobbyMap");
-
-    settings->SetDefaultLevel(L"LobbyMap");
+    settings->SetDefaultLevel(L"");
     
 }

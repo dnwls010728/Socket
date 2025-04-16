@@ -5,6 +5,10 @@ WorldSubsystem::WorldSubsystem()
 {
 }
 
+void WorldSubsystem::OnWorldBeginPlay()
+{
+}
+
 
 RTTR_REGISTRATION
 {

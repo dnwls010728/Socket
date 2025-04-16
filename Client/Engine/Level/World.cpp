@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "World.h"
 
+#include <ranges>
+
 #include "CameraManager.h"
 #include "DebugDrawHelper.h"
 #include "box2d/box2d.h"
@@ -266,6 +268,14 @@ void World::DeinitSubsystems()
     subsystems_.clear();
 }
 
+void World::BeginPlay()
+{
+    for (const auto& val : subsystems_ | std::views::values)
+    {
+        val->OnWorldBeginPlay();
+    }
+}
+
 void World::TransitionLevel()
 {
     if (!pending_level_) return;
@@ -288,6 +298,8 @@ void World::TransitionLevel()
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();
+
+    BeginPlay();
 }
 
 void World::ProcessCollisionEvents()

@@ -13,9 +13,6 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     Actor(kName),
     state_machine_(nullptr)
 {
-    collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
-    collider_->SetRadius(.5f);
-
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
     rigid_body_->SetGravityScale(0.f);
     rigid_body_->SetFreezeRotation(true);

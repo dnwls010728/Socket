@@ -19,8 +19,8 @@ void SessionSubsystem::Init()
         return std::make_unique<CustomSerializer>();
     });
 
-    bool result = Connect({"127.0.0.1", 9000});
-    // bool result = Connect({"175.198.74.36", 9000});
+    // bool result = Connect({"127.0.0.1", 9000});
+    bool result = Connect({"175.198.74.36", 9000});
     if (!result)
     {
         MessageBox(nullptr, L"서버와 연결할 수 없습니다.", EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
