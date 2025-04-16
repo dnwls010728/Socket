@@ -80,7 +80,6 @@ private:
 
     void InitSubsystems();
     void DeinitSubsystems();
-    void BeginPlay();
     void TransitionLevel();
     void ProcessCollisionEvents();
     void ProcessTriggerEvents();

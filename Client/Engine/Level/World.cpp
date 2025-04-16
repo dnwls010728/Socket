@@ -268,14 +268,6 @@ void World::DeinitSubsystems()
     subsystems_.clear();
 }
 
-void World::BeginPlay()
-{
-    for (const auto& val : subsystems_ | std::views::values)
-    {
-        val->OnWorldBeginPlay();
-    }
-}
-
 void World::TransitionLevel()
 {
     if (!pending_level_) return;
@@ -298,8 +290,11 @@ void World::TransitionLevel()
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();
-
-    BeginPlay();
+    
+    for (const auto& val : subsystems_ | std::views::values)
+    {
+        val->OnWorldBeginPlay();
+    }
 }
 
 void World::ProcessCollisionEvents()
