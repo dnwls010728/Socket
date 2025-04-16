@@ -19,6 +19,11 @@ ServerManager::ServerManager()
 
 bool ServerManager::Execute()
 {
+	if (!mysql_manager_.Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
+	{
+		return false;
+	}
+	
 	Net::WSAInit();
 
 	Net::NetAddress server_address("0.0.0.0", 9000);
@@ -68,6 +73,7 @@ bool ServerManager::Execute()
 
 	server_socket_.Stop();
 	Net::WSAUninit();
+	mysql_manager_.Disconnect();
 	return true;
 }
 
@@ -266,6 +272,42 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 		}
 		break;
 	}
+
+	case LoginPacketReq::StaticPacketID:
+		{
+			LoginPacketReq* login_packet = static_cast<LoginPacketReq*>(packet.get());
+			
+			bool is_found = false;
+			mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE account_id = '" + login_packet->id + L"';", [&](const sql::ResultSet* result_set)
+			{
+				is_found = true;
+				LoginPacketAck login_packet_response;
+				
+				std::string account_password_str = std::string(login_packet->password.begin(), login_packet->password.end());
+				if (account_password_str == result_set->getString("account_password"))
+				{
+					login_packet_response.result = true;
+					login_packet_response.message = L"로그인 성공";
+				}
+				else
+				{
+					login_packet_response.result = false;
+					login_packet_response.message = L"로그인 실패";
+				}
+
+				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+			});
+
+			if (!is_found)
+			{
+				LoginPacketAck login_packet_response;
+				login_packet_response.result = false;
+				login_packet_response.message = L"로그인 실패";
+				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+			}
+			
+		}
+		break;
 	
 	default:
 		break;

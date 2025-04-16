@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
+#include "Maps/LoginMap.h"
+
 ProjectSettings::ProjectSettings()
 {
 }
@@ -21,6 +23,8 @@ void ProjectSettings::Init()
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
 
-    settings->SetDefaultLevel(L"");
+    settings->AddLevel<LoginMap>(L"LoginMap");
+
+    settings->SetDefaultLevel(L"LoginMap");
     
 }

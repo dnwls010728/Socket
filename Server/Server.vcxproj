@@ -116,14 +116,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NetworkLib;$(ProjectDir)..\Common\Game\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\Common\Engine\LibFiles\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib\Debug;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NetworkLib;$(ProjectDir)..\Common\Game\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Common\Game\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,22 +144,92 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\Common\Engine\LibFiles\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientInfo.cpp" />
+    <ClCompile Include="MySQL\MySQLManager.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientInfo.h" />
+    <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
+    <ClInclude Include="Include\jdbc\cppconn\callback.h" />
+    <ClInclude Include="Include\jdbc\cppconn\config.h" />
+    <ClInclude Include="Include\jdbc\cppconn\connection.h" />
+    <ClInclude Include="Include\jdbc\cppconn\datatype.h" />
+    <ClInclude Include="Include\jdbc\cppconn\driver.h" />
+    <ClInclude Include="Include\jdbc\cppconn\exception.h" />
+    <ClInclude Include="Include\jdbc\cppconn\metadata.h" />
+    <ClInclude Include="Include\jdbc\cppconn\parameter_metadata.h" />
+    <ClInclude Include="Include\jdbc\cppconn\prepared_statement.h" />
+    <ClInclude Include="Include\jdbc\cppconn\resultset.h" />
+    <ClInclude Include="Include\jdbc\cppconn\resultset_metadata.h" />
+    <ClInclude Include="Include\jdbc\cppconn\sqlstring.h" />
+    <ClInclude Include="Include\jdbc\cppconn\statement.h" />
+    <ClInclude Include="Include\jdbc\cppconn\variant.h" />
+    <ClInclude Include="Include\jdbc\cppconn\version_info.h" />
+    <ClInclude Include="Include\jdbc\cppconn\warning.h" />
+    <ClInclude Include="Include\jdbc\mysql_connection.h" />
+    <ClInclude Include="Include\jdbc\mysql_driver.h" />
+    <ClInclude Include="Include\jdbc\mysql_error.h" />
+    <ClInclude Include="Include\mysqlx\common.h" />
+    <ClInclude Include="Include\mysqlx\common\api.h" />
+    <ClInclude Include="Include\mysqlx\common\error.h" />
+    <ClInclude Include="Include\mysqlx\common\op_if.h" />
+    <ClInclude Include="Include\mysqlx\common\settings.h" />
+    <ClInclude Include="Include\mysqlx\common\util.h" />
+    <ClInclude Include="Include\mysqlx\common\value.h" />
+    <ClInclude Include="Include\mysqlx\common_constants.h" />
+    <ClInclude Include="Include\mysqlx\devapi\collations.h" />
+    <ClInclude Include="Include\mysqlx\devapi\collection_crud.h" />
+    <ClInclude Include="Include\mysqlx\devapi\common.h" />
+    <ClInclude Include="Include\mysqlx\devapi\crud.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\crud.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\error.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\result.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\row.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\session.h" />
+    <ClInclude Include="Include\mysqlx\devapi\detail\settings.h" />
+    <ClInclude Include="Include\mysqlx\devapi\document.h" />
+    <ClInclude Include="Include\mysqlx\devapi\error.h" />
+    <ClInclude Include="Include\mysqlx\devapi\executable.h" />
+    <ClInclude Include="Include\mysqlx\devapi\mysql_charsets.h" />
+    <ClInclude Include="Include\mysqlx\devapi\mysql_collations.h" />
+    <ClInclude Include="Include\mysqlx\devapi\result.h" />
+    <ClInclude Include="Include\mysqlx\devapi\row.h" />
+    <ClInclude Include="Include\mysqlx\devapi\settings.h" />
+    <ClInclude Include="Include\mysqlx\devapi\table_crud.h" />
+    <ClInclude Include="Include\mysqlx\version_info.h" />
+    <ClInclude Include="Include\mysqlx\xapi.h" />
+    <ClInclude Include="Include\mysqlx\xdevapi.h" />
+    <ClInclude Include="Include\mysql\jdbc.h" />
+    <ClInclude Include="MySQL\MySQLManager.h" />
+    <ClInclude Include="MySQL\SQLEntity.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="ServerManager.h" />
+    <ClInclude Include="SessionManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\Debug\libcrypto.lib" />
+    <Content Include="Lib\Debug\libssl.lib" />
+    <Content Include="Lib\Debug\mysqlcppconn-static.lib" />
+    <Content Include="Lib\Debug\mysqlcppconn.lib" />
+    <Content Include="Lib\Debug\mysqlcppconnx-static.lib" />
+    <Content Include="Lib\Debug\mysqlcppconnx.lib" />
+    <Content Include="Lib\libcrypto.lib" />
+    <Content Include="Lib\libssl.lib" />
+    <Content Include="Lib\mysqlcppconn-static.lib" />
+    <Content Include="Lib\mysqlcppconn.lib" />
+    <Content Include="Lib\mysqlcppconnx-static.lib" />
+    <Content Include="Lib\mysqlcppconnx.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
