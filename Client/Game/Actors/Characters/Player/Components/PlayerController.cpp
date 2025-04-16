@@ -3,7 +3,6 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Actors/Dummy.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Characters/Player/States/PlayerDashState.h"
 #include "Actors/Characters/Player/States/PlayerIdleState.h"
@@ -112,38 +111,6 @@ void PlayerController::TickComponent(float delta_time)
 
 void PlayerController::UpdateInteraction()
 {
-    Math::Vector2 character_position = Math::Vector2::Zero();
-    if (IsValid(character_))
-    {
-        character_position = character_->GetTransform()->GetPosition();
-
-        std::vector<Actor*> out_actors;
-        if (Physics2D::OverlapCircleAll(character_position, 5.f, out_actors))
-        {
-            for (const auto& kActor: out_actors)
-            {
-                if (kActor == character_) continue;
-                
-                Math::Vector2 actor_direction = (kActor->GetTransform()->GetPosition() - character_position).Normalized();
-
-                float dot = Math::Vector2::Dot(mouse_direction_, actor_direction);
-                float radian = std::acosf(dot);
-                float degree = radian * Math::Rad2Deg();
-
-                if (degree < 45.f)
-                {
-                    DebugDrawHelper::Get()->DrawCircle(kActor->GetTransform()->GetPosition(), 1.f, Math::Color::Red);
-                    Dummy* dummy = dynamic_cast<Dummy*>(kActor);
-                    dummy->Show();
-                }
-                else
-                {
-                    Dummy* dummy = dynamic_cast<Dummy*>(kActor);
-                    dummy->Hide();
-                }
-            }
-        }
-    }
 }
 
 RTTR_REGISTRATION
