@@ -34,6 +34,13 @@ struct RoomInfoEx
 	std::vector<ClientData> client_list;
 };
 
+struct CharacterInfo
+{
+	int character_unique_id;
+	std::wstring character_name;
+	int character_lv;
+};
+
 enum RoomListUpdateType : uint16_t
 {
 	kRoomAdd,

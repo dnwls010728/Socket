@@ -8,6 +8,7 @@
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
+#include "UI/Widget/ListBox.h"
 
 LoginMap::LoginMap(const std::wstring& kName) :
     Level(kName),
@@ -18,7 +19,8 @@ LoginMap::LoginMap(const std::wstring& kName) :
     login_id_(nullptr),
     login_password_(nullptr),
     login_(nullptr),
-    register_switch_(nullptr)
+    register_switch_(nullptr),
+    character_list_(nullptr)
 {
 }
 
@@ -75,6 +77,10 @@ void LoginMap::Load()
         register_switch_->SetSize({ 200, 30 });
         register_switch_->SetText(L"회원가입");
         register_switch_->OnClick(this, &LoginMap::OnRegisterSwitch);
+
+        character_list_ = UI::ListBox::Create(L"CharacterList");
+        character_list_->SetPosition({ 400, 400 });
+        character_list_->SetSize({ 200, 300 });
 
         ui_manager->AddToViewport(login_id_);
         ui_manager->AddToViewport(login_password_);
@@ -150,10 +156,19 @@ void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
 
                 if (ui_manager)
                 {
+                    const std::vector<CharacterInfo>& characters = login_response->characters;
+                    for (const auto& character : characters)
+                    {
+                        std::wstring name = character.character_name + L" (Lv." + std::to_wstring(character.character_lv) + L")";
+                        character_list_->AddItem(name, character.character_unique_id);
+                    }
+                    
                     ui_manager->RemoveFromViewport(login_id_);
                     ui_manager->RemoveFromViewport(login_password_);
                     ui_manager->RemoveFromViewport(login_);
                     ui_manager->RemoveFromViewport(register_switch_);
+
+                    ui_manager->AddToViewport(character_list_);
                 }
             }
             

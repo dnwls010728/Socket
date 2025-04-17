@@ -8,6 +8,7 @@ namespace Net
 
 namespace UI
 {
+    class ListBox;
     class Button;
     class EditableTextBox;
 }
@@ -44,6 +45,8 @@ private:
 
     std::shared_ptr<UI::Button> login_;
     std::shared_ptr<UI::Button> register_switch_;
+
+    std::shared_ptr<UI::ListBox> character_list_;
 #pragma endregion
     
 };

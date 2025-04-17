@@ -213,7 +213,6 @@
     <ClInclude Include="Include\mysqlx\xdevapi.h" />
     <ClInclude Include="Include\mysql\jdbc.h" />
     <ClInclude Include="MySQL\MySQLManager.h" />
-    <ClInclude Include="MySQL\SQLEntity.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Session.h" />

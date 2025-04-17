@@ -339,10 +339,24 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 					std::shared_ptr<Session> session = std::make_shared<Session>(state.uniqueKey);
 					session_manager_.AddSession(account_unique_id, session);
 
+					std::vector<CharacterInfo> characters;
+
+					mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = '" + std::to_wstring(account_unique_id) + L"';", [&](const sql::ResultSet* result_set)
+					{
+						std::string character_name = result_set->getString("character_name");
+						
+						CharacterInfo character_info;
+						character_info.character_unique_id = result_set->getInt("character_unique_id");
+						character_info.character_name = std::wstring(character_name.begin(), character_name.end());
+						character_info.character_lv = result_set->getInt("character_lv");
+						characters.push_back(character_info);
+					});
+
 					LoginPacketAck login_packet_response;
 					login_packet_response.result = true;
 					login_packet_response.message = L"성공적으로 로그인 되었습니다.";
 					login_packet_response.account_unique_id = account_unique_id;
+					login_packet_response.characters = characters;
 					server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
 					return;
 				}

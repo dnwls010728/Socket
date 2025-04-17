@@ -64,4 +64,18 @@ public:
 		return *this;
 	}
 
+	CustomSerializer& operator<<(const CharacterInfo& value) {
+		*this << value.character_unique_id;
+		*this << value.character_name;
+		*this << value.character_lv;
+		return *this;
+	}
+
+	CustomSerializer& operator>>(CharacterInfo& value) {
+		*this >> value.character_unique_id;
+		*this >> value.character_name;
+		*this >> value.character_lv;
+		return *this;
+	}
+
 };
