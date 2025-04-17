@@ -108,6 +108,8 @@ void LoginMap::Unload(EndPlayReason type)
 void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
 {
     UI::Manager* ui_manager = UI::Manager::Get();
+
+    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     
     switch (packet->GetPacketID())
     {
@@ -138,8 +140,24 @@ void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
     case LoginPacketAck::StaticPacketID:
         {
             LoginPacketAck* login_response = static_cast<LoginPacketAck*>(packet.get());
-            if (login_response->result) Logger::Print(L"%s", login_response->message.c_str());
-            else Logger::Print(L"로그인 실패: %s", login_response->message.c_str());
+            if (login_response->result)
+            {
+                if (subsystem)
+                {
+                    subsystem->SetAccountUniqueID(login_response->account_unique_id);
+                    subsystem->SetLoggedIn(true);
+                }
+
+                if (ui_manager)
+                {
+                    ui_manager->RemoveFromViewport(login_id_);
+                    ui_manager->RemoveFromViewport(login_password_);
+                    ui_manager->RemoveFromViewport(login_);
+                    ui_manager->RemoveFromViewport(register_switch_);
+                }
+            }
+            
+            Logger::Print(L"%s", login_response->message.c_str());
         }
         break;
 

@@ -143,8 +143,9 @@ struct LoginPacketAck : public Net::IPacket
 {
     bool result;
     std::wstring message;
+    uint32_t account_unique_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result, message)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result, message, account_unique_id)
     REGISTER_PACKET(LoginPacketAck, 245)
 };
 

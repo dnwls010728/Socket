@@ -328,6 +328,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 						LoginPacketAck login_packet_response;
 						login_packet_response.result = false;
 						login_packet_response.message = L"현재 접속중인 계정입니다.";
+						login_packet_response.account_unique_id = 0;
 						server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
 						return;
 					}
@@ -341,6 +342,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 					LoginPacketAck login_packet_response;
 					login_packet_response.result = true;
 					login_packet_response.message = L"성공적으로 로그인 되었습니다.";
+					login_packet_response.account_unique_id = account_unique_id;
 					server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
 					return;
 				}
@@ -348,6 +350,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				LoginPacketAck login_packet_response;
 				login_packet_response.result = false;
 				login_packet_response.message = L"아이디 또는 비밀번호가 틀렸습니다.";
+				login_packet_response.account_unique_id = 0;
 				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
 			});
 

@@ -6,7 +6,9 @@
 #include "NetworkManager.h"
 #include "Windows/WindowsApplication.h"
 
-SessionSubsystem::SessionSubsystem()
+SessionSubsystem::SessionSubsystem() :
+    is_logged_in_(false),
+    account_unique_id_(0)
 {
 }
 
