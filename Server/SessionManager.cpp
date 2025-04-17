@@ -1,6 +1,6 @@
 ﻿#include "SessionManager.h"
 
-#include "Session.h"
+#include "Player.h"
 
 SessionManager::SessionManager() :
     mutex_(),
@@ -8,7 +8,7 @@ SessionManager::SessionManager() :
 {
 }
 
-void SessionManager::AddSession(uint32_t unique_id, const std::shared_ptr<Session>& session)
+void SessionManager::AddSession(uint32_t unique_id, const std::shared_ptr<Player>& session)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     sessions_.emplace(unique_id, session);

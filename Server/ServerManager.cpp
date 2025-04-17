@@ -4,16 +4,17 @@
 #include "NetworkManager.h"	
 #include "CustomPacket.h"
 #include "CustomSerializer.h"
-#include "Session.h"
+#include "Player.h"
 
 ServerManager::ServerManager()
 {
-	server_socket_.SetSerializerFactory([]() { return std::make_unique<CustomSerializer>(); });
+	server_socket_ = std::make_unique<Net::TCP::TCPServerSocket>();
+	server_socket_->SetSerializerFactory([]() { return std::make_unique<CustomSerializer>(); });
 
 	// 콜벡 설정file:/D:/Users/Desktop/태양/게임엔진/Socket/Server/ServerManager.h
-	server_socket_.SetClientAcceptedCallback(std::bind(&ServerManager::OnClientConnected, this, std::placeholders::_1));
-	server_socket_.SetClientDisconnectedCallback(std::bind(&ServerManager::OnClientDisconnected, this, std::placeholders::_1));
-	server_socket_.SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
+	server_socket_->SetClientAcceptedCallback(std::bind(&ServerManager::OnClientConnected, this, std::placeholders::_1));
+	server_socket_->SetClientDisconnectedCallback(std::bind(&ServerManager::OnClientDisconnected, this, std::placeholders::_1));
+	server_socket_->SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
 
 	room_manager_.SetRoomListUpdateCallback(std::bind(&ServerManager::OnRoomListChanged, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -28,7 +29,7 @@ bool ServerManager::Execute()
 	Net::WSAInit();
 
 	Net::NetAddress server_address("0.0.0.0", 9000);
-	if (server_socket_.Start(server_address, 0) == false)
+	if (server_socket_->Start(server_address, 0) == false)
 	{
 		return false;
 	}
@@ -72,7 +73,7 @@ bool ServerManager::Execute()
 		
 	}
 
-	server_socket_.Stop();
+	server_socket_->Stop();
 	Net::WSAUninit();
 	mysql_manager_.Disconnect();
 	return true;
@@ -114,7 +115,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 		RoomListPacketAck room_list_ack;
 		room_list_ack.sequence = room_list_req->sequence;
 		room_list_ack.room_list = room_list;
-		server_socket_.SendPacketToClient(state.uniqueKey, room_list_ack);
+		server_socket_->SendPacketToClient(state.uniqueKey, room_list_ack);
 		break;
 	}
 	
@@ -155,7 +156,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 		create_room_ack.room_title = room_title;
 		create_room_ack.max_user_count = max_user_count;
 
-		server_socket_.SendPacketToClient(state.uniqueKey, create_room_ack);
+		server_socket_->SendPacketToClient(state.uniqueKey, create_room_ack);
 		break;
 	}
 
@@ -217,7 +218,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				}
 			}
 		}
-		server_socket_.SendPacketToClient(state.uniqueKey, room_enter_ack);
+		server_socket_->SendPacketToClient(state.uniqueKey, room_enter_ack);
 		break;
 	}
 
@@ -253,7 +254,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				RoomExitOtherPacket exit_other_packet;
 				exit_other_packet.client_data.client_number = it->second.GetClientNumber();
 				exit_other_packet.client_data.client_name = it->second.GetClientName();
-				server_socket_.SendPacketToClient(find_result->first, exit_other_packet);
+				server_socket_->SendPacketToClient(find_result->first, exit_other_packet);
 			}
 		}
 		break;
@@ -287,7 +288,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				RegisterPacketAck register_packet_response;
 				register_packet_response.result = false;
 				register_packet_response.message = L"중복된 아이디입니다.";
-				server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+				server_socket_->SendPacketToClient(state.uniqueKey, register_packet_response);
 				break;
 			}
 
@@ -297,14 +298,14 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				RegisterPacketAck register_packet_response;
 				register_packet_response.result = false;
 				register_packet_response.message = L"회원가입 도중 문제가 발생했습니다.";
-				server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+				server_socket_->SendPacketToClient(state.uniqueKey, register_packet_response);
 				break;
 			}
 			
 			RegisterPacketAck register_packet_response;
 			register_packet_response.result = true;
 			register_packet_response.message = L"정상적으로 회원가입 되었습니다.";
-			server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+			server_socket_->SendPacketToClient(state.uniqueKey, register_packet_response);
 			break;
 		}
 		break;
@@ -329,14 +330,14 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 						login_packet_response.result = false;
 						login_packet_response.message = L"현재 접속중인 계정입니다.";
 						login_packet_response.account_unique_id = 0;
-						server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+						server_socket_->SendPacketToClient(state.uniqueKey, login_packet_response);
 						return;
 					}
 
 					ClientInfo* client_info = FindClient(state.uniqueKey);
 					if (client_info) client_info->SetAccountNumber(account_unique_id);
 
-					std::shared_ptr<Session> session = std::make_shared<Session>(state.uniqueKey);
+					std::shared_ptr<Player> session = std::make_shared<Player>(server_socket_.get(), state.uniqueKey);
 					session_manager_.AddSession(account_unique_id, session);
 
 					std::vector<CharacterInfo> characters;
@@ -357,7 +358,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 					login_packet_response.message = L"성공적으로 로그인 되었습니다.";
 					login_packet_response.account_unique_id = account_unique_id;
 					login_packet_response.characters = characters;
-					server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+					server_socket_->SendPacketToClient(state.uniqueKey, login_packet_response);
 					return;
 				}
 				
@@ -365,7 +366,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				login_packet_response.result = false;
 				login_packet_response.message = L"아이디 또는 비밀번호가 틀렸습니다.";
 				login_packet_response.account_unique_id = 0;
-				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+				server_socket_->SendPacketToClient(state.uniqueKey, login_packet_response);
 			});
 
 			if (!is_found)
@@ -373,7 +374,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 				LoginPacketAck login_packet_response;
 				login_packet_response.result = false;
 				login_packet_response.message = L"아이디 또는 비밀번호가 틀렸습니다.";
-				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+				server_socket_->SendPacketToClient(state.uniqueKey, login_packet_response);
 				break;
 			}
 			
@@ -403,7 +404,7 @@ void ServerManager::OnRoomListChanged(Room changed_room, RoomListUpdateType type
 		{
 			if (client.second.IsObserveRoomList())
 			{
-				server_socket_.SendPacketToClient(client.first, update_room_list_packet);
+				server_socket_->SendPacketToClient(client.first, update_room_list_packet);
 			}
 		}
 	}

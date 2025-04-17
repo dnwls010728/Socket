@@ -3,20 +3,20 @@
 #include <mutex>
 #include <unordered_map>
 
-class Session;
+class Player;
 
 class SessionManager
 {
 public:
     SessionManager();
 
-    void AddSession(uint32_t unique_id, const std::shared_ptr<Session>& session);
+    void AddSession(uint32_t unique_id, const std::shared_ptr<Player>& session);
     void RemoveSession(uint32_t unique_id);
     
     bool HasSession(uint32_t unique_id);
 
 private:
     std::mutex mutex_;
-    std::unordered_map<uint32_t, std::shared_ptr<Session>> sessions_;
+    std::unordered_map<uint32_t, std::shared_ptr<Player>> sessions_;
     
 };

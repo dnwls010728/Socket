@@ -26,7 +26,7 @@ public:
 	ClientInfo* FindClient(int client_id);
 
 private:
-	Net::TCP::TCPServerSocket server_socket_;
+	std::unique_ptr<Net::TCP::TCPServerSocket> server_socket_;
 
 	std::mutex client_map_mutex_;
 	std::unordered_map<int, ClientInfo> client_map_;

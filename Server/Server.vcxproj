@@ -160,7 +160,7 @@
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
-    <ClCompile Include="Session.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -223,7 +223,7 @@
     <ClInclude Include="MySQL\MySQLManager.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="ServerManager.h" />
-    <ClInclude Include="Session.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="SessionManager.h" />
   </ItemGroup>
   <ItemGroup>
