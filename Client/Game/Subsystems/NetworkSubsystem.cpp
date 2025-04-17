@@ -36,7 +36,7 @@ void NetworkSubsystem::Tick(float delta_time)
     }
 }
 
-void NetworkSubsystem::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
+void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     Logger::Print(L"Packet ID: %d", packet->GetPacketID());
 }

@@ -81,6 +81,7 @@ void LoginMap::Load()
         character_list_ = UI::ListBox::Create(L"CharacterList");
         character_list_->SetPosition({ 400, 400 });
         character_list_->SetSize({ 200, 300 });
+        character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
         ui_manager->AddToViewport(login_id_);
         ui_manager->AddToViewport(login_password_);
@@ -105,13 +106,15 @@ void LoginMap::Unload(EndPlayReason type)
         if (ui_manager->IsInViewport(login_password_)) ui_manager->RemoveFromViewport(login_password_);
         if (ui_manager->IsInViewport(login_)) ui_manager->RemoveFromViewport(login_);
         if (ui_manager->IsInViewport(register_switch_)) ui_manager->RemoveFromViewport(register_switch_);
+
+        if (ui_manager->IsInViewport(character_list_)) ui_manager->RemoveFromViewport(character_list_);
     }
     
     SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     if (subsystem) subsystem->packet_handler.Remove(this, &LoginMap::ProcessPackets);
 }
 
-void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
+void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     UI::Manager* ui_manager = UI::Manager::Get();
 
@@ -146,10 +149,43 @@ void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
         {
             LoginResponse* response = static_cast<LoginResponse*>(packet.get());
             Logger::Print(L"%s", response->message.c_str());
+
+            if (response->is_success)
+            {
+                if (ui_manager)
+                {
+                    const std::vector<CharacterInfo>& characters = response->characters;
+                    for (const auto& character : characters)
+                    {
+                        std::wstring name = character.name + L" (Lv. " + std::to_wstring(character.lv) + L")";
+                        character_list_->AddItem(name, reinterpret_cast<uintptr_t>(&character));
+                    }
+                    
+                    ui_manager->RemoveFromViewport(login_id_);
+                    ui_manager->RemoveFromViewport(login_password_);
+                    ui_manager->RemoveFromViewport(login_);
+                    ui_manager->RemoveFromViewport(register_switch_);
+
+                    ui_manager->AddToViewport(character_list_);
+                }
+            }
         }
         break;
 
-    default: break;
+    case SelectCharacterResponse::StaticPacketID:
+        {
+            SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
+            Logger::Print(L"%s", response->message.c_str());
+
+            if (response->is_success)
+            {
+                ui_manager->RemoveFromViewport(character_list_);
+            }
+        }
+        break;
+
+    default:
+        break;
     }
 }
 
@@ -211,6 +247,19 @@ void LoginMap::OnLoginSwitch()
         ui_manager->AddToViewport(login_);
         ui_manager->AddToViewport(register_switch_);
     }
+}
+
+void LoginMap::OnCharacterSelect(Type::uint64 user_data)
+{
+    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
+    if (!subsystem) return;
+    
+    CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
+    if (!character) return;
+
+    SelectCharacterRequest request;
+    request.unique_id = character->unique_id;
+    subsystem->SendPacket(request);
 }
 
 RTTR_REGISTRATION

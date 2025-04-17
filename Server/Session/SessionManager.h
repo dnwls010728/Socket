@@ -13,10 +13,10 @@ public:
     void RemoveSession(int client_id);
 
     std::shared_ptr<Session> FindSessionByClientID(int client_id);
-    std::shared_ptr<Session> FindSessionByAccountID(int account_id);
+    std::shared_ptr<Session> FindSessionByAccountUniqueID(int account_unique_id);
 
     bool HasSessionByClientID(int client_id);
-    bool HasSessionByAccountID(int account_id);
+    bool HasSessionByAccountUniqueID(int account_unique_id);
 
 private:
     std::mutex mutex_;

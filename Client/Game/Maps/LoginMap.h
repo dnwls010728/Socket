@@ -27,11 +27,12 @@ protected:
     virtual void Unload(EndPlayReason type) override;
 
 private:
-    void ProcessPackets(std::shared_ptr<Net::IPacket> packet);
+    void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
     void OnRegister();
     void OnLogin();
     void OnRegisterSwitch();
     void OnLoginSwitch();
+    void OnCharacterSelect(Type::uint64 user_data);
 
 #pragma region UI
     std::shared_ptr<UI::EditableTextBox> register_id_;

@@ -156,6 +156,7 @@
     <ClCompile Include="ServerManager.cpp" />
     <ClCompile Include="Session\Session.cpp" />
     <ClCompile Include="Session\SessionManager.cpp" />
+    <ClCompile Include="Utils\StringHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Session\Session.h" />
     <ClInclude Include="Session\SessionManager.h" />
+    <ClInclude Include="Utils\StringHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Debug\libcrypto.lib" />

@@ -3,7 +3,7 @@
 #include "TCPClientSocket.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
-DECLARE_DELEGATE(OnPacketDelegate, std::shared_ptr<Net::IPacket>);
+DECLARE_DELEGATE(OnPacketDelegate, const std::shared_ptr<Net::IPacket>&);
 
 class SessionSubsystem : public GameInstanceSubsystem
 {

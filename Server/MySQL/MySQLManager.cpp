@@ -1,5 +1,6 @@
 ﻿#include "MySQLManager.h"
 
+#include "../Utils/StringHelper.h"
 #include "jdbc/cppconn/driver.h"
 #include "jdbc/cppconn/exception.h"
 #include "jdbc/cppconn/resultset.h"
@@ -55,12 +56,10 @@ void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<v
 {
     if (!connection_) return;
 
-    std::string query_str = std::string(query.begin(), query.end());
-
     try
     {
         std::unique_ptr<sql::Statement> statement(connection_->createStatement());
-        std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(query_str));
+        std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(StringHelper::ToString(query)));
 
         while (result_set->next())
         {
@@ -86,13 +85,11 @@ void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<v
 int MySQLManager::ExecuteUpdate(const std::wstring& query)
 {
     if (!connection_) return 0;
-
-    std::string query_str = std::string(query.begin(), query.end());
     
     try
     {
         std::unique_ptr<sql::Statement> statement(connection_->createStatement());
-        return statement->executeUpdate(query_str);
+        return statement->executeUpdate(StringHelper::ToString(query));
     }
     catch (sql::SQLException& e)
     {

@@ -5,6 +5,7 @@
 #include "CustomPacket.h"
 #include "CustomSerializer.h"
 #include "Session/Session.h"
+#include "Utils/StringHelper.h"
 
 ServerManager::ServerManager()
 {
@@ -140,7 +141,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 is_found = true;
 
                 int unique_id = result->getInt("unique_id");
-                if (session_manager_.HasSessionByAccountID(unique_id))
+                if (session_manager_.HasSessionByAccountUniqueID(unique_id))
                 {
                     LoginResponse response;
                     response.is_success = false;
@@ -149,9 +150,27 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     return;
                 }
 
+                std::shared_ptr<Session> session = session_manager_.FindSessionByClientID(state.uniqueKey);
+                if (session) session->SetAccountUniqueID(unique_id);
+
+                std::vector<CharacterInfo> characters;
+                mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
+                {
+                    CharacterInfo character;
+                    character.unique_id = result->getInt("unique_id");
+                    character.account_unique_id = result->getInt("account_unique_id");
+                    character.name = StringHelper::ToWideString(result->getString("name"));
+                    character.lv = result->getInt("lv");
+                    character.job = result->getInt("job");
+                    character.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
+                    character.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
+                    characters.push_back(character);
+                });
+
                 LoginResponse response;
                 response.is_success = true;
                 response.message = L"Login successful.";
+                response.characters = characters;
                 server_socket_.SendPacketToClient(state.uniqueKey, response);
             });
 
@@ -162,6 +181,29 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 response.message = L"Invalid ID or password.";
                 server_socket_.SendPacketToClient(state.uniqueKey, response);
             }
+        }
+        break;
+
+    case SelectCharacterRequest::StaticPacketID:
+        {
+            SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet.get());
+
+            std::shared_ptr<Session> session = session_manager_.FindSessionByClientID(state.uniqueKey);
+            if (session)
+            {
+                session->SetCharacterUniqueID(request->unique_id);
+
+                SelectCharacterResponse response;
+                response.is_success = true;
+                response.message = L"Character selected successfully.";
+                server_socket_.SendPacketToClient(state.uniqueKey, response);
+                break;
+            }
+
+            SelectCharacterResponse response;
+            response.is_success = false;
+            response.message = L"Character selection failed.";
+            server_socket_.SendPacketToClient(state.uniqueKey, response);
         }
         break;
 

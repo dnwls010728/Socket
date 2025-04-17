@@ -48,7 +48,30 @@ struct LoginResponse : public Net::IPacket
 {
     bool is_success;
     std::wstring message;
+    std::vector<CharacterInfo> characters;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, characters)
+    REGISTER_PACKET(LoginResponse, 203)
+};
+
+// 캐릭터 생성 요청
+// 캐릭터 생성 응답
+
+// 캐릭터 선택 요청
+struct SelectCharacterRequest : public Net::IPacket
+{
+    int unique_id;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
+    REGISTER_PACKET(SelectCharacterRequest, 206)
+};
+
+// 캐릭터 선택 응답
+struct SelectCharacterResponse : public Net::IPacket
+{
+    bool is_success;
+    std::wstring message;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message)
-    REGISTER_PACKET(LoginResponse, 203)
+    REGISTER_PACKET(SelectCharacterResponse, 207)
 };
