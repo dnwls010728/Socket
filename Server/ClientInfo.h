@@ -25,12 +25,16 @@ public:
 	std::wstring GetClientName() { return client_name_; }
 	void SetClientName(std::wstring name) { client_name_ = name; }
 
+	inline uint32_t GetAccountNumber() { return account_number_; }
+	inline void SetAccountNumber(uint32_t account_number) { account_number_ = account_number; }
+
 private:
 	int client_number_;	
 	int room_number_;
 	bool observed_room_list;
 	std::wstring client_name_;
 	int db_key_;
+	uint32_t account_number_;
 
 };
 

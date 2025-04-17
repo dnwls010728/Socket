@@ -27,13 +27,23 @@ protected:
 
 private:
     void ProcessPackets(std::shared_ptr<Net::IPacket> packet);
+    void OnRegister();
     void OnLogin();
+    void OnRegisterSwitch();
+    void OnLoginSwitch();
 
 #pragma region UI
+    std::shared_ptr<UI::EditableTextBox> register_id_;
+    std::shared_ptr<UI::EditableTextBox> register_password_;
+
+    std::shared_ptr<UI::Button> register_;
+    std::shared_ptr<UI::Button> login_switch_;
+    
     std::shared_ptr<UI::EditableTextBox> login_id_;
     std::shared_ptr<UI::EditableTextBox> login_password_;
 
     std::shared_ptr<UI::Button> login_;
+    std::shared_ptr<UI::Button> register_switch_;
 #pragma endregion
     
 };

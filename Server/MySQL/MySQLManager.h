@@ -14,6 +14,8 @@ public:
 
     void Disconnect();
     void ExecuteQuery(const std::wstring& query, const std::function<void(const sql::ResultSet*)>& callback = nullptr);
+    
+    int ExecuteUpdate(const std::wstring& query);
 
     inline sql::Connection* GetConnection() const { return connection_.get(); }
 

@@ -4,6 +4,7 @@
 #include "NetworkManager.h"	
 #include "CustomPacket.h"
 #include "CustomSerializer.h"
+#include "Session.h"
 
 ServerManager::ServerManager()
 {
@@ -80,21 +81,18 @@ bool ServerManager::Execute()
 bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
 {
 	std::cout << "Client connected: " << state.address.ToString().c_str() << std::endl;
-	{
-		std::lock_guard<std::mutex> lock(client_map_mutex_);
-		client_map_.emplace(state.uniqueKey, state.uniqueKey);
-	}
-
+	AddClient(state.uniqueKey);
 	return true;
 }
 
 void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 {
 	std::cout << "Client disconnected: " << state.address.ToString().c_str() << std::endl;
-	{
-		std::lock_guard<std::mutex> lock(client_map_mutex_);
-		client_map_.erase(state.uniqueKey);
-	}
+	
+	ClientInfo* client_info = FindClient(state.uniqueKey);
+	if (client_info) session_manager_.RemoveSession(client_info->GetAccountNumber());
+	
+	RemoveClient(state.uniqueKey);
 }
 
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)
@@ -273,28 +271,83 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 		break;
 	}
 
-	case LoginPacketReq::StaticPacketID:
+	case RegisterPacketReq::StaticPacketID:
 		{
-			LoginPacketReq* login_packet = static_cast<LoginPacketReq*>(packet.get());
-			
+			RegisterPacketReq* register_packet_request = static_cast<RegisterPacketReq*>(packet.get());
+
 			bool is_found = false;
-			mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE account_id = '" + login_packet->id + L"';", [&](const sql::ResultSet* result_set)
+			// 중복 아이디 체크
+			mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE account_id = '" + register_packet_request->id + L"';", [&](const sql::ResultSet* result_set)
 			{
 				is_found = true;
-				LoginPacketAck login_packet_response;
-				
-				std::string account_password_str = std::string(login_packet->password.begin(), login_packet->password.end());
-				if (account_password_str == result_set->getString("account_password"))
-				{
-					login_packet_response.result = true;
-					login_packet_response.message = L"로그인 성공";
-				}
-				else
-				{
-					login_packet_response.result = false;
-					login_packet_response.message = L"로그인 실패";
-				}
+			});
 
+			if (is_found)
+			{
+				RegisterPacketAck register_packet_response;
+				register_packet_response.result = false;
+				register_packet_response.message = L"중복된 아이디입니다.";
+				server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+				break;
+			}
+
+			int result = mysql_manager_.ExecuteUpdate(L"INSERT INTO account_info (account_id, account_password) VALUES ('" + register_packet_request->id + L"', '" + register_packet_request->password + L"');");
+			if (result == 0)
+			{
+				RegisterPacketAck register_packet_response;
+				register_packet_response.result = false;
+				register_packet_response.message = L"회원가입 도중 문제가 발생했습니다.";
+				server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+				break;
+			}
+			
+			RegisterPacketAck register_packet_response;
+			register_packet_response.result = true;
+			register_packet_response.message = L"정상적으로 회원가입 되었습니다.";
+			server_socket_.SendPacketToClient(state.uniqueKey, register_packet_response);
+			break;
+		}
+		break;
+
+	case LoginPacketReq::StaticPacketID:
+		{
+			LoginPacketReq* login_packet_request = static_cast<LoginPacketReq*>(packet.get());
+			
+			bool is_found = false;
+			mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE account_id = '" + login_packet_request->id + L"';", [&](const sql::ResultSet* result_set)
+			{
+				is_found = true;
+
+				std::string password_str = std::string(login_packet_request->password.begin(), login_packet_request->password.end());
+				if (password_str == result_set->getString("account_password"))
+				{
+					int account_unique_id = result_set->getInt("account_unique_id");
+
+					if (session_manager_.HasSession(account_unique_id))
+					{
+						LoginPacketAck login_packet_response;
+						login_packet_response.result = false;
+						login_packet_response.message = L"현재 접속중인 계정입니다.";
+						server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+						return;
+					}
+
+					ClientInfo* client_info = FindClient(state.uniqueKey);
+					if (client_info) client_info->SetAccountNumber(account_unique_id);
+
+					std::shared_ptr<Session> session = std::make_shared<Session>(state.uniqueKey);
+					session_manager_.AddSession(account_unique_id, session);
+
+					LoginPacketAck login_packet_response;
+					login_packet_response.result = true;
+					login_packet_response.message = L"성공적으로 로그인 되었습니다.";
+					server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+					return;
+				}
+				
+				LoginPacketAck login_packet_response;
+				login_packet_response.result = false;
+				login_packet_response.message = L"아이디 또는 비밀번호가 틀렸습니다.";
 				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
 			});
 
@@ -302,8 +355,9 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 			{
 				LoginPacketAck login_packet_response;
 				login_packet_response.result = false;
-				login_packet_response.message = L"로그인 실패";
+				login_packet_response.message = L"아이디 또는 비밀번호가 틀렸습니다.";
 				server_socket_.SendPacketToClient(state.uniqueKey, login_packet_response);
+				break;
 			}
 			
 		}
@@ -336,4 +390,28 @@ void ServerManager::OnRoomListChanged(Room changed_room, RoomListUpdateType type
 			}
 		}
 	}
+}
+
+void ServerManager::AddClient(int client_id)
+{
+	std::lock_guard<std::mutex> lock(client_map_mutex_);
+	client_map_.emplace(client_id, client_id);
+}
+
+void ServerManager::RemoveClient(int client_id)
+{
+	std::lock_guard<std::mutex> lock(client_map_mutex_);
+	client_map_.erase(client_id);
+}
+
+ClientInfo* ServerManager::FindClient(int client_id)
+{
+	std::lock_guard<std::mutex> lock(client_map_mutex_);
+	auto it = client_map_.find(client_id);
+	if (it != client_map_.end())
+	{
+		return &it->second;
+	}
+	
+	return nullptr;
 }

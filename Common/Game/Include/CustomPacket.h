@@ -112,13 +112,22 @@ struct GameStartPacket : public Net::IPacket
     REGISTER_PACKET(GameStartPacket, 241)
 };
 
-struct RegisterPacket : public Net::IPacket
+struct RegisterPacketReq : public Net::IPacket
 {
     std::wstring id;
     std::wstring password;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, id, password)
-    REGISTER_PACKET(RegisterPacket, 242)
+    REGISTER_PACKET(RegisterPacketReq, 242)
+};
+
+struct RegisterPacketAck : public Net::IPacket
+{
+    bool result;
+    std::wstring message;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result, message)
+    REGISTER_PACKET(RegisterPacketAck, 243)
 };
 
 struct LoginPacketReq : public Net::IPacket
@@ -127,7 +136,7 @@ struct LoginPacketReq : public Net::IPacket
     std::wstring password;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, id, password)
-    REGISTER_PACKET(LoginPacketReq, 243)
+    REGISTER_PACKET(LoginPacketReq, 244)
 };
 
 struct LoginPacketAck : public Net::IPacket
@@ -136,7 +145,7 @@ struct LoginPacketAck : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, result, message)
-    REGISTER_PACKET(LoginPacketAck, 244)
+    REGISTER_PACKET(LoginPacketAck, 245)
 };
 
 

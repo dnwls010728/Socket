@@ -6,6 +6,7 @@ ClientInfo::ClientInfo(int client_number)
 	, observed_room_list(false)
 	, client_name_(L"")
 	, db_key_(-1)
+	, account_number_(0)
 {
 }
 

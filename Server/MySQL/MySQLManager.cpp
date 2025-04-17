@@ -57,11 +57,58 @@ void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<v
 
     std::string query_str = std::string(query.begin(), query.end());
 
-    std::unique_ptr<sql::Statement> statement(connection_->createStatement());
-    std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(query_str));
-
-    while (result_set->next())
+    try
     {
-        if (callback) callback(result_set.get());
+        std::unique_ptr<sql::Statement> statement(connection_->createStatement());
+        std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(query_str));
+
+        while (result_set->next())
+        {
+            if (callback) callback(result_set.get());
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+    }
+}
+
+int MySQLManager::ExecuteUpdate(const std::wstring& query)
+{
+    if (!connection_) return 0;
+
+    std::string query_str = std::string(query.begin(), query.end());
+    
+    try
+    {
+        std::unique_ptr<sql::Statement> statement(connection_->createStatement());
+        return statement->executeUpdate(query_str);
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        return 0;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return 0;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+        return 0;
     }
 }

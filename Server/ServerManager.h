@@ -20,6 +20,10 @@ public:
 	void OnClientDisconnected(const Net::TCPConnectionState& state);
 	void OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet);
 	void OnRoomListChanged(Room changed_room, RoomListUpdateType type);
+	void AddClient(int client_id);
+	void RemoveClient(int client_id);
+
+	ClientInfo* FindClient(int client_id);
 
 private:
 	Net::TCP::TCPServerSocket server_socket_;
