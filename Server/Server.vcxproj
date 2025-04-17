@@ -151,22 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actors\Actor.cpp" />
-    <ClCompile Include="Actors\PlayerActor.cpp" />
-    <ClCompile Include="ClientInfo.cpp" />
-    <ClCompile Include="Map\Map.cpp" />
-    <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="MySQL\MySQLManager.cpp" />
-    <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SessionManager.cpp" />
+    <ClCompile Include="Session\Session.cpp" />
+    <ClCompile Include="Session\SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actors\Actor.h" />
-    <ClInclude Include="Actors\PlayerActor.h" />
-    <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
@@ -218,13 +209,10 @@
     <ClInclude Include="Include\mysqlx\xapi.h" />
     <ClInclude Include="Include\mysqlx\xdevapi.h" />
     <ClInclude Include="Include\mysql\jdbc.h" />
-    <ClInclude Include="Map\Map.h" />
-    <ClInclude Include="Map\MapManager.h" />
     <ClInclude Include="MySQL\MySQLManager.h" />
-    <ClInclude Include="RoomManager.h" />
     <ClInclude Include="ServerManager.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="Session\Session.h" />
+    <ClInclude Include="Session\SessionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\Debug\libcrypto.lib" />

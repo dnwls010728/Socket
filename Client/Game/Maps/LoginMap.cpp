@@ -119,14 +119,13 @@ void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
     
     switch (packet->GetPacketID())
     {
-    case RegisterPacketAck::StaticPacketID:
+    case RegisterResponse::StaticPacketID:
         {
-            RegisterPacketAck* register_response = static_cast<RegisterPacketAck*>(packet.get());
-            if (!register_response->result) Logger::Print(L"%s", register_response->message.c_str());
-            else
-            {
-                Logger::Print(L"%s", register_response->message.c_str());
+            RegisterResponse* response = static_cast<RegisterResponse*>(packet.get());
+            Logger::Print(L"%s", response->message.c_str());
 
+            if (response->is_success)
+            {
                 if (ui_manager)
                 {
                     ui_manager->RemoveFromViewport(register_id_);
@@ -142,37 +141,11 @@ void LoginMap::ProcessPackets(std::shared_ptr<Net::IPacket> packet)
             }
         }
         break;
-        
-    case LoginPacketAck::StaticPacketID:
+
+    case LoginResponse::StaticPacketID:
         {
-            LoginPacketAck* login_response = static_cast<LoginPacketAck*>(packet.get());
-            if (login_response->result)
-            {
-                if (subsystem)
-                {
-                    subsystem->SetAccountUniqueID(login_response->account_unique_id);
-                    subsystem->SetLoggedIn(true);
-                }
-
-                if (ui_manager)
-                {
-                    const std::vector<CharacterInfo>& characters = login_response->characters;
-                    for (const auto& character : characters)
-                    {
-                        std::wstring name = character.character_name + L" (Lv." + std::to_wstring(character.character_lv) + L")";
-                        character_list_->AddItem(name, character.character_unique_id);
-                    }
-                    
-                    ui_manager->RemoveFromViewport(login_id_);
-                    ui_manager->RemoveFromViewport(login_password_);
-                    ui_manager->RemoveFromViewport(login_);
-                    ui_manager->RemoveFromViewport(register_switch_);
-
-                    ui_manager->AddToViewport(character_list_);
-                }
-            }
-            
-            Logger::Print(L"%s", login_response->message.c_str());
+            LoginResponse* response = static_cast<LoginResponse*>(packet.get());
+            Logger::Print(L"%s", response->message.c_str());
         }
         break;
 
@@ -187,10 +160,10 @@ void LoginMap::OnRegister()
     SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     if (!subsystem) return;
 
-    RegisterPacketReq register_packet_reqest;
-    register_packet_reqest.id = register_id_->GetText();
-    register_packet_reqest.password = register_password_->GetText();
-    subsystem->SendPacket(register_packet_reqest);
+    RegisterRequest request;
+    request.id = register_id_->GetText();
+    request.password = register_password_->GetText();
+    subsystem->SendPacket(request);
 }
 
 void LoginMap::OnLogin()
@@ -200,10 +173,10 @@ void LoginMap::OnLogin()
     SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     if (!subsystem) return;
 
-    LoginPacketReq login_request;
-    login_request.id = login_id_->GetText();
-    login_request.password = login_password_->GetText();
-    subsystem->SendPacket(login_request);
+    LoginRequest request;
+    request.id = login_id_->GetText();
+    request.password = login_password_->GetText();
+    subsystem->SendPacket(request);
 }
 
 void LoginMap::OnRegisterSwitch()
