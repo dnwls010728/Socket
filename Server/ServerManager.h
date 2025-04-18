@@ -12,8 +12,8 @@ public:
 	virtual ~ServerManager() override = default;
 
 	bool Execute();
-
 	bool OnClientConnected(const Net::TCPConnectionState& state);
+	
 	void OnClientDisconnected(const Net::TCPConnectionState& state);
 	void OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet);
 

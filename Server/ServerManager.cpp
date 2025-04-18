@@ -191,13 +191,23 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
             std::shared_ptr<Session> session = session_manager_.FindSessionByClientID(state.uniqueKey);
             if (session)
             {
-                session->SetCharacterUniqueID(request->unique_id);
+                // 해당 캐릭터가 로그인한 계정의 캐릭터인지 확인
+                bool is_found = false;
+                mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE unique_id = " + std::to_wstring(request->unique_id) + L" AND account_unique_id = " + std::to_wstring(session->GetAccountUniqueID()), [&](const sql::ResultSet* result)
+                {
+                    is_found = true;
+                });
 
-                SelectCharacterResponse response;
-                response.is_success = true;
-                response.message = L"Character selected successfully.";
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
-                break;
+                if (is_found)
+                {
+                    session->SetCharacterUniqueID(request->unique_id);
+
+                    SelectCharacterResponse response;
+                    response.is_success = true;
+                    response.message = L"Character selected successfully.";
+                    server_socket_.SendPacketToClient(state.uniqueKey, response);
+                    break;
+                }
             }
 
             SelectCharacterResponse response;
