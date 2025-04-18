@@ -3,8 +3,10 @@
 
 #include "GameInstance.h"
 #include "SessionSubsystem.h"
+#include "Actors/Characters/Player/PlayerCharacter.h"
 
-NetworkSubsystem::NetworkSubsystem()
+NetworkSubsystem::NetworkSubsystem() :
+    player_type_(PlayerCharacter::StaticClass())
 {
 }
 

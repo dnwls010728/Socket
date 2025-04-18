@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "Actor/Actor.h"
+#include "Actors/NetworkActor.h"
 
-class CharacterBase : public Actor
+class CharacterBase : public NetworkActor
 {
     SHADER_CLASS_HELPER(CharacterBase)
-    GENERATED_BODY(CharacterBase, Actor)
+    GENERATED_BODY(CharacterBase, NetworkActor)
     
 public:
     CharacterBase(const std::wstring& kName);

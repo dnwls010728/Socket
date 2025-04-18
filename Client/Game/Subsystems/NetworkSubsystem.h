@@ -2,6 +2,8 @@
 #include "Subsystems/Tickable.h"
 #include "Subsystems/WorldSubsystem.h"
 
+class NetworkActor;
+
 namespace Net
 {
     struct IPacket;
@@ -21,5 +23,7 @@ public:
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
+
+    rttr::type player_type_;
     
 };

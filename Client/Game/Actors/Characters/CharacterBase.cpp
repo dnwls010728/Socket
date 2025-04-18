@@ -10,7 +10,7 @@
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    Actor(kName),
+    NetworkActor(kName),
     state_machine_(nullptr)
 {
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
@@ -25,7 +25,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
 
 void CharacterBase::Tick(float delta_time)
 {
-    Actor::Tick(delta_time);
+    NetworkActor::Tick(delta_time);
 
     Math::Vector2 position = GetTransform()->GetPosition();
     DebugDrawHelper::Get()->DrawBox(position, { 1.0f, 1.0f }, Math::Color::White);
