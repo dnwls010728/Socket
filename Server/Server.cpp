@@ -1,11 +1,13 @@
-﻿// Server.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
+﻿#include "ServerManager.h"
+#define _CRTDBG_MAP_ALLOC
 
-#include <iostream>
-#include "ServerManager.h"
-#include "Serializer.h"
 int main()
 {
-	ServerManager server_manager;
-	server_manager.Execute();
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+	
+	ServerManager::Get()->Execute();
+
 	return 0;
 } 

@@ -1,13 +1,15 @@
 ﻿#pragma once
 
+#include "Singleton.h"
 #include "TCPServerSocket.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/SessionManager.h"
 
-class ServerManager
+class ServerManager : public Singleton<ServerManager>
 {
 public:
 	ServerManager();
+	virtual ~ServerManager() override = default;
 
 	bool Execute();
 

@@ -1,6 +1,6 @@
 ﻿#include "MySQLManager.h"
 
-#include "../Utils/StringHelper.h"
+#include "../Helper/StringHelper.h"
 #include "jdbc/cppconn/driver.h"
 #include "jdbc/cppconn/exception.h"
 #include "jdbc/cppconn/resultset.h"

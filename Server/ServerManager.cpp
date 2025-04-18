@@ -5,7 +5,7 @@
 #include "CustomPacket.h"
 #include "CustomSerializer.h"
 #include "Session/Session.h"
-#include "Utils/StringHelper.h"
+#include "Helper/StringHelper.h"
 
 ServerManager::ServerManager()
 {
