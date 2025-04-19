@@ -8,45 +8,45 @@ SessionManager::SessionManager() :
 {
 }
 
-void SessionManager::AddSession(const std::shared_ptr<Session>& session)
+void SessionManager::AddSession(std::unique_ptr<Session>& session)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    sessions_[session->GetClientID()] = session;
+    sessions_[session->GetClientID()] = std::move(session);
 }
 
-void SessionManager::RemoveSession(int client_id)
+void SessionManager::RemoveSession(uint32_t client_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     sessions_.erase(client_id);
 }
 
-std::shared_ptr<Session> SessionManager::FindSessionByClientID(int client_id)
+Session* SessionManager::FindSessionByClientID(uint32_t client_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = sessions_.find(client_id);
-    if (it != sessions_.end()) return it->second;
+    if (it != sessions_.end()) return it->second.get();
 
     return nullptr;
 }
 
-std::shared_ptr<Session> SessionManager::FindSessionByAccountUniqueID(int account_unique_id)
+Session* SessionManager::FindSessionByAccountUniqueID(uint32_t account_unique_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& session : sessions_)
     {
         if (session.second->GetAccountUniqueID() == account_unique_id)
-            return session.second;
+            return session.second.get();
     }
 
     return nullptr;
 }
 
-bool SessionManager::HasSessionByClientID(int client_id)
+bool SessionManager::HasSessionByClientID(uint32_t client_id)
 {
     return FindSessionByClientID(client_id) != nullptr;
 }
 
-bool SessionManager::HasSessionByAccountUniqueID(int account_unique_id)
+bool SessionManager::HasSessionByAccountUniqueID(uint32_t account_unique_id)
 {
     return FindSessionByAccountUniqueID(account_unique_id) != nullptr;
 }

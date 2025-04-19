@@ -74,7 +74,7 @@ bool ServerManager::Execute()
 bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
 {
     std::cout << "Client connected: " << state.address.ToString().c_str() << std::endl;
-    std::shared_ptr<Session> session = std::make_shared<Session>(state.uniqueKey);
+    std::unique_ptr<Session> session = std::make_unique<Session>(state.uniqueKey);
     session_manager_.AddSession(session);
     return true;
 }
@@ -150,8 +150,8 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     return;
                 }
 
-                std::shared_ptr<Session> session = session_manager_.FindSessionByClientID(state.uniqueKey);
-                if (session) session->SetAccountUniqueID(unique_id);
+                Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
+                if (session) session->CreatePlayer(unique_id);
 
                 std::vector<CharacterInfo> characters;
                 mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
@@ -188,7 +188,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
         {
             SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet.get());
 
-            std::shared_ptr<Session> session = session_manager_.FindSessionByClientID(state.uniqueKey);
+            Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
             if (session)
             {
                 // 해당 캐릭터가 로그인한 계정의 캐릭터인지 확인
@@ -200,8 +200,8 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 
                 if (is_found)
                 {
-                    session->SetCharacterUniqueID(request->unique_id);
-
+                    // TODO: 캐릭터 선택 처리 필요
+                    
                     SelectCharacterResponse response;
                     response.is_success = true;
                     response.message = L"Character selected successfully.";
@@ -220,4 +220,9 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
     default:
         break;
     }
+}
+
+void ServerManager::SendPacket(uint32_t client_id, const Net::IPacket& packet)
+{
+    server_socket_.SendPacketToClient(client_id, packet);
 }

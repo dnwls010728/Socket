@@ -9,17 +9,17 @@ class SessionManager
 public:
     SessionManager();
 
-    void AddSession(const std::shared_ptr<Session>& session);
-    void RemoveSession(int client_id);
+    void AddSession(std::unique_ptr<Session>& session);
+    void RemoveSession(uint32_t client_id);
 
-    std::shared_ptr<Session> FindSessionByClientID(int client_id);
-    std::shared_ptr<Session> FindSessionByAccountUniqueID(int account_unique_id);
+    Session* FindSessionByClientID(uint32_t client_id);
+    Session* FindSessionByAccountUniqueID(uint32_t account_unique_id);
 
-    bool HasSessionByClientID(int client_id);
-    bool HasSessionByAccountUniqueID(int account_unique_id);
+    bool HasSessionByClientID(uint32_t client_id);
+    bool HasSessionByAccountUniqueID(uint32_t account_unique_id);
 
 private:
     std::mutex mutex_;
-    std::unordered_map<int, std::shared_ptr<Session>> sessions_;
+    std::unordered_map<uint32_t, std::unique_ptr<Session>> sessions_;
     
 };

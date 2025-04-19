@@ -154,6 +154,7 @@
     <ClCompile Include="MySQL\MySQLManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
+    <ClCompile Include="Session\Player.cpp" />
     <ClCompile Include="Session\Session.cpp" />
     <ClCompile Include="Session\SessionManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Include\mysql\jdbc.h" />
     <ClInclude Include="MySQL\MySQLManager.h" />
     <ClInclude Include="ServerManager.h" />
+    <ClInclude Include="Session\Player.h" />
     <ClInclude Include="Session\Session.h" />
     <ClInclude Include="Session\SessionManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
@@ -230,6 +232,9 @@
     <Content Include="Lib\mysqlcppconn.lib" />
     <Content Include="Lib\mysqlcppconnx-static.lib" />
     <Content Include="Lib\mysqlcppconnx.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Map\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

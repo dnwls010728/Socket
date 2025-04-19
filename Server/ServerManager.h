@@ -16,6 +16,7 @@ public:
 	
 	void OnClientDisconnected(const Net::TCPConnectionState& state);
 	void OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet);
+	void SendPacket(uint32_t client_id, const Net::IPacket& packet);
 
 private:
 	Net::TCP::TCPServerSocket server_socket_;
