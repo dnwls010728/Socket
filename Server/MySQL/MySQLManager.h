@@ -2,13 +2,15 @@
 
 #include <functional>
 
+#include "../Singleton.h"
 #include "jdbc/cppconn/connection.h"
 #include "jdbc/cppconn/resultset.h"
 
-class MySQLManager
+class MySQLManager : public Singleton<MySQLManager>
 {
 public:
     MySQLManager();
+    virtual ~MySQLManager() override = default;
 
     bool Connect(const sql::SQLString& host_name, const sql::SQLString& user, const sql::SQLString& password);
 

@@ -263,6 +263,8 @@
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
+    <ClInclude Include="Game\Maps\OneMap.h" />
+    <ClInclude Include="Game\Maps\ZeroMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
@@ -610,6 +612,8 @@
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
+    <ClCompile Include="Game\Maps\OneMap.cpp" />
+    <ClCompile Include="Game\Maps\ZeroMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />

@@ -2,6 +2,7 @@
 
 #include "Singleton.h"
 #include "TCPServerSocket.h"
+#include "Map/MapManager.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/SessionManager.h"
 
@@ -21,6 +22,5 @@ public:
 private:
 	Net::TCP::TCPServerSocket server_socket_;
 
-	MySQLManager mysql_manager_;
 	SessionManager session_manager_;
 };

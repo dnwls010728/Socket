@@ -16,7 +16,7 @@ namespace UI
 class LoginMap : public Level
 {
     SHADER_CLASS_HELPER(Level)
-    GENERATED_BODY(LoginMap, Level);
+    GENERATED_BODY(LoginMap, Level)
     
 public:
     LoginMap(const std::wstring& kName);

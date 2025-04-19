@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "NetworkSubsystem.h"
 
+#include <CustomPacket.h>
+
 #include "GameInstance.h"
 #include "SessionSubsystem.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
@@ -40,7 +42,15 @@ void NetworkSubsystem::Tick(float delta_time)
 
 void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
-    Logger::Print(L"Packet ID: %d", packet->GetPacketID());
+    switch (packet->GetPacketID())
+    {
+    case ChangeMapPacket::StaticPacketID:
+        {
+            ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet.get());
+            World::Get()->OpenLevel(std::to_wstring(change_map_packet->map_id));
+        }
+        break;
+    }
 }
 
 

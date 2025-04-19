@@ -60,7 +60,7 @@ struct LoginResponse : public Net::IPacket
 // 캐릭터 선택 요청
 struct SelectCharacterRequest : public Net::IPacket
 {
-    int unique_id;
+    uint32_t unique_id;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
     REGISTER_PACKET(SelectCharacterRequest, 206)
@@ -74,4 +74,31 @@ struct SelectCharacterResponse : public Net::IPacket
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message)
     REGISTER_PACKET(SelectCharacterResponse, 207)
+};
+
+// 맵이 변경되었을 때
+struct ChangeMapPacket : public Net::IPacket
+{
+    uint32_t map_id;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_id)
+    REGISTER_PACKET(ChangeMapPacket, 208)
+};
+
+// 채팅 메시지를 보낼 때
+struct ChatMessagePacket : public Net::IPacket
+{
+    std::wstring message;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, message)
+    REGISTER_PACKET(ChatMessagePacket, 209)
+};
+
+// 채팅 메시지를 받을 때
+struct ChatMessageReceivePacket : public Net::IPacket
+{
+    std::wstring message;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, message)
+    REGISTER_PACKET(ChatMessageReceivePacket, 210)
 };

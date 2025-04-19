@@ -19,7 +19,8 @@ ServerManager::ServerManager()
 
 bool ServerManager::Execute()
 {
-    if (!mysql_manager_.Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
+    MySQLManager* mysql_manager = MySQLManager::Get();
+    if (!mysql_manager->Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
     {
         return false;
     }
@@ -67,7 +68,7 @@ bool ServerManager::Execute()
 
     server_socket_.Stop();
     Net::WSAUninit();
-    mysql_manager_.Disconnect();
+    mysql_manager->Disconnect();
     return true;
 }
 
@@ -87,6 +88,9 @@ void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)
 {
+    Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
+    if (session) session->ReceivePacket(packet.get());
+    
     switch (packet->GetPacketID())
     {
     case MessagePacket::StaticPacketID:
@@ -99,9 +103,10 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
     case RegisterRequest::StaticPacketID:
         {
             RegisterRequest* request = static_cast<RegisterRequest*>(packet.get());
-
+            MySQLManager* mysql_manager = MySQLManager::Get();
+            
             bool is_found = false;
-            mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"'", [&](const sql::ResultSet* result)
+            mysql_manager->ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"'", [&](const sql::ResultSet* result)
             {
                 is_found = true;
 
@@ -113,7 +118,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 
             if (!is_found)
             {
-                int result = mysql_manager_.ExecuteUpdate(L"INSERT INTO account_info (id, password) VALUES ('" + request->id + L"', '" + request->password + L"')");
+                int result = mysql_manager->ExecuteUpdate(L"INSERT INTO account_info (id, password) VALUES ('" + request->id + L"', '" + request->password + L"')");
                 if (result == 0)
                 {
                     RegisterResponse response;
@@ -134,9 +139,10 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
     case LoginRequest::StaticPacketID:
         {
             LoginRequest* request = static_cast<LoginRequest*>(packet.get());
+            MySQLManager* mysql_manager = MySQLManager::Get();
 
             bool is_found = false;
-            mysql_manager_.ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"' AND password = '" + request->password + L"'", [&](const sql::ResultSet* result)
+            mysql_manager->ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"' AND password = '" + request->password + L"'", [&](const sql::ResultSet* result)
             {
                 is_found = true;
 
@@ -154,7 +160,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 if (session) session->CreatePlayer(unique_id);
 
                 std::vector<CharacterInfo> characters;
-                mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
+                mysql_manager->ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
                 {
                     CharacterInfo character;
                     character.unique_id = result->getInt("unique_id");
@@ -181,39 +187,6 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 response.message = L"Invalid ID or password.";
                 server_socket_.SendPacketToClient(state.uniqueKey, response);
             }
-        }
-        break;
-
-    case SelectCharacterRequest::StaticPacketID:
-        {
-            SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet.get());
-
-            Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
-            if (session)
-            {
-                // 해당 캐릭터가 로그인한 계정의 캐릭터인지 확인
-                bool is_found = false;
-                mysql_manager_.ExecuteQuery(L"SELECT * FROM character_info WHERE unique_id = " + std::to_wstring(request->unique_id) + L" AND account_unique_id = " + std::to_wstring(session->GetAccountUniqueID()), [&](const sql::ResultSet* result)
-                {
-                    is_found = true;
-                });
-
-                if (is_found)
-                {
-                    // TODO: 캐릭터 선택 처리 필요
-                    
-                    SelectCharacterResponse response;
-                    response.is_success = true;
-                    response.message = L"Character selected successfully.";
-                    server_socket_.SendPacketToClient(state.uniqueKey, response);
-                    break;
-                }
-            }
-
-            SelectCharacterResponse response;
-            response.is_success = false;
-            response.message = L"Character selection failed.";
-            server_socket_.SendPacketToClient(state.uniqueKey, response);
         }
         break;
 

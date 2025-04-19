@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include <memory>
 
+#include "Player.h"
+
 namespace Net
 {
     struct IPacket;
 }
-
-class Player;
 
 class Session
 {
@@ -14,18 +14,19 @@ public:
     Session(int client_id);
     ~Session() = default;
 
-    void SendPacket(const Net::IPacket& packet);
+    void SendPacket(const Net::IPacket& packet) const;
+    void ReceivePacket(Net::IPacket* packet) const;
 
-    std::shared_ptr<Player> CreatePlayer(uint32_t account_unique_id);
+    Player* CreatePlayer(uint32_t account_unique_id);
 
     uint32_t GetAccountUniqueID() const;
 
     inline int GetClientID() const { return client_id_; }
     
-    inline std::shared_ptr<Player> GetPlayer() const { return player_; }
+    inline Player* GetPlayer() const { return player_.get(); }
 
 private:
     int client_id_;
 
-    std::shared_ptr<Player> player_;
+    std::unique_ptr<Player> player_;
 };
