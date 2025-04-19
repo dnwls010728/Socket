@@ -167,11 +167,9 @@
     <ClCompile Include="Engine\Windows\DX\Material.cpp" />
     <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\Components\PlayerController.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Data\PropData.cpp" />
-    <ClCompile Include="Game\Maps\TempMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationCondition.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationTransition.cpp" />
@@ -181,14 +179,9 @@
     <ClCompile Include="Engine\Subsystems\Tickable.cpp" />
     <ClCompile Include="Engine\Subsystems\WorldSubsystem.cpp" />
     <ClCompile Include="Game\Actors\Characters\Enemies\EnemyBase.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\Components\InventoryComponent.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\States\PlayerDashState.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\States\PlayerIdleState.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\States\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
-    <ClCompile Include="Game\Actors\Dummy.cpp" />
     <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Blackboard\BlackboardEntry.cpp" />
@@ -214,8 +207,9 @@
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
-    <ClCompile Include="Game\Maps\LobbyMap.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
+    <ClCompile Include="Game\Actors\NetworkActor.cpp" />
+    <ClCompile Include="Game\Maps\LoginMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -734,11 +728,9 @@
     <ClInclude Include="Engine\Windows\DX\Material.h" />
     <ClInclude Include="Engine\Windows\DX\Mesh.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\Components\PlayerController.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Data\PropData.h" />
-    <ClInclude Include="Game\Maps\TempMap.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationCondition.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationTransition.h" />
     <ClInclude Include="Engine\GameInstance.h" />
@@ -747,14 +739,9 @@
     <ClInclude Include="Engine\Subsystems\Tickable.h" />
     <ClInclude Include="Engine\Subsystems\WorldSubsystem.h" />
     <ClInclude Include="Game\Actors\Characters\Enemies\EnemyBase.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\Components\InventoryComponent.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\States\PlayerDashState.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\States\PlayerIdleState.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\States\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
-    <ClInclude Include="Game\Actors\Dummy.h" />
     <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
     <ClInclude Include="Game\Blackboard\BlackboardEntry.h" />
@@ -782,8 +769,9 @@
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
-    <ClInclude Include="Game\Maps\LobbyMap.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
+    <ClInclude Include="Game\Actors\NetworkActor.h" />
+    <ClInclude Include="Game\Maps\LoginMap.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">
