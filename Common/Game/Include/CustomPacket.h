@@ -84,21 +84,3 @@ struct ChangeMapPacket : public Net::IPacket
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_id)
     REGISTER_PACKET(ChangeMapPacket, 208)
 };
-
-// 채팅 메시지를 보낼 때
-struct ChatMessagePacket : public Net::IPacket
-{
-    std::wstring message;
-    
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, message)
-    REGISTER_PACKET(ChatMessagePacket, 209)
-};
-
-// 채팅 메시지를 받을 때
-struct ChatMessageReceivePacket : public Net::IPacket
-{
-    std::wstring message;
-    
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, message)
-    REGISTER_PACKET(ChatMessageReceivePacket, 210)
-};

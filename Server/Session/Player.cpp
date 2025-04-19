@@ -50,18 +50,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             });
         }
         break;
-
-    case ChatMessagePacket::StaticPacketID:
-        {
-            ChatMessagePacket* chat_message = static_cast<ChatMessagePacket*>(packet);
-            if (map_)
-            {
-                ChatMessageReceivePacket chat_message_receive_packet;
-                chat_message_receive_packet.message = chat_message->message;
-                map_->SendPacket(chat_message_receive_packet, this);
-            }
-        }
-        break;
         
     default:
         break;
