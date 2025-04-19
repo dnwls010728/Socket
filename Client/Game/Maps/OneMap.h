@@ -35,5 +35,3 @@ private:
     void OnChatInput(const std::wstring& kText);
     
 };
-    
-};
