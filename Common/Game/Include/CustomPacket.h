@@ -76,11 +76,11 @@ struct SelectCharacterResponse : public Net::IPacket
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
-// 맵이 변경되었을 때
-struct ChangeMapPacket : public Net::IPacket
+// 캐릭터 정보 전송
+struct CharacterInfoPacket : public Net::IPacket
 {
-    uint32_t map_id;
+    CharacterInfo character;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_id)
-    REGISTER_PACKET(ChangeMapPacket, 208)
+    SERIALIZABLE_FIELDS(CustomSerializer, character)
+    REGISTER_PACKET(SelectCharacterResponse, 207)
 };

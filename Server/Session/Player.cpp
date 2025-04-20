@@ -4,6 +4,7 @@
 
 #include "IPacket.h"
 #include "Session.h"
+#include "../Helper/StringHelper.h"
 #include "../Map/MapManager.h"
 #include "../MySQL/MySQLManager.h"
 
@@ -37,16 +38,21 @@ void Player::ReceivePacket(Net::IPacket* packet)
 
             MySQLManager::Get()->ExecuteQuery(L"SELECT * FROM character_info WHERE unique_id = " + std::to_wstring(character_unique_id_), [&](const sql::ResultSet* result)
             {
-                GameMap* map = MapManager::Get()->GetMap(result->getInt("map"));
-                if (map)
-                {
-                    map_ = map;
-                    map_->AddPlayer(this);
+                // TODO: HeavenMS - PlayerLoggedinHandler.java와 SetFieldHandler.cpp 참고
+                CharacterInfo character;
+                character.unique_id = result->getInt("unique_id");
+                character.account_unique_id = result->getInt("account_unique_id");
+                character.name = StringHelper::ToWideString(result->getString("name"));
+                character.lv = result->getInt("lv");
+                character.job = result->getInt("job");
+                character.map = result->getInt("map");
+                character.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
+                character.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
 
-                    ChangeMapPacket change_map_packet;
-                    change_map_packet.map_id = map_->GetMapUniqueID();
-                    SendPacket(change_map_packet);
-                }
+                // 선택한 캐릭터 정보를 전송
+                CharacterInfoPacket character_info_packet;
+                character_info_packet.character = character;
+                SendPacket(character_info_packet);
             });
         }
         break;

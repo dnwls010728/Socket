@@ -44,12 +44,8 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
 {
     switch (packet->GetPacketID())
     {
-    case ChangeMapPacket::StaticPacketID:
-        {
-            ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet.get());
-            World::Get()->OpenLevel(std::to_wstring(change_map_packet->map_id));
-        }
-        break;
+        default:
+            break;
     }
 }
 
