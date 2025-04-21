@@ -71,18 +71,18 @@ struct SelectCharacterResponse : public Net::IPacket
 {
     bool is_success;
     std::wstring message;
-    CharacterInfo character;
+    CharacterInfo character_info;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, character)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, character_info)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
 // 플레이어 스폰 패킷
 struct SpawnPlayerPacket : public Net::IPacket
 {
-    CharacterInfo character;
+    CharacterInfo character_info;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character_info)
     REGISTER_PACKET(SpawnPlayerPacket, 209)
 };
 

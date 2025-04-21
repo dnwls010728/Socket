@@ -7,7 +7,8 @@
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
-    state_(SessionState::kNone)
+    state_(SessionState::kNone),
+    character_info_()
 {
 }
 

@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <CommonObject.h>
+
 #include "NetTCPSocket.h"
 #include "TCPClientSocket.h"
 #include "Subsystems/GameInstanceSubsystem.h"
@@ -35,6 +37,9 @@ public:
     FORCEINLINE void SetState(SessionState state) { state_ = state; }
 
     FORCEINLINE bool IsInGame() const { return state_ == SessionState::kInGame; }
+
+    FORCEINLINE const CharacterInfo& GetCharacterInfo() const { return character_info_; }
+    FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
     
     OnPacketDelegate packet_handler;
 
@@ -46,5 +51,7 @@ private:
     Net::TCP::TCPClientSocket client_socket_;
 
     SessionState state_;
+
+    CharacterInfo character_info_;
     
 };

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <CommonObject.h>
 #include <cstdint>
 
 class GameMap;
@@ -26,6 +27,8 @@ public:
     inline uint32_t GetAccountUniqueID() const { return account_unique_id_; }
     inline GameMap* GetMap() const { return map_; }
 
+    inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
+
 private:
     Session* session_;
 
@@ -33,5 +36,7 @@ private:
     uint32_t character_unique_id_;
 
     GameMap* map_;
+
+    CharacterInfo character_info_;
     
 };

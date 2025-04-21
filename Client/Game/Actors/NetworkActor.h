@@ -10,11 +10,10 @@ public:
     NetworkActor(const std::wstring& kName);
     virtual ~NetworkActor() override = default;
 
-    FORCEINLINE Type::uint32 GetID() const { return id_; }
+    FORCEINLINE void SetUniqueID(Type::uint32 id) { unique_id_ = id; }
+    FORCEINLINE Type::uint32 GetUniqueID() const { return unique_id_; }
 
 private:
-    friend class NetworkSubsystem;
-    
-    Type::uint32 id_;
+    Type::uint32 unique_id_;
     
 };

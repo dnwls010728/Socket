@@ -3,7 +3,7 @@
 
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
-    id_(0)
+    unique_id_(0)
 {
 }
 

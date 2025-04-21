@@ -20,6 +20,7 @@ void GameMap::AddPlayer(Player* player)
     {
         // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
         SpawnPlayerPacket spawn_player_packet;
+        spawn_player_packet.character_info = player->GetCharacterInfo();
         SendPacket(spawn_player_packet, player);
     }
 
@@ -29,6 +30,7 @@ void GameMap::AddPlayer(Player* player)
         if (other_player && other_player != player)
         {
             SpawnPlayerPacket spawn_player_packet;
+            spawn_player_packet.character_info = player->GetCharacterInfo();
             player->SendPacket(spawn_player_packet);
         }
     }
@@ -42,6 +44,7 @@ void GameMap::RemovePlayer(Player* player)
     {
         // 맵에서 플레이어가 제거되면, 다른 플레이어에게 제거하도록 패킷을 전송
         DestroyPlayerPacket destroy_player_packet;
+        destroy_player_packet.unique_id = player->GetCharacterInfo().unique_id;
         SendPacket(destroy_player_packet, player);
     }
 }

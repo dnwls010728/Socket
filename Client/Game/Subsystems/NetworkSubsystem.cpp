@@ -8,7 +8,8 @@
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Level/CameraManager.h"
 
-NetworkSubsystem::NetworkSubsystem()
+NetworkSubsystem::NetworkSubsystem() :
+    network_actors_()
 {
 }
 
@@ -31,11 +32,14 @@ void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
 
+    const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
     if (GET_SESSION()->IsInGame())
     {
-        std::shared_ptr<PlayerCharacter> player_character = World::Get()->SpawnActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter");
+        std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
         if (IsValid(player_character))
         {
+            player_character->SetOwner(true);
+            
             CameraManager::Get()->SetTarget(player_character);
         }
     }
@@ -52,6 +56,17 @@ void NetworkSubsystem::Tick(float delta_time)
     }
 }
 
+void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
+{
+    auto iter = network_actors_.find(unique_id);
+    if (iter != network_actors_.end())
+    {
+        std::shared_ptr<NetworkActor> network_actor = iter->second;
+        if (IsValid(network_actor)) network_actor->Destroy();
+        network_actors_.erase(iter);
+    }
+}
+
 void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     switch (packet->GetPacketID())
@@ -59,14 +74,14 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case SpawnPlayerPacket::StaticPacketID:
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
-            Logger::Print(L"플레이어 생성");
+            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", spawn_player_packet->character_info.unique_id);
         }
         break;
 
     case DestroyPlayerPacket::StaticPacketID:
         {
             DestroyPlayerPacket* destroy_player_packet = static_cast<DestroyPlayerPacket*>(packet.get());
-            Logger::Print(L"플레이어 파괴");
+            DestroyNetworkActor(destroy_player_packet->unique_id);
         }
         break;
         
