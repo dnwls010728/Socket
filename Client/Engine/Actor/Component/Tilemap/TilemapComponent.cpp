@@ -129,7 +129,7 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 				const std::string& name = temp.getName();
 				
 				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
-				Actor* actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
+				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
 				if (IsValid(actor))
 				{
 					std::shared_ptr<TransformComponent> transform = actor->GetTransform();

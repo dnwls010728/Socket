@@ -15,7 +15,7 @@ public:
 		*this << value.name;
 		*this << value.lv;
 		*this << value.job;
-		*this << value.map;
+		*this << value.map_unique_id;
 		*this << value.last_position_x;
 		*this << value.last_position_y;
 		return *this;
@@ -28,7 +28,7 @@ public:
 		*this >> value.name;
 		*this >> value.lv;
 		*this >> value.job;
-		*this >> value.map;
+		*this >> value.map_unique_id;
 		*this >> value.last_position_x;
 		*this >> value.last_position_y;
 		return *this;

@@ -19,11 +19,10 @@ public:
 
     virtual void Init() override;
     virtual void Deinit() override;
+    virtual void OnWorldBeginPlay() override;
     virtual void Tick(float delta_time) override;
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
-
-    rttr::type player_type_;
     
 };

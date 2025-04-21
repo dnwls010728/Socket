@@ -15,8 +15,6 @@ public:
     FORCEINLINE std::shared_ptr<class StateMachineComponent> GetStateMachine() const { return state_machine_; }
 
 protected:
-    virtual void Tick(float delta_time) override;
-    
 #pragma region 컴포넌트
     std::shared_ptr<class RigidBody2DComponent> rigid_body_;
     std::shared_ptr<class SpriteRendererComponent> renderer_;

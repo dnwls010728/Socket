@@ -145,3 +145,8 @@ FORCEINLINE bool IsValid(const Actor* actor)
 {
     return actor && !actor->IsPendingDeletion();
 }
+
+FORCEINLINE bool IsValid(const std::shared_ptr<Actor>& actor)
+{
+    return actor && !actor->IsPendingDeletion();
+}

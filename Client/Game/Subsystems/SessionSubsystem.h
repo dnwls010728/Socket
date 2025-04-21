@@ -3,6 +3,18 @@
 #include "TCPClientSocket.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
+#define GET_SESSION() \
+    GameInstance::Get()->GetSubsystem<SessionSubsystem>()
+
+enum class SessionState
+{
+    kNone,
+    kConnected,
+    kDisconnected,
+    kLoggedIn,
+    kInGame
+};
+
 DECLARE_DELEGATE(OnPacketDelegate, const std::shared_ptr<Net::IPacket>&);
 
 class SessionSubsystem : public GameInstanceSubsystem
@@ -19,11 +31,10 @@ public:
     void ProcessPackets();
     void SendPacket(Net::IPacket& packet);
 
-    FORCEINLINE bool IsLoggedIn() const { return is_logged_in_; }
-    FORCEINLINE void SetLoggedIn(bool logged_in) { is_logged_in_ = logged_in; }
+    FORCEINLINE SessionState GetState() const { return state_; }
+    FORCEINLINE void SetState(SessionState state) { state_ = state; }
 
-    FORCEINLINE Type::uint32 GetAccountUniqueID() const { return account_unique_id_; }
-    FORCEINLINE void SetAccountUniqueID(Type::uint32 account_unique_id) { account_unique_id_ = account_unique_id; }
+    FORCEINLINE bool IsInGame() const { return state_ == SessionState::kInGame; }
     
     OnPacketDelegate packet_handler;
 
@@ -34,8 +45,6 @@ private:
     
     Net::TCP::TCPClientSocket client_socket_;
 
-    bool is_logged_in_;
-    
-    Type::uint32 account_unique_id_;
+    SessionState state_;
     
 };

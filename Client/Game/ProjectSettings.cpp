@@ -2,6 +2,7 @@
 #include "ProjectSettings.h"
 
 #include "Maps/LoginMap.h"
+#include "Maps/Map_Begin.h"
 
 ProjectSettings::ProjectSettings()
 {
@@ -24,6 +25,7 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
 
     settings->AddLevel<LoginMap>(L"LoginMap");
+    settings->AddLevel<Map_Begin>(L"0");
 
     settings->SetDefaultLevel(L"LoginMap");
     

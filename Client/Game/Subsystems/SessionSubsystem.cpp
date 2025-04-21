@@ -7,8 +7,7 @@
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
-    is_logged_in_(false),
-    account_unique_id_(0)
+    state_(SessionState::kNone)
 {
 }
 
@@ -29,6 +28,8 @@ void SessionSubsystem::Init()
         WindowsApplication::Get()->QuitApplication();
         return;
     }
+
+    SetState(SessionState::kConnected);
 }
 
 void SessionSubsystem::Deinit()

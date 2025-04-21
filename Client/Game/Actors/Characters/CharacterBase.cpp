@@ -23,14 +23,6 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
 
 }
 
-void CharacterBase::Tick(float delta_time)
-{
-    NetworkActor::Tick(delta_time);
-
-    Math::Vector2 position = GetTransform()->GetPosition();
-    DebugDrawHelper::Get()->DrawBox(position, { 1.0f, 1.0f }, Math::Color::White);
-}
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

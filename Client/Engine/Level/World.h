@@ -49,7 +49,7 @@ public:
     Actor* GetActor(const rttr::type& type);
 
     template<std::derived_from<Actor> T>
-    T* SpawnActor(const rttr::type& kType, const std::wstring& kName = L"");
+    std::shared_ptr<T> SpawnActor(const rttr::type& kType, const std::wstring& kName = L"");
 
     template<std::derived_from<Level> T>
     void AddLevel(const std::wstring& kName);
@@ -131,7 +131,7 @@ T* World::GetSubsystem() const
 }
 
 template <std::derived_from<Actor> T>
-T* World::SpawnActor(const rttr::type& kType, const std::wstring& kName)
+std::shared_ptr<T> World::SpawnActor(const rttr::type& kType, const std::wstring& kName)
 {
     std::wstring name = kName;
     
@@ -152,7 +152,7 @@ T* World::SpawnActor(const rttr::type& kType, const std::wstring& kName)
         rttr::type actor_type = rttr::type::get<T>();
         if (kType.is_derived_from(actor_type))
         {
-            return static_cast<T*>(actor.get());
+            return std::static_pointer_cast<T>(actor);
         }
     }
 

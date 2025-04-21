@@ -9,7 +9,9 @@ struct CharacterInfo
     std::wstring name;
     int lv;
     int job;
-    int map;
+    int map_unique_id;
     float last_position_x;
     float last_position_y;
+
+    inline bool IsValid() const { return unique_id > 0; }
 };

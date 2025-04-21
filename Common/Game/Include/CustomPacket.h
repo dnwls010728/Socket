@@ -71,16 +71,26 @@ struct SelectCharacterResponse : public Net::IPacket
 {
     bool is_success;
     std::wstring message;
+    CharacterInfo character;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, character)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
-// 캐릭터 정보 전송
-struct CharacterInfoPacket : public Net::IPacket
+// 플레이어 스폰 패킷
+struct SpawnPlayerPacket : public Net::IPacket
 {
     CharacterInfo character;
     
-    SERIALIZABLE_FIELDS(CustomSerializer, character)
-    REGISTER_PACKET(SelectCharacterResponse, 207)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character)
+    REGISTER_PACKET(SpawnPlayerPacket, 209)
+};
+
+// 플레이어 파괴 패킷
+struct DestroyPlayerPacket : public Net::IPacket
+{
+    uint32_t unique_id;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
+    REGISTER_PACKET(DestroyPlayerPacket, 210)
 };

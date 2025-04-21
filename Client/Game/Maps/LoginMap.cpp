@@ -28,8 +28,7 @@ void LoginMap::Load()
 {
     Level::Load();
 
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (subsystem) subsystem->packet_handler.Add(this, &LoginMap::ProcessPackets);
+    GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
 
     UI::Manager* ui_manager = UI::Manager::Get();
     if (ui_manager)
@@ -110,8 +109,7 @@ void LoginMap::Unload(EndPlayReason type)
         if (ui_manager->IsInViewport(character_list_)) ui_manager->RemoveFromViewport(character_list_);
     }
     
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (subsystem) subsystem->packet_handler.Remove(this, &LoginMap::ProcessPackets);
+    GET_SESSION()->packet_handler.Remove(this, &LoginMap::ProcessPackets);
 }
 
 void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
@@ -152,6 +150,8 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 
             if (response->is_success)
             {
+                GET_SESSION()->SetState(SessionState::kLoggedIn);
+                
                 if (ui_manager)
                 {
                     const std::vector<CharacterInfo>& characters = response->characters;
@@ -175,11 +175,12 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
     case SelectCharacterResponse::StaticPacketID:
         {
             SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
-            Logger::Print(L"%s", response->message.c_str());
-
             if (response->is_success)
             {
-                ui_manager->RemoveFromViewport(character_list_);
+                GET_SESSION()->SetState(SessionState::kInGame);
+                
+                Type::uint32 map_unique_id = response->character.map_unique_id;
+                World::Get()->OpenLevel(std::to_wstring(map_unique_id));
             }
         }
         break;
@@ -192,27 +193,21 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 void LoginMap::OnRegister()
 {
     if (register_id_->GetText().empty() || register_password_->GetText().empty()) return;
-    
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (!subsystem) return;
 
     RegisterRequest request;
     request.id = register_id_->GetText();
     request.password = register_password_->GetText();
-    subsystem->SendPacket(request);
+    GET_SESSION()->SendPacket(request);
 }
 
 void LoginMap::OnLogin()
 {
     if (login_id_->GetText().empty() || login_password_->GetText().empty()) return;
 
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (!subsystem) return;
-
     LoginRequest request;
     request.id = login_id_->GetText();
     request.password = login_password_->GetText();
-    subsystem->SendPacket(request);
+    GET_SESSION()->SendPacket(request);
 }
 
 void LoginMap::OnRegisterSwitch()
@@ -251,15 +246,12 @@ void LoginMap::OnLoginSwitch()
 
 void LoginMap::OnCharacterSelect(Type::uint64 user_data)
 {
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
-    if (!subsystem) return;
-    
     CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
     if (!character) return;
 
     SelectCharacterRequest request;
     request.unique_id = character->unique_id;
-    subsystem->SendPacket(request);
+    GET_SESSION()->SendPacket(request);
 }
 
 RTTR_REGISTRATION
