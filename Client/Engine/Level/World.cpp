@@ -287,14 +287,14 @@ void World::TransitionLevel()
 
     current_level_->InitializeActors();
     
-    SpawnActors();
-    ProcessActorActivation();
-    DestroyActors();
-    
     for (const auto& val : subsystems_ | std::views::values)
     {
         val->OnWorldBeginPlay();
     }
+    
+    SpawnActors();
+    ProcessActorActivation();
+    DestroyActors();
 }
 
 void World::ProcessCollisionEvents()

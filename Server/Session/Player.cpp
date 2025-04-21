@@ -56,8 +56,14 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 SendPacket(response);
 
                 map_ = MapManager::Get()->GetMap(character_info_.map_unique_id);
-                map_->AddPlayer(this);
+                // map_->AddPlayer(this);
             });
+        }
+        break;
+
+    case MapLoadCompletePacket::StaticPacketID:
+        {
+            map_->AddPlayer(this);
         }
         break;
 

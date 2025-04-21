@@ -37,13 +37,15 @@ void NetworkSubsystem::OnWorldBeginPlay()
     if (GET_SESSION()->IsInGame())
     {
         std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
-        Logger::Print(L"Owner: %d", character_info.unique_id);
         if (IsValid(player_character))
         {
             player_character->SetOwner(true);
             
             CameraManager::Get()->SetTarget(player_character);
         }
+
+        MapLoadCompletePacket map_load_complete_packet;
+        GET_SESSION()->SendPacket(map_load_complete_packet);
     }
 }
 
@@ -84,7 +86,6 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
             std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", spawn_player_packet->character_info.unique_id);
-            Logger::Print(L"SpawnPlayerPacket: %d", spawn_player_packet->character_info.unique_id);
         }
         break;
 

@@ -77,6 +77,12 @@ struct SelectCharacterResponse : public Net::IPacket
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
+struct MapLoadCompletePacket : public Net::IPacket
+{
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    REGISTER_PACKET(MapLoadCompletePacket, 208)
+};
+
 // 플레이어 스폰 패킷
 struct SpawnPlayerPacket : public Net::IPacket
 {
