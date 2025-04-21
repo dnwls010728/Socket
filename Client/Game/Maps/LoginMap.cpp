@@ -178,9 +178,10 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
             if (response->is_success)
             {
                 GET_SESSION()->SetState(SessionState::kInGame);
-                
-                Type::uint32 map_unique_id = response->character_info.map_unique_id;
-                World::Get()->OpenLevel(std::to_wstring(map_unique_id));
+
+                const CharacterInfo& character_info = response->character_info;
+                GET_SESSION()->SetCharacterInfo(character_info);
+                World::Get()->OpenLevel(std::to_wstring(character_info.map_unique_id));
             }
         }
         break;

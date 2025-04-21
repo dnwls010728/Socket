@@ -37,6 +37,8 @@ protected:
     template<std::derived_from<Actor> T>
     T* AddActor(const rttr::type& kType, const std::wstring& kName);
 
+    FORCEINLINE const std::vector<std::shared_ptr<Actor>>& GetActors() const { return actors_; }
+
 private:
     friend class World;
     friend class Editor;

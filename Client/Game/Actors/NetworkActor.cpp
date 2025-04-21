@@ -1,10 +1,18 @@
 ﻿#include "pch.h"
 #include "NetworkActor.h"
 
+#include "GameInstance.h"
+#include "Subsystems/SessionSubsystem.h"
+
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
     unique_id_(0)
 {
+}
+
+void NetworkActor::SendPacket(Net::IPacket& packet)
+{
+    GET_SESSION()->SendPacket(packet);
 }
 
 RTTR_REGISTRATION

@@ -30,7 +30,7 @@ void GameMap::AddPlayer(Player* player)
         if (other_player && other_player != player)
         {
             SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_info = player->GetCharacterInfo();
+            spawn_player_packet.character_info = other_player->GetCharacterInfo();
             player->SendPacket(spawn_player_packet);
         }
     }

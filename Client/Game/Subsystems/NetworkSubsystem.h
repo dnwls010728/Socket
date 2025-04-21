@@ -26,8 +26,10 @@ public:
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& kType, const std::wstring& kName, Type::uint32 unique_id);
-
+    
     void DestroyNetworkActor(Type::uint32 unique_id);
+
+    std::shared_ptr<NetworkActor> GetNetworkActor(Type::uint32 unique_id);
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);

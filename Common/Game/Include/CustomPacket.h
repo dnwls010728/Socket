@@ -94,3 +94,13 @@ struct DestroyPlayerPacket : public Net::IPacket
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
     REGISTER_PACKET(DestroyPlayerPacket, 210)
 };
+
+struct MovePlayerPacket : public Net::IPacket
+{
+    uint32_t unique_id;
+    float x;
+    float y;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, x, y)
+    REGISTER_PACKET(MovePlayerPacket, 211)
+};

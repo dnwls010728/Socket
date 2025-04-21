@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "PlayerCharacter.h"
 
+#include <CustomPacket.h>
+
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
@@ -28,6 +30,9 @@ void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
 
+    std::shared_ptr<TransformComponent> transform = GetTransform();
+    Math::Vector2 position = transform->GetPosition();
+
     if (IsOwner())
     {
         Keyboard* keyboard = Keyboard::Get();
@@ -36,7 +41,12 @@ void PlayerCharacter::Tick(float delta_time)
 
         Math::Vector2 direction = {static_cast<float>(h), static_cast<float>(v)};
 
-        GetTransform()->Translate(direction * 5.f * delta_time);
+        transform->Translate(direction * 5.f * delta_time);
+
+        MovePlayerPacket packet;
+        packet.x = position.x;
+        packet.y = position.y;
+        SendPacket(packet);
     }
 }
 

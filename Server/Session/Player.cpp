@@ -60,6 +60,20 @@ void Player::ReceivePacket(Net::IPacket* packet)
             });
         }
         break;
+
+    case MovePlayerPacket::StaticPacketID:
+        {
+            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
+            if (map_)
+            {
+                MovePlayerPacket move_player_broadcast_packet;
+                move_player_broadcast_packet.unique_id = character_unique_id_;
+                move_player_broadcast_packet.x = move_player_packet->x;
+                move_player_broadcast_packet.y = move_player_packet->y;
+                map_->SendPacket(move_player_broadcast_packet, this);
+            }
+        }
+        break;
         
     default:
         break;

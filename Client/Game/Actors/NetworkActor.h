@@ -1,6 +1,11 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
 
+namespace Net
+{
+    struct IPacket;
+}
+
 class NetworkActor : public Actor
 {
     SHADER_CLASS_HELPER(NetworkActor)
@@ -9,6 +14,8 @@ class NetworkActor : public Actor
 public:
     NetworkActor(const std::wstring& kName);
     virtual ~NetworkActor() override = default;
+
+    void SendPacket(Net::IPacket& packet);
 
     FORCEINLINE void SetUniqueID(Type::uint32 id) { unique_id_ = id; }
     FORCEINLINE Type::uint32 GetUniqueID() const { return unique_id_; }

@@ -5,6 +5,7 @@
 
 #include "GameInstance.h"
 #include "SessionSubsystem.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Level/CameraManager.h"
 
@@ -16,8 +17,6 @@ NetworkSubsystem::NetworkSubsystem() :
 void NetworkSubsystem::Init()
 {
     WorldSubsystem::Init();
-
-    GET_SESSION()->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
     
 }
 
@@ -31,11 +30,14 @@ void NetworkSubsystem::Deinit()
 void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
+    
+    GET_SESSION()->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
 
     const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
     if (GET_SESSION()->IsInGame())
     {
         std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
+        Logger::Print(L"Owner: %d", character_info.unique_id);
         if (IsValid(player_character))
         {
             player_character->SetOwner(true);
@@ -67,6 +69,13 @@ void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
     }
 }
 
+std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const Type::uint32 unique_id)
+{
+    auto iter = network_actors_.find(unique_id);
+    if (iter != network_actors_.end()) return iter->second;
+    return nullptr;
+}
+
 void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     switch (packet->GetPacketID())
@@ -75,6 +84,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
             std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", spawn_player_packet->character_info.unique_id);
+            Logger::Print(L"SpawnPlayerPacket: %d", spawn_player_packet->character_info.unique_id);
         }
         break;
 
@@ -82,6 +92,17 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             DestroyPlayerPacket* destroy_player_packet = static_cast<DestroyPlayerPacket*>(packet.get());
             DestroyNetworkActor(destroy_player_packet->unique_id);
+        }
+        break;
+
+    case MovePlayerPacket::StaticPacketID:
+        {
+            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet.get());
+            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(move_player_packet->unique_id);
+            if (IsValid(network_actor))
+            {
+                network_actor->GetTransform()->SetPosition({move_player_packet->x, move_player_packet->y});
+            }
         }
         break;
         
