@@ -100,6 +100,13 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
         }
         break;
 
+    case DisconnectPacket::StaticPacketID:
+        {
+            DisconnectPacket* disconnect_packet = static_cast<DisconnectPacket*>(packet.get());
+            
+        }
+        break;
+
     case RegisterRequest::StaticPacketID:
         {
             RegisterRequest* request = static_cast<RegisterRequest*>(packet.get());

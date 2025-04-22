@@ -16,6 +16,7 @@ public:
 
 protected:
 #pragma region 컴포넌트
+    std::shared_ptr<class CapsuleColliderComponent> collider_;
     std::shared_ptr<class RigidBody2DComponent> rigid_body_;
     std::shared_ptr<class SpriteRendererComponent> renderer_;
     std::shared_ptr<class StateMachineComponent> state_machine_;

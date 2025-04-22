@@ -2,6 +2,7 @@
 #include "CharacterBase.h"
 
 #include "DebugDrawHelper.h"
+#include "Actor/Component/CapsuleColliderComponent.h"
 #include "Actor/Component/CircleColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -13,8 +14,11 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     NetworkActor(kName),
     state_machine_(nullptr)
 {
+    collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
+    collider_->SetSize({1.f, 1.f});
+    
     rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
-    rigid_body_->SetGravityScale(0.f);
+    rigid_body_->SetBodyType(BodyType::kStatic);
     rigid_body_->SetFreezeRotation(true);
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");

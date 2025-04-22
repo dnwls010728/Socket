@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "SessionSubsystem.h"
 
+#include <CustomPacket.h>
 #include <CustomSerializer.h>
 
 #include "NetworkManager.h"
@@ -62,6 +63,9 @@ bool SessionSubsystem::Connect(const Net::NetAddress& address)
 
 void SessionSubsystem::Disconnect()
 {
+    DisconnectPacket disconnect_packet;
+    client_socket_.SendPacket(disconnect_packet);
+    
     client_socket_.Stop();
     Net::WSAUninit();
 }

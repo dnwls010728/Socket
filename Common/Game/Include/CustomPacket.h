@@ -13,6 +13,12 @@ struct MessagePacket : public Net::IPacket
     REGISTER_PACKET(MessagePacket, 100)
 };
 
+struct DisconnectPacket : public Net::IPacket
+{
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    REGISTER_PACKET(DisconnectPacket, 101)
+};
+
 // 회원가입 요청
 struct RegisterRequest : public Net::IPacket
 {

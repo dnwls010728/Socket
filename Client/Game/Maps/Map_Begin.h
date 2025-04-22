@@ -8,5 +8,8 @@ class Map_Begin : public Level
 public:
     Map_Begin(const std::wstring& kName);
     virtual ~Map_Begin() override = default;
+
+protected:
+    virtual void Load() override;
     
 };

@@ -27,6 +27,7 @@ void RigidBody2DComponent::SetBodyType(BodyType type)
     {
         b2BodyId body_id = GetValidBodyId();
         SetBodyTypeInternal(body_id);
+        SetAutoMassInternal(body_id);
     }
 }
 

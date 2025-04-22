@@ -6,7 +6,8 @@
 
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
-    unique_id_(0)
+    unique_id_(0),
+    is_owner_(false)
 {
 }
 
