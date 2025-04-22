@@ -77,6 +77,11 @@ float Math::RandRange(float min, float max)
     return dis(gen);
 }
 
+bool Math::IsEqual(float a, float b)
+{
+    return std::abs(a - b) < std::numeric_limits<float>::epsilon();
+}
+
 int Math::RandRange(int min, int max)
 {
     if (min > max)

@@ -39,7 +39,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
         std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
         if (IsValid(player_character))
         {
-            player_character->SetOwner(true);
+            player_character->SetMine(true);
 
             CameraManager* camera_manager = CameraManager::Get();
             camera_manager->SetSize(6.f);
@@ -102,11 +102,9 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case MovePlayerPacket::StaticPacketID:
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet.get());
+            
             std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(move_player_packet->unique_id);
-            if (IsValid(network_actor))
-            {
-                network_actor->GetTransform()->SetPosition({move_player_packet->x, move_player_packet->y});
-            }
+            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
         }
         break;
         

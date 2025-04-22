@@ -74,8 +74,8 @@ void Player::ReceivePacket(Net::IPacket* packet)
             {
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_unique_id_;
-                move_player_broadcast_packet.x = move_player_packet->x;
-                move_player_broadcast_packet.y = move_player_packet->y;
+                move_player_broadcast_packet.movement.x = move_player_packet->movement.x;
+                move_player_broadcast_packet.movement.y = move_player_packet->movement.y;
                 map_->SendPacket(move_player_broadcast_packet, this);
             }
         }

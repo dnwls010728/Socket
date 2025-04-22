@@ -7,13 +7,17 @@
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
     unique_id_(0),
-    is_owner_(false)
+    is_mine_(false)
 {
 }
 
 void NetworkActor::SendPacket(Net::IPacket& packet)
 {
     GET_SESSION()->SendPacket(packet);
+}
+
+void NetworkActor::ReceivePacket(Net::IPacket* packet)
+{
 }
 
 RTTR_REGISTRATION

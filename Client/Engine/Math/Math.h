@@ -15,6 +15,7 @@ namespace Math
     float Rad2Deg();
     float Deg2Rad();
     float RandRange(float min, float max);
+    bool IsEqual(float a, float b);
     
     int RandRange(int min, int max);
     

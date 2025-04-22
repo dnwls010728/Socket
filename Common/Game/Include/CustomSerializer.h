@@ -8,6 +8,20 @@ class CustomSerializer : public Net::Serializer
 public:
 	EXTEND_SERIALIZER()
 
+	CustomSerializer& operator<<(const Movement& value)
+	{
+		*this << value.x;
+		*this << value.y;
+		return *this;
+	}
+
+	CustomSerializer& operator>>(Movement& value)
+	{
+		*this >> value.x;
+		*this >> value.y;
+		return *this;
+	}
+
 	CustomSerializer& operator<<(const CharacterInfo& value)
 	{
 		*this << value.unique_id;

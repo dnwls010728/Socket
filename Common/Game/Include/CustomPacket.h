@@ -110,9 +110,8 @@ struct DestroyPlayerPacket : public Net::IPacket
 struct MovePlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
-    float x;
-    float y;
+    Movement movement;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, x, y)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, movement)
     REGISTER_PACKET(MovePlayerPacket, 211)
 };
