@@ -10,6 +10,7 @@
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -119,6 +120,15 @@ void PlayerCharacter::Tick(float delta_time)
         if (keyboard->GetKeyDown(VK_SPACE))
         {
             is_jump_ = true;
+        }
+
+        if (keyboard->GetKeyDown('1'))
+        {
+            GET_NETWORK()->OpenLevel(0);
+        }
+        if (keyboard->GetKeyDown('2'))
+        {
+            GET_NETWORK()->OpenLevel(1);
         }
     }
     else

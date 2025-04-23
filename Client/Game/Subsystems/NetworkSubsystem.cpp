@@ -63,6 +63,18 @@ void NetworkSubsystem::Tick(float delta_time)
     }
 }
 
+void NetworkSubsystem::SendPacket(Net::IPacket& packet)
+{
+    GET_SESSION()->SendPacket(packet);
+}
+
+void NetworkSubsystem::OpenLevel(uint32_t map_unique_id)
+{
+    ChangeMapRequest request;
+    request.map_unique_id = map_unique_id;
+    SendPacket(request);
+}
+
 void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
 {
     auto iter = network_actors_.find(unique_id);
@@ -85,6 +97,16 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
 {
     switch (packet->GetPacketID())
     {
+    case ChangeMapResponse::StaticPacketID:
+        {
+            ChangeMapResponse* response = static_cast<ChangeMapResponse*>(packet.get());
+            if (response->is_success)
+            {
+                World::Get()->OpenLevel(std::to_wstring(response->map_unique_id));
+            }
+        }
+        break;
+        
     case SpawnPlayerPacket::StaticPacketID:
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());

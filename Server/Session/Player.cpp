@@ -61,6 +61,28 @@ void Player::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
+    case ChangeMapRequest::StaticPacketID:
+        {
+            ChangeMapRequest* request = static_cast<ChangeMapRequest*>(packet);
+            if (map_)
+            {
+                map_->RemovePlayer(this);
+                map_ = MapManager::Get()->GetMap(request->map_unique_id);
+
+                ChangeMapResponse response;
+                response.is_success = true;
+                response.map_unique_id = request->map_unique_id;
+                SendPacket(response);
+                break;
+            }
+
+            ChangeMapResponse response;
+            response.is_success = false;
+            response.map_unique_id = 0;
+            SendPacket(response);
+        }
+        break;
+
     case MapLoadCompletePacket::StaticPacketID:
         {
             map_->AddPlayer(this);

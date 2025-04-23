@@ -23,6 +23,9 @@ public:
     virtual void Deinit() override;
     virtual void OnWorldBeginPlay() override;
     virtual void Tick(float delta_time) override;
+
+    void SendPacket(Net::IPacket& packet);
+    void OpenLevel(uint32_t map_unique_id);
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& kType, const std::wstring& kName, Type::uint32 unique_id);

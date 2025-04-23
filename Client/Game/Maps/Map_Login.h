@@ -13,14 +13,14 @@ namespace UI
     class EditableTextBox;
 }
 
-class LoginMap : public Level
+class Map_Login : public Level
 {
     SHADER_CLASS_HELPER(Level)
-    GENERATED_BODY(LoginMap, Level)
+    GENERATED_BODY(Map_Login, Level)
     
 public:
-    LoginMap(const std::wstring& kName);
-    virtual ~LoginMap() override = default;
+    Map_Login(const std::wstring& kName);
+    virtual ~Map_Login() override = default;
 
 protected:
     virtual void Load() override;

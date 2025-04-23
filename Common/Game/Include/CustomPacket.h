@@ -83,10 +83,30 @@ struct SelectCharacterResponse : public Net::IPacket
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
+// 맵 전환 요청
+struct ChangeMapRequest : public Net::IPacket
+{
+    uint32_t map_unique_id;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_unique_id)
+    REGISTER_PACKET(ChangeMapRequest, 208)
+};
+
+// 맵 전환 응답
+struct ChangeMapResponse : public Net::IPacket
+{
+    bool is_success;
+    uint32_t map_unique_id;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, map_unique_id)
+    REGISTER_PACKET(ChangeMapResponse, 209)
+};
+
+// 맵 전환 완료
 struct MapLoadCompletePacket : public Net::IPacket
 {
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
-    REGISTER_PACKET(MapLoadCompletePacket, 208)
+    REGISTER_PACKET(MapLoadCompletePacket, 210)
 };
 
 // 플레이어 스폰 패킷
@@ -95,7 +115,7 @@ struct SpawnPlayerPacket : public Net::IPacket
     CharacterInfo character_info;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character_info)
-    REGISTER_PACKET(SpawnPlayerPacket, 209)
+    REGISTER_PACKET(SpawnPlayerPacket, 211)
 };
 
 // 플레이어 파괴 패킷
@@ -104,7 +124,7 @@ struct DestroyPlayerPacket : public Net::IPacket
     uint32_t unique_id;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
-    REGISTER_PACKET(DestroyPlayerPacket, 210)
+    REGISTER_PACKET(DestroyPlayerPacket, 212)
 };
 
 struct MovePlayerPacket : public Net::IPacket
@@ -113,5 +133,5 @@ struct MovePlayerPacket : public Net::IPacket
     Movement movement;
     
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, movement)
-    REGISTER_PACKET(MovePlayerPacket, 211)
+    REGISTER_PACKET(MovePlayerPacket, 213)
 };
