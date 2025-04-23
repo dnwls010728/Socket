@@ -4,10 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{2904E936-DC63-4E5C-A4B5-FA97EE03BB74}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B7AA7975-5676-4B72-A110-FE376E84852E} = {B7AA7975-5676-4B72-A110-FE376E84852E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkLib", "NetworkLib\NetworkLib.vcxproj", "{B7AA7975-5676-4B72-A110-FE376E84852E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{AC9C9B1E-A765-412C-81A0-CDF86E98180D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B7AA7975-5676-4B72-A110-FE376E84852E} = {B7AA7975-5676-4B72-A110-FE376E84852E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

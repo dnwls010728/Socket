@@ -44,6 +44,7 @@ struct TestPacket : public IPacket{
         virtual uint16_t GetPacketID() const = 0;
         uint32_t sequence = 0;
         uint32_t GetSequence() { return sequence; }
+        virtual ~IPacket() = default;
     };
     using PacketFactoryFunc = std::function<std::unique_ptr<IPacket>()>;
 
