@@ -14,6 +14,8 @@ public:
 
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
+    void InitSpawn(const Math::Vector2& position);
+
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;

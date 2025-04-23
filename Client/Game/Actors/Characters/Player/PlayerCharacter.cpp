@@ -44,6 +44,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
+void PlayerCharacter::InitSpawn(const Math::Vector2& position)
+{
+    GetTransform()->SetPosition(position);
+    last_movement_.x = position.x;
+    last_movement_.y = position.y;
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();

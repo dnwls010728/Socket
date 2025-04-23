@@ -113,8 +113,10 @@ struct MapLoadCompletePacket : public Net::IPacket
 struct SpawnPlayerPacket : public Net::IPacket
 {
     CharacterInfo character_info;
+    float position_x;
+    float position_y;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character_info)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character_info, position_x, position_y)
     REGISTER_PACKET(SpawnPlayerPacket, 211)
 };
 

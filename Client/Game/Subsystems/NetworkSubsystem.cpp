@@ -111,6 +111,13 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
             std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", spawn_player_packet->character_info.unique_id);
+            if (IsValid(player_character))
+            {
+                float position_x = spawn_player_packet->position_x;
+                float position_y = spawn_player_packet->position_y;
+
+                player_character->InitSpawn({position_x, position_y});
+            }
         }
         break;
 

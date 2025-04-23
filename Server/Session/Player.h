@@ -19,6 +19,7 @@ public:
 
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
+    void SetPosition(float x, float y);
 
     inline void SetCharacterUniqueID(uint32_t character_unique_id) { character_unique_id_ = character_unique_id; }
     inline uint32_t GetCharacterUniqueID() const { return character_unique_id_; }
@@ -29,6 +30,9 @@ public:
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
 
+    inline float GetPositionX() const { return position_x_; }
+    inline float GetPositionY() const { return position_y_; }
+
 private:
     Session* session_;
 
@@ -38,5 +42,8 @@ private:
     GameMap* map_;
 
     CharacterInfo character_info_;
+
+    float position_x_;
+    float position_y_;
     
 };

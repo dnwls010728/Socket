@@ -13,7 +13,9 @@ Player::Player(Session* session, uint32_t account_unique_id) :
     account_unique_id_(account_unique_id),
     character_unique_id_(0),
     map_(nullptr),
-    character_info_()
+    character_info_(),
+    position_x_(0.f),
+    position_y_(0.f)
 {
 }
 
@@ -69,6 +71,8 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 map_->RemovePlayer(this);
                 map_ = MapManager::Get()->GetMap(request->map_unique_id);
 
+                SetPosition(0.f, 0.f);
+
                 ChangeMapResponse response;
                 response.is_success = true;
                 response.map_unique_id = request->map_unique_id;
@@ -94,10 +98,15 @@ void Player::ReceivePacket(Net::IPacket* packet)
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
             if (map_)
             {
+                float position_x = move_player_packet->movement.x;
+                float position_y = move_player_packet->movement.y;
+                
+                SetPosition(position_x, position_y);
+                
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_unique_id_;
-                move_player_broadcast_packet.movement.x = move_player_packet->movement.x;
-                move_player_broadcast_packet.movement.y = move_player_packet->movement.y;
+                move_player_broadcast_packet.movement.x = position_x;
+                move_player_broadcast_packet.movement.y = position_y;
                 map_->SendPacket(move_player_broadcast_packet, this);
             }
         }
@@ -106,4 +115,10 @@ void Player::ReceivePacket(Net::IPacket* packet)
     default:
         break;
     }
+}
+
+void Player::SetPosition(float x, float y)
+{
+    position_x_ = x;
+    position_y_ = y;
 }
