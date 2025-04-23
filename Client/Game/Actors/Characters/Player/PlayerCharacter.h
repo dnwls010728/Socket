@@ -24,8 +24,8 @@ protected:
     Movement last_movement_;
     std::queue<Movement> movements_;
 
-    int timer_;
-
     bool is_jump_;
+
+    int timer_;
     
 };

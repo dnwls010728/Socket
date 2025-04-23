@@ -35,7 +35,8 @@ public:
 
     void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components);
 
-    std::shared_ptr<ActorComponent> GetComponent(const rttr::type& type);
+    template <std::derived_from<ActorComponent> T>
+    std::shared_ptr<T> GetComponent(const rttr::type& type);
 
     template <std::derived_from<Actor> T>
     T* SpawnActor(const rttr::type& kType, const std::wstring& kName);
@@ -133,6 +134,21 @@ std::shared_ptr<T> Actor::AddComponent(const std::wstring& kName)
     
     components_.push_back(std::make_shared<T>(this, kName));
     return std::static_pointer_cast<T>(components_.back());
+}
+
+template <std::derived_from<ActorComponent> T>
+std::shared_ptr<T> Actor::GetComponent(const rttr::type& type)
+{
+    for (const auto& component : components_)
+    {
+        rttr::type component_type = rttr::type::get(*component);
+        if (component_type.is_derived_from(type))
+        {
+            return std::static_pointer_cast<T>(component);
+        }
+    }
+
+    return nullptr;
 }
 
 template <std::derived_from<Actor> T>

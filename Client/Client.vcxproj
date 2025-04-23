@@ -228,6 +228,7 @@
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
+    <ClInclude Include="Game\Actors\Characters\Components\Controller2D.h" />
     <ClInclude Include="Game\Actors\Characters\Enemies\EnemyBase.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
@@ -578,6 +579,7 @@
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Components\Controller2D.cpp" />
     <ClCompile Include="Game\Actors\Characters\Enemies\EnemyBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />

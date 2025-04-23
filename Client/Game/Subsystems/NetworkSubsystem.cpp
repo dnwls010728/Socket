@@ -43,7 +43,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
 
             CameraManager* camera_manager = CameraManager::Get();
             camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kPhysicsTick);
+            camera_manager->SetTickType(TickType::kTick);
             camera_manager->SetTarget(player_character);
         }
 

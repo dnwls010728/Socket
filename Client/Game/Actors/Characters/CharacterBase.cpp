@@ -2,24 +2,23 @@
 #include "CharacterBase.h"
 
 #include "DebugDrawHelper.h"
-#include "Actor/Component/CapsuleColliderComponent.h"
-#include "Actor/Component/CircleColliderComponent.h"
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
-#include "Actor/Component/TransformComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
+#include "Components/Controller2D.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
     NetworkActor(kName),
-    state_machine_(nullptr)
+    state_machine_(nullptr),
+    velocity_(Math::Vector2::Zero()),
+    gravity_(-20.f)
 {
-    collider_ = AddComponent<CapsuleColliderComponent>(L"CapsuleCollider");
+    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetSize({1.f, 1.f});
-    
-    rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
-    rigid_body_->SetBodyType(BodyType::kStatic);
-    rigid_body_->SetFreezeRotation(true);
+
+    controller_ = AddComponent<Controller2D>(L"Controller2D");
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
 

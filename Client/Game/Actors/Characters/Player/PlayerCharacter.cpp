@@ -6,6 +6,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/Characters/Components/Controller2D.h"
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
@@ -16,8 +17,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     movement_input_(Math::Vector2::Zero()),
     last_movement_(),
     movements_(),
-    timer_(0),
-    is_jump_(false)
+    is_jump_(false),
+    timer_(0)
 {
     SetLayer(ActorLayer::kPlayer);
 }
@@ -46,41 +47,34 @@ void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Capsule.png");
+    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
     if (sprite)
     {
-        renderer_->SetSprite(sprite, L"Capsule_0");
-    }
-
-    if (IsMine())
-    {
-        renderer_->SetColor(Math::Color::Green);
-
-        rigid_body_->SetBodyType(BodyType::kDynamic);
-    }
-    else
-    {
-        renderer_->SetColor(Math::Color::Red);
-        
-        rigid_body_->SetBodyType(BodyType::kDynamic);
+        renderer_->SetSprite(sprite, L"Box_0");
     }
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
-
-    Math::Vector2 position = rigid_body_->GetPosition();
+    
+    std::shared_ptr<TransformComponent> transform = GetTransform();
+    Math::Vector2 position = transform->GetPosition();
 
     if (IsMine())
     {
-        rigid_body_->SetLinearVelocityX(movement_input_.x * 5.f);
+        const Controller2D::CollisionInfo& collisions = controller_->GetCollisions();
+        if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
 
-        if (is_jump_)
+        if (is_jump_ && collisions.is_below)
         {
+            velocity_.y = 10.f;
             is_jump_ = false;
-            rigid_body_->AddForceY(10.f, ForceMode::kImpulse);
         }
+        
+        velocity_.x = movement_input_.x * 5.f;
+        velocity_.y += gravity_ * delta_time;
+        controller_->Move(velocity_ * delta_time);
         
         Movement movement = {position.x, position.y};
         if (!Math::IsEqual(last_movement_.x, movement.x) || !Math::IsEqual(last_movement_.y, movement.y))
@@ -94,10 +88,8 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     }
     else
     {
-        if (timer_ > 1)
-        {
-            timer_--;
-        }
+        // 50 프레임 딜레이
+        if (timer_ > 1) timer_--;
         else if (timer_ == 1)
         {
             if (!movements_.empty())
@@ -107,10 +99,10 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             }
             else timer_ = 0;
         }
-
+        
         float x_speed = last_movement_.x - position.x;
         float y_speed = last_movement_.y - position.y;
-        rigid_body_->SetLinearVelocity({x_speed, y_speed});
+        transform->Translate({x_speed, y_speed});
     }
 }
 
@@ -128,6 +120,9 @@ void PlayerCharacter::Tick(float delta_time)
         {
             is_jump_ = true;
         }
+    }
+    else
+    {
     }
 }
 

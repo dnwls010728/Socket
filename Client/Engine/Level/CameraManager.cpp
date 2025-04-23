@@ -69,12 +69,9 @@ void CameraManager::SetTarget(const std::shared_ptr<Actor>& kActor)
 {
     if (!kActor) return;
 
-    std::shared_ptr<ActorComponent> component = kActor->GetComponent(ColliderComponent::StaticClass());
-    if (!component) return;
-
     target_weak_ptr = kActor;
 
-    std::shared_ptr<ColliderComponent> collider_component = std::static_pointer_cast<ColliderComponent>(component);
+    std::shared_ptr<ColliderComponent> collider_component = kActor->GetComponent<ColliderComponent>(ColliderComponent::StaticClass());
     collider_weak_ptr_ = collider_component;
 
     const Bounds bounds = collider_component->GetBounds();

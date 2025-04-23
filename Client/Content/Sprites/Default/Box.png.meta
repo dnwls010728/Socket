@@ -2,7 +2,7 @@ wrap_mode: 0
 filter_mode: 0
 ppu: 32
 frames:
-  - name: Rectangle_0
+  - name: Box_0
     rect:
       x: 0
       y: 0
