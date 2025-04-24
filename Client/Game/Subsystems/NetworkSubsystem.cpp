@@ -142,7 +142,6 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     }
 }
 
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

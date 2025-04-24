@@ -116,8 +116,6 @@ void Map_Login::Unload(EndPlayReason type)
 void Map_Login::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     UI::Manager* ui_manager = UI::Manager::Get();
-
-    SessionSubsystem* subsystem = GameInstance::Get()->GetSubsystem<SessionSubsystem>();
     
     switch (packet->GetPacketID())
     {
