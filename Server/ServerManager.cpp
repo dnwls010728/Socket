@@ -15,6 +15,38 @@ ServerManager::ServerManager()
     server_socket_.SetClientAcceptedCallback(std::bind(&ServerManager::OnClientConnected, this, std::placeholders::_1));
     server_socket_.SetClientDisconnectedCallback(std::bind(&ServerManager::OnClientDisconnected, this, std::placeholders::_1));
     server_socket_.SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
+
+    CommandHandlerInitialize();
+}
+
+void ServerManager::CommandHandlerInitialize()
+{
+    
+    command_handler_[L"/disconnect"] = [&](auto& args) {
+        if (args.size() < 2) {
+            std::wcout << L"Usage: /disconnect <clientKey>\n";
+            return;
+        }
+        try {
+            uint32_t key = std::stoul(args[1]);
+            if (!server_socket_.DisconnectClient(key))
+                std::wcout << L"Error: No client with key " << key << "\n";
+            else
+            {
+                std::wcout << L"Client " << key << " disconnected\n";
+            }
+        }
+        catch (...) {
+            std::wcout << L"Error: Invalid key '" << args[1] << "'\n";
+        }
+    };
+
+    command_handler_[L"/help"] = [&](auto&) {
+        std::wcout << L"Available commands:\n";
+        std::wcout << L"  /exit                   - Exit the server\n";
+        std::wcout << L"  /disconnect <clientKey> - Disconnect a client by its key\n";
+        std::wcout << L"  /help                   - Show this help\n";
+    };
 }
 
 bool ServerManager::Execute()
@@ -34,35 +66,32 @@ bool ServerManager::Execute()
     }
 
     // 명령어 입력 루프
-    bool stop_flag = false;
-    while (stop_flag == false)
+    std::wstring line;
+    while (true)
     {
-        std::string command;
-        std::cin >> command;
+        std::wcout << L"> ";
+        if (!std::getline(std::wcin, line))
+            break;
+        
+        std::wistringstream wiss(line);
+        std::vector<std::wstring> tokens;
+        std::wstring tok;
+        while (wiss >> tok) tokens.push_back(tok);
+        
+        if (tokens.empty()) continue;
 
-        std::string first_token;
-        size_t token_idx = command.find(' ', 0);
-        if (token_idx != std::string::npos)
+        // 종료
+        if (tokens[0] == L"/exit")
         {
-            first_token = command.substr(0, token_idx);
+            break;
         }
-        else
-        {
-            first_token = command;
+        
+        auto it = command_handler_.find(tokens[0]);
+        if (it != command_handler_.end()) {
+            it->second(tokens);
         }
-
-        if (first_token == "/exit")
-        {
-            stop_flag = true;
-        }
-        else if (first_token == "/help")
-        {
-            std::cout << "Available commands:" << std::endl;
-            std::cout << "/exit - Exits the server." << std::endl;
-        }
-        else
-        {
-            std::cout << "Error: Unrecognized command. Please check '/help' for a list of available commands." << std::endl;
+        else {
+            std::cout << "Unrecognized command. Type /help for list.\n";
         }
     }
 

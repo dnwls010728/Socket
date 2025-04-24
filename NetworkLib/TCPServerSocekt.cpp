@@ -117,6 +117,7 @@ namespace Net::TCP {
         }
         return true;
     }
+    
 
     bool TCPServerSocket::StartRecv(SOCKET client_socket)
     {
@@ -233,14 +234,19 @@ namespace Net::TCP {
             BOOL result = GetQueuedCompletionStatus(iocp_handle_, &bytes_transferred, &completion_key, (LPOVERLAPPED*)&p_context, INFINITE);
             if (!result)
             {
-                std::cerr << "GetQueuedCompletionStatus 실패: " << GetLastError() << std::endl;
+
+
+                
                 continue;
             }
 
             if (bytes_transferred == 0 || p_context == nullptr)
             {
-                std::cout << "클라이언트 종료, 소켓: " << completion_key << std::endl;
-                CloseClient((SOCKET)completion_key);
+                if (completion_key != NULL)
+                {
+                    std::cout << "Client disconnected, socket: " << completion_key << std::endl;
+                    DisconnectClient((SOCKET)completion_key);
+                }
                 continue;
             }
 
@@ -267,7 +273,7 @@ namespace Net::TCP {
                 std::unique_ptr<IPacket> packet = PacketFactoryRegistry::Instance().CreatePacket(payloadHeader.packet_id);
                 if (!packet)
                 {
-                    std::cerr << "패킷 생성 실패, packet_id: " << payloadHeader.packet_id << std::endl;
+                    std::cerr << "create packet failed, packet_id: " << payloadHeader.packet_id << std::endl;
                     continue;
                 }
 
@@ -308,8 +314,8 @@ namespace Net::TCP {
                 int err = WSAGetLastError();
                 if (err != WSA_IO_PENDING)
                 {
-                    std::cerr << "WSARecv 재호출 실패: " << err << std::endl;
-                    CloseClient((SOCKET)completion_key);
+                    std::cerr << "WSARecv failed : " << err << std::endl;
+                    DisconnectClient((SOCKET)completion_key);
                     delete[] p_context->wsabuf.buf;
                     delete p_context;
                 }
@@ -317,37 +323,32 @@ namespace Net::TCP {
         }
     }
 
-    void TCPServerSocket::CloseClient(SOCKET client_socket)
+    bool TCPServerSocket::DisconnectClient(uint32_t unique_key)
     {
-        NetAddress addr;
-        GetClientAddress(client_socket, addr);
-
-        TCPConnectionState state = connection_manager_.GetClientState(client_socket);
-        connection_manager_.RemoveClient(client_socket);
-        closesocket(client_socket);
+        TCPConnectionState state = connection_manager_.GetClientState(unique_key);
+        if (state.uniqueKey == 0)
+        {
+            return false;
+        }
+        connection_manager_.RemoveClient(unique_key);
+        closesocket(state.socket);
         if (OnClientClosed)
         {
             OnClientClosed(state);
         }
+        return true;
     }
 
     bool TCPServerSocket::SendPacketToClient(uint32_t unique_key, const IPacket& kPacket)
     {
-        SOCKET target_socket = 0;
-        for (auto& pair : connection_manager_.GetAllConnections())
+        SOCKET target_socket = INVALID_SOCKET;
+        TCPConnectionState client_state = connection_manager_.GetClientState(unique_key);
+        if (client_state.uniqueKey == 0)
         {
-            if (pair.second.uniqueKey == unique_key)
-            {
-                target_socket = pair.second.socket;
-                break;
-            }
-        }
-        
-        if (target_socket == 0)
-        {
-            std::cerr << "SendPacketToClient: 대상 클라이언트를 찾을 수 없습니다." << std::endl;
+            std::cerr << "not found client, unique_key: " << unique_key << std::endl;
             return false;
         }
+        target_socket = client_state.socket;
 
         std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
         kPacket.Serialize(*serializer);
@@ -359,6 +360,7 @@ namespace Net::TCP {
         BYTE* header_ptr = reinterpret_cast<BYTE*>(&header);
         packet_data.insert(packet_data.end(), header_ptr, header_ptr + sizeof(PayloadHeader));
         packet_data.insert(packet_data.end(), payload.begin(), payload.end());
+        
         uint32_t len = static_cast<uint32_t>(packet_data.size());
         uint32_t netLen = htonl(len);
         std::vector<BYTE> send_buffer;
@@ -368,12 +370,12 @@ namespace Net::TCP {
         int ret = send(target_socket, reinterpret_cast<const char*>(send_buffer.data()), static_cast<int>(send_buffer.size()), 0);
         if (ret == SOCKET_ERROR)
         {
-            std::cerr << "SendPacketToClient 전송 실패: " << WSAGetLastError() << std::endl;
+            std::cerr << "SendPacketToClient send failed : " << WSAGetLastError() << std::endl;
 
             int err = WSAGetLastError();
             if (err == WSAECONNRESET || err == WSAECONNABORTED)
             {
-                CloseClient(target_socket);
+                DisconnectClient(unique_key);
             }
             return false;
         }
@@ -494,7 +496,7 @@ namespace Net::TCP {
         while (running_.load())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(heartbeat_Interval_ms_));
-            std::vector<SOCKET> to_close;
+            std::vector<uint32_t> to_close;
             auto allConnections = connection_manager_.GetAllConnections();
             for (auto& pair : allConnections)
             {
@@ -502,7 +504,7 @@ namespace Net::TCP {
                 auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - pair.second.lastResponseTime).count();
                 if (duration > heartbeat_timeout_ms_)
                 {
-                    std::cerr << "하트비트 타임아웃: 클라이언트 고유키 " << pair.second.uniqueKey << std::endl;
+                    std::cerr << "Heartbeat TimeOut, uniqueKey : " << pair.second.uniqueKey << std::endl;
                     to_close.push_back(pair.first);
                 }
                 else
@@ -511,8 +513,8 @@ namespace Net::TCP {
                     SendPacketToClient(pair.second.uniqueKey, ping);
                 }
             }
-            for (SOCKET s : to_close) {
-                CloseClient(s);
+            for (uint32_t unique_key : to_close) {
+                DisconnectClient(unique_key);
             }
         }
     }

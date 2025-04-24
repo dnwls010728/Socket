@@ -35,6 +35,8 @@ namespace Net::TCP {
         // Serializer 팩토리 함수
         void SetSerializerFactory(std::function<std::unique_ptr<Serializer>()> factory) { serializer_factory_ = factory; }
 
+        // 서버 연결 끊김 콜백
+        void SetClientAcceptedCallback(std::function<void()> callback) { OnDisconnected = callback; }
     private:
         NetTCPSocket socket_;
         std::vector<char> recv_buffer_; // 누적 수신 데이터 버퍼
@@ -57,5 +59,8 @@ namespace Net::TCP {
 
         // 수신된 패킷을 저장하는 큐
         ConcurrentQueue<ReceivedPacketInfo> recv_data_queue_;
+
+        // 서버 연결 끊김 콜백
+        std::function<void()> OnDisconnected;
     };
 } // namespace Net

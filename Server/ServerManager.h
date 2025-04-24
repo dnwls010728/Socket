@@ -20,7 +20,10 @@ public:
 	void SendPacket(uint32_t client_id, const Net::IPacket& packet);
 
 private:
+	void CommandHandlerInitialize();
+	
+	std::unordered_map<std::wstring, std::function<void(const std::vector<std::wstring>&)>> command_handler_;
+	
 	Net::TCP::TCPServerSocket server_socket_;
-
 	SessionManager session_manager_;
 };

@@ -27,12 +27,12 @@ namespace Net::TCP {
 
         if (!socket_.Create()) 
         {
-            std::cerr << "TCPClientSocket: 소켓 생성 실패" << std::endl;
+            std::cerr << "TCPClientSocket: socket create failed" << WSAGetLastError() << std::endl;
             return false;
         }
         if (!socket_.Connect(server_address))
         {
-            std::cerr << "TCPClientSocket: 서버 연결 실패" << std::endl;
+            std::cerr << "TCPClientSocket: server connect failed : "<< WSAGetLastError() << std::endl;
             return false;
         }
         running_.store(true);
@@ -80,7 +80,7 @@ namespace Net::TCP {
         if (!socket_.Send(reinterpret_cast<const char*>(send_buffer.data()),
             static_cast<int>(send_buffer.size()), sent_length)) 
         {
-            std::cerr << "TCPClientSocket: SendPacket 전송 실패, 에러: " << WSAGetLastError() << std::endl;
+            std::cerr << "TCPClientSocket: SendPacket error : " << WSAGetLastError() << std::endl;
             return false;
         }
         return true;
@@ -201,13 +201,28 @@ namespace Net::TCP {
             int received = 0;
             if (!socket_.Recv(temp_buffer, sizeof(temp_buffer), received)) 
             {
-                if (received <= 0) 
-                {
-                    std::cerr << "TCPClientSocket: Recv 실패 또는 연결 종료" << std::endl;
+                // 에러 처리
+                int err = WSAGetLastError();
+
+                // 논블록
+                if (err == WSAEWOULDBLOCK) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    continue;
+                }
+
+                // 연결 끊김
+                if (received == 0 || err == WSAECONNRESET || err == WSAECONNABORTED) {
+                    std::cerr << "TCPClientSocket: Server disconnected, WSA error=" << err << std::endl;
                     running_.store(false);
+                    if (OnDisconnected) OnDisconnected();
                     break;
                 }
+
+                // 그 외
+                std::cerr << "TCPClientSocket: Recv err, WSA error=" << err << std::endl;
+                continue;
             }
+            
             // 누적 버퍼에 수신된 데이터를 추가
             recv_buffer_.insert(recv_buffer_.end(), temp_buffer, temp_buffer + received);
             std::vector<char> packet_data;
@@ -223,7 +238,7 @@ namespace Net::TCP {
                 std::unique_ptr<IPacket> packet = PacketFactoryRegistry::Instance().CreatePacket(payload_header.packet_id);
                 if (!packet) 
                 {
-                    std::cerr << "TCPClientSocket: 패킷 생성 실패, packet_id: " << payload_header.packet_id << std::endl;
+                    std::cerr << "TCPClientSocket: Packet create failed, packet_id: " << payload_header.packet_id << std::endl;
                     continue;
                 }
 
