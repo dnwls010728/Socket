@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Level/Level.h"
 
 namespace Net
@@ -49,5 +50,7 @@ private:
 
     std::shared_ptr<UI::ListBox> character_list_;
 #pragma endregion
+
+    std::vector<CharacterInfo> characters_;
     
 };

@@ -20,7 +20,8 @@ Map_Login::Map_Login(const std::wstring& kName) :
     login_password_(nullptr),
     login_(nullptr),
     register_switch_(nullptr),
-    character_list_(nullptr)
+    character_list_(nullptr),
+    characters_()
 {
 }
 
@@ -154,8 +155,8 @@ void Map_Login::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
                 
                 if (ui_manager)
                 {
-                    const std::vector<CharacterInfo>& characters = response->characters;
-                    for (const auto& character : characters)
+                    characters_ = response->characters;
+                    for (const auto& character : characters_)
                     {
                         std::wstring name = character.name + L" (Lv. " + std::to_wstring(character.lv) + L")";
                         character_list_->AddItem(name, reinterpret_cast<uintptr_t>(&character));
