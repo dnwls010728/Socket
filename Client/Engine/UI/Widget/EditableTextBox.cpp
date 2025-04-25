@@ -33,6 +33,7 @@ void UI::EditableTextBox::OnReturn(void(* func)(const std::wstring&))
 void UI::EditableTextBox::SetText(const std::wstring& kText)
 {
     text_ = kText;
+    cursor_position_ = text_.size();
     total_advance_ = GetAdvances(text_, advances_);
 }
 

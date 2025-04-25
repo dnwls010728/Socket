@@ -111,6 +111,19 @@ void Player::ReceivePacket(Net::IPacket* packet)
             }
         }
         break;
+
+    case ChatMessagePacket::StaticPacketID:
+        {
+            ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet);
+            if (map_)
+            {
+                ChatMessagePacket chat_message_broadcast_packet;
+                chat_message_broadcast_packet.unique_id = character_unique_id_;
+                chat_message_broadcast_packet.message = chat_message_packet->message;
+                map_->SendPacket(chat_message_broadcast_packet);
+            }
+        }
+        break;
         
     default:
         break;

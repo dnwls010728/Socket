@@ -8,6 +8,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Level/CameraManager.h"
+#include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
@@ -31,11 +32,13 @@ void NetworkSubsystem::Deinit()
 void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
-    
-    GET_SESSION()->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
 
-    const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
-    if (GET_SESSION()->IsInGame())
+    SessionSubsystem* session_subsystem = GET_SESSION();
+    
+    session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
+
+    const CharacterInfo& character_info = session_subsystem->GetCharacterInfo();
+    if (session_subsystem->IsInGame())
     {
         std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
         if (IsValid(player_character))
@@ -51,7 +54,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
         }
 
         MapLoadCompletePacket map_load_complete_packet;
-        GET_SESSION()->SendPacket(map_load_complete_packet);
+        session_subsystem->SendPacket(map_load_complete_packet);
     }
 }
 
@@ -137,6 +140,25 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             
             std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(move_player_packet->unique_id);
             if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+        }
+        break;
+
+    case ChatMessagePacket::StaticPacketID:
+        {
+            ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());
+            for (const auto& network_actor : network_actors_)
+            {
+                if (network_actor.second->GetUniqueID() == chat_message_packet->unique_id)
+                {
+                    std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor.second);
+                    if (IsValid(player_character))
+                    {
+                        std::wstring message = chat_message_packet->message;
+                        player_character->Speak(message);
+                    }
+                    break;
+                }
+            }
         }
         break;
         

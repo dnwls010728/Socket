@@ -137,3 +137,12 @@ struct MovePlayerPacket : public Net::IPacket
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, movement)
     REGISTER_PACKET(MovePlayerPacket, 213)
 };
+
+struct ChatMessagePacket : public Net::IPacket
+{
+    uint32_t unique_id;
+    std::wstring message;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, message)
+    REGISTER_PACKET(ChatMessagePacket, 214)
+};

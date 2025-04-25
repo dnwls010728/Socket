@@ -26,6 +26,7 @@ protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
+    virtual void EndPlay(EndPlayReason type) override;
 
     Math::Vector2 movement_input_;
 

@@ -162,26 +162,43 @@ void PlayerCharacter::Tick(float delta_time)
     if (IsMine())
     {
         Keyboard* keyboard = Keyboard::Get();
-        movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+        if (!UI::Manager::Get()->HasFocus())
+        {
+            movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+            movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
 
-        if (keyboard->GetKeyDown(VK_SPACE))
-        {
-            is_jump_ = true;
-        }
+            if (keyboard->GetKeyDown(VK_SPACE))
+            {
+                is_jump_ = true;
+            }
 
-        if (keyboard->GetKeyDown('1'))
-        {
-            GET_NETWORK()->OpenLevel(0);
+            if (keyboard->GetKeyDown('1'))
+            {
+                GET_NETWORK()->OpenLevel(0);
+            }
+            if (keyboard->GetKeyDown('2'))
+            {
+                GET_NETWORK()->OpenLevel(1);
+            }
         }
-        if (keyboard->GetKeyDown('2'))
+        else
         {
-            GET_NETWORK()->OpenLevel(1);
+            movement_input_.x = 0.f;
+            movement_input_.y = 0.f;
         }
     }
     else
     {
     }
+}
+
+void PlayerCharacter::EndPlay(EndPlayReason type)
+{
+    CharacterBase::EndPlay(type);
+
+    UI::Manager* ui_manager = UI::Manager::Get();
+    if (ui_manager->IsInViewport(chat_balloon_))
+        ui_manager->RemoveFromViewport(chat_balloon_);
 }
 
 RTTR_REGISTRATION

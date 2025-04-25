@@ -19,6 +19,7 @@ bool MySQLManager::Connect(const sql::SQLString& host_name, const sql::SQLString
         if (!driver) return false;
         
         connection_ = std::unique_ptr<sql::Connection>(driver->connect("tcp://" + host_name, user, password));
+        // connection_->setSchema("socket_db");
         connection_->setSchema("socket_db");
         
         std::cout << "SQL: " << host_name << "에 연결했습니다." << std::endl;

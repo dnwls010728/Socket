@@ -17,6 +17,8 @@ namespace UI
         void SetFocus(const std::shared_ptr<Widget>& kWidget);
 
         bool IsInViewport(const std::shared_ptr<Widget>& kWidget);
+        
+        FORCEINLINE bool HasFocus() const { return focused_widget_.lock() != nullptr; }
 
         std::shared_ptr<Widget> RayCast(const Math::Vector2& kPosition) const;
 
