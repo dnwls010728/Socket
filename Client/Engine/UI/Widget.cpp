@@ -36,8 +36,8 @@ std::shared_ptr<UI::Widget> UI::Widget::Create(const std::wstring& kName)
 
 Math::Rect UI::Widget::GetRect(const Math::Vector2& kPosition, const Math::Vector2& kSize, const Math::Vector2& kPivot)
 {
-    float x = kPosition.x - kSize.x * kPivot.x;
-    float y = kPosition.y - kSize.y * (1.f - kPivot.y);
+    float x = kPosition.x - (kSize.x * kPivot.x);
+    float y = kPosition.y - (kSize.y * (1.f - kPivot.y));
     return {x, y, kSize.x, kSize.y};
 }
 

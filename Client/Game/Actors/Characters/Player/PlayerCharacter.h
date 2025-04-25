@@ -3,6 +3,11 @@
 
 #include "Actors/Characters/CharacterBase.h"
 
+namespace UI
+{
+    class ChatBalloon;
+}
+
 class PlayerCharacter : public CharacterBase
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
@@ -15,6 +20,7 @@ public:
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
     void InitSpawn(const Math::Vector2& position);
+    void Speak(const std::wstring& message);
 
 protected:
     virtual void BeginPlay() override;
@@ -29,5 +35,11 @@ protected:
     bool is_jump_;
 
     int timer_;
+
+#pragma region UI
+    std::shared_ptr<UI::ChatBalloon> chat_balloon_;
+#pragma endregion
+
+    TimerHandle chat_balloon_timer_handle_;
     
 };

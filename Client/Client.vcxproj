@@ -267,8 +267,10 @@
     <ClInclude Include="Game\Maps\Map_Login.h" />
     <ClInclude Include="Game\Maps\Map_Begin.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
+    <ClInclude Include="Game\Subsystems\GameUISubsystem.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
+    <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -617,8 +619,10 @@
     <ClCompile Include="Game\Maps\Map_Login.cpp" />
     <ClCompile Include="Game\Maps\Map_Begin.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
+    <ClCompile Include="Game\Subsystems\GameUISubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
+    <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -19,7 +19,7 @@ void ProjectSettings::Init()
     settings->UseVSync(false);
 
     // 물리 설정
-    settings->SetFixedTimeStep(.02f);
+    settings->SetFixedTimeStep(1.f / 60.f);
 
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer);

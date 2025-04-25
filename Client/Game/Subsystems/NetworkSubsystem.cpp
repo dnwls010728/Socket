@@ -10,7 +10,8 @@
 #include "Level/CameraManager.h"
 
 NetworkSubsystem::NetworkSubsystem() :
-    network_actors_()
+    network_actors_(),
+    local_player_()
 {
 }
 
@@ -45,6 +46,8 @@ void NetworkSubsystem::OnWorldBeginPlay()
             camera_manager->SetSize(6.f);
             camera_manager->SetTickType(TickType::kTick);
             camera_manager->SetTarget(player_character);
+
+            local_player_ = player_character;
         }
 
         MapLoadCompletePacket map_load_complete_packet;

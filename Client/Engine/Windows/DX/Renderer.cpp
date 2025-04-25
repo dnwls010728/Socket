@@ -716,7 +716,7 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     if (!use_slice9)
     {
         const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
-        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
     }
     else
     {

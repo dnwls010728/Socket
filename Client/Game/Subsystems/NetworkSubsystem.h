@@ -34,10 +34,14 @@ public:
 
     std::shared_ptr<NetworkActor> GetNetworkActor(Type::uint32 unique_id);
 
+    FORCEINLINE std::shared_ptr<NetworkActor> GetLocalPlayer() const { return local_player_.lock(); }
+
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
 
     std::unordered_map<Type::uint32, std::shared_ptr<NetworkActor>> network_actors_;
+
+    std::weak_ptr<NetworkActor> local_player_;
     
 };
 
