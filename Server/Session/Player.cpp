@@ -5,7 +5,7 @@
 #include "IPacket.h"
 #include "Session.h"
 #include "../Helper/StringHelper.h"
-#include "../Map/MapManager.h"
+#include "../Map/World.h"
 #include "../MySQL/MySQLManager.h"
 
 Player::Player(Session* session, uint32_t account_unique_id) :
@@ -57,7 +57,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 response.character_info = character_info_;
                 SendPacket(response);
 
-                map_ = MapManager::Get()->GetMap(character_info_.map_unique_id);
+                map_ = World::Get()->GetMap(character_info_.map_unique_id);
                 // map_->AddPlayer(this);
             });
         }
@@ -69,7 +69,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             if (map_)
             {
                 map_->RemovePlayer(this);
-                map_ = MapManager::Get()->GetMap(request->map_unique_id);
+                map_ = World::Get()->GetMap(request->map_unique_id);
 
                 SetPosition(0.f, 0.f);
 

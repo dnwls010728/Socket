@@ -2,7 +2,7 @@
 #include <CommonObject.h>
 #include <cstdint>
 
-class GameMap;
+class Map;
 
 namespace Net
 {
@@ -26,7 +26,7 @@ public:
 
     inline Session* GetSession() const { return session_; }
     inline uint32_t GetAccountUniqueID() const { return account_unique_id_; }
-    inline GameMap* GetMap() const { return map_; }
+    inline Map* GetMap() const { return map_; }
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
 
@@ -39,7 +39,7 @@ private:
     uint32_t account_unique_id_;
     uint32_t character_unique_id_;
 
-    GameMap* map_;
+    Map* map_;
 
     CharacterInfo character_info_;
 

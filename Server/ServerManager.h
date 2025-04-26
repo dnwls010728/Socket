@@ -2,7 +2,7 @@
 
 #include "Singleton.h"
 #include "TCPServerSocket.h"
-#include "Map/MapManager.h"
+#include "Map/World.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/SessionManager.h"
 

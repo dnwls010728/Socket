@@ -4,7 +4,7 @@
 #include "box2d/box2d.h"
 #include "box2d/math_functions.h"
 #include "box2d/types.h"
-#include "World/World.h"
+#include "Level/World.h"
 #include "Math/Math.h"
 
 // TODO: Box2D 버전 업데이트 이후 정상작동 하는지 확인 필요

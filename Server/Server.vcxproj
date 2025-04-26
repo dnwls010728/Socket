@@ -151,9 +151,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Map\GameMap.cpp" />
-    <ClCompile Include="Map\MapManager.cpp" />
-    <ClCompile Include="Map\Monster.cpp" />
+    <ClCompile Include="Map\Map.cpp" />
+    <ClCompile Include="Map\MapObject.cpp" />
+    <ClCompile Include="Map\MapObjects\Monster.cpp" />
+    <ClCompile Include="Map\World.cpp" />
     <ClCompile Include="MySQL\MySQLManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
@@ -214,9 +215,10 @@
     <ClInclude Include="Include\mysqlx\xapi.h" />
     <ClInclude Include="Include\mysqlx\xdevapi.h" />
     <ClInclude Include="Include\mysql\jdbc.h" />
-    <ClInclude Include="Map\GameMap.h" />
-    <ClInclude Include="Map\MapManager.h" />
-    <ClInclude Include="Map\Monster.h" />
+    <ClInclude Include="Map\Map.h" />
+    <ClInclude Include="Map\MapObject.h" />
+    <ClInclude Include="Map\MapObjects\Monster.h" />
+    <ClInclude Include="Map\World.h" />
     <ClInclude Include="MySQL\MySQLManager.h" />
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Session\Player.h" />

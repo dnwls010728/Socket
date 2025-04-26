@@ -1,18 +1,19 @@
-﻿#include "GameMap.h"
+﻿#include "Map.h"
 
 #include <CustomPacket.h>
-#include <iostream>
-#include <ostream>
 
 #include "../Session/Player.h"
 
-GameMap::GameMap(uint32_t map_id) :
+Map::Map(uint32_t map_id) :
     mutex_(),
-    map_unique_id_(map_id)
+    map_unique_id_(map_id),
+    map_object_unique_id_(0),
+    map_objects_(),
+    players_()
 {
 }
 
-void GameMap::AddPlayer(Player* player)
+void Map::AddPlayer(Player* player)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     players_.push_back(player);
@@ -40,7 +41,7 @@ void GameMap::AddPlayer(Player* player)
     }
 }
 
-void GameMap::RemovePlayer(Player* player)
+void Map::RemovePlayer(Player* player)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     std::erase(players_, player);
@@ -53,7 +54,7 @@ void GameMap::RemovePlayer(Player* player)
     }
 }
 
-void GameMap::SendPacket(const Net::IPacket& packet)
+void Map::SendPacket(const Net::IPacket& packet)
 {
     for (auto& player : players_)
     {
@@ -61,7 +62,7 @@ void GameMap::SendPacket(const Net::IPacket& packet)
     }
 }
 
-void GameMap::SendPacket(const Net::IPacket& packet, const Player* excluded_player)
+void Map::SendPacket(const Net::IPacket& packet, const Player* excluded_player)
 {
     for (const auto& player : players_)
     {
@@ -70,4 +71,17 @@ void GameMap::SendPacket(const Net::IPacket& packet, const Player* excluded_play
             player->SendPacket(packet);
         }
     }
+}
+
+uint32_t Map::GetMapObjectUniqueID()
+{
+    uint32_t unique_id = 0;
+
+    do
+    {
+        unique_id = map_object_unique_id_.fetch_add(1);
+    }
+    while (map_objects_.contains(unique_id));
+
+    return unique_id;
 }
