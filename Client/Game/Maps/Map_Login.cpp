@@ -94,17 +94,17 @@ void Map_Login::Unload(EndPlayReason type)
     
     UI::Manager* ui_manager = UI::Manager::Get();
     
-    if (ui_manager->IsInViewport(register_id_)) ui_manager->RemoveFromViewport(register_id_);
-    if (ui_manager->IsInViewport(register_password_)) ui_manager->RemoveFromViewport(register_password_);
-    if (ui_manager->IsInViewport(register_)) ui_manager->RemoveFromViewport(register_);
-    if (ui_manager->IsInViewport(login_switch_)) ui_manager->RemoveFromViewport(login_switch_);
+    ui_manager->RemoveFromViewport(register_id_);
+    ui_manager->RemoveFromViewport(register_password_);
+    ui_manager->RemoveFromViewport(register_);
+    ui_manager->RemoveFromViewport(login_switch_);
         
-    if (ui_manager->IsInViewport(login_id_)) ui_manager->RemoveFromViewport(login_id_);
-    if (ui_manager->IsInViewport(login_password_)) ui_manager->RemoveFromViewport(login_password_);
-    if (ui_manager->IsInViewport(login_)) ui_manager->RemoveFromViewport(login_);
-    if (ui_manager->IsInViewport(register_switch_)) ui_manager->RemoveFromViewport(register_switch_);
+    ui_manager->RemoveFromViewport(login_id_);
+    ui_manager->RemoveFromViewport(login_password_);
+    ui_manager->RemoveFromViewport(login_);
+    ui_manager->RemoveFromViewport(register_switch_);
 
-    if (ui_manager->IsInViewport(character_list_)) ui_manager->RemoveFromViewport(character_list_);
+    ui_manager->RemoveFromViewport(character_list_);
     
     GET_SESSION()->packet_handler.Remove(this, &Map_Login::ProcessPackets);
 }

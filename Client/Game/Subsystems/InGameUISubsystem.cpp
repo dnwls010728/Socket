@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "InGameUISubsystem.h"
 
+#include <CustomPacket.h>
+
+#include "GameInstance.h"
+#include "SessionSubsystem.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/ListBox.h"
@@ -24,6 +28,7 @@ void InGameUISubsystem::Init()
     chat_input_->SetPosition({ 0.f, 600.f });
     chat_input_->SetSize({ 300.f, 30.f });
     chat_input_->SetPivot({ 0.f, 0.f });
+    chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
     
 }
 
@@ -33,9 +38,40 @@ void InGameUISubsystem::Deinit()
 
     UI::Manager* ui_manager = UI::Manager::Get();
 
-    if (ui_manager->IsInViewport(chat_history_)) ui_manager->RemoveFromViewport(chat_history_);
-    if (ui_manager->IsInViewport(chat_input_)) ui_manager->RemoveFromViewport(chat_input_);
+    ui_manager->RemoveFromViewport(chat_history_);
+    ui_manager->RemoveFromViewport(chat_input_);
     
+}
+
+void InGameUISubsystem::ShowChatUI()
+{
+    UI::Manager* ui_manager = UI::Manager::Get();
+    
+    ui_manager->AddToViewport(chat_history_);
+    ui_manager->AddToViewport(chat_input_);
+}
+
+void InGameUISubsystem::HideChatUI()
+{
+    UI::Manager* ui_manager = UI::Manager::Get();
+    
+    ui_manager->RemoveFromViewport(chat_history_);
+    ui_manager->RemoveFromViewport(chat_input_);
+}
+
+void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)
+{
+    if (text.empty())
+    {
+        UI::Manager::Get()->SetFocus(nullptr);
+        return;
+    }
+
+    ChatMessagePacket chat_message_packet;
+    chat_message_packet.message = text;
+    GET_SESSION()->SendPacket(chat_message_packet);
+
+    chat_input_->SetText(L"");
 }
 
 RTTR_REGISTRATION

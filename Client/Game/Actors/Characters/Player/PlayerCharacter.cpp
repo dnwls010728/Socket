@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
@@ -10,6 +11,7 @@
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
+#include "Subsystems/InGameUISubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/ChatBalloon.h"
 #include "UI/UIManager.h"
@@ -197,8 +199,7 @@ void PlayerCharacter::EndPlay(EndPlayReason type)
     CharacterBase::EndPlay(type);
 
     UI::Manager* ui_manager = UI::Manager::Get();
-    if (ui_manager->IsInViewport(chat_balloon_))
-        ui_manager->RemoveFromViewport(chat_balloon_);
+    ui_manager->RemoveFromViewport(chat_balloon_);
 }
 
 RTTR_REGISTRATION
