@@ -229,7 +229,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2D.h" />
-    <ClInclude Include="Game\Actors\Characters\Enemies\EnemyBase.h" />
+    <ClInclude Include="Game\Actors\Characters\Monsters\MonsterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
@@ -583,7 +583,7 @@
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2D.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Enemies\EnemyBase.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Monsters\MonsterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />

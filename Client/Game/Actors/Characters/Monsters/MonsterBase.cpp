@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "EnemyBase.h"
+#include "MonsterBase.h"
 
-EnemyBase::EnemyBase(const std::wstring& kName) :
+MonsterBase::MonsterBase(const std::wstring& kName) :
     CharacterBase(kName)
 {
 }
@@ -10,7 +10,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<EnemyBase>("EnemyBase")
+    registration::class_<MonsterBase>("MonsterBase")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr
