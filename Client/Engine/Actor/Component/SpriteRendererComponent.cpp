@@ -3,7 +3,7 @@
 
 #include "TransformComponent.h"
 #include "Actor/Actor.h"
-#include "Level/World.h"
+#include "World/World.h"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/Sprite.h"
 

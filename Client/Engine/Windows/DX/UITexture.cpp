@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "UITexture.h"
 
-#include "Level/World.h"
+#include "World/World.h"
 
 UITexture::UITexture() :
     bitmap_(nullptr),

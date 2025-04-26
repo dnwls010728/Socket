@@ -175,9 +175,9 @@
     <ClInclude Include="Engine\GameInstance.h" />
     <ClInclude Include="Engine\Input\Keyboard.h" />
     <ClInclude Include="Engine\Input\Mouse.h" />
-    <ClInclude Include="Engine\Level\CameraManager.h" />
-    <ClInclude Include="Engine\Level\Level.h" />
-    <ClInclude Include="Engine\Level\World.h" />
+    <ClInclude Include="Engine\World\CameraManager.h" />
+    <ClInclude Include="Engine\World\Level.h" />
+    <ClInclude Include="Engine\World\World.h" />
     <ClInclude Include="Engine\Logger.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
@@ -540,9 +540,9 @@
     <ClCompile Include="Engine\GameInstance.cpp" />
     <ClCompile Include="Engine\Input\Keyboard.cpp" />
     <ClCompile Include="Engine\Input\Mouse.cpp" />
-    <ClCompile Include="Engine\Level\CameraManager.cpp" />
-    <ClCompile Include="Engine\Level\Level.cpp" />
-    <ClCompile Include="Engine\Level\World.cpp" />
+    <ClCompile Include="Engine\World\CameraManager.cpp" />
+    <ClCompile Include="Engine\World\Level.cpp" />
+    <ClCompile Include="Engine\World\World.cpp" />
     <ClCompile Include="Engine\Logger.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
     <ClCompile Include="Engine\Math\Color.cpp" />
