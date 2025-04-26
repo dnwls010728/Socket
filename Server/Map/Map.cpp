@@ -7,7 +7,7 @@
 Map::Map(uint32_t map_id) :
     mutex_(),
     map_unique_id_(map_id),
-    map_object_unique_id_(0),
+    map_object_unique_id_(100), // 플레이어 캐릭터 고유 ID로 인해, 100부터 시작
     map_objects_(),
     players_()
 {
