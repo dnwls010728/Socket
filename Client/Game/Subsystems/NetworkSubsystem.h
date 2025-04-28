@@ -35,6 +35,7 @@ public:
 
     std::shared_ptr<NetworkActor> GetNetworkActor(Type::uint32 unique_id);
 
+    FORCEINLINE const std::unordered_map<Type::uint32, std::shared_ptr<NetworkActor>>& GetNetworkActors() { return network_actors_; }
     FORCEINLINE std::shared_ptr<PlayerCharacter> GetLocalPlayer() const { return local_player_.lock(); }
 
 private:

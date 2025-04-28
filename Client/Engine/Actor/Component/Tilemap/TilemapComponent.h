@@ -17,12 +17,12 @@ class TilemapComponent : public ActorComponent
     SHADER_CLASS_HELPER(TilemapComponent)
     GENERATED_BODY(TilemapComponent, ActorComponent)
     
-    const float PPU = 32.f;
-    
 public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
 
     void LoadMap(const char* kPath);
+
+    FORCEINLINE const tmx::Map& GetMap() const { return map_; }
 
 protected:
     virtual void InitializeComponent() override;
@@ -32,6 +32,8 @@ protected:
 private:
     void GeneratePhysics(const tmx::ObjectGroup& kObject);
     void GenerateSpawn(const tmx::ObjectGroup& kObject);
+    
+    const float kPPU;
 
     tmx::Map map_;
     Math::Vector2 map_size_;

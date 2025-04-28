@@ -3,7 +3,6 @@
 
 #include <CustomPacket.h>
 
-#include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
@@ -12,9 +11,9 @@
 #include "Components/InventoryComponent.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
-#include "Subsystems/InGameUISubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/ChatBalloon.h"
+#include "UI/MiniMap.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
@@ -98,6 +97,13 @@ void PlayerCharacter::BeginPlay()
 
     chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});
+
+    mini_map_ = UI::MiniMap::Create(L"MiniMap");
+    mini_map_->SetPosition({800.f, 0.f});
+    mini_map_->SetSize({200.f, 200.f});
+    mini_map_->SetPivot({1.f, 1.f});
+
+    UI::Manager::Get()->AddToViewport(mini_map_);
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
@@ -119,7 +125,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         
         velocity_.x = movement_input_.x * 5.f;
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ *    delta_time);
+        controller_->Move(velocity_ * delta_time);
         
         Math::Vector2 position = transform->GetPosition();
         Movement movement = {position.x, position.y};
@@ -195,6 +201,9 @@ void PlayerCharacter::Tick(float delta_time)
     else
     {
     }
+
+    Math::Vector2 position = GetTransform()->GetPosition();
+    Logger::Print(L"PlayerCharacter::Tick() - Position: %f, %f", position.x, position.y);
 }
 
 void PlayerCharacter::EndPlay(EndPlayReason type)
@@ -203,6 +212,7 @@ void PlayerCharacter::EndPlay(EndPlayReason type)
 
     UI::Manager* ui_manager = UI::Manager::Get();
     ui_manager->RemoveFromViewport(chat_balloon_);
+    ui_manager->RemoveFromViewport(mini_map_);
 }
 
 RTTR_REGISTRATION

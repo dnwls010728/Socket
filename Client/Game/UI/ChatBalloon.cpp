@@ -61,3 +61,14 @@ void UI::ChatBalloon::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBitmap(window, body_texture_->GetTexture(), body_rect, GetPivotPosition(body_rect), 0.f, true, {11.f, 11.f, 21.f, 21.f});
     renderer->DrawString(window, text_, text_rect, GetPivotPosition(text_rect), Math::Color::Black, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<UI::ChatBalloon>("UI::ChatBalloon")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
+}

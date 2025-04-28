@@ -11,6 +11,8 @@
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),
+	kPPU(32.f),
+	map_size_(Math::Vector2::Zero()),
 	tilemap_layers_()
 {
 }
@@ -64,7 +66,7 @@ void TilemapComponent::Render(float alpha)
 	{
 		tilemap_layer->UpdateShapes(
 			GetOwner()->GetTransform()->GetPosition(),
-			{ 1.f / PPU, 1.f / PPU },
+			{ 1.f / kPPU, 1.f / kPPU },
 			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
 		);
 	}
@@ -85,8 +87,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		
 		if (temp.getShape() == tmx::Object::Shape::Rectangle)
 		{
-			b2Vec2 center = {temp.getPosition().x / PPU + ((temp.getAABB().width / 2) / PPU) - map_size_.x / 2.f, -1 * temp.getPosition().y / PPU - ((temp.getAABB().height / 2) / PPU) + map_size_.y / 2.f};
-			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / PPU, temp.getAABB().height / 2 / PPU, center, b2Rot_identity);
+			b2Vec2 center = {temp.getPosition().x / kPPU + ((temp.getAABB().width / 2) / kPPU) - map_size_.x / 2.f, -1 * temp.getPosition().y / kPPU - ((temp.getAABB().height / 2) / kPPU) + map_size_.y / 2.f};
+			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / kPPU, temp.getAABB().height / 2 / kPPU, center, b2Rot_identity);
 		}
 		else if (temp.getShape() == tmx::Object::Shape::Polygon)
 		{
@@ -94,7 +96,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 			
 			for (const auto& point : temp.getPoints())
 			{
-				b2Vec2 vertex = {point.x / PPU + temp.getPosition().x / PPU - map_size_.x / 2.f, -1 * point.y / PPU - temp.getPosition().y / PPU + map_size_.y / 2.f};
+				b2Vec2 vertex = {point.x / kPPU + temp.getPosition().x / kPPU - map_size_.x / 2.f, -1 * point.y / kPPU - temp.getPosition().y / kPPU + map_size_.y / 2.f};
 				vertices.push_back(vertex);
 			}
 
@@ -133,7 +135,7 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 				if (IsValid(actor))
 				{
 					std::shared_ptr<TransformComponent> transform = actor->GetTransform();
-					transform->SetPosition({temp.getPosition().x / PPU - map_size_.x / 2.f, -1 * temp.getPosition().y / PPU + map_size_.y / 2.f});
+					transform->SetPosition({temp.getPosition().x / kPPU - map_size_.x / 2.f, -1 * temp.getPosition().y / kPPU + map_size_.y / 2.f});
 				}
 			}
 		}
