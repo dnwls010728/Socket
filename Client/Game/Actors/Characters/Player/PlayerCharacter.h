@@ -3,6 +3,8 @@
 
 #include "Actors/Characters/CharacterBase.h"
 
+class InventoryComponent;
+
 namespace UI
 {
     class ChatBalloon;
@@ -29,6 +31,10 @@ protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
     virtual void EndPlay(EndPlayReason type) override;
+
+#pragma region 컴포넌트
+    std::shared_ptr<InventoryComponent> inventory_;
+#pragma endregion
 
     Math::Vector2 movement_input_;
 

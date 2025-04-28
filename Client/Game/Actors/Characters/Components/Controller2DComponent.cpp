@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Controller2D.h"
+#include "Controller2DComponent.h"
 
 #include "Actor/Component/ColliderComponent.h"
 #include "Math/Math.h"
@@ -9,7 +9,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Physics/Physics2D.h"
 
-Controller2D::Controller2D(Actor* owner, const std::wstring& name) :
+Controller2DComponent::Controller2DComponent(Actor* owner, const std::wstring& name) :
     ActorComponent(owner, name),
     kSkinWidth(.015f),
     horizontal_ray_count_(4),
@@ -22,7 +22,7 @@ Controller2D::Controller2D(Actor* owner, const std::wstring& name) :
 {
 }
 
-void Controller2D::Move(Math::Vector2 velocity)
+void Controller2DComponent::Move(Math::Vector2 velocity)
 {
     UpdateRayCastOrigins();
     collisions_.Reset();
@@ -33,7 +33,7 @@ void Controller2D::Move(Math::Vector2 velocity)
     GetOwner()->GetTransform()->Translate(velocity);
 }
 
-void Controller2D::BeginPlay()
+void Controller2DComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
@@ -42,7 +42,7 @@ void Controller2D::BeginPlay()
     
 }
 
-void Controller2D::UpdateRayCastOrigins()
+void Controller2DComponent::UpdateRayCastOrigins()
 {
     if (!collider_) return;
     
@@ -56,7 +56,7 @@ void Controller2D::UpdateRayCastOrigins()
     
 }
 
-void Controller2D::CalculateRaySpacing()
+void Controller2DComponent::CalculateRaySpacing()
 {
     if (!collider_) return;
     
@@ -71,7 +71,7 @@ void Controller2D::CalculateRaySpacing()
     
 }
 
-void Controller2D::HorizontalCollisions(Math::Vector2& velocity)
+void Controller2DComponent::HorizontalCollisions(Math::Vector2& velocity)
 {
     float direction_x = Math::Sign(velocity.x);
     float ray_length = Math::Abs(velocity.x) + kSkinWidth;
@@ -97,7 +97,7 @@ void Controller2D::HorizontalCollisions(Math::Vector2& velocity)
     }
 }
 
-void Controller2D::VerticalCollisions(Math::Vector2& velocity)
+void Controller2DComponent::VerticalCollisions(Math::Vector2& velocity)
 {
     float direction_y = Math::Sign(velocity.y);
     float ray_length = Math::Abs(velocity.y) + kSkinWidth;
@@ -127,7 +127,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Controller2D>("Controller2D")
+    registration::class_<Controller2DComponent>("Controller2DComponent")
         .constructor<Actor*, const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

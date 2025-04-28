@@ -6,7 +6,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
-#include "Components/Controller2D.h"
+#include "Components/Controller2DComponent.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
@@ -18,7 +18,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetSize({1.f, 1.f});
 
-    controller_ = AddComponent<Controller2D>(L"Controller2D");
+    controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
 

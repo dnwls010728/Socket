@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Actor/Component/ActorComponent.h"
 
-class Controller2D : public ActorComponent
+class Controller2DComponent : public ActorComponent
 {
-    SHADER_CLASS_HELPER(Controller2D)
-    GENERATED_BODY(Controller2D, ActorComponent)
+    SHADER_CLASS_HELPER(Controller2DComponent)
+    GENERATED_BODY(Controller2DComponent, ActorComponent)
 
 public:
     struct RayCastOrigins
@@ -32,8 +32,8 @@ public:
     };
     
 public:
-    Controller2D(Actor* owner, const std::wstring& name);
-    virtual ~Controller2D() override = default;
+    Controller2DComponent(Actor* owner, const std::wstring& name);
+    virtual ~Controller2DComponent() override = default;
 
     void Move(Math::Vector2 velocity);
 

@@ -7,8 +7,9 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Actors/Characters/Components/Controller2D.h"
+#include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Asset/AssetManager.h"
+#include "Components/InventoryComponent.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Subsystems/InGameUISubsystem.h"
@@ -27,6 +28,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     chat_balloon_(nullptr),
     chat_balloon_timer_handle_()
 {
+    inventory_ = AddComponent<InventoryComponent>(L"Inventory");
+    
     SetLayer(ActorLayer::kPlayer);
 }
 
@@ -105,7 +108,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 
     if (IsMine())
     {
-        const Controller2D::CollisionInfo& collisions = controller_->GetCollisions();
+        const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
 
         if (is_jump_ && collisions.is_below)
@@ -116,7 +119,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         
         velocity_.x = movement_input_.x * 5.f;
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ * delta_time);
+        controller_->Move(velocity_ *    delta_time);
         
         Math::Vector2 position = transform->GetPosition();
         Movement movement = {position.x, position.y};

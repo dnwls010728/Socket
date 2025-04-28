@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Actors/NetworkActor.h"
 
-class Controller2D;
+class Controller2DComponent;
 class StateMachineComponent;
 
 class CharacterBase : public NetworkActor
@@ -19,7 +19,7 @@ public:
 protected:
 #pragma region 컴포넌트
     std::shared_ptr<BoxColliderComponent> collider_;
-    std::shared_ptr<Controller2D> controller_;
+    std::shared_ptr<Controller2DComponent> controller_;
     std::shared_ptr<SpriteRendererComponent> renderer_;
     std::shared_ptr<StateMachineComponent> state_machine_;
 #pragma endregion
