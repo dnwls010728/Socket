@@ -15,8 +15,8 @@ CameraManager::CameraManager() :
     focus_area_(),
     target_weak_ptr(),
     collider_weak_ptr_(),
-    limit_half_width_(15.f),
-    limit_half_height_(10.f),
+    limit_half_width_(12.5f),
+    limit_half_height_(9.5f),
     position_(Math::Vector2::Zero()),
     focus_area_size_({2.f, 2.f}),
     tick_type_(TickType::kTick)

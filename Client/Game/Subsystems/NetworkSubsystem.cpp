@@ -12,7 +12,8 @@
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
-    local_player_()
+    local_player_(),
+    tilemap_component_()
 {
 }
 

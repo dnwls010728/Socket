@@ -38,12 +38,18 @@ public:
     FORCEINLINE const std::unordered_map<Type::uint32, std::shared_ptr<NetworkActor>>& GetNetworkActors() { return network_actors_; }
     FORCEINLINE std::shared_ptr<PlayerCharacter> GetLocalPlayer() const { return local_player_.lock(); }
 
+    FORCEINLINE void SetTilemapComponent(const std::shared_ptr<TilemapComponent>& kTilemapComponent) { tilemap_component_ = kTilemapComponent; }
+    FORCEINLINE std::shared_ptr<TilemapComponent> GetTilemapComponent() const { return tilemap_component_.lock(); }
+
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
 
     std::unordered_map<Type::uint32, std::shared_ptr<NetworkActor>> network_actors_;
 
     std::weak_ptr<PlayerCharacter> local_player_;
+
+    // 임시
+    std::weak_ptr<TilemapComponent> tilemap_component_;
     
 };
 

@@ -99,9 +99,8 @@ void PlayerCharacter::BeginPlay()
     chat_balloon_->SetSize({8.f, 8.f});
 
     mini_map_ = UI::MiniMap::Create(L"MiniMap");
-    mini_map_->SetPosition({800.f, 0.f});
-    mini_map_->SetSize({200.f, 200.f});
-    mini_map_->SetPivot({1.f, 1.f});
+    mini_map_->SetPosition({100.f, 76.f});
+    mini_map_->SetSize({200.f, 152.f});
 
     UI::Manager::Get()->AddToViewport(mini_map_);
 }
@@ -201,9 +200,6 @@ void PlayerCharacter::Tick(float delta_time)
     else
     {
     }
-
-    Math::Vector2 position = GetTransform()->GetPosition();
-    Logger::Print(L"PlayerCharacter::Tick() - Position: %f, %f", position.x, position.y);
 }
 
 void PlayerCharacter::EndPlay(EndPlayReason type)

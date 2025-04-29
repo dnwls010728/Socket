@@ -23,10 +23,12 @@ public:
     void LoadMap(const char* kPath);
 
     FORCEINLINE const tmx::Map& GetMap() const { return map_; }
+    FORCEINLINE const std::vector<Bounds>& GetCollisionBodies() const { return collision_bodies_; }
 
 protected:
     virtual void InitializeComponent() override;
     virtual void UninitializeComponent() override;
+    virtual void BeginPlay() override;
     virtual void Render(float alpha) override;
 
 private:
@@ -41,5 +43,7 @@ private:
     std::vector<std::unique_ptr<TilemapLayer>> tilemap_layers_;
 
     b2BodyId tilemap_body_id_;
+
+    std::vector<Bounds> collision_bodies_;
     
 };

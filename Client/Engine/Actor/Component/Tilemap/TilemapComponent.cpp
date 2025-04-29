@@ -7,13 +7,15 @@
 #include "box2d/box2d.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),
 	kPPU(32.f),
 	map_size_(Math::Vector2::Zero()),
-	tilemap_layers_()
+	tilemap_layers_(),
+	collision_bodies_()
 {
 }
 
@@ -58,6 +60,13 @@ void TilemapComponent::UninitializeComponent()
 	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
 }
 
+void TilemapComponent::BeginPlay()
+{
+	ActorComponent::BeginPlay();
+
+	GET_NETWORK()->SetTilemapComponent(GetSharedThis());
+}
+
 void TilemapComponent::Render(float alpha)
 {
 	ActorComponent::Render(alpha);
@@ -89,6 +98,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		{
 			b2Vec2 center = {temp.getPosition().x / kPPU + ((temp.getAABB().width / 2) / kPPU) - map_size_.x / 2.f, -1 * temp.getPosition().y / kPPU - ((temp.getAABB().height / 2) / kPPU) + map_size_.y / 2.f};
 			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / kPPU, temp.getAABB().height / 2 / kPPU, center, b2Rot_identity);
+
+			collision_bodies_.push_back({{center.x, center.y}, {temp.getAABB().width / kPPU, temp.getAABB().height / kPPU}});
 		}
 		else if (temp.getShape() == tmx::Object::Shape::Polygon)
 		{
