@@ -7,7 +7,7 @@
 
 class Asset
 {
-    GENERATED_BODY(Asset);
+    GENERATED_BODY(Asset)
     
 public:
     Asset();

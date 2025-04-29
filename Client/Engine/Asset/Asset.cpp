@@ -29,7 +29,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<Asset>("Resource")
+    registration::class_<Asset>("Asset")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

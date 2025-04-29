@@ -2,12 +2,16 @@
 #include "PrototypeTilemap.h"
 
 #include "Actor/Component/Tilemap/TilemapComponent.h"
+#include "Actor/Component/Tilemap/Tilemap.h"
+#include "Asset/AssetManager.h"
 
 PrototypeTilemap::PrototypeTilemap(const std::wstring& kName) :
     Actor(kName)
 {
     tilemap_ = AddComponent<TilemapComponent>(L"Tilemap");
-    tilemap_->LoadMap("Content\\Tilemaps\\PrototypeTilemap.tmx");
+
+    Tilemap* tilemap_data = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\PrototypeTilemap.tmx");
+    if (tilemap_data) tilemap_->SetTilemap(tilemap_data);
 }
 
 RTTR_REGISTRATION

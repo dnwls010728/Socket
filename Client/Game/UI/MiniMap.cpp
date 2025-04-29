@@ -94,7 +94,7 @@ void UI::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
         {max_x - min_x, max_y - min_y},
         {.5f, .5f}
     );
-    renderer->DrawBox(window, camera_bounds_rect, GetPivotPosition(camera_bounds_rect), Math::Color::Green, 1.f);
+    renderer->DrawBox(window, camera_bounds_rect, GetPivotPosition(camera_bounds_rect), Math::Color::Green);
 
     renderer->DrawSolidBox(window, camera_rect, GetPivotPosition(camera_rect), Math::Color::Blue);
     renderer->EndLayer();

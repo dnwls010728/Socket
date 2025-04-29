@@ -155,6 +155,7 @@
     <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
     <ClInclude Include="Engine\Actor\Component\SpriteRendererComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\Tilemap.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunkArray.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
@@ -524,6 +525,7 @@
     <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\SpriteRendererComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\Tilemap.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunkArray.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />

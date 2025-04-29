@@ -5,6 +5,8 @@
 #include "Math/Vector2.h"
 #include "tmxlite/Map.hpp"
 
+class Tilemap;
+
 namespace tmx
 {
     class ObjectGroup;
@@ -20,9 +22,8 @@ class TilemapComponent : public ActorComponent
 public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
 
-    void LoadMap(const char* kPath);
-
-    FORCEINLINE const tmx::Map& GetMap() const { return map_; }
+    FORCEINLINE void SetTilemap(Tilemap* tilemap) { tilemap_ = tilemap; }
+    
     FORCEINLINE const std::vector<Bounds>& GetCollisionBodies() const { return collision_bodies_; }
 
 protected:
@@ -37,7 +38,8 @@ private:
     
     const float kPPU;
 
-    tmx::Map map_;
+    Tilemap* tilemap_;
+
     Math::Vector2 map_size_;
 
     std::vector<std::unique_ptr<TilemapLayer>> tilemap_layers_;

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "TilemapComponent.h"
 
+#include "Tilemap.h"
 #include "TilemapLayer.h"
 #include "Actor/Actor.h"
 #include "Actor/Component/TransformComponent.h"
@@ -13,42 +14,43 @@
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),
 	kPPU(32.f),
+	tilemap_(nullptr),
 	map_size_(Math::Vector2::Zero()),
 	tilemap_layers_(),
 	collision_bodies_()
 {
 }
 
-void TilemapComponent::LoadMap(const char* kPath)
-{
-	map_.load(kPath);
-
-	map_size_.x = static_cast<float>(map_.getTileCount().x);
-	map_size_.y = static_cast<float>(map_.getTileCount().y);
-	
-	const auto& layers = map_.getLayers();
-	for (const auto& layer : layers)
-	{
-		if (layer->getType() == tmx::Layer::Type::Object)
-		{
-			const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
-			
-			if (layer->getName() == "Collision") GeneratePhysics(object);
-			else if (layer->getName() == "Spawn") GenerateSpawn(object);
-		}
-		else if (layer->getType() == tmx::Layer::Type::Tile)
-		{
-			const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
-			
-			Math::Vector2 chunk_size = {512.f, 512.f};
-			tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map_, tile_layer, chunk_size));
-		}
-	}
-}
-
 void TilemapComponent::InitializeComponent()
 {
 	ActorComponent::InitializeComponent();
+
+	if (tilemap_)
+	{
+		const tmx::Map& map = tilemap_->GetMap();
+		
+		map_size_.x = static_cast<float>(map.getTileCount().x);
+		map_size_.y = static_cast<float>(map.getTileCount().y);
+	
+		const auto& layers = map.getLayers();
+		for (const auto& layer : layers)
+		{
+			if (layer->getType() == tmx::Layer::Type::Object)
+			{
+				const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
+			
+				if (layer->getName() == "Collision") GeneratePhysics(object);
+				else if (layer->getName() == "Spawn") GenerateSpawn(object);
+			}
+			else if (layer->getType() == tmx::Layer::Type::Tile)
+			{
+				const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
+			
+				Math::Vector2 chunk_size = {512.f, 512.f};
+				tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map, tile_layer, chunk_size));
+			}
+		}
+	}
 
 	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
 }
