@@ -26,6 +26,8 @@ void UI::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
 
     Math::Rect rect = GetRect();
 
+    renderer->DrawSolidBox(window, rect, GetPivotPosition(), {0, 0, 0, 100});
+
     Bounds map_bounds = { {0.f, 0.f}, {25.f, 19.f} };
     Math::Vector2 scale = {rect.width / (map_bounds.max.x - map_bounds.min.x), rect.height / (map_bounds.max.y - map_bounds.min.y)};
 
@@ -72,31 +74,6 @@ void UI::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
         Math::Vector2 body_pivot_position = GetPivotPosition(body_rect, {.5f, .5f});
         renderer->DrawSolidBox(window, body_rect, body_pivot_position, Math::Color::Red);
     }
-
-    Math::Vector2 camera_position = CameraManager::Get()->GetPosition();
-    float camera_x = (camera_position.x - map_bounds.min.x) * scale.x;
-    float camera_y = (map_bounds.max.y - camera_position.y) * scale.y;
-
-    Math::Rect camera_rect = GetRect(
-        {camera_x, camera_y},
-        {5.f, 5.f},
-        {.5f, .5f}
-    );
-
-    Bounds bounds = CameraManager::Get()->GetBounds();
-    float min_x = (bounds.min.x - map_bounds.min.x) * scale.x;
-    float min_y = (map_bounds.max.y - bounds.min.y) * scale.y;
-    float max_x = (bounds.max.x - map_bounds.min.x) * scale.x;
-    float max_y = (map_bounds.max.y - bounds.max.y) * scale.y;
-
-    Math::Rect camera_bounds_rect = GetRect(
-        {camera_x, camera_y},
-        {max_x - min_x, max_y - min_y},
-        {.5f, .5f}
-    );
-    renderer->DrawBox(window, camera_bounds_rect, GetPivotPosition(camera_bounds_rect), Math::Color::Green);
-
-    renderer->DrawSolidBox(window, camera_rect, GetPivotPosition(camera_rect), Math::Color::Blue);
     renderer->EndLayer();
 }
 

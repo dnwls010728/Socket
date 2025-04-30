@@ -1,24 +1,27 @@
 ﻿#include "pch.h"
-#include "PrototypeTilemap.h"
+#include "TilemapLoader.h"
 
 #include "Actor/Component/Tilemap/TilemapComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Asset/AssetManager.h"
 
-PrototypeTilemap::PrototypeTilemap(const std::wstring& kName) :
+TilemapLoader::TilemapLoader(const std::wstring& kName) :
     Actor(kName)
 {
     tilemap_ = AddComponent<TilemapComponent>(L"Tilemap");
 
-    Tilemap* tilemap_data = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\PrototypeTilemap.tmx");
-    if (tilemap_data) tilemap_->SetTilemap(tilemap_data);
+}
+
+void TilemapLoader::SetTilemap(class Tilemap* tilemap)
+{
+    tilemap_->SetTilemap(tilemap);
 }
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<PrototypeTilemap>("PrototypeTilemap")
+    registration::class_<TilemapLoader>("TilemapLoader")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

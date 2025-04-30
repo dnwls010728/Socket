@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
-#include "Maps/Map_Login.h"
-#include "Maps/Map_Begin.h"
+#include "Maps/LoginMap.h"
+#include "Maps/InGameMap.h"
 
 ProjectSettings::ProjectSettings()
 {
@@ -25,9 +25,8 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer);
     settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
 
-    settings->AddLevel<Map_Login>(L"Login");
-    settings->AddLevel<Map_Begin>(L"0");
-    settings->AddLevel<Map_Begin>(L"1");
+    settings->AddLevel<LoginMap>(L"Login");
+    settings->AddLevel<InGameMap>(L"InGameMap");
 
     settings->SetDefaultLevel(L"Login");
     

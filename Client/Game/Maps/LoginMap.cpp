@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Map_Login.h"
+#include "LoginMap.h"
 
 #include <CustomPacket.h>
 
@@ -10,7 +10,7 @@
 #include "UI/Widget/EditableTextBox.h"
 #include "UI/Widget/ListBox.h"
 
-Map_Login::Map_Login(const std::wstring& kName) :
+LoginMap::LoginMap(const std::wstring& kName) :
     Level(kName),
     register_id_(nullptr),
     register_password_(nullptr),
@@ -25,11 +25,11 @@ Map_Login::Map_Login(const std::wstring& kName) :
 {
 }
 
-void Map_Login::Load()
+void LoginMap::Load()
 {
     Level::Load();
 
-    GET_SESSION()->packet_handler.Add(this, &Map_Login::ProcessPackets);
+    GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
 
     UI::Manager* ui_manager = UI::Manager::Get();
     
@@ -47,13 +47,13 @@ void Map_Login::Load()
         register_->SetPosition({ 400, 480 });
         register_->SetSize({ 200, 30 });
         register_->SetText(L"회원가입");
-        register_->OnClick(this, &Map_Login::OnRegister);
+        register_->OnClick(this, &LoginMap::OnRegister);
 
         login_switch_ = UI::Button::Create(L"LoginSwitch");
         login_switch_->SetPosition({ 400, 520 });
         login_switch_->SetSize({ 200, 30 });
         login_switch_->SetText(L"로그인");
-        login_switch_->OnClick(this, &Map_Login::OnLoginSwitch);
+        login_switch_->OnClick(this, &LoginMap::OnLoginSwitch);
         
         login_id_ = UI::EditableTextBox::Create(L"LoginID");
         login_id_->SetPosition({ 400, 400 });
@@ -69,18 +69,18 @@ void Map_Login::Load()
         login_->SetPosition({ 400, 480 });
         login_->SetSize({ 200, 30 });
         login_->SetText(L"로그인");
-        login_->OnClick(this, &Map_Login::OnLogin);
+        login_->OnClick(this, &LoginMap::OnLogin);
 
         register_switch_ = UI::Button::Create(L"RegisterSwitch");
         register_switch_->SetPosition({ 400, 520 });
         register_switch_->SetSize({ 200, 30 });
         register_switch_->SetText(L"회원가입");
-        register_switch_->OnClick(this, &Map_Login::OnRegisterSwitch);
+        register_switch_->OnClick(this, &LoginMap::OnRegisterSwitch);
 
         character_list_ = UI::ListBox::Create(L"CharacterList");
         character_list_->SetPosition({ 400, 400 });
         character_list_->SetSize({ 200, 300 });
-        character_list_->OnDoubleClick(this, &Map_Login::OnCharacterSelect);
+        character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
         ui_manager->AddToViewport(login_id_);
         ui_manager->AddToViewport(login_password_);
@@ -88,7 +88,7 @@ void Map_Login::Load()
         ui_manager->AddToViewport(register_switch_);
 }
 
-void Map_Login::Unload(EndPlayReason type)
+void LoginMap::Unload(EndPlayReason type)
 {
     Level::Unload(type);
     
@@ -106,10 +106,10 @@ void Map_Login::Unload(EndPlayReason type)
 
     ui_manager->RemoveFromViewport(character_list_);
     
-    GET_SESSION()->packet_handler.Remove(this, &Map_Login::ProcessPackets);
+    GET_SESSION()->packet_handler.Remove(this, &LoginMap::ProcessPackets);
 }
 
-void Map_Login::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
+void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 {
     switch (packet->GetPacketID())
     {
@@ -182,7 +182,7 @@ void Map_Login::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
     }
 }
 
-void Map_Login::OnRegister()
+void LoginMap::OnRegister()
 {
     if (register_id_->GetText().empty() || register_password_->GetText().empty()) return;
 
@@ -192,7 +192,7 @@ void Map_Login::OnRegister()
     GET_SESSION()->SendPacket(request);
 }
 
-void Map_Login::OnLogin()
+void LoginMap::OnLogin()
 {
     if (login_id_->GetText().empty() || login_password_->GetText().empty()) return;
 
@@ -202,7 +202,7 @@ void Map_Login::OnLogin()
     GET_SESSION()->SendPacket(request);
 }
 
-void Map_Login::OnRegisterSwitch()
+void LoginMap::OnRegisterSwitch()
 {
     UI::Manager* ui_manager = UI::Manager::Get();
     
@@ -217,7 +217,7 @@ void Map_Login::OnRegisterSwitch()
     ui_manager->AddToViewport(login_switch_);
 }
 
-void Map_Login::OnLoginSwitch()
+void LoginMap::OnLoginSwitch()
 {
     UI::Manager* ui_manager = UI::Manager::Get();
     
@@ -232,7 +232,7 @@ void Map_Login::OnLoginSwitch()
     ui_manager->AddToViewport(register_switch_);
 }
 
-void Map_Login::OnCharacterSelect(Type::uint64 user_data)
+void LoginMap::OnCharacterSelect(Type::uint64 user_data)
 {
     CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
     if (!character) return;
@@ -246,7 +246,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Map_Login>("Map_Login")
+    registration::class_<LoginMap>("LoginMap")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

@@ -238,7 +238,7 @@
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
-    <ClInclude Include="Game\Actors\PrototypeTilemap.h" />
+    <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
     <ClInclude Include="Game\Blackboard\BlackboardEntry.h" />
     <ClInclude Include="Game\Blackboard\BlackboardKey.h" />
@@ -265,9 +265,8 @@
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
-    <ClInclude Include="Game\Maps\Map_Empty.h" />
-    <ClInclude Include="Game\Maps\Map_Login.h" />
-    <ClInclude Include="Game\Maps\Map_Begin.h" />
+    <ClInclude Include="Game\Maps\LoginMap.h" />
+    <ClInclude Include="Game\Maps\InGameMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
@@ -595,7 +594,7 @@
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
-    <ClCompile Include="Game\Actors\PrototypeTilemap.cpp" />
+    <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Blackboard\BlackboardEntry.cpp" />
     <ClCompile Include="Game\Blackboard\BlackboardKey.cpp" />
@@ -620,9 +619,8 @@
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
-    <ClCompile Include="Game\Maps\Map_Empty.cpp" />
-    <ClCompile Include="Game\Maps\Map_Login.cpp" />
-    <ClCompile Include="Game\Maps\Map_Begin.cpp" />
+    <ClCompile Include="Game\Maps\LoginMap.cpp" />
+    <ClCompile Include="Game\Maps\InGameMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
