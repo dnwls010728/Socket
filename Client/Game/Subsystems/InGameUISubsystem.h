@@ -7,6 +7,7 @@ namespace UI
 {
     class ListBox;
     class EditableTextBox;
+    class MiniMap;
 }
 
 class InGameUISubsystem : public GameInstanceSubsystem
@@ -22,9 +23,12 @@ public:
 
     void ShowChatUI();
     void HideChatUI();
+    void ShowMiniMap();
+    void HideMiniMap();
 
     FORCEINLINE std::shared_ptr<UI::ListBox> GetChatHistory() const { return chat_history_; }
     FORCEINLINE std::shared_ptr<UI::EditableTextBox> GetChatInput() const { return chat_input_; }
+    FORCEINLINE std::shared_ptr<UI::MiniMap> GetMiniMap() const { return mini_map_; }
 
 private:
     void OnChatInputReturn(const std::wstring& text);
@@ -32,6 +36,7 @@ private:
 #pragma region 위젯
     std::shared_ptr<UI::ListBox> chat_history_;
     std::shared_ptr<UI::EditableTextBox> chat_input_;
+    std::shared_ptr<UI::MiniMap> mini_map_;
 #pragma endregion
     
 };

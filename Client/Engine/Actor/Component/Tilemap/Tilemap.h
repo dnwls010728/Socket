@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Asset/Asset.h"
 #include "tmxlite/Map.hpp"
+#include "Windows/DX/UITexture.h"
 
 class Tilemap : public Asset
 {
@@ -15,9 +16,19 @@ public:
     Math::Vector2 GetMapSize() const;
     Math::Vector2 GetTileSize() const;
 
+    Bounds GetWorldBounds();
+
     FORCEINLINE const tmx::Map& GetMap() const { return map_; }
+    FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+    FORCEINLINE float GetPPU() const { return ppu_; }
+    FORCEINLINE const UITexture* GetUITexture() const { return ui_texture_.get(); }
 
 private:
     tmx::Map map_;
+    uint32_t unique_id_;
+    std::wstring name_;
+    float ppu_;
+    std::unique_ptr<UITexture> ui_texture_;
     
 };

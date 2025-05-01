@@ -23,8 +23,6 @@ public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
 
     void SetTilemap(Tilemap* tilemap);
-    
-    FORCEINLINE const std::vector<Bounds>& GetCollisionBodies() const { return collision_bodies_; }
 
 protected:
     virtual void BeginPlay() override;
@@ -35,7 +33,7 @@ private:
     void GeneratePhysics(const tmx::ObjectGroup& kObject);
     void GenerateSpawn(const tmx::ObjectGroup& kObject);
     
-    const float kPPU;
+    float ppu_;
 
     Tilemap* tilemap_;
 
@@ -44,7 +42,5 @@ private:
     std::vector<std::unique_ptr<TilemapLayer>> tilemap_layers_;
 
     b2BodyId tilemap_body_id_;
-
-    std::vector<Bounds> collision_bodies_;
     
 };

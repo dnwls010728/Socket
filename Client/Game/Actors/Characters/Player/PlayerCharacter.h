@@ -47,7 +47,6 @@ protected:
 
 #pragma region UI
     std::shared_ptr<UI::ChatBalloon> chat_balloon_;
-    std::shared_ptr<UI::MiniMap> mini_map_;
 #pragma endregion
 
     TimerHandle chat_balloon_timer_handle_;

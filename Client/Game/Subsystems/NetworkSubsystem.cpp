@@ -5,6 +5,7 @@
 #include <ranges>
 
 #include "GameInstance.h"
+#include "InGameUISubsystem.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
@@ -13,13 +14,14 @@
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
+#include "UI/MiniMap.h"
 #include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
-    local_player_(),
-    tilemap_(nullptr),
-    tilemap_component_()
+    player_(),
+    other_players_(),
+    tilemap_(nullptr)
 {
 }
 
@@ -47,6 +49,9 @@ void NetworkSubsystem::OnWorldBeginPlay()
     {
         InGameReadyPacket packet;
         SendPacket(packet);
+
+        InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+        in_game_ui_subsystem->ShowMiniMap();
     }
 }
 
@@ -66,6 +71,13 @@ void NetworkSubsystem::SendPacket(Net::IPacket& packet)
     GET_SESSION()->SendPacket(packet);
 }
 
+void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
+{
+    ChangeMapRequest request;
+    request.map_unique_id = map_unique_id;
+    SendPacket(request);
+}
+
 void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
 {
     auto iter = network_actors_.find(unique_id);
@@ -74,6 +86,18 @@ void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
         std::shared_ptr<NetworkActor> network_actor = iter->second;
         if (IsValid(network_actor)) network_actor->Destroy();
         network_actors_.erase(iter);
+    }
+}
+
+void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharacter>>& out_players)
+{
+    for (const auto& player : other_players_)
+    {
+        std::shared_ptr<PlayerCharacter> player_character = player.lock();
+        if (IsValid(player_character))
+        {
+            out_players.push_back(player_character);
+        }
     }
 }
 
@@ -98,13 +122,14 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case SpawnPlayerPacket::StaticPacketID:
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
-            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", spawn_player_packet->character_info.unique_id);
+            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_info.unique_id);
             if (IsValid(player_character))
             {
                 float position_x = spawn_player_packet->position_x;
                 float position_y = spawn_player_packet->position_y;
 
                 player_character->InitSpawn({position_x, position_y});
+                other_players_.emplace_back(player_character);
             }
         }
         break;
@@ -128,11 +153,11 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case ChatMessagePacket::StaticPacketID:
         {
             ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());
-            for (const auto& network_actor : network_actors_)
+            for (const auto& network_actor : network_actors_ | std::views::values)
             {
-                if (network_actor.second->GetUniqueID() == chat_message_packet->unique_id)
+                if (network_actor->GetUniqueID() == chat_message_packet->unique_id)
                 {
-                    std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor.second);
+                    std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor);
                     if (IsValid(player_character))
                     {
                         std::wstring message = chat_message_packet->message;
@@ -159,8 +184,9 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
         if (IsValid(actor)) actor->Destroy();
     }
 
+    other_players_.clear();
+    player_.reset();
     network_actors_.clear();
-    local_player_.reset();
 
     CameraManager* camera_manager = CameraManager::Get();
 
@@ -176,20 +202,23 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
             camera_manager->SetSize(6.f);
             camera_manager->SetTickType(TickType::kTick);
 
-            Math::Vector2 map_size = tilemap_->GetMapSize();
-            camera_manager->SetLimit(map_size.x, map_size.y);
+            Bounds bounds = tilemap_->GetWorldBounds();
+            camera_manager->SetLimit(bounds.size.x, bounds.size.y);
         }
     }
     
     const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
-    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
+    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
     if (IsValid(player_character))
     {
         player_character->SetMine(true);
-        local_player_ = player_character;
+        player_ = player_character;
         
         camera_manager->SetTarget(player_character);
     }
+
+    InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+    in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 }
 
 RTTR_REGISTRATION

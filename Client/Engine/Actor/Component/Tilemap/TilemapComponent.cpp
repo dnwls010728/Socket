@@ -13,11 +13,10 @@
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),
-	kPPU(32.f),
 	tilemap_(nullptr),
+	ppu_(0.f),
 	map_size_(Math::Vector2::Zero()),
-	tilemap_layers_(),
-	collision_bodies_()
+	tilemap_layers_()
 {
 }
 
@@ -33,6 +32,8 @@ void TilemapComponent::BeginPlay()
 	if (tilemap_)
 	{
 		const tmx::Map& map = tilemap_->GetMap();
+
+		ppu_ = tilemap_->GetPPU();
 		
 		map_size_.x = static_cast<float>(map.getTileCount().x);
 		map_size_.y = static_cast<float>(map.getTileCount().y);
@@ -76,7 +77,7 @@ void TilemapComponent::Render(float alpha)
 	{
 		tilemap_layer->UpdateShapes(
 			GetOwner()->GetTransform()->GetPosition(),
-			{ 1.f / kPPU, 1.f / kPPU },
+			{ 1.f / ppu_, 1.f / ppu_ },
 			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
 		);
 	}
@@ -97,10 +98,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		
 		if (temp.getShape() == tmx::Object::Shape::Rectangle)
 		{
-			b2Vec2 center = {temp.getPosition().x / kPPU + ((temp.getAABB().width / 2) / kPPU) - map_size_.x / 2.f, -1 * temp.getPosition().y / kPPU - ((temp.getAABB().height / 2) / kPPU) + map_size_.y / 2.f};
-			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / kPPU, temp.getAABB().height / 2 / kPPU, center, b2Rot_identity);
-
-			collision_bodies_.push_back({{center.x, center.y}, {temp.getAABB().width / kPPU, temp.getAABB().height / kPPU}});
+			b2Vec2 center = {temp.getPosition().x / ppu_ + ((temp.getAABB().width / 2) / ppu_) - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ - ((temp.getAABB().height / 2) / ppu_) + map_size_.y / 2.f};
+			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
 		}
 		else if (temp.getShape() == tmx::Object::Shape::Polygon)
 		{
@@ -108,7 +107,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 			
 			for (const auto& point : temp.getPoints())
 			{
-				b2Vec2 vertex = {point.x / kPPU + temp.getPosition().x / kPPU - map_size_.x / 2.f, -1 * point.y / kPPU - temp.getPosition().y / kPPU + map_size_.y / 2.f};
+				b2Vec2 vertex = {point.x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * point.y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f};
 				vertices.push_back(vertex);
 			}
 
@@ -147,7 +146,7 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 				if (IsValid(actor))
 				{
 					std::shared_ptr<TransformComponent> transform = actor->GetTransform();
-					transform->SetPosition({temp.getPosition().x / kPPU - map_size_.x / 2.f, -1 * temp.getPosition().y / kPPU + map_size_.y / 2.f});
+					transform->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
 				}
 			}
 		}

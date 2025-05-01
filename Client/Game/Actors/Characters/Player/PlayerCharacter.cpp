@@ -97,12 +97,6 @@ void PlayerCharacter::BeginPlay()
 
     chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});
-
-    mini_map_ = UI::MiniMap::Create(L"MiniMap");
-    mini_map_->SetPosition({100.f, 76.f});
-    mini_map_->SetSize({200.f, 152.f});
-
-    // UI::Manager::Get()->AddToViewport(mini_map_);
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
@@ -181,6 +175,16 @@ void PlayerCharacter::Tick(float delta_time)
             {
                 is_jump_ = true;
             }
+
+            if (keyboard->GetKeyDown('1'))
+            {
+                GET_NETWORK()->ChangeMap(0);
+            }
+
+            if (keyboard->GetKeyDown('2'))
+            {
+                GET_NETWORK()->ChangeMap(1);
+            }
         }
         else
         {
@@ -199,7 +203,6 @@ void PlayerCharacter::EndPlay(EndPlayReason type)
 
     UI::Manager* ui_manager = UI::Manager::Get();
     ui_manager->RemoveFromViewport(chat_balloon_);
-    ui_manager->RemoveFromViewport(mini_map_);
 }
 
 RTTR_REGISTRATION
