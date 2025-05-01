@@ -287,9 +287,9 @@ void World::TransitionLevel()
 
     current_level_->InitializeActors();
     
-    for (const auto& val : subsystems_ | std::views::values)
+    for (const auto& subsystem : subsystems_ | std::views::values)
     {
-        val->OnWorldBeginPlay();
+        subsystem->OnWorldBeginPlay();
     }
     
     SpawnActors();

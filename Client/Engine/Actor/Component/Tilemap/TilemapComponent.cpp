@@ -21,10 +21,15 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 {
 }
 
-void TilemapComponent::InitializeComponent()
+void TilemapComponent::SetTilemap(Tilemap* tilemap)
 {
-	ActorComponent::InitializeComponent();
+	tilemap_ = tilemap;
+}
 
+void TilemapComponent::BeginPlay()
+{
+	ActorComponent::BeginPlay();
+	
 	if (tilemap_)
 	{
 		const tmx::Map& map = tilemap_->GetMap();
@@ -51,22 +56,16 @@ void TilemapComponent::InitializeComponent()
 			}
 		}
 	}
-
+	
 	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
+
 }
 
-void TilemapComponent::UninitializeComponent()
+void TilemapComponent::EndPlay(EndPlayReason type)
 {
-	ActorComponent::UninitializeComponent();
-
+	ActorComponent::EndPlay(type);
+	
 	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
-}
-
-void TilemapComponent::BeginPlay()
-{
-	ActorComponent::BeginPlay();
-
-	GET_NETWORK()->SetTilemapComponent(GetSharedThis());
 }
 
 void TilemapComponent::Render(float alpha)

@@ -2,17 +2,23 @@
 #include "NetworkSubsystem.h"
 
 #include <CustomPacket.h>
+#include <ranges>
 
 #include "GameInstance.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Tilemap/Tilemap.h"
+#include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Asset/AssetManager.h"
+#include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
     local_player_(),
+    tilemap_(nullptr),
     tilemap_component_()
 {
 }
@@ -35,27 +41,12 @@ void NetworkSubsystem::OnWorldBeginPlay()
     WorldSubsystem::OnWorldBeginPlay();
 
     SessionSubsystem* session_subsystem = GET_SESSION();
-    
     session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
 
-    const CharacterInfo& character_info = session_subsystem->GetCharacterInfo();
     if (session_subsystem->IsInGame())
     {
-        std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
-        if (IsValid(player_character))
-        {
-            player_character->SetMine(true);
-
-            CameraManager* camera_manager = CameraManager::Get();
-            camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kTick);
-            camera_manager->SetTarget(player_character);
-
-            local_player_ = player_character;
-        }
-
-        MapLoadCompletePacket map_load_complete_packet;
-        session_subsystem->SendPacket(map_load_complete_packet);
+        InGameReadyPacket packet;
+        SendPacket(packet);
     }
 }
 
@@ -73,13 +64,6 @@ void NetworkSubsystem::Tick(float delta_time)
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
 {
     GET_SESSION()->SendPacket(packet);
-}
-
-void NetworkSubsystem::OpenLevel(uint32_t map_unique_id)
-{
-    ChangeMapRequest request;
-    request.map_unique_id = map_unique_id;
-    SendPacket(request);
 }
 
 void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
@@ -107,10 +91,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case ChangeMapResponse::StaticPacketID:
         {
             ChangeMapResponse* response = static_cast<ChangeMapResponse*>(packet.get());
-            if (response->is_success)
-            {
-                World::Get()->OpenLevel(std::to_wstring(response->map_unique_id));
-            }
+            if (response->is_success) TransitionMap(response->map_unique_id);
         }
         break;
         
@@ -165,6 +146,49 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         
     default:
         break;
+    }
+}
+
+void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
+{
+    std::vector<Actor*> actors = {};
+    World::Get()->GetActors(Actor::StaticClass(), actors);
+
+    for (const auto& actor : actors)
+    {
+        if (IsValid(actor)) actor->Destroy();
+    }
+
+    network_actors_.clear();
+    local_player_.reset();
+
+    CameraManager* camera_manager = CameraManager::Get();
+
+    std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    if (IsValid(tilemap_loader))
+    {
+        std::wstring wide_str = std::format(L"{:06}", map_unique_id);
+        tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
+        if (tilemap_)
+        {
+            tilemap_loader->SetTilemap(tilemap_);
+
+            camera_manager->SetSize(6.f);
+            camera_manager->SetTickType(TickType::kTick);
+
+            Math::Vector2 map_size = tilemap_->GetMapSize();
+            camera_manager->SetLimit(map_size.x, map_size.y);
+        }
+    }
+    
+    const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
+    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), L"PlayerCharacter", character_info.unique_id);
+    if (IsValid(player_character))
+    {
+        player_character->SetMine(true);
+        local_player_ = player_character;
+        
+        camera_manager->SetTarget(player_character);
     }
 }
 

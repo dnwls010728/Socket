@@ -53,7 +53,7 @@ void MySQLManager::Disconnect()
     }
 }
 
-void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<void(const sql::ResultSet*)>& callback)
+void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<void(const sql::ResultSet*)>& callback, const std::function<void(void)>& error_callback)
 {
     if (!connection_) return;
 
@@ -72,18 +72,22 @@ void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<v
         std::cerr << "SQLException: " << e.what() << std::endl;
         std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
         std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        
+        if (error_callback) error_callback();
     }
     catch (std::exception& e)
     {
         std::cerr << "Exception: " << e.what() << std::endl;
+        if (error_callback) error_callback();
     }
     catch (...)
     {
         std::cerr << "Unknown Exception" << std::endl;
+        if (error_callback) error_callback();
     }
 }
 
-int MySQLManager::ExecuteUpdate(const std::wstring& query)
+int MySQLManager::ExecuteUpdate(const std::wstring& query, const std::function<void(void)>& error_callback)
 {
     if (!connection_) return 0;
     
@@ -97,16 +101,20 @@ int MySQLManager::ExecuteUpdate(const std::wstring& query)
         std::cerr << "SQLException: " << e.what() << std::endl;
         std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
         std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        
+        if (error_callback) error_callback();
         return 0;
     }
     catch (std::exception& e)
     {
         std::cerr << "Exception: " << e.what() << std::endl;
+        if (error_callback) error_callback();
         return 0;
     }
     catch (...)
     {
         std::cerr << "Unknown Exception" << std::endl;
+        if (error_callback) error_callback();
         return 0;
     }
 }

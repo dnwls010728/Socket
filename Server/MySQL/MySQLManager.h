@@ -15,9 +15,9 @@ public:
     bool Connect(const sql::SQLString& host_name, const sql::SQLString& user, const sql::SQLString& password);
 
     void Disconnect();
-    void ExecuteQuery(const std::wstring& query, const std::function<void(const sql::ResultSet*)>& callback = nullptr);
+    void ExecuteQuery(const std::wstring& query, const std::function<void(const sql::ResultSet*)>& callback = nullptr, const std::function<void(void)>& error_callback = nullptr);
     
-    int ExecuteUpdate(const std::wstring& query);
+    int ExecuteUpdate(const std::wstring& query, const std::function<void(void)>& error_callback = nullptr);
 
     inline sql::Connection* GetConnection() const { return connection_.get(); }
 

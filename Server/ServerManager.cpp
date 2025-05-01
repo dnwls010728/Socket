@@ -104,7 +104,10 @@ bool ServerManager::Execute()
 bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
 {
     std::cout << "Client connected: " << state.address.ToString().c_str() << std::endl;
+    
     std::unique_ptr<Session> session = std::make_unique<Session>(state.uniqueKey);
+    session->SetState(Session::State::kConnected);
+    
     session_manager_.AddSession(session);
     return true;
 }
@@ -214,6 +217,8 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 response.message = L"Login successful.";
                 response.characters = characters;
                 server_socket_.SendPacketToClient(state.uniqueKey, response);
+
+                session->SetState(Session::State::kLoggedIn);
             });
 
             if (!is_found)

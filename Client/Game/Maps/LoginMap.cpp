@@ -172,7 +172,7 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 
                 const CharacterInfo& character_info = response->character_info;
                 GET_SESSION()->SetCharacterInfo(character_info);
-                World::Get()->OpenLevel(std::to_wstring(character_info.map_unique_id));
+                World::Get()->OpenLevel(L"InGame");
             }
         }
         break;

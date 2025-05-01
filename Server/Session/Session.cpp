@@ -4,6 +4,7 @@
 
 Session::Session(int client_id) :
     client_id_(client_id),
+    state_(State::kNone),
     player_(nullptr)
 {
 }

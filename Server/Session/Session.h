@@ -11,6 +11,16 @@ namespace Net
 class Session
 {
 public:
+    enum class State
+    {
+        kNone,
+        kConnected,
+        kDisconnected,
+        kLoggedIn,
+        kCharacterSelected,
+        kInGame
+    };
+    
     Session(int client_id);
     ~Session() = default;
 
@@ -22,11 +32,16 @@ public:
     uint32_t GetAccountUniqueID() const;
 
     inline int GetClientID() const { return client_id_; }
+
+    inline State GetState() const { return state_; }
+    inline void SetState(const State state) { state_ = state; }
     
     inline Player* GetPlayer() const { return player_.get(); }
 
 private:
     int client_id_;
+
+    State state_;
 
     std::unique_ptr<Player> player_;
 };

@@ -50,16 +50,33 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 character_info_.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
                 character_info_.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
 
-                // 선택한 플레이어 정보를 클라이언트로 보내고, 클라이언트의 맵 전환
                 SelectCharacterResponse response;
                 response.is_success = true;
                 response.message = L"Character selected successfully.";
                 response.character_info = character_info_;
                 SendPacket(response);
 
-                map_ = World::Get()->GetMap(character_info_.map_unique_id);
-                // map_->AddPlayer(this);
+                session_->SetState(Session::State::kCharacterSelected);
             });
+        }
+        break;
+
+    case InGameReadyPacket::StaticPacketID:
+        {
+            session_->SetState(Session::State::kInGame);
+            
+            ChangeMapResponse response;
+            response.is_success = true;
+            response.map_unique_id = character_info_.map_unique_id;
+            SendPacket(response);
+
+            map_ = World::Get()->GetMap(character_info_.map_unique_id);
+            if (map_)
+            {
+                map_->AddPlayer(this);
+
+                SetPosition(character_info_.last_position_x, character_info_.last_position_y);
+            }
         }
         break;
 
@@ -70,26 +87,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
             {
                 map_->RemovePlayer(this);
                 map_ = World::Get()->GetMap(request->map_unique_id);
+                if (map_)
+                {
+                    map_->AddPlayer(this);
 
-                SetPosition(0.f, 0.f);
+                    SetPosition(0.f, 0.f);
 
-                ChangeMapResponse response;
-                response.is_success = true;
-                response.map_unique_id = request->map_unique_id;
-                SendPacket(response);
-                break;
+                    ChangeMapResponse response;
+                    response.is_success = true;
+                    response.map_unique_id = request->map_unique_id;
+                    SendPacket(response);
+                    break;
+                }
             }
 
             ChangeMapResponse response;
             response.is_success = false;
             response.map_unique_id = 0;
             SendPacket(response);
-        }
-        break;
-
-    case MapLoadCompletePacket::StaticPacketID:
-        {
-            map_->AddPlayer(this);
         }
         break;
 

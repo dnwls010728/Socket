@@ -102,7 +102,7 @@ void PlayerCharacter::BeginPlay()
     mini_map_->SetPosition({100.f, 76.f});
     mini_map_->SetSize({200.f, 152.f});
 
-    UI::Manager::Get()->AddToViewport(mini_map_);
+    // UI::Manager::Get()->AddToViewport(mini_map_);
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
@@ -180,15 +180,6 @@ void PlayerCharacter::Tick(float delta_time)
             if (keyboard->GetKeyDown(VK_SPACE))
             {
                 is_jump_ = true;
-            }
-
-            if (keyboard->GetKeyDown('1'))
-            {
-                GET_NETWORK()->OpenLevel(0);
-            }
-            if (keyboard->GetKeyDown('2'))
-            {
-                GET_NETWORK()->OpenLevel(1);
             }
         }
         else

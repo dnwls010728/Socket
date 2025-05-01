@@ -26,7 +26,6 @@ public:
     virtual void Tick(float delta_time) override;
 
     void SendPacket(Net::IPacket& packet);
-    void OpenLevel(uint32_t map_unique_id);
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& kType, const std::wstring& kName, Type::uint32 unique_id);
@@ -43,10 +42,13 @@ public:
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
+    void TransitionMap(uint32_t map_unique_id);
 
     std::unordered_map<Type::uint32, std::shared_ptr<NetworkActor>> network_actors_;
 
     std::weak_ptr<PlayerCharacter> local_player_;
+
+    class Tilemap* tilemap_;
 
     // 임시
     std::weak_ptr<TilemapComponent> tilemap_component_;

@@ -78,6 +78,12 @@ void CameraManager::SetTarget(const std::shared_ptr<Actor>& kActor)
     focus_area_.Setup(bounds, focus_area_size_);
 }
 
+void CameraManager::SetLimit(const float width, const float height)
+{
+    limit_half_width_ = width * .5f;
+    limit_half_height_ = height * .5f;
+}
+
 const Bounds& CameraManager::GetBounds()
 {
     const float kHeight = size_ * 2.f;

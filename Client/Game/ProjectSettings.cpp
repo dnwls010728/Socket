@@ -26,7 +26,7 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
 
     settings->AddLevel<LoginMap>(L"Login");
-    settings->AddLevel<InGameMap>(L"InGameMap");
+    settings->AddLevel<InGameMap>(L"InGame");
 
     settings->SetDefaultLevel(L"Login");
     

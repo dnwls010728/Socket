@@ -22,14 +22,13 @@ class TilemapComponent : public ActorComponent
 public:
     TilemapComponent(Actor* owner, const std::wstring& kName);
 
-    FORCEINLINE void SetTilemap(Tilemap* tilemap) { tilemap_ = tilemap; }
+    void SetTilemap(Tilemap* tilemap);
     
     FORCEINLINE const std::vector<Bounds>& GetCollisionBodies() const { return collision_bodies_; }
 
 protected:
-    virtual void InitializeComponent() override;
-    virtual void UninitializeComponent() override;
     virtual void BeginPlay() override;
+    virtual void EndPlay(EndPlayReason type) override;
     virtual void Render(float alpha) override;
 
 private:

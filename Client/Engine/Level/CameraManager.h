@@ -77,6 +77,7 @@ public:
     void SetNearZ(float near_z);
     void SetFarZ(float far_z);
     void SetTarget(const std::shared_ptr<Actor>& kActor);
+    void SetLimit(float width, float height);
 
     const Bounds& GetBounds();
 
