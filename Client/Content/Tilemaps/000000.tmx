@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="6">
  <properties>
   <property name="name" value="Unknown Area 1"/>
   <property name="ppu" type="float" value="32"/>
@@ -48,8 +48,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,32,32,32,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,10,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,10,1,1,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,
 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
 </data>
@@ -58,5 +58,8 @@
   <object id="1" x="0" y="544" width="800" height="64"/>
   <object id="3" x="288" y="352" width="160" height="32"/>
   <object id="4" x="480" y="448" width="128" height="32"/>
+  <object id="5" x="64" y="544">
+   <polygon points="0,0 64,-63.8182 128.182,-63.6364 191.636,0"/>
+  </object>
  </objectgroup>
 </map>
