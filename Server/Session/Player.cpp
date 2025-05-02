@@ -64,15 +64,15 @@ void Player::ReceivePacket(Net::IPacket* packet)
     case InGameReadyPacket::StaticPacketID:
         {
             session_->SetState(Session::State::kInGame);
-            
-            ChangeMapResponse response;
-            response.is_success = true;
-            response.map_unique_id = character_info_.map_unique_id;
-            SendPacket(response);
 
             map_ = World::Get()->GetMap(character_info_.map_unique_id);
             if (map_)
             {
+                ChangeMapResponse response;
+                response.is_success = true;
+                response.map_unique_id = character_info_.map_unique_id;
+                SendPacket(response);
+                
                 map_->AddPlayer(this);
 
                 SetPosition(character_info_.last_position_x, character_info_.last_position_y);
@@ -86,17 +86,18 @@ void Player::ReceivePacket(Net::IPacket* packet)
             if (map_)
             {
                 map_->RemovePlayer(this);
+                
                 map_ = World::Get()->GetMap(request->map_unique_id);
                 if (map_)
                 {
-                    map_->AddPlayer(this);
-
-                    SetPosition(0.f, 0.f);
-
                     ChangeMapResponse response;
                     response.is_success = true;
                     response.map_unique_id = request->map_unique_id;
                     SendPacket(response);
+                    
+                    map_->AddPlayer(this);
+
+                    SetPosition(0.f, 0.f);
                     break;
                 }
             }
