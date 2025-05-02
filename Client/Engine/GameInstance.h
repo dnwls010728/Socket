@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Data/PropData.h"
-
 class GameInstanceSubsystem;
 
 class GameInstance : public Singleton<GameInstance>

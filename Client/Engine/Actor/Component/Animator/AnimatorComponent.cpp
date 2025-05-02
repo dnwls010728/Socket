@@ -143,8 +143,7 @@ void AnimatorComponent::BeginPlay()
 {
     ActorComponent::BeginPlay();
 
-    std::shared_ptr<ActorComponent> component = owner_->GetComponent(SpriteRendererComponent::StaticClass());
-    if (component) renderer_weak_ptr_ = std::static_pointer_cast<SpriteRendererComponent>(component);
+    renderer_weak_ptr_ = owner_->GetComponent<SpriteRendererComponent>(SpriteRendererComponent::StaticClass());
 
     std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
     if (renderer && animation_pack_ && current_animation_)

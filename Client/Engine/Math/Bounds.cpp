@@ -2,11 +2,11 @@
 #include "Math/Bounds.h"
 
 Bounds::Bounds(Math::Vector2 center, Math::Vector2 size) :
-        center(center),
-        size(size)
+    center(center),
+    size(size)
 {
     extents = size * .5f;
-    
+
     min = center - extents;
     max = center + extents;
 }
@@ -15,7 +15,7 @@ void Bounds::Expand(float amount)
 {
     size += {amount, amount};
     extents = size * .5f;
-    
+
     min = center - extents;
     max = center + extents;
 }

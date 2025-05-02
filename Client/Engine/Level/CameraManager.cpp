@@ -15,12 +15,12 @@ CameraManager::CameraManager() :
     focus_area_(),
     target_weak_ptr(),
     collider_weak_ptr_(),
-    limit_half_width_(15.f),
-    limit_half_height_(10.f),
     position_(Math::Vector2::Zero()),
     focus_area_size_({2.f, 2.f}),
     tick_type_(TickType::kTick)
 {
+    limit_half_width_ = std::numeric_limits<float>::max();
+    limit_half_height_ = std::numeric_limits<float>::max();
 }
 
 float CameraManager::GetAspect()
@@ -69,16 +69,19 @@ void CameraManager::SetTarget(const std::shared_ptr<Actor>& kActor)
 {
     if (!kActor) return;
 
-    std::shared_ptr<ActorComponent> component = kActor->GetComponent(ColliderComponent::StaticClass());
-    if (!component) return;
-
     target_weak_ptr = kActor;
 
-    std::shared_ptr<ColliderComponent> collider_component = std::static_pointer_cast<ColliderComponent>(component);
+    std::shared_ptr<ColliderComponent> collider_component = kActor->GetComponent<ColliderComponent>(ColliderComponent::StaticClass());
     collider_weak_ptr_ = collider_component;
 
     const Bounds bounds = collider_component->GetBounds();
     focus_area_.Setup(bounds, focus_area_size_);
+}
+
+void CameraManager::SetLimit(const float width, const float height)
+{
+    limit_half_width_ = width * .5f;
+    limit_half_height_ = height * .5f;
 }
 
 const Bounds& CameraManager::GetBounds()
@@ -156,5 +159,5 @@ void CameraManager::MoveToTarget(float delta_time)
     float clamp_y = Math::Clamp(new_position.y, -limit_y, limit_y);
     SetPosition({clamp_x, clamp_y});
 
-    DebugDrawHelper::Get()->DrawBox(focus_area_.center, focus_area_size_, Math::Color::Red);
+    // DebugDrawHelper::Get()->DrawBox(focus_area_.center, focus_area_size_, Math::Color::Red);
 }

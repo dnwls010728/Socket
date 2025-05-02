@@ -14,7 +14,7 @@ enum class EndPlayReason : Type::uint64;
 class Level : public std::enable_shared_from_this<Level>
 {
     SHADER_CLASS_HELPER(Level)
-    GENERATED_BODY(Level);
+    GENERATED_BODY(Level)
     
 public:
     Level(const std::wstring& kName);
@@ -65,13 +65,6 @@ T* Level::AddActor(const rttr::type& kType, const std::wstring& kName)
 
         return nullptr;
     }
+    
+    return nullptr;
 }
-
-// template <std::derived_from<Actor> T>
-// T* Level::AddActor(const std::wstring& kName)
-// {
-//     std::shared_ptr<Actor> actor = std::make_shared<T>(kName);
-//     actors_.push_back(actor);
-//
-//     return static_cast<T*>(actor.get());
-// }

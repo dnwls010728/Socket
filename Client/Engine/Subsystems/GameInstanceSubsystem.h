@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Subsystems/Subsystem.h"
+#include "Subsystem.h"
 
 class GameInstanceSubsystem : public Subsystem
 {

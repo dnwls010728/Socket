@@ -145,8 +145,8 @@ Math::Vector2 Math::Vector2::operator/(float val) const
 
 bool Math::Vector2::operator==(const Vector2& kVector) const
 {
-    if (std::fabsf(x - kVector.x) <= FLT_EPSILON &&
-        std::fabsf(y - kVector.y) <= FLT_EPSILON)
+    if (std::fabsf(x - kVector.x) <= std::numeric_limits<float>::epsilon() &&
+        std::fabsf(y - kVector.y) <= std::numeric_limits<float>::epsilon())
     {
         return true;
     }
@@ -156,8 +156,8 @@ bool Math::Vector2::operator==(const Vector2& kVector) const
 
 bool Math::Vector2::operator!=(const Vector2& kVector) const
 {
-    if (std::fabsf(x - kVector.x) > FLT_EPSILON ||
-        std::fabsf(y - kVector.y) > FLT_EPSILON)
+    if (std::fabsf(x - kVector.x) > std::numeric_limits<float>::epsilon() ||
+        std::fabsf(y - kVector.y) > std::numeric_limits<float>::epsilon())
     {
         return true;
     }

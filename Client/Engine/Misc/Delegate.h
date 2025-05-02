@@ -30,9 +30,15 @@ public:
         functions_.emplace_back(func);
     }
 
-    void Execute(Args&&... args) const {
+    // void Execute(Args&&... args) const {
+    //     for (const auto& func : functions_) {
+    //         func(std::forward<Args>(args)...);
+    //     }
+    // }
+
+    void Execute(Args&... args) const {
         for (const auto& func : functions_) {
-            func(std::forward<Args>(args)...);
+            func(args...);
         }
     }
 
@@ -43,6 +49,22 @@ public:
     template<typename F>
     void Remove(F&& func) {
         RemoveImpl(GetFunctionAddress(std::forward<F>(func)));
+    }
+    
+    void Remove(Ret(*func)(Args...)) {
+        RemoveImpl(GetFunctionAddress(func));
+    }
+
+    template<typename M>
+    void Remove(M* target, Ret(M::*func)(Args...)) {
+        FunctionType temp(target, func);
+        RemoveImpl(temp.GetAddr());
+    }
+
+    template<typename M>
+    void Remove(M* target, Ret(M::*func)(Args...) const) {
+        FunctionType temp(target, func);
+        RemoveImpl(temp.GetAddr());
     }
 
     // template<typename F>

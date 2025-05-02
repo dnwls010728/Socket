@@ -30,7 +30,7 @@ public:
     void AddMessageHandler(IWindowsMessageHandler& message_handler);
     void RemoveMessageHandler(IWindowsMessageHandler& message_handler);
     void PumpMessages();
-    void Quit();
+    void QuitApplication();
 
     const std::vector<std::shared_ptr<WindowsWindow>>& GetWindows() const { return windows_; }
 

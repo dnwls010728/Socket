@@ -77,8 +77,11 @@ public:
     void SetNearZ(float near_z);
     void SetFarZ(float far_z);
     void SetTarget(const std::shared_ptr<Actor>& kActor);
+    void SetLimit(float width, float height);
 
     const Bounds& GetBounds();
+
+    FORCEINLINE const Math::Vector2& GetPosition() const { return position_; }
 
     FORCEINLINE void SetTickType(TickType kTickType) { tick_type_ = kTickType; }
     FORCEINLINE TickType GetTickType() const { return tick_type_; }

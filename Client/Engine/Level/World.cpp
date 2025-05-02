@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "World.h"
 
+#include <ranges>
+
 #include "CameraManager.h"
 #include "DebugDrawHelper.h"
 #include "box2d/box2d.h"
@@ -83,9 +85,9 @@ void World::InitPhysicsWorld()
     debug_draw_.DrawStringFcn = DrawString;
 
     UpdateCameraBounds(CameraManager::Get()->GetBounds());
-    debug_draw_.useDrawingBounds = true;
+    debug_draw_.useDrawingBounds = false;
 
-    debug_draw_.drawShapes = true;
+    debug_draw_.drawShapes = false;
     debug_draw_.drawJoints = false;
     debug_draw_.drawJointExtras = false;
     debug_draw_.drawBounds = false;
@@ -284,6 +286,11 @@ void World::TransitionLevel()
     current_level_->Load();
 
     current_level_->InitializeActors();
+    
+    for (const auto& subsystem : subsystems_ | std::views::values)
+    {
+        subsystem->OnWorldBeginPlay();
+    }
     
     SpawnActors();
     ProcessActorActivation();

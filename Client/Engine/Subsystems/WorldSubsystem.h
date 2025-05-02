@@ -8,5 +8,7 @@ class WorldSubsystem : public Subsystem
 public:
     WorldSubsystem();
     virtual ~WorldSubsystem() override = default;
+
+    virtual void OnWorldBeginPlay();
     
 };

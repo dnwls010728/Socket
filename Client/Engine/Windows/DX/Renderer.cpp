@@ -594,10 +594,9 @@ void Renderer::DrawSolidRoundBox(WindowsWindow* window, const Math::Rect& kRect,
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius,
-                          Math::Color color, float stroke)
+void Renderer::DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke)
 {
-    D2DViewport* d2d_viewport = FindD2DViewport(kWindow.get());
+    D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
 
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
@@ -610,10 +609,9 @@ void Renderer::DrawCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::V
     d2d_viewport->d2d_render_target->DrawEllipse(ellipse, brush.Get(), stroke);
 }
 
-void Renderer::DrawSolidCircle(const std::shared_ptr<WindowsWindow>& kWindow, Math::Vector2 position, float radius,
-    Math::Color color)
+void Renderer::DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color)
 {
-    D2DViewport* d2d_viewport = FindD2DViewport(kWindow.get());
+    D2DViewport* d2d_viewport = FindD2DViewport(window);
     if (!d2d_viewport) return;
 
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
@@ -716,7 +714,7 @@ void Renderer::DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID
     if (!use_slice9)
     {
         const D2D1_RECT_F kTempRect = D2D1::RectF(kRect.MinX(), kRect.MinY(), kRect.MaxX(), kRect.MaxY());
-        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+        d2d_viewport->d2d_render_target->DrawBitmap(kBitmap.Get(), kTempRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
     }
     else
     {

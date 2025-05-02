@@ -85,6 +85,13 @@ void UI::ListBox::ClearItems()
     hovered_index_ = -1;
 }
 
+void UI::ListBox::SetItem(int index, const std::wstring& kName, Type::uint64 user_data)
+{
+    if (index < 0 || index >= items_.size()) return;
+    items_[index].name = kName;
+    items_[index].user_data = user_data;
+}
+
 std::shared_ptr<UI::ListBox> UI::ListBox::Create(const std::wstring& kName)
 {
     return std::make_shared<ListBox>(kName);
@@ -120,7 +127,8 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
     const Math::Rect kRect = GetRect();
 
-    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f, 1.f);
+    renderer->DrawSolidBox(window, kRect, GetPivotPosition(), Math::Color(0, 0, 0, 100));
+    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::White);
 
     renderer->BeginLayer(GetRect());
     for (Type::uint32 i = 0; i < items_.size(); ++i)
@@ -128,18 +136,18 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
         const Item& kItem = items_[i];
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
-        renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 12.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
     if (selected_index_ >= 0)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (selected_index_ * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -150,7 +158,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (hovered_index_ * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -168,15 +176,19 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
     renderer->BeginLayer(kScrollBarRect);
     float ratio = kRect.height / (items_.size() * 30.f);
-    
+
     const float scroll_thumb_height = Math::Clamp(kRect.height * ratio, 10.f, kRect.height);
+    
+    float scroll_ratio = scroll_offset_y_ / min_allowed_scroll_offset_y_;
+    scroll_ratio = Math::IsValid(scroll_ratio) ? scroll_ratio : 0.f;
+    
     const Math::Rect kScrollThumbRect = GetRect(
-        {kScrollBarRect.x, kScrollBarRect.y + (scroll_offset_y_ / min_allowed_scroll_offset_y_) * (kScrollBarRect.height - scroll_thumb_height)},
+        {kScrollBarRect.x, kScrollBarRect.y + scroll_ratio * (kScrollBarRect.height - scroll_thumb_height)},
         {kScrollBarRect.width, scroll_thumb_height},
         {0.f, 1.f}
     );
 
-    renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect), Math::Color(255, 255, 255, 100), 0.f);
+    renderer->DrawSolidBox(window, kScrollThumbRect, GetPivotPosition(kScrollThumbRect, {0.f, 1.f}), Math::Color(255, 255, 255, 100), 0.f);
     renderer->EndLayer();
 }
 
@@ -201,7 +213,7 @@ bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vect
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -227,7 +239,7 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
         {
             const Math::Rect kItemRect = GetRect(
                 {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-                {kRect.width, 30.f},
+                {kRect.width - 10.f, 30.f},
                 {0.f, 1.f}
             );
 

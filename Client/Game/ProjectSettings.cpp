@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
-#include "Maps/TempMap.h"
+#include "Maps/LoginMap.h"
+#include "Maps/InGameMap.h"
 
 ProjectSettings::ProjectSettings()
 {
@@ -18,13 +19,15 @@ void ProjectSettings::Init()
     settings->UseVSync(false);
 
     // 물리 설정
-    settings->SetFixedTimeStep(.02f);
+    settings->SetFixedTimeStep(1.f / 60.f);
 
     // 레이어 충돌 매트릭스 설정
-    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer);
+    settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
 
-    settings->AddLevel<TempMap>(L"TempMap");
+    settings->AddLevel<LoginMap>(L"Login");
+    settings->AddLevel<InGameMap>(L"InGame");
 
-    settings->SetDefaultLevel(L"TempMap");
+    settings->SetDefaultLevel(L"Login");
     
 }

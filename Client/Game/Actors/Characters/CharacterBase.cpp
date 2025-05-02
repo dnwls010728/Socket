@@ -2,36 +2,29 @@
 #include "CharacterBase.h"
 
 #include "DebugDrawHelper.h"
-#include "Actor/Component/CircleColliderComponent.h"
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
-#include "Actor/Component/TransformComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
+#include "Components/Controller2DComponent.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    Actor(kName),
-    state_machine_(nullptr)
+    NetworkActor(kName),
+    state_machine_(nullptr),
+    velocity_(Math::Vector2::Zero()),
+    gravity_(-20.f)
 {
-    collider_ = AddComponent<CircleColliderComponent>(L"CircleCollider");
-    collider_->SetRadius(.5f);
+    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
+    collider_->SetSize({1.f, 1.f});
 
-    rigid_body_ = AddComponent<RigidBody2DComponent>(L"RigidBody");
-    rigid_body_->SetGravityScale(0.f);
-    rigid_body_->SetFreezeRotation(true);
+    controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
+    renderer_->SetZOrder(std::numeric_limits<int>::max());
 
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
-}
-
-void CharacterBase::Tick(float delta_time)
-{
-    Actor::Tick(delta_time);
-
-    Math::Vector2 position = GetTransform()->GetPosition();
-    DebugDrawHelper::Get()->DrawBox(position, { 1.0f, 1.0f }, Math::Color::White);
 }
 
 RTTR_REGISTRATION

@@ -82,6 +82,14 @@ void WindowsApplication::PumpMessages()
     }
 }
 
+void WindowsApplication::QuitApplication()
+{
+    for (const auto& window : windows_)
+    {
+        PostMessage(window->GetHWnd(), WM_USER, 0, 0);
+    }
+}
+
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WindowsApplication* application;
