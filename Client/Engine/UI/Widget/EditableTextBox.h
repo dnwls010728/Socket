@@ -54,9 +54,11 @@ namespace UI
 
         float GetAdvances(const std::wstring& kString, std::vector<float>& advances);
         
+        std::wstring font_name_;
         std::wstring text_;
         std::wstring placeholder_;
 
+        float font_size_;
         float elapsed_time_;
         float total_advance_;
 

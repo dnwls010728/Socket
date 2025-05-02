@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "GameInstance.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
@@ -11,10 +12,12 @@
 #include "Components/InventoryComponent.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
+#include "Subsystems/InGameUISubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/ChatBalloon.h"
 #include "UI/MiniMap.h"
 #include "UI/UIManager.h"
+#include "UI/Widget/EditableTextBox.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -200,6 +203,8 @@ void PlayerCharacter::Tick(float delta_time)
 void PlayerCharacter::EndPlay(EndPlayReason type)
 {
     CharacterBase::EndPlay(type);
+    
+    TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
 
     UI::Manager* ui_manager = UI::Manager::Get();
     ui_manager->RemoveFromViewport(chat_balloon_);

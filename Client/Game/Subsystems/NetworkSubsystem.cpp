@@ -52,6 +52,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
 
         InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
         in_game_ui_subsystem->ShowMiniMap();
+        in_game_ui_subsystem->ShowChatUI();
     }
 }
 
