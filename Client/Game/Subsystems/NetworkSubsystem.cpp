@@ -12,6 +12,7 @@
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
+#include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/MiniMap.h"
@@ -65,6 +66,17 @@ void NetworkSubsystem::Tick(float delta_time)
     {
         session_subsystem->ProcessPackets();
     }
+
+    if (ImGui::Begin("Camera"))
+    {
+        static float camera_size = 6.f;
+        if (ImGui::SliderFloat("Size", &camera_size, 1.f, 20.f))
+        {
+            CameraManager* camera_manager = CameraManager::Get();
+            camera_manager->SetSize(camera_size);
+        }
+    }
+    ImGui::End();
 }
 
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
