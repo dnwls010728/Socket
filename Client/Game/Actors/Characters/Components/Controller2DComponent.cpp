@@ -138,7 +138,7 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& velocity)
     for (int i = 0; i < vertical_ray_count_; ++i)
     {
         Math::Vector2 ray_origin = (direction_y == -1) ? ray_cast_origins_.bottom_left : ray_cast_origins_.top_left;
-        ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i);
+        ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i + velocity.x);
 
         HitResult hit_result;
         bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * direction_y, ray_length, static_cast<Type::uint16>(ActorLayer::kDefault));
