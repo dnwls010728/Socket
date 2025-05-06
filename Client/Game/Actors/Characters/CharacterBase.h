@@ -3,6 +3,7 @@
 
 namespace UI
 {
+    class NameTag;
     class ChatBalloon;
 }
 
@@ -40,6 +41,7 @@ protected:
     float gravity_;
     
 #pragma region UI
+    std::shared_ptr<UI::NameTag> name_tag_;
     std::shared_ptr<UI::ChatBalloon> chat_balloon_;
 #pragma endregion
 

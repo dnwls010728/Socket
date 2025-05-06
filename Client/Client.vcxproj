@@ -208,6 +208,7 @@
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\CheckBox.h" />
     <ClInclude Include="Engine\UI\Widget\EditableTextBox.h" />
+    <ClInclude Include="Engine\UI\Widget\Image.h" />
     <ClInclude Include="Engine\UI\Widget\ListBox.h" />
     <ClInclude Include="Engine\UI\Widget\Slider.h" />
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
@@ -274,6 +275,7 @@
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
+    <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -569,6 +571,7 @@
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\CheckBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\EditableTextBox.cpp" />
+    <ClCompile Include="Engine\UI\Widget\Image.cpp" />
     <ClCompile Include="Engine\UI\Widget\ListBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
@@ -629,6 +632,7 @@
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
+    <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

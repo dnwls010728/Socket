@@ -8,11 +8,14 @@
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
+#include "UI/Widget/Image.h"
 #include "UI/Widget/ListBox.h"
 #include "UI/Widget/TextBox.h"
 
 LoginMap::LoginMap(const std::wstring& kName) :
     Level(kName),
+    background_(nullptr),
+    version_(nullptr),
     register_id_(nullptr),
     register_password_(nullptr),
     register_(nullptr),
@@ -33,6 +36,11 @@ void LoginMap::Load()
     GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
 
     UI::Manager* ui_manager = UI::Manager::Get();
+
+    background_ = UI::Image::Create(L"Background");
+    background_->SetPosition({400.f, 300.f});
+    background_->SetSize({800.f, 600.f});
+    background_->SetTexture(L"\\UI\\LoginBackground.png");
 
     version_ = UI::TextBox::Create(L"Version");
     version_->SetPosition({10.f, 600.f});
@@ -89,6 +97,7 @@ void LoginMap::Load()
     character_list_->SetSize({200.f, 300.f});
     character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
+    ui_manager->AddToViewport(background_);
     ui_manager->AddToViewport(version_);
     ui_manager->AddToViewport(login_id_);
     ui_manager->AddToViewport(login_password_);
@@ -101,7 +110,9 @@ void LoginMap::Unload(EndPlayReason type)
     Level::Unload(type);
 
     UI::Manager* ui_manager = UI::Manager::Get();
-
+    
+    ui_manager->RemoveFromViewport(background_);
+    
     ui_manager->RemoveFromViewport(version_);
 
     ui_manager->RemoveFromViewport(register_id_);

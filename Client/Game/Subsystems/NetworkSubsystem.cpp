@@ -202,7 +202,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
             tilemap_loader->SetTilemap(tilemap_);
 
             camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kTick);
+            camera_manager->SetTickType(TickType::kPhysicsTick);
 
             Bounds bounds = tilemap_->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);

@@ -9,6 +9,7 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Components/Controller2DComponent.h"
 #include "UI/ChatBalloon.h"
+#include "UI/NameTag.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
@@ -17,6 +18,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     state_machine_(nullptr),
     velocity_(Math::Vector2::Zero()),
     gravity_(-20.f),
+    name_tag_(nullptr),
     chat_balloon_(nullptr),
     chat_balloon_timer_handle_()
 {
@@ -61,9 +63,15 @@ void CharacterBase::Speak(const std::wstring& message)
 void CharacterBase::BeginPlay()
 {
     NetworkActor::BeginPlay();
+
+    name_tag_ = UI::NameTag::Create(L"NameTag");
+    name_tag_->SetText(L"GM시오");
     
     chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});
+
+    UI::Manager* ui_manager = UI::Manager::Get();
+    ui_manager->AddToViewport(name_tag_);
 }
 
 void CharacterBase::PhysicsTick(float delta_time)
@@ -71,11 +79,13 @@ void CharacterBase::PhysicsTick(float delta_time)
     NetworkActor::PhysicsTick(delta_time);
     
     UI::Manager* ui_manager = UI::Manager::Get();
+    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
+
+    if (ui_manager->IsInViewport(name_tag_))
+        name_tag_->SetPosition(screen_position + Math::Vector2::Up() * 50.f);
+    
     if (ui_manager->IsInViewport(chat_balloon_))
-    {
-        Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
         chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
-    }
 }
 
 void CharacterBase::EndPlay(EndPlayReason type)
@@ -85,7 +95,9 @@ void CharacterBase::EndPlay(EndPlayReason type)
     TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
 
     UI::Manager* ui_manager = UI::Manager::Get();
+    
     ui_manager->RemoveFromViewport(chat_balloon_);
+    ui_manager->RemoveFromViewport(name_tag_);
 }
 
 RTTR_REGISTRATION

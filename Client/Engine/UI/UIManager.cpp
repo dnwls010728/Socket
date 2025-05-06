@@ -64,7 +64,7 @@ void UI::Manager::Render()
 {
     for (Type::uint64 i = 0; i < widgets_.size(); ++i)
     {
-        Widget* widget = widgets_[widgets_.size() - i - 1].get();
+        Widget* widget = widgets_[i].get();
         widget->Render(Renderer::Get(), World::Get()->GetWindow());
     }
 }

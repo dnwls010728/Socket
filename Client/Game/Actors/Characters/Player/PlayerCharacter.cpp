@@ -69,8 +69,6 @@ void PlayerCharacter::BeginPlay()
 
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
-    CharacterBase::PhysicsTick(delta_time);
-    
     std::shared_ptr<TransformComponent> transform = GetTransform();
 
     if (IsMine())
@@ -118,6 +116,8 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         float y_speed = last_movement_.y - position.y;
         transform->Translate({x_speed, y_speed});
     }
+    
+    CharacterBase::PhysicsTick(delta_time);
 }
 
 void PlayerCharacter::Tick(float delta_time)

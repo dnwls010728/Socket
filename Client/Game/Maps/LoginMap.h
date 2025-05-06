@@ -9,6 +9,7 @@ namespace Net
 
 namespace UI
 {
+    class Image;
     class TextBox;
     class ListBox;
     class Button;
@@ -37,6 +38,8 @@ private:
     void OnCharacterSelect(Type::uint64 user_data);
 
 #pragma region UI
+    std::shared_ptr<UI::Image> background_;
+    
     std::shared_ptr<UI::TextBox> version_;
     
     std::shared_ptr<UI::EditableTextBox> register_id_;
