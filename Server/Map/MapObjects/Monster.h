@@ -4,6 +4,7 @@
 class Monster : public MapObject
 {
 public:
+    
     Monster();
     virtual ~Monster() override = default;
     

@@ -65,6 +65,8 @@ bool ServerManager::Execute()
         return false;
     }
 
+    World::Get()->Start(50,10);
+    
     // 명령어 입력 루프
     std::wstring line;
     while (true)
@@ -95,6 +97,8 @@ bool ServerManager::Execute()
         }
     }
 
+    World::Get()->Stop();
+    
     server_socket_.Stop();
     Net::WSAUninit();
     mysql_manager->Disconnect();
