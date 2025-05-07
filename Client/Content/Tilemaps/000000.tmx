@@ -62,24 +62,5 @@
    <polygon points="0,0 64,-63.8182 128.182,-63.6364 191.636,0"/>
   </object>
  </objectgroup>
- <objectgroup id="6" name="Spawn">
-  <object id="6" name="Ladder" type="Ladder" x="400" y="400">
-   <point/>
-  </object>
-  <object id="8" name="Ladder" type="Ladder" x="400" y="432">
-   <point/>
-  </object>
-  <object id="9" name="Ladder" type="Ladder" x="400" y="464">
-   <point/>
-  </object>
-  <object id="10" name="Ladder" type="Ladder" x="400" y="496">
-   <point/>
-  </object>
-  <object id="11" name="Ladder" type="Ladder" x="400" y="528">
-   <point/>
-  </object>
-  <object id="7" name="Ladder" type="Ladder" x="400" y="368">
-   <point/>
-  </object>
- </objectgroup>
+ <objectgroup id="6" name="Spawn"/>
 </map>
