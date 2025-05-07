@@ -238,6 +238,7 @@
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
+    <ClInclude Include="Game\Actors\Ladder.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
@@ -597,6 +598,7 @@
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
+    <ClCompile Include="Game\Actors\Ladder.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />

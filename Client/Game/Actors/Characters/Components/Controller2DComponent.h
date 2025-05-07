@@ -23,6 +23,7 @@ public:
         bool is_right;
         bool is_climbing_slope;
         bool is_descending_slope;
+        bool is_falling;
 
         float slope_angle;
         float slope_angle_old;
@@ -47,20 +48,22 @@ public:
     Controller2DComponent(Actor* owner, const std::wstring& name);
     virtual ~Controller2DComponent() override = default;
 
-    void Move(Math::Vector2 velocity);
+    void Move(const Math::Vector2& move_amount);
+    void Move(Math::Vector2 move_amount, const Math::Vector2& input);
 
     FORCEINLINE const CollisionInfo& GetCollisions() const { return collisions_; }
 
 protected:
     virtual void BeginPlay() override;
+    virtual void EndPlay(EndPlayReason type) override;
 
 private:
     void UpdateRayCastOrigins();
     void CalculateRaySpacing();
-    void HorizontalCollisions(Math::Vector2& velocity);
-    void VerticalCollisions(Math::Vector2& velocity);
-    void ClimbSlope(Math::Vector2& velocity, float slope_angle);
-    void DescendSlope(Math::Vector2& velocity);
+    void HorizontalCollisions(Math::Vector2& move_amount);
+    void VerticalCollisions(Math::Vector2& move_amount);
+    void ClimbSlope(Math::Vector2& move_amount, float slope_angle);
+    void DescendSlope(Math::Vector2& move_amount);
     
     const float kSkinWidth;
 
@@ -78,5 +81,9 @@ private:
 
     RayCastOrigins ray_cast_origins_;
     CollisionInfo collisions_;
+
+    Math::Vector2 input_;
+
+    TimerHandle timer_handle_;
     
 };

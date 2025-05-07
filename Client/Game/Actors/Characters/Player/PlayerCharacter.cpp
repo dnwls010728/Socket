@@ -74,7 +74,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-        if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
 
         if (is_jump_ && collisions.is_below)
         {
@@ -84,7 +83,9 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         
         velocity_.x = movement_input_.x * 5.f;
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ * delta_time);
+        controller_->Move(velocity_ * delta_time, movement_input_);
+        
+        if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
         
         Math::Vector2 position = transform->GetPosition();
         Movement movement = {position.x, position.y};

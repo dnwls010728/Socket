@@ -2,5 +2,5 @@
 
 enum class ActorTag : Type::uint64
 {
-    kNone,
+    kNone = (0x01<<0)
 };
