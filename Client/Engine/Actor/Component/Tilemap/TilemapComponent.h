@@ -24,6 +24,8 @@ public:
 
     void SetTilemap(Tilemap* tilemap);
 
+    int GetType(int shape_id);
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(EndPlayReason type) override;
@@ -42,5 +44,7 @@ private:
     std::vector<std::unique_ptr<TilemapLayer>> tilemap_layers_;
 
     b2BodyId tilemap_body_id_;
+
+    std::unordered_map<int, int> type_map_;
     
 };

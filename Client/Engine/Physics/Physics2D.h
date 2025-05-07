@@ -13,6 +13,8 @@ struct HitResult
     Math::Vector2 end;
     Math::Vector2 point;
     Math::Vector2 normal;
+
+    b2ShapeId shape_id;
  
     float distance;
 };

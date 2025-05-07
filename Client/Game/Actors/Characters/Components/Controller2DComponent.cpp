@@ -7,6 +7,7 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/TilemapLoader.h"
 #include "Physics/Physics2D.h"
 
 Controller2DComponent::Controller2DComponent(Actor* owner, const std::wstring& name) :
@@ -165,20 +166,26 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
 
         if (is_hit)
         {
-            // if (true) // 추후 One Way Platform 인지 확인 필요
-            // {
-            //     if (direction_y == 1 || Math::IsEqual(hit_result.distance, 0.f)) continue;
-            //     if (collisions_.is_falling) continue;
-            //     if (input_.y == -1)
-            //     {
-            //         collisions_.is_falling = true;
-            //
-            //         TimerManager::Get()->SetTimer(timer_handle_, [&]()
-            //         {
-            //             collisions_.is_falling = false;
-            //         }, .5f);
-            //     }
-            // }
+            Logger::Print(L"Shape ID: %d", hit_result.shape_id.index1 - 1);
+            TilemapLoader* tilemap_loader = dynamic_cast<TilemapLoader*>(hit_result.actor);
+            if (IsValid(tilemap_loader))
+            {
+                bool is_platform = tilemap_loader->GetType(hit_result.shape_id.index1 - 1) == 1;
+                if (is_platform)
+                {
+                    if (direction_y == 1 || Math::IsEqual(hit_result.distance, 0.f)) continue;
+                    if (collisions_.is_falling) continue;
+                    if (input_.y == -1)
+                    {
+                        collisions_.is_falling = true;
+            
+                        TimerManager::Get()->SetTimer(timer_handle_, [&]()
+                        {
+                            collisions_.is_falling = false;
+                        }, .5f);
+                    }
+                }
+            }
             
             move_amount.y = (hit_result.distance - kSkinWidth) * direction_y;
             ray_length = hit_result.distance;

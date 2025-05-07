@@ -16,13 +16,21 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	tilemap_(nullptr),
 	ppu_(0.f),
 	map_size_(Math::Vector2::Zero()),
-	tilemap_layers_()
+	tilemap_layers_(),
+	type_map_()
 {
 }
 
 void TilemapComponent::SetTilemap(Tilemap* tilemap)
 {
 	tilemap_ = tilemap;
+}
+
+int TilemapComponent::GetType(int shape_id)
+{
+	auto it = type_map_.find(shape_id);
+	if (it != type_map_.end()) return it->second;
+	return -1;
 }
 
 void TilemapComponent::BeginPlay()
@@ -121,8 +129,12 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		
 		b2ShapeDef shape_def = b2DefaultShapeDef();
 		shape_def.filter = filter;
+		shape_def.userData = nullptr;
 
-		b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+		b2ShapeId shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+		
+		const std::vector<tmx::Property>& properties = temp.getProperties();
+		if (properties.size() > 0) type_map_[shape_id.index1 - 1] = properties[0].getIntValue();
 	}
 
 	b2Body_Disable(tilemap_body_id_);

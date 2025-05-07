@@ -55,10 +55,25 @@
 </data>
  </layer>
  <objectgroup id="2" name="Collision">
-  <object id="1" x="0" y="544" width="800" height="64"/>
-  <object id="3" x="288" y="352" width="160" height="32"/>
-  <object id="4" x="480" y="448" width="128" height="32"/>
+  <object id="1" x="0" y="544" width="800" height="64">
+   <properties>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="3" x="288" y="352" width="160" height="32">
+   <properties>
+    <property name="Type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="4" x="480" y="448" width="128" height="32">
+   <properties>
+    <property name="Type" type="int" value="1"/>
+   </properties>
+  </object>
   <object id="5" x="64" y="544">
+   <properties>
+    <property name="Type" type="int" value="0"/>
+   </properties>
    <polygon points="0,0 64,-63.8182 128.182,-63.6364 191.636,0"/>
   </object>
  </objectgroup>

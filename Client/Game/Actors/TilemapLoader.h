@@ -12,6 +12,8 @@ public:
 
     void SetTilemap(class Tilemap* tilemap);
 
+    int GetType(int shape_id);
+
 protected:
 #pragma region 컴포넌트
     std::shared_ptr<class TilemapComponent> tilemap_;
