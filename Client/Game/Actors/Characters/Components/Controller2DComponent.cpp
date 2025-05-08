@@ -110,6 +110,13 @@ void Controller2DComponent::HorizontalCollisions(Math::Vector2& move_amount)
         
         if (is_hit)
         {
+            TilemapLoader* tilemap_loader = dynamic_cast<TilemapLoader*>(hit_result.actor);
+            if (IsValid(tilemap_loader))
+            {
+                bool is_platform = tilemap_loader->GetType(hit_result.shape_id) == 1;
+                if (is_platform) continue;
+            }
+            
             if (Math::IsEqual(hit_result.distance, 0.f)) continue;
             
             float slope_angle = Math::Vector2::Angle(hit_result.normal, Math::Vector2::Up());
