@@ -45,6 +45,6 @@ private:
 
     b2BodyId tilemap_body_id_;
 
-    std::unordered_map<int, int> type_map_;
+    std::unordered_map<Type::uint64, int> type_map_;
     
 };

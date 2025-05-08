@@ -17,11 +17,6 @@ void TilemapLoader::SetTilemap(class Tilemap* tilemap)
     tilemap_->SetTilemap(tilemap);
 }
 
-int TilemapLoader::GetType(const b2ShapeId shape_id)
-{
-    return tilemap_->GetType(shape_id);
-}
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

@@ -28,7 +28,9 @@ void TilemapComponent::SetTilemap(Tilemap* tilemap)
 
 int TilemapComponent::GetType(const b2ShapeId shape_id)
 {
-	auto it = type_map_.find(shape_id.index1);
+	Type::uint64 id = b2StoreShapeId(shape_id);
+	
+	auto it = type_map_.find(id);
 	if (it != type_map_.end()) return it->second;
 	return -1;
 }
@@ -134,7 +136,11 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		b2ShapeId shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
 		
 		const std::vector<tmx::Property>& properties = temp.getProperties();
-		if (properties.size() > 0) type_map_[shape_id.index1] = properties[0].getIntValue();
+		if (properties.size() > 0)
+		{
+			Type::uint64 id = b2StoreShapeId(shape_id);
+			type_map_[id] = properties[0].getIntValue();
+		}
 	}
 
 	b2Body_Disable(tilemap_body_id_);
