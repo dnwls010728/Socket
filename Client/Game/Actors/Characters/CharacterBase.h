@@ -20,7 +20,7 @@ public:
     virtual ~CharacterBase() override = default;
 
     void SetCharacterName(const std::wstring& name);
-    void Speak(const std::wstring& message);
+    void Speak(const std::wstring& message, float duration = 4.f);
     
     FORCEINLINE const std::wstring& GetCharacterName() const { return character_name_; }
     FORCEINLINE std::shared_ptr<SpriteRendererComponent> GetRenderer() const { return renderer_; }
@@ -30,6 +30,8 @@ protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void EndPlay(EndPlayReason type) override;
+    
+    virtual void OnSpeakEnd();
     
 #pragma region 컴포넌트
     std::shared_ptr<BoxColliderComponent> collider_;

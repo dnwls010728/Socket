@@ -22,7 +22,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     is_jump_(false),
     timer_(0)
 {
-    SetLayer(ActorLayer::kPlayer);
+    SetLayer(ActorLayer::kCharacter);
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)

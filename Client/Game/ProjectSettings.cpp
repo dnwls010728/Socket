@@ -22,8 +22,8 @@ void ProjectSettings::Init()
     settings->SetFixedTimeStep(1.f / 60.f);
 
     // 레이어 충돌 매트릭스 설정
-    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer);
-    settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter);
+    settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
 
     settings->AddLevel<LoginMap>(L"Login");
     settings->AddLevel<InGameMap>(L"InGame");

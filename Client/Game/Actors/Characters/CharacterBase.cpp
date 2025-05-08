@@ -45,7 +45,7 @@ void CharacterBase::SetCharacterName(const std::wstring& name)
     }
 }
 
-void CharacterBase::Speak(const std::wstring& message)
+void CharacterBase::Speak(const std::wstring& message, float duration)
 {
     UI::Manager* ui_manager = UI::Manager::Get();
     TimerManager* timer_manager = TimerManager::Get();
@@ -65,10 +65,7 @@ void CharacterBase::Speak(const std::wstring& message)
         ui_manager->AddToViewport(chat_balloon_);
     }
 
-    timer_manager->SetTimer(chat_balloon_timer_handle_, [&]()
-    {
-        UI::Manager::Get()->RemoveFromViewport(chat_balloon_);
-    }, 4.f, false);
+    timer_manager->SetTimer(chat_balloon_timer_handle_, this, &CharacterBase::OnSpeakEnd, duration, false);
 }
 
 void CharacterBase::BeginPlay()
@@ -109,6 +106,11 @@ void CharacterBase::EndPlay(EndPlayReason type)
     
     ui_manager->RemoveFromViewport(chat_balloon_);
     ui_manager->RemoveFromViewport(name_tag_);
+}
+
+void CharacterBase::OnSpeakEnd()
+{
+    UI::Manager::Get()->RemoveFromViewport(chat_balloon_);
 }
 
 RTTR_REGISTRATION
