@@ -18,12 +18,16 @@ UI::Manager::Manager() :
 void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& kWidget)
 {
     if (!kWidget) return;
+
+    kWidget->OnAdd();
     widgets_.push_back(kWidget);
 }
 
 void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& kWidget)
 {
     if (!kWidget) return;
+
+    kWidget->OnRemove();
     std::erase(widgets_, kWidget);
 }
 

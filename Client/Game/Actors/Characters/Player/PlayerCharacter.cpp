@@ -8,7 +8,6 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Asset/AssetManager.h"
-#include "Components/InventoryComponent.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Subsystems/NetworkSubsystem.h"
@@ -23,8 +22,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     is_jump_(false),
     timer_(0)
 {
-    inventory_ = AddComponent<InventoryComponent>(L"Inventory");
-    
     SetLayer(ActorLayer::kPlayer);
 }
 
@@ -127,8 +124,10 @@ void PlayerCharacter::Tick(float delta_time)
 
     if (IsMine())
     {
+        UI::Manager* ui_manager = UI::Manager::Get();
         Keyboard* keyboard = Keyboard::Get();
-        if (!UI::Manager::Get()->HasFocus())
+        
+        if (!ui_manager->HasFocus())
         {
             movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
             movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);

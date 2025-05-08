@@ -47,6 +47,8 @@ namespace UI
 
         virtual void Tick(float delta_time);
         virtual void Render(Renderer* renderer, WindowsWindow* window);
+        virtual void OnAdd();
+        virtual void OnRemove();
 
         virtual bool OnMouseEnter();
         virtual bool OnMouseLeave();

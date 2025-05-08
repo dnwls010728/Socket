@@ -54,6 +54,14 @@ void UI::Widget::Render(Renderer* renderer, WindowsWindow* window)
 {
 }
 
+void UI::Widget::OnAdd()
+{
+}
+
+void UI::Widget::OnRemove()
+{
+}
+
 bool UI::Widget::OnMouseEnter()
 {
     return false;
