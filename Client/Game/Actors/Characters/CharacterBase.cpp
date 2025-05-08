@@ -15,6 +15,7 @@
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
     NetworkActor(kName),
+    character_name_(L"Unknown"),
     state_machine_(nullptr),
     velocity_(Math::Vector2::Zero()),
     gravity_(-20.f),
@@ -32,6 +33,16 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
 
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
+}
+
+void CharacterBase::SetCharacterName(const std::wstring& name)
+{
+    character_name_ = name;
+    
+    if (HasBegunPlay())
+    {
+        if (name_tag_) name_tag_->SetText(character_name_);
+    }
 }
 
 void CharacterBase::Speak(const std::wstring& message)
@@ -65,7 +76,7 @@ void CharacterBase::BeginPlay()
     NetworkActor::BeginPlay();
 
     name_tag_ = UI::NameTag::Create(L"NameTag");
-    name_tag_->SetText(L"GM시오");
+    name_tag_->SetText(character_name_);
     
     chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});

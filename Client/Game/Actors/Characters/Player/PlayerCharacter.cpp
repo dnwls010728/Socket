@@ -45,11 +45,14 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::InitSpawn(const Math::Vector2& position)
+void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
 {
-    GetTransform()->SetPosition(position);
+    character_name_ = name;
+    
     last_movement_.x = position.x;
     last_movement_.y = position.y;
+    
+    GetTransform()->SetPosition(position);
 }
 
 void PlayerCharacter::BeginPlay()

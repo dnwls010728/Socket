@@ -127,10 +127,12 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_info.unique_id);
             if (IsValid(player_character))
             {
+                const CharacterInfo character_info = spawn_player_packet->character_info;
+                
                 float position_x = spawn_player_packet->position_x;
                 float position_y = spawn_player_packet->position_y;
 
-                player_character->InitSpawn({position_x, position_y});
+                player_character->InitSpawn(character_info.name, {position_x, position_y});
                 other_players_.emplace_back(player_character);
             }
         }
@@ -213,7 +215,9 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
     std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
     if (IsValid(player_character))
     {
+        player_character->InitSpawn(character_info.name, Math::Vector2::Zero());
         player_character->SetMine(true);
+        
         player_ = player_character;
         
         camera_manager->SetTarget(player_character);

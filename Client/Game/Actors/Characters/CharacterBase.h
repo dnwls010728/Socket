@@ -19,8 +19,10 @@ public:
     CharacterBase(const std::wstring& kName);
     virtual ~CharacterBase() override = default;
 
+    void SetCharacterName(const std::wstring& name);
     void Speak(const std::wstring& message);
-
+    
+    FORCEINLINE const std::wstring& GetCharacterName() const { return character_name_; }
     FORCEINLINE std::shared_ptr<SpriteRendererComponent> GetRenderer() const { return renderer_; }
     FORCEINLINE std::shared_ptr<StateMachineComponent> GetStateMachine() const { return state_machine_; }
 
@@ -35,6 +37,8 @@ protected:
     std::shared_ptr<SpriteRendererComponent> renderer_;
     std::shared_ptr<StateMachineComponent> state_machine_;
 #pragma endregion
+
+    std::wstring character_name_;
 
     Math::Vector2 velocity_;
 
