@@ -17,7 +17,7 @@ void TilemapLoader::SetTilemap(class Tilemap* tilemap)
     tilemap_->SetTilemap(tilemap);
 }
 
-int TilemapLoader::GetType(int shape_id)
+int TilemapLoader::GetType(const b2ShapeId shape_id)
 {
     return tilemap_->GetType(shape_id);
 }

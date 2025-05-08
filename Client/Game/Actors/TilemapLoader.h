@@ -12,7 +12,7 @@ public:
 
     void SetTilemap(class Tilemap* tilemap);
 
-    int GetType(int shape_id);
+    int GetType(b2ShapeId shape_id);
 
 protected:
 #pragma region 컴포넌트

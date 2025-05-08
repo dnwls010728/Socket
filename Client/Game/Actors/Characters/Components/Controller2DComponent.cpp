@@ -166,11 +166,10 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
 
         if (is_hit)
         {
-            Logger::Print(L"Shape ID: %d", hit_result.shape_id.index1 - 1);
             TilemapLoader* tilemap_loader = dynamic_cast<TilemapLoader*>(hit_result.actor);
             if (IsValid(tilemap_loader))
             {
-                bool is_platform = tilemap_loader->GetType(hit_result.shape_id.index1 - 1) == 1;
+                bool is_platform = tilemap_loader->GetType(hit_result.shape_id) == 1;
                 if (is_platform)
                 {
                     if (direction_y == 1 || Math::IsEqual(hit_result.distance, 0.f)) continue;

@@ -24,7 +24,7 @@ public:
 
     void SetTilemap(Tilemap* tilemap);
 
-    int GetType(int shape_id);
+    int GetType(b2ShapeId shape_id);
 
 protected:
     virtual void BeginPlay() override;
