@@ -52,7 +52,8 @@ void ServerManager::CommandHandlerInitialize()
 bool ServerManager::Execute()
 {
     MySQLManager* mysql_manager = MySQLManager::Get();
-    if (!mysql_manager->Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
+    // if (!mysql_manager->Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
+    if (!mysql_manager->Connect("localhost", "root", "12345"))
     {
         return false;
     }

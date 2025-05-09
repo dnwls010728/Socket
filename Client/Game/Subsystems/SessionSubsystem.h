@@ -8,6 +8,8 @@
 #define GET_SESSION() \
     GameInstance::Get()->GetSubsystem<SessionSubsystem>()
 
+class Inventory;
+
 enum class SessionState
 {
     kNone,
@@ -53,5 +55,7 @@ private:
     SessionState state_;
 
     CharacterInfo character_info_;
+
+    std::unique_ptr<Inventory> inventory_;
     
 };
