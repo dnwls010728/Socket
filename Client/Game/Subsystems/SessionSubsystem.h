@@ -8,7 +8,7 @@
 #define GET_SESSION() \
     GameInstance::Get()->GetSubsystem<SessionSubsystem>()
 
-class Inventory;
+class InventoryData;
 
 enum class SessionState
 {
@@ -42,6 +42,8 @@ public:
 
     FORCEINLINE const CharacterInfo& GetCharacterInfo() const { return character_info_; }
     FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
+
+    FORCEINLINE InventoryData* GetInventoryData() const { return inventory_data_.get(); }
     
     OnPacketDelegate packet_handler;
 
@@ -56,6 +58,6 @@ private:
 
     CharacterInfo character_info_;
 
-    std::unique_ptr<Inventory> inventory_;
+    std::unique_ptr<InventoryData> inventory_data_;
     
 };

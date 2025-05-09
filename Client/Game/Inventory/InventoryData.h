@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-class Inventory
+class InventoryData
 {
 public:
-    Inventory();
-    ~Inventory() = default;
+    InventoryData();
+    ~InventoryData() = default;
     
     int32_t GetItemID(uint16_t slot_index) const;
 
@@ -28,7 +28,7 @@ private:
     
     // X: 슬롯 인덱스 % 행 개수
     // Y: 슬롯 인덱스 / 행 개수
-    std::map<uint16_t, Slot> inventory_;
+    std::map<uint16_t, Slot> slots_;
 
     // 재화
     int64_t color_;

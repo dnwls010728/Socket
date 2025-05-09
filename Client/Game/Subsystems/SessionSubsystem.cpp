@@ -5,13 +5,13 @@
 #include <CustomSerializer.h>
 
 #include "NetworkManager.h"
-#include "Inventory/Inventory.h"
+#include "Inventory/InventoryData.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
     character_info_(),
-    inventory_(nullptr)
+    inventory_data_(nullptr)
 {
 }
 
@@ -57,7 +57,7 @@ void SessionSubsystem::ProcessPackets()
                 SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
                 if (response->is_success)
                 {
-                    inventory_ = std::make_unique<Inventory>();
+                    inventory_data_ = std::make_unique<InventoryData>();
                     Logger::Print(L"인벤토리 생성");
                 }
             }
