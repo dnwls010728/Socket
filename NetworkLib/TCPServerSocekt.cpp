@@ -22,8 +22,7 @@ namespace Net::TCP {
         heartbeat_timeout_ms_(15000),
 		OnClientAccepted(nullptr),
 		OnClientClosed(nullptr),
-		OnPacketReceived(nullptr),
-		serializer_factory_(nullptr)
+		OnPacketReceived(nullptr)
     {
     }
 
@@ -279,9 +278,9 @@ namespace Net::TCP {
 
                 std::vector<BYTE> payload(packet_data.begin() + sizeof(PayloadHeader), packet_data.end());
 
-                std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-                serializer->SetData(payload);
-                packet->Deserialize(*serializer);
+                Serializer serializer;
+                serializer.SetData(payload);
+                packet->Deserialize(serializer);
 
                 NetAddress client_addr;
                 if (!GetClientAddress((SOCKET)completion_key, client_addr))
@@ -297,8 +296,7 @@ namespace Net::TCP {
                     connection_manager_.UpdateClientResponseTime(state.uniqueKey);
                 }
 
-				bool is_pprocessed = ProcessPendingPacket(state, packet);
-                if (is_pprocessed == false && OnPacketReceived)
+                if (OnPacketReceived)
                 {
 					OnPacketReceived(state, std::move(packet));
                 }
@@ -350,9 +348,9 @@ namespace Net::TCP {
         }
         target_socket = client_state.socket;
 
-        std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-        kPacket.Serialize(*serializer);
-        std::vector<BYTE> payload = serializer->GetData();
+        Serializer serializer;
+        kPacket.Serialize(serializer);
+        std::vector<BYTE> payload = serializer.GetData();
 
         PayloadHeader header;
         header.packet_id = kPacket.GetPacketID();
@@ -381,115 +379,6 @@ namespace Net::TCP {
         }
         return true;
     }
-
-    bool TCPServerSocket::SendAndReceivePacket(uint32_t unique_key, IPacket& request_packet, uint32_t timeout_ms, std::function<void(uint32_t, std::unique_ptr<IPacket>)> callback)
-    {
-		bool send_result = SendPacketToClient(unique_key, request_packet);
-		if (send_result == false)
-		{
-			return false;
-		}
-
-        {
-			std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            uint32_t pending_number = next_pending_number_;
-			next_pending_number_++;
-
-			PendingPacketCallback pending_packet;
-			pending_packet.sequence = pending_number;
-            pending_packet.callback = callback;
-			pending_packet.expiration_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
-			pending_packet_[pending_number] = std::move(pending_packet);
-
-        }
-        return true;
-    }
-
-    bool TCPServerSocket::ProcessPendingPacket(TCPConnectionState client_state, std::unique_ptr<IPacket>& packet)
-    {
-		bool is_processed = false;
-        int sequence = packet->GetSequence();
-        {
-            // 응답을 기다리는 콜백이 있으면 그쪽으로 넘겨줌
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            auto it = pending_packet_.find(sequence);
-            if (it != pending_packet_.end())
-            {
-                PendingPacketCallback& pending = it->second;
-                if (pending.callback)
-                {
-                    pending.callback(client_state.uniqueKey , std::move(packet));
-                    packet = nullptr;
-                }
-                pending_packet_.erase(it);
-				is_processed = true;    
-            }
-        }
-
-        return is_processed;
-    }
-
-    /*
-    void TCPServerSocket::ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback)
-    {
-		if (callback == nullptr)
-        {
-			return;
-		}
-        
-        // 만료된 패킷 제거
-        {
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            auto now = std::chrono::steady_clock::now();
-            for (auto it = pending_packet_.begin(); it != pending_packet_.end();)
-            {
-                if (it->second.expiration_time > now)
-                {
-                    std::unique_ptr<ErrorPacket> error_packet = std::make_unique<ErrorPacket>();
-                    error_packet->error_code = NetErrorCode::kTimeout;
-                    error_packet->error_message = L"";
-
-                    if (it->second.callback)
-                    {
-                        it->second.callback(0, std::move(error_packet));
-                    }
-                    it = pending_packet_.erase(it);
-                }
-            }
-        }
-
-        // 쌓여있는 패킷 처리
-        ReceivedPacketInfo packet_info;
-        while (recv_data_queue_.try_pop(packet_info))
-        {
-			int sequence = packet_info.packet->GetSequence();
-            {
-                // 응답을 기다리는 콜백이 있으면 그쪽으로 넘겨줌
-                std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-				auto it = pending_packet_.find(sequence);
-                if (it == pending_packet_.end())
-                {
-					PendingPacketCallback& pending = it->second;
-                    if (pending.callback)
-                    {
-						pending.callback(packet_info.client_key, std::move(packet_info.packet));
-                        packet_info.packet = nullptr;
-						packet_info.client_key = 0;
-                    }
-					pending_packet_.erase(it);
-                    continue;
-                }
-            }
-
-            if (packet_info.packet->GetPacketID() == NET_PACKET_ID_PONG)
-            {
-                connection_manager_.UpdateClientResponseTime(packet_info.client_key);
-            }
-
-			// 아닌경우 사용자가 설정한 콜백 호출
-            callback(packet_info);
-        }
-    }*/
 
     void TCPServerSocket::HeartbeatThread()
     {

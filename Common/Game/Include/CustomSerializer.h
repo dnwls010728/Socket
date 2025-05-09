@@ -2,72 +2,49 @@
 #include "Serializer.h"
 #include "CommonObject.h"
 
+namespace Net {
 
-class CustomSerializer : public Net::Serializer
+/*
+ SERIALIZER_EXTEND( Example, v.a, v.b )
+ or
+ inline Serializer& operator<<(Serializer& s, const Example& v)
+ { 
+	s << v.a;
+	s << v.b;
+	return s; 
+}
+inline Serializer& operator>>(Serializer& s, Example& v)
 {
-public:
-	EXTEND_SERIALIZER()
+	s >> v.a;
+	s >> v.b;
+	return s;
+}
+*/
+	
+// Movement
+SERIALIZER_EXTEND(Movement,v.x,v.y)
 
-	CustomSerializer& operator<<(const Movement& value)
-	{
-		*this << value.x;
-		*this << value.y;
-		return *this;
-	}
+// CharacterInfo
+SERIALIZER_EXTEND(CharacterInfo,
+	v.unique_id,
+	v.account_unique_id,
+	v.name,
+	v.lv,
+	v.job,
+	v.map_unique_id,
+	v.last_position_x,
+	v.last_position_y
+	)
 
-	CustomSerializer& operator>>(Movement& value)
-	{
-		*this >> value.x;
-		*this >> value.y;
-		return *this;
-	}
+// ObjectInfo 직렬화/역직렬화 등록
+SERIALIZER_EXTEND(ObjectInfo,
+	v.name,
+	v.class_name,
+	v.unique_id,
+	v.last_position_x,
+	v.last_position_y,
+	v.map_unique_id
+	)
 
-	CustomSerializer& operator<<(const CharacterInfo& value)
-	{
-		*this << value.unique_id;
-		*this << value.account_unique_id;
-		*this << value.name;
-		*this << value.lv;
-		*this << value.job;
-		*this << value.map_unique_id;
-		*this << value.last_position_x;
-		*this << value.last_position_y;
-		return *this;
-	}
 
-	CustomSerializer& operator>>(CharacterInfo& value)
-	{
-		*this >> value.unique_id;
-		*this >> value.account_unique_id;
-		*this >> value.name;
-		*this >> value.lv;
-		*this >> value.job;
-		*this >> value.map_unique_id;
-		*this >> value.last_position_x;
-		*this >> value.last_position_y;
-		return *this;
-	}
-
-	CustomSerializer& operator<<(const ObjectInfo& value)
-	{
-		*this << value.name;
-		*this << value.class_name;
-		*this << value.unique_id;
-		*this << value.last_position_x;
-		*this << value.last_position_y;
-		*this << value.map_unique_id;
-		return *this;
-	}
-
-	CustomSerializer& operator>>(ObjectInfo& value)
-	{
-		*this >> value.name;
-		*this >> value.class_name;
-		*this >> value.unique_id;
-		*this >> value.last_position_x;
-		*this >> value.last_position_y;
-		*this >> value.map_unique_id;
-		return *this;
-	}
-
-};
+} // namespace Net

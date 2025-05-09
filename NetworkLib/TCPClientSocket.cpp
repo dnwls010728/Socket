@@ -53,9 +53,9 @@ namespace Net::TCP {
     bool TCPClientSocket::SendPacket(IPacket& packet)
     {
         // 1. IPacket 직렬화
-        std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-        packet.Serialize(*serializer);
-        std::vector<BYTE> payload = serializer->GetData();
+        Serializer serializer;
+        packet.Serialize(serializer);
+        std::vector<BYTE> payload = serializer.GetData();
 
         // 2. PayloadHeader 작성
         PayloadHeader header;
@@ -86,32 +86,6 @@ namespace Net::TCP {
         return true;
     }
 
-    bool TCPClientSocket::SendAndReceivePacket(IPacket& request_packet, uint32_t timeout_ms, std::function<void(std::unique_ptr<IPacket>)> callback)
-    {
-        bool send_result = SendPacket(request_packet);
-        if (send_result == false)
-        {
-            return false;
-        }
-
-        {
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            uint32_t pending_number = next_pending_number_;
-            next_pending_number_++;
-
-            PendingPacketCallback pending_packet;
-            pending_packet.sequence = pending_number;
-            pending_packet.callback = [callback](uint32_t, std::unique_ptr<Net::IPacket> packet)
-                {
-					callback(std::move(packet));
-                };
-            pending_packet.expiration_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
-            pending_packet_[pending_number] = std::move(pending_packet);
-
-        }
-        return true;
-    }
-
     void TCPClientSocket::ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback)
     {
         if (callback == nullptr)
@@ -119,47 +93,10 @@ namespace Net::TCP {
             return;
         }
 
-        // 만료된 패킷 제거
-        {
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            auto now = std::chrono::steady_clock::now();
-            for (auto it = pending_packet_.begin(); it != pending_packet_.end();)
-            {
-                if (it->second.expiration_time > now)
-                {
-                    std::unique_ptr<ErrorPacket> error_packet = std::make_unique<ErrorPacket>();
-                    error_packet->error_code = NetErrorCode::kTimeout;
-                    error_packet->error_message = L"";
-
-                    if (it->second.callback)
-                    {
-                        it->second.callback(0, std::move(error_packet));
-                    }
-                    it = pending_packet_.erase(it);
-                }
-            }
-        }
-
         // 쌓여있는 패킷 처리
         ReceivedPacketInfo packet_info;
         while (recv_data_queue_.try_pop(packet_info))
         {
-            int sequence = packet_info.packet->GetSequence();
-            {
-                // 응답을 기다리는 콜백이 있으면 그쪽으로 넘겨줌
-                std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-                auto it = pending_packet_.find(sequence);
-                if (it != pending_packet_.end())
-                {
-                    PendingPacketCallback& pending = it->second;
-                    if (pending.callback)
-                    {
-                        pending.callback(packet_info.client_key, std::move(packet_info.packet));
-                        continue;
-                    }
-                }
-            }
-
             if (packet_info.packet->GetPacketID() == NET_PACKET_ID_PING)
             {
                 PongPacket pong_packet;
@@ -245,9 +182,9 @@ namespace Net::TCP {
                 // 역릭렬화
                 std::vector<BYTE> payload(packet_data.begin() + sizeof(PayloadHeader), packet_data.end());
                 
-				std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-				serializer->SetData(payload);
-                packet->Deserialize(*serializer);
+				Serializer serializer;
+				serializer.SetData(payload);
+                packet->Deserialize(serializer);
 
 				recv_data_queue_.push({ 0, std::move(packet) });
             }

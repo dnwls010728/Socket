@@ -26,14 +26,8 @@ namespace Net::TCP {
         // IPacket 전송 (패킷 형식: [4바이트 길이][PayloadHeader][payload])
         bool SendPacket(IPacket& packet);
 
-        // IPacket을 보낸 후 응답 콜백. 콜백 등록할 때 this가 사라지는 것 주의
-        bool SendAndReceivePacket(IPacket& request_packet, uint32_t timeout_ms, std::function<void(std::unique_ptr<IPacket>)> callback);
-
 		// 수신된 패킷 처리. client_key은 무조건 0으로 넘겨줌
         void ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback);
-
-        // Serializer 팩토리 함수
-        void SetSerializerFactory(std::function<std::unique_ptr<Serializer>()> factory) { serializer_factory_ = factory; }
 
         // 서버 연결 끊김 콜백
         void SetClientAcceptedCallback(std::function<void()> callback) { OnDisconnected = callback; }
@@ -43,13 +37,6 @@ namespace Net::TCP {
         int buffer_size_;
         std::atomic<bool> running_;
         std::thread recv_thread_;
-
-        std::atomic<uint32_t> next_pending_number_;                             // 응답을 기다리려는 패킷에 부여할 다음 번호
-        std::unordered_map<uint32_t, PendingPacketCallback> pending_packet_;    // 패킷의 응답이 올 때 호출될 콜백 저장
-        std::mutex pending_packets_mutex_;                                      // pending_packets_에 대한 동기화
-
-        // Serialize 팩토리
-        std::function<std::unique_ptr<Serializer>()> serializer_factory_;
 
         // 내부 함수: 수신 스레드 루프
         void RecvThread();

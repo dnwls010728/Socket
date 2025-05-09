@@ -9,8 +9,6 @@
 
 ServerManager::ServerManager()
 {
-    server_socket_.SetSerializerFactory([]() { return std::make_unique<CustomSerializer>(); });
-
     // 콜벡 설정file:/D:/Users/Desktop/태양/게임엔진/Socket/Server/ServerManager.h
     server_socket_.SetClientAcceptedCallback(std::bind(&ServerManager::OnClientConnected, this, std::placeholders::_1));
     server_socket_.SetClientDisconnectedCallback(std::bind(&ServerManager::OnClientDisconnected, this, std::placeholders::_1));
