@@ -6,7 +6,6 @@
 #include <string>
 #include <d2d1.h>
 
-#include "Misc/Type.h"
 #include "Asset/Asset.h"
 
 class UITexture : public Asset
@@ -21,8 +20,8 @@ public:
 
     FORCEINLINE Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
     
-    FORCEINLINE Type::uint32 GetWidth() const { return width_; }
-    FORCEINLINE Type::uint32 GetHeight() const { return height_; }
+    FORCEINLINE uint32_t GetWidth() const { return width_; }
+    FORCEINLINE uint32_t GetHeight() const { return height_; }
 
     FORCEINLINE void SetSlice9Rect(const Math::Rect& kRect) { slice9_rect_ = kRect; }
     FORCEINLINE const Math::Rect& GetSlice9Rect() const { return slice9_rect_; }
@@ -30,8 +29,8 @@ public:
 private:
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
     
-    Type::uint32 width_;
-    Type::uint32 height_;
+    uint32_t width_;
+    uint32_t height_;
 
     Math::Rect slice9_rect_;
     

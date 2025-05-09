@@ -43,7 +43,7 @@ float Math::Pow(float f, float p)
 {
     float result = 1.f;
 
-    for (int i = 0; i < p; ++i)
+    for (int32_t i = 0; i < p; ++i)
     {
         result *= f;
     }
@@ -82,7 +82,7 @@ bool Math::IsEqual(float a, float b)
     return std::abs(a - b) < std::numeric_limits<float>::epsilon();
 }
 
-int Math::RandRange(int min, int max)
+int32_t Math::RandRange(int32_t min, int32_t max)
 {
     if (min > max)
     {
@@ -93,7 +93,7 @@ int Math::RandRange(int min, int max)
     
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dis(min, max);
+    std::uniform_int_distribution<int32_t> dis(min, max);
 
     return dis(gen);
 }

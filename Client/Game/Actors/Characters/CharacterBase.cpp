@@ -29,7 +29,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
-    renderer_->SetZOrder(std::numeric_limits<int>::max());
+    renderer_->SetZOrder(std::numeric_limits<int32_t>::max());
 
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 

@@ -85,8 +85,8 @@ void Controller2DComponent::CalculateRaySpacing()
     Bounds bounds = collider_->GetBounds();
     bounds.Expand(kSkinWidth * -2.f);
 
-    horizontal_ray_count_ = Math::Clamp(horizontal_ray_count_, 2, std::numeric_limits<int>::max());
-    vertical_ray_count_ = Math::Clamp(vertical_ray_count_, 2, std::numeric_limits<int>::max());
+    horizontal_ray_count_ = Math::Clamp(horizontal_ray_count_, 2, std::numeric_limits<int32_t>::max());
+    vertical_ray_count_ = Math::Clamp(vertical_ray_count_, 2, std::numeric_limits<int32_t>::max());
 
     horizontal_ray_spacing_ = bounds.size.x / (horizontal_ray_count_ - 1);
     vertical_ray_spacing_ = bounds.size.y / (vertical_ray_count_ - 1);
@@ -98,13 +98,13 @@ void Controller2DComponent::HorizontalCollisions(Math::Vector2& move_amount)
     float direction_x = Math::Sign(move_amount.x);
     float ray_length = Math::Abs(move_amount.x) + kSkinWidth;
 
-    for (int i = 0; i < horizontal_ray_count_; ++i)
+    for (int32_t i = 0; i < horizontal_ray_count_; ++i)
     {
         Math::Vector2 ray_origin = (direction_x == -1) ? ray_cast_origins_.bottom_left : ray_cast_origins_.bottom_right;
         ray_origin += Math::Vector2::Up() * (horizontal_ray_spacing_ * i);
 
         HitResult hit_result;
-        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * direction_x, ray_length, static_cast<Type::uint16>(ActorLayer::kDefault));
+        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * direction_x, ray_length, static_cast<uint16_t>(ActorLayer::kDefault));
 
         DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Right() * direction_x * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
         
@@ -161,13 +161,13 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
     float direction_y = Math::Sign(move_amount.y);
     float ray_length = Math::Abs(move_amount.y) + kSkinWidth;
 
-    for (int i = 0; i < vertical_ray_count_; ++i)
+    for (int32_t i = 0; i < vertical_ray_count_; ++i)
     {
         Math::Vector2 ray_origin = (direction_y == -1) ? ray_cast_origins_.bottom_left : ray_cast_origins_.top_left;
         ray_origin += Math::Vector2::Right() * (vertical_ray_spacing_ * i + move_amount.x);
 
         HitResult hit_result;
-        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * direction_y, ray_length, static_cast<Type::uint16>(ActorLayer::kDefault));
+        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * direction_y, ray_length, static_cast<uint16_t>(ActorLayer::kDefault));
 
         DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Up() * direction_y * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
 
@@ -215,7 +215,7 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
         ray_origin += Math::Vector2::Up() * move_amount.y;
 
         HitResult hit_result;
-        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * direction_x, ray_length, static_cast<Type::uint16>(ActorLayer::kDefault));
+        bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * direction_x, ray_length, static_cast<uint16_t>(ActorLayer::kDefault));
 
         if (is_hit)
         {
@@ -250,7 +250,7 @@ void Controller2DComponent::DescendSlope(Math::Vector2& move_amount)
     Math::Vector2 ray_origin = (direction_x == -1) ? ray_cast_origins_.bottom_right : ray_cast_origins_.bottom_left;
     
     HitResult hit_result;
-    bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Down(), std::numeric_limits<float>::max(), static_cast<Type::uint16>(ActorLayer::kDefault));
+    bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Down(), std::numeric_limits<float>::max(), static_cast<uint16_t>(ActorLayer::kDefault));
 
     if (is_hit)
     {

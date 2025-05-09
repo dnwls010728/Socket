@@ -25,7 +25,7 @@ namespace Blackboard
         FORCEINLINE const BlackboardKey& GetKey() const { return key_; }
         FORCEINLINE T GetValue() const { return value_; }
         FORCEINLINE std::type_index GetType() const { return type_; }
-        FORCEINLINE Type::uint64 GetHashCode() const { return key_.GetHashCode(); }
+        FORCEINLINE uint64_t GetHashCode() const { return key_.GetHashCode(); }
 
     private:
         BlackboardKey key_;

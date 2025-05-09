@@ -18,39 +18,39 @@ namespace UI
         ListBox(const std::wstring& kName);
         virtual ~ListBox() override = default;
 
-        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Type::uint64)>, std::decay_t<F>>>>
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(uint64_t)>, std::decay_t<F>>>>
         void OnSelect(F&& func);
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnSelect(M* target, void(M::*func)(Type::uint64));
+        void OnSelect(M* target, void(M::*func)(uint64_t));
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnSelect(M* target, void(M::*func)(Type::uint64) const);
+        void OnSelect(M* target, void(M::*func)(uint64_t) const);
 
-        void OnSelect(void(*func)(Type::uint64));
+        void OnSelect(void(*func)(uint64_t));
 
-        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Type::uint64)>, std::decay_t<F>>>>
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(uint64_t)>, std::decay_t<F>>>>
         void OnDoubleClick(F&& func);
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnDoubleClick(M* target, void(M::*func)(Type::uint64));
+        void OnDoubleClick(M* target, void(M::*func)(uint64_t));
 
         template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-        void OnDoubleClick(M* target, void(M::*func)(Type::uint64) const);
+        void OnDoubleClick(M* target, void(M::*func)(uint64_t) const);
 
-        void OnDoubleClick(void(*func)(Type::uint64));
+        void OnDoubleClick(void(*func)(uint64_t));
 
-        void AddItem(const std::wstring& kName, Type::uint64 user_data = 0);
-        void RemoveItem(int index);
+        void AddItem(const std::wstring& kName, uint64_t user_data = 0);
+        void RemoveItem(int32_t index);
         void ClearItems();
-        void SetItem(int index, const std::wstring& kName, Type::uint64 user_data = 0);
+        void SetItem(int32_t index, const std::wstring& kName, uint64_t user_data = 0);
 
-        FORCEINLINE const Item& GetItem(int index) const { return items_[index]; }
+        FORCEINLINE const Item& GetItem(int32_t index) const { return items_[index]; }
 
         FORCEINLINE const std::vector<Item>& GetItems() const { return items_; }
 
-        FORCEINLINE int GetHoveredIndex() const { return hovered_index_; }
-        FORCEINLINE int GetSelectedIndex() const { return selected_index_; }
+        FORCEINLINE int32_t GetHoveredIndex() const { return hovered_index_; }
+        FORCEINLINE int32_t GetSelectedIndex() const { return selected_index_; }
 
         static std::shared_ptr<ListBox> Create(const std::wstring& kName);
 
@@ -67,16 +67,16 @@ namespace UI
         virtual bool OnDragEnd(const Math::Vector2& kPosition) override;
         virtual bool OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta) override;
 
-        Function<void(Type::uint64)> select_event_;
-        Function<void(Type::uint64)> double_click_event_;
+        Function<void(uint64_t)> select_event_;
+        Function<void(uint64_t)> double_click_event_;
 
         std::vector<Item> items_;
 
         bool is_hovered_;
         bool is_dragging_;
         
-        int selected_index_;
-        int hovered_index_;
+        int32_t selected_index_;
+        int32_t hovered_index_;
 
         float scroll_offset_y_;
         float min_allowed_scroll_offset_y_;
@@ -93,13 +93,13 @@ namespace UI
     }
 
     template <typename M, typename>
-    void ListBox::OnSelect(M* target, void(M::* func)(Type::uint64))
+    void ListBox::OnSelect(M* target, void(M::* func)(uint64_t))
     {
         select_event_ = { target, func };
     }
 
     template <typename M, typename>
-    void ListBox::OnSelect(M* target, void(M::* func)(Type::uint64) const)
+    void ListBox::OnSelect(M* target, void(M::* func)(uint64_t) const)
     {
         select_event_ = { target, func };
     }
@@ -111,13 +111,13 @@ namespace UI
     }
 
     template <typename M, typename>
-    void ListBox::OnDoubleClick(M* target, void(M::* func)(Type::uint64))
+    void ListBox::OnDoubleClick(M* target, void(M::* func)(uint64_t))
     {
         double_click_event_ = { target, func };
     }
 
     template <typename M, typename>
-    void ListBox::OnDoubleClick(M* target, void(M::* func)(Type::uint64) const)
+    void ListBox::OnDoubleClick(M* target, void(M::* func)(uint64_t) const)
     {
         double_click_event_ = { target, func };
     }

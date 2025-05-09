@@ -13,7 +13,7 @@ private:
     friend class AnimatorComponent;
 
     std::wstring name_;
-    int frame_rate_;
+    int32_t frame_rate_;
     bool is_loop_;
     std::vector<std::wstring> frames_;
     

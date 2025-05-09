@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class ActorTag : Type::uint64
+enum class ActorTag : uint64_t
 {
     kNone = (0x01<<0)
 };

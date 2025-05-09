@@ -15,7 +15,7 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
 
-Type::uint32 g_frame_counter = 0;
+uint32_t g_frame_counter = 0;
 
 GameEngine::GameEngine() :
     game_window_(nullptr),

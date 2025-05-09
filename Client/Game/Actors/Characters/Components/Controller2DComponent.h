@@ -67,8 +67,8 @@ private:
     
     const float kSkinWidth;
 
-    int horizontal_ray_count_;
-    int vertical_ray_count_;
+    int32_t horizontal_ray_count_;
+    int32_t vertical_ray_count_;
 
     float horizontal_ray_spacing_;
     float vertical_ray_spacing_;

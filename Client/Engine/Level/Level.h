@@ -9,7 +9,7 @@
 
 union Event;
 class Actor;
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 
 class Level : public std::enable_shared_from_this<Level>
 {

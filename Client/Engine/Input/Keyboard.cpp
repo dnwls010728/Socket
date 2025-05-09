@@ -49,10 +49,10 @@ bool Keyboard::GetKeyUp(WORD key_code)
 
 void Keyboard::OnEvent(const Event& kEvent)
 {
-	const Type::uint32& kType = kEvent.type;
+	const uint32_t& kType = kEvent.type;
 
-	if (kType == static_cast<Type::uint32>(EventType::kKeyPressed) && !kEvent.key.is_repeat ||
-		kType == static_cast<Type::uint32>(EventType::kKeyReleased))
+	if (kType == static_cast<uint32_t>(EventType::kKeyPressed) && !kEvent.key.is_repeat ||
+		kType == static_cast<uint32_t>(EventType::kKeyReleased))
 	{
 		WORD key_code = kEvent.key.key_code;
 			
@@ -60,7 +60,7 @@ void Keyboard::OnEvent(const Event& kEvent)
 		if (it != key_states_.end())
 		{
 			KeyState& key_state = it->second;
-			key_state.is_down = kType == static_cast<Type::uint32>(EventType::kKeyPressed);
+			key_state.is_down = kType == static_cast<uint32_t>(EventType::kKeyPressed);
 		}
 	}
 }

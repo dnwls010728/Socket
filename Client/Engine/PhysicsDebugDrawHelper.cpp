@@ -8,17 +8,17 @@
 FORCEINLINE static Math::Color MakeRGBA8(b2HexColor color, float alpha)
 {
     return {
-        static_cast<Type::uint8>((color >> 16) & 0xFF),
-        static_cast<Type::uint8>((color >> 8) & 0xFF),
-        static_cast<Type::uint8>(color & 0xFF),
-        static_cast<Type::uint8>(0xFF * alpha)
+        static_cast<uint8_t>((color >> 16) & 0xFF),
+        static_cast<uint8_t>((color >> 8) & 0xFF),
+        static_cast<uint8_t>(color & 0xFF),
+        static_cast<uint8_t>(0xFF * alpha)
     };
 }
 
-void PhysicsDebugDrawHelper::AddPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color)
+void PhysicsDebugDrawHelper::AddPolygon(const b2Vec2* vertices, int32_t vertexCount, b2HexColor color)
 {
     b2Vec2 p1 = vertices[vertexCount - 1];
-    for (int i = 0; i < vertexCount; ++i)
+    for (int32_t i = 0; i < vertexCount; ++i)
     {
         b2Vec2 p2 = vertices[i];
         AddSegment(p1, p2, color);
@@ -26,13 +26,13 @@ void PhysicsDebugDrawHelper::AddPolygon(const b2Vec2* vertices, int vertexCount,
     }
 }
 
-void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color)
+void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2* vertices, int32_t vertexCount, float radius, b2HexColor color)
 {
     Math::Color fill_color = MakeRGBA8(color, .6f);
     Math::Color border_color = MakeRGBA8(color, 1.f);
 
     // Fill
-    for (int i = 0; i < vertexCount; ++i)
+    for (int32_t i = 0; i < vertexCount; ++i)
     {
         b2Vec2 p = b2Add(transform.p, b2RotateVector(transform.q, vertices[i]));
         polygon_vertices_.push_back({
@@ -41,9 +41,9 @@ void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2
         });
     }
 
-    int last_idx = polygon_vertices_.size() - vertexCount;
+    int32_t last_idx = polygon_vertices_.size() - vertexCount;
 
-    for (int i = 0; i < vertexCount - 2; ++i)
+    for (int32_t i = 0; i < vertexCount - 2; ++i)
     {
         polygon_indices_.push_back(last_idx);
         polygon_indices_.push_back(last_idx + i + 1);
@@ -52,7 +52,7 @@ void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2
 
     // Border
     b2Vec2 p1 = b2Add(transform.p, b2RotateVector(transform.q, vertices[vertexCount - 1]));
-    for (int i = 0; i < vertexCount; ++i)
+    for (int32_t i = 0; i < vertexCount; ++i)
     {
         b2Vec2 p2 = b2Add(transform.p, b2RotateVector(transform.q, vertices[i]));
         segment_vertices_.push_back({
@@ -71,7 +71,7 @@ void PhysicsDebugDrawHelper::AddSolidPolygon(b2Transform transform, const b2Vec2
 
 void PhysicsDebugDrawHelper::AddCircle(b2Vec2 center, float radius, b2HexColor color)
 {
-    const int kSegments = 16;
+    const int32_t kSegments = 16;
     const float kIncrement = 2.f * B2_PI / kSegments;
     float sin_increment = sinf(kIncrement);
     float cos_increment = cosf(kIncrement);
@@ -79,7 +79,7 @@ void PhysicsDebugDrawHelper::AddCircle(b2Vec2 center, float radius, b2HexColor c
     b2Vec2 r1 = {radius, 0.f};
     b2Vec2 v1 = b2Add(center, r1);
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         b2Vec2 r2;
         r2.x = cos_increment * r1.x - sin_increment * r1.y;
@@ -99,7 +99,7 @@ void PhysicsDebugDrawHelper::AddSolidCircle(b2Transform transform, b2Vec2 center
 
     b2Vec2 final_center = b2Add(transform.p, b2RotateVector(transform.q, center));
 
-    const int kSegments = 16;
+    const int32_t kSegments = 16;
     const float kIncrement = 2.f * B2_PI / kSegments;
     float sin_increment = sinf(kIncrement);
     float cos_increment = cosf(kIncrement);
@@ -107,7 +107,7 @@ void PhysicsDebugDrawHelper::AddSolidCircle(b2Transform transform, b2Vec2 center
     b2Vec2 r = {radius, 0.f};
     b2Vec2 v = b2Add(final_center, r);
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         circle_vertices_.push_back({
             {v.x, v.y, 0.f},
@@ -128,9 +128,9 @@ void PhysicsDebugDrawHelper::AddSolidCircle(b2Transform transform, b2Vec2 center
         {rgba8.r / 255.f, rgba8.g / 255.f, rgba8.b / 255.f, rgba8.a / 255.f}
     });
 
-    int last_idx = circle_vertices_.size() - (kSegments + 1);
+    int32_t last_idx = circle_vertices_.size() - (kSegments + 1);
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         circle_indices_.push_back(last_idx);
         circle_indices_.push_back(last_idx + i + 1);
@@ -149,7 +149,7 @@ void PhysicsDebugDrawHelper::AddCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2He
     float length;
     b2Vec2 axis = b2GetLengthAndNormalize(&length, b2Sub(p2, p1));
 
-    const int kSegments = 16.f;
+    const int32_t kSegments = 16.f;
     const float kIncremnt = B2_PI / kSegments;
     float sin_incremnt = sinf(kIncremnt);
     float cos_incremnt = cosf(kIncremnt);
@@ -158,7 +158,7 @@ void PhysicsDebugDrawHelper::AddCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2He
     b2Vec2 v1 = b2MulAdd(p1, radius, r1);
     b2Vec2 a = v1;
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         b2Vec2 r2;
         r2.x = cos_incremnt * r1.x - sin_incremnt * r1.y;
@@ -176,7 +176,7 @@ void PhysicsDebugDrawHelper::AddCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2He
     v1 = b2MulAdd(p2, radius, r1);
     b2Vec2 c = v1;
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         b2Vec2 r2;
         r2.x = cos_incremnt * r1.x - sin_incremnt * r1.y;
@@ -202,7 +202,7 @@ void PhysicsDebugDrawHelper::AddSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius,
     float length;
     b2Vec2 axis = b2GetLengthAndNormalize(&length, b2Sub(p2, p1));
 
-    const int kSegments = 16.f;
+    const int32_t kSegments = 16.f;
     const float kIncremnt = B2_PI / kSegments;
     float sin_incremnt = sinf(kIncremnt);
     float cos_incremnt = cosf(kIncremnt);
@@ -210,7 +210,7 @@ void PhysicsDebugDrawHelper::AddSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius,
     b2Vec2 r = {-axis.y, axis.x};
     b2Vec2 v = b2MulAdd(p1, radius, r);
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         capsule_vertices_.push_back({
             {v.x, v.y, 0.f},
@@ -234,7 +234,7 @@ void PhysicsDebugDrawHelper::AddSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius,
     r = {axis.y, -axis.x};
     v = b2MulAdd(p2, radius, r);
 
-    for (int i = 0; i < kSegments; ++i)
+    for (int32_t i = 0; i < kSegments; ++i)
     {
         capsule_vertices_.push_back({
             {v.x, v.y, 0.f},
@@ -255,9 +255,9 @@ void PhysicsDebugDrawHelper::AddSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius,
         {fill_color.r / 255.f, fill_color.g / 255.f, fill_color.b / 255.f, fill_color.a / 255.f}
     });
 
-    int last_idx = capsule_vertices_.size() - ((kSegments * 2.f) + 2.f);
+    int32_t last_idx = capsule_vertices_.size() - ((kSegments * 2.f) + 2.f);
 
-    for (int i = 0; i < kSegments * 2.f; ++i)
+    for (int32_t i = 0; i < kSegments * 2.f; ++i)
     {
         capsule_indices_.push_back(last_idx);
         capsule_indices_.push_back(last_idx + i + 1);

@@ -80,7 +80,7 @@ void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
     SendPacket(request);
 }
 
-void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
+void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end())
@@ -103,7 +103,7 @@ void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharact
     }
 }
 
-std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const Type::uint32 unique_id)
+std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end()) return iter->second;

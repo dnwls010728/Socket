@@ -33,12 +33,12 @@ bool RegistryHelper::HasKey(const std::wstring& kKey)
     return false;
 }
 
-void RegistryHelper::SetInt(const std::wstring& kKey, int value)
+void RegistryHelper::SetInt(const std::wstring& kKey, int32_t value)
 {
     HKEY hKey = nullptr;
     if (RegCreateKeyEx(HKEY_CURRENT_USER, L"Software\\Game", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr) == ERROR_SUCCESS)
     {
-        RegSetValueEx(hKey, kKey.c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(&value), sizeof(int));
+        RegSetValueEx(hKey, kKey.c_str(), 0, REG_DWORD, reinterpret_cast<const BYTE*>(&value), sizeof(int32_t));
     }
     
     RegCloseKey(hKey);
@@ -66,14 +66,14 @@ void RegistryHelper::SetString(const std::wstring& kKey, const std::wstring& kVa
     RegCloseKey(hKey);
 }
 
-int RegistryHelper::GetInt(const std::wstring& kKey, int kDefaultValue)
+int32_t RegistryHelper::GetInt(const std::wstring& kKey, int32_t kDefaultValue)
 {
     HKEY hKey = nullptr;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Game", 0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
         DWORD type = REG_DWORD;
-        DWORD size = sizeof(int);
-        int data = 0;
+        DWORD size = sizeof(int32_t);
+        int32_t data = 0;
         if (RegQueryValueEx(hKey, kKey.c_str(), nullptr, &type, reinterpret_cast<BYTE*>(&data), &size) == ERROR_SUCCESS)
         {
             RegCloseKey(hKey);

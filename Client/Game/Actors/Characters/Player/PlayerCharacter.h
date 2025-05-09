@@ -30,6 +30,6 @@ protected:
 
     bool is_jump_;
 
-    int timer_;
+    int32_t timer_;
     
 };

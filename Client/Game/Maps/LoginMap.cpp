@@ -253,7 +253,7 @@ void LoginMap::OnLoginSwitch()
     ui_manager->AddToViewport(register_switch_);
 }
 
-void LoginMap::OnCharacterSelect(Type::uint64 user_data)
+void LoginMap::OnCharacterSelect(uint64_t user_data)
 {
     CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
     if (!character) return;

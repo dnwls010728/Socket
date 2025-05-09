@@ -12,7 +12,7 @@ public:
     virtual ~EventManager() override = default;
 
     bool PollEvent(Event& event);
-    bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result);
+    bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result);
 
     FORCEINLINE void SetMessageTick(DWORD tick) { message_tick_ = tick; }
 

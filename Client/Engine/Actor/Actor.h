@@ -9,7 +9,7 @@
 class ActorComponent;
 class Actor;
 
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 class TransformComponent;
 
 class Actor : public std::enable_shared_from_this<Actor>

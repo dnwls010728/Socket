@@ -13,7 +13,7 @@ public:
 
     void Init();
     
-    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result) override;
+    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result) override;
 
 private:
     void MainThread();

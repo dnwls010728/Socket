@@ -108,7 +108,7 @@ bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vect
     return false;
 }
 
-bool UI::Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+bool UI::Widget::OnKey(uint16_t key_code, bool is_pressed)
 {
     return false;
 }

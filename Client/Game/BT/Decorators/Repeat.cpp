@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Repeat.h"
 
-BT::Repeat::Repeat(const std::wstring& kName, int count) :
+BT::Repeat::Repeat(const std::wstring& kName, int32_t count) :
     Decorator(kName),
     count_(count),
     counter_(0)
@@ -32,7 +32,7 @@ void BT::Repeat::Reset()
     Decorator::Reset();
 }
 
-std::shared_ptr<BT::Repeat> BT::Repeat::Create(const std::wstring& kName, int count)
+std::shared_ptr<BT::Repeat> BT::Repeat::Create(const std::wstring& kName, int32_t count)
 {
     return std::make_shared<Repeat>(kName, count);
 }

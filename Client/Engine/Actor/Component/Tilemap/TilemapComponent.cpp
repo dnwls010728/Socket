@@ -26,9 +26,9 @@ void TilemapComponent::SetTilemap(Tilemap* tilemap)
 	tilemap_ = tilemap;
 }
 
-int TilemapComponent::GetType(const b2ShapeId shape_id)
+int32_t TilemapComponent::GetType(const b2ShapeId shape_id)
 {
-	Type::uint64 id = b2StoreShapeId(shape_id);
+	uint64_t id = b2StoreShapeId(shape_id);
 	
 	auto it = type_map_.find(id);
 	if (it != type_map_.end()) return it->second;
@@ -126,8 +126,8 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		}
 		
 		b2Filter filter = b2DefaultFilter();
-		filter.categoryBits = static_cast<Type::uint16>(GetOwner()->GetLayer());
-		filter.maskBits = static_cast<Type::uint16>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
+		filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
+		filter.maskBits = static_cast<uint16_t>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
 		
 		b2ShapeDef shape_def = b2DefaultShapeDef();
 		shape_def.filter = filter;
@@ -138,7 +138,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		const std::vector<tmx::Property>& properties = temp.getProperties();
 		if (properties.size() > 0)
 		{
-			Type::uint64 id = b2StoreShapeId(shape_id);
+			uint64_t id = b2StoreShapeId(shape_id);
 			type_map_[id] = properties[0].getIntValue();
 		}
 	}

@@ -11,7 +11,7 @@ class AnimationPack;
 
 DECLARE_DELEGATE(OnAnimationDelegate)
 
-using ParameterType = std::variant<bool, float, int>;
+using ParameterType = std::variant<bool, float, int32_t>;
 
 // TODO: 애니메이션 전환 구조를 변경함에 따라 테스트 필요
 class AnimatorComponent : public ActorComponent
@@ -46,7 +46,7 @@ public:
 
     void SetBool(const std::wstring& kName, bool value);
     void SetFloat(const std::wstring& kName, float value);
-    void SetInt(const std::wstring& kName, int value);
+    void SetInt(const std::wstring& kName, int32_t value);
     void SetTrigger(const std::wstring& kName);
 
     bool GetBool(const std::wstring& kName);
@@ -54,7 +54,7 @@ public:
     
     float GetFloat(const std::wstring& kName);
     
-    int GetInt(const std::wstring& kName);
+    int32_t GetInt(const std::wstring& kName);
     
     std::shared_ptr<StateNode> GetOrAddNode(const std::wstring& kState);
 
@@ -83,7 +83,7 @@ private:
 
     bool is_playing_;
 
-    int current_frame_;
+    int32_t current_frame_;
 
     std::shared_ptr<StateNode> current_state_;
 

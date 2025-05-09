@@ -21,11 +21,11 @@ namespace RegistryHelper
     bool HasKey(const std::wstring& kKey);
 
     /**
-     * \brief int 형의 값을 레지스트리에 저장합니다.
+     * \brief int32_t 형의 값을 레지스트리에 저장합니다.
      * \param kKey 키
      * \param value 값
      */
-    void SetInt(const std::wstring& kKey, int value);
+    void SetInt(const std::wstring& kKey, int32_t value);
 
     /**
      * \brief float 형의 값을 레지스트리에 저장합니다.
@@ -42,12 +42,12 @@ namespace RegistryHelper
     void SetString(const std::wstring& kKey, const std::wstring& kValue);
 
     /**
-     * \brief int 형의 값을 레지스트리에서 가져옵니다.
+     * \brief int32_t 형의 값을 레지스트리에서 가져옵니다.
      * \param kKey 키
      * \param kDefaultValue 기본값
-     * \return int
+     * \return int32_t
      */
-    int GetInt(const std::wstring& kKey, int kDefaultValue = 0);
+    int32_t GetInt(const std::wstring& kKey, int32_t kDefaultValue = 0);
 
     /**
      * \brief float 형의 값을 레지스트리에서 가져옵니다.

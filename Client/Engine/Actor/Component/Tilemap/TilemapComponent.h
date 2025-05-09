@@ -24,7 +24,7 @@ public:
 
     void SetTilemap(Tilemap* tilemap);
 
-    int GetType(b2ShapeId shape_id);
+    int32_t GetType(b2ShapeId shape_id);
 
 protected:
     virtual void BeginPlay() override;
@@ -45,6 +45,6 @@ private:
 
     b2BodyId tilemap_body_id_;
 
-    std::unordered_map<Type::uint64, int> type_map_;
+    std::unordered_map<uint64_t, int32_t> type_map_;
     
 };

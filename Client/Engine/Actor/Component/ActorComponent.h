@@ -4,7 +4,7 @@
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
 
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 class ActorComponent : public std::enable_shared_from_this<ActorComponent>
 {
     SHADER_CLASS_HELPER(ActorComponent)

@@ -5,9 +5,7 @@
 #include "Vertex.h"
 #include "Math/Bounds.h"
 #include "Math/Color.h"
-#include "Misc/Type.h"
 #include "Math/Vector2.h"
-#include "Misc/EngineMacros.h"
 
 class PixelShader;
 class VertexShader;
@@ -27,11 +25,11 @@ public:
     Bounds GetBounds() const;
 
     FORCEINLINE void SetVertices(const std::vector<DefaultVertex>& kVertices) { vertices_ = kVertices; }
-    FORCEINLINE void SetIndices(const std::vector<Type::uint32>& kIndices) { indices_ = kIndices; }
+    FORCEINLINE void SetIndices(const std::vector<uint32_t>& kIndices) { indices_ = kIndices; }
     FORCEINLINE void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY primitive_topology) { primitive_topology_ = primitive_topology; }
 
     FORCEINLINE const std::vector<DefaultVertex>& GetVertices() const { return vertices_; }
-    FORCEINLINE const std::vector<Type::uint32>& GetIndices() const { return indices_; }
+    FORCEINLINE const std::vector<uint32_t>& GetIndices() const { return indices_; }
 
     FORCEINLINE const DirectX::XMMATRIX& GetWorldMatrix() const { return world_matrix_; }
 
@@ -55,8 +53,8 @@ public:
     FORCEINLINE void SetTexture(Texture* kTexture) { texture_ = kTexture; }
     FORCEINLINE const Texture* GetTexture() const { return texture_; }
 
-    FORCEINLINE void SetZOrder(int z_order) { z_order_ = z_order; }
-    FORCEINLINE int GetZOrder() const { return z_order_; }
+    FORCEINLINE void SetZOrder(int32_t z_order) { z_order_ = z_order; }
+    FORCEINLINE int32_t GetZOrder() const { return z_order_; }
 
     static bool CompareZOrder(const std::shared_ptr<Shape>& kLHS, const std::shared_ptr<Shape>& kRHS);
 
@@ -64,7 +62,7 @@ protected:
     virtual void UpdateMatrixx();
     
     std::vector<DefaultVertex> vertices_;
-    std::vector<Type::uint32> indices_;
+    std::vector<uint32_t> indices_;
 
     DirectX::XMMATRIX world_matrix_;
 
@@ -82,6 +80,6 @@ protected:
 
     Texture* texture_;
 
-    int z_order_;
+    int32_t z_order_;
     
 };

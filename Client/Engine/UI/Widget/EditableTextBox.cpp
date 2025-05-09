@@ -118,7 +118,7 @@ bool UI::EditableTextBox::OnMouseButton(const Math::Vector2& kPosition, MouseBut
     return true;
 }
 
-bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
+bool UI::EditableTextBox::OnKey(uint16_t key_code, bool is_pressed)
 {
     if (is_pressed)
     {

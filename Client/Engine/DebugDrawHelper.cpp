@@ -27,7 +27,7 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
     };
 
     Math::Vector2 p1 = vertices[3];
-    for (int i = 0; i < 4; ++i)
+    for (int32_t i = 0; i < 4; ++i)
     {
         Math::Vector2 p2 = vertices[i];
         DrawSegment(p1, p2, kColor);
@@ -37,7 +37,7 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
 
 void DebugDrawHelper::DrawCircle(const Math::Vector2& kCenter, float radius, const Math::Color& kColor)
 {
-    const int kSegment = 16;
+    const int32_t kSegment = 16;
     const float kIncrement = 2.f * MATH_PI / kSegment;
     float sin_increment = sin(kIncrement);
     float cos_increment = cos(kIncrement);
@@ -45,7 +45,7 @@ void DebugDrawHelper::DrawCircle(const Math::Vector2& kCenter, float radius, con
     Math::Vector2 r1 = {radius, 0.f};
     Math::Vector2 v1 = kCenter + r1;
 
-    for (int i = 0; i < kSegment; ++i)
+    for (int32_t i = 0; i < kSegment; ++i)
     {
         Math::Vector2 r2;
         r2.x = r1.x * cos_increment - r1.y * sin_increment;

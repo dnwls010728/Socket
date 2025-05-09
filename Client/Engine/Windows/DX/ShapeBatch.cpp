@@ -111,7 +111,7 @@ void ShapeBatch::DrawShapes(const std::shared_ptr<WindowsWindow>& kWindow, const
         void* indices_ptr = index_buffer_.Lock();
 
         CopyMemory(vertices_ptr, shape->GetVertices().data(), sizeof(DefaultVertex) * shape->GetVertices().size());
-        CopyMemory(indices_ptr, shape->GetIndices().data(), sizeof(Type::uint32) * shape->GetIndices().size());
+        CopyMemory(indices_ptr, shape->GetIndices().data(), sizeof(uint32_t) * shape->GetIndices().size());
 
         // Buffer 메모리 잠금 해제
         vertex_buffer_.Unlock();
@@ -142,8 +142,8 @@ void ShapeBatch::DrawShapes(const std::shared_ptr<WindowsWindow>& kWindow, const
         ID3D11Buffer* buffer = vertex_buffer_.GetResource();
         vertex_shader_->BindParameters();
 
-        constexpr Type::uint32 kStride = sizeof(DefaultVertex);
-        constexpr Type::uint32 kOffset = 0;
+        constexpr uint32_t kStride = sizeof(DefaultVertex);
+        constexpr uint32_t kOffset = 0;
 
         if (const Texture* texture = shape->GetTexture())
         {

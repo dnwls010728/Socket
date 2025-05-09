@@ -42,9 +42,9 @@ void Audio::SetLoop(bool is_loop)
     FMOD_Sound_SetMode(sound_, mode);
 }
 
-Type::uint32 Audio::GetLength() const
+uint32_t Audio::GetLength() const
 {
-    Type::uint32 length;
+    uint32_t length;
     FMOD_Sound_GetLength(sound_, &length, FMOD_TIMEUNIT_MS);
     return length;
 }

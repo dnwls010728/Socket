@@ -6,8 +6,8 @@ struct AudioFormat
 {
     FMOD_SOUND_TYPE type;
     FMOD_SOUND_FORMAT format;
-    int channels;
-    int bits;
+    int32_t channels;
+    int32_t bits;
 };
 
 class Audio : public Asset
@@ -22,7 +22,7 @@ public:
 
     void SetLoop(bool is_loop);
 
-    Type::uint32 GetLength() const;
+    uint32_t GetLength() const;
 
     AudioFormat GetFormat() const;
 

@@ -75,7 +75,7 @@ void AnimatorComponent::SetFloat(const std::wstring& kName, float value)
     parameters_[kName] = value;
 }
 
-void AnimatorComponent::SetInt(const std::wstring& kName, int value)
+void AnimatorComponent::SetInt(const std::wstring& kName, int32_t value)
 {
     parameters_[kName] = value;
 }
@@ -115,10 +115,10 @@ float AnimatorComponent::GetFloat(const std::wstring& kName)
     return 0.f;
 }
 
-int AnimatorComponent::GetInt(const std::wstring& kName)
+int32_t AnimatorComponent::GetInt(const std::wstring& kName)
 {
-    if (std::get_if<int>(&parameters_[kName]))
-        return std::get<int>(parameters_[kName]);
+    if (std::get_if<int32_t>(&parameters_[kName]))
+        return std::get<int32_t>(parameters_[kName]);
 
     return 0;
 }
