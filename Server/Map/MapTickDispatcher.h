@@ -32,7 +32,11 @@ private:
     };
 
     void WorkerThread(WorkerContext* context, uint32_t tick_interval_ms);
+
+    // 가장 빠른 스레드 탐색
     WorkerContext* FindBestWorker();
+
+    // 하나의 스레드가 맡은 맵을 두개의 스레드로 분산
     void SplitWorker(WorkerContext* context);
 
     std::vector<std::unique_ptr<WorkerContext>> worker_contexts_;

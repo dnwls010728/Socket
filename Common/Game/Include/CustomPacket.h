@@ -146,3 +146,19 @@ struct ChatMessagePacket : public Net::IPacket
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, message)
     REGISTER_PACKET(ChatMessagePacket, 214)
 };
+
+struct SpawnObjectPacket : public Net::IPacket
+{
+    ObjectInfo object;
+
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, object)
+    REGISTER_PACKET(SpawnObjectPacket, 230)
+};
+
+struct DestroyObjectPacket : public Net::IPacket
+{
+    uint32_t unique_id;
+
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
+    REGISTER_PACKET(SpawnObjectPacket, 231)
+};

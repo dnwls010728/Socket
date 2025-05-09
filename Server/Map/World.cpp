@@ -32,7 +32,7 @@ void World::Start(uint32_t tick_interval_ms, size_t maps_per_thread)
     dispatcher_.Start(tick_interval_ms, maps_per_thread);
 
     std::lock_guard<std::mutex> lock(maps_mutex_);
-    for (auto& [_, map] : maps_)
+    for (auto& [map_unique_id, map] : maps_)
     {
         dispatcher_.AddMap(map.get());
     }

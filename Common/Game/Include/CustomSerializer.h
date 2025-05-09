@@ -48,4 +48,26 @@ public:
 		return *this;
 	}
 
+	CustomSerializer& operator<<(const ObjectInfo& value)
+	{
+		*this << value.name;
+		*this << value.class_name;
+		*this << value.unique_id;
+		*this << value.last_position_x;
+		*this << value.last_position_y;
+		*this << value.map_unique_id;
+		return *this;
+	}
+
+	CustomSerializer& operator>>(ObjectInfo& value)
+	{
+		*this >> value.name;
+		*this >> value.class_name;
+		*this >> value.unique_id;
+		*this >> value.last_position_x;
+		*this >> value.last_position_y;
+		*this >> value.map_unique_id;
+		return *this;
+	}
+
 };

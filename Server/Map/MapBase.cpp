@@ -1,6 +1,7 @@
 ﻿#include "MapBase.h"
 
 #include <CustomPacket.h>
+#include <ranges>
 
 #include "MapObject.h"
 #include "Session/Player.h"
@@ -8,16 +9,13 @@
 #include "Engine/Enums.h"
 
 MapBase::MapBase(uint32_t MapBase_id) :
-    mutex_(),
-    map_unique_id_(MapBase_id),
-    map_objects_(),
-    players_()
+    map_unique_id_(MapBase_id)
 {
 }
 
 void MapBase::AddPlayer(Player* player)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(player_mutex_);
     players_.push_back(player);
 
     {
@@ -41,11 +39,19 @@ void MapBase::AddPlayer(Player* player)
             player->SendPacket(spawn_player_packet);
         }
     }
+
+    for (auto& map_object :  std::views::values(map_objects_))
+    {
+        SpawnObjectPacket spawn_object_packet;
+        spawn_object_packet.object.unique_id = map_object->GetUniqueID();
+        spawn_object_packet.object.last_position_x = map_object->GetUniqueID();
+        
+    }
 }
 
 void MapBase::RemovePlayer(Player* player)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(player_mutex_);
     std::erase(players_, player);
 
     {
@@ -82,7 +88,7 @@ void MapBase::Tick(float delta_time)
     DestroyActors();
 }
 
-void MapBase::Physics(float delta_time)
+void MapBase::PhysicsTick(float delta_time)
 {
 }
 

@@ -4,8 +4,13 @@
 class Monster : public MapObject
 {
 public:
+    SHADER_CLASS_HELPER(Monster)
+    GENERATED_BODY(Monster)
     
-    Monster();
-    virtual ~Monster() override = default;
+    Monster(std::wstring kName);
+protected:
+    void Tick(float delta_time) override;
+    
+    
     
 };

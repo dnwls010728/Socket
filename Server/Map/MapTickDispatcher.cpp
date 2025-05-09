@@ -146,7 +146,9 @@ void MapTickDispatcher::WorkerThread(WorkerContext* context, uint32_t tick_inter
             {
                 if (map)
                 {
+                    map->PhysicsTick(delta.count());
                     map->Tick(delta.count());
+                    map->PostTick(delta.count());
                 }
             }
         }
