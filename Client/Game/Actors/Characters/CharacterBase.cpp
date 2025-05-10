@@ -47,12 +47,11 @@ void CharacterBase::SetCharacterName(const std::wstring& name)
 
 void CharacterBase::Speak(const std::wstring& message, float duration)
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
     TimerManager* timer_manager = TimerManager::Get();
 
     chat_balloon_->SetText(message);
     
-    if (ui_manager->IsInViewport(chat_balloon_))
+    if (chat_balloon_->IsInViewport())
     {
         if (chat_balloon_timer_handle_.IsValid())
             timer_manager->ClearTimer(chat_balloon_timer_handle_);
@@ -62,7 +61,7 @@ void CharacterBase::Speak(const std::wstring& message, float duration)
         Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
         chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
         
-        ui_manager->AddToViewport(chat_balloon_);
+        chat_balloon_->AddToViewport();
     }
 
     timer_manager->SetTimer(chat_balloon_timer_handle_, this, &CharacterBase::OnSpeakEnd, duration, false);
@@ -78,21 +77,19 @@ void CharacterBase::BeginPlay()
     chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});
 
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->AddToViewport(name_tag_);
+    name_tag_->AddToViewport();
 }
 
 void CharacterBase::PhysicsTick(float delta_time)
 {
     NetworkActor::PhysicsTick(delta_time);
     
-    UI::Manager* ui_manager = UI::Manager::Get();
     Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
 
-    if (ui_manager->IsInViewport(name_tag_))
+    if (name_tag_->IsInViewport())
         name_tag_->SetPosition(screen_position + Math::Vector2::Up() * 50.f);
     
-    if (ui_manager->IsInViewport(chat_balloon_))
+    if (chat_balloon_->IsInViewport())
         chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
 }
 
@@ -101,16 +98,14 @@ void CharacterBase::EndPlay(EndPlayReason type)
     NetworkActor::EndPlay(type);
     
     TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
-
-    UI::Manager* ui_manager = UI::Manager::Get();
     
-    ui_manager->RemoveFromViewport(chat_balloon_);
-    ui_manager->RemoveFromViewport(name_tag_);
+    chat_balloon_->RemoveFromViewport();
+    name_tag_->RemoveFromViewport();
 }
 
 void CharacterBase::OnSpeakEnd()
 {
-    UI::Manager::Get()->RemoveFromViewport(chat_balloon_);
+    chat_balloon_->RemoveFromViewport();
 }
 
 RTTR_REGISTRATION

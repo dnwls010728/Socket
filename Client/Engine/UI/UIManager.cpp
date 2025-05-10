@@ -15,33 +15,12 @@ UI::Manager::Manager() :
 {
 }
 
-void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& kWidget)
-{
-    if (!kWidget) return;
-
-    kWidget->OnAdd();
-    widgets_.push_back(kWidget);
-}
-
-void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& kWidget)
-{
-    if (!kWidget) return;
-
-    kWidget->OnRemove();
-    std::erase(widgets_, kWidget);
-}
-
 void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
 {
     if (const std::shared_ptr<Widget> widget_ptr = focused_widget_.lock()) widget_ptr->OnFocus(false);
 
     focused_widget_ = kWidget;
     if (kWidget) kWidget->OnFocus(true);
-}
-
-bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& kWidget)
-{
-    return std::ranges::find(widgets_, kWidget) != widgets_.end();
 }
 
 std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition) const

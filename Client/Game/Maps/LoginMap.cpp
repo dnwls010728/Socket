@@ -35,8 +35,6 @@ void LoginMap::Load()
 
     GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
 
-    UI::Manager* ui_manager = UI::Manager::Get();
-
     background_ = UI::Image::Create(L"Background");
     background_->SetPosition({400.f, 300.f});
     background_->SetSize({800.f, 600.f});
@@ -97,35 +95,33 @@ void LoginMap::Load()
     character_list_->SetSize({200.f, 300.f});
     character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
-    ui_manager->AddToViewport(background_);
-    ui_manager->AddToViewport(version_);
-    ui_manager->AddToViewport(login_id_);
-    ui_manager->AddToViewport(login_password_);
-    ui_manager->AddToViewport(login_);
-    ui_manager->AddToViewport(register_switch_);
+    background_->AddToViewport();
+    version_->AddToViewport();
+    login_id_->AddToViewport();
+    login_password_->AddToViewport();
+    login_->AddToViewport();
+    register_switch_->AddToViewport();
 }
 
 void LoginMap::Unload(EndPlayReason type)
 {
     Level::Unload(type);
-
-    UI::Manager* ui_manager = UI::Manager::Get();
     
-    ui_manager->RemoveFromViewport(background_);
+    background_->RemoveFromViewport();
     
-    ui_manager->RemoveFromViewport(version_);
+    version_->RemoveFromViewport();
 
-    ui_manager->RemoveFromViewport(register_id_);
-    ui_manager->RemoveFromViewport(register_password_);
-    ui_manager->RemoveFromViewport(register_);
-    ui_manager->RemoveFromViewport(login_switch_);
+    register_id_->RemoveFromViewport();
+    register_password_->RemoveFromViewport();
+    register_->RemoveFromViewport();
+    login_switch_->RemoveFromViewport();
 
-    ui_manager->RemoveFromViewport(login_id_);
-    ui_manager->RemoveFromViewport(login_password_);
-    ui_manager->RemoveFromViewport(login_);
-    ui_manager->RemoveFromViewport(register_switch_);
+    login_id_->RemoveFromViewport();
+    login_password_->RemoveFromViewport();
+    login_->RemoveFromViewport();
+    register_switch_->RemoveFromViewport();
 
-    ui_manager->RemoveFromViewport(character_list_);
+    character_list_->RemoveFromViewport();
 
     GET_SESSION()->packet_handler.Remove(this, &LoginMap::ProcessPackets);
 }
@@ -137,21 +133,18 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
     case RegisterResponse::StaticPacketID:
         {
             RegisterResponse* response = static_cast<RegisterResponse*>(packet.get());
-            Logger::Print(L"%s", response->message.c_str());
 
             if (response->is_success)
             {
-                UI::Manager* ui_manager = UI::Manager::Get();
+                register_id_->RemoveFromViewport();
+                register_password_->RemoveFromViewport();
+                register_->RemoveFromViewport();
+                login_switch_->RemoveFromViewport();
 
-                ui_manager->RemoveFromViewport(register_id_);
-                ui_manager->RemoveFromViewport(register_password_);
-                ui_manager->RemoveFromViewport(register_);
-                ui_manager->RemoveFromViewport(login_switch_);
-
-                ui_manager->AddToViewport(login_id_);
-                ui_manager->AddToViewport(login_password_);
-                ui_manager->AddToViewport(login_);
-                ui_manager->AddToViewport(register_switch_);
+                login_id_->AddToViewport();
+                login_password_->AddToViewport();
+                login_->AddToViewport();
+                register_switch_->AddToViewport();
             }
         }
         break;
@@ -159,7 +152,6 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
     case LoginResponse::StaticPacketID:
         {
             LoginResponse* response = static_cast<LoginResponse*>(packet.get());
-            Logger::Print(L"%s", response->message.c_str());
 
             if (response->is_success)
             {
@@ -172,14 +164,12 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
                     character_list_->AddItem(name, reinterpret_cast<uintptr_t>(&character));
                 }
 
-                UI::Manager* ui_manager = UI::Manager::Get();
+                login_id_->RemoveFromViewport();
+                login_password_->RemoveFromViewport();
+                login_->RemoveFromViewport();
+                register_switch_->RemoveFromViewport();
 
-                ui_manager->RemoveFromViewport(login_id_);
-                ui_manager->RemoveFromViewport(login_password_);
-                ui_manager->RemoveFromViewport(login_);
-                ui_manager->RemoveFromViewport(register_switch_);
-
-                ui_manager->AddToViewport(character_list_);
+                character_list_->AddToViewport();
             }
         }
         break;
@@ -225,32 +215,28 @@ void LoginMap::OnLogin()
 
 void LoginMap::OnRegisterSwitch()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
+    login_id_->RemoveFromViewport();
+    login_password_->RemoveFromViewport();
+    login_->RemoveFromViewport();
+    register_switch_->RemoveFromViewport();
 
-    ui_manager->RemoveFromViewport(login_id_);
-    ui_manager->RemoveFromViewport(login_password_);
-    ui_manager->RemoveFromViewport(login_);
-    ui_manager->RemoveFromViewport(register_switch_);
-
-    ui_manager->AddToViewport(register_id_);
-    ui_manager->AddToViewport(register_password_);
-    ui_manager->AddToViewport(register_);
-    ui_manager->AddToViewport(login_switch_);
+    register_id_->AddToViewport();
+    register_password_->AddToViewport();
+    register_->AddToViewport();
+    login_switch_->AddToViewport();
 }
 
 void LoginMap::OnLoginSwitch()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
+    register_id_->RemoveFromViewport();
+    register_password_->RemoveFromViewport();
+    register_->RemoveFromViewport();
+    login_switch_->RemoveFromViewport();
 
-    ui_manager->RemoveFromViewport(register_id_);
-    ui_manager->RemoveFromViewport(register_password_);
-    ui_manager->RemoveFromViewport(register_);
-    ui_manager->RemoveFromViewport(login_switch_);
-
-    ui_manager->AddToViewport(login_id_);
-    ui_manager->AddToViewport(login_password_);
-    ui_manager->AddToViewport(login_);
-    ui_manager->AddToViewport(register_switch_);
+    login_id_->AddToViewport();
+    login_password_->AddToViewport();
+    login_->AddToViewport();
+    register_switch_->AddToViewport();
 }
 
 void LoginMap::OnCharacterSelect(uint64_t user_data)

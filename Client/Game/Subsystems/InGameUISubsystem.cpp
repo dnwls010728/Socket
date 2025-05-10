@@ -36,37 +36,29 @@ void InGameUISubsystem::Deinit()
 {
     GameInstanceSubsystem::Deinit();
 
-    UI::Manager* ui_manager = UI::Manager::Get();
-
-    ui_manager->RemoveFromViewport(chat_input_);
-    ui_manager->RemoveFromViewport(mini_map_);
+    chat_input_->RemoveFromViewport();
+    mini_map_->RemoveFromViewport();
     
 }
 
 void InGameUISubsystem::ShowChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->AddToViewport(chat_input_);
+    chat_input_->AddToViewport();
 }
 
 void InGameUISubsystem::HideChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->RemoveFromViewport(chat_input_);
+    chat_input_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::ShowMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->AddToViewport(mini_map_);
+    mini_map_->AddToViewport();
 }
 
 void InGameUISubsystem::HideMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->RemoveFromViewport(mini_map_);
+    mini_map_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)

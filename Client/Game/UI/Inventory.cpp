@@ -2,8 +2,18 @@
 #include "Inventory.h"
 
 UI::Inventory::Inventory(const std::wstring& name) :
-    Widget(name)
+    Widget(name),
+    slot_row(4),
+    slot_col(5),
+    max_slots(0)
 {
+}
+
+void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
+{
+    Widget::Render(renderer, window);
+
+    
 }
 
 

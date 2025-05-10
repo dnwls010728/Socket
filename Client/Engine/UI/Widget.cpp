@@ -14,6 +14,22 @@ UI::Widget::Widget(const std::wstring& kName) :
 {
 }
 
+void UI::Widget::AddToViewport()
+{
+    Manager* manager = Manager::Get();
+
+    manager->widgets_.push_back(GetSharedThis());
+    OnAdd();
+}
+
+void UI::Widget::RemoveFromViewport()
+{
+    Manager* manager = Manager::Get();
+
+    OnRemove();
+    std::erase(manager->widgets_, GetSharedThis());
+}
+
 Math::Rect UI::Widget::GetRect() const
 {
     return GetRect(position_, size_, pivot_);
@@ -22,6 +38,14 @@ Math::Rect UI::Widget::GetRect() const
 Math::Vector2 UI::Widget::GetPivotPosition() const
 {
     return GetPivotPosition(GetRect(), pivot_);
+}
+
+bool UI::Widget::IsInViewport()
+{
+    Manager* manager = Manager::Get();
+    
+    const std::vector<std::shared_ptr<Widget>>& widgets_ = manager->widgets_;
+    return std::ranges::find(widgets_, GetSharedThis()) != widgets_.end();
 }
 
 bool UI::Widget::Contains(const Math::Vector2& kPosition) const

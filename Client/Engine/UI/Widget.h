@@ -18,10 +18,14 @@ namespace UI
         Widget(const std::wstring& kName);
         virtual ~Widget() = default;
 
+        void AddToViewport();
+        void RemoveFromViewport();
+
         Math::Rect GetRect() const;
 
         Math::Vector2 GetPivotPosition() const;
 
+        bool IsInViewport();
         bool Contains(const Math::Vector2& kPosition) const;
 
         FORCEINLINE const std::wstring& GetName() const { return name_; }
