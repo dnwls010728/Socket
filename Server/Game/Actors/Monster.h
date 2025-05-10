@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "../MapObject.h"
+#include "Actor.h"
 
-class Monster : public MapObject
+class Monster : public Actor
 {
 public:
     SHADER_CLASS_HELPER(Monster)

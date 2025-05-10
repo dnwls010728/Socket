@@ -3,7 +3,7 @@
 #include <CustomPacket.h>
 #include <ranges>
 
-#include "MapObject.h"
+#include "Actor/Actor.h"
 #include "Session/Player.h"
 #include "Engine/Misc/Type.h"
 #include "Engine/Enums.h"
@@ -107,7 +107,7 @@ void MapBase::ProcessActorActivation()
         const ActorActivation& activation = pending_actor_activation_.front();
         pending_actor_activation_.pop();
         
-        MapObject* actor = activation.actor;
+        Actor* actor = activation.actor;
         
         if (activation.is_active) actor->OnEnable();
         else actor->OnDisable();
@@ -118,7 +118,7 @@ void MapBase::SpawnActors()
 {
     while (!pending_actors_.empty())
     {
-        std::shared_ptr<MapObject> actor = pending_actors_.front();
+        std::shared_ptr<Actor> actor = pending_actors_.front();
         map_objects_.insert({actor->GetUniqueID(),actor});
         actor->BeginPlay();
         
@@ -126,11 +126,11 @@ void MapBase::SpawnActors()
     }
 }
 
-void MapBase::DestroyActor(MapObject* actor)
+void MapBase::DestroyActor(Actor* actor)
 {
     //actor->is_pending_destroy_ = true;
     
-    std::shared_ptr<MapObject> shared_actor = actor->GetSharedThis();
+    std::shared_ptr<Actor> shared_actor = actor->GetSharedThis();
     pending_destroy_actors_.push(shared_actor);
 }
 
@@ -138,7 +138,7 @@ void MapBase::DestroyActors()
 {
     while (!pending_destroy_actors_.empty())
     {
-        std::shared_ptr<MapObject> actor = pending_destroy_actors_.front();
+        std::shared_ptr<Actor> actor = pending_destroy_actors_.front();
         actor->EndPlay(EndPlayReason::kDestroyed);
         
         map_objects_.erase(actor->GetUniqueID());
@@ -146,7 +146,7 @@ void MapBase::DestroyActors()
     }
 }
 
-void MapBase::ActivateActor(MapObject* actor, bool is_active)
+void MapBase::ActivateActor(Actor* actor, bool is_active)
 {
     pending_actor_activation_.push({actor, is_active});
 }

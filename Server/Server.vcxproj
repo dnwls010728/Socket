@@ -116,13 +116,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Server;$(SolutionDir)\Server\Engine;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Server;$(SolutionDir)\Server\Engine;$(SolutionDir)\Server\Game</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>box2dd.lib;libtmxlite-s-d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib\Debug;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -136,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Common\Game\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Server\Game</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,36 +145,127 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Actor\Actor.cpp" />
+    <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\CapsuleColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
+    <ClCompile Include="Engine\Map\MapBase.cpp" />
+    <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
+    <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
     <ClCompile Include="Engine\Math\Color.cpp" />
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
+    <ClCompile Include="Engine\Session\Player.cpp" />
+    <ClCompile Include="Engine\Session\Session.cpp" />
+    <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Game\Actors\Monster.cpp" />
+    <ClCompile Include="Game\ServerManager.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\Server.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\Server.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Users\Desktop\태양\게임엔진\Socket\\Common\Game\Include;D:\Users\Desktop\태양\게임엔진\Socket\\Server\Include;D:\Users\Desktop\태양\게임엔진\Socket\\NetworkLib;D:\Users\Desktop\태양\게임엔진\Socket\\Server;D:\Users\Desktop\태양\게임엔진\Socket\\Server\Engine;</AdditionalIncludeDirectories>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
     <ClCompile Include="Include\rttr\policy.cpp" />
-    <ClCompile Include="Map\Map.cpp" />
-    <ClCompile Include="Map\MapBase.cpp" />
-    <ClCompile Include="Map\MapObject.cpp" />
-    <ClCompile Include="Map\MapObjects\Monster.cpp" />
-    <ClCompile Include="Map\MapTickDispatcher.cpp" />
-    <ClCompile Include="Map\World.cpp" />
     <ClCompile Include="MySQL\MySQLManager.cpp" />
     <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerManager.cpp" />
-    <ClCompile Include="Session\Player.cpp" />
-    <ClCompile Include="Session\Session.cpp" />
-    <ClCompile Include="Session\SessionManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Actor\Actor.h" />
+    <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\CapsuleColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
     <ClInclude Include="Engine\Enums.h" />
+    <ClInclude Include="Engine\Map\MapBase.h" />
+    <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
+    <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
     <ClInclude Include="Engine\Math\Math.h" />
@@ -186,7 +278,18 @@
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\GameplayStatics.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
+    <ClInclude Include="Engine\Session\Player.h" />
+    <ClInclude Include="Engine\Session\Session.h" />
+    <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Game\Actors\Monster.h" />
+    <ClInclude Include="Game\ServerManager.h" />
+    <ClInclude Include="Include\box2d\base.h" />
+    <ClInclude Include="Include\box2d\box2d.h" />
+    <ClInclude Include="Include\box2d\collision.h" />
+    <ClInclude Include="Include\box2d\id.h" />
+    <ClInclude Include="Include\box2d\math_functions.h" />
+    <ClInclude Include="Include\box2d\types.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
@@ -375,17 +478,21 @@
     <ClInclude Include="Include\rttr\variant_sequential_view.h" />
     <ClInclude Include="Include\rttr\visitor.h" />
     <ClInclude Include="Include\rttr\wrapper_mapper.h" />
-    <ClInclude Include="Map\Map.h" />
-    <ClInclude Include="Map\MapBase.h" />
-    <ClInclude Include="Map\MapObject.h" />
-    <ClInclude Include="Map\MapObjects\Monster.h" />
-    <ClInclude Include="Map\MapTickDispatcher.h" />
-    <ClInclude Include="Map\World.h" />
+    <ClInclude Include="Include\tmxlite\Config.hpp" />
+    <ClInclude Include="Include\tmxlite\FreeFuncs.hpp" />
+    <ClInclude Include="Include\tmxlite\ImageLayer.hpp" />
+    <ClInclude Include="Include\tmxlite\Layer.hpp" />
+    <ClInclude Include="Include\tmxlite\LayerGroup.hpp" />
+    <ClInclude Include="Include\tmxlite\Map.hpp" />
+    <ClInclude Include="Include\tmxlite\Object.hpp" />
+    <ClInclude Include="Include\tmxlite\ObjectGroup.hpp" />
+    <ClInclude Include="Include\tmxlite\ObjectTypes.hpp" />
+    <ClInclude Include="Include\tmxlite\Property.hpp" />
+    <ClInclude Include="Include\tmxlite\TileLayer.hpp" />
+    <ClInclude Include="Include\tmxlite\Tileset.hpp" />
+    <ClInclude Include="Include\tmxlite\Types.hpp" />
+    <ClInclude Include="Include\tmxlite\Types.inl" />
     <ClInclude Include="MySQL\MySQLManager.h" />
-    <ClInclude Include="ServerManager.h" />
-    <ClInclude Include="Session\Player.h" />
-    <ClInclude Include="Session\Session.h" />
-    <ClInclude Include="Session\SessionManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
   </ItemGroup>
   <ItemGroup>

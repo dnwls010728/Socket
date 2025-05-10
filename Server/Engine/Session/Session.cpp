@@ -1,5 +1,4 @@
 ﻿#include "Session.h"
-
 #include "../ServerManager.h"
 
 Session::Session(int client_id) :

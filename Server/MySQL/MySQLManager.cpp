@@ -1,4 +1,5 @@
-﻿#include "MySQLManager.h"
+﻿#include "pch.h"
+#include "MySQLManager.h"
 
 #include "../Helper/StringHelper.h"
 #include "jdbc/cppconn/driver.h"

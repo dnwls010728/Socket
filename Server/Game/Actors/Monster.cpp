@@ -1,13 +1,12 @@
 ﻿#include "Monster.h"
-#include "rttr/registration"
 
-Monster::Monster(std::wstring kName) : MapObject(kName)
+Monster::Monster(std::wstring kName) : Actor(kName)
 {
 }
 
 void Monster::Tick(float delta_time)
 {
-    MapObject::Tick(delta_time);
+    Actor::Tick(delta_time);
     
 }
 

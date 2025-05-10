@@ -3,7 +3,6 @@
 #include <iostream>
 #include "NetworkManager.h"
 #include "CustomPacket.h"
-#include "CustomSerializer.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
 

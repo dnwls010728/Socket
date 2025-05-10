@@ -104,7 +104,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;$(SolutionDir)\Common\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -124,7 +124,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;$(SolutionDir)\Common\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -140,8 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Engine\ActorLayer.h" />
-    <ClInclude Include="Engine\ActorTag.h" />
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\Animation.h" />
@@ -169,7 +167,6 @@
     <ClInclude Include="Engine\Data\RegistryHelper.h" />
     <ClInclude Include="Engine\DebugDrawHelper.h" />
     <ClInclude Include="Engine\EngineSettings.h" />
-    <ClInclude Include="Engine\Enums.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
     <ClInclude Include="Engine\Event\Events.h" />
     <ClInclude Include="Engine\GameEngine.h" />

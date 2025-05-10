@@ -1,4 +1,4 @@
-﻿#include "ServerManager.h"
+﻿#include "Game/ServerManager.h"
 #define _CRTDBG_MAP_ALLOC
 
 int main()

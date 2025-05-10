@@ -1,7 +1,5 @@
 ﻿#include "World.h"
 #include <chrono>
-#include <algorithm>
-#include <iostream>
 
 using namespace std::chrono;
 
