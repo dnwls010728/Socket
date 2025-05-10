@@ -32,8 +32,8 @@ void BoxColliderComponent::SetShape()
     else
     {
         b2Filter filter = b2DefaultFilter();
-        filter.categoryBits = static_cast<Type::uint16>(GetOwner()->GetLayer());
-        filter.maskBits = static_cast<Type::uint16>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
+        filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
+        filter.maskBits = static_cast<uint16_t>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
         
         b2ShapeDef shape_def = b2DefaultShapeDef();
         shape_def.density = 1.f;

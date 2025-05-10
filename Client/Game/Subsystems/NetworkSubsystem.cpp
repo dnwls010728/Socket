@@ -12,6 +12,7 @@
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
+#include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/MiniMap.h"
@@ -52,6 +53,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
 
         InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
         in_game_ui_subsystem->ShowMiniMap();
+        in_game_ui_subsystem->ShowChatUI();
     }
 }
 
@@ -78,7 +80,7 @@ void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
     SendPacket(request);
 }
 
-void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
+void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end())
@@ -101,7 +103,7 @@ void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharact
     }
 }
 
-std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const Type::uint32 unique_id)
+std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end()) return iter->second;
@@ -125,10 +127,12 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_info.unique_id);
             if (IsValid(player_character))
             {
+                const CharacterInfo character_info = spawn_player_packet->character_info;
+                
                 float position_x = spawn_player_packet->position_x;
                 float position_y = spawn_player_packet->position_y;
 
-                player_character->InitSpawn({position_x, position_y});
+                player_character->InitSpawn(character_info.name, {position_x, position_y});
                 other_players_.emplace_back(player_character);
             }
         }
@@ -200,7 +204,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
             tilemap_loader->SetTilemap(tilemap_);
 
             camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kTick);
+            camera_manager->SetTickType(TickType::kPhysicsTick);
 
             Bounds bounds = tilemap_->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
@@ -211,7 +215,9 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
     std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
     if (IsValid(player_character))
     {
+        player_character->InitSpawn(character_info.name, Math::Vector2::Zero());
         player_character->SetMine(true);
+        
         player_ = player_character;
         
         camera_manager->SetTarget(player_character);

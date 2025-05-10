@@ -33,7 +33,7 @@ bool AnimationPack::Load(const std::wstring& kPath)
                     std::wstring to_wide_string(name.begin(), name.end());
                     
                     std::shared_ptr<Animation> data = std::make_shared<Animation>(to_wide_string);
-                    data->frame_rate_ = animation["frame_rate"].as<int>();
+                    data->frame_rate_ = animation["frame_rate"].as<int32_t>();
                     data->is_loop_ = animation["loop"].as<bool>();
 
                     for (const YAML::Node& index : animation["frames"])

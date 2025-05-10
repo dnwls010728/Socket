@@ -28,4 +28,4 @@ private:
     
 };
 
-extern Type::uint32 g_frame_counter;
+extern uint32_t g_frame_counter;

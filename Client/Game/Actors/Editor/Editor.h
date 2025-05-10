@@ -30,7 +30,7 @@ private:
     struct AnimationData
     {
         std::string name;
-        int frame_rate;
+        int32_t frame_rate;
         bool is_loop;
         std::vector<std::string> frame_indexes;
     };
@@ -43,12 +43,12 @@ private:
     bool show_texture_editor_;
     bool show_sprite_animator_;
 
-    int selected_wrap_mode_;
-    int selected_filter_mode_;
-    int ppu_;
-    int selected_frame_;
-    int selected_index_;
-    int selected_animation_;
+    int32_t selected_wrap_mode_;
+    int32_t selected_filter_mode_;
+    int32_t ppu_;
+    int32_t selected_frame_;
+    int32_t selected_index_;
+    int32_t selected_animation_;
 
     char frame_name_[256];
 

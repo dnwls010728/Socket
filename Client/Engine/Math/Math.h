@@ -17,7 +17,7 @@ namespace Math
     float RandRange(float min, float max);
     bool IsEqual(float a, float b);
     
-    int RandRange(int min, int max);
+    int32_t RandRange(int32_t min, int32_t max);
     
     bool IsValid(float f);
 }

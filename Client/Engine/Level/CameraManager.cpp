@@ -159,5 +159,5 @@ void CameraManager::MoveToTarget(float delta_time)
     float clamp_y = Math::Clamp(new_position.y, -limit_y, limit_y);
     SetPosition({clamp_x, clamp_y});
 
-    DebugDrawHelper::Get()->DrawBox(focus_area_.center, focus_area_size_, Math::Color::Red);
+    // DebugDrawHelper::Get()->DrawBox(focus_area_.center, focus_area_size_, Math::Color::Red);
 }

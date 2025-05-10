@@ -11,7 +11,6 @@
 #include "UI/Widget/ListBox.h"
 
 InGameUISubsystem::InGameUISubsystem() :
-    chat_history_(nullptr),
     chat_input_(nullptr),
     mini_map_(nullptr)
 {
@@ -20,11 +19,6 @@ InGameUISubsystem::InGameUISubsystem() :
 void InGameUISubsystem::Init()
 {
     GameInstanceSubsystem::Init();
-    
-    chat_history_ = UI::ListBox::Create(L"ChatHistory");
-    chat_history_->SetPosition({ 0.f, 570.f });
-    chat_history_->SetSize({ 300.f, 100.f });
-    chat_history_->SetPivot({ 0.f, 0.f });
 
     chat_input_ = UI::EditableTextBox::Create(L"ChatInput");
     chat_input_->SetPosition({ 0.f, 600.f });
@@ -42,40 +36,29 @@ void InGameUISubsystem::Deinit()
 {
     GameInstanceSubsystem::Deinit();
 
-    UI::Manager* ui_manager = UI::Manager::Get();
-
-    ui_manager->RemoveFromViewport(chat_history_);
-    ui_manager->RemoveFromViewport(chat_input_);
-    ui_manager->RemoveFromViewport(mini_map_);
+    chat_input_->RemoveFromViewport();
+    mini_map_->RemoveFromViewport();
     
 }
 
 void InGameUISubsystem::ShowChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->AddToViewport(chat_history_);
-    ui_manager->AddToViewport(chat_input_);
+    chat_input_->AddToViewport();
 }
 
 void InGameUISubsystem::HideChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->RemoveFromViewport(chat_history_);
-    ui_manager->RemoveFromViewport(chat_input_);
+    chat_input_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::ShowMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->AddToViewport(mini_map_);
+    mini_map_->AddToViewport();
 }
 
 void InGameUISubsystem::HideMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->RemoveFromViewport(mini_map_);
+    mini_map_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)

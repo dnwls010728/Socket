@@ -20,7 +20,7 @@ public:
     virtual bool Load(const std::wstring& kPath) override;
 
     FORCEINLINE const std::map<std::wstring, SpriteFrame>& GetFrames() const { return frames_; }
-    FORCEINLINE Type::uint32 GetPPU() const { return ppu_; }
+    FORCEINLINE uint32_t GetPPU() const { return ppu_; }
 
     static const Math::Vector2 kCenter;
     static const Math::Vector2 kTopLeft;
@@ -35,6 +35,6 @@ public:
 private:
     std::map<std::wstring, SpriteFrame> frames_;
     
-    Type::uint32 ppu_;
+    uint32_t ppu_;
     
 };

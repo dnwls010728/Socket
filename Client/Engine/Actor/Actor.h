@@ -9,7 +9,7 @@
 class ActorComponent;
 class Actor;
 
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 class TransformComponent;
 
 class Actor : public std::enable_shared_from_this<Actor>
@@ -51,6 +51,7 @@ public:
 
     FORCEINLINE std::shared_ptr<TransformComponent> GetTransform() const { return transform_; }
 
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
 
@@ -102,6 +103,7 @@ protected:
 
     b2BodyId body_id_;
 
+    bool has_begun_play_;
     bool is_active_;
     bool is_pending_destroy_;
 

@@ -5,10 +5,10 @@ struct PropData
     RTTR_ENABLE()
 
 public:
-    int id;
+    int32_t id;
     std::wstring name;
     std::wstring sprite_path;
     std::wstring animation_pack_path;
-    int weight;
+    int32_t weight;
     
 };

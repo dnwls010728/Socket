@@ -14,7 +14,7 @@ public:
     SpriteRendererComponent(Actor* owner, const std::wstring& kName = L"");
     virtual ~SpriteRendererComponent() override = default;
 
-    void SetZOrder(int z_order);
+    void SetZOrder(int32_t z_order);
     void SetSprite(Sprite* sprite, const std::wstring& kFrame);
 
     Bounds GetBounds() const;
@@ -32,7 +32,7 @@ public:
     FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
     FORCEINLINE Math::Color GetColor() const { return color_; }
 
-    FORCEINLINE int GetZOrder() const { return z_order_; }
+    FORCEINLINE int32_t GetZOrder() const { return z_order_; }
 
 protected:
     virtual void InitializeComponent() override;
@@ -52,6 +52,6 @@ private:
 
     Math::Color color_;
 
-    int z_order_;
+    int32_t z_order_;
     
 };

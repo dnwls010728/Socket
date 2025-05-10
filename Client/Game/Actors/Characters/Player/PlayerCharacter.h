@@ -2,13 +2,6 @@
 #include <CommonObject.h>
 
 #include "Actors/Characters/CharacterBase.h"
-class InventoryComponent;
-
-namespace UI
-{
-    class ChatBalloon;
-    class MiniMap;
-}
 
 class PlayerCharacter : public CharacterBase
 {
@@ -21,8 +14,7 @@ public:
 
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
-    void InitSpawn(const Math::Vector2& position);
-    void Speak(const std::wstring& message);
+    void InitSpawn(const std::wstring& name, const Math::Vector2& position);
 
     FORCEINLINE Math::Vector2& GetVelocity() { return velocity_; }
 
@@ -30,11 +22,6 @@ protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
-    virtual void EndPlay(EndPlayReason type) override;
-
-#pragma region 컴포넌트
-    std::shared_ptr<InventoryComponent> inventory_;
-#pragma endregion
 
     Math::Vector2 movement_input_;
 
@@ -43,12 +30,6 @@ protected:
 
     bool is_jump_;
 
-    int timer_;
-
-#pragma region UI
-    std::shared_ptr<UI::ChatBalloon> chat_balloon_;
-#pragma endregion
-
-    TimerHandle chat_balloon_timer_handle_;
+    int32_t timer_;
     
 };

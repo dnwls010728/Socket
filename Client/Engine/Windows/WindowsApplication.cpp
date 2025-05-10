@@ -106,18 +106,18 @@ LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-Type::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+uint32_t WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     std::shared_ptr<WindowsWindow> window = FindWindowByHWND(hWnd);
     
     if (window)
     {
         bool is_external_handled = false;
-        Type::uint32 external_handler_result = 0;
+        uint32_t external_handler_result = 0;
         
         for (const auto& handler : message_handlers_)
         {
-            Type::uint32 handler_result = 0;
+            uint32_t handler_result = 0;
             if (handler->ProcessMessage(hWnd, message, wParam, lParam, handler_result))
             {
                 if (!is_external_handled)
@@ -130,8 +130,8 @@ Type::uint32 WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM 
         
         if (message == WM_GETMINMAXINFO)
         {
-            Type::uint32 window_ex_style = 0;
-            Type::uint32 window_style = 0;
+            uint32_t window_ex_style = 0;
+            uint32_t window_style = 0;
     
             window_style |= WS_OVERLAPPED;
             window_style |= WS_CAPTION;

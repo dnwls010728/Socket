@@ -15,7 +15,6 @@
 
 #include "Singleton.h"
 #include "Math/Rect.h"
-#include "Misc/Type.h"
 #include "Windows/WindowsWindow.h"
 
 class DefaultPixelShader;
@@ -59,7 +58,7 @@ public:
     bool CreateViewport(std::shared_ptr<WindowsWindow> window, Math::Vector2 window_size);
     bool CreateD2DViewport(std::shared_ptr<WindowsWindow> window);
     bool CreateDepthStencilBuffer(Viewport& viewport);
-    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width, Type::uint32 height);
+    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, uint32_t width, uint32_t height);
     bool AddFont(const std::wstring& kPath);
     bool AddTextFormat(const std::wstring& kName, float size);
     
@@ -80,7 +79,7 @@ public:
     void EndRenderD2D();
     void BeginLayer(const Math::Rect& kRect);
     void EndLayer();
-    void ChangeResolution(WindowsWindow* window, Type::uint32 width, Type::uint32 height, bool is_fullscreen = false);
+    void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
     
     Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition) const;
     Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition) const;

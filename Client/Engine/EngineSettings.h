@@ -11,7 +11,7 @@ public:
     EngineSettings();
     virtual ~EngineSettings() override = default;
 
-    void SetScreenSize(Type::uint32 width, Type::uint32 height);
+    void SetScreenSize(uint32_t width, uint32_t height);
 
     template<std::derived_from<Level> T>
     void AddLevel(const std::wstring& kName);
@@ -22,8 +22,8 @@ public:
     FORCEINLINE void SetDefaultLevel(const std::wstring& kLevel) { default_level_ = kLevel; }
     FORCEINLINE const std::wstring& GetDefaultLevel() const { return default_level_; }
 
-    FORCEINLINE Type::uint32 GetScreenWidth() const { return screen_width_; }
-    FORCEINLINE Type::uint32 GetScreenHeight() const { return screen_height_; }
+    FORCEINLINE uint32_t GetScreenWidth() const { return screen_width_; }
+    FORCEINLINE uint32_t GetScreenHeight() const { return screen_height_; }
 
     FORCEINLINE void UseVSync(bool use_vsync) { use_vsync_ = use_vsync; }
     FORCEINLINE bool IsUseVSync() const { return use_vsync_; }
@@ -38,8 +38,8 @@ private:
     std::wstring window_title_;
     std::wstring default_level_;
     
-    Type::uint32 screen_width_;
-    Type::uint32 screen_height_;
+    uint32_t screen_width_;
+    uint32_t screen_height_;
 
     bool use_vsync_;
 

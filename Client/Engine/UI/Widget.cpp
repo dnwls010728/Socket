@@ -14,6 +14,22 @@ UI::Widget::Widget(const std::wstring& kName) :
 {
 }
 
+void UI::Widget::AddToViewport()
+{
+    Manager* manager = Manager::Get();
+
+    manager->widgets_.push_back(GetSharedThis());
+    OnAdd();
+}
+
+void UI::Widget::RemoveFromViewport()
+{
+    Manager* manager = Manager::Get();
+
+    OnRemove();
+    std::erase(manager->widgets_, GetSharedThis());
+}
+
 Math::Rect UI::Widget::GetRect() const
 {
     return GetRect(position_, size_, pivot_);
@@ -22,6 +38,14 @@ Math::Rect UI::Widget::GetRect() const
 Math::Vector2 UI::Widget::GetPivotPosition() const
 {
     return GetPivotPosition(GetRect(), pivot_);
+}
+
+bool UI::Widget::IsInViewport()
+{
+    Manager* manager = Manager::Get();
+    
+    const std::vector<std::shared_ptr<Widget>>& widgets_ = manager->widgets_;
+    return std::ranges::find(widgets_, GetSharedThis()) != widgets_.end();
 }
 
 bool UI::Widget::Contains(const Math::Vector2& kPosition) const
@@ -51,6 +75,14 @@ void UI::Widget::Tick(float delta_time)
 }
 
 void UI::Widget::Render(Renderer* renderer, WindowsWindow* window)
+{
+}
+
+void UI::Widget::OnAdd()
+{
+}
+
+void UI::Widget::OnRemove()
 {
 }
 
@@ -100,7 +132,7 @@ bool UI::Widget::OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vect
     return false;
 }
 
-bool UI::Widget::OnKey(Type::uint16 key_code, bool is_pressed)
+bool UI::Widget::OnKey(uint16_t key_code, bool is_pressed)
 {
     return false;
 }

@@ -2,7 +2,6 @@
 #include "WindowsWindow.h"
 
 #include "WindowDefinition.h"
-#include "Misc/Type.h"
 
 WindowsWindow::WindowsWindow() :
     application_(nullptr),
@@ -27,8 +26,8 @@ void WindowsWindow::Init(WindowsApplication* const application, const std::share
     application_ = application;
     definition_ = kDefinition;
 
-    Type::uint32 window_ex_style = 0;
-    Type::uint32 window_style = 0;
+    uint32_t window_ex_style = 0;
+    uint32_t window_style = 0;
     
     window_style |= WS_OVERLAPPED;
     window_style |= WS_CAPTION;
@@ -39,10 +38,10 @@ void WindowsWindow::Init(WindowsApplication* const application, const std::share
     RECT border_rect = {0, 0, 0, 0};
     AdjustWindowRectEx(&border_rect, window_style, false, window_ex_style);
 
-    Type::uint32 window_x = kDefinition->screen_x;
-    Type::uint32 window_y = kDefinition->screen_y;
-    Type::uint32 window_width = kDefinition->width;
-    Type::uint32 window_height = kDefinition->height;
+    uint32_t window_x = kDefinition->screen_x;
+    uint32_t window_y = kDefinition->screen_y;
+    uint32_t window_width = kDefinition->width;
+    uint32_t window_height = kDefinition->height;
 
     window_x += border_rect.left;
     window_y += border_rect.top;

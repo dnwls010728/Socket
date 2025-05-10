@@ -3,7 +3,6 @@
 
 #include "Singleton.h"
 #include "../framework.h"
-#include "Misc/Type.h"
 
 struct WindowDefinition;
 class WindowsWindow;
@@ -11,7 +10,7 @@ class WindowsWindow;
 class IWindowsMessageHandler
 {
 public:
-    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result) = 0;
+    virtual bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result) = 0;
     
 };
 
@@ -37,7 +36,7 @@ public:
 private:
     static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    Type::uint32 ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    uint32_t ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     std::shared_ptr<WindowsWindow> FindWindowByHWND(HWND hWnd) const;
 

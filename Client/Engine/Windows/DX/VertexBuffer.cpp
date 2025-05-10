@@ -12,7 +12,7 @@ VertexBuffer::~VertexBuffer()
 {
 }
 
-bool VertexBuffer::CreateBuffer(Type::uint32 stride, bool cpu_access, bool gpu_access)
+bool VertexBuffer::CreateBuffer(uint32_t stride, bool cpu_access, bool gpu_access)
 {
     stride_ = stride;
     buffer_size_ = stride * 2048;

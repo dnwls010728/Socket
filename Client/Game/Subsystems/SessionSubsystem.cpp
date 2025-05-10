@@ -5,11 +5,13 @@
 #include <CustomSerializer.h>
 
 #include "NetworkManager.h"
+#include "Inventory/InventoryData.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
-    character_info_()
+    character_info_(),
+    inventory_data_(nullptr)
 {
 }
 
@@ -42,6 +44,20 @@ void SessionSubsystem::ProcessPackets()
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
         packet_handler.Execute(packet);
+
+        switch (packet->GetPacketID())
+        {
+        case SelectCharacterResponse::StaticPacketID:
+            {
+                SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
+                if (response->is_success)
+                {
+                    inventory_data_ = std::make_unique<InventoryData>();
+                    Logger::Print(L"인벤토리 생성");
+                }
+            }
+            break;
+        }
     });
 }
 

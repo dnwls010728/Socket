@@ -1,14 +1,13 @@
 ﻿#pragma once
-#include "Misc/Type.h"
 
 namespace Math
 {
     struct Color
     {
-        Type::uint8 r;
-        Type::uint8 g;
-        Type::uint8 b;
-        Type::uint8 a;
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a;
 
         static const Color Red;
         static const Color Green;

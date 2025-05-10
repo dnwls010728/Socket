@@ -1,9 +1,7 @@
 ﻿#include "pch.h"
 #include "TimerManager.h"
 
-#include "Misc/Type.h"
-
-Type::uint64 TimerManager::last_handle_ = 0;
+uint64_t TimerManager::last_handle_ = 0;
 
 TimerManager::TimerManager() :
     last_ticked_frame_(-1),
@@ -47,8 +45,8 @@ void TimerManager::Tick(float delta_time)
             
             data->status = TimerStatus::kExecuting;
         
-            Type::uint32 cell_count = data->loop ? static_cast<int>(std::trunc(internal_time_ - data->expire_time) / data->rate) + 1 : 1;
-            for (Type::uint32 i = 0; i < cell_count; ++i)
+            uint32_t cell_count = data->loop ? static_cast<int32_t>(std::trunc(internal_time_ - data->expire_time) / data->rate) + 1 : 1;
+            for (uint32_t i = 0; i < cell_count; ++i)
             {
                 data->callback();
 

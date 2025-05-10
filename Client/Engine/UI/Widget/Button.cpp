@@ -25,10 +25,11 @@ void UI::Button::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    const Math::Rect kRect = GetRect();
+    const Math::Rect rect = GetRect();
 
-    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f);
-    renderer->DrawString(window, text_, kRect, GetPivotPosition(), Math::Color::Black, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    renderer->DrawSolidBox(window, rect, GetPivotPosition(), {0, 0, 0, 100});
+    renderer->DrawBox(window, rect, GetPivotPosition(), Math::Color::White);
+    renderer->DrawString(window, text_, rect, GetPivotPosition(), Math::Color::White, 0.f, L"NanumBarunGothic", 12.f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
 bool UI::Button::OnMouseEnter()

@@ -7,26 +7,26 @@ namespace Math
     struct Vector2;
 }
 
-enum class BodyType : Type::uint64
+enum class BodyType : uint64_t
 {
     kDynamic = 0,
     kKinematic,
     kStatic
 };
 
-enum class SleepMode : Type::uint64
+enum class SleepMode : uint64_t
 {
     kNeverSleep = 0,
     kStartAwake
 };
 
-enum class CollisionDetectionMode : Type::uint64
+enum class CollisionDetectionMode : uint64_t
 {
     kDiscrete = 0,
     kContinuous
 };
 
-enum class ForceMode : Type::uint64
+enum class ForceMode : uint64_t
 {
     kForce = 0,
     kImpulse

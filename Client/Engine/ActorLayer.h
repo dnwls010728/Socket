@@ -1,11 +1,10 @@
 ﻿#pragma once
 #include "Misc/EnumClassFlags.h"
-#include "Misc/Type.h"
 
-enum class ActorLayer : Type::uint16
+enum class ActorLayer : uint16_t
 {
     kDefault = (0x01<<0),
-    kPlayer = (0x01<<1),
+    kCharacter = (0x01<<1),
 };
 
 ENUM_CLASS_FLAGS(ActorLayer)

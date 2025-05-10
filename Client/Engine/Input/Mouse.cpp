@@ -13,40 +13,40 @@ Mouse::Mouse() :
 
 bool Mouse::GetMouseButton(MouseButton button) const
 {
-    MouseState state = mouse_states_[static_cast<int>(button)];
+    MouseState state = mouse_states_[static_cast<int32_t>(button)];
     return state.is_down;
 }
 
 bool Mouse::GetMouseButtonDown(MouseButton button) const
 {
-    MouseState state = mouse_states_[static_cast<int>(button)];
+    MouseState state = mouse_states_[static_cast<int32_t>(button)];
     return state.is_down && !state.was_down;
 }
 
 bool Mouse::GetMouseButtonUp(MouseButton button) const
 {
-    MouseState state = mouse_states_[static_cast<int>(button)];
+    MouseState state = mouse_states_[static_cast<int32_t>(button)];
     return !state.is_down && state.was_down;
 }
 
 void Mouse::OnEvent(const Event& kEvent)
 {
-    const Type::uint32& kType = kEvent.type;
-    if (kType == static_cast<Type::uint32>(EventType::kMouseMotion))
+    const uint32_t& kType = kEvent.type;
+    if (kType == static_cast<uint32_t>(EventType::kMouseMotion))
     {
         const MouseMotionEvent& kMotion = kEvent.motion;
         mouse_position_ = Math::Vector2(kMotion.x, kMotion.y);
     }
-    else if (kType & static_cast<Type::uint32>(EventType::kMousePressed) || kType & static_cast<Type::uint32>(EventType::kMouseReleased))
+    else if (kType & static_cast<uint32_t>(EventType::kMousePressed) || kType & static_cast<uint32_t>(EventType::kMouseReleased))
     {
         const MouseButtonEvent& kButton = kEvent.button;
-        mouse_states_[static_cast<int>(kButton.button)].is_down = kButton.is_pressed;
+        mouse_states_[static_cast<int32_t>(kButton.button)].is_down = kButton.is_pressed;
     }
-    else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))
+    else if (kType == static_cast<uint32_t>(EventType::kMouseWheel))
     {
         const MouseWheelEvent& kWheel = kEvent.wheel;
-        wheel_axis_ = static_cast<int>(kWheel.y);
-        wheel_h_axis_ = static_cast<int>(kWheel.x);
+        wheel_axis_ = static_cast<int32_t>(kWheel.y);
+        wheel_h_axis_ = static_cast<int32_t>(kWheel.x);
     }
 }
 

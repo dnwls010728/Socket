@@ -7,8 +7,8 @@
 
 UI::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
-    select_event_([&](Type::uint64) {}),
-    double_click_event_([&](Type::uint64) {}),
+    select_event_([&](uint64_t) {}),
+    double_click_event_([&](uint64_t) {}),
     items_(),
     is_hovered_(false),
     is_dragging_(false),
@@ -21,17 +21,17 @@ UI::ListBox::ListBox(const std::wstring& kName) :
 {
 }
 
-void UI::ListBox::OnSelect(void(* func)(Type::uint64))
+void UI::ListBox::OnSelect(void(* func)(uint64_t))
 {
     select_event_ = func;
 }
 
-void UI::ListBox::OnDoubleClick(void(* func)(Type::uint64))
+void UI::ListBox::OnDoubleClick(void(* func)(uint64_t))
 {
     double_click_event_ = func;
 }
 
-void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
+void UI::ListBox::AddItem(const std::wstring& kName, uint64_t user_data)
 {
     Item new_item;
     new_item.name = kName;
@@ -39,7 +39,7 @@ void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
     items_.push_back(new_item);
 
     float offset_y = 0.f;
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         offset_y += 30.f;
     }
@@ -47,7 +47,7 @@ void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
     min_allowed_scroll_offset_y_ = Math::Min(size_.y - offset_y, 0.f);
 }
 
-void UI::ListBox::RemoveItem(int index)
+void UI::ListBox::RemoveItem(int32_t index)
 {
     if (index < 0 || index >= items_.size())
         return;
@@ -55,7 +55,7 @@ void UI::ListBox::RemoveItem(int index)
     items_.erase(items_.begin() + index);
     
     float offset_y = 0.f;
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         offset_y += 30.f;
     }
@@ -85,7 +85,7 @@ void UI::ListBox::ClearItems()
     hovered_index_ = -1;
 }
 
-void UI::ListBox::SetItem(int index, const std::wstring& kName, Type::uint64 user_data)
+void UI::ListBox::SetItem(int32_t index, const std::wstring& kName, uint64_t user_data)
 {
     if (index < 0 || index >= items_.size()) return;
     items_[index].name = kName;
@@ -127,26 +127,27 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 
     const Math::Rect kRect = GetRect();
 
-    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f, 1.f);
+    renderer->DrawSolidBox(window, kRect, GetPivotPosition(), Math::Color(0, 0, 0, 100));
+    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::White);
 
     renderer->BeginLayer(GetRect());
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         const Item& kItem = items_[i];
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
-        renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, kItem.name, kItemRect, GetPivotPosition(kItemRect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 12.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
     if (selected_index_ >= 0)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (selected_index_ * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -157,7 +158,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (hovered_index_ * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -176,10 +177,13 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     renderer->BeginLayer(kScrollBarRect);
     float ratio = kRect.height / (items_.size() * 30.f);
 
-    // TODO: Y 좌표 값이 NaN이 나오는 문제 해결 필요
     const float scroll_thumb_height = Math::Clamp(kRect.height * ratio, 10.f, kRect.height);
+    
+    float scroll_ratio = scroll_offset_y_ / min_allowed_scroll_offset_y_;
+    scroll_ratio = Math::IsValid(scroll_ratio) ? scroll_ratio : 0.f;
+    
     const Math::Rect kScrollThumbRect = GetRect(
-        {kScrollBarRect.x, kScrollBarRect.y + (scroll_offset_y_ / min_allowed_scroll_offset_y_) * (kScrollBarRect.height - scroll_thumb_height)},
+        {kScrollBarRect.x, kScrollBarRect.y + scroll_ratio * (kScrollBarRect.height - scroll_thumb_height)},
         {kScrollBarRect.width, scroll_thumb_height},
         {0.f, 1.f}
     );
@@ -205,11 +209,11 @@ bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vect
     if (items_.empty()) return false;
 
     const Math::Rect kRect = GetRect();
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-            {kRect.width, 30.f},
+            {kRect.width - 10.f, 30.f},
             {0.f, 1.f}
         );
 
@@ -231,11 +235,11 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
     if (button == MouseButton::kLeft && is_pressed)
     {
         const Math::Rect kRect = GetRect();
-        for (Type::uint32 i = 0; i < items_.size(); ++i)
+        for (uint32_t i = 0; i < items_.size(); ++i)
         {
             const Math::Rect kItemRect = GetRect(
                 {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
-                {kRect.width, 30.f},
+                {kRect.width - 10.f, 30.f},
                 {0.f, 1.f}
             );
 

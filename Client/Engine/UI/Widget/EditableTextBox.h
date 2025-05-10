@@ -47,22 +47,24 @@ namespace UI
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
-        virtual bool OnKey(Type::uint16 key_code, bool is_pressed) override;
+        virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
         virtual bool OnChar(wchar_t character) override;
 
         virtual void OnFocus(bool is_focus) override;
 
         float GetAdvances(const std::wstring& kString, std::vector<float>& advances);
         
+        std::wstring font_name_;
         std::wstring text_;
         std::wstring placeholder_;
 
+        float font_size_;
         float elapsed_time_;
         float total_advance_;
 
         bool cursor_visible_;
 
-        int cursor_position_;
+        int32_t cursor_position_;
 
         Function<void(const std::wstring&)> value_changed_event_;
         Function<void(const std::wstring&)> return_event_;

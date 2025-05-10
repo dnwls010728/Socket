@@ -18,10 +18,14 @@ namespace UI
         Widget(const std::wstring& kName);
         virtual ~Widget() = default;
 
+        void AddToViewport();
+        void RemoveFromViewport();
+
         Math::Rect GetRect() const;
 
         Math::Vector2 GetPivotPosition() const;
 
+        bool IsInViewport();
         bool Contains(const Math::Vector2& kPosition) const;
 
         FORCEINLINE const std::wstring& GetName() const { return name_; }
@@ -47,6 +51,8 @@ namespace UI
 
         virtual void Tick(float delta_time);
         virtual void Render(Renderer* renderer, WindowsWindow* window);
+        virtual void OnAdd();
+        virtual void OnRemove();
 
         virtual bool OnMouseEnter();
         virtual bool OnMouseLeave();
@@ -57,7 +63,7 @@ namespace UI
         virtual bool OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta);
         virtual bool OnDragEnd(const Math::Vector2& kPosition);
         virtual bool OnDrop(const std::shared_ptr<Widget>& kWidget, const Math::Vector2& kPosition);
-        virtual bool OnKey(Type::uint16 key_code, bool is_pressed);
+        virtual bool OnKey(uint16_t key_code, bool is_pressed);
         virtual bool OnChar(wchar_t character);
         
         virtual void OnFocus(bool is_focus);

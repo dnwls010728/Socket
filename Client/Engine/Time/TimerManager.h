@@ -1,14 +1,12 @@
 ﻿#pragma once
 #include "GameEngine.h"
 #include "Singleton.h"
-#include "Misc/Type.h"
-#include "Misc/DelegateMacros.h"
 #include "Misc/Function.h"
 
 struct TimerData;
 struct TimerHandle;
 
-enum class TimerStatus : Type::uint8
+enum class TimerStatus : uint64_t
 {
     kPending,
     kActive,
@@ -43,7 +41,7 @@ struct TimerHandle
         return handle != kOther.handle;
     }
 
-    Type::uint64 handle;
+    uint64_t handle;
 };
 
 struct TimerData
@@ -114,7 +112,7 @@ private:
     void Tick(float delta_time);
     void RemoveTimer(TimerHandle handle);
     
-    Type::uint64 last_ticked_frame_;
+    uint64_t last_ticked_frame_;
     
     float internal_time_;
     
@@ -125,7 +123,7 @@ private:
     
     TimerHandle executing_timer_;
 
-    static Type::uint64 last_handle_;
+    static uint64_t last_handle_;
     
 };
 

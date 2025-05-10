@@ -1,9 +1,6 @@
 ﻿#pragma once
-#include <queue>
-#include <Windows.h>
 
 #include "Singleton.h"
-#include "Misc/Type.h"
 #include "Math/Vector2.h"
 
 union Event;
@@ -37,8 +34,8 @@ public:
     bool GetMouseButtonDown(MouseButton button) const;
     bool GetMouseButtonUp(MouseButton button) const;
 
-    FORCEINLINE int GetWheelAxis() const { return wheel_axis_; }
-    FORCEINLINE int GetWheelHAxis() const { return wheel_h_axis_; }
+    FORCEINLINE int32_t GetWheelAxis() const { return wheel_axis_; }
+    FORCEINLINE int32_t GetWheelHAxis() const { return wheel_h_axis_; }
     
     FORCEINLINE Math::Vector2 GetMousePosition() const { return mouse_position_; }
 
@@ -51,8 +48,8 @@ private:
 
     MouseState mouse_states_[3];
 
-    int wheel_axis_;
-    int wheel_h_axis_;
+    int32_t wheel_axis_;
+    int32_t wheel_h_axis_;
     
     Math::Vector2 mouse_position_;
 

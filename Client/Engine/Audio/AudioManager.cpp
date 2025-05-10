@@ -43,19 +43,19 @@ void AudioManager::PlayOneShot(const Audio* audio, float volume)
     if (channel) FMOD_Channel_SetVolume(channel, volume);
 }
 
-void AudioManager::PauseSound(int id)
+void AudioManager::PauseSound(int32_t id)
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetPaused(channels_[id], true);
 }
 
-void AudioManager::ResumeSound(int id)
+void AudioManager::ResumeSound(int32_t id)
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetPaused(channels_[id], false);
 }
 
-void AudioManager::StopSound(int id)
+void AudioManager::StopSound(int32_t id)
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_Stop(channels_[id]);
@@ -69,7 +69,7 @@ void AudioManager::StopAllSounds()
     }
 }
 
-void AudioManager::SetVolume(int id, int volume)
+void AudioManager::SetVolume(int32_t id, int32_t volume)
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     volume = Math::Clamp(volume, 0.f, 100.f);
@@ -78,7 +78,7 @@ void AudioManager::SetVolume(int id, int volume)
     FMOD_Channel_SetVolume(channels_[id], final_volume);
 }
 
-void AudioManager::SetMute(int id, bool is_mute)
+void AudioManager::SetMute(int32_t id, bool is_mute)
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetMute(channels_[id], is_mute);
@@ -92,11 +92,11 @@ void AudioManager::SetAllMutes(bool is_mute)
     }
 }
 
-int AudioManager::PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group)
+int32_t AudioManager::PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group)
 {
     if (!audio) return -1;
     
-    for (int i = 0; i < MAX_CHANNEL_COUNT; ++i)
+    for (int32_t i = 0; i < MAX_CHANNEL_COUNT; ++i)
     {
         FMOD_CHANNEL* channel = channels_[i];
         FMOD_BOOL is_playing = false;

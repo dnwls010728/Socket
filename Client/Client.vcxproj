@@ -191,7 +191,6 @@
     <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\GameplayStatics.h" />
-    <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Asset\Asset.h" />
     <ClInclude Include="Engine\Asset\AssetManager.h" />
@@ -208,6 +207,7 @@
     <ClInclude Include="Engine\UI\Widget\Button.h" />
     <ClInclude Include="Engine\UI\Widget\CheckBox.h" />
     <ClInclude Include="Engine\UI\Widget\EditableTextBox.h" />
+    <ClInclude Include="Engine\UI\Widget\Image.h" />
     <ClInclude Include="Engine\UI\Widget\ListBox.h" />
     <ClInclude Include="Engine\UI\Widget\Slider.h" />
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
@@ -231,12 +231,13 @@
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Characters\Monsters\MonsterBase.h" />
-    <ClInclude Include="Game\Actors\Characters\Player\Components\InventoryComponent.h" />
+    <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
+    <ClInclude Include="Game\Actors\Ladder.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
@@ -265,6 +266,7 @@
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
+    <ClInclude Include="Game\Inventory\InventoryData.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
@@ -272,7 +274,10 @@
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
+    <ClInclude Include="Game\UI\ChatPanel.h" />
+    <ClInclude Include="Game\UI\Inventory.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
+    <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -568,6 +573,7 @@
     <ClCompile Include="Engine\UI\Widget\Button.cpp" />
     <ClCompile Include="Engine\UI\Widget\CheckBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\EditableTextBox.cpp" />
+    <ClCompile Include="Engine\UI\Widget\Image.cpp" />
     <ClCompile Include="Engine\UI\Widget\ListBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
@@ -587,12 +593,13 @@
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Characters\Monsters\MonsterBase.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Player\Components\InventoryComponent.cpp" />
+    <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
+    <ClCompile Include="Game\Actors\Ladder.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />
@@ -619,6 +626,7 @@
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
+    <ClCompile Include="Game\Inventory\InventoryData.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
@@ -626,7 +634,10 @@
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
+    <ClCompile Include="Game\UI\ChatPanel.cpp" />
+    <ClCompile Include="Game\UI\Inventory.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
+    <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -719,6 +730,9 @@
     <Content Include="Lib\libtmxlite-s.lib" />
     <Content Include="Lib\rttr_core.lib" />
     <Content Include="Lib\yaml-cpp.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Game\Actors\Characters\Player\Components\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

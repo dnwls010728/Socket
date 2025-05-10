@@ -7,16 +7,15 @@
 #include <wrl/client.h>
 
 #include "Vertex.h"
-#include "Misc/Type.h"
 #include "Asset/Asset.h"
 
-enum class WrapMode : Type::uint8
+enum class WrapMode : uint8_t
 {
     kReapet,
     kClamp
 };
 
-enum class FilterMode : Type::uint8
+enum class FilterMode : uint8_t
 {
     kPoint,
     kBilinear
@@ -34,11 +33,11 @@ public:
 
     void Bind() const;
 
-    FORCEINLINE Type::uint32 GetWidth() const { return width_; }
-    FORCEINLINE Type::uint32 GetHeight() const { return height_; }
+    FORCEINLINE uint32_t GetWidth() const { return width_; }
+    FORCEINLINE uint32_t GetHeight() const { return height_; }
 
     FORCEINLINE const std::vector<DefaultVertex>& GetVertices() const { return vertices_; }
-    FORCEINLINE const std::vector<Type::uint32>& GetIndices() const { return indices_; }
+    FORCEINLINE const std::vector<uint32_t>& GetIndices() const { return indices_; }
 
     FORCEINLINE WrapMode GetWrapMode() const { return wrap_mode_; }
     FORCEINLINE void SetWrapMode(WrapMode mode) { wrap_mode_ = mode; }
@@ -52,11 +51,11 @@ protected:
     Microsoft::WRL::ComPtr<ID3D11Resource> resource_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> resource_view_;
     
-    Type::uint32 width_;
-    Type::uint32 height_;
+    uint32_t width_;
+    uint32_t height_;
 
     std::vector<DefaultVertex> vertices_;
-    std::vector<Type::uint32> indices_;
+    std::vector<uint32_t> indices_;
 
     WrapMode wrap_mode_;
     FilterMode filter_mode_;

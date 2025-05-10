@@ -8,6 +8,8 @@
 
 UI::EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
+    font_name_(L"NanumBarunGothic"),
+    font_size_(12.f),
     text_(L""),
     placeholder_(L""),
     elapsed_time_(0.f),
@@ -61,9 +63,10 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
-    const Math::Rect kRect = GetRect();
+    const Math::Rect rect = GetRect();
 
-    renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black);
+    renderer->DrawSolidBox(window, rect, GetPivotPosition(), {0, 0, 0, 100});
+    renderer->DrawBox(window, rect, GetPivotPosition(), Math::Color::White);
     
     float cursor_advance = 0.f;
     float text_offset = 0.f;
@@ -71,38 +74,38 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
     if (cursor_position_ - 1 < advances_.size())
         cursor_advance = std::accumulate(advances_.begin(), advances_.begin() + cursor_position_, 0.f);
 
-    if (kRect.width < cursor_advance) text_offset = cursor_advance - kRect.width;
+    if (rect.width < cursor_advance) text_offset = cursor_advance - rect.width;
 
-    renderer->BeginLayer(kRect);
+    renderer->BeginLayer(rect);
 
     Math::Rect text_rect = GetRect(
-        {kRect.x - text_offset, kRect.y},
-        {total_advance_ + 1.f, kRect.height},
+        {rect.x - text_offset, rect.y},
+        {total_advance_ + 1.f, rect.height},
         {0.f, 1.f}
     );
 
     Math::Rect placeholder_rect = GetRect(
-        {kRect.x, kRect.y},
-        {kRect.width, kRect.height},
+        {rect.x, rect.y},
+        {rect.width, rect.height},
         {0.f, 1.f}
     );
 
-    renderer->DrawString(window, text_, text_rect,GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    renderer->DrawString(window, text_, text_rect,GetPivotPosition(text_rect, {0.f, 1.f}), Math::Color::White, 0.f, font_name_, font_size_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     
     if (text_.empty())
     {
-        renderer->DrawString(window, placeholder_, placeholder_rect,GetPivotPosition(placeholder_rect, {0.f, 1.f}), Math::Color::Gray, 0.f, L"NanumBarunGothic", 18.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        renderer->DrawString(window, placeholder_, placeholder_rect,GetPivotPosition(placeholder_rect, {0.f, 1.f}), Math::Color::Gray, 0.f, font_name_, font_size_, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
     
     renderer->EndLayer();
 
     if (cursor_visible_)
     {
-        float font_size = renderer->GetTextFormat(L"NanumBarunGothic", 18.f)->GetFontSize();
-        float padding = (kRect.height - font_size) * .5f;
+        float font_size = renderer->GetTextFormat(font_name_, font_size_)->GetFontSize();
+        float padding = (rect.height - font_size) * .5f;
 
-        Math::Vector2 start = {kRect.x + cursor_advance - text_offset, kRect.y + padding};
-        Math::Vector2 end = {kRect.x + cursor_advance - text_offset, kRect.y + kRect.height - padding};
+        Math::Vector2 start = {rect.x + cursor_advance - text_offset, rect.y + padding};
+        Math::Vector2 end = {rect.x + cursor_advance - text_offset, rect.y + rect.height - padding};
 
         renderer->DrawLine(window, start, end, Math::Color::White, 2.f);
     }
@@ -115,7 +118,7 @@ bool UI::EditableTextBox::OnMouseButton(const Math::Vector2& kPosition, MouseBut
     return true;
 }
 
-bool UI::EditableTextBox::OnKey(Type::uint16 key_code, bool is_pressed)
+bool UI::EditableTextBox::OnKey(uint16_t key_code, bool is_pressed)
 {
     if (is_pressed)
     {
@@ -225,7 +228,7 @@ void UI::EditableTextBox::OnFocus(bool is_focus)
 float UI::EditableTextBox::GetAdvances(const std::wstring& kString, std::vector<float>& advances)
 {
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(kString, L"NanumBarunGothic", 18.f, advances);
+    renderer->GetTextAdvances(kString, font_name_, font_size_, advances);
 
     float total_advance = std::accumulate(advances.begin(), advances.end(), 0.f);
     return total_advance;

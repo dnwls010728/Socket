@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class EndPlayReason : Type::uint64
+enum class EndPlayReason : uint64_t
 {
     kDestroyed,
     kLevelTransition,
