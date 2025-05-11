@@ -6,6 +6,8 @@
 
 #include "NetworkManager.h"
 #include "Inventory/InventoryData.h"
+#include "UI/Inventory.h"
+#include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
@@ -58,7 +60,13 @@ void SessionSubsystem::ProcessPackets()
                 if (response->is_success)
                 {
                     inventory_data_ = std::make_unique<InventoryData>();
-                    Logger::Print(L"인벤토리 생성");
+                    inventory_data_->AddSlot(0, 100, 1);
+                    inventory_data_->AddSlot(7, 101, 2);
+                    inventory_data_->AddSlot(19, 102, 3);
+
+                    std::shared_ptr<UI::Inventory> inventory = UI::Inventory::Create(L"Inventory");
+                    inventory->SetPosition({400.f, 300.f});
+                    inventory->AddToViewport();
                 }
             }
             break;

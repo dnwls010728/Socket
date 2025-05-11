@@ -270,6 +270,7 @@
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
+    <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
@@ -630,6 +631,7 @@
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
+    <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />

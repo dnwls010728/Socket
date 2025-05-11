@@ -15,6 +15,8 @@ public:
     
     void AddSlot(uint16_t slot_index, int32_t item_id, int16_t count);
     void ChangeCount(uint16_t slot_index, int16_t count);
+    void Swap(uint16_t first_slot, uint16_t second_slot);
+    void Remove(uint16_t slot_index);
 
     FORCEINLINE void SetColor(int64_t color) { color_ = color; }
     FORCEINLINE int64_t GetColor() const { return color_; }
@@ -22,12 +24,12 @@ public:
 private:
     struct Slot
     {
-        int32_t item_id;
-        int16_t count;
+        int32_t item_id = -1;
+        int16_t count = 0;
+
+        FORCEINLINE bool IsValid() const { return item_id != -1; }
     };
     
-    // X: 슬롯 인덱스 % 행 개수
-    // Y: 슬롯 인덱스 / 행 개수
     std::map<uint16_t, Slot> slots_;
 
     // 재화

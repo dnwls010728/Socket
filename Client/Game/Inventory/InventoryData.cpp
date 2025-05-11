@@ -76,3 +76,21 @@ void InventoryData::ChangeCount(uint16_t slot_index, int16_t count)
     if (it != slots_.end())
         it->second.count = count;
 }
+
+void InventoryData::Swap(uint16_t first_slot, uint16_t second_slot)
+{
+    Slot first = std::move(slots_[first_slot]);
+    slots_[first_slot] = std::move(slots_[second_slot]);
+    slots_[second_slot] = std::move(first);
+
+    if (!slots_[first_slot].IsValid()) Remove(first_slot);
+    if (!slots_[second_slot].IsValid()) Remove(second_slot);
+}
+
+void InventoryData::Remove(uint16_t slot_index)
+{
+    auto it = slots_.find(slot_index);
+    if (it == slots_.end()) return;
+    
+    slots_.erase(it);
+}
