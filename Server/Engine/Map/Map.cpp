@@ -18,8 +18,11 @@ Map::Map(uint32_t MapBase_id) :
 
 Map::~Map()
 {
-    b2DestroyWorld(world_id_);
-    world_id_ = b2_nullWorldId;
+    if (memcmp(&world_id_, &b2_nullWorldId, sizeof(b2WorldId)) != 0)
+    {
+        b2DestroyWorld(world_id_);
+        world_id_ = b2_nullWorldId;
+    }
 }
 
 void Map::Init()

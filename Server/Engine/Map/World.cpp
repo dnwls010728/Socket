@@ -16,10 +16,25 @@ World::~World()
 Map* World::GetMap(uint32_t map_unique_id)
 {
     std::lock_guard<std::mutex> lock(maps_mutex_);
-    auto [it, inserted] = maps_.emplace(map_unique_id, std::make_unique<Map>(map_unique_id));
-    Map* map = it->second.get();
-    if (inserted && dispatcher_.running())
-        dispatcher_.AddMap(map);
+
+    auto it = maps_.find(map_unique_id);
+    Map* map = nullptr;
+
+    if (it == maps_.end())
+    {
+        auto map_ptr = std::make_unique<Map>(map_unique_id);
+        map_ptr->Init();
+        map = map_ptr.get();
+        maps_.emplace(map_unique_id, std::move(map_ptr));
+
+        if (dispatcher_.running())
+            dispatcher_.AddMap(map);
+    }
+    else
+    {
+        map = it->second.get();
+    }
+
     return map;
 }
 
