@@ -1,4 +1,5 @@
-﻿#include "Game/ServerManager.h"
+﻿#include "pch.h"
+#include "Game/ServerManager.h"
 #define _CRTDBG_MAP_ALLOC
 
 int main()

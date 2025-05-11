@@ -1,4 +1,5 @@
-﻿#include "ServerManager.h"
+﻿#include "pch.h"
+#include "ServerManager.h"
 #include <string>
 #include <iostream>
 #include "NetworkManager.h"
@@ -50,7 +51,7 @@ bool ServerManager::Execute()
 {
     MySQLManager* mysql_manager = MySQLManager::Get();
     // if (!mysql_manager->Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
-    if (!mysql_manager->Connect("localhost", "root", "12345"))
+    if (!mysql_manager->Connect("127.0.0.1:3306", "y_eternal", "@eternal12345"))
     {
         return false;
     }

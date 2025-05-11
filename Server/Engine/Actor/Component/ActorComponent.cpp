@@ -1,4 +1,5 @@
-﻿#include "ActorComponent.h"
+﻿#include "pch.h"
+#include "ActorComponent.h"
 
 #include "../Actor.h"
 

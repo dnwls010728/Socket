@@ -1,6 +1,7 @@
-﻿#include "Monster.h"
+﻿#include "pch.h"
+#include "Monster.h"
 
-Monster::Monster(std::wstring kName) : Actor(kName)
+Monster::Monster(std::wstring kName) : CharacterBase(kName)
 {
 }
 

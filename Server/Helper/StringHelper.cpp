@@ -1,4 +1,5 @@
-﻿#include "StringHelper.h"
+﻿#include "pch.h"
+#include "StringHelper.h"
 
 std::string StringHelper::ToString(const std::wstring& w_str)
 {

@@ -1,5 +1,6 @@
-﻿#include "Session.h"
-#include "../ServerManager.h"
+﻿#include "pch.h"
+#include "Session.h"
+#include "ServerManager.h"
 
 Session::Session(int client_id) :
     client_id_(client_id),

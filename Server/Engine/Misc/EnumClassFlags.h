@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #define ENUM_CLASS_FLAGS(enum_class) \
     FORCEINLINE constexpr enum_class operator|(enum_class lhs, enum_class rhs) \
     { \

@@ -1,4 +1,5 @@
-﻿#include "World.h"
+﻿#include "pch.h"
+#include "World.h"
 #include <chrono>
 
 using namespace std::chrono;
