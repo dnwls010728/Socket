@@ -66,6 +66,37 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
             renderer->DrawBox(window, slot_rect, pivot_position, Math::Color::White);
         }
     }
+    
+    for (int16_t i = 0; i < max_slots_; ++i)
+    {
+        int32_t item_id = inventory_data_->GetItemID(i);
+        if (item_id >= 0)
+        {
+            UITexture* texture = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+            if (texture)
+            {
+                Math::Rect icon_rect = GetRect(
+                    {slot_start_x + (i % slot_col_) * 36.f, slot_start_y + (i / slot_col_) * 36.f},
+                    {32.f, 32.f},
+                    {0.f, 1.f}
+                );
+
+                renderer->DrawBitmap(window, texture->GetTexture(), icon_rect, GetPivotPosition(icon_rect, {0.f, 1.f}));
+
+                int16_t count = inventory_data_->GetItemCount(i);
+                renderer->DrawString(
+                    window,
+                    std::to_wstring(count),
+                    icon_rect,
+                    GetPivotPosition(icon_rect, {0.f, 1.f}),
+                    Math::Color::White,
+                    0.f,
+                    L"NanumBarunGothic", 12.f,
+                    DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_FAR
+                );
+            }
+        }
+    }
 
     Math::Rect color_rect = GetRect(
         { rect.XMin() + 4.f, rect.YMax() - 20.f },
