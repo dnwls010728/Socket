@@ -13,13 +13,16 @@ namespace Net
 }
 
 class Player;
+class Actor;
 
-class MapBase
+class Map
 {
 public:
-    MapBase(uint32_t MapBase_id);
-    ~MapBase() = default;
+    Map(uint32_t MapBase_id);
+    virtual ~Map();
 
+    virtual void Init();
+    
     virtual void AddPlayer(Player* player);
     virtual void RemovePlayer(Player* player);
     virtual void SendPacket(const Net::IPacket& packet);
@@ -30,9 +33,15 @@ public:
     virtual void PostTick(float delta_time);
     virtual void ActivateActor(Actor* actor, bool is_active);
     virtual void DestroyActor(Actor* actor);
+    virtual void ProcessTriggerEvents();
+    void ProcessCollisionEvents();
+
+    virtual void InitPhysicsWorld();
     
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapBaseUniqueID() const { return map_unique_id_; }
+
+    b2WorldId GetWorldID() const {return world_id_; }
     
     template <std::derived_from<Actor> T>
     std::shared_ptr<T> SpawnActor(const rttr::type& kType, const std::wstring& kName = L"");
@@ -49,6 +58,7 @@ private:
 
     std::mutex player_mutex_;
     uint32_t map_unique_id_;
+    b2WorldId world_id_;
 
     std::unordered_map<uint32_t, std::shared_ptr<Actor>> map_objects_;
     std::vector<Player*> players_;
@@ -59,7 +69,7 @@ private:
 };
 
 template <std::derived_from<Actor> T>
-std::shared_ptr<T> MapBase::SpawnActor(const rttr::type& kType, const std::wstring& kName)
+std::shared_ptr<T> Map::SpawnActor(const rttr::type& kType, const std::wstring& kName)
 {
     std::wstring name = kName;
     

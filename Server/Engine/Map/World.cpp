@@ -13,11 +13,11 @@ World::~World()
     Stop();
 }
 
-MapBase* World::GetMap(uint32_t map_unique_id)
+Map* World::GetMap(uint32_t map_unique_id)
 {
     std::lock_guard<std::mutex> lock(maps_mutex_);
-    auto [it, inserted] = maps_.emplace(map_unique_id, std::make_unique<MapBase>(map_unique_id));
-    MapBase* map = it->second.get();
+    auto [it, inserted] = maps_.emplace(map_unique_id, std::make_unique<Map>(map_unique_id));
+    Map* map = it->second.get();
     if (inserted && dispatcher_.running())
         dispatcher_.AddMap(map);
     return map;

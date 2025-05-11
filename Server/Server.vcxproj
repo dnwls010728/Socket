@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>box2dd.lib;libtmxlite-s-d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>box2dd.lib;libtmxlite-s-d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;rttr_core_d.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib\Debug;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -146,7 +146,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -160,8 +160,18 @@
     <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\Tilemap.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
     <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
-    <ClCompile Include="Engine\Map\MapBase.cpp" />
+    <ClCompile Include="Engine\Asset\Asset.cpp" />
+    <ClCompile Include="Engine\Asset\AssetManager.cpp" />
+    <ClCompile Include="Engine\Data\CSVReader.cpp" />
+    <ClCompile Include="Engine\Data\FileHelper.cpp" />
+    <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
+    <ClCompile Include="Engine\EngineSettings.cpp" />
+    <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
@@ -170,10 +180,14 @@
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
+    <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Engine\Time\Time.cpp" />
+    <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Game\Actors\Character\CharacterBase.cpp" />
+    <ClCompile Include="Game\Actors\Character\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Character\Monster.cpp"/>
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\States\BaseState.cpp" />
@@ -199,9 +213,19 @@
     <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\Tilemap.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
     <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
+    <ClInclude Include="Engine\Asset\Asset.h" />
+    <ClInclude Include="Engine\Asset\AssetManager.h" />
+    <ClInclude Include="Engine\Data\CSVReader.h" />
+    <ClInclude Include="Engine\Data\FileHelper.h" />
+    <ClInclude Include="Engine\Data\RegistryHelper.h" />
+    <ClInclude Include="Engine\EngineSettings.h" />
     <ClInclude Include="Engine\Enums.h" />
-    <ClInclude Include="Engine\Map\MapBase.h" />
+    <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
@@ -216,11 +240,52 @@
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\GameplayStatics.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
+    <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Session\Player.h" />
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Engine\Time\Time.h" />
+    <ClInclude Include="Engine\Time\TimerManager.h" />
+    <ClInclude Include="Engine\yaml-cpp\anchor.h" />
+    <ClInclude Include="Engine\yaml-cpp\binary.h" />
+    <ClInclude Include="Engine\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="Engine\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="Engine\yaml-cpp\depthguard.h" />
+    <ClInclude Include="Engine\yaml-cpp\dll.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitter.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="Engine\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="Engine\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="Engine\yaml-cpp\exceptions.h" />
+    <ClInclude Include="Engine\yaml-cpp\mark.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\convert.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\emit.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\impl.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\node.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\parse.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\type.h" />
+    <ClInclude Include="Engine\yaml-cpp\noexcept.h" />
+    <ClInclude Include="Engine\yaml-cpp\null.h" />
+    <ClInclude Include="Engine\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="Engine\yaml-cpp\parser.h" />
+    <ClInclude Include="Engine\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="Engine\yaml-cpp\traits.h" />
+    <ClInclude Include="Engine\yaml-cpp\yaml.h" />
     <ClInclude Include="Game\Actors\Character\CharacterBase.h" />
+    <ClInclude Include="Game\Actors\Character\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Character\Monster.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\States\BaseState.h" />

@@ -13,12 +13,11 @@
 #include "ActorTag.h"
 #include "ActorLayer.h"
 
-
 class Map;
 class ActorComponent;
 class Actor : public std::enable_shared_from_this<Actor>
 {
-    friend class MapBase;
+    friend class Map;
     friend class World;
     friend class TransformComponent;
     friend class ColliderComponent;
@@ -158,4 +157,14 @@ std::shared_ptr<T> Actor::GetComponent(const rttr::type& type)
     }
 
     return nullptr;
+}
+
+FORCEINLINE bool IsValid(const Actor* actor)
+{
+    return actor && !actor->IsPendingDeletion();
+}
+
+FORCEINLINE bool IsValid(const std::shared_ptr<Actor>& actor)
+{
+    return actor && !actor->IsPendingDeletion();
 }

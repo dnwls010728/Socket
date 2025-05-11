@@ -4,6 +4,7 @@
 #include <iostream>
 #include "NetworkManager.h"
 #include "CustomPacket.h"
+#include "EngineSettings.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
 
@@ -15,6 +16,10 @@ ServerManager::ServerManager()
     server_socket_.SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
 
     CommandHandlerInitialize();
+
+    EngineSettings::Get()->SetFixedTimeStep(0.05f);
+    EngineSettings::Get()->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter);
+    EngineSettings::Get()->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
 }
 
 void ServerManager::CommandHandlerInitialize()

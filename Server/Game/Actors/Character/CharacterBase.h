@@ -3,6 +3,7 @@
 #include "Math/Vector2.h"
 
 class StateMachineComponent;
+class Controller2DComponent;
 class CharacterBase : public Actor
 {
     SHADER_CLASS_HELPER(CharacterBase)
@@ -16,5 +17,6 @@ protected:
     float gravity_;
 
     std::shared_ptr<BoxColliderComponent> collider_;
+    std::shared_ptr<Controller2DComponent> controller_;
     std::shared_ptr<StateMachineComponent> state_machine_;
 };

@@ -2,6 +2,7 @@
 #include "CharacterBase.h"
 #include "actor/Component/BoxColliderComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
+#include "Actors/Character/Components/Controller2DComponent.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
     Actor(kName),
@@ -12,6 +13,8 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetSize({1.f, 1.f});
 
+    controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
+    
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
 }

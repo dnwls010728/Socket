@@ -2,7 +2,7 @@
 
 #include "MapTickDispatcher.h"
 #include <chrono>
-#include "MapBase.h"
+#include "Map.h"
 
 using namespace std::chrono;
 
@@ -33,7 +33,7 @@ void MapTickDispatcher::Stop()
     worker_contexts_.clear();
 }
 
-void MapTickDispatcher::AddMap(MapBase* map)
+void MapTickDispatcher::AddMap(Map* map)
 {
     WorkerContext* best = FindBestWorker();
     if (!best)
@@ -54,7 +54,7 @@ void MapTickDispatcher::AddMap(MapBase* map)
     }
 }
 
-void MapTickDispatcher::RemoveMap(MapBase* map)
+void MapTickDispatcher::RemoveMap(Map* map)
 {
     std::lock_guard<std::mutex> lock(worker_mutex_);
 
@@ -114,7 +114,7 @@ void MapTickDispatcher::SplitWorker(WorkerContext* context)
     size_t move_count = context->assigned_maps.size() / 2;
     for (size_t i = 0; i < move_count; ++i)
     {
-        MapBase* map = context->assigned_maps.back();
+        Map* map = context->assigned_maps.back();
         context->assigned_maps.pop_back();
         new_ptr->assigned_maps.push_back(map);
     }
@@ -148,6 +148,7 @@ void MapTickDispatcher::WorkerThread(WorkerContext* context, uint32_t tick_inter
             {
                 if (map)
                 {
+                    // TODO : 실제 delta 계산 및 그에 따른 물리엔진
                     map->PhysicsTick(delta.count());
                     map->Tick(delta.count());
                     map->PostTick(delta.count());

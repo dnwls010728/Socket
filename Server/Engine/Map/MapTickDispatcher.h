@@ -8,7 +8,7 @@
 #include <memory>
 #include <algorithm>
 
-class MapBase;
+class Map;
 class MapTickDispatcher
 {
 public:
@@ -18,15 +18,15 @@ public:
     void Start(uint32_t tick_interval_ms, size_t max_maps_per_thread);
     void Stop();
 
-    void AddMap(MapBase* map);
-    void RemoveMap(MapBase* map);
+    void AddMap(Map* map);
+    void RemoveMap(Map* map);
 
     inline bool running() const { return running_.load(); }
 private:
     struct WorkerContext
     {
         std::thread thread;
-        std::vector<MapBase*> assigned_maps;
+        std::vector<Map*> assigned_maps;
         std::mutex mutex;
         std::atomic<uint32_t> last_tick_duration_ms{ 0 };
     };
