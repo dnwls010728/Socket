@@ -61,8 +61,8 @@ void SessionSubsystem::ProcessPackets()
                 {
                     inventory_data_ = std::make_unique<InventoryData>();
                     inventory_data_->AddSlot(0, 100, 1);
-                    inventory_data_->AddSlot(7, 101, 2);
-                    inventory_data_->AddSlot(19, 102, 3);
+                    inventory_data_->AddSlot(7, 101, 20);
+                    inventory_data_->AddSlot(19, 102, 100);
 
                     std::shared_ptr<UI::Inventory> inventory = UI::Inventory::Create(L"Inventory");
                     inventory->SetPosition({400.f, 300.f});

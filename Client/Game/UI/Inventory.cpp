@@ -173,7 +173,7 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
     return false;
 }
 
-uint16_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position)
+uint16_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position) const
 {
     Math::Vector2 relative_position = position - GetRect().Min();
 
