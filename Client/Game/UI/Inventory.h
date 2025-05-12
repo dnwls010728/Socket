@@ -35,6 +35,7 @@ namespace UI
         Math::Rect scroll_rect_;
 
         float scroll_offset_y_;
+        float min_allowed_scroll_offset_y_;
 
         InventoryData* inventory_data_;
         

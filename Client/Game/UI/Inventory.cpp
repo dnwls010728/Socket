@@ -5,16 +5,18 @@
 #include "Asset/AssetManager.h"
 #include "Inventory/InventoryData.h"
 #include "Math/Color.h"
+#include "Math/Math.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Windows/DX/UITexture.h"
 
 UI::Inventory::Inventory(const std::wstring& name) :
     Widget(name),
-    slot_row_(20),
+    slot_row_(10),
     slot_col_(4),
     max_slots_(0),
     scroll_rect_(Math::Rect::Zero()),
     scroll_offset_y_(0.f),
+    min_allowed_scroll_offset_y_(0.f),
     inventory_data_(nullptr),
     dragged_slot_(-1),
     is_dragging_(false)
@@ -154,6 +156,9 @@ void UI::Inventory::OnAdd()
         {0.f, 1.f}
     );
 
+    float content_height = slot_row_ * 36.f;
+    min_allowed_scroll_offset_y_ = scroll_rect_.height - content_height;
+
     inventory_data_ = GET_SESSION()->GetInventoryData();
 }
 
@@ -223,9 +228,7 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
 
 bool UI::Inventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    const float scroll_amount = delta.y * 10.f;
-    scroll_offset_y_ += scroll_amount;
-    
+    scroll_offset_y_ = Math::Clamp(scroll_offset_y_ + delta.y * 50.f, min_allowed_scroll_offset_y_, 0.f);
     return true;
 }
 
