@@ -10,9 +10,11 @@
 
 UI::Inventory::Inventory(const std::wstring& name) :
     Widget(name),
-    slot_row_(5),
+    slot_row_(20),
     slot_col_(4),
     max_slots_(0),
+    scroll_rect_(Math::Rect::Zero()),
+    scroll_offset_y_(0.f),
     inventory_data_(nullptr),
     dragged_slot_(-1),
     is_dragging_(false)
@@ -21,7 +23,7 @@ UI::Inventory::Inventory(const std::wstring& name) :
 
 std::shared_ptr<UI::Inventory> UI::Inventory::Create(const std::wstring& name)
 {
-    return std::make_shared<UI::Inventory>(name);
+    return std::make_shared<Inventory>(name);
 }
 
 void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
@@ -52,6 +54,8 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
         DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER
     );
 
+    renderer->BeginLayer(scroll_rect_);
+
     float slot_start_x = rect.x + 4.f;
     float slot_start_y = rect.y + 24.f;
 
@@ -60,7 +64,7 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
         for (int16_t col = 0; col < slot_col_; ++col)
         {
             float slot_x = slot_start_x + col * 36.f;
-            float slot_y = slot_start_y + row * 36.f;
+            float slot_y = slot_start_y + row * 36.f + scroll_offset_y_;
 
             Math::Rect slot_rect(slot_x, slot_y, 32.f, 32.f);
             renderer->DrawBox(window, slot_rect, pivot_position, Math::Color::White);
@@ -80,6 +84,8 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
                     {32.f, 32.f},
                     {0.f, 1.f}
                 );
+
+                icon_rect.y += scroll_offset_y_;
 
                 Mouse* mouse = Mouse::Get();
                 if (dragged_slot_ == i)
@@ -105,6 +111,8 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
             }
         }
     }
+
+    renderer->EndLayer();
 
     Math::Rect color_rect = GetRect(
         { rect.XMin() + 4.f, rect.YMax() - 20.f },
@@ -137,6 +145,14 @@ void UI::Inventory::OnAdd()
     SetPivot({0.f, 1.f});
 
     max_slots_ = slot_row_ * slot_col_;
+
+    Math::Rect rect = GetRect();
+
+    scroll_rect_ = GetRect(
+        {rect.XMin() + 4, rect.YMin() + 24.f},
+        {rect.width - 8.f, rect.height - 48.f},
+        {0.f, 1.f}
+    );
 
     inventory_data_ = GET_SESSION()->GetInventoryData();
 }
@@ -171,6 +187,9 @@ bool UI::Inventory::OnDrag(const Math::Vector2& position, const Math::Vector2& d
     if (is_dragging_)
     {
         position_ += delta;
+        
+        scroll_rect_.x += delta.x;
+        scroll_rect_.y += delta.y;
         return true;
     }
     
@@ -202,9 +221,17 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
     return false;
 }
 
+bool UI::Inventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    const float scroll_amount = delta.y * 10.f;
+    scroll_offset_y_ += scroll_amount;
+    
+    return true;
+}
+
 int32_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position) const
 {
-    Math::Vector2 relative_position = position - GetRect().Min();
+    Math::Vector2 relative_position = position - GetRect().Min() + (Math::Vector2::Down() * scroll_offset_y_);
 
     int16_t x_min = 4;
     int16_t x_max = x_min + (slot_col_ * 36);
