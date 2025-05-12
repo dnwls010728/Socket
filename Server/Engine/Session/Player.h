@@ -13,6 +13,7 @@ class Session;
 
 class Player
 {
+    friend class Map;
 public:
     Player(Session* session, uint32_t account_unique_id);
     ~Player();
@@ -20,8 +21,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     void SetPosition(float x, float y);
-
-    inline void SetCharacterUniqueID(uint32_t character_unique_id) { character_unique_id_ = character_unique_id; }
+    
     inline uint32_t GetCharacterUniqueID() const { return character_unique_id_; }
 
     inline Session* GetSession() const { return session_; }
@@ -34,6 +34,9 @@ public:
     inline float GetPositionY() const { return position_y_; }
 
 private:
+    inline void SetMap(Map* kMap) { map_ = kMap; }
+    inline void SetCharacterUniqueID(uint32_t character_unique_id) { character_unique_id_ = character_unique_id; }
+    
     Session* session_;
 
     uint32_t account_unique_id_;

@@ -12,6 +12,7 @@
 #include "Engine/Enums.h"
 #include "ActorTag.h"
 #include "ActorLayer.h"
+#include "Time/TimerManager.h"
 
 class Map;
 class ActorComponent;
@@ -72,8 +73,7 @@ public:
 
     FORCEINLINE void SetInstigator(Actor* instigator) { instigator_ = instigator; }
     FORCEINLINE Actor* GetInstigator() const { return instigator_; }
-
-    FORCEINLINE void SetUniqueID(uint32_t unique_id) { unique_id_ = unique_id;}
+    
     FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
     FORCEINLINE Map* GetMap() const { return map_; }
 protected:
@@ -111,6 +111,9 @@ protected:
     FORCEINLINE virtual void OnTriggerEnter(Actor* other) {}
     FORCEINLINE virtual void OnTriggerExit(Actor* other) {}
 
+    FORCEINLINE void SetMap(Map* map) { map_ = map; }
+    FORCEINLINE void SetUniqueID(uint32_t unique_id) { unique_id_ = unique_id;}
+    
     std::wstring name_;
 
     ActorTag tag_;
@@ -126,7 +129,7 @@ protected:
 
     std::shared_ptr<TransformComponent> transform_;
     
-    //TimerHandle life_span_timer_;
+    TimerHandle life_span_timer_;
 
     Actor* owner_;
     Actor* instigator_;

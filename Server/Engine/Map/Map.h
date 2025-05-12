@@ -59,6 +59,7 @@ private:
     std::mutex player_mutex_;
     uint32_t map_unique_id_;
     b2WorldId world_id_;
+	uint32_t test_next_unique_id_ = 0;
 
     std::unordered_map<uint32_t, std::shared_ptr<Actor>> map_objects_;
     std::vector<Player*> players_;
@@ -85,6 +86,8 @@ std::shared_ptr<T> Map::SpawnActor(const rttr::type& kType, const std::wstring& 
         std::shared_ptr<Actor> actor = var.get_value<std::shared_ptr<Actor>>();
         pending_actors_.push(actor);
 
+        actor->SetMap(this);
+		actor->SetUniqueID(test_next_unique_id_++);
         actor->InitializeActor();
 
         rttr::type actor_type = rttr::type::get<T>();
@@ -95,4 +98,9 @@ std::shared_ptr<T> Map::SpawnActor(const rttr::type& kType, const std::wstring& 
     }
 
     return nullptr;
+}
+
+FORCEINLINE bool IsValid(const Map* map)
+{
+    return map != nullptr;
 }

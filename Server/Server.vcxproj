@@ -191,6 +191,7 @@
     <ClCompile Include="Game\Actors\Character\Monster.cpp"/>
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\States\BaseState.cpp" />
+    <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
@@ -289,6 +290,7 @@
     <ClInclude Include="Game\Actors\Character\Monster.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />

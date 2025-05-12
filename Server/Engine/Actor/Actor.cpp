@@ -6,6 +6,8 @@
 #include "box2d/types.h"
 #include "Actor/Component/ActorComponent.h"
 #include "Map/World.h"
+#include "Time/TimerManager.h"
+#include "Actor/Component/TransformComponent.h"
 
 Actor::Actor(const std::wstring& kName):
     name_(kName),
@@ -18,7 +20,8 @@ Actor::Actor(const std::wstring& kName):
     map_(nullptr),
     unique_id_(0)
 {
-    
+    transform_ = AddComponent<TransformComponent>(L"Transform");
+    CHECK(transform_);
 }
 
 void Actor::BeginPlay()
@@ -124,7 +127,6 @@ void Actor::Destroy()
 
 void Actor::SetLifeSpan(float life_span)
 {
-    /*
     if (life_span > 0.f)
     {
          TimerManager::Get()->SetTimer(life_span_timer_, this, &Actor::OnLifeSpanExpired, life_span);
@@ -133,7 +135,6 @@ void Actor::SetLifeSpan(float life_span)
     {
         TimerManager::Get()->ClearTimer(life_span_timer_);
     }
-    */
 }
 
 void Actor::SetPersistent(bool is_persistent)
@@ -186,7 +187,7 @@ void Actor::CreateBody()
     b2BodyDef body_def = b2DefaultBodyDef();
     body_def.userData = this;
 
-    //body_id_ = b2CreateBody(World::Get()->world_id_, &body_def);
+    body_id_ = b2CreateBody(GetMap()->GetWorldID(), &body_def);
     b2Body_Disable(body_id_);
 }
 

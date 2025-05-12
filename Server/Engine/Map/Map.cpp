@@ -2,13 +2,18 @@
 #include "Map.h"
 
 #include <CustomPacket.h>
+#include <format>
 #include <ranges>
 
 #include "Actor/Actor.h"
+#include "Actors/TilemapLoader.h"
+#include "Asset/AssetManager.h"
 #include "Session/Player.h"
 #include "Engine/Misc/Type.h"
 #include "Engine/Enums.h"
 #include "box2d/box2d.h"
+#include "Math/Bounds.h"
+#include "Actor/Component/Tilemap/Tilemap.h"
 
 Map::Map(uint32_t MapBase_id) :
     map_unique_id_(MapBase_id),
@@ -28,13 +33,31 @@ Map::~Map()
 void Map::Init()
 {
     InitPhysicsWorld();
+    
+    for (const auto& actor : map_objects_ | std::views::values)
+    {
+        if (IsValid(actor)) actor->Destroy();
+    }
+    map_objects_.clear();
+
+    std::shared_ptr<TilemapLoader> tilemap_loader = SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    if (IsValid(tilemap_loader))
+    {
+        std::wstring wide_str = std::format(L"{:06}", map_unique_id_);
+        Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
+        if (tilemap)
+        {
+            tilemap_loader->SetTilemap(tilemap);
+        }
+    }
+    
 }
 
 void Map::AddPlayer(Player* player)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
     players_.push_back(player);
-
+    player->SetMap(this);
     {
         // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
         SpawnPlayerPacket spawn_player_packet;

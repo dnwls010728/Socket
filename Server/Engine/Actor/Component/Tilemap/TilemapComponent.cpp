@@ -86,6 +86,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 	body_def.userData = GetOwner();
 
 	if (!IsValid(owner_)) return;
+	if (!IsValid(owner_->GetMap())) return;
 	
 	tilemap_body_id_ = b2CreateBody(owner_->GetMap()->GetWorldID(), &body_def);
 
@@ -136,6 +137,9 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 {
 	const auto& objects = kObject.getObjects();
+
+	if(!IsValid(owner_) || !IsValid(owner_->GetMap())) 
+		return;
 
 	for (const auto& temp : objects)
 	{
