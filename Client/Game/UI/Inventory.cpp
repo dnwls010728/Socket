@@ -81,6 +81,14 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
                     {0.f, 1.f}
                 );
 
+                Mouse* mouse = Mouse::Get();
+                if (dragged_slot_ == i)
+                {
+                    Math::Vector2 mouse_position = mouse->GetMousePosition();
+                    icon_rect.x = mouse_position.x - icon_rect.width / 2.f;
+                    icon_rect.y = mouse_position.y - icon_rect.height / 2.f;
+                }
+
                 renderer->DrawBitmap(window, texture->GetTexture(), icon_rect, GetPivotPosition(icon_rect, {0.f, 1.f}));
 
                 int16_t count = inventory_data_->GetItemCount(i);
@@ -147,6 +155,13 @@ bool UI::Inventory::OnDragBegin(const Math::Vector2& position)
         is_dragging_ = true;
         return true;
     }
+
+    int32_t slot_index = GetSlotByPosition(position);
+    if (slot_index > -1)
+    {
+        dragged_slot_ = slot_index;
+        return true;
+    }
     
     return false;
 }
@@ -169,11 +184,25 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
         is_dragging_ = false;
         return true;
     }
+
+    if (dragged_slot_ > -1)
+    {
+        int32_t slot_index = GetSlotByPosition(position);
+        if (slot_index > -1 && slot_index != dragged_slot_)
+        {
+            inventory_data_->Swap(dragged_slot_, slot_index);
+            dragged_slot_ = -1;
+            return true;
+        }
+
+        dragged_slot_ = -1;
+        return true;
+    }
     
     return false;
 }
 
-uint16_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position) const
+int32_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position) const
 {
     Math::Vector2 relative_position = position - GetRect().Min();
 

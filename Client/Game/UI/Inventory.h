@@ -24,7 +24,7 @@ namespace UI
         virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
         virtual bool OnDragEnd(const Math::Vector2& position) override;
 
-        uint16_t GetSlotByPosition(const Math::Vector2& position) const;
+        int32_t GetSlotByPosition(const Math::Vector2& position) const;
 
     private:
         int16_t slot_row_;
@@ -33,7 +33,7 @@ namespace UI
 
         InventoryData* inventory_data_;
         
-        uint16_t dragged_slot_;
+        int32_t dragged_slot_;
         
         bool is_dragging_;
     
