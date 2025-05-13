@@ -9,7 +9,6 @@
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
 #include "Misc/StringHelper.h"
-#include "Subsystems/NetworkSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :

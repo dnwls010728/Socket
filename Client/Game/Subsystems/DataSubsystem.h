@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 #include "yaml-cpp/yaml.h"
 
 #define GET_DATA() GameInstance::Get()->GetSubsystem<DataSubsystem>()

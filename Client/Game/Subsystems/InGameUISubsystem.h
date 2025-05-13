@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 
 #define GET_IN_GAME_UI() GameInstance::Get()->GetSubsystem<InGameUISubsystem>()
 

@@ -3,7 +3,7 @@
 
 #include "NetTCPSocket.h"
 #include "TCPClientSocket.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 
 #define GET_SESSION() GameInstance::Get()->GetSubsystem<SessionSubsystem>()
 

@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "Subsystems/Tickable.h"
-#include "Subsystems/WorldSubsystem.h"
+#include "Subsystem/Tickable.h"
+#include "Subsystem/WorldSubsystem.h"
 
 #define GET_NETWORK() World::Get()->GetSubsystem<NetworkSubsystem>()
 

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GameInstance.h"
 
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 
 GameInstance::GameInstance() :
     subsystems_()
