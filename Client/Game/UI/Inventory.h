@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "UI/Widget.h"
 
-class InventoryData;
+class InventoryManager;
 
 namespace UI
 {
@@ -37,7 +37,7 @@ namespace UI
         float scroll_offset_y_;
         float min_allowed_scroll_offset_y_;
 
-        InventoryData* inventory_data_;
+        InventoryManager* inventory_manager_;
         
         int32_t dragged_slot_;
         

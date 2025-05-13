@@ -3,9 +3,11 @@
 
 #include "GameInstance.h"
 #include "Asset/AssetManager.h"
-#include "Inventory/InventoryData.h"
+#include "Data/ItemData.h"
+#include "Inventory/InventoryManager.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Windows/DX/UITexture.h"
 
@@ -17,7 +19,7 @@ UI::Inventory::Inventory(const std::wstring& name) :
     scroll_rect_(Math::Rect::Zero()),
     scroll_offset_y_(0.f),
     min_allowed_scroll_offset_y_(0.f),
-    inventory_data_(nullptr),
+    inventory_manager_(nullptr),
     dragged_slot_(-1),
     is_dragging_(false)
 {
@@ -75,11 +77,11 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
     
     for (int16_t i = 0; i < max_slots_; ++i)
     {
-        int32_t item_id = inventory_data_->GetItemID(i);
+        int32_t item_id = inventory_manager_->GetItemID(i);
         if (item_id >= 0)
         {
-            UITexture* texture = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-            if (texture)
+            ItemData* item_data = GET_DATA()->GetItem(item_id);
+            if (item_data && item_data->IsValid())
             {
                 Math::Rect icon_rect = GetRect(
                     {slot_start_x + (i % slot_col_) * 36.f, slot_start_y + (i / slot_col_) * 36.f},
@@ -97,9 +99,9 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
                     icon_rect.y = mouse_position.y - icon_rect.height / 2.f;
                 }
 
-                renderer->DrawBitmap(window, texture->GetTexture(), icon_rect, GetPivotPosition(icon_rect, {0.f, 1.f}));
+                renderer->DrawBitmap(window, item_data->GetIcon()->GetTexture(), icon_rect, GetPivotPosition(icon_rect, {0.f, 1.f}));
 
-                int16_t count = inventory_data_->GetItemCount(i);
+                int16_t count = inventory_manager_->GetItemCount(i);
                 renderer->DrawString(
                     window,
                     std::to_wstring(count),
@@ -122,7 +124,7 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
         { 0.f, 1.f }
     );
 
-    std::wstring color = std::to_wstring(inventory_data_->GetColor());
+    std::wstring color = std::to_wstring(inventory_manager_->GetColor());
     for (size_t i = color.size(); i > 3; i -= 3)
     {
         color.insert(i - 3, 1, L',');
@@ -137,6 +139,28 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
         L"NanumBarunGothic", 12.f,
         DWRITE_TEXT_ALIGNMENT_TRAILING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER
     );
+
+    Math::Rect scroll_bar_rect = GetRect(
+        { rect.XMax() - 10.f, rect.YMin() + 20.f },
+        { 10.f, rect.height - 40.f },
+        { 0.f, 1.f }
+    );
+
+    renderer->DrawSolidBox(window, scroll_bar_rect, pivot_position, Math::Color::Gray);
+
+    float ratio = scroll_rect_.height / (slot_row_ * 36.f);
+    float scroll_thumb_height = Math::Clamp(scroll_rect_.height * ratio, 10.f, scroll_rect_.height);
+    
+    float scroll_ratio = scroll_offset_y_ / min_allowed_scroll_offset_y_;
+    scroll_ratio = Math::IsValid(scroll_ratio) ? scroll_ratio : 0.f;
+    
+    Math::Rect scroll_thumb_rect = GetRect(
+        { scroll_bar_rect.x, scroll_bar_rect.y + scroll_ratio * (scroll_bar_rect.height - scroll_thumb_height) },
+        { scroll_bar_rect.width, scroll_thumb_height },
+        { 0.f, 1.f }
+    );
+    
+    renderer->DrawSolidBox(window, scroll_thumb_rect, pivot_position, Math::Color(255, 255, 255, 100));
 }
 
 void UI::Inventory::OnAdd()
@@ -156,7 +180,7 @@ void UI::Inventory::OnAdd()
     float content_height = slot_row_ * 36.f;
     min_allowed_scroll_offset_y_ = scroll_rect_.height - content_height;
 
-    inventory_data_ = GET_SESSION()->GetInventoryData();
+    inventory_manager_ = GET_SESSION()->GetInventoryManager();
 }
 
 bool UI::Inventory::OnDragBegin(const Math::Vector2& position)
@@ -211,7 +235,7 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
         int32_t slot_index = GetSlotByPosition(position);
         if (slot_index > -1 && slot_index != dragged_slot_)
         {
-            inventory_data_->Swap(dragged_slot_, slot_index);
+            inventory_manager_->Swap(dragged_slot_, slot_index);
             dragged_slot_ = -1;
             return true;
         }

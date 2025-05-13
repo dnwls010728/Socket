@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-class InventoryData
+class InventoryManager
 {
 public:
-    InventoryData();
-    ~InventoryData() = default;
+    InventoryManager();
+    ~InventoryManager() = default;
     
     int32_t GetItemID(int32_t slot_index) const;
 

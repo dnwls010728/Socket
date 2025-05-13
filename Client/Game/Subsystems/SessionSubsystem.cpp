@@ -5,7 +5,7 @@
 #include <CustomSerializer.h>
 
 #include "NetworkManager.h"
-#include "Inventory/InventoryData.h"
+#include "Inventory/InventoryManager.h"
 #include "UI/Inventory.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
@@ -13,7 +13,7 @@
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
     character_info_(),
-    inventory_data_(nullptr)
+    inventory_manager_(nullptr)
 {
 }
 
@@ -59,10 +59,8 @@ void SessionSubsystem::ProcessPackets()
                 SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
                 if (response->is_success)
                 {
-                    inventory_data_ = std::make_unique<InventoryData>();
-                    inventory_data_->AddSlot(0, 100, 1);
-                    inventory_data_->AddSlot(7, 101, 20);
-                    inventory_data_->AddSlot(19, 102, 100);
+                    inventory_manager_ = std::make_unique<InventoryManager>();
+                    inventory_manager_->AddSlot(7, 101, 20);
 
                     std::shared_ptr<UI::Inventory> inventory = UI::Inventory::Create(L"Inventory");
                     inventory->SetPosition({400.f, 300.f});

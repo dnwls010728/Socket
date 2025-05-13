@@ -5,10 +5,9 @@
 #include "TCPClientSocket.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
-#define GET_SESSION() \
-    GameInstance::Get()->GetSubsystem<SessionSubsystem>()
+#define GET_SESSION() GameInstance::Get()->GetSubsystem<SessionSubsystem>()
 
-class InventoryData;
+class InventoryManager;
 
 enum class SessionState
 {
@@ -43,7 +42,7 @@ public:
     FORCEINLINE const CharacterInfo& GetCharacterInfo() const { return character_info_; }
     FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
 
-    FORCEINLINE InventoryData* GetInventoryData() const { return inventory_data_.get(); }
+    FORCEINLINE InventoryManager* GetInventoryManager() const { return inventory_manager_.get(); }
     
     OnPacketDelegate packet_handler;
 
@@ -58,6 +57,6 @@ private:
 
     CharacterInfo character_info_;
 
-    std::unique_ptr<InventoryData> inventory_data_;
+    std::unique_ptr<InventoryManager> inventory_manager_;
     
 };
