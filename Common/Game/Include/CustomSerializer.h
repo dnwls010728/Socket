@@ -39,7 +39,7 @@ SERIALIZER_EXTEND(CharacterInfo,
 // ObjectInfo 직렬화/역직렬화 등록
 SERIALIZER_EXTEND(ObjectInfo,
 	v.name,
-	v.class_name,
+	v.type_name,
 	v.unique_id,
 	v.last_position_x,
 	v.last_position_y,

@@ -6,6 +6,7 @@
 #include <ranges>
 
 #include "Actor/Actor.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Actors/TilemapLoader.h"
 #include "Asset/AssetManager.h"
 #include "Session/Player.h"
@@ -14,6 +15,7 @@
 #include "box2d/box2d.h"
 #include "Math/Bounds.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
+#include "Helper/StringHelper.h"
 
 Map::Map(uint32_t MapBase_id) :
     map_unique_id_(MapBase_id),
@@ -80,12 +82,17 @@ void Map::AddPlayer(Player* player)
         }
     }
 
+    // 맵에 추가된 플레이어에게 맵 내의 오브젝트들을 스폰하도록 패킷 전송
     for (auto& map_object :  std::views::values(map_objects_))
     {
         SpawnObjectPacket spawn_object_packet;
+        Math::Vector2 position = map_object->GetTransform()->GetPosition();
         spawn_object_packet.object.unique_id = map_object->GetUniqueID();
-        spawn_object_packet.object.last_position_x = map_object->GetUniqueID();
-        
+        spawn_object_packet.object.last_position_x = position.x;
+        spawn_object_packet.object.last_position_y = position.y;
+        spawn_object_packet.object.name = map_object->GetName();
+        spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
+        player->SendPacket(spawn_object_packet);
     }
 }
 
@@ -183,6 +190,18 @@ void Map::SpawnActors()
         std::shared_ptr<Actor> actor = pending_actors_.front();
         map_objects_.insert({actor->GetUniqueID(),actor});
         actor->BeginPlay();
+
+        for (auto& map_object :  std::views::values(map_objects_))
+        {
+            SpawnObjectPacket spawn_object_packet;
+            Math::Vector2 position = map_object->GetTransform()->GetPosition();
+            spawn_object_packet.object.unique_id = map_object->GetUniqueID();
+            spawn_object_packet.object.last_position_x = position.x;
+            spawn_object_packet.object.last_position_y = position.y;
+            spawn_object_packet.object.name = map_object->GetName();
+            spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
+            SendPacket(spawn_object_packet);
+        }
         
         pending_actors_.pop();
     }

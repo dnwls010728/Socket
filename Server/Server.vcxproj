@@ -188,7 +188,7 @@
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Game\Actors\Character\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Character\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Character\Monster.cpp"/>
+    <ClCompile Include="Game\Actors\Character\Monster\MonsterBase.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
@@ -287,7 +287,7 @@
     <ClInclude Include="Engine\yaml-cpp\yaml.h" />
     <ClInclude Include="Game\Actors\Character\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Character\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Character\Monster.h" />
+    <ClInclude Include="Game\Actors\Character\Monster\MonsterBase.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\States\BaseState.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />

@@ -80,6 +80,18 @@ void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
     SendPacket(request);
 }
 
+std::shared_ptr<NetworkActor> NetworkSubsystem::SpawnNetworkActor(const std::wstring& type_name, uint32_t unique_id, const std::wstring& name)
+{
+    std::string type_name_a(type_name.begin(), type_name.end());
+    rttr::type type = rttr::type::get_by_name(type_name_a);
+    if (!type.is_valid())
+    {
+        return nullptr;
+    }
+    return SpawnNetworkActor<NetworkActor>(type, unique_id, name);
+}
+
+
 void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
@@ -172,7 +184,18 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
-        
+
+    case SpawnObjectPacket::StaticPacketID:
+        {
+            SpawnObjectPacket* spawn_object_packet = static_cast<SpawnObjectPacket*>(packet.get());
+            ObjectInfo  &object_info = spawn_object_packet->object;
+            std::shared_ptr<NetworkActor> new_object = SpawnNetworkActor(object_info.type_name, object_info.unique_id, object_info.name);
+            if (IsValid(new_object))
+            {
+                new_object->GetTransform()->SetPosition({object_info.last_position_x,object_info.last_position_y});
+            }
+        }
+        break;
     default:
         break;
     }

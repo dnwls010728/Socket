@@ -36,10 +36,10 @@ struct CharacterInfo
 
 struct ObjectInfo
 {
-    int unique_id;
+    uint32_t unique_id;
     std::wstring name;
-    std::wstring class_name;
-    int map_unique_id;
+    std::wstring type_name;
+    uint32_t map_unique_id;
     float last_position_x;
     float last_position_y;
 
