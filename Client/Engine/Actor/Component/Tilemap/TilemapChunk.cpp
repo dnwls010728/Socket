@@ -3,6 +3,7 @@
 
 #include "Data/FileHelper.h"
 #include "Level/World.h"
+#include "Misc/StringHelper.h"
 #include "tmxlite/Tileset.hpp"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/Sprite.h"
@@ -26,13 +27,11 @@ TilemapChunk::TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::
     
     for (const auto& kTileset : tilesets)
     {
-        const std::string kPath = kTileset->getImagePath();
-        
-        std::wstring to_wide_string = std::wstring(kPath.begin(), kPath.end());
-        to_wide_string = FileHelper::GetRelativePath(to_wide_string);
+        std::wstring path = StringHelper::UTF8ToUTF16(kTileset->getImagePath());
+        path = FileHelper::GetRelativePath(path);
 
         if (kTileset->getImagePath().empty()) continue;
-        chunk_arrays_.emplace_back(std::make_unique<TilemapChunkArray>(tileset_textures.find(to_wide_string)->second, *kTileset, order));
+        chunk_arrays_.emplace_back(std::make_unique<TilemapChunkArray>(tileset_textures.find(path)->second, *kTileset, order));
     }
     
     uint32_t pos_x = static_cast<uint32_t>(kPosition.x / kTileSize.x);

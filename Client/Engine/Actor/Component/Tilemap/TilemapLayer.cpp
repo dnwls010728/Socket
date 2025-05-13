@@ -4,6 +4,7 @@
 #include "TilemapChunk.h"
 #include "Asset/AssetManager.h"
 #include "Data/FileHelper.h"
+#include "Misc/StringHelper.h"
 #include "tmxlite/Map.hpp"
 #include "Windows/DX/Sprite.h"
 
@@ -73,13 +74,11 @@ void TilemapLayer::CreateChunks(const tmx::Map& kMap, const tmx::TileLayer& kLay
 
     for (const auto& kTileset : used_tilesets)
     {
-        const std::string kPath = kTileset->getImagePath();
-        
-        std::wstring to_wide_string = std::wstring(kPath.begin(), kPath.end());
-        to_wide_string = FileHelper::GetRelativePath(to_wide_string);
+        std::wstring path = StringHelper::UTF8ToUTF16(kTileset->getImagePath());
+        path = FileHelper::GetRelativePath(path);
 
-        Sprite* temp = AssetManager::Get()->Load<Sprite>(to_wide_string);
-        tileset_textures_[to_wide_string] = temp;
+        Sprite* temp = AssetManager::Get()->Load<Sprite>(path);
+        tileset_textures_[path] = temp;
     }
     
     const auto bounds = kMap.getBounds();

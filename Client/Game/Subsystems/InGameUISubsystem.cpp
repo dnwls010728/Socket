@@ -22,7 +22,7 @@ void InGameUISubsystem::Init()
 
     chat_input_ = UI::EditableTextBox::Create(L"ChatInput");
     chat_input_->SetPosition({ 0.f, 600.f });
-    chat_input_->SetSize({ 300.f, 30.f });
+    chat_input_->SetSize({ 300.f, 20.f });
     chat_input_->SetPivot({ 0.f, 0.f });
     chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
 

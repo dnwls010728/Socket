@@ -66,6 +66,8 @@ void SessionSubsystem::ProcessPackets()
 
                     std::shared_ptr<UI::Inventory> inventory = UI::Inventory::Create(L"Inventory");
                     inventory->SetPosition({400.f, 300.f});
+                    inventory->SetSize({158.f, 224.f});
+                    inventory->SetPivot({0.f, 1.f});
                     inventory->AddToViewport();
                 }
             }

@@ -143,9 +143,6 @@ void UI::Inventory::OnAdd()
 {
     Widget::OnAdd();
 
-    SetSize({148.f, 224.f});
-    SetPivot({0.f, 1.f});
-
     max_slots_ = slot_row_ * slot_col_;
 
     Math::Rect rect = GetRect();

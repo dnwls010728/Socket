@@ -8,5 +8,7 @@ class DataSubsystem : public GameInstanceSubsystem
 public:
     DataSubsystem();
     virtual ~DataSubsystem() override = default;
+
+    virtual void Init() override;
     
 };

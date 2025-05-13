@@ -191,6 +191,7 @@
     <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\GameplayStatics.h" />
+    <ClInclude Include="Engine\Misc\StringHelper.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Asset\Asset.h" />
     <ClInclude Include="Engine\Asset\AssetManager.h" />
@@ -261,7 +262,6 @@
     <ClInclude Include="Game\BT\Decorators\Start.h" />
     <ClInclude Include="Game\BT\Decorators\TimeOut.h" />
     <ClInclude Include="Game\BT\Node.h" />
-    <ClInclude Include="Game\Data\PropData.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
@@ -559,6 +559,7 @@
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
+    <ClCompile Include="Engine\Misc\StringHelper.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Asset\Asset.cpp" />
     <ClCompile Include="Engine\Asset\AssetManager.cpp" />
@@ -623,7 +624,6 @@
     <ClCompile Include="Game\BT\Decorators\Start.cpp" />
     <ClCompile Include="Game\BT\Decorators\TimeOut.cpp" />
     <ClCompile Include="Game\BT\Node.cpp" />
-    <ClCompile Include="Game\Data\PropData.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />

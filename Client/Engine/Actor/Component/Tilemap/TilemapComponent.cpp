@@ -8,6 +8,7 @@
 #include "box2d/box2d.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
+#include "Misc/StringHelper.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
@@ -157,10 +158,8 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 			rttr::type type = rttr::type::get_by_name(temp.getClass());
 			if (type.is_valid())
 			{
-				const std::string& name = temp.getName();
-				
-				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
-				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
+				std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
+				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, name);
 				if (IsValid(actor))
 				{
 					std::shared_ptr<TransformComponent> transform = actor->GetTransform();

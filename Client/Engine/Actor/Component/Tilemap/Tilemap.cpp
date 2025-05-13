@@ -4,6 +4,7 @@
 #include <format>
 
 #include "Data/FileHelper.h"
+#include "Misc/StringHelper.h"
 
 Tilemap::Tilemap() :
     map_(),
@@ -23,8 +24,7 @@ bool Tilemap::Load(const std::wstring& kPath)
 
     const std::vector<tmx::Property> properties = map_.getProperties();
     
-    std::string name_str = properties[0].getStringValue();
-    name_ = std::wstring(name_str.begin(), name_str.end());
+    name_ = StringHelper::UTF8ToUTF16(properties[0].getStringValue());
 
     ppu_ = properties[1].getFloatValue();
     unique_id_ = properties[2].getIntValue();

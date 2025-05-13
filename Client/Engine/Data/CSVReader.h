@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <codecvt>
 #include <fstream>
 #include <vector>
 
@@ -21,8 +22,9 @@ private:
 template <typename T>
 bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
 {
-    std::wifstream file(L".\\Content\\" + kPath);
+    std::wifstream file(L".\\Content\\" + kPath, std::ios::binary);
     if (!file.is_open()) return false;
+    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
 
     std::wstring line;
     std::vector<std::wstring> headers = {};
