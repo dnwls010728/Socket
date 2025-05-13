@@ -78,7 +78,7 @@
   </object>
  </objectgroup>
  <objectgroup id="6" name="Spawn">
-  <object id="12" name="NPC" type="NPC" x="304" y="336">
+  <object id="12" name="NPC" type="NPC" x="504" y="336">
    <point/>
   </object>
   <object id="13" name="MonsterBase" type="MonsterBase" x="404" y="336">

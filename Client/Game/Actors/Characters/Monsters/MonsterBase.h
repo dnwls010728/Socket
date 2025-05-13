@@ -4,7 +4,7 @@
 class MonsterBase : public CharacterBase
 {
     SHADER_CLASS_HELPER(MonsterBase)
-    GENERATED_BODY(MonsterBase, Actor)
+    GENERATED_BODY(MonsterBase, CharacterBase)
  
 public:
     enum class State : uint8_t
