@@ -23,8 +23,8 @@ void MonsterBase::PhysicsTick(float delta_time)
     std::cout<<"Before y : "<< transform->GetPosition().y << std::endl;
     
     Math::Vector2 movement_input_ = {1.0f,0.0f};
-    velocity_.x = movement_input_.x * 5.f;
-    velocity_.y += gravity_ * delta_time;
+    velocity_.x = movement_input_.x * 1.f;
+    velocity_.y = 0;
     
     controller_->Move(velocity_ * delta_time, movement_input_);
 
