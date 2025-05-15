@@ -9,6 +9,7 @@
 #include "Math/Vector2.h"
 #include "Asset/AssetManager.h"
 #include "Time/Time.h"
+#include "UI/UI.h"
 #include "UI/UIManager.h"
 #include "Windows/WindowDefinition.h"
 #include "Windows/WindowsWindow.h"
@@ -149,6 +150,7 @@ void Core::MainThread()
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
                 UI_OLD::Manager::Get()->OnEvent(event);
+                UI::Get()->OnEvent(event);
             }
             
             game_engine_->GameLoop(delta_time_);
