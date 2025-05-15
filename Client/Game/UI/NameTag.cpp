@@ -6,7 +6,7 @@
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-UI::NameTag::NameTag(const std::wstring& name) :
+UI_OLD::NameTag::NameTag(const std::wstring& name) :
     Widget(name),
     text_(L"Unknown"),
     advances_(),
@@ -14,7 +14,7 @@ UI::NameTag::NameTag(const std::wstring& name) :
 {
 }
 
-void UI::NameTag::SetText(const std::wstring& text)
+void UI_OLD::NameTag::SetText(const std::wstring& text)
 {
     text_ = text;
     
@@ -24,12 +24,12 @@ void UI::NameTag::SetText(const std::wstring& text)
     total_advance_ = std::accumulate(advances_.begin(), advances_.end(), 0.f);
 }
 
-std::shared_ptr<UI::NameTag> UI::NameTag::Create(const std::wstring& name)
+std::shared_ptr<UI_OLD::NameTag> UI_OLD::NameTag::Create(const std::wstring& name)
 {
     return std::make_shared<NameTag>(name);
 }
 
-void UI::NameTag::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::NameTag::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -49,7 +49,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::NameTag>("UI::NameTag")
+    registration::class_<UI_OLD::NameTag>("UI::NameTag")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

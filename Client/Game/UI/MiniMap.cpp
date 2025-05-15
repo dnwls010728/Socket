@@ -11,13 +11,13 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
 
-UI::MiniMap::MiniMap(const std::wstring& name) :
+UI_OLD::MiniMap::MiniMap(const std::wstring& name) :
     Widget(name),
     tilemap_(nullptr)
 {
 }
 
-void UI::MiniMap::SetTilemap(Tilemap* tilemap)
+void UI_OLD::MiniMap::SetTilemap(Tilemap* tilemap)
 {
     tilemap_ = tilemap;
     if (!tilemap_) return;
@@ -32,12 +32,12 @@ void UI::MiniMap::SetTilemap(Tilemap* tilemap)
     SetSize({ width, height });
 }
 
-std::shared_ptr<UI::MiniMap> UI::MiniMap::Create(const std::wstring& name)
+std::shared_ptr<UI_OLD::MiniMap> UI_OLD::MiniMap::Create(const std::wstring& name)
 {
     return std::make_shared<MiniMap>(name);
 }
 
-void UI::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -93,7 +93,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::MiniMap>("UI::MiniMap")
+    registration::class_<UI_OLD::MiniMap>("UI::MiniMap")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

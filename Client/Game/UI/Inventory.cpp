@@ -11,7 +11,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "Windows/DX/UITexture.h"
 
-UI::Inventory::Inventory(const std::wstring& name) :
+UI_OLD::Inventory::Inventory(const std::wstring& name) :
     Widget(name),
     slot_row_(10),
     slot_col_(4),
@@ -25,12 +25,12 @@ UI::Inventory::Inventory(const std::wstring& name) :
 {
 }
 
-std::shared_ptr<UI::Inventory> UI::Inventory::Create(const std::wstring& name)
+std::shared_ptr<UI_OLD::Inventory> UI_OLD::Inventory::Create(const std::wstring& name)
 {
     return std::make_shared<Inventory>(name);
 }
 
-void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::Inventory::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -163,7 +163,7 @@ void UI::Inventory::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawSolidBox(window, scroll_thumb_rect, pivot_position, Math::Color(255, 255, 255, 100));
 }
 
-void UI::Inventory::OnAdd()
+void UI_OLD::Inventory::OnAdd()
 {
     Widget::OnAdd();
 
@@ -183,7 +183,7 @@ void UI::Inventory::OnAdd()
     inventory_manager_ = GET_SESSION()->GetInventoryManager();
 }
 
-bool UI::Inventory::OnDragBegin(const Math::Vector2& position)
+bool UI_OLD::Inventory::OnDragBegin(const Math::Vector2& position)
 {
     Math::Rect rect = GetRect();
     Math::Rect title_rect = GetRect(
@@ -208,7 +208,7 @@ bool UI::Inventory::OnDragBegin(const Math::Vector2& position)
     return false;
 }
 
-bool UI::Inventory::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
+bool UI_OLD::Inventory::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
     if (is_dragging_)
     {
@@ -222,7 +222,7 @@ bool UI::Inventory::OnDrag(const Math::Vector2& position, const Math::Vector2& d
     return false;
 }
 
-bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
+bool UI_OLD::Inventory::OnDragEnd(const Math::Vector2& position)
 {
     if (is_dragging_)
     {
@@ -247,13 +247,13 @@ bool UI::Inventory::OnDragEnd(const Math::Vector2& position)
     return false;
 }
 
-bool UI::Inventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
+bool UI_OLD::Inventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
     scroll_offset_y_ = Math::Clamp(scroll_offset_y_ + delta.y * 50.f, min_allowed_scroll_offset_y_, 0.f);
     return true;
 }
 
-int32_t UI::Inventory::GetSlotByPosition(const Math::Vector2& position) const
+int32_t UI_OLD::Inventory::GetSlotByPosition(const Math::Vector2& position) const
 {
     Math::Vector2 relative_position = position - GetRect().Min() + (Math::Vector2::Down() * scroll_offset_y_);
 
@@ -276,7 +276,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::Inventory>("UI::Inventory")
+    registration::class_<UI_OLD::Inventory>("UI::Inventory")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

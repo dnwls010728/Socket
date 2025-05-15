@@ -3,7 +3,7 @@
 
 class Tilemap;
 
-namespace UI
+namespace UI_OLD
 {
     class MiniMap : public Widget
     {

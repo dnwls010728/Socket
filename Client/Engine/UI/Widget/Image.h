@@ -3,7 +3,7 @@
 
 class UITexture;
 
-namespace UI
+namespace UI_OLD
 {
     class Image : public Widget
     {

@@ -7,7 +7,7 @@
 
 class Renderer;
 
-namespace UI
+namespace UI_OLD
 {
     class Widget : public std::enable_shared_from_this<Widget>
     {

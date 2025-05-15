@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Actors/NetworkActor.h"
 
-namespace UI
+namespace UI_OLD
 {
     class NameTag;
     class ChatBalloon;
@@ -47,8 +47,8 @@ protected:
     float gravity_;
     
 #pragma region UI
-    std::shared_ptr<UI::NameTag> name_tag_;
-    std::shared_ptr<UI::ChatBalloon> chat_balloon_;
+    std::shared_ptr<UI_OLD::NameTag> name_tag_;
+    std::shared_ptr<UI_OLD::ChatBalloon> chat_balloon_;
 #pragma endregion
 
     TimerHandle chat_balloon_timer_handle_;

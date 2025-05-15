@@ -3,7 +3,7 @@
 
 class InventoryManager;
 
-namespace UI
+namespace UI_OLD
 {
     class Inventory : public Widget
     {

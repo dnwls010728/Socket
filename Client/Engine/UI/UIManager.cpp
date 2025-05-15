@@ -5,7 +5,7 @@
 #include "Event/Events.h"
 #include "Windows/DX/Renderer.h"
 
-UI::Manager::Manager() :
+UI_OLD::Manager::Manager() :
     widgets_(),
     focused_widget_(),
     dragging_widget_(),
@@ -15,7 +15,7 @@ UI::Manager::Manager() :
 {
 }
 
-void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
+void UI_OLD::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
 {
     if (const std::shared_ptr<Widget> widget_ptr = focused_widget_.lock()) widget_ptr->OnFocus(false);
 
@@ -23,7 +23,7 @@ void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
     if (kWidget) kWidget->OnFocus(true);
 }
 
-std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition) const
+std::shared_ptr<UI_OLD::Widget> UI_OLD::Manager::RayCast(const Math::Vector2& kPosition) const
 {
     for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
@@ -34,7 +34,7 @@ std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition)
     return nullptr;
 }
 
-void UI::Manager::Tick(float delta_time)
+void UI_OLD::Manager::Tick(float delta_time)
 {
     for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
@@ -43,7 +43,7 @@ void UI::Manager::Tick(float delta_time)
     }
 }
 
-void UI::Manager::Render()
+void UI_OLD::Manager::Render()
 {
     for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
@@ -52,7 +52,7 @@ void UI::Manager::Render()
     }
 }
 
-void UI::Manager::OnEvent(const Event& kEvent)
+void UI_OLD::Manager::OnEvent(const Event& kEvent)
 {
     const uint32_t& kType = kEvent.type;
 

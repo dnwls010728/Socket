@@ -71,10 +71,10 @@ void CharacterBase::BeginPlay()
 {
     NetworkActor::BeginPlay();
 
-    name_tag_ = UI::NameTag::Create(L"NameTag");
+    name_tag_ = UI_OLD::NameTag::Create(L"NameTag");
     name_tag_->SetText(character_name_);
     
-    chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
+    chat_balloon_ = UI_OLD::ChatBalloon::Create(L"ChatBalloon");
     chat_balloon_->SetSize({8.f, 8.f});
 
     name_tag_->AddToViewport();

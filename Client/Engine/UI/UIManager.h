@@ -2,7 +2,7 @@
 #include "DirectXTK/SimpleMath.h"
 #include "Math/Vector2.h"
 
-namespace UI
+namespace UI_OLD
 {
     class Widget;
 

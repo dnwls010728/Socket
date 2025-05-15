@@ -127,7 +127,7 @@ void PlayerCharacter::Tick(float delta_time)
 
     if (IsMine())
     {
-        UI::Manager* ui_manager = UI::Manager::Get();
+        UI_OLD::Manager* ui_manager = UI_OLD::Manager::Get();
         Keyboard* keyboard = Keyboard::Get();
         
         if (!ui_manager->HasFocus())

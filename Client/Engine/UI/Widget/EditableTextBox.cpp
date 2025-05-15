@@ -6,7 +6,7 @@
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-UI::EditableTextBox::EditableTextBox(const std::wstring& kName) :
+UI_OLD::EditableTextBox::EditableTextBox(const std::wstring& kName) :
     Widget(kName),
     font_name_(L"NanumBarunGothic"),
     font_size_(12.f),
@@ -22,29 +22,29 @@ UI::EditableTextBox::EditableTextBox(const std::wstring& kName) :
 {
 }
 
-void UI::EditableTextBox::OnValueChanged(void(* func)(const std::wstring&))
+void UI_OLD::EditableTextBox::OnValueChanged(void(* func)(const std::wstring&))
 {
     value_changed_event_ = func;
 }
 
-void UI::EditableTextBox::OnReturn(void(* func)(const std::wstring&))
+void UI_OLD::EditableTextBox::OnReturn(void(* func)(const std::wstring&))
 {
     return_event_ = func;
 }
 
-void UI::EditableTextBox::SetText(const std::wstring& kText)
+void UI_OLD::EditableTextBox::SetText(const std::wstring& kText)
 {
     text_ = kText;
     cursor_position_ = text_.size();
     total_advance_ = GetAdvances(text_, advances_);
 }
 
-std::shared_ptr<UI::EditableTextBox> UI::EditableTextBox::Create(const std::wstring& kName)
+std::shared_ptr<UI_OLD::EditableTextBox> UI_OLD::EditableTextBox::Create(const std::wstring& kName)
 {
     return std::make_shared<EditableTextBox>(kName);
 }
 
-void UI::EditableTextBox::Tick(float delta_time)
+void UI_OLD::EditableTextBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
 
@@ -59,7 +59,7 @@ void UI::EditableTextBox::Tick(float delta_time)
     }
 }
 
-void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -111,14 +111,14 @@ void UI::EditableTextBox::Render(Renderer* renderer, WindowsWindow* window)
     }
 }
 
-bool UI::EditableTextBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed,
+bool UI_OLD::EditableTextBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed,
     double timestamp)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
     return true;
 }
 
-bool UI::EditableTextBox::OnKey(uint16_t key_code, bool is_pressed)
+bool UI_OLD::EditableTextBox::OnKey(uint16_t key_code, bool is_pressed)
 {
     if (is_pressed)
     {
@@ -201,7 +201,7 @@ bool UI::EditableTextBox::OnKey(uint16_t key_code, bool is_pressed)
     return false;
 }
 
-bool UI::EditableTextBox::OnChar(wchar_t character)
+bool UI_OLD::EditableTextBox::OnChar(wchar_t character)
 {
     text_.insert(cursor_position_++, 1, character);
     value_changed_event_(text_);
@@ -218,14 +218,14 @@ bool UI::EditableTextBox::OnChar(wchar_t character)
     return true;
 }
 
-void UI::EditableTextBox::OnFocus(bool is_focus)
+void UI_OLD::EditableTextBox::OnFocus(bool is_focus)
 {
     elapsed_time_ = 0.f;
     cursor_visible_ = is_focus;
     Widget::OnFocus(is_focus);
 }
 
-float UI::EditableTextBox::GetAdvances(const std::wstring& kString, std::vector<float>& advances)
+float UI_OLD::EditableTextBox::GetAdvances(const std::wstring& kString, std::vector<float>& advances)
 {
     Renderer* renderer = Renderer::Get();
     renderer->GetTextAdvances(kString, font_name_, font_size_, advances);
@@ -238,7 +238,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::EditableTextBox>("UI::EditableTextBox")
+    registration::class_<UI_OLD::EditableTextBox>("UI::EditableTextBox")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

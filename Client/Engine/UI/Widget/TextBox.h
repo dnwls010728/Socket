@@ -2,7 +2,7 @@
 #include "Math/Color.h"
 #include "UI/Widget.h"
 
-namespace UI
+namespace UI_OLD
 {
     class TextBox : public Widget
     {
