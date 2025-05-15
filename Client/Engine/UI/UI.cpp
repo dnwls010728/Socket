@@ -9,6 +9,7 @@
 UI::UI() :
     cursor_state_(CursorState::kIdle),
     cursor_textures_(),
+    last_position_(Math::Vector2::Zero()),
     cursor_position_(Math::Vector2::Zero()),
     state_(nullptr)
 {
@@ -21,6 +22,7 @@ void UI::ChangeState(const rttr::type& type)
     {
         UIState* new_state = var.get_value<UIState*>();
         state_ = std::unique_ptr<UIState>(new_state);
+        if (state_) state_->Init();
     }
 }
 
@@ -43,27 +45,66 @@ void UI::Render()
     Renderer* renderer = Renderer::Get();
     WindowsWindow* window = World::Get()->GetWindow();
 
-    if (cursor_textures_[cursor_state_])
+    UITexture* cursor_texture = cursor_textures_[cursor_state_];
+    if (cursor_texture)
     {
         Math::Rect cursor_rect = {
             cursor_position_.x,
             cursor_position_.y,
-            static_cast<float>(cursor_textures_[cursor_state_]->GetWidth()),
-            static_cast<float>(cursor_textures_[cursor_state_]->GetHeight())
+            static_cast<float>(cursor_texture->GetWidth()),
+            static_cast<float>(cursor_texture->GetHeight())
         };
         
-        renderer->DrawBitmap(window, cursor_textures_[cursor_state_]->GetTexture(), cursor_rect, Math::Vector2::Zero(), 0.f);
+        renderer->DrawBitmap(window, cursor_texture->GetTexture(), cursor_rect, Math::Vector2::Zero(), 0.f);
     }
 }
 
 void UI::OnEvent(const Event& event)
 {
-    if (state_) state_->OnEvent(event);
-
     const uint32_t& type = event.type;
     if (type == static_cast<uint32_t>(EventType::kMouseMotion))
     {
-        const Math::Vector2 position = {event.motion.x, event.motion.y};
+        const MouseMotionEvent& motion_event = event.motion;
+        
+        const Math::Vector2 position = {motion_event.x, motion_event.y};
+        const Math::Vector2 delta = position - last_position_;
+
+        if (state_)
+        {
+            MouseEventResult result = state_->OnMouseMotion(position, delta);
+            if (result.is_handled) cursor_state_ = result.cursor_state;
+        }
+
         cursor_position_ = position;
+        last_position_ = position;
+    }
+    else if (type & static_cast<uint32_t>(EventType::kMouseChanged))
+    {
+        const MouseButtonEvent& button_event = event.button;
+        const Math::Vector2 position = {button_event.x, button_event.y};
+
+        if (state_)
+        {
+            MouseEventResult result = state_->OnMouseButton(position, button_event.button, button_event.is_pressed, button_event.timestamp);
+            if (result.is_handled) cursor_state_ = result.cursor_state;
+        }
+    }
+    else if (type == static_cast<uint32_t>(EventType::kMouseWheel))
+    {
+        const MouseWheelEvent& wheel_event = event.wheel;
+        const Math::Vector2 position = {wheel_event.mouse_x, wheel_event.mouse_y};
+        const Math::Vector2 delta = {wheel_event.x, wheel_event.y};
+
+        if (state_) state_->OnScroll(position, delta);
+    }
+    else if (type & static_cast<uint32_t>(EventType::kKeyChanged))
+    {
+        const KeyboardEvent& key_event = event.key;
+        if (state_) state_->OnKey(key_event.key_code, key_event.is_repeat);
+    }
+    else if (type == static_cast<uint32_t>(EventType::kText))
+    {
+        const TextEvent& text_event = event.text;
+        if (state_) state_->OnChar(text_event.character);
     }
 }

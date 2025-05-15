@@ -10,6 +10,12 @@ public:
     {
         kIdle = 0
     };
+
+    struct MouseEventResult
+    {
+        bool is_handled;
+        CursorState cursor_state;
+    };
     
     UI();
     virtual ~UI() override = default;
@@ -29,6 +35,7 @@ private:
     
     std::unordered_map<CursorState, UITexture*> cursor_textures_;
 
+    Math::Vector2 last_position_;
     Math::Vector2 cursor_position_;
 
     std::unique_ptr<UIState> state_;
