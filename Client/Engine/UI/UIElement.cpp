@@ -20,13 +20,6 @@ UIElement::UIElement() :
 {
 }
 
-UIElement::UIElement(const Math::Vector2& position, const Math::Vector2& size) :
-    position_(position),
-    size_(size),
-    is_active_(true)
-{
-}
-
 UI::MouseEventResult UIElement::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     return { false, UI::CursorState::kIdle };
@@ -58,10 +51,6 @@ RTTR_REGISTRATION
 
     registration::class_<UIElement>("UIElement")
         .constructor<>()
-        (
-            policy::ctor::as_raw_ptr
-        )
-        .constructor<const Math::Vector2&, const Math::Vector2&>()
         (
             policy::ctor::as_raw_ptr
         );

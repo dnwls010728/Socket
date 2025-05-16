@@ -17,7 +17,6 @@ protected:
     friend class UIContainer;
     
     UIElement();
-    UIElement(const Math::Vector2& position, const Math::Vector2& size);
     
     FORCEINLINE virtual void Init() {}
     FORCEINLINE virtual void Tick(float delta_time) {}

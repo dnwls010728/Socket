@@ -10,7 +10,6 @@ public:
 
 protected:
     UIContainer();
-    UIContainer(const Math::Vector2& position, const Math::Vector2& size);
 
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
@@ -22,21 +21,31 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
-    template <std::derived_from<UIElement> T, typename ... Args>
-    void AddChild(const rttr::type& type, Args&&... args);
+    template <std::derived_from<UIElement> T>
+    T* AddChild(const rttr::type& type);
 
 private:
     std::vector<std::unique_ptr<UIElement>> children_;
     
 };
 
-template <std::derived_from<UIElement> T, typename ... Args>
-void UIContainer::AddChild(const rttr::type& type, Args&&... args)
+template <std::derived_from<UIElement> T>
+T* UIContainer::AddChild(const rttr::type& type)
 {
-    std::unique_ptr<UIElement> child = std::make_unique<T>(std::forward<Args>(args)...);
-    if (child)
+    if (!type.is_derived_from(T::StaticClass())) return nullptr;
+
+    rttr::variant var = type.create();
+    if (var.is_valid())
     {
-        child->Init();
-        children_.emplace_back(std::move(child));
+        UIElement* child = var.get_value<UIElement*>();
+        children_.push_back(std::unique_ptr<UIElement>(child));
+
+        rttr::type child_type = rttr::type::get<T>();
+        if (type.is_derived_from(child_type))
+        {
+            return static_cast<T*>(child);
+        }
     }
+    
+    return nullptr;
 }

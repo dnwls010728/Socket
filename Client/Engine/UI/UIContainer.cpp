@@ -2,13 +2,6 @@
 #include "UIContainer.h"
 
 UIContainer::UIContainer() :
-    UIElement(),
-    children_()
-{
-}
-
-UIContainer::UIContainer(const Math::Vector2& position, const Math::Vector2& size) :
-    UIElement(position, size),
     children_()
 {
 }
@@ -95,10 +88,6 @@ RTTR_REGISTRATION
 
     registration::class_<UIContainer>("UIContainer")
         .constructor<>()
-        (
-            policy::ctor::as_raw_ptr
-        )
-        .constructor<const Math::Vector2&, const Math::Vector2&>()
         (
             policy::ctor::as_raw_ptr
         );

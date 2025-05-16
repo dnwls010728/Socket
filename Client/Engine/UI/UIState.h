@@ -30,18 +30,18 @@ protected:
     virtual bool OnChar(wchar_t character);
 
     template <std::derived_from<UIElement> T>
-    T* AddElement(const rttr::type& type, const Math::Vector2& position = Math::Vector2::Zero(), const Math::Vector2& size = Math::Vector2::Zero());
+    T* AddElement(const rttr::type& type);
 
 private:
     std::vector<std::unique_ptr<UIElement>> elements_;
 };
 
 template <std::derived_from<UIElement> T>
-T* UIState::AddElement(const rttr::type& type, const Math::Vector2& position, const Math::Vector2& size)
+T* UIState::AddElement(const rttr::type& type)
 {
     if (!type.is_derived_from<UIElement>()) return nullptr;
 
-    rttr::variant var = type.create({ position, size });
+    rttr::variant var = type.create();
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
