@@ -16,13 +16,13 @@ void UIContainer::Tick(float delta_time)
     }
 }
 
-void UIContainer::Render()
+void UIContainer::Render(const Math::Vector2& parent_position)
 {
-    UIElement::Render();
+    UIElement::Render(parent_position);
     
     for (const auto& child : children_)
     {
-        if (child && child->IsActive()) child->Render();
+        if (child && child->IsActive()) child->Render(parent_position);
     }
 }
 

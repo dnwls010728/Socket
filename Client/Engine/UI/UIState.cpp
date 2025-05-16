@@ -22,7 +22,7 @@ void UIState::Render()
     {
         UIElement* element = elements_[i].get();
         if (element && element->IsActive())
-            element->Render();
+            element->Render(Math::Vector2::Zero());
     }
 }
 

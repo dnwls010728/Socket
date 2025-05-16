@@ -12,6 +12,9 @@ public:
     
     bool IsInRange(const Math::Vector2& position) const;
 
+    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+    FORCEINLINE Math::Vector2 GetSize() const { return size_; }
+
 protected:
     friend class UIState;
     friend class UIContainer;
@@ -20,7 +23,7 @@ protected:
     
     FORCEINLINE virtual void Init() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render() {}
+    FORCEINLINE virtual void Render(const Math::Vector2& parent_position) {}
 
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE void SetActive(bool active) { is_active_ = active; }
