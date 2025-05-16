@@ -16,6 +16,7 @@
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/MiniMap.h"
+#include "UI/UILoginState.h"
 #include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
@@ -55,6 +56,8 @@ void NetworkSubsystem::OnWorldBeginPlay()
         in_game_ui_subsystem->ShowMiniMap();
         in_game_ui_subsystem->ShowChatUI();
     }
+    
+    UI::Get()->ChangeState(UILoginState::StaticClass());
 }
 
 void NetworkSubsystem::Tick(float delta_time)

@@ -62,8 +62,6 @@ T* Level::AddActor(const rttr::type& kType, const std::wstring& kName)
         {
             return static_cast<T*>(actor.get());
         }
-
-        return nullptr;
     }
     
     return nullptr;

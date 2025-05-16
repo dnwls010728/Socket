@@ -1,0 +1,42 @@
+﻿#pragma once
+#include "UIElement.h"
+
+class UIContainer : public UIElement
+{
+    GENERATED_BODY(UIContainer, UIElement)
+    
+public:
+    virtual ~UIContainer() override = default;
+
+protected:
+    UIContainer();
+    UIContainer(const Math::Vector2& position, const Math::Vector2& size);
+
+    virtual void Tick(float delta_time) override;
+    virtual void Render() override;
+    
+    virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
+    
+    virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    virtual bool OnChar(wchar_t character) override;
+
+    template <std::derived_from<UIElement> T, typename ... Args>
+    void AddChild(const rttr::type& type, Args&&... args);
+
+private:
+    std::vector<std::unique_ptr<UIElement>> children_;
+    
+};
+
+template <std::derived_from<UIElement> T, typename ... Args>
+void UIContainer::AddChild(const rttr::type& type, Args&&... args)
+{
+    std::unique_ptr<UIElement> child = std::make_unique<T>(std::forward<Args>(args)...);
+    if (child)
+    {
+        child->Init();
+        children_.emplace_back(std::move(child));
+    }
+}

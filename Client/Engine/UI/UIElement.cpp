@@ -3,18 +3,6 @@
 
 #include "Math/Rect.h"
 
-UIElement::UIElement() :
-    position_(Math::Vector2::Zero()),
-    size_(Math::Vector2::Zero())
-{
-}
-
-UIElement::UIElement(const Math::Vector2& position, const Math::Vector2& size) :
-    position_(position),
-    size_(size)
-{
-}
-
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
     Math::Rect rect = {
@@ -23,6 +11,20 @@ bool UIElement::IsInRange(const Math::Vector2& position) const
     };
 
     return Math::Rect::Contains(rect, position);
+}
+
+UIElement::UIElement() :
+    position_(Math::Vector2::Zero()),
+    size_(Math::Vector2::Zero()),
+    is_active_(true)
+{
+}
+
+UIElement::UIElement(const Math::Vector2& position, const Math::Vector2& size) :
+    position_(position),
+    size_(size),
+    is_active_(true)
+{
 }
 
 UI::MouseEventResult UIElement::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
@@ -56,6 +58,10 @@ RTTR_REGISTRATION
 
     registration::class_<UIElement>("UIElement")
         .constructor<>()
+        (
+            policy::ctor::as_raw_ptr
+        )
+        .constructor<const Math::Vector2&, const Math::Vector2&>()
         (
             policy::ctor::as_raw_ptr
         );
