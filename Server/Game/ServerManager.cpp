@@ -5,6 +5,7 @@
 #include "NetworkManager.h"
 #include "CustomPacket.h"
 #include "EngineSettings.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
 
@@ -44,10 +45,63 @@ void ServerManager::CommandHandlerInitialize()
         }
     };
 
+    command_handler_[L"/spawn"] = [&](auto& args)
+    {
+        if (args.size() < 3) {
+            std::wcout << L"Usage: /spawn <mapKey> <object type> [<x> <y>][\n";
+            return;
+        }
+
+        Map* map = nullptr;
+        try {
+            uint32_t key = std::stoul(args[1]);
+            map = World::Get()->GetMap(key);
+            if (!map) {
+                std::wcout << L"Error: No map with key " << key << "\n";
+                return;
+            }
+        }
+        catch (...) {
+            std::wcout << L"Error: Invalid key '" << args[1] << "'\n";
+        }
+        std::string type_name = StringHelper::ToString(args[2]);
+        auto type = rttr::type::get_by_name(type_name);
+        if ( type.is_valid() == false)
+        {
+            std::wcout << L"Error: Invalid object type " << args[2] << "\n";
+            return;
+        }
+
+        std::shared_ptr<Actor> object = map->SpawnActor<Actor>(type);
+        if (IsValid(object) == false)
+        {
+            std::wcout << L"Error: Failed to spawn object\n";
+            return;
+        }
+
+        if (args.size() >= 5){
+            try {
+                float x = std::stof(args[3]);
+                float y = std::stof(args[4]);
+
+                object->GetTransform()->SetPosition({x,y});
+            }
+            catch (...) {
+                std::wcout << L"Error: Invalid position '" << args[3] << " " << args[4] << "'\n";
+            }
+        }
+
+        std::wcout << L"Spawned '" << args[2] << L"' on map " << args[1];
+        if (args.size() >= 5)
+            std::wcout << L" at (" << args[3] << L"," << args[4] << L")";
+        std::wcout << L"\n";
+    };
+
     command_handler_[L"/help"] = [&](auto&) {
         std::wcout << L"Available commands:\n";
         std::wcout << L"  /exit                   - Exit the server\n";
         std::wcout << L"  /disconnect <clientKey> - Disconnect a client by its key\n";
+        std::wcout << L"  /spawn <mapKey> <object type> [<x> <y>] - Spawn a object\n";
         std::wcout << L"  /help                   - Show this help\n";
     };
 }
