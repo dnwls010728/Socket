@@ -2,6 +2,7 @@
 #include "UI.h"
 #include "Input/Mouse.h"
 #include "Misc/EngineMacros.h"
+#include "rttr/registration_friend.h"
 
 class UIElement
 {
@@ -12,7 +13,10 @@ public:
     
     bool IsInRange(const Math::Vector2& position) const;
 
+    FORCEINLINE void SetPosition(const Math::Vector2& position) { position_ = position; }
     FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+
+    FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE Math::Vector2 GetSize() const { return size_; }
 
 protected:
