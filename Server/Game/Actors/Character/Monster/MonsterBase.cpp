@@ -17,21 +17,14 @@ void MonsterBase::PhysicsTick(float delta_time)
 {
     const std::shared_ptr<TransformComponent> transform = GetTransform();
     const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-
-    // 테스트
-    std::cout<<"Before x : "<< transform->GetPosition().x << std::endl;
-    std::cout<<"Before y : "<< transform->GetPosition().y << std::endl;
     
     Math::Vector2 movement_input_ = {1.0f,0.0f};
-    velocity_.x = movement_input_.x * 1.f;
+    velocity_.x = movement_input_.x * 0.1f;
     velocity_.y = 0;
     
     controller_->Move(velocity_ * delta_time, movement_input_);
 
-    if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
-
-    std::cout<<"After x : "<< transform->GetPosition().x << std::endl;
-    std::cout<<"After y : "<< transform->GetPosition().y << std::endl;
+    //if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
     
     CharacterBase::PhysicsTick(delta_time);
 }

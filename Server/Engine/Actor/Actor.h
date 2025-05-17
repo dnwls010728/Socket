@@ -12,6 +12,7 @@
 #include "Engine/Enums.h"
 #include "ActorTag.h"
 #include "ActorLayer.h"
+#include "Math/Vector2.h"
 #include "Time/TimerManager.h"
 
 class Map;
@@ -76,6 +77,7 @@ public:
     
     FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
     FORCEINLINE Map* GetMap() const { return map_; }
+    FORCEINLINE bool IsExistOnlyServer() const { return is_exist_only_server_; }
 protected:
     friend class World;
     friend class Level;
@@ -124,6 +126,10 @@ protected:
     bool has_begun_play_;
     bool is_active_;
     bool is_pending_destroy_;
+
+    bool is_exist_only_server_;
+
+    Math::Vector2 last_position_;
 
     std::vector<std::shared_ptr<ActorComponent>> components_;
 

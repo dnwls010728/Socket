@@ -44,6 +44,9 @@ public:
     FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
 
     FORCEINLINE InventoryData* GetInventoryData() const { return inventory_data_.get(); }
+
+    FORCEINLINE float GetServerTime() const { return client_socket_.GetServerTime(); }
+    FORCEINLINE float GetClientTime() const { return Net::GetClientTime(); }
     
     OnPacketDelegate packet_handler;
 

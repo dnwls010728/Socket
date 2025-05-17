@@ -1,6 +1,9 @@
 ﻿#include "pch.h"
 #include "Actor.h"
 
+#include <CustomPacket.h>
+
+#include "NetDef.h"
 #include "Map/Map.h"
 #include "box2d/box2d.h"
 #include "box2d/types.h"
@@ -18,7 +21,9 @@ Actor::Actor(const std::wstring& kName):
     is_pending_destroy_(false),
     is_persistent_(false),
     map_(nullptr),
-    unique_id_(0)
+    unique_id_(0),
+    last_position_(Math::Vector2::Zero()),
+    is_exist_only_server_(false)
 {
     transform_ = AddComponent<TransformComponent>(L"Transform");
     CHECK(transform_);
@@ -60,6 +65,25 @@ void Actor::PhysicsTick(float delta_time)
     {
         kComponent->PhysicsTickComponent(delta_time);
     }
+
+    Math::Vector2 position = transform_->GetPosition();
+    if (position != last_position_)
+    {
+        last_position_ = transform_->GetPosition();
+        Map* map= GetMap();
+        if (IsValid(map))
+        {
+            ObjectPositionPacket packet;
+            packet.unique_id = unique_id_;
+            packet.position_x = position.x;
+            packet.position_y = position.y;
+            packet.velocity_x = 0;
+            packet.velocity_y = 0;
+            packet.server_time = Net::GetClientTime();
+            map->SendPacket(packet);
+        }
+    }
+    
 }
 
 void Actor::Tick(float delta_time)

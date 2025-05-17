@@ -25,6 +25,9 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter);
     settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
 
+    // 보간 지연
+    settings->SetInterpolationDelay(0.1f);
+
     settings->AddLevel<LoginMap>(L"Login");
     settings->AddLevel<InGameMap>(L"InGame");
 

@@ -19,7 +19,8 @@
 
 Map::Map(uint32_t MapBase_id) :
     map_unique_id_(MapBase_id),
-    world_id_(b2_nullWorldId)
+    world_id_(b2_nullWorldId),
+    test_next_unique_id_(1000)
 {
 }
 
@@ -85,6 +86,8 @@ void Map::AddPlayer(Player* player)
     // 맵에 추가된 플레이어에게 맵 내의 오브젝트들을 스폰하도록 패킷 전송
     for (auto& map_object :  std::views::values(map_objects_))
     {
+        if (map_object->IsExistOnlyServer())
+            continue;
         SpawnObjectPacket spawn_object_packet;
         Math::Vector2 position = map_object->GetTransform()->GetPosition();
         spawn_object_packet.object.unique_id = map_object->GetUniqueID();
@@ -190,16 +193,16 @@ void Map::SpawnActors()
         std::shared_ptr<Actor> actor = pending_actors_.front();
         map_objects_.insert({actor->GetUniqueID(),actor});
         actor->BeginPlay();
-
-        for (auto& map_object :  std::views::values(map_objects_))
+        
+        if (actor->IsExistOnlyServer() == false)
         {
             SpawnObjectPacket spawn_object_packet;
-            Math::Vector2 position = map_object->GetTransform()->GetPosition();
-            spawn_object_packet.object.unique_id = map_object->GetUniqueID();
+            Math::Vector2 position = actor->GetTransform()->GetPosition();
+            spawn_object_packet.object.unique_id = actor->GetUniqueID();
             spawn_object_packet.object.last_position_x = position.x;
             spawn_object_packet.object.last_position_y = position.y;
-            spawn_object_packet.object.name = map_object->GetName();
-            spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
+            spawn_object_packet.object.name = actor->GetName();
+            spawn_object_packet.object.type_name = StringHelper::ToWideString(actor->get_type().get_name().to_string());
             SendPacket(spawn_object_packet);
         }
         

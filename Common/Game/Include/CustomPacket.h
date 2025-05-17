@@ -162,3 +162,16 @@ struct DestroyObjectPacket : public Net::IPacket
     SERIALIZABLE_FIELDS(unique_id)
     REGISTER_PACKET(SpawnObjectPacket, 231)
 };
+
+struct ObjectPositionPacket : public Net::IPacket
+{
+    uint32_t unique_id;
+    float position_x;
+    float position_y;
+    float velocity_x;
+    float velocity_y;
+    float server_time;
+
+    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, server_time)
+    REGISTER_PACKET(ObjectPositionPacket, 232)
+};

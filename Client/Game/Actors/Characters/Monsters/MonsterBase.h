@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "Actors/Characters/CharacterBase.h"
+#include "Actors/Characters/ServerObject.h"
  
-class MonsterBase : public CharacterBase
+class MonsterBase : public ServerObject
 {
     SHADER_CLASS_HELPER(MonsterBase)
-    GENERATED_BODY(MonsterBase, CharacterBase)
+    GENERATED_BODY(MonsterBase, ServerObject)
  
 public:
     enum class State : uint8_t
@@ -21,12 +21,7 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
- 
 private:
-    Math::Vector2 velocity_;
- 
     State state_;
- 
-    int counter_;
  
 };

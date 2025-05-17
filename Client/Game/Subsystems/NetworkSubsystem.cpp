@@ -196,6 +196,14 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
+    case ObjectPositionPacket::StaticPacketID:
+        {
+            ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
+            
+            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->unique_id);
+            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+        }
+        break;
     default:
         break;
     }

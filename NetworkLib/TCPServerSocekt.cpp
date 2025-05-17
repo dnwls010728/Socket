@@ -289,11 +289,17 @@ namespace Net::TCP {
                 }
 
                 TCPConnectionState state = connection_manager_.GetClientStateBySocket((SOCKET)completion_key);
+                connection_manager_.UpdateClientResponseTime(state.uniqueKey);
 				//recv_data_queue_.push({ state.uniqueKey, std::move(packet) });
 
-                if (packet->GetPacketID() == NET_PACKET_ID_PONG)
+                if (packet->GetPacketID() == NET_PACKET_ID_PING_REQUEST)
                 {
-                    connection_manager_.UpdateClientResponseTime(state.uniqueKey);
+                    PingRequestPacket* ping_request_packet = static_cast<PingRequestPacket*>(packet.get());
+                    
+                    PingPacket ping_packet;
+                    ping_packet.client_time = ping_request_packet->client_time;
+                    ping_packet.server_time = Net::GetClientTime();
+                    SendPacketToClient(state.uniqueKey, ping_packet);
                 }
 
                 if (OnPacketReceived)
@@ -395,11 +401,6 @@ namespace Net::TCP {
                 {
                     std::cerr << "Heartbeat TimeOut, uniqueKey : " << pair.second.uniqueKey << std::endl;
                     to_close.push_back(pair.first);
-                }
-                else
-                {
-                    PingPacket ping;
-                    SendPacketToClient(pair.second.uniqueKey, ping);
                 }
             }
             for (uint32_t unique_key : to_close) {

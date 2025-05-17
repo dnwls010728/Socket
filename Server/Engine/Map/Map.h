@@ -59,7 +59,7 @@ private:
     std::mutex player_mutex_;
     uint32_t map_unique_id_;
     b2WorldId world_id_;
-	uint32_t test_next_unique_id_ = 0;
+	uint32_t test_next_unique_id_;
 
     std::unordered_map<uint32_t, std::shared_ptr<Actor>> map_objects_;
     std::vector<Player*> players_;

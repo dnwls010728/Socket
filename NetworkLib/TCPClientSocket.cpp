@@ -9,8 +9,13 @@
 
 namespace Net::TCP {
 
-    TCPClientSocket::TCPClientSocket()
-        : buffer_size_(8192), running_(false)
+    TCPClientSocket::TCPClientSocket():
+    buffer_size_(8192),
+    running_(false),
+    ping_request_period_ms_(1000),
+    server_time_offset(0.0f),
+    is_first_ping(true),
+    last_request_time(0)
     {
         recv_buffer_.reserve(buffer_size_);
     }
@@ -93,18 +98,53 @@ namespace Net::TCP {
             return;
         }
 
+        // Ping 요청
+        float now = GetClientTime();
+        if (last_request_time == 0.0)
+        {
+            last_request_time = now;
+            SendPingRequest(last_request_time);
+        }
+        else if (now - last_request_time >= ping_request_period_ms_ / 1000.0f)
+        {
+            last_request_time += ping_request_period_ms_ / 1000.0f;
+            SendPingRequest(last_request_time);
+        }
+        
         // 쌓여있는 패킷 처리
         ReceivedPacketInfo packet_info;
         while (recv_data_queue_.try_pop(packet_info))
         {
             if (packet_info.packet->GetPacketID() == NET_PACKET_ID_PING)
             {
+                PingPacket* ping_packet = static_cast<PingPacket*>(packet_info.packet.get());
+                server_time_offset = CalculateServerTimeOffset(ping_packet->client_time, ping_packet->server_time, server_time_offset);
+                
                 PongPacket pong_packet;
                 SendPacket(pong_packet);
             }
 
             // 아닌경우 사용자가 설정한 콜백 호출
             callback(packet_info);
+        }
+    }
+
+    float TCPClientSocket::CalculateServerTimeOffset(float sent_client_time, float recv_server_time, float old_offset)
+    {
+        float now = GetClientTime();
+        float RTT = now - sent_client_time;
+        float one_way = RTT * 0.5f;
+        float clock_offset = recv_server_time - (sent_client_time + one_way);
+
+        if (is_first_ping)
+        {
+            is_first_ping = false;
+            return clock_offset;
+        }
+        else
+        {
+            const float alpha = 0.1f;
+            return old_offset * (1 - alpha) + clock_offset * alpha;
         }
     }
 
@@ -189,5 +229,12 @@ namespace Net::TCP {
 				recv_data_queue_.push({ 0, std::move(packet) });
             }
         }
+    }
+
+    void TCPClientSocket::SendPingRequest(float now)
+    {
+        PingRequestPacket ping_request_packet;
+        ping_request_packet.client_time = now;
+        SendPacket(ping_request_packet);
     }
 } // namespace Net

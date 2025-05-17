@@ -8,6 +8,7 @@
 TilemapLoader::TilemapLoader(const std::wstring& kName) :
     Actor(kName)
 {
+    is_exist_only_server_ = true;
     tilemap_ = AddComponent<TilemapComponent>(L"Tilemap");
 
 }

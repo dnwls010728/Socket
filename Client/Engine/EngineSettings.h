@@ -34,6 +34,8 @@ public:
     FORCEINLINE void AddCollisionLayer(ActorLayer layer, ActorLayer collision) { layer_collision_matrix_[layer] = collision; }
     FORCEINLINE ActorLayer GetCollisionLayer(ActorLayer layer) const { return layer_collision_matrix_.at(layer); }
 
+    FORCEINLINE void SetInterpolationDelay(float delay) { interpolationDelay_ = delay; }
+    FORCEINLINE float GetInterpolationDelay() const { return interpolationDelay_; }
 private:
     std::wstring window_title_;
     std::wstring default_level_;
@@ -44,6 +46,7 @@ private:
     bool use_vsync_;
 
     float fixed_time_step_;
+    float interpolationDelay_;
     
     std::unordered_map<ActorLayer, ActorLayer> layer_collision_matrix_;
     

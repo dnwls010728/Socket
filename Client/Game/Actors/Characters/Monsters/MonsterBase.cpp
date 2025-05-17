@@ -5,22 +5,21 @@
  
  #include "Actor/Component/SpriteRendererComponent.h"
  #include "Actor/Component/TransformComponent.h"
- #include "Actors/Characters/Components/Controller2DComponent.h"
+#include "Actors/Characters/CharacterBase.h"
+#include "Actors/Characters/Components/Controller2DComponent.h"
  #include "Asset/AssetManager.h"
  #include "Math/Math.h"
  #include "Windows/DX/Sprite.h"
  
  MonsterBase::MonsterBase(const std::wstring& kName) :
-     CharacterBase(kName),
-     velocity_(Math::Vector2::Zero()),
-     counter_(0),
+    ServerObject(kName),
      state_(State::kIdle)
  {
  }
  
  void MonsterBase::BeginPlay()
  {
-     CharacterBase::BeginPlay();
+     ServerObject::BeginPlay();
  
      Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
      if (sprite)
@@ -32,12 +31,14 @@
 
 void MonsterBase::ReceivePacket(Net::IPacket* packet)
  {
+     ServerObject::ReceivePacket(packet);
+
      
  }
 
  void MonsterBase::PhysicsTick(float delta_time)
  {
-     CharacterBase::PhysicsTick(delta_time);
+     ServerObject::PhysicsTick(delta_time);
      
  }
  
