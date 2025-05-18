@@ -22,7 +22,7 @@ Player::Player(Session* session, uint32_t account_unique_id) :
 
 Player::~Player()
 {
-    if (map_) map_->RemovePlayer(this);
+    if (map_) map_->RemovePlayer(GetCharacterUniqueID());
 }
 
 void Player::SendPacket(const Net::IPacket& packet) const
@@ -74,7 +74,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 response.map_unique_id = character_info_.map_unique_id;
                 SendPacket(response);
                 
-                map_->AddPlayer(this);
+                map_->AddPlayer(shared_from_this());
 
                 SetPosition(character_info_.last_position_x, character_info_.last_position_y);
             }
@@ -86,7 +86,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             ChangeMapRequest* request = static_cast<ChangeMapRequest*>(packet);
             if (map_)
             {
-                map_->RemovePlayer(this);
+                map_->RemovePlayer(GetCharacterUniqueID());
                 
                 map_ = World::Get()->GetMap(request->map_unique_id);
                 if (map_)
@@ -96,7 +96,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                     response.map_unique_id = request->map_unique_id;
                     SendPacket(response);
                     
-                    map_->AddPlayer(this);
+                    map_->AddPlayer(shared_from_this());
 
                     SetPosition(0.f, 0.f);
                     break;
@@ -124,7 +124,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 move_player_broadcast_packet.unique_id = character_unique_id_;
                 move_player_broadcast_packet.movement.x = position_x;
                 move_player_broadcast_packet.movement.y = position_y;
-                map_->SendPacket(move_player_broadcast_packet, this);
+                map_->SendPacket(move_player_broadcast_packet, shared_from_this());
             }
         }
         break;

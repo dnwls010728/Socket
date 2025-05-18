@@ -56,74 +56,108 @@ void Map::Init()
     
 }
 
-void Map::AddPlayer(Player* player)
+void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
-    players_.push_back(player);
-    player->SetMap(this);
-    {
-        // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
-        SpawnPlayerPacket spawn_player_packet;
-        spawn_player_packet.character_info = player->GetCharacterInfo();
-        spawn_player_packet.position_x = player->GetPositionX();
-        spawn_player_packet.position_y = player->GetPositionY();
-        SendPacket(spawn_player_packet, player);
-    }
+    pending_players_.push(player_weak);
+}
 
-    // 맵에 추가된 플레이어에게 다른 플레이어들을 스폰하도록 패킷을 전송
-    for (auto& other_player : players_)
+void Map::RemovePlayer(uint32_t player_id)
+{
+    std::lock_guard<std::mutex> lock(player_mutex_);
+    pending_remove_players_.push(player_id);
+}
+
+void Map::AddPlayers()
+{
+    std::lock_guard<std::mutex> lock(player_mutex_);
+
+    while (!pending_players_.empty())
     {
-        if (other_player && other_player != player)
+        auto pending_player_weak = pending_players_.front();
+        pending_players_.pop();
+        
+        auto player = pending_player_weak.lock();
+        if (!player) continue;
+
+        uint32_t unique_id = player->GetCharacterUniqueID();
+        players_.emplace(unique_id, pending_player_weak);
+    
+        player->SetMap(this);
         {
+            // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
             SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_info = other_player->GetCharacterInfo();
-            spawn_player_packet.position_x = other_player->GetPositionX();
-            spawn_player_packet.position_y = other_player->GetPositionY();
-            player->SendPacket(spawn_player_packet);
+            spawn_player_packet.character_info = player->GetCharacterInfo();
+            spawn_player_packet.position_x = player->GetPositionX();
+            spawn_player_packet.position_y = player->GetPositionY();
+            SendPacket(spawn_player_packet, player);
         }
-    }
 
-    // 맵에 추가된 플레이어에게 맵 내의 오브젝트들을 스폰하도록 패킷 전송
-    for (auto& map_object :  std::views::values(map_objects_))
-    {
-        if (map_object->IsExistOnlyServer())
-            continue;
-        SpawnObjectPacket spawn_object_packet;
-        Math::Vector2 position = map_object->GetTransform()->GetPosition();
-        spawn_object_packet.object.unique_id = map_object->GetUniqueID();
-        spawn_object_packet.object.last_position_x = position.x;
-        spawn_object_packet.object.last_position_y = position.y;
-        spawn_object_packet.object.name = map_object->GetName();
-        spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
-        player->SendPacket(spawn_object_packet);
+        // 맵에 추가된 플레이어에게 다른 플레이어들을 스폰하도록 패킷을 전송
+        for (auto & [unique_key, other_player_weak] : players_)
+        {
+            auto other_player = other_player_weak.lock();
+            if (other_player && other_player != player)
+            {
+                SpawnPlayerPacket spawn_player_packet;
+                spawn_player_packet.character_info = other_player->GetCharacterInfo();
+                spawn_player_packet.position_x = other_player->GetPositionX();
+                spawn_player_packet.position_y = other_player->GetPositionY();
+                player->SendPacket(spawn_player_packet);
+            }
+        }
+
+        // 맵에 추가된 플레이어에게 맵 내의 오브젝트들을 스폰하도록 패킷 전송
+        for (auto& map_object :  std::views::values(map_objects_))
+        {
+            if (map_object->IsExistOnlyServer())
+                continue;
+            SpawnObjectPacket spawn_object_packet;
+            Math::Vector2 position = map_object->GetTransform()->GetPosition();
+            spawn_object_packet.object.unique_id = map_object->GetUniqueID();
+            spawn_object_packet.object.last_position_x = position.x;
+            spawn_object_packet.object.last_position_y = position.y;
+            spawn_object_packet.object.name = map_object->GetName();
+            spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
+            player->SendPacket(spawn_object_packet);
+        }
     }
 }
 
-void Map::RemovePlayer(Player* player)
+void Map::RemovePlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
-    std::erase(players_, player);
 
+    while (!pending_remove_players_.empty())
     {
-        // 맵에서 플레이어가 제거되면, 다른 플레이어에게 제거하도록 패킷을 전송
+        uint32_t unique_key = pending_remove_players_.front();
+        pending_remove_players_.pop();
+
+        players_.erase(unique_key);
+        
+         // 맵에서 플레이어가 제거되면, 다른 플레이어에게 제거하도록 패킷을 전송
         DestroyPlayerPacket destroy_player_packet;
-        destroy_player_packet.unique_id = player->GetCharacterInfo().unique_id;
-        SendPacket(destroy_player_packet, player);
+        destroy_player_packet.unique_id = unique_key;
+        SendPacket(destroy_player_packet);
+        
     }
 }
 
 void Map::SendPacket(const Net::IPacket& packet)
 {
-    for (auto& player : players_)
+    for (auto& player_weak : std::views::values(players_))
     {
-        if (player) player->SendPacket(packet);
+        if (auto player = player_weak.lock())
+            player->SendPacket(packet);
     }
 }
 
-void Map::SendPacket(const Net::IPacket& packet, const Player* excluded_player)
+void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &excluded_player_weak)
 {
-    for (const auto& player : players_)
+    auto excluded_player = excluded_player_weak.lock();
+    for (const auto& player_weak : std::views::values(players_))
     {
+        auto player = player_weak.lock();
         if (player && player != excluded_player)
         {
             player->SendPacket(packet);
@@ -133,6 +167,8 @@ void Map::SendPacket(const Net::IPacket& packet, const Player* excluded_player)
 
 void Map::Tick(float delta_time)
 {
+    AddPlayers();
+    RemovePlayers();
     SpawnActors();
     ProcessActorActivation();
     DestroyActors();

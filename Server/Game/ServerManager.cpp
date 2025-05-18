@@ -53,8 +53,9 @@ void ServerManager::CommandHandlerInitialize()
         }
 
         Map* map = nullptr;
+        uint32_t key = 0;
         try {
-            uint32_t key = std::stoul(args[1]);
+            key = std::stoul(args[1]);
             map = World::Get()->GetMap(key);
             if (!map) {
                 std::wcout << L"Error: No map with key " << key << "\n";
@@ -79,21 +80,24 @@ void ServerManager::CommandHandlerInitialize()
             return;
         }
 
+        float x = 0.0f;
+        float y = 0.0f;
         if (args.size() >= 5){
             try {
-                float x = std::stof(args[3]);
-                float y = std::stof(args[4]);
+                x = std::stof(args[3]);
+                y = std::stof(args[4]);
 
                 object->GetTransform()->SetPosition({x,y});
             }
             catch (...) {
                 std::wcout << L"Error: Invalid position '" << args[3] << " " << args[4] << "'\n";
+                return;
             }
         }
 
-        std::wcout << L"Spawned '" << args[2] << L"' on map " << args[1];
+        std::wcout << L"Spawned '" << args[2] << L"' on map " << key;
         if (args.size() >= 5)
-            std::wcout << L" at (" << args[3] << L"," << args[4] << L")";
+            std::wcout << L" at (" << x << L"," << y << L")";
         std::wcout << L"\n";
     };
 

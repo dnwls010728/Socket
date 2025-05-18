@@ -27,7 +27,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet) const;
 
-    Player* CreatePlayer(uint32_t account_unique_id);
+    std::shared_ptr<Player> CreatePlayer(uint32_t account_unique_id);
 
     uint32_t GetAccountUniqueID() const;
 
@@ -36,12 +36,12 @@ public:
     inline State GetState() const { return state_; }
     inline void SetState(const State state) { state_ = state; }
     
-    inline Player* GetPlayer() const { return player_.get(); }
+    inline std::shared_ptr<Player> GetPlayer() const { return player_; }
 
 private:
     int client_id_;
 
     State state_;
 
-    std::unique_ptr<Player> player_;
+    std::shared_ptr<Player> player_;
 };
