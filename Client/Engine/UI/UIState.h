@@ -30,6 +30,8 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);
 
+    UIElement* FindElement(const Math::Vector2& position) const;
+
 private:
     friend class UIElement;
     
@@ -37,6 +39,11 @@ private:
     
     std::vector<std::unique_ptr<UIElement>> elements_;
     std::vector<UIElement*> focus_path_;
+
+    bool is_dragging_;
+    bool has_begun_drag_;
+
+    UIElement* dragging_element_;
 };
 
 template <std::derived_from<UIElement> T>

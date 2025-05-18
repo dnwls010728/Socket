@@ -18,6 +18,8 @@ protected:
 
     virtual void Tick(float delta_time) override;
     virtual void Render(const Math::Vector2& parent_position) override;
+
+    virtual UIElement* FindElement(const Math::Vector2& position) override;
     
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;

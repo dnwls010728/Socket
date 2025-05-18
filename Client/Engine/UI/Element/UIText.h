@@ -33,6 +33,11 @@ public:
 protected:
     virtual void Render(const Math::Vector2& parent_position) override;
 
+    virtual bool OnDragBegin(const Math::Vector2& position) override;
+    virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual bool OnDragEnd(const Math::Vector2& position) override;
+    virtual bool OnDrop(const Math::Vector2& position, UIElement* target) override;
+
 private:
     std::wstring text_;
     std::wstring font_name_;

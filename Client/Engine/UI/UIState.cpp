@@ -4,7 +4,11 @@
 #include "UI/UIContainer.h"
 
 UIState::UIState() :
-    elements_()
+    elements_(),
+    focus_path_(),
+    is_dragging_(false),
+    has_begun_drag_(false),
+    dragging_element_(nullptr)
 {
 }
 
@@ -32,6 +36,21 @@ UI::MouseEventResult UIState::OnMouseMotion(const Math::Vector2& position, const
 {
     UI::MouseEventResult result = { false, UI::CursorState::kIdle };
 
+    if (is_dragging_ && dragging_element_)
+    {
+        if (has_begun_drag_)
+        {
+            result.is_handled = dragging_element_->OnDrag(position, delta);
+            if (result.is_handled) return result;
+        }
+        else
+        {
+            result.is_handled = dragging_element_->OnDragBegin(position);
+            has_begun_drag_ = true;
+            if (result.is_handled) return result;
+        }
+    }
+
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[elements_.size() - i - 1].get();
@@ -49,12 +68,41 @@ UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, Mouse
 {
     UI::MouseEventResult result = { false, UI::CursorState::kIdle };
 
+    if (is_dragging_ && button == MouseButton::kLeft && !is_pressed)
+    {
+        if (dragging_element_)
+        {
+            UIElement* target_element = FindElement(position);
+            if (target_element && target_element != dragging_element_)
+            {
+                result.is_handled |= target_element->OnDrop(position, dragging_element_);
+            }
+
+            if (has_begun_drag_)
+            {
+                result.is_handled |= dragging_element_->OnDragEnd(position);
+                has_begun_drag_ = false;
+            }
+        }
+        
+        is_dragging_ = false;
+        dragging_element_ = nullptr;
+    }
+    else if (!is_dragging_ && button == MouseButton::kLeft && is_pressed)
+    {
+        dragging_element_ = FindElement(position);
+        is_dragging_ = dragging_element_ != nullptr;
+        if (!is_dragging_) UpdateFocus(nullptr);
+    }
+
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[elements_.size() - i - 1].get();
         if (element && element->IsActive() && element->IsInRange(position))
         {
-            result = element->OnMouseButton(position, button, is_pressed, timestamp);
+            UI::MouseEventResult temp_result = element->OnMouseButton(position, button, is_pressed, timestamp);
+            result.is_handled |= temp_result.is_handled;
+            result.cursor_state = temp_result.cursor_state;
             if (result.is_handled) return result;
         }
     }
@@ -96,6 +144,18 @@ bool UIState::OnChar(wchar_t character)
     }
 
     return false;
+}
+
+UIElement* UIState::FindElement(const Math::Vector2& position) const
+{
+    for (uint32_t i = 0; i < elements_.size(); ++i)
+    {
+        UIElement* element = elements_[elements_.size() - i - 1].get();
+        if (element && element->IsActive() && element->IsInRange(position))
+            return element->FindElement(position);
+    }
+
+    return nullptr;
 }
 
 void UIState::UpdateFocus(UIElement* element)

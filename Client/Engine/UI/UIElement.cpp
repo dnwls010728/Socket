@@ -23,6 +23,11 @@ UIElement::UIElement() :
 {
 }
 
+UIElement* UIElement::FindElement(const Math::Vector2& position)
+{
+    return IsInRange(position) ? this : nullptr;
+}
+
 UI::MouseEventResult UIElement::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     return { false, UI::CursorState::kIdle };
@@ -34,6 +39,26 @@ UI::MouseEventResult UIElement::OnMouseButton(const Math::Vector2& position, Mou
         UI::Get()->GetState()->UpdateFocus(this);
     
     return { false, UI::CursorState::kIdle };
+}
+
+bool UIElement::OnDragBegin(const Math::Vector2& position)
+{
+    return false;
+}
+
+bool UIElement::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    return false;
+}
+
+bool UIElement::OnDragEnd(const Math::Vector2& position)
+{
+    return false;
+}
+
+bool UIElement::OnDrop(const Math::Vector2& position, UIElement* target)
+{
+    return false;
 }
 
 bool UIElement::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)

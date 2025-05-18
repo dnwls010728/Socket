@@ -33,10 +33,16 @@ protected:
     FORCEINLINE virtual void Init() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
     FORCEINLINE virtual void Render(const Math::Vector2& parent_position) {}
+
+    virtual UIElement* FindElement(const Math::Vector2& position);
     
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
-    
+
+    virtual bool OnDragBegin(const Math::Vector2& position);
+    virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta);
+    virtual bool OnDragEnd(const Math::Vector2& position);
+    virtual bool OnDrop(const Math::Vector2& position, UIElement* target);
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta);
     virtual bool OnKey(uint16_t key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);

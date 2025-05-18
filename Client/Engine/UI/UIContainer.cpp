@@ -37,6 +37,18 @@ void UIContainer::Render(const Math::Vector2& parent_position)
     }
 }
 
+UIElement* UIContainer::FindElement(const Math::Vector2& position)
+{
+    for (uint32_t i = 0; i < children_.size(); ++i)
+    {
+        UIElement* child = children_[children_.size() - i - 1].get();
+        if (child && child->IsActive() && child->IsInRange(position))
+            return child->FindElement(position);
+    }
+
+    return UIElement::FindElement(position);
+}
+
 UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     UI::MouseEventResult result = UIElement::OnMouseMotion(position, delta);
