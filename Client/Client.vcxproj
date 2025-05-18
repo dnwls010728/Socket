@@ -127,7 +127,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Client\Game;$(SolutionDir)\Client\Engine;$(SolutionDir)\Client\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -203,6 +203,7 @@
     <ClInclude Include="Engine\Subsystem\WorldSubsystem.h" />
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
+    <ClInclude Include="Engine\UI\Element\UIImage.h" />
     <ClInclude Include="Engine\UI\Element\UIText.h" />
     <ClInclude Include="Engine\UI\UI.h" />
     <ClInclude Include="Engine\UI\UIContainer.h" />
@@ -578,6 +579,7 @@
     <ClCompile Include="Engine\Subsystem\WorldSubsystem.cpp" />
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
     <ClCompile Include="Engine\UI\Element\UIText.cpp" />
     <ClCompile Include="Engine\UI\UI.cpp" />
     <ClCompile Include="Engine\UI\UIContainer.cpp" />

@@ -97,9 +97,11 @@ public:
     [[deprecated("Use DrawString instead.")]]
     void DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f, const std::wstring& kFontName = L"", float font_size = 0.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     
+    [[deprecated("Use DrawBitmap instead.")]]
     void DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float angle = 0.f, bool use_slice9 = false, const Math::Rect& kSlice9Rect = Math::Rect::Zero());
-
+    
     void DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    void DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 

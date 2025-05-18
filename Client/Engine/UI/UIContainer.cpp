@@ -1,6 +1,17 @@
 ﻿#include "pch.h"
 #include "UIContainer.h"
 
+void UIContainer::SetActive(bool active)
+{
+    for (uint32_t i = 0; i < children_.size(); ++i)
+    {
+        UIElement* child = children_[children_.size() - i - 1].get();
+        if (child) child->SetActive(active);
+    }
+    
+    UIElement::SetActive(active);
+}
+
 UIContainer::UIContainer() :
     children_()
 {
@@ -45,19 +56,17 @@ UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, c
 
 UI::MouseEventResult UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = UIElement::OnMouseButton(position, button, is_pressed, timestamp);
-
     for (uint32_t i = 0; i < children_.size(); ++i)
     {
         UIElement* child = children_[children_.size() - i - 1].get();
         if (child && child->IsActive() && child->IsInRange(position))
         {
-            result = child->OnMouseButton(position, button, is_pressed, timestamp);
+            UI::MouseEventResult result = child->OnMouseButton(position, button, is_pressed, timestamp);
             if (result.is_handled) return result;
         }
     }
 
-    return result;
+    return UIElement::OnMouseButton(position, button, is_pressed, timestamp);
 }
 
 bool UIContainer::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)

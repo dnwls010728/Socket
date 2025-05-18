@@ -807,6 +807,26 @@ void Renderer::DrawString(const std::wstring& string, const Math::Vector2& posit
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    // D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR - Point
+    // D2D1_BITMAP_INTERPOLATION_MODE_LINEAR - Bilinear
+
+    const D2D1_RECT_F temp_rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+    d2d_viewport->d2d_render_target->DrawBitmap(bitmap.Get(), temp_rect, 1.f, filter_mode);
+    
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
 bool Renderer::LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(kWindow.get());

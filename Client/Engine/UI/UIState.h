@@ -11,13 +11,14 @@ class UIState
 public:
     UIState();
     virtual ~UIState() = default;
+    
+    template <std::derived_from<UIElement> T>
+    T* AddElement(const rttr::type& type);
 
 protected:
     friend class UI;
 
-    FORCEINLINE virtual void Init()
-    {
-    }
+    FORCEINLINE virtual void Init() {}
 
     virtual void Tick(float delta_time);
     virtual void Render();
@@ -29,11 +30,13 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);
 
-    template <std::derived_from<UIElement> T>
-    T* AddElement(const rttr::type& type);
-
 private:
+    friend class UIElement;
+    
+    void UpdateFocus(UIElement* element);
+    
     std::vector<std::unique_ptr<UIElement>> elements_;
+    std::vector<UIElement*> focus_path_;
 };
 
 template <std::derived_from<UIElement> T>

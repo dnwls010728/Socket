@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class UIElement;
 class UITexture;
 class UIState;
 
@@ -21,6 +22,8 @@ public:
     virtual ~UI() override = default;
 
     void ChangeState(const rttr::type& type);
+
+    FORCEINLINE UIState* GetState() const { return state_.get(); }
 
 private:
     friend class Core;

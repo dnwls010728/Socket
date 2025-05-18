@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIElement.h"
 
+#include "UIState.h"
 #include "Math/Rect.h"
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
@@ -16,7 +17,9 @@ bool UIElement::IsInRange(const Math::Vector2& position) const
 UIElement::UIElement() :
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero()),
-    is_active_(true)
+    is_active_(true),
+    is_focused_(false),
+    parent_(nullptr)
 {
 }
 
@@ -27,6 +30,9 @@ UI::MouseEventResult UIElement::OnMouseMotion(const Math::Vector2& position, con
 
 UI::MouseEventResult UIElement::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
+    if (button == MouseButton::kLeft && is_pressed && !is_focused_)
+        UI::Get()->GetState()->UpdateFocus(this);
+    
     return { false, UI::CursorState::kIdle };
 }
 
@@ -43,6 +49,11 @@ bool UIElement::OnKey(uint16_t key_code, bool is_pressed)
 bool UIElement::OnChar(wchar_t character)
 {
     return false;
+}
+
+void UIElement::OnFocus(bool is_focused)
+{
+    is_focused_ = is_focused;
 }
 
 RTTR_REGISTRATION
