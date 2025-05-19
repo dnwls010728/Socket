@@ -18,9 +18,7 @@ void UIText::Render()
 {
     UIElement::Render();
 
-    Math::Vector2 parent_position = parent_ ? parent_->GetPosition() : Math::Vector2::Zero();
-    Math::Vector2 position = parent_position + position_;
-    Renderer::Get()->DrawString(text_, position, size_, color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);
+    Renderer::Get()->DrawString(text_, GetAbsolutePosition(), size_, color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);
 }
 
 RTTR_REGISTRATION

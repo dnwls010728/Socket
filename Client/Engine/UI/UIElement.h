@@ -13,8 +13,11 @@ public:
     
     bool IsInRange(const Math::Vector2& position) const;
 
-    FORCEINLINE void SetPosition(const Math::Vector2& position) { position_ = position; }
-    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+    void SetAbsolutePosition(const Math::Vector2& position);
+    Math::Vector2 GetAbsolutePosition() const;
+
+    FORCEINLINE void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
+    FORCEINLINE Math::Vector2 GetRelativePosition() const { return position_; }
 
     FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE Math::Vector2 GetSize() const { return size_; }

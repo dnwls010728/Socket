@@ -232,6 +232,8 @@
     <ClCompile Include="Game\UI\MiniMap.cpp" />
     <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -815,6 +817,8 @@
     <ClInclude Include="Game\UI\MiniMap.h" />
     <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
+    <ClInclude Include="Engine\UI\Element\UIImage.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">

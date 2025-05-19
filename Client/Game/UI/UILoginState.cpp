@@ -11,7 +11,7 @@ void UILoginState::Init()
 {
     UIState::Init();
 
-    AddElement<UIInventory>(UIInventory::StaticClass());
+    inventory_ = AddElement<UIInventory>(UIInventory::StaticClass());
 
 }
 

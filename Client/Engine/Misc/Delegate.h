@@ -42,6 +42,11 @@ public:
         }
     }
 
+    void ExecuteIfBound(Args&... args) const
+    {
+        if (IsBound()) Execute(args...);
+    }
+
     void RemoveAll() {
         functions_.clear();
     }

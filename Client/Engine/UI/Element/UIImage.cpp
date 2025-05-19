@@ -16,9 +16,7 @@ void UIImage::Render()
     UIElement::Render();
     if (!texture_) return;
 
-    Math::Vector2 parent_position = parent_ ? parent_->GetPosition() : Math::Vector2::Zero();
-    Math::Vector2 position = parent_position + position_;
-    Renderer::Get()->DrawBitmap(texture_->GetTexture(), position, size_, filter_mode_);
+    Renderer::Get()->DrawBitmap(texture_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
 }
 
 RTTR_REGISTRATION
