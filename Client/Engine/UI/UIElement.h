@@ -24,6 +24,8 @@ public:
 
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
+    FORCEINLINE void SetIgnoreInteraction(bool ignore) { is_ignore_interaction_ = ignore; }
+
 protected:
     friend class UIState;
     friend class UIContainer;
@@ -32,7 +34,7 @@ protected:
     
     FORCEINLINE virtual void Init() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render(const Math::Vector2& parent_position) {}
+    FORCEINLINE virtual void Render() {}
 
     virtual UIElement* FindElement(const Math::Vector2& position);
     
@@ -54,6 +56,7 @@ protected:
 
     bool is_active_;
     bool is_focused_;
+    bool is_ignore_interaction_;
 
     UIContainer* parent_;
     

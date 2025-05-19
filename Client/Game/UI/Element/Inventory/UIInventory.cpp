@@ -26,12 +26,13 @@ void UIInventory::Init()
     }
 }
 
-void UIInventory::Render(const Math::Vector2& parent_position)
+void UIInventory::Render()
 {
+    Math::Vector2 parent_position = parent_ ? parent_->GetPosition() : Math::Vector2::Zero();
     Math::Vector2 position = parent_position + position_;
     Renderer::Get()->DrawBox(position, size_, Math::Color::Red);
     
-    UIContainer::Render(parent_position);
+    UIContainer::Render();
 }
 
 RTTR_REGISTRATION

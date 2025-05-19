@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIText.h"
 
+#include "UI/UIContainer.h"
 #include "Windows/DX/Renderer.h"
 
 UIText::UIText() :
@@ -13,10 +14,11 @@ UIText::UIText() :
 {
 }
 
-void UIText::Render(const Math::Vector2& parent_position)
+void UIText::Render()
 {
-    UIElement::Render(parent_position);
+    UIElement::Render();
 
+    Math::Vector2 parent_position = parent_ ? parent_->GetPosition() : Math::Vector2::Zero();
     Math::Vector2 position = parent_position + position_;
     Renderer::Get()->DrawString(text_, position, size_, color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);
 }

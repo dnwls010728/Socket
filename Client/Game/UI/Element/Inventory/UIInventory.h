@@ -13,7 +13,7 @@ public:
 
 protected:
     virtual void Init() override;
-    virtual void Render(const Math::Vector2& parent_position) override;
+    virtual void Render() override;
 
 private:
     std::vector<UIInventorySlot*> slots_;

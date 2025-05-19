@@ -19,7 +19,7 @@ public:
     FORCEINLINE D2D1_BITMAP_INTERPOLATION_MODE GetFilterMode() const { return filter_mode_; }
 
 protected:
-    virtual void Render(const Math::Vector2& parent_position) override;
+    virtual void Render() override;
 
     UITexture* texture_;
 

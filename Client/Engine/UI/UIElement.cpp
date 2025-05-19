@@ -7,18 +7,13 @@
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
-    Math::Vector2 parent_position = Math::Vector2::Zero();
-    if (parent_)
-    {
-        parent_position = parent_->GetPosition();
-    }
-    
+    Math::Vector2 parent_position = parent_ ? parent_->GetPosition() : Math::Vector2::Zero();
     Math::Rect rect = {
         parent_position.x + position_.x, parent_position.y + position_.y,
         size_.x, size_.y
     };
 
-    return Math::Rect::Contains(rect, position);
+    return !is_ignore_interaction_ ? Math::Rect::Contains(rect, position) : false;
 }
 
 UIElement::UIElement() :
@@ -26,6 +21,7 @@ UIElement::UIElement() :
     size_(Math::Vector2::Zero()),
     is_active_(true),
     is_focused_(false),
+    is_ignore_interaction_(false),
     parent_(nullptr)
 {
 }

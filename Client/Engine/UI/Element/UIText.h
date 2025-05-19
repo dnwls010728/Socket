@@ -31,7 +31,7 @@ public:
     FORCEINLINE DWRITE_PARAGRAPH_ALIGNMENT GetParagraphAlignment() const { return paragraph_alignment_; }
 
 protected:
-    virtual void Render(const Math::Vector2& parent_position) override;
+    virtual void Render() override;
 
 private:
     std::wstring text_;

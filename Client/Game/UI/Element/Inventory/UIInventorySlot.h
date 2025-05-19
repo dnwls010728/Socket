@@ -17,7 +17,7 @@ public:
 
 protected:
     virtual void Init() override;
-    virtual void Render(const Math::Vector2& parent_position) override;
+    virtual void Render() override;
 
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;

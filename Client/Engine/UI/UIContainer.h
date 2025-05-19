@@ -17,7 +17,7 @@ protected:
     UIContainer();
 
     virtual void Tick(float delta_time) override;
-    virtual void Render(const Math::Vector2& parent_position) override;
+    virtual void Render() override;
 
     virtual UIElement* FindElement(const Math::Vector2& position) override;
     
