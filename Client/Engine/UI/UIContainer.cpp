@@ -33,7 +33,7 @@ void UIContainer::Render(const Math::Vector2& parent_position)
     
     for (const auto& child : children_)
     {
-        if (child && child->IsActive()) child->Render(parent_position);
+        if (child && child->IsActive()) child->Render(parent_position + position_);
     }
 }
 

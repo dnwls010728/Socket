@@ -1,13 +1,20 @@
 ﻿#include "pch.h"
 #include "UIElement.h"
 
+#include "UIContainer.h"
 #include "UIState.h"
 #include "Math/Rect.h"
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
+    Math::Vector2 parent_position = Math::Vector2::Zero();
+    if (parent_)
+    {
+        parent_position = parent_->GetPosition();
+    }
+    
     Math::Rect rect = {
-        position_.x, position_.y,
+        parent_position.x + position_.x, parent_position.y + position_.y,
         size_.x, size_.y
     };
 

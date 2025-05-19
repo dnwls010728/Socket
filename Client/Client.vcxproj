@@ -284,6 +284,7 @@
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
     <ClInclude Include="Game\UI\Inventory.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
     <ClInclude Include="Game\UI\NameTag.h" />
@@ -654,6 +655,7 @@
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
     <ClCompile Include="Game\UI\Inventory.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
     <ClCompile Include="Game\UI\NameTag.cpp" />

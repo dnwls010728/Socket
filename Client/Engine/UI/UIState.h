@@ -60,6 +60,7 @@ T* UIState::AddElement(const rttr::type& type)
         rttr::type element_type = rttr::type::get<T>();
         if (type.is_derived_from(element_type))
         {
+            element->Init();
             return static_cast<T*>(element);
         }
     }

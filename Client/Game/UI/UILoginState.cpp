@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "UILoginState.h"
 
-#include "UI/Element/UIText.h"
+#include "Element/Inventory/UIInventory.h"
 
 UILoginState::UILoginState()
 {
@@ -11,9 +11,8 @@ void UILoginState::Init()
 {
     UIState::Init();
 
-    UIText* text = AddElement<UIText>(UIText::StaticClass());
-    text->SetSize({100.f, 30.f});
-    text->SetText(L"요소 테스트");
+    AddElement<UIInventory>(UIInventory::StaticClass());
+
 }
 
 RTTR_REGISTRATION

@@ -48,6 +48,7 @@ T* UIContainer::AddChild(const rttr::type& type)
         rttr::type child_type = rttr::type::get<T>();
         if (type.is_derived_from(child_type))
         {
+            child->Init();
             return static_cast<T*>(child);
         }
     }
