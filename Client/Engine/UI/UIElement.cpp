@@ -20,7 +20,7 @@ void UIElement::SetAbsolutePosition(const Math::Vector2& position)
 {
     if (parent_)
     {
-        Math::Vector2 parent_position = parent_->GetRelativePosition();
+        Math::Vector2 parent_position = parent_->GetAbsolutePosition();
         position_ = position - parent_position;
         return;
     }

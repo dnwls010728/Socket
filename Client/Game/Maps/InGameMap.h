@@ -8,5 +8,8 @@ class InGameMap : public Level
 public:
     InGameMap(const std::wstring& kName);
     virtual ~InGameMap() override = default;
+
+protected:
+    virtual void Load() override;
     
 };

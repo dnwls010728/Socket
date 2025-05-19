@@ -11,12 +11,7 @@ public:
     UILoginState();
     virtual ~UILoginState() override = default;
 
-    FORCEINLINE UIInventory* GetInventory() const { return inventory_; }
-
 protected:
     virtual void Init() override;
-
-private:
-    UIInventory* inventory_;
     
 };

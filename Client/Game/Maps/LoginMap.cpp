@@ -5,6 +5,8 @@
 
 #include "GameInstance.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UI.h"
+#include "UI/UILoginState.h"
 #include "UI/UIManager.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/EditableTextBox.h"
@@ -34,6 +36,8 @@ void LoginMap::Load()
     Level::Load();
 
     GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
+
+    UI::Get()->ChangeState(UILoginState::StaticClass());
 
     background_ = UI_OLD::Image::Create(L"Background");
     background_->SetPosition({400.f, 300.f});

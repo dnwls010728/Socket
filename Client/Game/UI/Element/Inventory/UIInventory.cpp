@@ -2,7 +2,6 @@
 #include "UIInventory.h"
 
 #include "UIInventorySlot.h"
-#include "Inventory/InventoryManager.h"
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
@@ -10,19 +9,6 @@ UIInventory::UIInventory() :
     slots_()
 {
     size_ = { 158.f, 224.f };
-}
-
-void UIInventory::UpdateSlots(InventoryManager* inventory)
-{
-    if (!inventory) return;
-    for (uint32_t i = 0; i < 20; ++i)
-    {
-        int32_t item_id = inventory->GetItemID(i);
-        if (item_id == -1) continue;
-
-        int16_t count = inventory->GetItemCount(i);
-        slots_[i]->UpdateSlot(item_id, count);
-    }
 }
 
 void UIInventory::Init()
@@ -35,7 +21,7 @@ void UIInventory::Init()
         {
             UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass());
             slot->SetRelativePosition({ 8 + j * 36.f, 24 + i * 36.f });
-            slots_[j + i * 4] = slot;
+            slots_[j + i * 4 + 1] = slot;
         }
     }
 }

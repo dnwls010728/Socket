@@ -9,16 +9,16 @@ InventoryManager::InventoryManager() :
 {
 }
 
-int32_t InventoryManager::GetItemID(int32_t slot_index) const
+uint32_t InventoryManager::GetItemID(uint32_t slot_index) const
 {
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
         return it->second.item_id;
     
-    return -1;
+    return 0;
 }
 
-int32_t InventoryManager::FindItem(int32_t item_id) const
+uint32_t InventoryManager::FindItem(uint32_t item_id) const
 {
     for (const auto& iter : slots_)
     {
@@ -26,12 +26,12 @@ int32_t InventoryManager::FindItem(int32_t item_id) const
             return iter.first;
     }
     
-    return -1;
+    return 0;
 }
 
-int32_t InventoryManager::FindFreeSlot() const
+uint32_t InventoryManager::FindFreeSlot() const
 {
-    int32_t counter = 1;
+    uint32_t counter = 1;
 
     for (const auto& iter : slots_)
     {
@@ -44,7 +44,7 @@ int32_t InventoryManager::FindFreeSlot() const
     return counter;
 }
 
-int16_t InventoryManager::GetItemCount(int32_t slot_index) const
+uint32_t InventoryManager::GetItemCount(uint32_t slot_index) const
 {
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
@@ -53,9 +53,9 @@ int16_t InventoryManager::GetItemCount(int32_t slot_index) const
     return 0;
 }
 
-int16_t InventoryManager::GetTotalItemCount(int32_t item_id) const
+uint32_t InventoryManager::GetTotalItemCount(uint32_t item_id) const
 {
-    int16_t total_count = 0;
+    uint32_t total_count = 0;
     for (const auto& slot : slots_ | std::views::values)
     {
         if (slot.item_id == item_id)
@@ -65,19 +65,19 @@ int16_t InventoryManager::GetTotalItemCount(int32_t item_id) const
     return total_count;
 }
 
-void InventoryManager::AddSlot(int32_t slot_index, int32_t item_id, int16_t count)
+void InventoryManager::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
     slots_[slot_index] = { item_id, count };
 }
 
-void InventoryManager::ChangeCount(int32_t slot_index, int16_t count)
+void InventoryManager::ChangeCount(uint32_t slot_index, uint32_t count)
 {
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
         it->second.count = count;
 }
 
-void InventoryManager::Swap(int32_t first_slot, int32_t second_slot)
+void InventoryManager::Swap(uint32_t first_slot, uint32_t second_slot)
 {
     Slot first = std::move(slots_[first_slot]);
     slots_[first_slot] = std::move(slots_[second_slot]);
@@ -87,7 +87,7 @@ void InventoryManager::Swap(int32_t first_slot, int32_t second_slot)
     if (slots_[second_slot].item_id == -1) Remove(second_slot);
 }
 
-void InventoryManager::Remove(int32_t slot_index)
+void InventoryManager::Remove(uint32_t slot_index)
 {
     auto it = slots_.find(slot_index);
     if (it == slots_.end()) return;

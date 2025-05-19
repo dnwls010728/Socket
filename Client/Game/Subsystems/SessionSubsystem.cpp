@@ -6,7 +6,6 @@
 
 #include "NetworkManager.h"
 #include "Inventory/InventoryManager.h"
-#include "UI/Inventory.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
 #include "UI/Element/Inventory/UIInventory.h"
@@ -64,15 +63,6 @@ void SessionSubsystem::ProcessPackets()
                 {
                     inventory_manager_ = std::make_unique<InventoryManager>();
                     inventory_manager_->AddSlot(7, 101, 20);
-
-                    std::shared_ptr<UI_OLD::Inventory> inventory = UI_OLD::Inventory::Create(L"Inventory");
-                    inventory->SetPosition({400.f, 300.f});
-                    inventory->SetSize({158.f, 224.f});
-                    inventory->SetPivot({0.f, 1.f});
-                    inventory->AddToViewport();
-
-                    UILoginState* state = dynamic_cast<UILoginState*>(UI::Get()->GetState());
-                    if (state) state->GetInventory()->UpdateSlots(inventory_manager_.get());
                 }
             }
             break;

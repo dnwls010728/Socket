@@ -285,9 +285,9 @@
     <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
-    <ClInclude Include="Game\UI\Inventory.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
     <ClInclude Include="Game\UI\NameTag.h" />
+    <ClInclude Include="Game\UI\UIInGameState.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
@@ -656,9 +656,9 @@
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
-    <ClCompile Include="Game\UI\Inventory.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
     <ClCompile Include="Game\UI\NameTag.cpp" />
+    <ClCompile Include="Game\UI\UIInGameState.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
     <ClCompile Include="Include\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

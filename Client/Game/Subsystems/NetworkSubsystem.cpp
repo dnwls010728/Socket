@@ -56,8 +56,6 @@ void NetworkSubsystem::OnWorldBeginPlay()
         in_game_ui_subsystem->ShowMiniMap();
         in_game_ui_subsystem->ShowChatUI();
     }
-    
-    UI::Get()->ChangeState(UILoginState::StaticClass());
 }
 
 void NetworkSubsystem::Tick(float delta_time)

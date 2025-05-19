@@ -12,8 +12,6 @@ public:
     UIInventory();
     virtual ~UIInventory() override = default;
 
-    void UpdateSlots(InventoryManager* inventory);
-
 protected:
     virtual void Init() override;
     virtual void Render() override;

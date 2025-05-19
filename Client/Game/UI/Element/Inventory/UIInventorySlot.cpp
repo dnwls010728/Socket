@@ -14,7 +14,7 @@ UIInventorySlot::UIInventorySlot() :
     size_ = { 32.f, 32.f };
 }
 
-void UIInventorySlot::UpdateSlot(int32_t item_id, int16_t count)
+void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
 {
     if (item_id_ != item_id)
     {
@@ -53,28 +53,36 @@ void UIInventorySlot::Render()
 
 bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 {
+    if (item_id_ == 0) return false;
     return true;
 }
 
 bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
+    if (item_id_ == 0) return false;
+    
     i_icon_->SetAbsolutePosition(position - (i_icon_->GetSize() * .5f));
+    t_count_->SetAbsolutePosition(position - (t_count_->GetSize() * .5f));
     return true;
 }
 
 bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
-    // Logger::Print(L"UIInventorySlot::OnDragEnd: %u", slot_id_);
+    if (item_id_ == 0) return false;
+    
     i_icon_->SetRelativePosition(Math::Vector2::Zero());
+    t_count_->SetRelativePosition(Math::Vector2::Zero());
     return true;
 }
 
 bool UIInventorySlot::OnDrop(const Math::Vector2& position, UIElement* target)
 {
     UIInventorySlot* target_slot = dynamic_cast<UIInventorySlot*>(target);
-    if (target_slot)
-    {
-    }
+    if (!target_slot) return false;
+
+    uint32_t target_item_id = target_slot->GetItemID();
+    if (target_item_id == 0) return false;
+    
     return true;
 }
 

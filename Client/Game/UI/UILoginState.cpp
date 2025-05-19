@@ -11,8 +11,6 @@ void UILoginState::Init()
 {
     UIState::Init();
 
-    inventory_ = AddElement<UIInventory>(UIInventory::StaticClass());
-
 }
 
 RTTR_REGISTRATION

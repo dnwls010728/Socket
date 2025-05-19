@@ -12,7 +12,9 @@ public:
     UIInventorySlot();
     virtual ~UIInventorySlot() override = default;
 
-    void UpdateSlot(int32_t item_id, int16_t count);
+    void UpdateSlot(uint32_t item_id, uint32_t count);
+
+    FORCEINLINE uint32_t GetItemID() const { return item_id_; }
 
 protected:
     virtual void Init() override;
@@ -27,6 +29,6 @@ private:
     UIImage* i_icon_;
     UIText* t_count_;
 
-    int32_t item_id_;
+    uint32_t item_id_;
     
 };
