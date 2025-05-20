@@ -12,8 +12,8 @@ void UIContainer::SetActive(bool active)
     UIElement::SetActive(active);
 }
 
-UIContainer::UIContainer(const std::wstring&) :
-    UIElement(name_),
+UIContainer::UIContainer(const std::wstring& name) :
+    UIElement(name),
     children_()
 {
 }

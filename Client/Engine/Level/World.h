@@ -149,11 +149,7 @@ std::shared_ptr<T> World::SpawnActor(const rttr::type& kType, const std::wstring
 
         actor->InitializeActor();
 
-        rttr::type actor_type = rttr::type::get<T>();
-        if (kType.is_derived_from(actor_type))
-        {
-            return std::static_pointer_cast<T>(actor);
-        }
+        return std::dynamic_pointer_cast<T>(actor);
     }
 
     return nullptr;

@@ -3,6 +3,7 @@
 #include "UIElement.h"
 #include "Input/Mouse.h"
 #include "Misc/EngineMacros.h"
+#include "UIContainer.h"
 
 class UIState
 {
@@ -14,6 +15,9 @@ public:
     
     template <std::derived_from<UIElement> T>
     T* AddElement(const rttr::type& type, const std::wstring& name);
+
+    template <std::derived_from<UIElement> T>
+    T* FindElement(const std::wstring& name);
 
 protected:
     friend class UI;
@@ -37,6 +41,9 @@ private:
     
     void UpdateFocus(UIElement* element);
     
+    template <std::derived_from<UIElement> T>
+    T* FindElement_Internal(UIElement* element, const std::wstring& name);
+    
     std::vector<std::unique_ptr<UIElement>> elements_;
     std::vector<UIElement*> focus_path_;
 
@@ -55,13 +62,47 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
+        element->Init();
         elements_.emplace_back(std::unique_ptr<UIElement>(element));
 
-        rttr::type element_type = rttr::type::get<T>();
-        if (type.is_derived_from(element_type))
+        return dynamic_cast<T*>(element);
+    }
+    
+    return nullptr;
+}
+
+template <std::derived_from<UIElement> T>
+T* UIState::FindElement(const std::wstring& name)
+{
+    for (uint32_t i = 0; i < elements_.size(); ++i)
+    {
+        UIElement* element = elements_[elements_.size() - i - 1].get();
+        
+        T* found_element = FindElement_Internal<T>(element, name);
+        if (found_element) return found_element;
+    }
+
+    return nullptr;
+}
+
+template <std::derived_from<UIElement> T>
+T* UIState::FindElement_Internal(UIElement* element, const std::wstring& name)
+{
+    if (element->GetName() == name)
+        return dynamic_cast<T*>(element);
+
+    UIContainer* container = dynamic_cast<UIContainer*>(element);
+    if (container)
+    {
+        const std::vector<std::unique_ptr<UIElement>>& children = container->GetChildren();
+        for (uint32_t i = 0; i < children.size(); ++i)
         {
-            element->Init();
-            return static_cast<T*>(element);
+            UIElement* child = children[children.size() - i - 1].get();
+            if (child)
+            {
+                T* found_element = FindElement_Internal<T>(child, name);
+                if (found_element) return found_element;
+            }
         }
     }
     

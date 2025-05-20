@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ActorTag.h"
 #include "box2d/id.h"
+#include "Component/ActorComponent.h"
 #include "Misc/DelegateMacros.h"
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
@@ -143,8 +144,7 @@ std::shared_ptr<T> Actor::GetComponent(const rttr::type& type)
 {
     for (const auto& component : components_)
     {
-        rttr::type component_type = rttr::type::get(*component);
-        if (component_type.is_derived_from(type))
+        if (component->get_type().is_derived_from(type))
         {
             return std::static_pointer_cast<T>(component);
         }

@@ -13,6 +13,8 @@ public:
 
     virtual void SetActive(bool active) override;
 
+    FORCEINLINE const std::vector<std::unique_ptr<UIElement>>& GetChildren() const { return children_; }
+
 protected:
     UIContainer(const std::wstring& name);
 
@@ -43,14 +45,11 @@ T* UIContainer::AddChild(const rttr::type& type, const std::wstring& name)
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
+        child->Init();
+        
         children_.push_back(std::unique_ptr<UIElement>(child));
 
-        rttr::type child_type = rttr::type::get<T>();
-        if (type.is_derived_from(child_type))
-        {
-            child->Init();
-            return static_cast<T*>(child);
-        }
+        return dynamic_cast<T*>(child);
     }
     
     return nullptr;

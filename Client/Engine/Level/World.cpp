@@ -212,8 +212,7 @@ void World::GetActors(const rttr::type& type, std::vector<Actor*>& actors)
 {
     for (const auto& kActor : current_level_->actors_)
     {
-        rttr::type actor_type = rttr::type::get(*kActor);
-        if (actor_type.is_derived_from(type))
+        if (kActor->get_type().is_derived_from(type))
         {
             actors.push_back(kActor.get());
         }
@@ -224,8 +223,7 @@ Actor* World::GetActor(const rttr::type& type)
 {
     for (const auto& kActor : current_level_->actors_)
     {
-        rttr::type actor_type = rttr::type::get(*kActor);
-        if (actor_type.is_derived_from(type))
+        if (kActor->get_type().is_derived_from(type))
         {
             return kActor.get();
         }
