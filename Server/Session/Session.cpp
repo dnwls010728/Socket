@@ -20,9 +20,9 @@ void Session::ReceivePacket(Net::IPacket* packet) const
     if (player_) player_->ReceivePacket(packet);
 }
 
-Player* Session::CreatePlayer(uint32_t account_unique_id)
+Player* Session::CreatePlayer(uint32_t account_id)
 {
-    player_ = std::make_unique<Player>(this, account_unique_id);
+    player_ = std::make_unique<Player>(this, account_id);
     return player_.get();
 }
 

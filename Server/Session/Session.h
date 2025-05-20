@@ -27,7 +27,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet) const;
 
-    Player* CreatePlayer(uint32_t account_unique_id);
+    Player* CreatePlayer(uint32_t account_id);
 
     uint32_t GetAccountUniqueID() const;
 

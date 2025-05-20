@@ -6,13 +6,15 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/SelectCharacterHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
-    character_info_()
+    character_info_(),
+    handlers_()
 {
 }
 
@@ -34,6 +36,12 @@ void SessionSubsystem::Init()
         return;
     }
 
+    // 핸들러 등록
+    handlers_.emplace(
+        SelectCharacterResponse::StaticPacketID,
+        std::make_unique<SelectCharacterHandler>()
+    );
+
     SetState(SessionState::kConnected);
 }
 
@@ -50,6 +58,14 @@ void SessionSubsystem::ProcessPackets()
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
         packet_handler.Execute(packet);
+
+        auto it = handlers_.find(packet->GetPacketID());
+        if (it != handlers_.end())
+        {
+            // 패킷 핸들링 실패 시 애플리케이션 종료
+            if (!it->second->Handle(packet.get()))
+                WindowsApplication::Get()->QuitApplication();
+        }
     });
 }
 

@@ -185,7 +185,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
             {
                 is_found = true;
 
-                int unique_id = result->getInt("unique_id");
+                int unique_id = result->getInt("account_id");
                 if (session_manager_.HasSessionByAccountUniqueID(unique_id))
                 {
                     LoginResponse response;
@@ -199,11 +199,11 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 if (session) session->CreatePlayer(unique_id);
 
                 std::vector<CharacterInfo> characters;
-                mysql_manager->ExecuteQuery(L"SELECT * FROM character_info WHERE account_unique_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
+                mysql_manager->ExecuteQuery(L"SELECT * FROM character_info WHERE account_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
                 {
                     CharacterInfo character;
-                    character.unique_id = result->getInt("unique_id");
-                    character.account_unique_id = result->getInt("account_unique_id");
+                    character.unique_id = result->getInt("character_id");
+                    character.account_id = result->getInt("account_id");
                     character.name = StringHelper::UTF8ToUTF16(result->getString("name"));
                     character.lv = result->getInt("lv");
                     // character.job = result->getInt("job");

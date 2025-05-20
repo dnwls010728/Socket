@@ -178,20 +178,6 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
         }
         break;
 
-    case SelectCharacterResponse::StaticPacketID:
-        {
-            SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
-            if (response->is_success)
-            {
-                SessionSubsystem::Get()->SetState(SessionState::kInGame);
-
-                const CharacterInfo& character_info = response->character_info;
-                SessionSubsystem::Get()->SetCharacterInfo(character_info);
-                World::Get()->OpenLevel(L"InGame");
-            }
-        }
-        break;
-
     default:
         break;
     }

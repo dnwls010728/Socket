@@ -76,10 +76,20 @@ struct SelectCharacterRequest : public Net::IPacket
 struct SelectCharacterResponse : public Net::IPacket
 {
     bool is_success;
-    std::wstring message;
-    CharacterInfo character_info;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, character_info)
+    std::wstring message;
+    std::wstring name;
+
+    uint32_t character_id;
+    uint32_t lv;
+    uint32_t color;
+
+    float position_x;
+    float position_y;
+
+    std::vector<ItemInfo> inventory;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, name, character_id, lv, color, position_x, position_y, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 

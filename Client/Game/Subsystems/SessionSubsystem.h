@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <CommonObject.h>
 
+#include "IPacketHandler.h"
 #include "NetTCPSocket.h"
 #include "TCPClientSocket.h"
 #include "Subsystem/GameInstanceSubsystem.h"
@@ -54,5 +55,7 @@ private:
     SessionState state_;
 
     CharacterInfo character_info_;
+
+    std::unordered_map<uint16_t, std::unique_ptr<IPacketHandler>> handlers_;
     
 };

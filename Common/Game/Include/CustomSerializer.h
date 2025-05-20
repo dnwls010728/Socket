@@ -25,7 +25,7 @@ public:
 	CustomSerializer& operator<<(const CharacterInfo& value)
 	{
 		*this << value.unique_id;
-		*this << value.account_unique_id;
+		*this << value.account_id;
 		*this << value.name;
 		*this << value.lv;
 		*this << value.job;
@@ -38,13 +38,29 @@ public:
 	CustomSerializer& operator>>(CharacterInfo& value)
 	{
 		*this >> value.unique_id;
-		*this >> value.account_unique_id;
+		*this >> value.account_id;
 		*this >> value.name;
 		*this >> value.lv;
 		*this >> value.job;
 		*this >> value.map_id;
 		*this >> value.last_position_x;
 		*this >> value.last_position_y;
+		return *this;
+	}
+
+	CustomSerializer& operator<<(const ItemInfo& value)
+	{
+		*this << value.item_id;
+		*this << value.slot_index;
+		*this << value.count;
+		return *this;
+	}
+
+	CustomSerializer& operator>>(ItemInfo& value)
+	{
+		*this >> value.item_id;
+		*this >> value.slot_index;
+		*this >> value.count;
 		return *this;
 	}
 

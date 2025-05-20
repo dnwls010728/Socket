@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <map>
 #include <memory>
+#include <vector>
 
 class Inventory
 {
@@ -14,9 +15,13 @@ private:
     struct Slot
     {
         uint32_t item_id;
+        uint32_t slot_index;
         uint32_t count;
     };
     
     std::map<uint32_t, Slot> slots_;
+
+public:
+    inline const std::map<uint32_t, Slot>& GetSlots() const { return slots_; }
     
 };

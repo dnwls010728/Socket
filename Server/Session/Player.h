@@ -16,7 +16,7 @@ class Session;
 class Player
 {
 public:
-    Player(Session* session, uint32_t account_unique_id);
+    Player(Session* session, uint32_t account_id);
     ~Player();
 
     void LoadCharacter(uint32_t unique_id);
@@ -25,7 +25,7 @@ public:
     void SetPosition(float x, float y);
 
     inline Session* GetSession() const { return session_; }
-    inline uint32_t GetAccountUniqueID() const { return account_unique_id_; }
+    inline uint32_t GetAccountUniqueID() const { return account_id_; }
     inline Map* GetMap() const { return map_; }
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
@@ -36,8 +36,8 @@ public:
 private:
     Session* session_;
 
-    uint32_t account_unique_id_;
-    uint32_t character_unique_id_;
+    uint32_t account_id_;
+    uint32_t character_id_;
 
     Map* map_;
 

@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 
 #include <CustomPacket.h>
+#include <ranges>
 
 #include "IPacket.h"
 #include "Session.h"
@@ -10,10 +11,10 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Player/Inventory/Inventory.h"
 
-Player::Player(Session* session, uint32_t account_unique_id) :
+Player::Player(Session* session, uint32_t account_id) :
     session_(session),
-    account_unique_id_(account_unique_id),
-    character_unique_id_(0),
+    account_id_(account_id),
+    character_id_(0),
     map_(nullptr),
     character_info_(),
     name_(L""),
@@ -33,7 +34,7 @@ Player::~Player()
 
 void Player::LoadCharacter(uint32_t unique_id)
 {
-    character_unique_id_ = unique_id;
+    character_id_ = unique_id;
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
@@ -41,7 +42,7 @@ void Player::LoadCharacter(uint32_t unique_id)
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE unique_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE character_id = ?"));
             statement->setInt(1, unique_id);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
@@ -59,7 +60,7 @@ void Player::LoadCharacter(uint32_t unique_id)
         inventory_ = std::make_unique<Inventory>();
 
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_unique_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
             statement->setInt(1, unique_id);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
@@ -108,6 +109,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             SelectCharacterResponse response;
             response.is_success = true;
+            response.message = L"";
+            response.name = name_;
+            response.character_id = character_id_;
+            response.lv = lv_;
+            response.color = color_;
+            response.position_x = position_x_;
+            response.position_y = position_y_;
+
+            for (const auto& slot : inventory_->GetSlots() | std::views::values)
+            {
+                ItemInfo item_info;
+                item_info.item_id = slot.item_id;
+                item_info.slot_index = slot.slot_index;
+                item_info.count = slot.count;
+
+                response.inventory.push_back(item_info);
+            }
+
             SendPacket(response);
 
             session_->SetState(Session::State::kCharacterSelected);
@@ -172,7 +191,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 SetPosition(position_x, position_y);
                 
                 MovePlayerPacket move_player_broadcast_packet;
-                move_player_broadcast_packet.unique_id = character_unique_id_;
+                move_player_broadcast_packet.unique_id = character_id_;
                 move_player_broadcast_packet.movement.x = position_x;
                 move_player_broadcast_packet.movement.y = position_y;
                 map_->SendPacket(move_player_broadcast_packet, this);
@@ -186,7 +205,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             if (map_)
             {
                 ChatMessagePacket chat_message_broadcast_packet;
-                chat_message_broadcast_packet.unique_id = character_unique_id_;
+                chat_message_broadcast_packet.unique_id = character_id_;
                 chat_message_broadcast_packet.message = chat_message_packet->message;
                 map_->SendPacket(chat_message_broadcast_packet);
             }

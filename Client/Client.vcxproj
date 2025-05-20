@@ -275,6 +275,7 @@
     <ClInclude Include="Game\Inventory\Inventory.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
+    <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
@@ -645,6 +646,7 @@
     <ClCompile Include="Game\Inventory\Inventory.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />

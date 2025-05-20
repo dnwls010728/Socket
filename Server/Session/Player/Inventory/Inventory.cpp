@@ -1,5 +1,7 @@
 ﻿#include "Inventory.h"
 
+#include <ranges>
+
 Inventory::Inventory() :
     slots_()
 {
@@ -8,5 +10,5 @@ Inventory::Inventory() :
 void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
     if (slot_index == 0 || item_id == 0) return;
-    slots_[slot_index] = { item_id, count };
+    slots_[slot_index] = { item_id, slot_index, count };
 }

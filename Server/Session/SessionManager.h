@@ -13,10 +13,10 @@ public:
     void RemoveSession(uint32_t client_id);
 
     Session* FindSessionByClientID(uint32_t client_id);
-    Session* FindSessionByAccountUniqueID(uint32_t account_unique_id);
+    Session* FindSessionByAccountUniqueID(uint32_t account_id);
 
     bool HasSessionByClientID(uint32_t client_id);
-    bool HasSessionByAccountUniqueID(uint32_t account_unique_id);
+    bool HasSessionByAccountUniqueID(uint32_t account_id);
 
 private:
     std::mutex mutex_;

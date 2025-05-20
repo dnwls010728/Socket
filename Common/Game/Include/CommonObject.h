@@ -23,7 +23,7 @@ struct Movement
 struct CharacterInfo
 {
     int unique_id;
-    int account_unique_id;
+    int account_id;
     std::wstring name;
     int lv;
     int job;
@@ -32,4 +32,11 @@ struct CharacterInfo
     float last_position_y;
 
     inline bool IsValid() const { return unique_id > 0; }
+};
+
+struct ItemInfo
+{
+    uint32_t item_id;
+    uint32_t slot_index;
+    uint32_t count;
 };
