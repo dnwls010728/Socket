@@ -42,6 +42,7 @@ public:
     virtual void InitPhysicsWorld();
     
     inline size_t GetPlayerCount() const { return players_.size(); }
+    std::vector<std::weak_ptr<Player>> GetPlayers();
     inline uint32_t GetMapBaseUniqueID() const { return map_unique_id_; }
 
     b2WorldId GetWorldID() const {return world_id_; }

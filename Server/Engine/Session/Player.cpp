@@ -15,8 +15,7 @@ Player::Player(Session* session, uint32_t account_unique_id) :
     character_unique_id_(0),
     map_(nullptr),
     character_info_(),
-    position_x_(0.f),
-    position_y_(0.f)
+    position_(Math::Vector2::Zero())
 {
 }
 
@@ -76,7 +75,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 
                 map_->AddPlayer(shared_from_this());
 
-                SetPosition(character_info_.last_position_x, character_info_.last_position_y);
+                SetPosition({character_info_.last_position_x, character_info_.last_position_y});
             }
         }
         break;
@@ -98,7 +97,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                     
                     map_->AddPlayer(shared_from_this());
 
-                    SetPosition(0.f, 0.f);
+                    SetPosition(Math::Vector2::Zero());
                     break;
                 }
             }
@@ -118,7 +117,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 float position_x = move_player_packet->movement.x;
                 float position_y = move_player_packet->movement.y;
                 
-                SetPosition(position_x, position_y);
+                SetPosition({position_x, position_y});
                 
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_unique_id_;
@@ -145,10 +144,4 @@ void Player::ReceivePacket(Net::IPacket* packet)
     default:
         break;
     }
-}
-
-void Player::SetPosition(float x, float y)
-{
-    position_x_ = x;
-    position_y_ = y;
 }

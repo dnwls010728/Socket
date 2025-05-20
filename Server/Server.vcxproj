@@ -189,8 +189,10 @@
     <ClCompile Include="Game\Actors\Character\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Character\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Character\Monster\MonsterBase.cpp" />
+    <ClCompile Include="Game\Actors\Character\States\BaseState.cpp"/>
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\States\BaseState.cpp" />
+    <ClCompile Include="Game\Actors\States\MoveToPlayerState.cpp"/>
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
@@ -288,8 +290,11 @@
     <ClInclude Include="Game\Actors\Character\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Character\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Character\Monster\MonsterBase.h" />
+    <ClInclude Include="Game\Actors\Character\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\States\IdleState.h" />
+    <ClInclude Include="Game\Actors\States\MoveToPlayerState.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />

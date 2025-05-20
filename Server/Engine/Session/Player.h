@@ -2,6 +2,8 @@
 #include <CommonObject.h>
 #include <cstdint>
 
+#include "Math/Vector2.h"
+
 class Map;
 
 namespace Net
@@ -20,7 +22,6 @@ public:
 
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    void SetPosition(float x, float y);
     
     inline uint32_t GetCharacterUniqueID() const { return character_unique_id_; }
 
@@ -30,8 +31,8 @@ public:
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
 
-    inline float GetPositionX() const { return position_x_; }
-    inline float GetPositionY() const { return position_y_; }
+    inline void SetPosition(const Math::Vector2 &position) {position_ = position;}
+    inline Math::Vector2 GetPosition() const { return position_; }
 
 private:
     inline void SetMap(Map* kMap) { map_ = kMap; }
@@ -46,7 +47,6 @@ private:
 
     CharacterInfo character_info_;
 
-    float position_x_;
-    float position_y_;
+    Math::Vector2 position_;
     
 };

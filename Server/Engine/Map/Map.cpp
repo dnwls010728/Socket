@@ -88,8 +88,8 @@ void Map::AddPlayers()
             // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
             SpawnPlayerPacket spawn_player_packet;
             spawn_player_packet.character_info = player->GetCharacterInfo();
-            spawn_player_packet.position_x = player->GetPositionX();
-            spawn_player_packet.position_y = player->GetPositionY();
+            spawn_player_packet.position_x = player->GetPosition().x;
+            spawn_player_packet.position_y = player->GetPosition().y;
             SendPacket(spawn_player_packet, player);
         }
 
@@ -101,8 +101,8 @@ void Map::AddPlayers()
             {
                 SpawnPlayerPacket spawn_player_packet;
                 spawn_player_packet.character_info = other_player->GetCharacterInfo();
-                spawn_player_packet.position_x = other_player->GetPositionX();
-                spawn_player_packet.position_y = other_player->GetPositionY();
+                spawn_player_packet.position_x = other_player->GetPosition().x;
+                spawn_player_packet.position_y = other_player->GetPosition().y;
                 player->SendPacket(spawn_player_packet);
             }
         }
@@ -261,6 +261,17 @@ void Map::InitPhysicsWorld()
     world_def.gravity = gravity;
 
     world_id_ = b2CreateWorld(&world_def);
+}
+
+std::vector<std::weak_ptr<Player>> Map::GetPlayers()
+{
+    std::lock_guard<std::mutex> lock(player_mutex_);
+    std::vector<std::weak_ptr<Player>> players;
+    for (const auto& player_weak : players_ | std::views::values)
+    {
+        players.push_back(player_weak);
+    }
+    return players;
 }
 
 void Map::DestroyActors()

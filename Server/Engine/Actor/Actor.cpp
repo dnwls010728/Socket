@@ -65,6 +65,22 @@ void Actor::PhysicsTick(float delta_time)
     {
         kComponent->PhysicsTickComponent(delta_time);
     }
+}
+
+void Actor::Tick(float delta_time)
+{
+    for (const auto& kComponent : components_)
+    {
+        kComponent->TickComponent(delta_time);
+    }
+}
+
+void Actor::PostTick(float delta_time)
+{
+    for (const auto& kComponent : components_)
+    {
+        kComponent->PostTickComponent(delta_time);
+    }
 
     Math::Vector2 position = transform_->GetPosition();
     if (position != last_position_)
@@ -82,23 +98,6 @@ void Actor::PhysicsTick(float delta_time)
             packet.server_time = Net::GetClientTime();
             map->SendPacket(packet);
         }
-    }
-    
-}
-
-void Actor::Tick(float delta_time)
-{
-    for (const auto& kComponent : components_)
-    {
-        kComponent->TickComponent(delta_time);
-    }
-}
-
-void Actor::PostTick(float delta_time)
-{
-    for (const auto& kComponent : components_)
-    {
-        kComponent->PostTickComponent(delta_time);
     }
 }
 
