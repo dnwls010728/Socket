@@ -2,8 +2,6 @@
 #include "Subsystem/Tickable.h"
 #include "Subsystem/WorldSubsystem.h"
 
-#define GET_NETWORK() World::Get()->GetSubsystem<NetworkSubsystem>()
-
 class Tilemap;
 class PlayerCharacter;
 class NetworkActor;
@@ -41,6 +39,8 @@ public:
     FORCEINLINE std::shared_ptr<PlayerCharacter> GetPlayer() const { return player_.lock(); }
 
     FORCEINLINE Tilemap* GetTilemap() const { return tilemap_; }
+
+    static NetworkSubsystem* Get();
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);

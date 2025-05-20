@@ -13,7 +13,7 @@ NetworkActor::NetworkActor(const std::wstring& kName) :
 
 void NetworkActor::SendPacket(Net::IPacket& packet)
 {
-    GET_SESSION()->SendPacket(packet);
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
 void NetworkActor::ReceivePacket(Net::IPacket* packet)

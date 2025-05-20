@@ -4,18 +4,15 @@
 #include <CustomPacket.h>
 #include <CustomSerializer.h>
 
+#include "GameInstance.h"
 #include "NetworkManager.h"
-#include "Inventory/InventoryManager.h"
-#include "UI/UI.h"
 #include "UI/UILoginState.h"
-#include "UI/Element/Inventory/UIInventory.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
-    character_info_(),
-    inventory_manager_(nullptr)
+    character_info_()
 {
 }
 
@@ -53,26 +50,17 @@ void SessionSubsystem::ProcessPackets()
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
         packet_handler.Execute(packet);
-
-        switch (packet->GetPacketID())
-        {
-        case SelectCharacterResponse::StaticPacketID:
-            {
-                SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
-                if (response->is_success)
-                {
-                    inventory_manager_ = std::make_unique<InventoryManager>();
-                    inventory_manager_->AddSlot(7, 101, 20);
-                }
-            }
-            break;
-        }
     });
 }
 
 void SessionSubsystem::SendPacket(Net::IPacket& packet)
 {
     client_socket_.SendPacket(packet);
+}
+
+SessionSubsystem* SessionSubsystem::Get()
+{
+    return GameInstance::Get()->GetSubsystem<SessionSubsystem>();
 }
 
 bool SessionSubsystem::Connect(const Net::NetAddress& address)

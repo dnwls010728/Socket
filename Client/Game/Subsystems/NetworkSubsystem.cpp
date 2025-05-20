@@ -37,14 +37,14 @@ void NetworkSubsystem::Deinit()
 {
     WorldSubsystem::Deinit();
 
-    GET_SESSION()->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
+    SessionSubsystem::Get()->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
 }
 
 void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
 
-    SessionSubsystem* session_subsystem = GET_SESSION();
+    SessionSubsystem* session_subsystem = SessionSubsystem::Get();
     session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
 
     if (session_subsystem->IsInGame())
@@ -52,7 +52,7 @@ void NetworkSubsystem::OnWorldBeginPlay()
         InGameReadyPacket packet;
         SendPacket(packet);
 
-        InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+        InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
         in_game_ui_subsystem->ShowMiniMap();
         in_game_ui_subsystem->ShowChatUI();
     }
@@ -71,7 +71,7 @@ void NetworkSubsystem::Tick(float delta_time)
 
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
 {
-    GET_SESSION()->SendPacket(packet);
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
 void NetworkSubsystem::ChangeMap(uint32_t map_id)
@@ -109,6 +109,11 @@ std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const uint32_t u
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end()) return iter->second;
     return nullptr;
+}
+
+NetworkSubsystem* NetworkSubsystem::Get()
+{
+    return World::Get()->GetSubsystem<NetworkSubsystem>();
 }
 
 void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
@@ -212,7 +217,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
         }
     }
     
-    const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
+    const CharacterInfo& character_info = SessionSubsystem::Get()->GetCharacterInfo();
     std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
     if (IsValid(player_character))
     {
@@ -224,7 +229,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
         camera_manager->SetTarget(player_character);
     }
 
-    InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+    InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
     in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 }
 

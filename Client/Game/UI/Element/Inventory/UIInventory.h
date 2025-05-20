@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
 
-class InventoryManager;
+class Inventory;
 class UIInventorySlot;
 
 class UIInventory : public UIContainer

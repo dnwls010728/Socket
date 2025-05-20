@@ -35,7 +35,7 @@ void LoginMap::Load()
 {
     Level::Load();
 
-    GET_SESSION()->packet_handler.Add(this, &LoginMap::ProcessPackets);
+    SessionSubsystem::Get()->packet_handler.Add(this, &LoginMap::ProcessPackets);
 
     UI::Get()->ChangeState(UILoginState::StaticClass());
 
@@ -127,7 +127,7 @@ void LoginMap::Unload(EndPlayReason type)
 
     character_list_->RemoveFromViewport();
 
-    GET_SESSION()->packet_handler.Remove(this, &LoginMap::ProcessPackets);
+    SessionSubsystem::Get()->packet_handler.Remove(this, &LoginMap::ProcessPackets);
 }
 
 void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
@@ -159,7 +159,7 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
 
             if (response->is_success)
             {
-                GET_SESSION()->SetState(SessionState::kLoggedIn);
+                SessionSubsystem::Get()->SetState(SessionState::kLoggedIn);
 
                 characters_ = response->characters;
                 for (const auto& character : characters_)
@@ -183,10 +183,10 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
             SelectCharacterResponse* response = static_cast<SelectCharacterResponse*>(packet.get());
             if (response->is_success)
             {
-                GET_SESSION()->SetState(SessionState::kInGame);
+                SessionSubsystem::Get()->SetState(SessionState::kInGame);
 
                 const CharacterInfo& character_info = response->character_info;
-                GET_SESSION()->SetCharacterInfo(character_info);
+                SessionSubsystem::Get()->SetCharacterInfo(character_info);
                 World::Get()->OpenLevel(L"InGame");
             }
         }
@@ -204,7 +204,7 @@ void LoginMap::OnRegister()
     RegisterRequest request;
     request.id = register_id_->GetText();
     request.password = register_password_->GetText();
-    GET_SESSION()->SendPacket(request);
+    SessionSubsystem::Get()->SendPacket(request);
 }
 
 void LoginMap::OnLogin()
@@ -214,7 +214,7 @@ void LoginMap::OnLogin()
     LoginRequest request;
     request.id = login_id_->GetText();
     request.password = login_password_->GetText();
-    GET_SESSION()->SendPacket(request);
+    SessionSubsystem::Get()->SendPacket(request);
 }
 
 void LoginMap::OnRegisterSwitch()
@@ -250,7 +250,7 @@ void LoginMap::OnCharacterSelect(uint64_t user_data)
 
     SelectCharacterRequest request;
     request.unique_id = character->unique_id;
-    GET_SESSION()->SendPacket(request);
+    SessionSubsystem::Get()->SendPacket(request);
 }
 
 RTTR_REGISTRATION

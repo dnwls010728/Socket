@@ -51,7 +51,7 @@ void UI_OLD::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
         Bounds map_world_bounds = tilemap_->GetWorldBounds();
         Math::Vector2 scale { rect.width / (map_world_bounds.max.x - map_world_bounds.min.x), rect.height / (map_world_bounds.max.y - map_world_bounds.min.y) };
 
-        NetworkSubsystem* network_subsystem = GET_NETWORK();
+        NetworkSubsystem* network_subsystem = NetworkSubsystem::Get();
 
         renderer->BeginLayer(rect);
 

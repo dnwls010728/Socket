@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "Subsystem/GameInstanceSubsystem.h"
 
-#define GET_IN_GAME_UI() GameInstance::Get()->GetSubsystem<InGameUISubsystem>()
-
 namespace UI_OLD
 {
     class ListBox;
@@ -28,6 +26,8 @@ public:
 
     FORCEINLINE std::shared_ptr<UI_OLD::EditableTextBox> GetChatInput() const { return chat_input_; }
     FORCEINLINE std::shared_ptr<UI_OLD::MiniMap> GetMiniMap() const { return mini_map_; }
+
+    static InGameUISubsystem* Get();
 
 private:
     void OnChatInputReturn(const std::wstring& text);

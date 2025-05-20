@@ -61,6 +61,11 @@ void InGameUISubsystem::HideMiniMap()
     mini_map_->RemoveFromViewport();
 }
 
+InGameUISubsystem* InGameUISubsystem::Get()
+{
+    return GameInstance::Get()->GetSubsystem<InGameUISubsystem>();
+}
+
 void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)
 {
     if (text.empty())
@@ -71,7 +76,7 @@ void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)
 
     ChatMessagePacket chat_message_packet;
     chat_message_packet.message = text;
-    GET_SESSION()->SendPacket(chat_message_packet);
+    SessionSubsystem::Get()->SendPacket(chat_message_packet);
 
     chat_input_->SetText(L"");
 }

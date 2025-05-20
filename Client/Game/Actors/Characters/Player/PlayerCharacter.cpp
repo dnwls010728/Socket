@@ -142,12 +142,12 @@ void PlayerCharacter::Tick(float delta_time)
 
             if (keyboard->GetKeyDown('1'))
             {
-                GET_NETWORK()->ChangeMap(0);
+                NetworkSubsystem::Get()->ChangeMap(0);
             }
 
             if (keyboard->GetKeyDown('2'))
             {
-                GET_NETWORK()->ChangeMap(1);
+                NetworkSubsystem::Get()->ChangeMap(1);
             }
         }
         else
