@@ -12,7 +12,8 @@ void UIContainer::SetActive(bool active)
     UIElement::SetActive(active);
 }
 
-UIContainer::UIContainer() :
+UIContainer::UIContainer(const std::wstring&) :
+    UIElement(name_),
     children_()
 {
 }
@@ -37,16 +38,16 @@ void UIContainer::Render()
     }
 }
 
-UIElement* UIContainer::FindElement(const Math::Vector2& position)
+UIElement* UIContainer::RayCast(const Math::Vector2& position)
 {
     for (uint32_t i = 0; i < children_.size(); ++i)
     {
         UIElement* child = children_[children_.size() - i - 1].get();
         if (child && child->IsActive() && child->IsInRange(position))
-            return child->FindElement(position);
+            return child->RayCast(position);
     }
 
-    return UIElement::FindElement(position);
+    return UIElement::RayCast(position);
 }
 
 UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
@@ -108,7 +109,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIContainer>("UIContainer")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );

@@ -9,7 +9,7 @@ class UIInventorySlot : public UIContainer
     GENERATED_BODY(UIInventorySlot, UIContainer)
     
 public:
-    UIInventorySlot();
+    UIInventorySlot(const std::wstring& name);
     virtual ~UIInventorySlot() override = default;
 
     void UpdateSlot(uint32_t item_id, uint32_t count);

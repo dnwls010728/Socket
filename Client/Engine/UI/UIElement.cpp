@@ -13,7 +13,7 @@ bool UIElement::IsInRange(const Math::Vector2& position) const
         size_.x, size_.y
     };
 
-    return !is_ignore_interaction_ ? Math::Rect::Contains(rect, position) : false;
+    return !is_ignore_raycast ? Math::Rect::Contains(rect, position) : false;
 }
 
 void UIElement::SetAbsolutePosition(const Math::Vector2& position)
@@ -39,17 +39,18 @@ Math::Vector2 UIElement::GetAbsolutePosition() const
     return position_;
 }
 
-UIElement::UIElement() :
+UIElement::UIElement(const std::wstring& name) :
+    name_(name),
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero()),
     is_active_(true),
     is_focused_(false),
-    is_ignore_interaction_(false),
+    is_ignore_raycast(false),
     parent_(nullptr)
 {
 }
 
-UIElement* UIElement::FindElement(const Math::Vector2& position)
+UIElement* UIElement::RayCast(const Math::Vector2& position)
 {
     return IsInRange(position) ? this : nullptr;
 }
@@ -112,7 +113,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIElement>("UIElement")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );

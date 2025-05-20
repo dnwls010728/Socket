@@ -10,7 +10,7 @@ class UIImage : public UIElement
     GENERATED_BODY(UIImage, UIElement)
     
 public:
-    UIImage();
+    UIImage(const std::wstring& name);
     virtual ~UIImage() override = default;
 
     FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }

@@ -5,7 +5,8 @@
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-UIInventory::UIInventory() :
+UIInventory::UIInventory(const std::wstring& name) :
+    UIContainer(name),
     slots_()
 {
     size_ = { 158.f, 224.f };
@@ -19,7 +20,7 @@ void UIInventory::Init()
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
-            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass());
+            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
             slot->SetRelativePosition({ 8 + j * 36.f, 24 + i * 36.f });
             slots_[j + i * 4 + 1] = slot;
         }
@@ -56,7 +57,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIInventory>("UIInventory")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );

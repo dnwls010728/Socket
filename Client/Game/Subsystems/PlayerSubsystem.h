@@ -23,9 +23,9 @@ private:
     uint32_t lv_;
 
     std::wstring name_;
-
-    float position_x_;
-    float position_y_;
+    
+    float initial_position_x_;
+    float initial_position_y_;
     
     std::unique_ptr<Inventory> inventory_;
     

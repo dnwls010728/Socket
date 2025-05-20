@@ -6,7 +6,8 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
 
-UIInventorySlot::UIInventorySlot() :
+UIInventorySlot::UIInventorySlot(const std::wstring& name) :
+    UIContainer(name),
     i_icon_(nullptr),
     t_count_(nullptr),
     item_id_(0)
@@ -31,16 +32,16 @@ void UIInventorySlot::Init()
 {
     UIContainer::Init();
 
-    i_icon_ = AddChild<UIImage>(UIImage::StaticClass());
+    i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     i_icon_->SetSize(size_);
-    i_icon_->SetIgnoreInteraction(true);
+    i_icon_->SetIgnoreRayCast(true);
     
-    t_count_ = AddChild<UIText>(UIText::StaticClass());
+    t_count_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
     t_count_->SetSize(size_);
     t_count_->SetColor(Math::Color::White);
     t_count_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
     t_count_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
-    t_count_->SetIgnoreInteraction(true);
+    t_count_->SetIgnoreRayCast(true);
     t_count_->SetActive(false);
 }
 
@@ -91,7 +92,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIInventorySlot>("UIInventorySlot")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );

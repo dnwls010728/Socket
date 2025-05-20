@@ -13,7 +13,7 @@ public:
     virtual ~UIState() = default;
     
     template <std::derived_from<UIElement> T>
-    T* AddElement(const rttr::type& type);
+    T* AddElement(const rttr::type& type, const std::wstring& name);
 
 protected:
     friend class UI;
@@ -30,7 +30,7 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);
 
-    UIElement* FindElement(const Math::Vector2& position) const;
+    UIElement* RayCast(const Math::Vector2& position) const;
 
 private:
     friend class UIElement;
@@ -47,11 +47,11 @@ private:
 };
 
 template <std::derived_from<UIElement> T>
-T* UIState::AddElement(const rttr::type& type)
+T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
 {
     if (!type.is_derived_from<UIElement>()) return nullptr;
 
-    rttr::variant var = type.create();
+    rttr::variant var = type.create({ name });
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();

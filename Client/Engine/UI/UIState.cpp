@@ -72,7 +72,7 @@ UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, Mouse
     {
         if (dragging_element_)
         {
-            UIElement* target_element = FindElement(position);
+            UIElement* target_element = RayCast(position);
             if (target_element && target_element != dragging_element_)
             {
                 result.is_handled |= target_element->OnDrop(position, dragging_element_);
@@ -90,7 +90,7 @@ UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, Mouse
     }
     else if (!is_dragging_ && button == MouseButton::kLeft && is_pressed)
     {
-        dragging_element_ = FindElement(position);
+        dragging_element_ = RayCast(position);
         is_dragging_ = dragging_element_ != nullptr;
         if (!is_dragging_) UpdateFocus(nullptr);
     }
@@ -146,13 +146,13 @@ bool UIState::OnChar(wchar_t character)
     return false;
 }
 
-UIElement* UIState::FindElement(const Math::Vector2& position) const
+UIElement* UIState::RayCast(const Math::Vector2& position) const
 {
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[elements_.size() - i - 1].get();
         if (element && element->IsActive() && element->IsInRange(position))
-            return element->FindElement(position);
+            return element->RayCast(position);
     }
 
     return nullptr;

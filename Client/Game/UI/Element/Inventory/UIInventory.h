@@ -9,7 +9,7 @@ class UIInventory : public UIContainer
     GENERATED_BODY(UIInventory, UIContainer)
     
 public:
-    UIInventory();
+    UIInventory(const std::wstring& name);
     virtual ~UIInventory() override = default;
 
 protected:

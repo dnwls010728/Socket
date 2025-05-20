@@ -12,7 +12,7 @@ void UIInGameState::Init()
 {
     UIState::Init();
 
-    inventory_ = AddElement<UIInventory>(UIInventory::StaticClass());
+    inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
 }
 
 bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)

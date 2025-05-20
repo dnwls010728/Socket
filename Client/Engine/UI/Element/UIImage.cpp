@@ -5,7 +5,8 @@
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
 
-UIImage::UIImage() :
+UIImage::UIImage(const std::wstring& name) :
+    UIElement(name),
     texture_(nullptr),
     filter_mode_(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR)
 {
@@ -24,7 +25,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIImage>("UIImage")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );

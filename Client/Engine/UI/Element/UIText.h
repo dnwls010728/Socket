@@ -9,7 +9,7 @@ class UIText : public UIElement
     GENERATED_BODY(UIText, UIElement)
     
 public:
-    UIText();
+    UIText(const std::wstring& name);
     virtual ~UIText() override = default;
 
     FORCEINLINE void SetText(const std::wstring& text) { text_ = text; }

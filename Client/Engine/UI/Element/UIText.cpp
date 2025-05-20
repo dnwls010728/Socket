@@ -4,7 +4,8 @@
 #include "UI/UIContainer.h"
 #include "Windows/DX/Renderer.h"
 
-UIText::UIText() :
+UIText::UIText(const std::wstring& name) :
+    UIElement(name),
     text_(L"New Text"),
     font_name_(L"NanumBarunGothic"),
     font_size_(12.f),
@@ -26,7 +27,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<UIText>("UIText")
-        .constructor<>()
+        .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
         );
