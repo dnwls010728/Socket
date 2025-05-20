@@ -1,12 +1,12 @@
 ﻿#include "Inventory.h"
 
 Inventory::Inventory() :
-    items_()
+    slots_()
 {
 }
 
-void Inventory::AddSlot(std::unique_ptr<Item> item)
+void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
-    if (!item || item->GetSlotIndex() < 1) return;
-    items_[item->GetSlotIndex()] = std::move(item);
+    if (slot_index == 0 || item_id == 0) return;
+    slots_[slot_index] = { item_id, count };
 }

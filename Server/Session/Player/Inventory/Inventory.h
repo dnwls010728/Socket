@@ -2,17 +2,21 @@
 #include <map>
 #include <memory>
 
-#include "Item.h"
-
 class Inventory
 {
 public:
     Inventory();
     ~Inventory() = default;
 
-    void AddSlot(std::unique_ptr<Item> item);
+    void AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count);
 
 private:
-    std::map<uint32_t, std::unique_ptr<Item>> items_;
+    struct Slot
+    {
+        uint32_t item_id;
+        uint32_t count;
+    };
+    
+    std::map<uint32_t, Slot> slots_;
     
 };

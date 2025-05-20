@@ -235,7 +235,6 @@
       <AdditionalIncludeDirectories>D:\RiderProjects\Socket\\Common\Game\Include;D:\RiderProjects\Socket\\Server\Include;D:\RiderProjects\Socket\\Server;D:\RiderProjects\Socket\\NetworkLib</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Session\Player\Inventory\Item.cpp" />
     <ClCompile Include="Session\Session.cpp" />
     <ClCompile Include="Session\SessionManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
@@ -337,7 +336,6 @@
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Session\Player.h" />
     <ClInclude Include="Session\Player\Inventory\Inventory.h" />
-    <ClInclude Include="Session\Player\Inventory\Item.h" />
     <ClInclude Include="Session\Session.h" />
     <ClInclude Include="Session\SessionManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />

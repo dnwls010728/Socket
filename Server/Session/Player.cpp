@@ -69,8 +69,7 @@ void Player::LoadCharacter(uint32_t unique_id)
                 uint32_t slot_index = result->getInt("slot_index");
                 uint32_t count = result->getInt("count");
 
-                std::unique_ptr<Item> item = std::make_unique<Item>(item_id, slot_index, count);
-                inventory_->AddSlot(std::move(item));
+                inventory_->AddSlot(slot_index, item_id, count);
             }
         }
 
