@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <CommonObject.h>
 #include <cstdint>
+#include <memory>
 
+class Inventory;
 class Map;
 
 namespace Net
@@ -17,12 +19,10 @@ public:
     Player(Session* session, uint32_t account_unique_id);
     ~Player();
 
+    void LoadCharacter(uint32_t unique_id);
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     void SetPosition(float x, float y);
-
-    inline void SetCharacterUniqueID(uint32_t character_unique_id) { character_unique_id_ = character_unique_id; }
-    inline uint32_t GetCharacterUniqueID() const { return character_unique_id_; }
 
     inline Session* GetSession() const { return session_; }
     inline uint32_t GetAccountUniqueID() const { return account_unique_id_; }
@@ -43,7 +43,16 @@ private:
 
     CharacterInfo character_info_;
 
+    // 캐릭터 정보
+    std::wstring name_;
+
+    int32_t lv_;
+    int32_t map_id_;
+    int32_t color_;
+
     float position_x_;
     float position_y_;
+
+    std::unique_ptr<Inventory> inventory_;
     
 };

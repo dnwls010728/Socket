@@ -74,10 +74,10 @@ void NetworkSubsystem::SendPacket(Net::IPacket& packet)
     GET_SESSION()->SendPacket(packet);
 }
 
-void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
+void NetworkSubsystem::ChangeMap(uint32_t map_id)
 {
     ChangeMapRequest request;
-    request.map_unique_id = map_unique_id;
+    request.map_id = map_id;
     SendPacket(request);
 }
 
@@ -118,7 +118,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case ChangeMapResponse::StaticPacketID:
         {
             ChangeMapResponse* response = static_cast<ChangeMapResponse*>(packet.get());
-            if (response->is_success) TransitionMap(response->map_unique_id);
+            if (response->is_success) TransitionMap(response->map_id);
         }
         break;
         
@@ -179,7 +179,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     }
 }
 
-void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
+void NetworkSubsystem::TransitionMap(uint32_t map_id)
 {
     std::vector<Actor*> actors = {};
     World::Get()->GetActors(Actor::StaticClass(), actors);
@@ -198,7 +198,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
     std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
     if (IsValid(tilemap_loader))
     {
-        std::wstring wide_str = std::format(L"{:06}", map_unique_id);
+        std::wstring wide_str = std::format(L"{:06}", map_id);
         tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
         if (tilemap_)
         {

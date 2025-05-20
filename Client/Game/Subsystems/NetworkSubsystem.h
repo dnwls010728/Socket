@@ -27,7 +27,7 @@ public:
     virtual void Tick(float delta_time) override;
 
     void SendPacket(Net::IPacket& packet);
-    void ChangeMap(uint32_t map_unique_id);
+    void ChangeMap(uint32_t map_id);
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& type, uint32_t unique_id, const std::wstring& name = L"");
@@ -44,7 +44,7 @@ public:
 
 private:
     void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
-    void TransitionMap(uint32_t map_unique_id);
+    void TransitionMap(uint32_t map_id);
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 

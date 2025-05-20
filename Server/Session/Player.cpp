@@ -7,6 +7,8 @@
 #include "../Helper/StringHelper.h"
 #include "../Map/World.h"
 #include "../MySQL/MySQLManager.h"
+#include "jdbc/cppconn/prepared_statement.h"
+#include "Player/Inventory/Inventory.h"
 
 Player::Player(Session* session, uint32_t account_unique_id) :
     session_(session),
@@ -14,14 +16,80 @@ Player::Player(Session* session, uint32_t account_unique_id) :
     character_unique_id_(0),
     map_(nullptr),
     character_info_(),
+    name_(L""),
+    lv_(0),
+    map_id_(0),
+    color_(0),
     position_x_(0.f),
-    position_y_(0.f)
+    position_y_(0.f),
+    inventory_(nullptr)
 {
 }
 
 Player::~Player()
 {
     if (map_) map_->RemovePlayer(this);
+}
+
+void Player::LoadCharacter(uint32_t unique_id)
+{
+    character_unique_id_ = unique_id;
+    
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return;
+
+    try
+    {
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE unique_id = ?"));
+            statement->setInt(1, unique_id);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                name_ = StringHelper::UTF8ToUTF16(result->getString("name"));
+                lv_ = result->getInt("lv");
+                map_id_ = result->getInt("map_id");
+                position_x_ = static_cast<float>(result->getDouble("last_position_x"));
+                position_y_ = static_cast<float>(result->getDouble("last_position_y"));
+                color_ = result->getInt("color");
+            }
+        }
+
+        inventory_ = std::make_unique<Inventory>();
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_unique_id = ?"));
+            statement->setInt(1, unique_id);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                uint32_t item_id = result->getInt("item_id");
+                uint32_t slot_index = result->getInt("slot_index");
+                uint32_t count = result->getInt("count");
+
+                std::unique_ptr<Item> item = std::make_unique<Item>(item_id, slot_index, count);
+                inventory_->AddSlot(std::move(item));
+            }
+        }
+
+        map_ = World::Get()->GetMap(map_id_);
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+    }
 }
 
 void Player::SendPacket(const Net::IPacket& packet) const
@@ -37,27 +105,13 @@ void Player::ReceivePacket(Net::IPacket* packet)
     case SelectCharacterRequest::StaticPacketID:
         {
             SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet);
-            character_unique_id_ = request->unique_id;
+            LoadCharacter(request->unique_id);
+            
+            SelectCharacterResponse response;
+            response.is_success = true;
+            SendPacket(response);
 
-            MySQLManager::Get()->ExecuteQuery(L"SELECT * FROM character_info WHERE unique_id = " + std::to_wstring(character_unique_id_), [&](const sql::ResultSet* result)
-            {
-                character_info_.unique_id = result->getInt("unique_id");
-                character_info_.account_unique_id = result->getInt("account_unique_id");
-                character_info_.name = StringHelper::ToWideString(result->getString("name"));
-                character_info_.lv = result->getInt("lv");
-                character_info_.job = result->getInt("job");
-                character_info_.map_unique_id = result->getInt("map_unique_id");
-                character_info_.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
-                character_info_.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
-
-                SelectCharacterResponse response;
-                response.is_success = true;
-                response.message = L"Character selected successfully.";
-                response.character_info = character_info_;
-                SendPacket(response);
-
-                session_->SetState(Session::State::kCharacterSelected);
-            });
+            session_->SetState(Session::State::kCharacterSelected);
         }
         break;
 
@@ -65,12 +119,11 @@ void Player::ReceivePacket(Net::IPacket* packet)
         {
             session_->SetState(Session::State::kInGame);
 
-            map_ = World::Get()->GetMap(character_info_.map_unique_id);
             if (map_)
             {
                 ChangeMapResponse response;
                 response.is_success = true;
-                response.map_unique_id = character_info_.map_unique_id;
+                response.map_id = character_info_.map_id;
                 SendPacket(response);
                 
                 map_->AddPlayer(this);
@@ -87,12 +140,12 @@ void Player::ReceivePacket(Net::IPacket* packet)
             {
                 map_->RemovePlayer(this);
                 
-                map_ = World::Get()->GetMap(request->map_unique_id);
+                map_ = World::Get()->GetMap(request->map_id);
                 if (map_)
                 {
                     ChangeMapResponse response;
                     response.is_success = true;
-                    response.map_unique_id = request->map_unique_id;
+                    response.map_id = request->map_id;
                     SendPacket(response);
                     
                     map_->AddPlayer(this);
@@ -104,7 +157,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
 
             ChangeMapResponse response;
             response.is_success = false;
-            response.map_unique_id = 0;
+            response.map_id = 0;
             SendPacket(response);
         }
         break;

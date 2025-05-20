@@ -24,8 +24,8 @@ public:
 private:
     struct Slot
     {
-        uint32_t item_id = -1;
-        uint32_t count = 0;
+        uint32_t item_id;
+        uint32_t count;
     };
     
     std::map<uint32_t, Slot> slots_;

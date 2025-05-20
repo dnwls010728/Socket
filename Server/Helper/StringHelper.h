@@ -3,7 +3,6 @@
 
 namespace StringHelper
 {
-    std::string ToString(const std::wstring& w_str);
-    std::wstring ToWideString(const std::string& str);
-    
+    std::wstring UTF8ToUTF16(const std::string& utf8);
+    std::string UTF16ToUTF8(const std::wstring& utf16);
 };

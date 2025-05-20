@@ -26,12 +26,12 @@ public:
 
     uint32_t GetMapObjectUniqueID();
 
-    inline uint32_t GetMapUniqueID() const { return map_unique_id_; }
+    inline uint32_t GetMapUniqueID() const { return map_id_; }
 
 private:
     std::mutex mutex_;
     
-    uint32_t map_unique_id_;
+    uint32_t map_id_;
     
     std::atomic<uint32_t> map_object_unique_id_;
 

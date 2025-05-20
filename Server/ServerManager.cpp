@@ -204,9 +204,9 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     CharacterInfo character;
                     character.unique_id = result->getInt("unique_id");
                     character.account_unique_id = result->getInt("account_unique_id");
-                    character.name = StringHelper::ToWideString(result->getString("name"));
+                    character.name = StringHelper::UTF8ToUTF16(result->getString("name"));
                     character.lv = result->getInt("lv");
-                    character.job = result->getInt("job");
+                    // character.job = result->getInt("job");
                     character.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
                     character.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
                     characters.push_back(character);

@@ -93,9 +93,9 @@ struct InGameReadyPacket : public Net::IPacket
 // 맵 전환 요청
 struct ChangeMapRequest : public Net::IPacket
 {
-    uint32_t map_unique_id;
+    uint32_t map_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_unique_id)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_id)
     REGISTER_PACKET(ChangeMapRequest, 209)
 };
 
@@ -103,9 +103,9 @@ struct ChangeMapRequest : public Net::IPacket
 struct ChangeMapResponse : public Net::IPacket
 {
     bool is_success;
-    uint32_t map_unique_id;
+    uint32_t map_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, map_unique_id)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, map_id)
     REGISTER_PACKET(ChangeMapResponse, 210)
 };
 

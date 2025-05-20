@@ -27,7 +27,7 @@ struct CharacterInfo
     std::wstring name;
     int lv;
     int job;
-    int map_unique_id;
+    int map_id;
     float last_position_x;
     float last_position_y;
 

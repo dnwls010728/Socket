@@ -12,7 +12,7 @@ public:
     World();
     virtual ~World() override = default;
 
-    Map* GetMap(uint32_t map_unique_id);
+    Map* GetMap(uint32_t map_id);
 
 private:
     std::unordered_map<uint32_t, std::unique_ptr<Map>> maps_;
