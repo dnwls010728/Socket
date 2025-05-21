@@ -4,7 +4,6 @@
 #include "TCPServerSocket.h"
 #include "Map/World.h"
 #include "MySQL/MySQLManager.h"
-#include "Session/SessionManager.h"
 
 class ServerManager : public Singleton<ServerManager>
 {
@@ -25,5 +24,4 @@ private:
 	std::unordered_map<std::wstring, std::function<void(const std::vector<std::wstring>&)>> command_handler_;
 	
 	Net::TCP::TCPServerSocket server_socket_;
-	SessionManager session_manager_;
 };

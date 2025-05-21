@@ -156,3 +156,21 @@ struct ChatMessagePacket : public Net::IPacket
     SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, message)
     REGISTER_PACKET(ChatMessagePacket, 214)
 };
+
+struct MoveItemRequest : public Net::IPacket
+{
+    uint32_t src;
+    uint32_t dest;
+    uint32_t count;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, src, dest, count)
+    REGISTER_PACKET(MoveItemRequest, 300)
+};
+
+struct MoveItemResponse : public Net::IPacket
+{
+    std::vector<InventoryChange> changes;
+    
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, changes)
+    REGISTER_PACKET(MoveItemResponse, 301)
+};

@@ -6,6 +6,7 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
@@ -13,7 +14,6 @@
 
 SessionSubsystem::SessionSubsystem() :
     state_(SessionState::kNone),
-    character_info_(),
     handlers_()
 {
 }
@@ -40,6 +40,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
         std::make_unique<SelectCharacterHandler>()
+    );
+
+    handlers_.emplace(
+        MoveItemResponse::StaticPacketID,
+        std::make_unique<MoveItemHandler>()
     );
 
     SetState(SessionState::kConnected);

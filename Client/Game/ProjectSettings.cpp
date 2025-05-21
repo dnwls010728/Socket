@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ProjectSettings.h"
 
+#include "Maps/EditorMap.h"
 #include "Maps/LoginMap.h"
 #include "Maps/InGameMap.h"
 
@@ -25,9 +26,11 @@ void ProjectSettings::Init()
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter);
     settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
 
+    settings->AddLevel<EditorMap>(L"Editor");
     settings->AddLevel<LoginMap>(L"Login");
     settings->AddLevel<InGameMap>(L"InGame");
 
     settings->SetDefaultLevel(L"Login");
+    // settings->SetDefaultLevel(L"Editor");
     
 }

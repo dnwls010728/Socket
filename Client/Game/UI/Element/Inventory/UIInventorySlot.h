@@ -14,6 +14,9 @@ public:
 
     void UpdateSlot(uint32_t item_id, uint32_t count);
 
+    FORCEINLINE void SetSlotID(uint32_t slot_id) { slot_id_ = slot_id; }
+    FORCEINLINE uint32_t GetSlotID() const { return slot_id_; }
+
     FORCEINLINE uint32_t GetItemID() const { return item_id_; }
 
 protected:
@@ -29,6 +32,7 @@ private:
     UIImage* i_icon_;
     UIText* t_count_;
 
+    uint32_t slot_id_;
     uint32_t item_id_;
     
 };

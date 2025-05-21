@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "UIInventorySlot.h"
 
+#include <CustomPacket.h>
+
 #include "Asset/AssetManager.h"
+#include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
@@ -10,6 +13,7 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
     i_icon_(nullptr),
     t_count_(nullptr),
+    slot_id_(0),
     item_id_(0)
 {
     size_ = { 32.f, 32.f };
@@ -17,14 +21,16 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
 
 void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
 {
-    if (item_id_ != item_id)
+    item_id_ = item_id;
+    if (item_id > 0)
     {
-        UITexture* icon = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (icon) i_icon_->SetTexture(icon);
-        item_id_ = item_id;
+        UITexture* texture = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+        if (texture) i_icon_->SetTexture(texture);
+
+        t_count_->SetText(std::to_wstring(count));
     }
 
-    t_count_->SetText(std::to_wstring(count));
+    i_icon_->SetActive(item_id > 0);
     t_count_->SetActive(count > 1);
 }
 
@@ -70,9 +76,6 @@ bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2&
 bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
-    
-    i_icon_->SetRelativePosition(Math::Vector2::Zero());
-    t_count_->SetRelativePosition(Math::Vector2::Zero());
     return true;
 }
 
@@ -81,8 +84,10 @@ bool UIInventorySlot::OnDrop(const Math::Vector2& position, UIElement* target)
     UIInventorySlot* target_slot = dynamic_cast<UIInventorySlot*>(target);
     if (!target_slot) return false;
 
-    uint32_t target_item_id = target_slot->GetItemID();
-    if (target_item_id == 0) return false;
+    MoveItemRequest request;
+    request.src = target_slot->GetSlotID();
+    request.dest = slot_id_;
+    SessionSubsystem::Get()->SendPacket(request);
     
     return true;
 }

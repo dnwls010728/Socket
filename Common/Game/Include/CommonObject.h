@@ -40,3 +40,9 @@ struct ItemInfo
     uint32_t slot_index;
     uint32_t count;
 };
+
+struct InventoryChange
+{
+    uint32_t dest;
+    uint32_t arg;
+};

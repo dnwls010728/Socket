@@ -6,6 +6,7 @@
 
 #include "GameInstance.h"
 #include "InGameUISubsystem.h"
+#include "PlayerSubsystem.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
@@ -16,8 +17,6 @@
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/MiniMap.h"
-#include "UI/UILoginState.h"
-#include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
@@ -49,9 +48,6 @@ void NetworkSubsystem::OnWorldBeginPlay()
 
     if (session_subsystem->IsInGame())
     {
-        InGameReadyPacket packet;
-        SendPacket(packet);
-
         InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
         in_game_ui_subsystem->ShowMiniMap();
         in_game_ui_subsystem->ShowChatUI();
@@ -217,11 +213,11 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
         }
     }
     
-    const CharacterInfo& character_info = SessionSubsystem::Get()->GetCharacterInfo();
-    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
+    PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), player_subsystem->GetCharacterID());
     if (IsValid(player_character))
     {
-        player_character->InitSpawn(character_info.name, Math::Vector2::Zero());
+        player_character->InitSpawn(player_subsystem->GetName(), player_subsystem->GetInitialPosition());
         player_character->SetMine(true);
         
         player_ = player_character;

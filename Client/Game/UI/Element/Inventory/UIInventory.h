@@ -11,6 +11,8 @@ class UIInventory : public UIContainer
 public:
     UIInventory(const std::wstring& name);
     virtual ~UIInventory() override = default;
+    
+    void RefreshSlots();
 
 protected:
     virtual void Init() override;

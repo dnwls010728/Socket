@@ -11,9 +11,17 @@ public:
     PlayerSubsystem();
     virtual ~PlayerSubsystem() override = default;
 
-    static PlayerSubsystem* Get();
+    FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
+    FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
+    FORCEINLINE uint32_t GetLv() const { return lv_; }
 
+    FORCEINLINE const std::wstring& GetName() const { return name_; }
+
+    FORCEINLINE Math::Vector2 GetInitialPosition() const { return { initial_position_x_, initial_position_y_ }; }
+    
     FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
+
+    static PlayerSubsystem* Get();
 
 private:
     friend class SelectCharacterHandler;

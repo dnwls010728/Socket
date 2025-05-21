@@ -29,7 +29,7 @@ Session* SessionManager::FindSessionByClientID(uint32_t client_id)
     return nullptr;
 }
 
-Session* SessionManager::FindSessionByAccountUniqueID(uint32_t account_id)
+Session* SessionManager::FindSessionByAccountID(uint32_t account_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& session : sessions_)
@@ -46,7 +46,7 @@ bool SessionManager::HasSessionByClientID(uint32_t client_id)
     return FindSessionByClientID(client_id) != nullptr;
 }
 
-bool SessionManager::HasSessionByAccountUniqueID(uint32_t account_id)
+bool SessionManager::HasSessionByAccountID(uint32_t account_id)
 {
-    return FindSessionByAccountUniqueID(account_id) != nullptr;
+    return FindSessionByAccountID(account_id) != nullptr;
 }

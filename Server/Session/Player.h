@@ -32,6 +32,8 @@ public:
 
     inline float GetPositionX() const { return position_x_; }
     inline float GetPositionY() const { return position_y_; }
+    
+    inline Inventory* GetInventory() const { return inventory_.get(); }
 
 private:
     Session* session_;

@@ -2,21 +2,24 @@
 #include <mutex>
 #include <unordered_map>
 
+#include "Singleton.h"
+
 class Session;
 
-class SessionManager
+class SessionManager : public Singleton<SessionManager>
 {
 public:
     SessionManager();
+    virtual ~SessionManager() override = default;
 
     void AddSession(std::unique_ptr<Session>& session);
     void RemoveSession(uint32_t client_id);
 
     Session* FindSessionByClientID(uint32_t client_id);
-    Session* FindSessionByAccountUniqueID(uint32_t account_id);
+    Session* FindSessionByAccountID(uint32_t account_id);
 
     bool HasSessionByClientID(uint32_t client_id);
-    bool HasSessionByAccountUniqueID(uint32_t account_id);
+    bool HasSessionByAccountID(uint32_t account_id);
 
 private:
     std::mutex mutex_;

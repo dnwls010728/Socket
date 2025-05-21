@@ -6,6 +6,7 @@
 #include "CustomSerializer.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
+#include "Session/SessionManager.h"
 
 ServerManager::ServerManager()
 {
@@ -108,19 +109,20 @@ bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
     std::unique_ptr<Session> session = std::make_unique<Session>(state.uniqueKey);
     session->SetState(Session::State::kConnected);
     
-    session_manager_.AddSession(session);
+    SessionManager::Get()->AddSession(session);
     return true;
 }
 
 void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 {
     std::cout << "Client disconnected: " << state.address.ToString().c_str() << std::endl;
-    session_manager_.RemoveSession(state.uniqueKey);
+    SessionManager::Get()->RemoveSession(state.uniqueKey);
 }
 
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)
 {
-    Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
+    SessionManager* session_manager = SessionManager::Get();
+    Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
     if (session) session->ReceivePacket(packet.get());
     
     switch (packet->GetPacketID())
@@ -186,7 +188,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                 is_found = true;
 
                 int unique_id = result->getInt("account_id");
-                if (session_manager_.HasSessionByAccountUniqueID(unique_id))
+                if (session_manager->HasSessionByAccountID(unique_id))
                 {
                     LoginResponse response;
                     response.is_success = false;
@@ -195,7 +197,6 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     return;
                 }
 
-                Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
                 if (session) session->CreatePlayer(unique_id);
 
                 std::vector<CharacterInfo> characters;

@@ -64,4 +64,18 @@ public:
 		return *this;
 	}
 
+	CustomSerializer& operator<<(InventoryChange& value)
+	{
+		*this << value.dest;
+		*this << value.arg;
+		return *this;
+	}
+
+	CustomSerializer& operator>>(InventoryChange& value)
+	{
+		*this >> value.dest;
+		*this >> value.arg;
+		return *this;
+	}
+
 };

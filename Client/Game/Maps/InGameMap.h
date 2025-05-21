@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Level/Level.h"
 
 class InGameMap : public Level
 {

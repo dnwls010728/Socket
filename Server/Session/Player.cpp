@@ -212,6 +212,23 @@ void Player::ReceivePacket(Net::IPacket* packet)
         }
         break;
         
+    case MoveItemRequest::StaticPacketID:
+        {
+            MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
+            if (!inventory_) return;
+            
+            uint32_t src = request->src;
+            uint32_t dest = request->dest;
+
+            if (!inventory_->GetItemID(src)) return;
+            inventory_->Swap(src, dest);
+
+            MoveItemResponse response;
+            response.changes.push_back({ src, dest });
+            SendPacket(response);
+        }
+        break;
+        
     default:
         break;
     }

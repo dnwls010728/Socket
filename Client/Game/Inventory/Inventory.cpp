@@ -20,10 +20,10 @@ uint32_t Inventory::GetItemID(uint32_t slot_index) const
 
 uint32_t Inventory::FindItem(uint32_t item_id) const
 {
-    for (const auto& iter : slots_)
+    for (const auto& it : slots_)
     {
-        if (iter.second.item_id == item_id)
-            return iter.first;
+        if (it.second.item_id == item_id)
+            return it.first;
     }
     
     return 0;
@@ -33,9 +33,9 @@ uint32_t Inventory::FindFreeSlot() const
 {
     uint32_t counter = 1;
 
-    for (const auto& iter : slots_)
+    for (const auto& it : slots_)
     {
-        if (iter.first != counter)
+        if (it.first != counter)
             return counter;
 
         counter++;
@@ -83,8 +83,8 @@ void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
     slots_[first_slot] = std::move(slots_[second_slot]);
     slots_[second_slot] = std::move(first);
 
-    if (slots_[first_slot].item_id == -1) Remove(first_slot);
-    if (slots_[second_slot].item_id == -1) Remove(second_slot);
+    if (!slots_[first_slot].item_id) Remove(first_slot);
+    if (!slots_[second_slot].item_id) Remove(second_slot);
 }
 
 void Inventory::Remove(uint32_t slot_index)

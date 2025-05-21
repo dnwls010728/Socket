@@ -3,6 +3,7 @@
 
 #include "UIInventorySlot.h"
 #include "Math/Color.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Windows/DX/Renderer.h"
 
 UIInventory::UIInventory(const std::wstring& name) :
@@ -10,6 +11,22 @@ UIInventory::UIInventory(const std::wstring& name) :
     slots_()
 {
     size_ = { 158.f, 224.f };
+}
+
+void UIInventory::RefreshSlots()
+{
+    Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
+    if (!inventory) return;
+
+    for (uint32_t i = 0; i < 20; ++i)
+    {
+        if (uint32_t item_id = inventory->GetItemID(i + 1))
+        {
+            uint32_t count = inventory->GetItemCount(i + 1);
+            slots_[i]->UpdateSlot(item_id, count);
+        }
+        else slots_[i]->UpdateSlot(0, 0);
+    }
 }
 
 void UIInventory::Init()
@@ -22,7 +39,10 @@ void UIInventory::Init()
         {
             UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
             slot->SetRelativePosition({ 8 + j * 36.f, 24 + i * 36.f });
-            slots_[j + i * 4 + 1] = slot;
+
+            uint32_t idx = i * 4 + j;
+            slot->SetSlotID(idx + 1);
+            slots_[idx] = slot;
         }
     }
 }

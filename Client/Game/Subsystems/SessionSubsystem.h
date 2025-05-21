@@ -37,9 +37,6 @@ public:
     FORCEINLINE void SetState(SessionState state) { state_ = state; }
 
     FORCEINLINE bool IsInGame() const { return state_ == SessionState::kInGame; }
-
-    FORCEINLINE const CharacterInfo& GetCharacterInfo() const { return character_info_; }
-    FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
     
     OnPacketDelegate packet_handler;
 
@@ -53,8 +50,6 @@ private:
     Net::TCP::TCPClientSocket client_socket_;
 
     SessionState state_;
-
-    CharacterInfo character_info_;
 
     std::unordered_map<uint16_t, std::unique_ptr<IPacketHandler>> handlers_;
     

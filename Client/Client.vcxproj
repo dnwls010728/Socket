@@ -220,8 +220,6 @@
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
-    <ClInclude Include="Engine\Windows\DX\Material.h" />
-    <ClInclude Include="Engine\Windows\DX\Mesh.h" />
     <ClInclude Include="Engine\Windows\DX\Renderer.h" />
     <ClInclude Include="Engine\Windows\DX\Shaders.h" />
     <ClInclude Include="Engine\Windows\DX\Shape.h" />
@@ -273,8 +271,10 @@
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\Inventory\Inventory.h" />
+    <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
+    <ClInclude Include="Game\PacketHandlers\MoveItemHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
@@ -596,8 +596,6 @@
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
-    <ClCompile Include="Engine\Windows\DX\Material.cpp" />
-    <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shaders.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shape.cpp" />
@@ -644,8 +642,10 @@
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\Inventory\Inventory.cpp" />
+    <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\MoveItemHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
