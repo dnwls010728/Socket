@@ -57,7 +57,7 @@ T* Level::AddActor(const rttr::type& kType, const std::wstring& kName)
         std::shared_ptr<Actor> actor = var.get_value<std::shared_ptr<Actor>>();
         actors_.push_back(actor);
 
-        return dynamic_cast<T>(actor.get());
+        return dynamic_cast<T*>(actor.get());
     }
     
     return nullptr;
