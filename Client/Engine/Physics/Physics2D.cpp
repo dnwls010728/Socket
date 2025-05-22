@@ -217,7 +217,7 @@ bool Physics2D::RayCastAll(std::vector<HitResult>& hit_results, const Math::Vect
 
 bool Physics2D::BoxCast(HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
 {
-    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f));
+    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * Math::Deg2Rad()));
     b2ShapeProxy proxy = b2MakeProxy(box.vertices, box.count, box.radius);
     
     b2QueryFilter filter = b2DefaultQueryFilter();
@@ -237,7 +237,7 @@ bool Physics2D::BoxCast(HitResult& hit_result, const Math::Vector2& kSize, float
 
 bool Physics2D::BoxCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
 {
-    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f));
+    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * Math::Deg2Rad()));
     b2ShapeProxy proxy = b2MakeProxy(box.vertices, box.count, box.radius);
     
     b2QueryFilter filter = b2DefaultQueryFilter();

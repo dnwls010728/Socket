@@ -130,7 +130,7 @@ void CameraManager::UpdateViewMatrix()
     if (Viewport* viewport = Renderer::Get()->FindViewport(World::Get()->GetWindow()))
     {
         viewport->view_matrix = DirectX::XMMatrixTranslation(-position_.x, -position_.y, 0.f)
-            * DirectX::XMMatrixRotationZ(-angle_ * MATH_PI / 180.f);
+            * DirectX::XMMatrixRotationZ(-angle_ * Math::Deg2Rad());
     }
 }
 

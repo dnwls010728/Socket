@@ -5,6 +5,7 @@
 
 #include "Asset/AssetManager.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UITexture.h"
@@ -80,6 +81,16 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     if (item_id_ == 0) return false;
     i_icon_->SetRelativePosition(Math::Vector2::Zero());
     t_count_->SetRelativePosition(Math::Vector2::Zero());
+
+    UIElement* element = UI::Get()->GetState()->RayCast(position);
+    if (!element)
+    {
+        MoveItemRequest request;
+        request.type = ItemMoveType::kDrop;
+        request.src = slot_id_;
+        SessionSubsystem::Get()->SendPacket(request);
+    }
+    
     return true;
 }
 
@@ -89,6 +100,7 @@ bool UIInventorySlot::OnDrop(const Math::Vector2& position, UIElement* target)
     if (!target_slot) return false;
 
     MoveItemRequest request;
+    request.type = ItemMoveType::kMove;
     request.src = target_slot->GetSlotID();
     request.dest = slot_id_;
     SessionSubsystem::Get()->SendPacket(request);

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "DebugDrawHelper.h"
 
+#include <numbers>
+
 #include "Level/World.h"
 #include "Math/Math.h"
 #include "Windows/DX/Shape.h"
@@ -38,7 +40,7 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
 void DebugDrawHelper::DrawCircle(const Math::Vector2& kCenter, float radius, const Math::Color& kColor)
 {
     const int32_t kSegment = 16;
-    const float kIncrement = 2.f * MATH_PI / kSegment;
+    const float kIncrement = 2.f * std::numbers::pi_v<float> / kSegment;
     float sin_increment = sin(kIncrement);
     float cos_increment = cos(kIncrement);
 

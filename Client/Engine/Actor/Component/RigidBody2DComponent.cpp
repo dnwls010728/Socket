@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "RigidBody2DComponent.h"
 
+#include <numbers>
+
 #include "TransformComponent.h"
 #include "Actor/Actor.h"
 #include "box2d/box2d.h"
@@ -109,7 +111,7 @@ void RigidBody2DComponent::SetAngle(float angle)
 {
     b2BodyId body_id = GetValidBodyId();
 
-    b2Body_SetTransform(body_id, b2Body_GetPosition(body_id), b2MakeRot(angle * MATH_PI / 180.f));
+    b2Body_SetTransform(body_id, b2Body_GetPosition(body_id), b2MakeRot(angle * std::numbers::pi_v<float> / 180.f));
 }
 
 void RigidBody2DComponent::SetLinearVelocity(const Math::Vector2& kLinearVelocity)
@@ -254,7 +256,7 @@ float RigidBody2DComponent::GetAngle() const
 {
     b2BodyId body_id = GetValidBodyId();
 
-    return b2Rot_GetAngle(b2Body_GetRotation(body_id)) * 180.f / MATH_PI;
+    return b2Rot_GetAngle(b2Body_GetRotation(body_id)) * 180.f / std::numbers::pi_v<float>;
 }
 
 float RigidBody2DComponent::GetAngularVelocity() const

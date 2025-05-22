@@ -12,6 +12,18 @@ UIState::UIState() :
 {
 }
 
+UIElement* UIState::RayCast(const Math::Vector2& position) const
+{
+    for (uint32_t i = 0; i < elements_.size(); ++i)
+    {
+        UIElement* element = elements_[elements_.size() - i - 1].get();
+        if (element && element->IsActive() && element->IsInRange(position))
+            return element->RayCast(position);
+    }
+
+    return nullptr;
+}
+
 void UIState::Tick(float delta_time)
 {
     for ( uint32_t i = 0; i < elements_.size(); ++i )
@@ -144,18 +156,6 @@ bool UIState::OnChar(wchar_t character)
     }
 
     return false;
-}
-
-UIElement* UIState::RayCast(const Math::Vector2& position) const
-{
-    for (uint32_t i = 0; i < elements_.size(); ++i)
-    {
-        UIElement* element = elements_[elements_.size() - i - 1].get();
-        if (element && element->IsActive() && element->IsInRange(position))
-            return element->RayCast(position);
-    }
-
-    return nullptr;
 }
 
 void UIState::UpdateFocus(UIElement* element)

@@ -159,11 +159,12 @@ struct ChatMessagePacket : public Net::IPacket
 
 struct MoveItemRequest : public Net::IPacket
 {
+    ItemMoveType type;
     uint32_t src;
     uint32_t dest;
     uint32_t count;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, src, dest, count)
+    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, type, src, dest, count)
     REGISTER_PACKET(MoveItemRequest, 300)
 };
 

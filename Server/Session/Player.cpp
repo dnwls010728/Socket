@@ -220,12 +220,27 @@ void Player::ReceivePacket(Net::IPacket* packet)
             uint32_t src = request->src;
             uint32_t dest = request->dest;
 
-            if (!inventory_->GetItemID(src)) return;
-            inventory_->Swap(src, dest);
+            switch (request->type)
+            {
+            case ItemMoveType::kMove:
+                {
+                    if (!inventory_->GetItemID(src)) break;
+                    inventory_->Swap(src, dest);
 
-            MoveItemResponse response;
-            response.changes.push_back({ src, dest });
-            SendPacket(response);
+                    MoveItemResponse response;
+                    response.changes.push_back({ src, dest });
+                    SendPacket(response);
+                }
+                break;
+
+            case ItemMoveType::kDrop:
+                {
+                    if (!inventory_->GetItemID(src)) break;
+                    // inventory_->Remove(src);
+                }
+                break;
+                
+            }
         }
         break;
         

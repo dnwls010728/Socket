@@ -18,6 +18,8 @@ public:
 
     template <std::derived_from<UIElement> T>
     T* FindElement(const std::wstring& name);
+    
+    UIElement* RayCast(const Math::Vector2& position) const;
 
 protected:
     friend class UI;
@@ -33,8 +35,6 @@ protected:
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta);
     virtual bool OnKey(uint16_t key_code, bool is_pressed);
     virtual bool OnChar(wchar_t character);
-
-    UIElement* RayCast(const Math::Vector2& position) const;
 
 private:
     friend class UIElement;

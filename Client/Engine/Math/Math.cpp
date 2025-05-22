@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Math.h"
 
+#include <numbers>
 #include <random>
 
 float Math::Sign(float a)
@@ -53,12 +54,12 @@ float Math::Pow(float f, float p)
 
 float Math::Rad2Deg()
 {
-    return 360.f / (MATH_PI * 2.f);
+    return 360.f / (std::numbers::pi_v<float> * 2.f);
 }
 
 float Math::Deg2Rad()
 {
-    return (MATH_PI * 2.f) / 360.f;
+    return std::numbers::pi_v<float> / 180.f;
 }
 
 float Math::RandRange(float min, float max)
