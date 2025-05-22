@@ -1,8 +1,15 @@
 ﻿#include "Inventory.h"
 
+#include <iostream>
 #include <ranges>
 
-Inventory::Inventory() :
+#include "jdbc/cppconn/exception.h"
+#include "jdbc/cppconn/prepared_statement.h"
+#include "MySQL/MySQLManager.h"
+#include "Session/Player.h"
+
+Inventory::Inventory(Player* player) :
+    player_(player),
     slots_()
 {
 }
@@ -66,7 +73,7 @@ uint32_t Inventory::GetTotalItemCount(uint32_t item_id) const
 void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
     if (slot_index == 0 || item_id == 0) return;
-    slots_[slot_index] = { item_id, slot_index, count };
+    slots_[slot_index] = { item_id, count };
 }
 
 void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
@@ -92,4 +99,46 @@ void Inventory::Remove(uint32_t slot_index)
     if (it == slots_.end()) return;
     
     slots_.erase(it);
+}
+
+void Inventory::Update()
+{
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return;
+    
+    try
+    {
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+            statement->setUInt(1, player_->GetCharacterID());
+            statement->executeUpdate();
+        }
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, item_id, slot_index, count) VALUES (?, ?, ?, ?, ?)"));
+            for (const auto& it : slots_)
+            {
+                statement->setUInt(1, player_->GetAccountID());
+                statement->setUInt(2, player_->GetCharacterID());
+                statement->setUInt(3, it.second.item_id);
+                statement->setUInt(4, it.first);
+                statement->setUInt(5, it.second.count);
+                statement->executeUpdate();
+            }
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+    }
 }

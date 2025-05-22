@@ -204,6 +204,7 @@
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
     <ClInclude Include="Engine\UI\Element\UIImage.h" />
+    <ClInclude Include="Engine\UI\Element\UIScrollBox.h" />
     <ClInclude Include="Engine\UI\Element\UIText.h" />
     <ClInclude Include="Engine\UI\UI.h" />
     <ClInclude Include="Engine\UI\UIContainer.h" />
@@ -581,6 +582,7 @@
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIScrollBox.cpp" />
     <ClCompile Include="Engine\UI\Element\UIText.cpp" />
     <ClCompile Include="Engine\UI\UI.cpp" />
     <ClCompile Include="Engine\UI\UIContainer.cpp" />

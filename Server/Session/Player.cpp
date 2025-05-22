@@ -57,7 +57,7 @@ void Player::LoadCharacter(uint32_t unique_id)
             }
         }
 
-        inventory_ = std::make_unique<Inventory>();
+        inventory_ = std::make_unique<Inventory>(this);
 
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
@@ -117,12 +117,12 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.position_x = position_x_;
             response.position_y = position_y_;
 
-            for (const auto& slot : inventory_->GetSlots() | std::views::values)
+            for (const auto& it : inventory_->GetSlots())
             {
                 ItemInfo item_info;
-                item_info.item_id = slot.item_id;
-                item_info.slot_index = slot.slot_index;
-                item_info.count = slot.count;
+                item_info.item_id = it.second.item_id;
+                item_info.slot_index = it.first;
+                item_info.count = it.second.count;
 
                 response.inventory.push_back(item_info);
             }
@@ -238,4 +238,9 @@ void Player::SetPosition(float x, float y)
 {
     position_x_ = x;
     position_y_ = y;
+}
+
+void Player::Update()
+{
+    if (inventory_) inventory_->Update();
 }

@@ -5,6 +5,7 @@
 #include "../Singleton.h"
 #include "jdbc/cppconn/connection.h"
 #include "jdbc/cppconn/resultset.h"
+#include "Session/Player/Inventory/Inventory.h"
 
 class MySQLManager : public Singleton<MySQLManager>
 {

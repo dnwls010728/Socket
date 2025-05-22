@@ -3,12 +3,15 @@
 
 #include "UIInventorySlot.h"
 #include "DirectXTK/SimpleMath.h"
+#include "imgui/imgui.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
+#include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/Renderer.h"
 
 UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
+    scroll_box_(nullptr),
     slots_(),
     t_color_(nullptr),
     inventory_(nullptr)
@@ -22,9 +25,9 @@ void UIInventory::UpdateSlot(uint32_t slot_index)
     if (uint32_t item_id = inventory_->GetItemID(slot_index))
     {
         uint32_t count = inventory_->GetItemCount(slot_index);
-        slots_[slot_index]->UpdateSlot(item_id, count);
+        slots_[slot_index - 1]->UpdateSlot(item_id, count);
     }
-    else slots_[slot_index]->UpdateSlot(0, 0);
+    else slots_[slot_index - 1]->UpdateSlot(0, 0);
 }
 
 void UIInventory::InitInventory(Inventory* inventory)
@@ -32,7 +35,7 @@ void UIInventory::InitInventory(Inventory* inventory)
     if (!inventory) return;
     inventory_ = inventory;
 
-    for (uint32_t i = 0; i < 20; ++i)
+    for (uint32_t i = 0; i < 40; ++i)
     {
         UpdateSlot(i + 1);
     }
@@ -64,16 +67,19 @@ void UIInventory::Init()
     t_title->SetText(L"인벤토리");
     t_title->SetIgnoreRayCast(true);
 
-    for (uint32_t i = 0; i < 5; ++i)
+    scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"SlotContainer");
+    scroll_box_->SetRelativePosition({ 8.f, 24.f });
+    scroll_box_->SetSize({ 142.f, 176.f });
+
+    for (uint32_t i = 0; i < 10; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
-            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ 8 + j * 36.f, 24 + i * 36.f });
-
-            uint32_t slot_index = i * 4 + j + 1;
-            slot->SetSlotID(slot_index);
-            slots_[slot_index] = slot;
+            UIInventorySlot* slot = scroll_box_->AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
+            slot->SetRelativePosition({ j * 36.f, i * 36.f });
+            
+            slot->SetSlotID(i * 4 + j + 1);
+            slots_.push_back(slot);
         }
     }
     
@@ -84,8 +90,20 @@ void UIInventory::Init()
     t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
     t_color_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     t_color_->SetText(L"0Color");
+    t_color_->SetIgnoreRayCast(true);
 
     SetActive(false);
+}
+
+void UIInventory::Tick(float delta_time)
+{
+    UIContainer::Tick(delta_time);
+
+    static float a = 0.f;
+    if (ImGui::SliderFloat("Color", &a, 0.f, 1.f))
+    {
+        scroll_box_->SetScrollY(a);
+    }
 }
 
 void UIInventory::Render()

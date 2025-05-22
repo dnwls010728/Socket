@@ -427,6 +427,25 @@ void Renderer::BeginLayer(const Math::Rect& kRect)
     );
 }
 
+void Renderer::BeginLayer(const Math::Vector2& position, const Math::Vector2& size)
+{
+    Microsoft::WRL::ComPtr<ID2D1Layer> layer;
+    current_d2d_viewport_->d2d_render_target->CreateLayer(nullptr, &layer);
+
+    D2D1_RECT_F clipRect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+    current_d2d_viewport_->d2d_render_target->PushLayer(
+        D2D1::LayerParameters(
+            clipRect,
+            nullptr,
+            D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
+            D2D1::IdentityMatrix(),
+            1.0f,
+            nullptr,
+            D2D1_LAYER_OPTIONS_NONE),
+        layer.Get()
+    );
+}
+
 void Renderer::EndLayer()
 {
     current_d2d_viewport_->d2d_render_target->PopLayer();

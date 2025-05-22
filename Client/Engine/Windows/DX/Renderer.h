@@ -78,7 +78,10 @@ public:
     void EndRender();
     void BeginRenderD2D(const std::shared_ptr<WindowsWindow>& kWindow);
     void EndRenderD2D();
+    [[deprecated("Use BeginLayer instead.")]]
     void BeginLayer(const Math::Rect& kRect);
+    
+    void BeginLayer(const Math::Vector2& position, const Math::Vector2& size);
     void EndLayer();
     void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
     

@@ -116,7 +116,14 @@ bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
 void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 {
     std::cout << "Client disconnected: " << state.address.ToString().c_str() << std::endl;
-    SessionManager::Get()->RemoveSession(state.uniqueKey);
+
+    // 유저 데이터 저장
+    SessionManager* session_manager = SessionManager::Get();
+    
+    Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
+    session->Update();
+    
+    session_manager->RemoveSession(state.uniqueKey);
 }
 
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)

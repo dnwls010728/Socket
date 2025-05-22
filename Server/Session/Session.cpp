@@ -20,6 +20,11 @@ void Session::ReceivePacket(Net::IPacket* packet) const
     if (player_) player_->ReceivePacket(packet);
 }
 
+void Session::Update()
+{
+    if (player_) player_->Update();
+}
+
 Player* Session::CreatePlayer(uint32_t account_id)
 {
     player_ = std::make_unique<Player>(this, account_id);
@@ -28,6 +33,6 @@ Player* Session::CreatePlayer(uint32_t account_id)
 
 uint32_t Session::GetAccountUniqueID() const
 {
-    if (player_) return player_->GetAccountUniqueID();
+    if (player_) return player_->GetAccountID();
     return 0;
 }

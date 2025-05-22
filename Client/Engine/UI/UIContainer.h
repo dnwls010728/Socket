@@ -30,7 +30,6 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
-private:
     std::vector<std::unique_ptr<UIElement>> children_;
     
 };

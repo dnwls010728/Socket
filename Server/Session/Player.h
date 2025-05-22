@@ -23,9 +23,11 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     void SetPosition(float x, float y);
+    void Update();
 
     inline Session* GetSession() const { return session_; }
-    inline uint32_t GetAccountUniqueID() const { return account_id_; }
+    inline uint32_t GetAccountID() const { return account_id_; }
+    inline uint32_t GetCharacterID() const { return character_id_; }
     inline Map* GetMap() const { return map_; }
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
