@@ -164,8 +164,6 @@
     <ClCompile Include="Engine\UI\Widget\ListBox.cpp" />
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
-    <ClCompile Include="Engine\Windows\DX\Material.cpp" />
-    <ClCompile Include="Engine\Windows\DX\Mesh.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
@@ -220,20 +218,22 @@
     <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Ladder.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
-    <ClCompile Include="Game\Data\ItemData.cpp" />
-    <ClCompile Include="Game\Inventory\InventoryManager.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
-    <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
-    <ClCompile Include="Game\UI\Inventory.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
     <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
     <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\Inventory\Inventory.cpp" />
+    <ClCompile Include="Game\Maps\EditorMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\MoveItemHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
+    <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
+    <ClCompile Include="Game\UI\UIInGameState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -748,8 +748,6 @@
     <ClInclude Include="Engine\UI\Widget\ListBox.h" />
     <ClInclude Include="Engine\UI\Widget\Slider.h" />
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
-    <ClInclude Include="Engine\Windows\DX\Material.h" />
-    <ClInclude Include="Engine\Windows\DX\Mesh.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
@@ -805,20 +803,22 @@
     <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Ladder.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
-    <ClInclude Include="Game\Data\ItemData.h" />
-    <ClInclude Include="Game\Inventory\InventoryManager.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
-    <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
-    <ClInclude Include="Game\UI\Inventory.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
     <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
     <ClInclude Include="Engine\UI\Element\UIImage.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\Inventory\Inventory.h" />
+    <ClInclude Include="Game\Maps\EditorMap.h" />
+    <ClInclude Include="Game\PacketHandlers\MoveItemHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
+    <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
+    <ClInclude Include="Game\UI\UIInGameState.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">

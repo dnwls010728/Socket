@@ -45,6 +45,8 @@ void UIInventory::Init()
             slots_[idx] = slot;
         }
     }
+
+    SetActive(false);
 }
 
 void UIInventory::Render()

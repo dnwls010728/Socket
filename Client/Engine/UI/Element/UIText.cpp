@@ -6,7 +6,7 @@
 
 UIText::UIText(const std::wstring& name) :
     UIElement(name),
-    text_(L"New Text"),
+    text_(L""),
     font_name_(L"NanumBarunGothic"),
     font_size_(12.f),
     color_(Math::Color::Black),

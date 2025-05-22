@@ -29,9 +29,11 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
 
         t_count_->SetText(std::to_wstring(count));
     }
-
-    i_icon_->SetActive(item_id > 0);
-    t_count_->SetActive(count > 1);
+    else
+    {
+        i_icon_->SetTexture(nullptr);
+        t_count_->SetText(L"");
+    }
 }
 
 void UIInventorySlot::Init()
@@ -76,6 +78,8 @@ bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2&
 bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
+    i_icon_->SetRelativePosition(Math::Vector2::Zero());
+    t_count_->SetRelativePosition(Math::Vector2::Zero());
     return true;
 }
 
