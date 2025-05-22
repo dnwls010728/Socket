@@ -2,7 +2,6 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
-class UIScrollBox;
 class Inventory;
 class UIInventorySlot;
 
@@ -20,7 +19,6 @@ public:
 
 protected:
     virtual void Init() override;
-    virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
     virtual bool OnDragBegin(const Math::Vector2& position) override;
@@ -28,8 +26,6 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position) override;
 
 private:
-    UIScrollBox* scroll_box_;
-    
     std::vector<UIInventorySlot*> slots_;
 
     UIText* t_color_;
