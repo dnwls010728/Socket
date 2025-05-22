@@ -13,12 +13,18 @@ bool MoveItemHandler::Handle(Net::IPacket* packet)
     MoveItemResponse* response = dynamic_cast<MoveItemResponse*>(packet);
     if (!response) return false;
 
-    if (response->changes.size() > 0)
+    const std::vector<InventoryChange>& changes = response->changes;
+    if (!changes.empty())
     {
-        PlayerSubsystem::Get()->GetInventory()->Swap(response->changes[0].dest, response->changes[0].arg);
+        Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
+        inventory->Swap(changes[0].dest, changes[0].arg);
 
         UIInventory* ui_inventory = UI::Get()->GetState()->FindElement<UIInventory>(L"Inventory");
-        if (ui_inventory) ui_inventory->RefreshSlots();
+        if (ui_inventory)
+        {
+            ui_inventory->UpdateSlot(changes[0].dest);
+            ui_inventory->UpdateSlot(changes[0].arg);
+        }
     }
     
     return true;

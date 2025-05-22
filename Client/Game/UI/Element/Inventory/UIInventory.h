@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
+#include "UI/Element/UIText.h"
 
 class Inventory;
 class UIInventorySlot;
@@ -11,8 +12,10 @@ class UIInventory : public UIContainer
 public:
     UIInventory(const std::wstring& name);
     virtual ~UIInventory() override = default;
-    
-    void RefreshSlots();
+
+    void UpdateSlot(uint32_t slot_index);
+    void UpdateColor(uint32_t color);
+    void InitInventory(Inventory* inventory);
 
 protected:
     virtual void Init() override;
@@ -24,5 +27,9 @@ protected:
 
 private:
     std::map<uint32_t, UIInventorySlot*> slots_;
+
+    UIText* t_color_;
+
+    Inventory* inventory_;
     
 };
