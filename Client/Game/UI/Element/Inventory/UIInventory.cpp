@@ -31,7 +31,7 @@ void UIInventory::InitInventory(Inventory* inventory)
     if (!inventory) return;
     inventory_ = inventory;
 
-    for (uint32_t i = 0; i < 40; ++i)
+    for (uint32_t i = 0; i < 20; ++i)
     {
         UpdateSlot(i + 1);
     }
@@ -63,12 +63,12 @@ void UIInventory::Init()
     t_title->SetText(L"인벤토리");
     t_title->SetIgnoreRayCast(true);
 
-    for (uint32_t i = 0; i < 10; ++i)
+    for (uint32_t i = 0; i < 5; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
             UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ j * 36.f, i * 36.f });
+            slot->SetRelativePosition({ 8.f + j * 36.f, 24.f + i * 36.f });
             
             slot->SetSlotID(i * 4 + j + 1);
             slots_.push_back(slot);
