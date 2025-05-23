@@ -2,80 +2,59 @@
 #include "Serializer.h"
 #include "CommonObject.h"
 
-
-class CustomSerializer : public Net::Serializer
+namespace Net
 {
-public:
-	EXTEND_SERIALIZER()
-
-	CustomSerializer& operator<<(const Movement& value)
-	{
-		*this << value.x;
-		*this << value.y;
-		return *this;
+	/*
+	 SERIALIZER_EXTEND( Example, v.a, v.b )
+	 or
+	 inline Serializer& operator<<(Serializer& s, const Example& v)
+	 { 
+		s << v.a;
+		s << v.b;
+		return s; 
 	}
-
-	CustomSerializer& operator>>(Movement& value)
+	inline Serializer& operator>>(Serializer& s, Example& v)
 	{
-		*this >> value.x;
-		*this >> value.y;
-		return *this;
+		s >> v.a;
+		s >> v.b;
+		return s;
 	}
+	*/
+	
+	// Movement
+	SERIALIZER_EXTEND(Movement,v.x,v.y)
 
-	CustomSerializer& operator<<(const CharacterInfo& value)
-	{
-		*this << value.unique_id;
-		*this << value.account_id;
-		*this << value.name;
-		*this << value.lv;
-		*this << value.job;
-		*this << value.map_id;
-		*this << value.last_position_x;
-		*this << value.last_position_y;
-		return *this;
-	}
+	// CharacterInfo
+	SERIALIZER_EXTEND(CharacterInfo,
+		v.unique_id,
+		v.account_id,
+		v.name,
+		v.lv,
+		v.job,
+		v.map_id,
+		v.last_position_x,
+		v.last_position_y
+		)
 
-	CustomSerializer& operator>>(CharacterInfo& value)
-	{
-		*this >> value.unique_id;
-		*this >> value.account_id;
-		*this >> value.name;
-		*this >> value.lv;
-		*this >> value.job;
-		*this >> value.map_id;
-		*this >> value.last_position_x;
-		*this >> value.last_position_y;
-		return *this;
-	}
+	// ObjectInfo 직렬화/역직렬화 등록
+	SERIALIZER_EXTEND(ObjectInfo,
+		v.name,
+		v.type_name,
+		v.unique_id,
+		v.last_position_x,
+		v.last_position_y,
+		v.map_unique_id
+		)
 
-	CustomSerializer& operator<<(const ItemInfo& value)
-	{
-		*this << value.item_id;
-		*this << value.slot_index;
-		*this << value.count;
-		return *this;
-	}
+	SERIALIZER_EXTEND(ItemInfo,
+		v.item_id,
+		v.slot_index,
+		v.coount
+		}
 
-	CustomSerializer& operator>>(ItemInfo& value)
-	{
-		*this >> value.item_id;
-		*this >> value.slot_index;
-		*this >> value.count;
-		return *this;
-	}
+	SERIALIZER_EXTEND(InventoryChange,
+		v.dest,
+		v.arg
+		)
 
-	CustomSerializer& operator<<(InventoryChange& value)
-	{
-		*this << value.dest;
-		*this << value.arg;
-		return *this;
-	}
-
-	CustomSerializer& operator>>(InventoryChange& value)
-	{
-		*this >> value.dest;
-		*this >> value.arg;
-		return *this;
-	}
-
-};
+} // namespace Net

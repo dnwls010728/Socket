@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "../Singleton.h"
+#include "Engine/Singleton.h"
 #include "jdbc/cppconn/connection.h"
 #include "jdbc/cppconn/resultset.h"
 #include "Session/Player/Inventory/Inventory.h"

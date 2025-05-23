@@ -1,4 +1,5 @@
-﻿#include "StringHelper.h"
+﻿#include "pch.h"
+#include "StringHelper.h"
 
 #include <windows.h>
 

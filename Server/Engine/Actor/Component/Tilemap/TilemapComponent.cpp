@@ -1,0 +1,174 @@
+﻿#include "pch.h"
+#include "TilemapComponent.h"
+
+#include "Tilemap.h"
+#include "TilemapLayer.h"
+#include "Actor/Actor.h"
+#include "Actor/Component/TransformComponent.h"
+#include "box2d/box2d.h"
+#include "Asset/AssetManager.h"
+#include "Map/Map.h"
+#include "EngineSettings.h"
+
+TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
+	ActorComponent(owner, kName),
+	tilemap_(nullptr),
+	ppu_(0.f),
+	map_size_(Math::Vector2::Zero()),
+	tilemap_layers_(),
+	type_map_()
+{
+}
+
+void TilemapComponent::SetTilemap(Tilemap* tilemap)
+{
+	tilemap_ = tilemap;
+}
+
+int32_t TilemapComponent::GetType(const b2ShapeId shape_id)
+{
+	uint64_t id = b2StoreShapeId(shape_id);
+	
+	auto it = type_map_.find(id);
+	if (it != type_map_.end()) return it->second;
+	return -1;
+}
+
+void TilemapComponent::BeginPlay()
+{
+	ActorComponent::BeginPlay();
+	
+	if (tilemap_)
+	{
+		const tmx::Map& map = tilemap_->GetMap();
+
+		ppu_ = tilemap_->GetPPU();
+		
+		map_size_.x = static_cast<float>(map.getTileCount().x);
+		map_size_.y = static_cast<float>(map.getTileCount().y);
+	
+		const auto& layers = map.getLayers();
+		for (const auto& layer : layers)
+		{
+			if (layer->getType() == tmx::Layer::Type::Object)
+			{
+				const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
+			
+				if (layer->getName() == "Collision") GeneratePhysics(object);
+				else if (layer->getName() == "Spawn") GenerateSpawn(object);
+			}
+			else if (layer->getType() == tmx::Layer::Type::Tile)
+			{
+				const auto& tile_layer = layer->getLayerAs<tmx::TileLayer>();
+			
+				Math::Vector2 chunk_size = {512.f, 512.f};
+				tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map, tile_layer, chunk_size));
+			}
+		}
+	}
+	
+	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
+
+}
+
+void TilemapComponent::EndPlay(EndPlayReason type)
+{
+	ActorComponent::EndPlay(type);
+	
+	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
+}
+
+void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
+{
+	const auto& objects = kObject.getObjects();
+
+	b2BodyDef body_def = b2DefaultBodyDef();
+	body_def.userData = GetOwner();
+
+	if (!IsValid(owner_)) return;
+	if (!IsValid(owner_->GetMap())) return;
+	
+	tilemap_body_id_ = b2CreateBody(owner_->GetMap()->GetWorldID(), &body_def);
+
+	for (const auto& temp : objects)
+	{
+		b2Polygon shape;
+		
+		if (temp.getShape() == tmx::Object::Shape::Rectangle)
+		{
+			b2Vec2 center = {temp.getPosition().x / ppu_ + ((temp.getAABB().width / 2) / ppu_) - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ - ((temp.getAABB().height / 2) / ppu_) + map_size_.y / 2.f};
+			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
+		}
+		else if (temp.getShape() == tmx::Object::Shape::Polygon)
+		{
+			std::vector<b2Vec2> vertices;
+			
+			for (const auto& point : temp.getPoints())
+			{
+				b2Vec2 vertex = {point.x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * point.y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f};
+				vertices.push_back(vertex);
+			}
+
+			b2Hull hull = b2ComputeHull(vertices.data(), vertices.size());
+			shape = b2MakePolygon(&hull, 0.f);
+		}
+		
+		b2Filter filter = b2DefaultFilter();
+		filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
+		filter.maskBits = static_cast<uint16_t>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
+		
+		b2ShapeDef shape_def = b2DefaultShapeDef();
+		shape_def.filter = filter;
+		shape_def.userData = nullptr;
+
+		b2ShapeId shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+		
+		const std::vector<tmx::Property>& properties = temp.getProperties();
+		if (properties.size() > 0)
+		{
+			uint64_t id = b2StoreShapeId(shape_id);
+			type_map_[id] = properties[0].getIntValue();
+		}
+	}
+
+	b2Body_Disable(tilemap_body_id_);
+}
+
+void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
+{
+	const auto& objects = kObject.getObjects();
+
+	if(!IsValid(owner_) || !IsValid(owner_->GetMap())) 
+		return;
+
+	for (const auto& temp : objects)
+	{
+		if (temp.getShape() == tmx::Object::Shape::Point)
+		{
+			rttr::type type = rttr::type::get_by_name(temp.getClass());
+			if (type.is_valid())
+			{
+				const std::string& name = temp.getName();
+				
+				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
+				std::shared_ptr<Actor> actor = owner_->GetMap()->SpawnActor<Actor>(type, to_wide_string);
+				if (IsValid(actor))
+				{
+					std::shared_ptr<TransformComponent> transform = actor->GetTransform();
+					transform->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
+				}
+			}
+		}
+	}
+}
+
+RTTR_REGISTRATION
+{
+	using namespace rttr;
+
+	registration::class_<TilemapComponent>("TilemapComponent")
+		.constructor<Actor*, const std::wstring&>()
+		(
+			policy::ctor::as_std_shared_ptr
+		);
+}

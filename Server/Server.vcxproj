@@ -114,15 +114,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Server\Include;$(SolutionDir)\Server;$(SolutionDir)\NetworkLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Common\Engine;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Server;$(SolutionDir)\Server\Engine;$(SolutionDir)\Server\Game</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>box2dd.lib;libtmxlite-s-d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;rttr_core_d.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib\Debug;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -136,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Server;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Common\Game\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common\Game\Include;$(SolutionDir)\Common\Engine;$(SolutionDir)\Server\Include;$(SolutionDir)\NetworkLib;$(SolutionDir)\Server;$(SolutionDir)\Server\Engine;$(SolutionDir)\Server\Game</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,20 +146,65 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmxlite-s.lib;box2d.lib;NetworkLib_x64.lib;libcrypto.lib;libssl.lib;mysqlcppconn.lib;mysqlcppconn-static.lib;mysqlcppconnx.lib;mysqlcppconnx-static.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Server\Lib;$(SolutionDir)\Common\Engine\LibFiles\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Map\Map.cpp" />
-    <ClCompile Include="Map\MapObject.cpp" />
-    <ClCompile Include="Map\MapObjects\DropItem.cpp" />
-    <ClCompile Include="Map\MapObjects\Monster.cpp" />
-    <ClCompile Include="Map\World.cpp" />
-    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Actor\Actor.cpp" />
+    <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\CapsuleColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\Tilemap.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
+    <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
+    <ClCompile Include="Engine\Asset\Asset.cpp" />
+    <ClCompile Include="Engine\Asset\AssetManager.cpp" />
+    <ClCompile Include="Engine\Data\CSVReader.cpp" />
+    <ClCompile Include="Engine\Data\FileHelper.cpp" />
+    <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
+    <ClCompile Include="Engine\EngineSettings.cpp" />
+    <ClCompile Include="Engine\Map\Map.cpp" />
+    <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
+    <ClCompile Include="Engine\Map\World.cpp" />
+    <ClCompile Include="Engine\Math\Bounds.cpp" />
+    <ClCompile Include="Engine\Math\Color.cpp" />
+    <ClCompile Include="Engine\Math\Math.cpp" />
+    <ClCompile Include="Engine\Math\Rect.cpp" />
+    <ClCompile Include="Engine\Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
+    <ClCompile Include="Engine\Physics\Physics2D.cpp" />
+    <ClCompile Include="Engine\Session\Player.cpp" />
+    <ClCompile Include="Engine\Session\Session.cpp" />
+    <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Engine\Time\Time.cpp" />
+    <ClCompile Include="Engine\Time\TimerManager.cpp" />
+    <ClCompile Include="Game\Actors\Character\CharacterBase.cpp" />
+    <ClCompile Include="Game\Actors\Character\Components\Controller2DComponent.cpp" />
+    <ClCompile Include="Game\Actors\Character\Monster\MonsterBase.cpp" />
+    <ClCompile Include="Game\Actors\Character\States\BaseState.cpp"/>
+    <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
+    <ClCompile Include="Game\Actors\States\BaseState.cpp" />
+    <ClCompile Include="Game\Actors\States\MoveToPlayerState.cpp"/>
+    <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
+    <ClCompile Include="Game\FSM\Condition.cpp" />
+    <ClCompile Include="Game\FSM\StateMachine.cpp" />
+    <ClCompile Include="Game\FSM\Transition.cpp" />
+    <ClCompile Include="Game\ServerManager.cpp" />
+    <ClCompile Include="Include\rttr\policy.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MySQL\MySQLManager.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerManager.cpp" />
     <ClCompile Include="Session\Player.cpp" />
@@ -167,6 +214,104 @@
     <ClCompile Include="Helper\StringHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Actor\Actor.h" />
+    <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\CapsuleColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\Tilemap.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
+    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
+    <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
+    <ClInclude Include="Engine\Asset\Asset.h" />
+    <ClInclude Include="Engine\Asset\AssetManager.h" />
+    <ClInclude Include="Engine\Data\CSVReader.h" />
+    <ClInclude Include="Engine\Data\FileHelper.h" />
+    <ClInclude Include="Engine\Data\RegistryHelper.h" />
+    <ClInclude Include="Engine\EngineSettings.h" />
+    <ClInclude Include="Engine\Enums.h" />
+    <ClInclude Include="Engine\Map\Map.h" />
+    <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
+    <ClInclude Include="Engine\Map\World.h" />
+    <ClInclude Include="Engine\Math\Bounds.h" />
+    <ClInclude Include="Engine\Math\Color.h" />
+    <ClInclude Include="Engine\Math\Math.h" />
+    <ClInclude Include="Engine\Math\Rect.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Misc\Delegate.h" />
+    <ClInclude Include="Engine\Misc\DelegateMacros.h" />
+    <ClInclude Include="Engine\Misc\EngineMacros.h" />
+    <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
+    <ClInclude Include="Engine\Misc\Function.h" />
+    <ClInclude Include="Engine\Misc\GameplayStatics.h" />
+    <ClInclude Include="Engine\Misc\Type.h" />
+    <ClInclude Include="Engine\Physics\Physics2D.h" />
+    <ClInclude Include="Engine\Session\Player.h" />
+    <ClInclude Include="Engine\Session\Session.h" />
+    <ClInclude Include="Engine\Session\SessionManager.h" />
+    <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Engine\Time\Time.h" />
+    <ClInclude Include="Engine\Time\TimerManager.h" />
+    <ClInclude Include="Engine\yaml-cpp\anchor.h" />
+    <ClInclude Include="Engine\yaml-cpp\binary.h" />
+    <ClInclude Include="Engine\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="Engine\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="Engine\yaml-cpp\depthguard.h" />
+    <ClInclude Include="Engine\yaml-cpp\dll.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitter.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="Engine\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="Engine\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="Engine\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="Engine\yaml-cpp\exceptions.h" />
+    <ClInclude Include="Engine\yaml-cpp\mark.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\convert.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\emit.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\impl.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\node.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\parse.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="Engine\yaml-cpp\node\type.h" />
+    <ClInclude Include="Engine\yaml-cpp\noexcept.h" />
+    <ClInclude Include="Engine\yaml-cpp\null.h" />
+    <ClInclude Include="Engine\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="Engine\yaml-cpp\parser.h" />
+    <ClInclude Include="Engine\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="Engine\yaml-cpp\traits.h" />
+    <ClInclude Include="Engine\yaml-cpp\yaml.h" />
+    <ClInclude Include="Game\Actors\Character\CharacterBase.h" />
+    <ClInclude Include="Game\Actors\Character\Components\Controller2DComponent.h" />
+    <ClInclude Include="Game\Actors\Character\Monster\MonsterBase.h" />
+    <ClInclude Include="Game\Actors\Character\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
+    <ClInclude Include="Game\Actors\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\States\IdleState.h" />
+    <ClInclude Include="Game\Actors\States\MoveToPlayerState.h" />
+    <ClInclude Include="Game\Actors\TilemapLoader.h" />
+    <ClInclude Include="Game\FSM\Condition.h" />
+    <ClInclude Include="Game\FSM\IState.h" />
+    <ClInclude Include="Game\FSM\StateMachine.h" />
+    <ClInclude Include="Game\FSM\Transition.h" />
+    <ClInclude Include="Game\ServerManager.h" />
+    <ClInclude Include="Include\box2d\base.h" />
+    <ClInclude Include="Include\box2d\box2d.h" />
+    <ClInclude Include="Include\box2d\collision.h" />
+    <ClInclude Include="Include\box2d\id.h" />
+    <ClInclude Include="Include\box2d\math_functions.h" />
+    <ClInclude Include="Include\box2d\types.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
@@ -218,49 +363,157 @@
     <ClInclude Include="Include\mysqlx\xapi.h" />
     <ClInclude Include="Include\mysqlx\xdevapi.h" />
     <ClInclude Include="Include\mysql\jdbc.h" />
-    <ClInclude Include="Include\yaml-cpp\anchor.h" />
-    <ClInclude Include="Include\yaml-cpp\binary.h" />
-    <ClInclude Include="Include\yaml-cpp\contrib\anchordict.h" />
-    <ClInclude Include="Include\yaml-cpp\contrib\graphbuilder.h" />
-    <ClInclude Include="Include\yaml-cpp\depthguard.h" />
-    <ClInclude Include="Include\yaml-cpp\dll.h" />
-    <ClInclude Include="Include\yaml-cpp\emitfromevents.h" />
-    <ClInclude Include="Include\yaml-cpp\emitter.h" />
-    <ClInclude Include="Include\yaml-cpp\emitterdef.h" />
-    <ClInclude Include="Include\yaml-cpp\emittermanip.h" />
-    <ClInclude Include="Include\yaml-cpp\emitterstyle.h" />
-    <ClInclude Include="Include\yaml-cpp\eventhandler.h" />
-    <ClInclude Include="Include\yaml-cpp\exceptions.h" />
-    <ClInclude Include="Include\yaml-cpp\mark.h" />
-    <ClInclude Include="Include\yaml-cpp\node\convert.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\impl.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\iterator.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\iterator_fwd.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\memory.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\node.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\node_data.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\node_iterator.h" />
-    <ClInclude Include="Include\yaml-cpp\node\detail\node_ref.h" />
-    <ClInclude Include="Include\yaml-cpp\node\emit.h" />
-    <ClInclude Include="Include\yaml-cpp\node\impl.h" />
-    <ClInclude Include="Include\yaml-cpp\node\iterator.h" />
-    <ClInclude Include="Include\yaml-cpp\node\node.h" />
-    <ClInclude Include="Include\yaml-cpp\node\parse.h" />
-    <ClInclude Include="Include\yaml-cpp\node\ptr.h" />
-    <ClInclude Include="Include\yaml-cpp\node\type.h" />
-    <ClInclude Include="Include\yaml-cpp\noexcept.h" />
-    <ClInclude Include="Include\yaml-cpp\null.h" />
-    <ClInclude Include="Include\yaml-cpp\ostream_wrapper.h" />
-    <ClInclude Include="Include\yaml-cpp\parser.h" />
-    <ClInclude Include="Include\yaml-cpp\stlemitter.h" />
-    <ClInclude Include="Include\yaml-cpp\traits.h" />
-    <ClInclude Include="Include\yaml-cpp\yaml.h" />
-    <ClInclude Include="Map\Map.h" />
-    <ClInclude Include="Map\MapObject.h" />
-    <ClInclude Include="Map\MapObjects\DropItem.h" />
-    <ClInclude Include="Map\MapObjects\Monster.h" />
-    <ClInclude Include="Map\World.h" />
-    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Include\rttr\access_levels.h" />
+    <ClInclude Include="Include\rttr\argument.h" />
+    <ClInclude Include="Include\rttr\array_range.h" />
+    <ClInclude Include="Include\rttr\associative_mapper.h" />
+    <ClInclude Include="Include\rttr\constructor.h" />
+    <ClInclude Include="Include\rttr\destructor.h" />
+    <ClInclude Include="Include\rttr\detail\base\core_prerequisites.h" />
+    <ClInclude Include="Include\rttr\detail\base\version.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\comparable_types.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_array_equal.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_array_equal_impl.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_array_less.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_array_less_impl.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_equal.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_equal_impl.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_less.h" />
+    <ClInclude Include="Include\rttr\detail\comparison\compare_less_impl.h" />
+    <ClInclude Include="Include\rttr\detail\constructor\constructor_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\constructor\constructor_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\constructor\constructor_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\constructor\constructor_wrapper_defaults.h" />
+    <ClInclude Include="Include\rttr\detail\conversion\number_conversion.h" />
+    <ClInclude Include="Include\rttr\detail\conversion\std_conversion_functions.h" />
+    <ClInclude Include="Include\rttr\detail\default_arguments\default_arguments.h" />
+    <ClInclude Include="Include\rttr\detail\default_arguments\invoke_with_defaults.h" />
+    <ClInclude Include="Include\rttr\detail\destructor\destructor_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\destructor\destructor_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\enumeration\enumeration_helper.h" />
+    <ClInclude Include="Include\rttr\detail\enumeration\enumeration_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\enumeration\enumeration_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\enumeration\enum_data.h" />
+    <ClInclude Include="Include\rttr\detail\filter\filter_item_funcs.h" />
+    <ClInclude Include="Include\rttr\detail\impl\argument_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\array_range_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\associative_mapper_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\enum_flags_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\instance_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\rttr_cast_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\sequential_mapper_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\string_view_impl.h" />
+    <ClInclude Include="Include\rttr\detail\impl\wrapper_mapper_impl.h" />
+    <ClInclude Include="Include\rttr\detail\metadata\metadata.h" />
+    <ClInclude Include="Include\rttr\detail\metadata\metadata_handler.h" />
+    <ClInclude Include="Include\rttr\detail\method\method_accessor.h" />
+    <ClInclude Include="Include\rttr\detail\method\method_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\method\method_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\method\method_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\misc\argument_extractor.h" />
+    <ClInclude Include="Include\rttr\detail\misc\argument_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\misc\class_item_mapper.h" />
+    <ClInclude Include="Include\rttr\detail\misc\data_address_container.h" />
+    <ClInclude Include="Include\rttr\detail\misc\flat_map.h" />
+    <ClInclude Include="Include\rttr\detail\misc\flat_multimap.h" />
+    <ClInclude Include="Include\rttr\detail\misc\function_traits.h" />
+    <ClInclude Include="Include\rttr\detail\misc\iterator_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\misc\misc_type_traits.h" />
+    <ClInclude Include="Include\rttr\detail\misc\register_wrapper_mapper_conversion.h" />
+    <ClInclude Include="Include\rttr\detail\misc\sequential_container_type_traits.h" />
+    <ClInclude Include="Include\rttr\detail\misc\std_type_traits.h" />
+    <ClInclude Include="Include\rttr\detail\misc\template_type_trait.h" />
+    <ClInclude Include="Include\rttr\detail\misc\template_type_trait_impl.h" />
+    <ClInclude Include="Include\rttr\detail\misc\utility.h" />
+    <ClInclude Include="Include\rttr\detail\parameter_info\parameter_infos.h" />
+    <ClInclude Include="Include\rttr\detail\parameter_info\parameter_infos_compare.h" />
+    <ClInclude Include="Include\rttr\detail\parameter_info\parameter_info_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\parameter_info\parameter_info_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\parameter_info\parameter_names.h" />
+    <ClInclude Include="Include\rttr\detail\policies\ctor_policies.h" />
+    <ClInclude Include="Include\rttr\detail\policies\meth_policies.h" />
+    <ClInclude Include="Include\rttr\detail\policies\prop_policies.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_accessor.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper_base.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper_func.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper_member_func.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper_member_object.h" />
+    <ClInclude Include="Include\rttr\detail\property\property_wrapper_object.h" />
+    <ClInclude Include="Include\rttr\detail\registration\bind_impl.h" />
+    <ClInclude Include="Include\rttr\detail\registration\bind_types.h" />
+    <ClInclude Include="Include\rttr\detail\registration\register_base_class_from_accessor.h" />
+    <ClInclude Include="Include\rttr\detail\registration\registration_executer.h" />
+    <ClInclude Include="Include\rttr\detail\registration\registration_impl.h" />
+    <ClInclude Include="Include\rttr\detail\registration\registration_manager.h" />
+    <ClInclude Include="Include\rttr\detail\registration\registration_state_saver.h" />
+    <ClInclude Include="Include\rttr\detail\type\accessor_type.h" />
+    <ClInclude Include="Include\rttr\detail\type\base_classes.h" />
+    <ClInclude Include="Include\rttr\detail\type\get_create_variant_func.h" />
+    <ClInclude Include="Include\rttr\detail\type\get_derived_info_func.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_comparator.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_converter.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_data.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_impl.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_name.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_register.h" />
+    <ClInclude Include="Include\rttr\detail\type\type_string_utils.h" />
+    <ClInclude Include="Include\rttr\detail\variant\variant_compare.h" />
+    <ClInclude Include="Include\rttr\detail\variant\variant_data.h" />
+    <ClInclude Include="Include\rttr\detail\variant\variant_data_converter.h" />
+    <ClInclude Include="Include\rttr\detail\variant\variant_data_policy.h" />
+    <ClInclude Include="Include\rttr\detail\variant\variant_impl.h" />
+    <ClInclude Include="Include\rttr\detail\variant_associative_view\variant_associative_view_creator.h" />
+    <ClInclude Include="Include\rttr\detail\variant_associative_view\variant_associative_view_creator_impl.h" />
+    <ClInclude Include="Include\rttr\detail\variant_associative_view\variant_associative_view_private.h" />
+    <ClInclude Include="Include\rttr\detail\variant_sequential_view\variant_sequential_view_creator.h" />
+    <ClInclude Include="Include\rttr\detail\variant_sequential_view\variant_sequential_view_creator_impl.h" />
+    <ClInclude Include="Include\rttr\detail\variant_sequential_view\variant_sequential_view_private.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\constructor_visitor_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\create_type_visitor_func.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\create_type_visitor_func_impl.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\method_visitor_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\property_visitor_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\type_visitor_invoker.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\visitor_impl.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\visitor_iterator.h" />
+    <ClInclude Include="Include\rttr\detail\visitor\visitor_registration.h" />
+    <ClInclude Include="Include\rttr\enumeration.h" />
+    <ClInclude Include="Include\rttr\enum_flags.h" />
+    <ClInclude Include="Include\rttr\filter_item.h" />
+    <ClInclude Include="Include\rttr\instance.h" />
+    <ClInclude Include="Include\rttr\library.h" />
+    <ClInclude Include="Include\rttr\method.h" />
+    <ClInclude Include="Include\rttr\parameter_info.h" />
+    <ClInclude Include="Include\rttr\policy.h" />
+    <ClInclude Include="Include\rttr\property.h" />
+    <ClInclude Include="Include\rttr\registration.h" />
+    <ClInclude Include="Include\rttr\registration_friend.h" />
+    <ClInclude Include="Include\rttr\rttr_cast.h" />
+    <ClInclude Include="Include\rttr\rttr_enable.h" />
+    <ClInclude Include="Include\rttr\sequential_mapper.h" />
+    <ClInclude Include="Include\rttr\string_view.h" />
+    <ClInclude Include="Include\rttr\type.h" />
+    <ClInclude Include="Include\rttr\type_list.h" />
+    <ClInclude Include="Include\rttr\variant.h" />
+    <ClInclude Include="Include\rttr\variant_associative_view.h" />
+    <ClInclude Include="Include\rttr\variant_sequential_view.h" />
+    <ClInclude Include="Include\rttr\visitor.h" />
+    <ClInclude Include="Include\rttr\wrapper_mapper.h" />
+    <ClInclude Include="Include\tmxlite\Config.hpp" />
+    <ClInclude Include="Include\tmxlite\FreeFuncs.hpp" />
+    <ClInclude Include="Include\tmxlite\ImageLayer.hpp" />
+    <ClInclude Include="Include\tmxlite\Layer.hpp" />
+    <ClInclude Include="Include\tmxlite\LayerGroup.hpp" />
+    <ClInclude Include="Include\tmxlite\Map.hpp" />
+    <ClInclude Include="Include\tmxlite\Object.hpp" />
+    <ClInclude Include="Include\tmxlite\ObjectGroup.hpp" />
+    <ClInclude Include="Include\tmxlite\ObjectTypes.hpp" />
+    <ClInclude Include="Include\tmxlite\Property.hpp" />
+    <ClInclude Include="Include\tmxlite\TileLayer.hpp" />
+    <ClInclude Include="Include\tmxlite\Tileset.hpp" />
+    <ClInclude Include="Include\tmxlite\Types.hpp" />
+    <ClInclude Include="Include\tmxlite\Types.inl" />
     <ClInclude Include="MySQL\MySQLManager.h" />
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="Session\Player.h" />
@@ -268,7 +521,24 @@
     <ClInclude Include="Session\Session.h" />
     <ClInclude Include="Session\SessionManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
-    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Include\rttr\registration" />
+    <Content Include="Include\rttr\registration_friend" />
+    <Content Include="Include\rttr\type" />
+    <Content Include="Lib\Debug\libcrypto.lib" />
+    <Content Include="Lib\Debug\libssl.lib" />
+    <Content Include="Lib\Debug\mysqlcppconn-static.lib" />
+    <Content Include="Lib\Debug\mysqlcppconn.lib" />
+    <Content Include="Lib\Debug\mysqlcppconnx-static.lib" />
+    <Content Include="Lib\Debug\mysqlcppconnx.lib" />
+    <Content Include="Lib\libcrypto.lib" />
+    <Content Include="Lib\libssl.lib" />
+    <Content Include="Lib\mysqlcppconn-static.lib" />
+    <Content Include="Lib\mysqlcppconn.lib" />
+    <Content Include="Lib\mysqlcppconnx-static.lib" />
+    <Content Include="Lib\mysqlcppconnx.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

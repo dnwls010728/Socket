@@ -9,8 +9,13 @@
 
 namespace Net::TCP {
 
-    TCPClientSocket::TCPClientSocket()
-        : buffer_size_(8192), running_(false)
+    TCPClientSocket::TCPClientSocket():
+    buffer_size_(8192),
+    running_(false),
+    ping_request_period_ms_(1000),
+    server_time_offset(0.0f),
+    is_first_ping(true),
+    last_request_time(0)
     {
         recv_buffer_.reserve(buffer_size_);
     }
@@ -53,9 +58,9 @@ namespace Net::TCP {
     bool TCPClientSocket::SendPacket(IPacket& packet)
     {
         // 1. IPacket 직렬화
-        std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-        packet.Serialize(*serializer);
-        std::vector<BYTE> payload = serializer->GetData();
+        Serializer serializer;
+        packet.Serialize(serializer);
+        std::vector<BYTE> payload = serializer.GetData();
 
         // 2. PayloadHeader 작성
         PayloadHeader header;
@@ -86,32 +91,6 @@ namespace Net::TCP {
         return true;
     }
 
-    bool TCPClientSocket::SendAndReceivePacket(IPacket& request_packet, uint32_t timeout_ms, std::function<void(std::unique_ptr<IPacket>)> callback)
-    {
-        bool send_result = SendPacket(request_packet);
-        if (send_result == false)
-        {
-            return false;
-        }
-
-        {
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            uint32_t pending_number = next_pending_number_;
-            next_pending_number_++;
-
-            PendingPacketCallback pending_packet;
-            pending_packet.sequence = pending_number;
-            pending_packet.callback = [callback](uint32_t, std::unique_ptr<Net::IPacket> packet)
-                {
-					callback(std::move(packet));
-                };
-            pending_packet.expiration_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
-            pending_packet_[pending_number] = std::move(pending_packet);
-
-        }
-        return true;
-    }
-
     void TCPClientSocket::ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback)
     {
         if (callback == nullptr)
@@ -119,55 +98,53 @@ namespace Net::TCP {
             return;
         }
 
-        // 만료된 패킷 제거
+        // Ping 요청
+        float now = GetClientTime();
+        if (last_request_time == 0.0)
         {
-            std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-            auto now = std::chrono::steady_clock::now();
-            for (auto it = pending_packet_.begin(); it != pending_packet_.end();)
-            {
-                if (it->second.expiration_time > now)
-                {
-                    std::unique_ptr<ErrorPacket> error_packet = std::make_unique<ErrorPacket>();
-                    error_packet->error_code = NetErrorCode::kTimeout;
-                    error_packet->error_message = L"";
-
-                    if (it->second.callback)
-                    {
-                        it->second.callback(0, std::move(error_packet));
-                    }
-                    it = pending_packet_.erase(it);
-                }
-            }
+            last_request_time = now;
+            SendPingRequest(last_request_time);
         }
-
+        else if (now - last_request_time >= ping_request_period_ms_ / 1000.0f)
+        {
+            last_request_time += ping_request_period_ms_ / 1000.0f;
+            SendPingRequest(last_request_time);
+        }
+        
         // 쌓여있는 패킷 처리
         ReceivedPacketInfo packet_info;
         while (recv_data_queue_.try_pop(packet_info))
         {
-            int sequence = packet_info.packet->GetSequence();
-            {
-                // 응답을 기다리는 콜백이 있으면 그쪽으로 넘겨줌
-                std::lock_guard<std::mutex> lock(pending_packets_mutex_);
-                auto it = pending_packet_.find(sequence);
-                if (it != pending_packet_.end())
-                {
-                    PendingPacketCallback& pending = it->second;
-                    if (pending.callback)
-                    {
-                        pending.callback(packet_info.client_key, std::move(packet_info.packet));
-                        continue;
-                    }
-                }
-            }
-
             if (packet_info.packet->GetPacketID() == NET_PACKET_ID_PING)
             {
+                PingPacket* ping_packet = static_cast<PingPacket*>(packet_info.packet.get());
+                server_time_offset = CalculateServerTimeOffset(ping_packet->client_time, ping_packet->server_time, server_time_offset);
+                
                 PongPacket pong_packet;
                 SendPacket(pong_packet);
             }
 
             // 아닌경우 사용자가 설정한 콜백 호출
             callback(packet_info);
+        }
+    }
+
+    float TCPClientSocket::CalculateServerTimeOffset(float sent_client_time, float recv_server_time, float old_offset)
+    {
+        float now = GetClientTime();
+        float RTT = now - sent_client_time;
+        float one_way = RTT * 0.5f;
+        float clock_offset = recv_server_time - (sent_client_time + one_way);
+
+        if (is_first_ping)
+        {
+            is_first_ping = false;
+            return clock_offset;
+        }
+        else
+        {
+            const float alpha = 0.1f;
+            return old_offset * (1 - alpha) + clock_offset * alpha;
         }
     }
 
@@ -245,12 +222,19 @@ namespace Net::TCP {
                 // 역릭렬화
                 std::vector<BYTE> payload(packet_data.begin() + sizeof(PayloadHeader), packet_data.end());
                 
-				std::unique_ptr<Serializer> serializer = serializer_factory_ ? serializer_factory_() : std::make_unique<Serializer>();
-				serializer->SetData(payload);
-                packet->Deserialize(*serializer);
+				Serializer serializer;
+				serializer.SetData(payload);
+                packet->Deserialize(serializer);
 
 				recv_data_queue_.push({ 0, std::move(packet) });
             }
         }
+    }
+
+    void TCPClientSocket::SendPingRequest(float now)
+    {
+        PingRequestPacket ping_request_packet;
+        ping_request_packet.client_time = now;
+        SendPacket(ping_request_packet);
     }
 } // namespace Net

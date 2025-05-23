@@ -34,6 +34,18 @@ struct CharacterInfo
     inline bool IsValid() const { return unique_id > 0; }
 };
 
+struct ObjectInfo
+{
+    uint32_t unique_id;
+    std::wstring name;
+    std::wstring type_name;
+    uint32_t map_unique_id;
+    float last_position_x;
+    float last_position_y;
+
+    inline bool IsValid() const { return unique_id > 0; }
+};
+
 struct ItemInfo
 {
     uint32_t item_id;

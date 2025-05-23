@@ -37,6 +37,8 @@ public:
     FORCEINLINE void SetState(SessionState state) { state_ = state; }
 
     FORCEINLINE bool IsInGame() const { return state_ == SessionState::kInGame; }
+    FORCEINLINE float GetServerTime() const { return client_socket_.GetServerTime(); }
+    FORCEINLINE float GetClientTime() const { return Net::GetClientTime(); }
     
     OnPacketDelegate packet_handler;
 

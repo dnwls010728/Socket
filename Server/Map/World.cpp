@@ -5,8 +5,8 @@ World::World() :
 {
 }
 
-Map* World::GetMap(uint32_t map_id)
+Map* World::GetMap(uint32_t map_unique_id)
 {
-    auto [it, inserted] = maps_.emplace(map_id, std::make_unique<Map>(map_id));
+    auto [it, inserted] = maps_.emplace(map_unique_id, std::make_unique<Map>(map_unique_id));
     return it->second.get();
 }
