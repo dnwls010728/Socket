@@ -56,7 +56,7 @@ void ServerObject::Tick(float delta_time)
 
 void ServerObject::UpdateInterpolatedPosition(float delta_time)
 {
-    float serverNow = GET_SESSION()->GetServerTime();
+    float serverNow = SessionSubsystem::Get()->GetServerTime();
 
     // 현재 서버의 시간보다 interpolationDelay 지연된 시간
     float interpolationTime = serverNow - EngineSettings::Get()->GetInterpolationDelay();

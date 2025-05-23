@@ -49,8 +49,8 @@ namespace Net
 	SERIALIZER_EXTEND(ItemInfo,
 		v.item_id,
 		v.slot_index,
-		v.coount
-		}
+		v.count
+		)
 
 	SERIALIZER_EXTEND(InventoryChange,
 		v.dest,

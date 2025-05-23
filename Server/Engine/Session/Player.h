@@ -26,7 +26,6 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     
-    inline uint32_t GetCharacterUniqueID() const { return character_unique_id_; }
     void Update();
 
     inline Session* GetSession() const { return session_; }
@@ -43,7 +42,7 @@ public:
 
 private:
     inline void SetMap(Map* kMap) { map_ = kMap; }
-    inline void SetCharacterUniqueID(uint32_t character_unique_id) { character_unique_id_ = character_unique_id; }
+    inline void SetCharacterID(uint32_t character_id) { character_id_ = character_id; }
     
     Session* session_;
 

@@ -2,9 +2,9 @@
 #include "TransformComponent.h"
 
 #include "Actor/Actor.h"
-#include "RigidBody2DComponent.h"
 #include "box2d/box2d.h"
 #include "Math/Math.h"
+#include <numbers>
 
 TransformComponent::TransformComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
@@ -39,7 +39,7 @@ void TransformComponent::Translate(const Math::Vector2& translation)
 
 Math::Vector2 TransformComponent::GetRightVector() const
 {
-    const float theta = angle_ * MATH_PI / 180.f;
+    const float theta = angle_ * std::numbers::pi_v<float> / 180.f;
     const float c = cosf(theta);
     const float s = sinf(theta);
 
@@ -48,7 +48,7 @@ Math::Vector2 TransformComponent::GetRightVector() const
 
 Math::Vector2 TransformComponent::GetUpVector() const
 {
-    const float theta = angle_ * MATH_PI / 180.f;
+    const float theta = angle_ * std::numbers::pi_v<float> / 180.f;
     const float c = cosf(theta);
     const float s = sinf(theta);
 
@@ -73,7 +73,7 @@ void TransformComponent::TickComponent(float delta_time)
         position_ = {position.x, position.y};
 
         const b2Rot& rotation = b2Body_GetRotation(body_id);
-        angle_ = b2Rot_GetAngle(rotation) * 180.f / MATH_PI;
+        angle_ = b2Rot_GetAngle(rotation) * 180.f / std::numbers::pi_v<float>;
     }
 }
 
@@ -82,7 +82,7 @@ void TransformComponent::UpdateBody()
     b2BodyId  body_id = GetOwner()->body_id_;
     if (b2Body_IsValid(body_id))
     {
-        b2Body_SetTransform(body_id, {position_.x, position_.y}, b2MakeRot(angle_ * MATH_PI / 180.f));
+        b2Body_SetTransform(body_id, {position_.x, position_.y}, b2MakeRot(angle_ * std::numbers::pi_v<float> / 180.f));
         b2Body_SetAwake(body_id, true);
     }
 }

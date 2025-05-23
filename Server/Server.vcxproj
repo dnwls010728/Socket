@@ -156,10 +156,7 @@
     <ClCompile Include="Engine\Actor\Actor.cpp" />
     <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\CapsuleColliderComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\CircleColliderComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\RigidBody2DComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\Tilemap.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
@@ -182,6 +179,7 @@
     <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
+    <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
     <ClCompile Include="Engine\Time\Time.cpp" />
@@ -206,21 +204,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerManager.cpp" />
-    <ClCompile Include="Session\Player.cpp" />
-    <ClCompile Include="Session\Player\Inventory\Inventory.cpp" />
-    <ClCompile Include="Session\Session.cpp" />
-    <ClCompile Include="Session\SessionManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
     <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\CapsuleColliderComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\CircleColliderComponent.h" />
     <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\RigidBody2DComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\Tilemap.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
@@ -250,6 +240,7 @@
     <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Session\Player.h" />
+    <ClInclude Include="Engine\Session\Player\Inventory\Inventory.h" />
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
@@ -515,11 +506,6 @@
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
     <ClInclude Include="MySQL\MySQLManager.h" />
-    <ClInclude Include="ServerManager.h" />
-    <ClInclude Include="Session\Player.h" />
-    <ClInclude Include="Session\Player\Inventory\Inventory.h" />
-    <ClInclude Include="Session\Session.h" />
-    <ClInclude Include="Session\SessionManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

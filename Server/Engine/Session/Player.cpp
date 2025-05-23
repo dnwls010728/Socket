@@ -1,4 +1,5 @@
-﻿#include "Player.h"
+﻿#include "pch.h"
+#include "Player.h"
 
 #include <CustomPacket.h>
 #include <ranges>
@@ -21,14 +22,14 @@ Player::Player(Session* session, uint32_t account_id) :
     lv_(0),
     map_id_(0),
     color_(0),
-    inventory_(nullptr)
+    inventory_(nullptr),
     position_(Math::Vector2::Zero())
 {
 }
 
 Player::~Player()
 {
-    if (map_) map_->RemovePlayer(GetCharacterUniqueID());
+    if (map_) map_->RemovePlayer(GetCharacterID());
 }
 
 void Player::LoadCharacter(uint32_t unique_id)
@@ -50,8 +51,8 @@ void Player::LoadCharacter(uint32_t unique_id)
                 name_ = StringHelper::UTF8ToUTF16(result->getString("name"));
                 lv_ = result->getInt("lv");
                 map_id_ = result->getInt("map_id");
-                position_x_ = static_cast<float>(result->getDouble("last_position_x"));
-                position_y_ = static_cast<float>(result->getDouble("last_position_y"));
+                position_.x = static_cast<float>(result->getDouble("last_position_x"));
+                position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 color_ = result->getInt("color");
             }
         }
@@ -113,8 +114,8 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.character_id = character_id_;
             response.lv = lv_;
             response.color = color_;
-            response.position_x = position_x_;
-            response.position_y = position_y_;
+            response.position_x = position_.x;
+            response.position_y = position_.y;
 
             for (const auto& it : inventory_->GetSlots())
             {
@@ -155,7 +156,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             ChangeMapRequest* request = static_cast<ChangeMapRequest*>(packet);
             if (map_)
             {
-                map_->RemovePlayer(GetCharacterUniqueID());
+                map_->RemovePlayer(GetCharacterID());
                 
                 map_ = World::Get()->GetMap(request->map_id);
                 if (map_)

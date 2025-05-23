@@ -115,7 +115,7 @@ struct ChangeMapResponse : public Net::IPacket
     bool is_success;
     uint32_t map_id;
     
-    SERIALIZABLE_FIELDS(CustomSerializer, is_success, map_id)
+    SERIALIZABLE_FIELDS(is_success, map_id)
     REGISTER_PACKET(ChangeMapResponse, 210)
 };
 

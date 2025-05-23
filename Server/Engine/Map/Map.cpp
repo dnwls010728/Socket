@@ -80,7 +80,7 @@ void Map::AddPlayers()
         auto player = pending_player_weak.lock();
         if (!player) continue;
 
-        uint32_t unique_id = player->GetCharacterUniqueID();
+        uint32_t unique_id = player->GetCharacterID();
         players_.emplace(unique_id, pending_player_weak);
     
         player->SetMap(this);
@@ -118,7 +118,7 @@ void Map::AddPlayers()
             spawn_object_packet.object.last_position_x = position.x;
             spawn_object_packet.object.last_position_y = position.y;
             spawn_object_packet.object.name = map_object->GetName();
-            spawn_object_packet.object.type_name = StringHelper::ToWideString(map_object->get_type().get_name().to_string());
+            spawn_object_packet.object.type_name = StringHelper::UTF8ToUTF16(map_object->get_type().get_name().to_string());
             player->SendPacket(spawn_object_packet);
         }
     }
@@ -238,7 +238,7 @@ void Map::SpawnActors()
             spawn_object_packet.object.last_position_x = position.x;
             spawn_object_packet.object.last_position_y = position.y;
             spawn_object_packet.object.name = actor->GetName();
-            spawn_object_packet.object.type_name = StringHelper::ToWideString(actor->get_type().get_name().to_string());
+            spawn_object_packet.object.type_name = StringHelper::UTF8ToUTF16(actor->get_type().get_name().to_string());
             SendPacket(spawn_object_packet);
         }
         

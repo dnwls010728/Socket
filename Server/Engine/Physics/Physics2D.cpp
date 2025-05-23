@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Physics2D.h"
 
+#include <numbers>
+
 #include "box2d/box2d.h"
 #include "box2d/math_functions.h"
 #include "box2d/types.h"
@@ -213,10 +215,10 @@ bool Physics2D::RayCastAll(const Map& kMap, std::vector<HitResult>& hit_results,
 
     return false;
 }
-
-bool Physics2D::BoxCast(const Map& kMap, HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
+/*
+ bool Physics2D::BoxCast(const Map& kMap, HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
 {
-    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f));
+    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * std::numbers::pi_v<float>() / 180.f));
     b2ShapeProxy proxy = b2MakeProxy(box.vertices, box.count, box.radius);
     
     b2QueryFilter filter = b2DefaultQueryFilter();
@@ -234,9 +236,10 @@ bool Physics2D::BoxCast(const Map& kMap, HitResult& hit_result, const Math::Vect
     return false;
 }
 
+
 bool Physics2D::BoxCastAll(const Map& kMap, std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
 {
-    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * MATH_PI / 180.f));
+    b2Polygon box = b2MakeOffsetBox(kSize.x * .5f, kSize.y * .5f, {kOrigin.x, kOrigin.y}, b2MakeRot(angle * std::numbers::pi_v<float>() / 180.f));
     b2ShapeProxy proxy = b2MakeProxy(box.vertices, box.count, box.radius);
     
     b2QueryFilter filter = b2DefaultQueryFilter();
@@ -253,7 +256,7 @@ bool Physics2D::BoxCastAll(const Map& kMap, std::vector<HitResult>& hit_results,
 
     return false;
 }
-
+*/
 bool Physics2D::CircleCast(const Map& kMap, HitResult& hit_result, float radius, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer)
 {
     b2Circle circle = {{kOrigin.x, kOrigin.y}, radius};

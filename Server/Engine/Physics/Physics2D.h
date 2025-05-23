@@ -3,7 +3,7 @@
 
 #include "Math/Vector2.h"
 #include "Box2D/Box2D.h"
-#include "Map/Map.h"
+#include "Engine/Map/Map.h"
 
 class Actor;
 
@@ -104,7 +104,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool BoxCast(const Map& kMap, HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
+    //static bool BoxCast(const Map& kMap, HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 상자를 쏴서 충돌하는 모든 액터를 찾습니다.
@@ -118,7 +118,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool BoxCastAll(const Map& kMap, std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
+    //static bool BoxCastAll(const Map& kMap, std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 원을 쏴서 충돌하는 액터를 찾습니다.

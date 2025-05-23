@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#define MATH_PI 3.14159265358979323846f
-
 namespace Math
 {
     float Sign(float a);
@@ -17,7 +15,7 @@ namespace Math
     float RandRange(float min, float max);
     bool IsEqual(float a, float b);
     
-    int RandRange(int min, int max);
+    int32_t RandRange(int32_t min, int32_t max);
     
     bool IsValid(float f);
 }

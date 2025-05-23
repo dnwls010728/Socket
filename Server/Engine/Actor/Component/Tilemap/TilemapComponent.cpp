@@ -7,7 +7,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "box2d/box2d.h"
 #include "Asset/AssetManager.h"
-#include "Map/Map.h"
+#include "Engine/map/Map.h"
 #include "EngineSettings.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :

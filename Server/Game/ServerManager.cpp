@@ -66,7 +66,7 @@ void ServerManager::CommandHandlerInitialize()
         catch (...) {
             std::wcout << L"Error: Invalid key '" << args[1] << "'\n";
         }
-        std::string type_name = StringHelper::ToString(args[2]);
+        std::string type_name = StringHelper::UTF16ToUTF8(args[2]);
         auto type = rttr::type::get_by_name(type_name);
         if ( type.is_valid() == false)
         {
@@ -269,7 +269,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     return;
                 }
 
-                Session* session = session_manager_.FindSessionByClientID(state.uniqueKey);
+                Session* session = SessionManager::Get()->FindSessionByClientID(state.uniqueKey);
                 if (session) session->CreatePlayer(unique_id);
 
                 std::vector<CharacterInfo> characters;
