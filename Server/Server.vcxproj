@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
+    <ClCompile Include="Map\MapObjects\DropItem.cpp" />
     <ClCompile Include="Map\MapObjects\Monster.cpp" />
     <ClCompile Include="Map\World.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
@@ -256,6 +257,7 @@
     <ClInclude Include="Include\yaml-cpp\yaml.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapObject.h" />
+    <ClInclude Include="Map\MapObjects\DropItem.h" />
     <ClInclude Include="Map\MapObjects\Monster.h" />
     <ClInclude Include="Map\World.h" />
     <ClInclude Include="Math\Vector2.h" />
