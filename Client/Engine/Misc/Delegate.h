@@ -81,7 +81,7 @@ public:
      * 이 델리게이트가 바인딩된 함수가 있는지 확인합니다.
      * @return 어떤 함수가 바인딩되어 있으면 true, 아니면 false를 반환합니다.
      */
-    bool IsBound()
+    bool IsBound() const
     {
         return !functions_.empty();
     }
