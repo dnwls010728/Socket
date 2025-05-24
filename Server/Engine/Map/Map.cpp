@@ -87,7 +87,8 @@ void Map::AddPlayers()
         {
             // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
             SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_info = player->GetCharacterInfo();
+            spawn_player_packet.character_id = player->GetCharacterID();
+            spawn_player_packet.name = player->GetName();
             spawn_player_packet.position_x = player->GetPosition().x;
             spawn_player_packet.position_y = player->GetPosition().y;
             SendPacket(spawn_player_packet, player);
@@ -100,7 +101,8 @@ void Map::AddPlayers()
             if (other_player && other_player != player)
             {
                 SpawnPlayerPacket spawn_player_packet;
-                spawn_player_packet.character_info = other_player->GetCharacterInfo();
+                spawn_player_packet.character_id = other_player->GetCharacterID();
+                spawn_player_packet.name = other_player->GetName();
                 spawn_player_packet.position_x = other_player->GetPosition().x;
                 spawn_player_packet.position_y = other_player->GetPosition().y;
                 player->SendPacket(spawn_player_packet);

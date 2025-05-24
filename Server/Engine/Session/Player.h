@@ -35,6 +35,8 @@ public:
 
     inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
 
+    inline const std::wstring& GetName() const { return name_; }
+
     inline void SetPosition(const Math::Vector2 &position) {position_ = position;}
     inline Math::Vector2 GetPosition() const { return position_; }
     

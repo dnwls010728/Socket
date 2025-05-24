@@ -122,11 +122,14 @@ struct ChangeMapResponse : public Net::IPacket
 // 플레이어 스폰 패킷
 struct SpawnPlayerPacket : public Net::IPacket
 {
-    CharacterInfo character_info;
+    uint32_t character_id;
+
+    std::wstring name;
+    
     float position_x;
     float position_y;
     
-    SERIALIZABLE_FIELDS(character_info, position_x, position_y)
+    SERIALIZABLE_FIELDS(character_id, name, position_x, position_y)
     REGISTER_PACKET(SpawnPlayerPacket, 211)
 };
 
