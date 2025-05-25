@@ -22,7 +22,8 @@ bool Tilemap::Load(const std::wstring& kPath)
     const std::string kFinalPath(kPath.begin(), kPath.end());
     if (!map_.load(kFinalPath)) return false;
 
-    const std::vector<tmx::Property> properties = map_.getProperties();
+    const auto& properties = map_.getProperties();
+    if (properties.size() < 3) return false;
     
     name_ = StringHelper::UTF8ToUTF16(properties[0].getStringValue());
 

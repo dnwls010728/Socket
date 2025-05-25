@@ -37,6 +37,9 @@ public:
     virtual void ActivateActor(Actor* actor, bool is_active);
     virtual void DestroyActor(Actor* actor);
     virtual void ProcessTriggerEvents();
+
+    bool LoadMapData();
+    
     void ProcessCollisionEvents();
 
     virtual void InitPhysicsWorld();

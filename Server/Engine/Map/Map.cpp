@@ -333,6 +333,46 @@ void Map::ProcessTriggerEvents()
     }
 }
 
+bool Map::LoadMapData()
+{
+    std::string path = std::format(".\\Content\\Tilemaps\\{:06}.tmx", map_unique_id_);
+        
+    tmx::Map map_data;
+    if (!map_data.load(path)) return false;
+
+    const auto& properties = map_data.getProperties();
+    if (!properties.empty()) return false;
+
+    float ppu = properties[1].getFloatValue();
+
+    const auto& layers = map_data.getLayers();
+    for (const auto& layer : layers)
+    {
+        if (layer->getType() == tmx::Layer::Type::Object)
+        {
+            const auto& object_group = layer->getLayerAs<tmx::ObjectGroup>();
+
+            if (layer->getName() == "Collision")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() == tmx::Object::Shape::Rectangle)
+                    {
+                    }
+                    else if (object.getShape() == tmx::Object::Shape::Polygon)
+                    {
+                    }
+                }
+                
+                break;
+            }
+        }
+    }
+
+    return true;
+}
+
 void Map::ProcessCollisionEvents()
 {
     b2ContactEvents events = b2World_GetContactEvents(world_id_);

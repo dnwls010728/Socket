@@ -170,6 +170,7 @@
     <ClCompile Include="Engine\EngineSettings.cpp" />
     <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapObject.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\ItemDrop.cpp" />
     <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Engine\Enums.h" />
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />
+    <ClInclude Include="Engine\Map\MapObjects\ItemDrop.h" />
     <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />

@@ -24,6 +24,8 @@ Map* World::GetMap(uint32_t map_unique_id)
     {
         auto map_ptr = std::make_unique<Map>(map_unique_id);
         map_ptr->Init();
+        map_ptr->LoadMapData();
+        
         map = map_ptr.get();
         maps_.emplace(map_unique_id, std::move(map_ptr));
 
