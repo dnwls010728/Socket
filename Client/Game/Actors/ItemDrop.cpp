@@ -68,7 +68,7 @@ void ItemDrop::Tick(float delta_time)
             position.y = base_y_ + .25f + (std::cos(moved_ + std::numbers::pi_v<float>) - 1.f) * .125f;
             GetTransform()->SetPosition(position);
             
-            moved_ = (moved_ < 360.f) ? moved_ + .025f : 0.f;
+            moved_ = (moved_ < 360.f) ? moved_ + 2.f * delta_time : 0.f;
         }
         break;
         
