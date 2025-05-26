@@ -71,6 +71,8 @@ private:
     std::unordered_map<uint32_t, std::shared_ptr<Actor>> map_objects_;
     std::unordered_map<uint32_t, std::weak_ptr<Player>> players_;
 
+    std::vector<std::array<Math::Vector2, 4>> collider_vertices_;
+
     std::queue<std::weak_ptr<Player>> pending_players_;
     std::queue<uint32_t> pending_remove_players_;
     std::queue<std::shared_ptr<Actor>> pending_actors_;

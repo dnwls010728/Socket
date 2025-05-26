@@ -15,6 +15,7 @@ public:
     virtual ~ItemDrop() override = default;
 
 protected:
+    virtual void BeginPlay() override;
     virtual void Tick(float delta_time) override;
     
     enum class State

@@ -20,7 +20,8 @@
 Map::Map(uint32_t MapBase_id) :
     map_unique_id_(MapBase_id),
     world_id_(b2_nullWorldId),
-    test_next_unique_id_(1000)
+    test_next_unique_id_(1000),
+    collider_vertices_()
 {
 }
 
@@ -357,12 +358,36 @@ bool Map::LoadMapData()
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)
                 {
+                    std::array<Math::Vector2, 4> vertices = {};
+                    
                     if (object.getShape() == tmx::Object::Shape::Rectangle)
                     {
+                        float half_width = object.getAABB().width / 2.f / ppu;
+                        float half_height = object.getAABB().height / 2.f / ppu;
+                        
+                        Math::Vector2 center = {
+                            object.getPosition().x / ppu + half_width - map_data.getTileCount().x / 2.f,
+                            -1 * object.getPosition().y / ppu - half_height + map_data.getTileCount().y / 2.f
+                        };
+
+                        vertices[0] = { center.x - half_width, center.y - half_height };
+                        vertices[1] = { center.x + half_width, center.y - half_height };
+                        vertices[2] = { center.x + half_width, center.y + half_height };
+                        vertices[3] = { center.x - half_width, center.y + half_height };
                     }
                     else if (object.getShape() == tmx::Object::Shape::Polygon)
                     {
+                        const auto& points = object.getPoints();
+                        for (int32_t i = 0; i < 4; ++i)
+                        {
+                            vertices[i] = {
+                                points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                                -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                            };
+                        }
                     }
+
+                    collider_vertices_.push_back(vertices);
                 }
                 
                 break;

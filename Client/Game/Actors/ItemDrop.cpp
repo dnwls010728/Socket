@@ -31,9 +31,14 @@ ItemDrop::ItemDrop(const std::wstring& name) :
     collider_->SetSize({ .5f, .5f });
     
     controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
-
-    velocity_.y = 5.f;
     
+}
+
+void ItemDrop::BeginPlay()
+{
+    NetworkActor::BeginPlay();
+    
+    velocity_.y = 10.f;
 }
 
 void ItemDrop::Tick(float delta_time)
@@ -47,7 +52,7 @@ void ItemDrop::Tick(float delta_time)
     case State::kDropped:
         {
             float angle = GetTransform()->GetAngle();
-            angle += 360.f * delta_time;
+            angle += 720.f * delta_time;
             GetTransform()->SetAngle(angle);
             
             velocity_.y += gravity_ * delta_time;
