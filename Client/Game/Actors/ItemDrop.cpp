@@ -65,10 +65,15 @@ void ItemDrop::Tick(float delta_time)
     case State::kFloating:
         {
             Math::Vector2 position = GetTransform()->GetPosition();
-            position.y = base_y_ + .25f + (std::cos(moved_ + std::numbers::pi_v<float>) - 1.f) * .125f;
+            position.y = base_y_ + .25f + (std::sin(moved_) - 1.f) * .125f;
             GetTransform()->SetPosition(position);
             
-            moved_ = (moved_ < 360.f) ? moved_ + 2.f * delta_time : 0.f;
+            moved_ = (moved_ < std::numbers::pi_v<float> * 2.f) ? moved_ + 2.f * delta_time : 0.f;
+        }
+        break;
+
+    case State::kPickedUp:
+        {
         }
         break;
         
