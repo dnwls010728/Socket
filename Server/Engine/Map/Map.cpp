@@ -43,16 +43,16 @@ void Map::Init()
     }
     map_objects_.clear();
 
-    std::shared_ptr<TilemapLoader> tilemap_loader = SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
-    if (IsValid(tilemap_loader))
-    {
-        std::wstring wide_str = std::format(L"{:06}", map_unique_id_);
-        Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
-        if (tilemap)
-        {
-            tilemap_loader->SetTilemap(tilemap);
-        }
-    }
+    // std::shared_ptr<TilemapLoader> tilemap_loader = SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    // if (IsValid(tilemap_loader))
+    // {
+    //     std::wstring wide_str = std::format(L"{:06}", map_unique_id_);
+    //     Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
+    //     if (tilemap)
+    //     {
+    //         tilemap_loader->SetTilemap(tilemap);
+    //     }
+    // }
     
 }
 

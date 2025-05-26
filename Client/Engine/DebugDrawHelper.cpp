@@ -90,16 +90,16 @@ void DebugDrawHelper::DrawRay(const Math::Vector2& kStart, const Math::Vector2& 
 void DebugDrawHelper::Init()
 {
     polygon_shape_ = std::make_shared<Shape>();
-    polygon_shape_->SetZOrder(32767);
+    polygon_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     
     circle_shape_ = std::make_shared<Shape>();
-    circle_shape_->SetZOrder(32767);
+    circle_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     
     capsule_shape_ = std::make_shared<Shape>();
-    capsule_shape_->SetZOrder(32767);
+    capsule_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
 
     segment_shape_ = std::make_shared<Shape>();
-    segment_shape_->SetZOrder(32767);
+    segment_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     segment_shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     
     World::Get()->AddShape(polygon_shape_);

@@ -6,6 +6,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
@@ -23,6 +24,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     timer_(0)
 {
     SetLayer(ActorLayer::kCharacter);
+    renderer_->SetZOrder(1000);
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -148,6 +150,12 @@ void PlayerCharacter::Tick(float delta_time)
             if (keyboard->GetKeyDown('2'))
             {
                 NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            if (keyboard->GetKeyDown('D'))
+            {
+                std::shared_ptr<ItemDrop> item = World::Get()->SpawnActor<ItemDrop>(ItemDrop::StaticClass(), L"Item");
+                item->GetTransform()->SetPosition(GetTransform()->GetPosition());
             }
         }
         else

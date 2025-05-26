@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "NetworkActor.h"
 
+class SpriteRendererComponent;
+class BoxColliderComponent;
 class Controller2DComponent;
 
 class ItemDrop : public NetworkActor
@@ -14,12 +16,24 @@ public:
 
 protected:
     virtual void Tick(float delta_time) override;
+    
+    enum class State
+    {
+        kDropped,
+        kFloating,
+        kPickedUp
+    };
 
-private:
+    std::shared_ptr<SpriteRendererComponent> renderer_;
+    std::shared_ptr<BoxColliderComponent> collider_;
     std::shared_ptr<Controller2DComponent> controller_;
 
     float gravity_;
+    float base_y_;
+    float moved_;
     
     Math::Vector2 velocity_;
+
+    State current_state_;
     
 };
