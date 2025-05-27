@@ -149,9 +149,7 @@ void MapTickDispatcher::WorkerThread(WorkerContext* context, uint32_t tick_inter
                 if (map)
                 {
                     // TODO : 실제 delta 계산 및 그에 따른 물리엔진
-                    map->PhysicsTick(delta.count());
                     map->Tick(delta.count());
-                    map->PostTick(delta.count());
                 }
             }
         }

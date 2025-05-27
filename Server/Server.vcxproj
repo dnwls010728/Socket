@@ -153,21 +153,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Actor\Actor.cpp" />
-    <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\BoxColliderComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\ColliderComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\Tilemap\Tilemap.cpp" />
-    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapChunk.cpp" />
-    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
-    <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
-    <ClCompile Include="Engine\Asset\Asset.cpp" />
-    <ClCompile Include="Engine\Asset\AssetManager.cpp" />
-    <ClCompile Include="Engine\Data\CSVReader.cpp" />
-    <ClCompile Include="Engine\Data\FileHelper.cpp" />
-    <ClCompile Include="Engine\Data\RegistryHelper.cpp" />
-    <ClCompile Include="Engine\EngineSettings.cpp" />
     <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapObject.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\ItemDrop.cpp" />
@@ -179,25 +164,12 @@
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
-    <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
-    <ClCompile Include="Engine\Time\Time.cpp" />
-    <ClCompile Include="Engine\Time\TimerManager.cpp" />
-    <ClCompile Include="Game\Actors\Character\CharacterBase.cpp" />
-    <ClCompile Include="Game\Actors\Character\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Character\Monster\MonsterBase.cpp" />
-    <ClCompile Include="Game\Actors\Character\States\BaseState.cpp"/>
-    <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
-    <ClCompile Include="Game\Actors\States\BaseState.cpp" />
-    <ClCompile Include="Game\Actors\States\MoveToPlayerState.cpp"/>
-    <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
-    <ClCompile Include="Game\FSM\Condition.cpp" />
-    <ClCompile Include="Game\FSM\StateMachine.cpp" />
-    <ClCompile Include="Game\FSM\Transition.cpp" />
     <ClCompile Include="Game\ServerManager.cpp" />
+    <ClCompile Include="Helper\StringHelper.cpp" />
     <ClCompile Include="Include\rttr\policy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -206,25 +178,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Server.cpp" />
-    <ClCompile Include="Helper\StringHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Actor\Actor.h" />
-    <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\BoxColliderComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\ColliderComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\Tilemap\Tilemap.h" />
-    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapChunk.h" />
-    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
-    <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
-    <ClInclude Include="Engine\Asset\Asset.h" />
-    <ClInclude Include="Engine\Asset\AssetManager.h" />
-    <ClInclude Include="Engine\Data\CSVReader.h" />
-    <ClInclude Include="Engine\Data\FileHelper.h" />
-    <ClInclude Include="Engine\Data\RegistryHelper.h" />
-    <ClInclude Include="Engine\EngineSettings.h" />
-    <ClInclude Include="Engine\Enums.h" />
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />
     <ClInclude Include="Engine\Map\MapObjects\ItemDrop.h" />
@@ -242,14 +197,11 @@
     <ClInclude Include="Engine\Misc\Function.h" />
     <ClInclude Include="Engine\Misc\GameplayStatics.h" />
     <ClInclude Include="Engine\Misc\Type.h" />
-    <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Session\Player.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Inventory.h" />
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
-    <ClInclude Include="Engine\Time\Time.h" />
-    <ClInclude Include="Engine\Time\TimerManager.h" />
     <ClInclude Include="Engine\yaml-cpp\anchor.h" />
     <ClInclude Include="Engine\yaml-cpp\binary.h" />
     <ClInclude Include="Engine\yaml-cpp\contrib\anchordict.h" />
@@ -287,20 +239,8 @@
     <ClInclude Include="Engine\yaml-cpp\stlemitter.h" />
     <ClInclude Include="Engine\yaml-cpp\traits.h" />
     <ClInclude Include="Engine\yaml-cpp\yaml.h" />
-    <ClInclude Include="Game\Actors\Character\CharacterBase.h" />
-    <ClInclude Include="Game\Actors\Character\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Character\Monster\MonsterBase.h" />
-    <ClInclude Include="Game\Actors\Character\States\BaseState.h" />
-    <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
-    <ClInclude Include="Game\Actors\States\BaseState.h" />
-    <ClInclude Include="Game\Actors\States\IdleState.h" />
-    <ClInclude Include="Game\Actors\States\MoveToPlayerState.h" />
-    <ClInclude Include="Game\Actors\TilemapLoader.h" />
-    <ClInclude Include="Game\FSM\Condition.h" />
-    <ClInclude Include="Game\FSM\IState.h" />
-    <ClInclude Include="Game\FSM\StateMachine.h" />
-    <ClInclude Include="Game\FSM\Transition.h" />
     <ClInclude Include="Game\ServerManager.h" />
+    <ClInclude Include="Helper\StringHelper.h" />
     <ClInclude Include="Include\box2d\base.h" />
     <ClInclude Include="Include\box2d\box2d.h" />
     <ClInclude Include="Include\box2d\collision.h" />
@@ -510,7 +450,6 @@
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
     <ClInclude Include="MySQL\MySQLManager.h" />
-    <ClInclude Include="Helper\StringHelper.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
