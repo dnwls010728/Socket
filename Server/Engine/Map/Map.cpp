@@ -11,7 +11,7 @@
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
     test_next_unique_id_(1000),
-    collider_vertices_()
+    collider_polygons_()
 {
 }
 
@@ -152,8 +152,6 @@ bool Map::LoadMapData()
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)
                 {
-                    std::array<Math::Vector2, 4> vertices = {};
-                    
                     if (object.getShape() == tmx::Object::Shape::Rectangle)
                     {
                         float half_width = object.getAABB().width / 2.f / ppu;
@@ -164,24 +162,28 @@ bool Map::LoadMapData()
                             -1 * object.getPosition().y / ppu - half_height + map_data.getTileCount().y / 2.f
                         };
 
-                        vertices[0] = { center.x - half_width, center.y - half_height };
-                        vertices[1] = { center.x + half_width, center.y - half_height };
-                        vertices[2] = { center.x + half_width, center.y + half_height };
-                        vertices[3] = { center.x - half_width, center.y + half_height };
+                        Collider::Polygon polygon;
+                        polygon.vertices.emplace_back(center.x - half_width, center.y - half_height);
+                        polygon.vertices.emplace_back(center.x + half_width, center.y - half_height);
+                        polygon.vertices.emplace_back(center.x + half_width, center.y + half_height);
+                        polygon.vertices.emplace_back(center.x - half_width, center.y + half_height);
+                        collider_polygons_.push_back(polygon);
                     }
                     else if (object.getShape() == tmx::Object::Shape::Polygon)
                     {
+                        Collider::Polygon polygon;
+                        
                         const auto& points = object.getPoints();
-                        for (int32_t i = 0; i < 4; ++i)
+                        for (int32_t i = 0; i < points.size(); ++i)
                         {
-                            vertices[i] = {
-                                points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            };
+                            polygon.vertices.emplace_back(
+                                points[(i + 1) % points.size()].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                                -1 * points[(i + 1) % points.size()].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                            );
                         }
-                    }
 
-                    collider_vertices_.push_back(vertices);
+                        collider_polygons_.push_back(polygon);
+                    }
                 }
                 
                 break;

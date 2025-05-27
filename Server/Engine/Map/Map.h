@@ -5,8 +5,7 @@
 #include <vector>
 #include <queue>
 
-#include "Math/Vector2.h"
-#include "rttr/type.h"
+#include "Engine/Map/Collider.h"
 
 namespace Net
 {
@@ -46,7 +45,7 @@ private:
 
     std::unordered_map<uint32_t, std::weak_ptr<Player>> players_;
 
-    std::vector<std::array<Math::Vector2, 4>> collider_vertices_;
+    std::vector<Collider::Polygon> collider_polygons_;
 
     std::queue<std::weak_ptr<Player>> pending_players_;
     std::queue<uint32_t> pending_remove_players_;
