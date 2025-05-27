@@ -16,6 +16,7 @@
 #include "Math/Bounds.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Helper/StringHelper.h"
+#include "Math/Math.h"
 
 Map::Map(uint32_t MapBase_id) :
     map_unique_id_(MapBase_id),
@@ -342,7 +343,7 @@ bool Map::LoadMapData()
     if (!map_data.load(path)) return false;
 
     const auto& properties = map_data.getProperties();
-    if (!properties.empty()) return false;
+    if (properties.empty()) return false;
 
     float ppu = properties[1].getFloatValue();
 

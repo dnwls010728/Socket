@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="13">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="17">
  <properties>
   <property name="name" value="Unknown Area 1"/>
   <property name="ppu" type="float" value="32"/>
   <property name="unique_id" type="int" value="0"/>
  </properties>
- <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
+ <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="0" columns="7">
   <image source="../Tilesets/TemplateTileset.png" width="224" height="256"/>
  </tileset>
  <layer id="3" name="Tile Layer 1" width="25" height="19">
