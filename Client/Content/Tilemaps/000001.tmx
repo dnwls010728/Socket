@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="8">
  <properties>
   <property name="name" value="Unknown Area 2"/>
   <property name="ppu" type="float" value="32"/>
@@ -82,20 +82,23 @@
    <property name="ppu" type="float" value="32"/>
    <property name="unique_id" type="int" value="1"/>
   </properties>
-  <object id="1" x="0" y="544" width="800" height="416">
+  <object id="5" x="0" y="544">
    <properties>
     <property name="Type" type="int" value="0"/>
    </properties>
+   <polyline points="0,0 800,0"/>
   </object>
-  <object id="3" x="288" y="352" width="160" height="32">
+  <object id="6" x="288" y="352">
    <properties>
     <property name="Type" type="int" value="1"/>
    </properties>
+   <polyline points="0,0 160,0"/>
   </object>
-  <object id="4" x="480" y="448" width="128" height="32">
+  <object id="7" x="480" y="448">
    <properties>
     <property name="Type" type="int" value="1"/>
    </properties>
+   <polyline points="0,0 128,0"/>
   </object>
  </objectgroup>
 </map>

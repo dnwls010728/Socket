@@ -102,28 +102,11 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 	
 	tilemap_body_id_ = b2CreateBody(World::Get()->world_id_, &body_def);
 
+	float point = 0.f;
+	
 	for (const auto& temp : objects)
 	{
-		b2Polygon shape;
-		
-		if (temp.getShape() == tmx::Object::Shape::Rectangle)
-		{
-			b2Vec2 center = {temp.getPosition().x / ppu_ + ((temp.getAABB().width / 2) / ppu_) - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ - ((temp.getAABB().height / 2) / ppu_) + map_size_.y / 2.f};
-			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
-		}
-		else if (temp.getShape() == tmx::Object::Shape::Polygon)
-		{
-			std::vector<b2Vec2> vertices;
-			
-			for (const auto& point : temp.getPoints())
-			{
-				b2Vec2 vertex = {point.x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * point.y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f};
-				vertices.push_back(vertex);
-			}
-
-			b2Hull hull = b2ComputeHull(vertices.data(), vertices.size());
-			shape = b2MakePolygon(&hull, 0.f);
-		}
+		const std::vector<tmx::Property>& properties = temp.getProperties();
 		
 		b2Filter filter = b2DefaultFilter();
 		filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
@@ -132,14 +115,46 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 		b2ShapeDef shape_def = b2DefaultShapeDef();
 		shape_def.filter = filter;
 		shape_def.userData = nullptr;
-
-		b2ShapeId shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
 		
-		const std::vector<tmx::Property>& properties = temp.getProperties();
-		if (properties.size() > 0)
+		b2ShapeId shape_id = b2_nullShapeId;
+		
+		if (temp.getShape() == tmx::Object::Shape::Rectangle)
 		{
-			uint64_t id = b2StoreShapeId(shape_id);
-			type_map_[id] = properties[0].getIntValue();
+			b2Vec2 center = {temp.getPosition().x / ppu_ + ((temp.getAABB().width / 2) / ppu_) - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ - ((temp.getAABB().height / 2) / ppu_) + map_size_.y / 2.f};
+			b2Polygon shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
+			
+			shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+			
+			if (properties.size() > 0)
+			{
+				uint64_t id = b2StoreShapeId(shape_id);
+				type_map_[id] = properties[0].getIntValue();
+			}
+		}
+		else if (temp.getShape() == tmx::Object::Shape::Polyline)
+		{
+			const auto& points = temp.getPoints();
+			for (int32_t i = 0; i < points.size() - 1; ++i)
+			{
+				b2Segment segment;
+				segment.point1 = {
+					points[i].x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f,
+					-1 * points[i].y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f
+				};
+
+				segment.point2 = {
+					points[i + 1].x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f,
+					-1 * points[i + 1].y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f
+				};
+
+				shape_id = b2CreateSegmentShape(tilemap_body_id_, &shape_def, &segment);
+				
+				if (properties.size() > 0)
+				{
+					uint64_t id = b2StoreShapeId(shape_id);
+					type_map_[id] = properties[0].getIntValue();
+				}
+			}
 		}
 	}
 
