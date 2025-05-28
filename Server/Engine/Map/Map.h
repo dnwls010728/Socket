@@ -5,7 +5,7 @@
 #include <vector>
 #include <queue>
 
-#include "Engine/Map/Collider.h"
+#include "Math/Vector2.h"
 
 namespace Net
 {
@@ -14,6 +14,14 @@ namespace Net
 
 class Player;
 class Actor;
+
+struct Foothold
+{
+    Math::Vector2 point1;
+    Math::Vector2 point2;
+
+    inline bool IsValid() const { return point1 != point2; }
+};
 
 class Map
 {
@@ -32,12 +40,16 @@ public:
     virtual void Tick(float delta_time);
 
     bool LoadMapData();
+
+    Foothold GetFoothold(const Math::Vector2& position);
+    
+    float GetFootholdY(const Foothold& foothold, const Math::Vector2& position);
     
     std::vector<std::weak_ptr<Player>> GetPlayers();
     
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapID() const { return map_id_; }
-    
+
 private:
     std::mutex player_mutex_;
     uint32_t map_id_;
@@ -45,10 +57,12 @@ private:
 
     std::unordered_map<uint32_t, std::weak_ptr<Player>> players_;
 
-    std::vector<Collider::Polygon> collider_polygons_;
+    std::vector<Foothold> footholds_;
 
     std::queue<std::weak_ptr<Player>> pending_players_;
     std::queue<uint32_t> pending_remove_players_;
+    
+    static bool CompareToFoothold(const Foothold& a, const Foothold& b);
 };
 
 FORCEINLINE bool IsValid(const Map* map)

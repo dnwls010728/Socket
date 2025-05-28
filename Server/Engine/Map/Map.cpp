@@ -8,10 +8,14 @@
 #include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
+#include <iostream>
+
+#include "Math/Math.h"
+
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
     test_next_unique_id_(1000),
-    collider_polygons_()
+    footholds_()
 {
 }
 
@@ -152,44 +156,77 @@ bool Map::LoadMapData()
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)
                 {
-                    if (object.getShape() == tmx::Object::Shape::Rectangle)
+                    if (object.getShape() == tmx::Object::Shape::Polyline)
                     {
-                        float half_width = object.getAABB().width / 2.f / ppu;
-                        float half_height = object.getAABB().height / 2.f / ppu;
-                        
-                        Math::Vector2 center = {
-                            object.getPosition().x / ppu + half_width - map_data.getTileCount().x / 2.f,
-                            -1 * object.getPosition().y / ppu - half_height + map_data.getTileCount().y / 2.f
-                        };
-
-                        Collider::Polygon polygon;
-                        polygon.vertices.emplace_back(center.x - half_width, center.y - half_height);
-                        polygon.vertices.emplace_back(center.x + half_width, center.y - half_height);
-                        polygon.vertices.emplace_back(center.x + half_width, center.y + half_height);
-                        polygon.vertices.emplace_back(center.x - half_width, center.y + half_height);
-                        collider_polygons_.push_back(polygon);
-                    }
-                    else if (object.getShape() == tmx::Object::Shape::Polygon)
-                    {
-                        Collider::Polygon polygon;
-                        
                         const auto& points = object.getPoints();
-                        for (int32_t i = 0; i < points.size(); ++i)
+                        for (size_t i = 0; i < points.size() - 1; ++i)
                         {
-                            polygon.vertices.emplace_back(
-                                points[(i + 1) % points.size()].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[(i + 1) % points.size()].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            );
+                            Foothold foothold;
+                            foothold.point1 = {
+                                points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                                -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                            };
+                            
+                            foothold.point2 = {
+                                points[i + 1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                                -1 * points[i + 1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                            };
+                            
+                            footholds_.push_back(foothold);
                         }
-
-                        collider_polygons_.push_back(polygon);
                     }
                 }
-                
-                break;
+
+                std::ranges::sort(footholds_, CompareToFoothold);
             }
         }
     }
 
     return true;
+}
+
+Foothold Map::GetFoothold(const Math::Vector2& position)
+{
+    Foothold best;
+    float best_y = -std::numeric_limits<float>::infinity();
+    
+    for (const auto& foothold : footholds_)
+    {
+        if (!foothold.IsValid()) continue;
+        
+        const Math::Vector2& point1 = foothold.point1;
+        const Math::Vector2& point2 = foothold.point2;
+        
+        if (position.x < point1.x || position.x > point2.x) continue;
+
+        float t = (position.x - point1.x) / (point2.x - point1.x);
+        float y = point1.y + t * (point2.y - point1.y);
+
+        if (y <= position.y && y > best_y)
+        {
+            best_y = y;
+            best = foothold;
+        }
+    }
+
+    return best;
+}
+
+float Map::GetFootholdY(const Foothold& foothold, const Math::Vector2& position)
+{
+    if (!foothold.IsValid()) return position.y;
+    
+    const Math::Vector2& point1 = foothold.point1;
+    const Math::Vector2& point2 = foothold.point2;
+    
+    float t = (position.x - point1.x) / (point2.x - point1.x);
+    return point1.y + t * (point2.y - point1.y);
+}
+
+bool Map::CompareToFoothold(const Foothold& a, const Foothold& b)
+{
+    return (a.point1.x < b.point1.x) || 
+           (Math::IsEqual(a.point1.x, b.point1.x) && a.point1.y < b.point1.y) ||
+           (a.point2.x < b.point2.x) || 
+           (Math::IsEqual(a.point2.x, b.point2.x) && a.point2.y < b.point2.y);
 }

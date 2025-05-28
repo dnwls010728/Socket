@@ -14,6 +14,8 @@ public:
     inline void SetPosition(const Math::Vector2& position) { position_ = position; }
     inline const Math::Vector2& GetPosition() const { return position_; }
 
+    inline void Translate(const Math::Vector2& translation) { position_ += translation; }
+
 private:
     uint32_t object_id_;
 
