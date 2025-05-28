@@ -207,3 +207,12 @@ struct MoveItemResponse : public Net::IPacket
     SERIALIZABLE_FIELDS(changes)
     REGISTER_PACKET(MoveItemResponse, 301)
 };
+
+struct MoveTestPacket : public Net::IPacket
+{
+    float position_x;
+    float position_y;
+
+    SERIALIZABLE_FIELDS(position_x, position_y)
+    REGISTER_PACKET(MoveTestPacket, 400)
+};

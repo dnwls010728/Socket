@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 #include <ranges>
 
+#include "DebugDrawHelper.h"
 #include "GameInstance.h"
 #include "InGameUISubsystem.h"
 #include "PlayerSubsystem.h"
@@ -22,7 +23,8 @@ NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
     player_(),
     other_players_(),
-    tilemap_(nullptr)
+    tilemap_(nullptr),
+    temp_position_(Math::Vector2::Zero())
 {
 }
 
@@ -63,6 +65,8 @@ void NetworkSubsystem::Tick(float delta_time)
     {
         session_subsystem->ProcessPackets();
     }
+
+    DebugDrawHelper::Get()->DrawBox(temp_position_, {.5f, .5f}, Math::Color::Green);
 }
 
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
@@ -196,6 +200,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
+        
     case ObjectPositionPacket::StaticPacketID:
         {
             ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
@@ -204,6 +209,14 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
         }
         break;
+
+    case MoveTestPacket::StaticPacketID:
+        {
+            MoveTestPacket* move_test_packet = static_cast<MoveTestPacket*>(packet.get());
+            temp_position_.x = move_test_packet->position_x;
+            temp_position_.y = move_test_packet->position_y;
+        }
+        
     default:
         break;
     }

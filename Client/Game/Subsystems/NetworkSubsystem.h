@@ -53,6 +53,8 @@ private:
     std::vector<std::weak_ptr<PlayerCharacter>> other_players_;
 
     Tilemap* tilemap_;
+
+    Math::Vector2 temp_position_;
     
 };
 
