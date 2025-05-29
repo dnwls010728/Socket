@@ -190,13 +190,10 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 
                 SetPosition({position_x, position_y});
 
-                Foothold foothold = map_->GetFoothold(GetPosition());
-                if (foothold.IsValid())
-                {
-                    std::cout << "Player " << GetCharacterID() << " moved to foothold: "
-                              << "Point1(" << foothold.point1.x << ", " << foothold.point1.y << "), "
-                              << "Point2(" << foothold.point2.x << ", " << foothold.point2.y << ")" << std::endl;
-                }
+                std::cout << "Player Position Updated: "
+                          << "ID: " << character_id_
+                          << ", X: " << position_x
+                          << ", Y: " << position_y << std::endl;
                 
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_id_;

@@ -79,7 +79,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 
         if (is_jump_ && collisions.is_below)
         {
-            velocity_.y = 10.f;
+            velocity_.y = 5.f;
             is_jump_ = false;
         }
         

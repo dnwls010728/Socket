@@ -4,7 +4,7 @@
 
 class Map;
 
-class MapObject
+class MapObject : public std::enable_shared_from_this<MapObject>
 {
 public:
     MapObject();
@@ -22,10 +22,9 @@ public:
     inline void Translate(const Math::Vector2& translation) { position_ += translation; }
 
 protected:
-    virtual void Tick(float delta_time);
-
-private:
     friend class Map;
+    
+    inline virtual void Tick(float delta_time) {}
     
     uint32_t object_id_;
 

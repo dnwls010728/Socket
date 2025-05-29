@@ -64,7 +64,7 @@ bool ServerManager::Execute()
         return false;
     }
 
-    World::Get()->Start(10, 10);
+    World::Get()->Start(33, 10);
     
     // 명령어 입력 루프
     std::wstring line;
