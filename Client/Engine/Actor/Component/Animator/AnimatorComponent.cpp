@@ -63,6 +63,8 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[0]);
     }
+    
+    current_state_ = GetOrAddNode(kName);
 }
 
 void AnimatorComponent::SetBool(const std::wstring& kName, bool value)

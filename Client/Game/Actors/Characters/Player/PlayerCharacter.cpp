@@ -3,9 +3,13 @@
 
 #include <CustomPacket.h>
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimationCondition.h"
+#include "Actor/Component/Animator/AnimationPack.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Asset/AssetManager.h"
@@ -24,7 +28,29 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     timer_(0)
 {
     SetLayer(ActorLayer::kCharacter);
-    renderer_->SetZOrder(1000);
+    
+    collider_->SetOffset({ 0.f, .5f });
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    if (animation_pack)
+    {
+        animator_->SetAnimationPack(animation_pack);
+        animator_->PlayAnimation(L"Idle");
+        
+        animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            Logger::Print(L"Speed: %f", animator->GetFloat(L"Speed"));
+            return animator->GetFloat(L"Speed") > .1f;
+        }));
+
+        animator_->AddTransition(L"Run", L"Idle", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            Logger::Print(L"Speed: %f", animator->GetFloat(L"Speed"));
+            return animator->GetFloat(L"Speed") < .1f;
+        }));
+    }
+
+    GetTransform()->SetScale({ 2.f, 2.f });
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -57,18 +83,6 @@ void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& p
     GetTransform()->SetPosition(position);
 }
 
-void PlayerCharacter::BeginPlay()
-{
-    CharacterBase::BeginPlay();
-
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
-    if (sprite)
-    {
-        renderer_->SetSprite(sprite, L"Box_0");
-    }
-
-}
-
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
     std::shared_ptr<TransformComponent> transform = GetTransform();
@@ -79,7 +93,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 
         if (is_jump_ && collisions.is_below)
         {
-            velocity_.y = 5.f;
+            velocity_.y = 10.f;
             is_jump_ = false;
         }
         
@@ -99,6 +113,13 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             
             last_movement_ = movement;
         }
+
+        if (movement_input_.Magnitude() > .1f)
+        {
+            renderer_->SetFlipX(movement_input_.x < 0.f);
+        }
+        
+        animator_->SetFloat(L"Speed", movement_input_.Magnitude());
     }
     else
     {
