@@ -8,13 +8,18 @@
 #include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
+#include "MapObjects/Mob.h"
 #include "Math/Math.h"
+
+std::unique_ptr<Mob> mob = nullptr;
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
     test_next_unique_id_(1000),
     footholds_()
 {
+    mob = std::make_unique<Mob>();
+    mob->SetMap(this);
 }
 
 void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
@@ -117,6 +122,8 @@ void Map::Tick(float delta_time)
 {
     AddPlayers();
     RemovePlayers();
+
+    mob->Tick(delta_time);
 
 }
 

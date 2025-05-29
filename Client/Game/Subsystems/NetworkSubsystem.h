@@ -54,7 +54,8 @@ private:
 
     Tilemap* tilemap_;
 
-    Math::Vector2 temp_position_;
+    // 테스트
+    std::shared_ptr<NetworkActor> network_actor_;
     
 };
 

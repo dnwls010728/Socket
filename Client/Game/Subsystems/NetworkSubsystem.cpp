@@ -12,6 +12,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
+#include "Actors/Characters/Monsters/MonsterBase.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
 #include "imgui/imgui.h"
@@ -24,7 +25,7 @@ NetworkSubsystem::NetworkSubsystem() :
     player_(),
     other_players_(),
     tilemap_(nullptr),
-    temp_position_(Math::Vector2::Zero())
+    network_actor_(nullptr)
 {
 }
 
@@ -65,8 +66,6 @@ void NetworkSubsystem::Tick(float delta_time)
     {
         session_subsystem->ProcessPackets();
     }
-
-    DebugDrawHelper::Get()->DrawBox(temp_position_, {.5f, .5f}, Math::Color::Green);
 }
 
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
@@ -212,9 +211,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
 
     case MoveTestPacket::StaticPacketID:
         {
-            MoveTestPacket* move_test_packet = static_cast<MoveTestPacket*>(packet.get());
-            temp_position_.x = move_test_packet->position_x;
-            temp_position_.y = move_test_packet->position_y;
+            if (IsValid(network_actor_)) network_actor_->ReceivePacket(packet.get());
         }
         
     default:
@@ -269,6 +266,8 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
 
     InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
     in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
+
+    network_actor_ = World::Get()->SpawnActor<MonsterBase>(MonsterBase::StaticClass());
 }
 
 RTTR_REGISTRATION

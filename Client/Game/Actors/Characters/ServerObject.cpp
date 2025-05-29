@@ -93,9 +93,9 @@ void ServerObject::ReceivePacket(Net::IPacket* packet)
 
     switch (packet->GetPacketID())
     {
-    case ObjectPositionPacket::StaticPacketID:
+    case MoveTestPacket::StaticPacketID:
         {
-            ObjectPositionPacket* position_packet = static_cast<ObjectPositionPacket*>(packet);
+            MoveTestPacket* position_packet = static_cast<MoveTestPacket*>(packet);
             Snapshot snapshot;
             snapshot.position = Math::Vector2(position_packet->position_x, position_packet->position_y);
             snapshot.velocity = Math::Vector2(position_packet->velocity_x, position_packet->velocity_y);

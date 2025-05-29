@@ -189,11 +189,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 float position_y = move_player_packet->movement.y;
                 
                 SetPosition({position_x, position_y});
-
-                std::cout << "Player Position Updated: "
-                          << "ID: " << character_id_
-                          << ", X: " << position_x
-                          << ", Y: " << position_y << std::endl;
                 
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_id_;

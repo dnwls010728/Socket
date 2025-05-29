@@ -210,9 +210,14 @@ struct MoveItemResponse : public Net::IPacket
 
 struct MoveTestPacket : public Net::IPacket
 {
+    uint32_t object_id;
+    
     float position_x;
     float position_y;
+    float velocity_x;
+    float velocity_y;
+    float server_time;
 
-    SERIALIZABLE_FIELDS(position_x, position_y)
+    SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, server_time)
     REGISTER_PACKET(MoveTestPacket, 400)
 };
