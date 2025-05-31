@@ -19,6 +19,7 @@ public:
     FORCEINLINE Math::Vector2& GetVelocity() { return velocity_; }
 
 protected:
+    virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
 

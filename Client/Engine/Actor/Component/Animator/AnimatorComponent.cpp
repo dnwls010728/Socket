@@ -9,8 +9,9 @@
 #include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
 
-AnimatorComponent::StateNode::StateNode(const std::wstring& kState) :
-    state_(kState),
+AnimatorComponent::StateNode::StateNode(const std::wstring& name) :
+    name_(name),
+    animation_(nullptr),
     transitions_()
 {
 }
@@ -24,7 +25,6 @@ AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
     renderer_weak_ptr_(),
     animation_pack_(nullptr),
-    current_animation_(nullptr),
     timer_(0.f),
     is_playing_(false),
     current_frame_(0),
@@ -47,24 +47,23 @@ void AnimatorComponent::AddAnyTransition(const std::wstring& kTo, const std::sha
 
 void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 {
-    if (!animation_pack_) return;
-
-    const auto it = animation_pack_->animations_.find(kName);
-    if (it == animation_pack_->animations_.end()) return;
-
-    current_animation_ = it->second.get();
+    current_state_ = GetOrAddNode(kName);
     current_frame_ = 0;
     timer_ = 0.f;
-    is_playing_ = true;
 
-    std::shared_ptr<SpriteRendererComponent> renderer_ptr = renderer_weak_ptr_.lock();
-    if (HasBegunPlay() && renderer_ptr)
+    if (!current_state_ || !HasBegunPlay()) return;
+
+    const std::shared_ptr<Animation>& animation = current_state_->GetAnimation();
+    if (!animation || animation->frames_.empty()) return;
+
+    std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
+    if (renderer)
     {
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[0]);
+        if (sprite) renderer->SetSprite(sprite, animation->frames_.front());
     }
     
-    current_state_ = GetOrAddNode(kName);
+    is_playing_ = true;
 }
 
 void AnimatorComponent::SetBool(const std::wstring& kName, bool value)
@@ -125,20 +124,32 @@ int32_t AnimatorComponent::GetInt(const std::wstring& kName)
     return 0;
 }
 
-std::shared_ptr<AnimatorComponent::StateNode> AnimatorComponent::GetOrAddNode(const std::wstring& kState)
+std::shared_ptr<AnimatorComponent::StateNode> AnimatorComponent::GetOrAddNode(const std::wstring& name)
 {
     std::shared_ptr<StateNode> node = nullptr;
 
-    const auto it = nodes_.find(kState);
+    const auto it = nodes_.find(name);
     if (it != nodes_.end()) node = it->second;
 
     if (!node)
     {
-        node = std::make_shared<StateNode>(kState);
-        nodes_[kState] = node;
+        node = std::make_shared<StateNode>(name);
+        nodes_[name] = node;
     }
 
     return node;
+}
+
+void AnimatorComponent::InitializeComponent()
+{
+    ActorComponent::InitializeComponent();
+    if (!animation_pack_) return;
+    
+    const auto& animations = animation_pack_->animations_;
+    for (const auto& animation : animations)
+    {
+        GetOrAddNode(animation.first)->SetAnimation(animation.second);
+    }
 }
 
 void AnimatorComponent::BeginPlay()
@@ -146,13 +157,6 @@ void AnimatorComponent::BeginPlay()
     ActorComponent::BeginPlay();
 
     renderer_weak_ptr_ = owner_->GetComponent<SpriteRendererComponent>(SpriteRendererComponent::StaticClass());
-
-    std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
-    if (renderer && animation_pack_ && current_animation_)
-    {
-        Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer->SetSprite(sprite, current_animation_->frames_[0]);
-    }
 }
 
 void AnimatorComponent::TickComponent(float delta_time)
@@ -161,19 +165,24 @@ void AnimatorComponent::TickComponent(float delta_time)
 
     std::shared_ptr<Transition> transition = GetTransition();
     if (transition) PlayAnimation(transition->GetTo());
+    
+    if (!current_state_ || !is_playing_) return;
+    
+    const std::shared_ptr<Animation>& animation = current_state_->GetAnimation();
+    if (!animation || animation->frames_.empty()) return;
 
-    std::shared_ptr<SpriteRendererComponent> renderer_ptr = renderer_weak_ptr_.lock();
-    if (!renderer_ptr || !is_playing_ || !current_animation_) return;
+    std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
+    if (!renderer) return;
 
-    const float frame_time = 1.f / current_animation_->frame_rate_;
+    const float frame_time = 1.f / animation->frame_rate_;
     timer_ += delta_time;
 
     if (timer_ >= frame_time)
     {
         timer_ -= frame_time;
-        if (current_frame_ >= current_animation_->frames_.size() - 1)
+        if (current_frame_ >= animation->frames_.size() - 1)
         {
-            if (!current_animation_->is_loop_)
+            if (!animation->is_loop_)
             {
                 if (OnEndHandler.IsBound()) OnEndHandler.Execute();
                 is_playing_ = false;
@@ -181,10 +190,10 @@ void AnimatorComponent::TickComponent(float delta_time)
             }
         }
 
-        current_frame_ = (current_frame_ + 1) % current_animation_->frames_.size();
+        current_frame_ = (current_frame_ + 1) % animation->frames_.size();
 
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer_ptr->SetSprite(sprite, current_animation_->frames_[current_frame_]);
+        if (sprite) renderer->SetSprite(sprite, animation->frames_[current_frame_]);
     }
 }
 

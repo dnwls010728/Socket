@@ -35,7 +35,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     if (animation_pack)
     {
         animator_->SetAnimationPack(animation_pack);
-        animator_->PlayAnimation(L"Idle");
         
         animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
         {
@@ -49,8 +48,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
             return animator->GetFloat(L"Speed") < .1f;
         }));
     }
-
-    GetTransform()->SetScale({ 2.f, 2.f });
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -81,6 +78,13 @@ void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& p
     last_movement_.y = position.y;
     
     GetTransform()->SetPosition(position);
+}
+
+void PlayerCharacter::BeginPlay()
+{
+    CharacterBase::BeginPlay();
+
+    animator_->PlayAnimation(L"Idle");
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
