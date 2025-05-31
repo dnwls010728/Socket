@@ -23,7 +23,7 @@ void ProjectSettings::Init()
     settings->SetFixedTimeStep(1.f / 60.f);
 
     // 보간 지연
-    settings->SetInterpolationDelay(0.1f);
+    settings->SetInterpolationDelay(0.25f);
     
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kItemDrop);

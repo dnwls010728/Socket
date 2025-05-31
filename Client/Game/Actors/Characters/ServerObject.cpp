@@ -16,6 +16,7 @@
 #include "GameInstance.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Math/Math.h"
+#include "Misc/StringHelper.h"
 
 ServerObject::ServerObject(const std::wstring& kName) :
     NetworkActor(kName),
@@ -56,14 +57,14 @@ void ServerObject::Tick(float delta_time)
 
 void ServerObject::UpdateInterpolatedPosition(float delta_time)
 {
-    float serverNow = SessionSubsystem::Get()->GetServerTime();
+    float server_now = SessionSubsystem::Get()->GetServerTime();
 
     // 현재 서버의 시간보다 interpolationDelay 지연된 시간
-    float interpolationTime = serverNow - EngineSettings::Get()->GetInterpolationDelay();
+    float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
     
     // 시간이 지난 스냅샷 제거
     while (snapshot_queue.size() >= 2 &&
-           snapshot_queue[1].server_time < interpolationTime)
+           snapshot_queue[1].server_time < interpolation_time)
     {
         snapshot_queue.pop_front();
     }
@@ -73,7 +74,7 @@ void ServerObject::UpdateInterpolatedPosition(float delta_time)
         const auto& from = snapshot_queue[0];
         const auto& to   = snapshot_queue[1];
 
-        float t = (interpolationTime - from.server_time) / (to.server_time - from.server_time);
+        float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
         Math::Vector2 pos;
         pos.x = Math::Lerp(from.position.x, to.position.x, t);
         pos.y = Math::Lerp(from.position.y, to.position.y, t);
@@ -101,6 +102,8 @@ void ServerObject::ReceivePacket(Net::IPacket* packet)
             snapshot.velocity = Math::Vector2(position_packet->velocity_x, position_packet->velocity_y);
             snapshot.server_time = position_packet->server_time;
             snapshot_queue.push_back(snapshot);
+            std::cout << "ReceivePacket x : " << snapshot.position.x << " y : " << snapshot.position.y
+            <<" server_time :" << snapshot.server_time<< std::endl;
         }
         break;
     default:

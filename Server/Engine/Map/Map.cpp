@@ -11,8 +11,6 @@
 #include "MapObjects/Mob.h"
 #include "Math/Math.h"
 
-std::unique_ptr<Mob> mob = nullptr;
-
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
     test_next_unique_id_(1000),

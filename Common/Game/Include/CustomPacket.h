@@ -173,7 +173,7 @@ struct DestroyObjectPacket : public Net::IPacket
     uint32_t unique_id;
 
     SERIALIZABLE_FIELDS(unique_id)
-    REGISTER_PACKET(SpawnObjectPacket, 231)
+    REGISTER_PACKET(DestroyObjectPacket, 231)
 };
 
 struct ObjectPositionPacket : public Net::IPacket

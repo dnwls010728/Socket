@@ -61,6 +61,9 @@ private:
 
     std::queue<std::weak_ptr<Player>> pending_players_;
     std::queue<uint32_t> pending_remove_players_;
+
+    // 테스트
+    std::unique_ptr<class Mob> mob = nullptr;
     
     static bool CompareToFoothold(const Foothold& a, const Foothold& b);
 };

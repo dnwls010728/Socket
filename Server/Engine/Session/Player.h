@@ -28,6 +28,8 @@ public:
     
     void Update();
 
+    void ExitMap();
+    
     inline Session* GetSession() const { return session_; }
     inline uint32_t GetAccountID() const { return account_id_; }
     inline uint32_t GetCharacterID() const { return character_id_; }

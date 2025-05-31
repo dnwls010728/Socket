@@ -9,6 +9,15 @@ Session::Session(int client_id) :
 {
 }
 
+Session::~Session()
+{
+    if (player_)
+    {
+        player_->ExitMap();
+        player_ = nullptr;
+    }
+}
+
 void Session::SendPacket(const Net::IPacket& packet) const
 {
     if (client_id_ == 0) return;
@@ -27,6 +36,8 @@ void Session::Update()
 
 std::shared_ptr<Player> Session::CreatePlayer(uint32_t account_id)
 {
+    if (player_) player_->ExitMap();
+    
     player_ = std::make_shared<Player>(this, account_id);
     return player_;
 }

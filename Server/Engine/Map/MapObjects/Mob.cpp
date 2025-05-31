@@ -21,7 +21,15 @@ void Mob::Tick(float delta_time)
     const auto& players = map_->GetPlayers();
     if (players.empty()) return;
 
-    velocity_.x = players[0].lock()->GetPosition().x - position_.x;
+    const auto target = players[0].lock();
+    if (!target)
+    {
+        velocity_.x = 0;
+    }
+    else
+    {
+        velocity_.x = target->GetPosition().x - position_.x;
+    }
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
 

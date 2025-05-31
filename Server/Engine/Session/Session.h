@@ -22,7 +22,7 @@ public:
     };
     
     Session(int client_id);
-    ~Session() = default;
+    ~Session();
 
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet) const;
