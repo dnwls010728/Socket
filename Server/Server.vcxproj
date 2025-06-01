@@ -153,10 +153,90 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\FSM\Condition.cpp" />
+    <ClCompile Include="Engine\FSM\StateMachine.cpp" />
+    <ClCompile Include="Engine\FSM\Transition.cpp" />
     <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapObject.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\Foothold.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\ItemDrop.cpp" />
-    <ClCompile Include="Engine\Map\MapObjects\Mob.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\Mob\Mob.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\Server.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\Server.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_CONSOLE;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Woojin Choi\RiderProjects\Socket\\Common\Game\Include;C:\Users\Woojin Choi\RiderProjects\Socket\\Common\Engine;C:\Users\Woojin Choi\RiderProjects\Socket\\Server\Include;C:\Users\Woojin Choi\RiderProjects\Socket\\NetworkLib;C:\Users\Woojin Choi\RiderProjects\Socket\\Server;C:\Users\Woojin Choi\RiderProjects\Socket\\Server\Engine;C:\Users\Woojin Choi\RiderProjects\Socket\\Server\Game</AdditionalIncludeDirectories>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
     <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
@@ -181,10 +261,15 @@
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\FSM\Condition.h" />
+    <ClInclude Include="Engine\FSM\IState.h" />
+    <ClInclude Include="Engine\FSM\StateMachine.h" />
+    <ClInclude Include="Engine\FSM\Transition.h" />
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />
+    <ClInclude Include="Engine\Map\MapObjects\Foothold.h" />
     <ClInclude Include="Engine\Map\MapObjects\ItemDrop.h" />
-    <ClInclude Include="Engine\Map\MapObjects\Mob.h" />
+    <ClInclude Include="Engine\Map\MapObjects\Mob\Mob.h" />
     <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
@@ -204,43 +289,6 @@
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
-    <ClInclude Include="Engine\yaml-cpp\anchor.h" />
-    <ClInclude Include="Engine\yaml-cpp\binary.h" />
-    <ClInclude Include="Engine\yaml-cpp\contrib\anchordict.h" />
-    <ClInclude Include="Engine\yaml-cpp\contrib\graphbuilder.h" />
-    <ClInclude Include="Engine\yaml-cpp\depthguard.h" />
-    <ClInclude Include="Engine\yaml-cpp\dll.h" />
-    <ClInclude Include="Engine\yaml-cpp\emitfromevents.h" />
-    <ClInclude Include="Engine\yaml-cpp\emitter.h" />
-    <ClInclude Include="Engine\yaml-cpp\emitterdef.h" />
-    <ClInclude Include="Engine\yaml-cpp\emittermanip.h" />
-    <ClInclude Include="Engine\yaml-cpp\emitterstyle.h" />
-    <ClInclude Include="Engine\yaml-cpp\eventhandler.h" />
-    <ClInclude Include="Engine\yaml-cpp\exceptions.h" />
-    <ClInclude Include="Engine\yaml-cpp\mark.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\convert.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\impl.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\iterator_fwd.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\memory.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\node.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\node_data.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\node_iterator.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\detail\node_ref.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\emit.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\impl.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\iterator.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\node.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\parse.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\ptr.h" />
-    <ClInclude Include="Engine\yaml-cpp\node\type.h" />
-    <ClInclude Include="Engine\yaml-cpp\noexcept.h" />
-    <ClInclude Include="Engine\yaml-cpp\null.h" />
-    <ClInclude Include="Engine\yaml-cpp\ostream_wrapper.h" />
-    <ClInclude Include="Engine\yaml-cpp\parser.h" />
-    <ClInclude Include="Engine\yaml-cpp\stlemitter.h" />
-    <ClInclude Include="Engine\yaml-cpp\traits.h" />
-    <ClInclude Include="Engine\yaml-cpp\yaml.h" />
     <ClInclude Include="Game\ServerManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
     <ClInclude Include="Include\box2d\base.h" />

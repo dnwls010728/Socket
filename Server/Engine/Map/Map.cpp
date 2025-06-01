@@ -8,16 +8,25 @@
 #include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
-#include "MapObjects/Mob.h"
+#include "MapObject.h"
+#include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
-    test_next_unique_id_(1000),
+    player_mutex_(),
+    object_mutex_(),
+    next_object_id_(1000),
+    players_(),
+    map_objects_(),
+    pending_players_(),
+    pending_remove_players_(),
+    pending_objects_(),
+    pending_remove_objects_(),
     footholds_()
 {
-    mob = std::make_unique<Mob>();
-    mob->SetMap(this);
+    std::shared_ptr<Mob> new_mob = std::make_shared<Mob>();
+    SpawnMob(new_mob);
 }
 
 void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
@@ -94,6 +103,18 @@ void Map::RemovePlayers()
     }
 }
 
+void Map::AddObject(const std::shared_ptr<MapObject>& object)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    pending_objects_.push(object);
+}
+
+void Map::RemoveObject(uint32_t object_id)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    pending_remove_objects_.push(object_id);
+}
+
 void Map::SendPacket(const Net::IPacket& packet)
 {
     for (auto& player_weak : std::views::values(players_))
@@ -116,12 +137,28 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &ex
     }
 }
 
+void Map::SpawnMob(const std::shared_ptr<Mob>& mob)
+{
+    if (!mob) return;
+
+    mob->SetMap(this);
+    mob->SetObjectID(next_object_id_++);
+
+    AddObject(mob);
+}
+
 void Map::Tick(float delta_time)
 {
     AddPlayers();
     RemovePlayers();
+    
+    AddObjects();
+    RemoveObjects();
 
-    mob->Tick(delta_time);
+    for (const auto& map_object : map_objects_ | std::views::values)
+    {
+        map_object->Tick(delta_time);
+    }
 
 }
 
@@ -165,23 +202,20 @@ bool Map::LoadMapData()
                         const auto& points = object.getPoints();
                         for (size_t i = 0; i < points.size() - 1; ++i)
                         {
-                            Foothold foothold;
-                            foothold.point1 = {
+                            Math::Vector2 point1 = {
                                 points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                                 -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                             };
                             
-                            foothold.point2 = {
+                            Math::Vector2 point2 = {
                                 points[i + 1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                                 -1 * points[i + 1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                             };
-                            
-                            footholds_.push_back(foothold);
+
+                            footholds_.emplace_back(std::make_unique<Foothold>(point1, point2));
                         }
                     }
                 }
-
-                std::ranges::sort(footholds_, CompareToFoothold);
             }
         }
     }
@@ -189,48 +223,46 @@ bool Map::LoadMapData()
     return true;
 }
 
-Foothold Map::GetFoothold(const Math::Vector2& position)
+Foothold* Map::FindFoothold(const Math::Vector2& position)
 {
-    Foothold best;
-    float best_y = -std::numeric_limits<float>::infinity();
+    Foothold* best = nullptr;
+    float best_y = -std::numeric_limits<float>::max();
     
     for (const auto& foothold : footholds_)
     {
-        if (!foothold.IsValid()) continue;
+        if (position.x < foothold->GetX1() || position.x > foothold->GetX2()) continue;
         
-        const Math::Vector2& point1 = foothold.point1;
-        const Math::Vector2& point2 = foothold.point2;
-        
-        if (position.x < point1.x || position.x > point2.x) continue;
-
-        float t = (position.x - point1.x) / (point2.x - point1.x);
-        float y = point1.y + t * (point2.y - point1.y);
-
-        if (y <= position.y && y > best_y)
+        float y = foothold->GetYAt(position.x);
+        if (best_y <= y && position.y <= y)
         {
             best_y = y;
-            best = foothold;
+            best = foothold.get();
         }
     }
 
     return best;
 }
 
-float Map::GetFootholdY(const Foothold& foothold, const Math::Vector2& position)
+void Map::AddObjects()
 {
-    if (!foothold.IsValid()) return position.y;
-    
-    const Math::Vector2& point1 = foothold.point1;
-    const Math::Vector2& point2 = foothold.point2;
-    
-    float t = (position.x - point1.x) / (point2.x - point1.x);
-    return point1.y + t * (point2.y - point1.y);
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    while (!pending_objects_.empty())
+    {
+        std::shared_ptr<MapObject> object = pending_objects_.front();
+        pending_objects_.pop();
+
+        map_objects_.emplace(object->GetObjectID(), object);
+    }
 }
 
-bool Map::CompareToFoothold(const Foothold& a, const Foothold& b)
+void Map::RemoveObjects()
 {
-    return (a.point1.x < b.point1.x) || 
-           (Math::IsEqual(a.point1.x, b.point1.x) && a.point1.y < b.point1.y) ||
-           (a.point2.x < b.point2.x) || 
-           (Math::IsEqual(a.point2.x, b.point2.x) && a.point2.y < b.point2.y);
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    while (!pending_remove_objects_.empty())
+    {
+        uint32_t object_id = pending_remove_objects_.front();
+        pending_remove_objects_.pop();
+
+        map_objects_.erase(object_id);
+    }
 }

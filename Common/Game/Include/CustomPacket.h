@@ -178,14 +178,14 @@ struct DestroyObjectPacket : public Net::IPacket
 
 struct ObjectPositionPacket : public Net::IPacket
 {
-    uint32_t unique_id;
+    uint32_t object_id;
     float position_x;
     float position_y;
     float velocity_x;
     float velocity_y;
     float server_time;
 
-    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, server_time)
+    SERIALIZABLE_FIELDS(object_id, position_x, position_y, server_time)
     REGISTER_PACKET(ObjectPositionPacket, 232)
 };
 
@@ -206,18 +206,4 @@ struct MoveItemResponse : public Net::IPacket
     
     SERIALIZABLE_FIELDS(changes)
     REGISTER_PACKET(MoveItemResponse, 301)
-};
-
-struct MoveTestPacket : public Net::IPacket
-{
-    uint32_t object_id;
-    
-    float position_x;
-    float position_y;
-    float velocity_x;
-    float velocity_y;
-    float server_time;
-
-    SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, server_time)
-    REGISTER_PACKET(MoveTestPacket, 400)
 };

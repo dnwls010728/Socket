@@ -55,7 +55,7 @@ private:
     Tilemap* tilemap_;
 
     // 테스트
-    std::shared_ptr<NetworkActor> network_actor_;
+    std::shared_ptr<NetworkActor> test_actor_;
     
 };
 
@@ -66,7 +66,7 @@ std::shared_ptr<T> NetworkSubsystem::SpawnNetworkActor(const rttr::type& type, u
     if (IsValid(network_actor))
     {
         network_actors_.emplace(unique_id, network_actor);
-        network_actor->SetUniqueID(unique_id);
+        network_actor->SetObjectID(unique_id);
         return network_actor;
     }
 

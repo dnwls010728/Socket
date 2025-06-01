@@ -38,13 +38,11 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
         
         animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
         {
-            Logger::Print(L"Speed: %f", animator->GetFloat(L"Speed"));
             return animator->GetFloat(L"Speed") > .1f;
         }));
 
         animator_->AddTransition(L"Run", L"Idle", std::make_shared<Condition>([&](AnimatorComponent* animator)
         {
-            Logger::Print(L"Speed: %f", animator->GetFloat(L"Speed"));
             return animator->GetFloat(L"Speed") < .1f;
         }));
     }

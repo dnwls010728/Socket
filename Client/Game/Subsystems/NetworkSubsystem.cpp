@@ -12,8 +12,8 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
-#include "Actors/Characters/Monsters/MonsterBase.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
@@ -25,7 +25,7 @@ NetworkSubsystem::NetworkSubsystem() :
     player_(),
     other_players_(),
     tilemap_(nullptr),
-    network_actor_(nullptr)
+    test_actor_(nullptr)
 {
 }
 
@@ -174,7 +174,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());
             for (const auto& network_actor : network_actors_ | std::views::values)
             {
-                if (network_actor->GetUniqueID() == chat_message_packet->unique_id)
+                if (network_actor->GetObjectID() == chat_message_packet->unique_id)
                 {
                     std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor);
                     if (IsValid(player_character))
@@ -204,15 +204,12 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
             
-            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->unique_id);
-            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+            // std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->object_id);
+            // if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+
+            if (IsValid(test_actor_)) test_actor_->ReceivePacket(packet.get());
         }
         break;
-
-    case MoveTestPacket::StaticPacketID:
-        {
-            if (IsValid(network_actor_)) network_actor_->ReceivePacket(packet.get());
-        }
         
     default:
         break;
@@ -267,7 +264,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
     InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
     in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 
-    network_actor_ = World::Get()->SpawnActor<MonsterBase>(MonsterBase::StaticClass());
+    if (!IsValid(test_actor_)) test_actor_ = World::Get()->SpawnActor<MobBase>(MobBase::StaticClass());
 }
 
 RTTR_REGISTRATION

@@ -22,22 +22,12 @@ FSM::StateMachine::StateMachine() :
 {
 }
 
-void FSM::StateMachine::PhysicsTick(float delta_time)
-{
-    if (current_state_ && current_state_->GetState()) current_state_->GetState()->PhysicsTick(delta_time);
-}
-
 void FSM::StateMachine::Tick(float delta_time)
 {
     const std::shared_ptr<Transition> transition = GetTransition();
     if (transition) ChangeState(transition->GetTo());
 
     if (current_state_ && current_state_->GetState()) current_state_->GetState()->Tick(delta_time);
-}
-
-void FSM::StateMachine::PostTick(float delta_time)
-{
-    if (current_state_ && current_state_->GetState()) current_state_->GetState()->PostTick(delta_time);
 }
 
 void FSM::StateMachine::SetState(std::shared_ptr<IState> kState)
