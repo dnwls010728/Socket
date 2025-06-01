@@ -19,6 +19,9 @@ protected:
     Math::Vector2 last_position_;
 
     float gravity_;
+    float timer_;
+
+    int32_t direction_;
 
     bool is_grounded_;
 

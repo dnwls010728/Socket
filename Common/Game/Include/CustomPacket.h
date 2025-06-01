@@ -162,9 +162,9 @@ struct ChatMessagePacket : public Net::IPacket
 
 struct SpawnObjectPacket : public Net::IPacket
 {
-    ObjectInfo object;
-
-    SERIALIZABLE_FIELDS(object)
+    ObjectInfo object_info;
+    
+    SERIALIZABLE_FIELDS(object_info)
     REGISTER_PACKET(SpawnObjectPacket, 230)
 };
 

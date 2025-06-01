@@ -9,8 +9,6 @@
 #include "tmxlite/Map.hpp"
 
 #include "MapObject.h"
-#include "MapObjects/Mob/Mob.h"
-#include "Math/Math.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
@@ -25,8 +23,6 @@ Map::Map(uint32_t map_id) :
     pending_remove_objects_(),
     footholds_()
 {
-    std::shared_ptr<Mob> new_mob = std::make_shared<Mob>();
-    SpawnMob(new_mob);
 }
 
 void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
@@ -115,6 +111,22 @@ void Map::RemoveObject(uint32_t object_id)
     pending_remove_objects_.push(object_id);
 }
 
+void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
+{
+    object->SetObjectID(next_object_id_++);
+    object->SetMap(this);
+
+    SpawnObjectPacket spawn_object_packet;
+    spawn_object_packet.object_info.type = ObjectType::kMob;
+    spawn_object_packet.object_info.object_id = object->GetObjectID();
+    spawn_object_packet.object_info.position_x = object->GetPosition().x;
+    spawn_object_packet.object_info.position_y = object->GetPosition().y;
+    spawn_object_packet.object_info.info.mob = {};
+    SendPacket(spawn_object_packet);
+
+    AddObject(object);
+}
+
 void Map::SendPacket(const Net::IPacket& packet)
 {
     for (auto& player_weak : std::views::values(players_))
@@ -135,16 +147,6 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &ex
             player->SendPacket(packet);
         }
     }
-}
-
-void Map::SpawnMob(const std::shared_ptr<Mob>& mob)
-{
-    if (!mob) return;
-
-    mob->SetMap(this);
-    mob->SetObjectID(next_object_id_++);
-
-    AddObject(mob);
 }
 
 void Map::Tick(float delta_time)

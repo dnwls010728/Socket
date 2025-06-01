@@ -6,6 +6,7 @@
 #include "CustomPacket.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
+#include "Map/MapObjects/Mob/Mob.h"
 #include "Session/SessionManager.h"
 
 ServerManager::ServerManager()
@@ -38,6 +39,21 @@ void ServerManager::CommandHandlerInitialize()
         catch (...) {
             std::wcout << L"Error: Invalid key '" << args[1] << "'\n";
         }
+    };
+
+    command_handler_[L"/Spawn"] = [&](auto& args)
+    {
+        Map* map = nullptr;
+        try
+        {
+            map = World::Get()->GetMap(0);
+        }
+        catch (...)
+        {
+        }
+
+        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
+        map->SpawnObject(mob);
     };
 
     command_handler_[L"/help"] = [&](auto&) {

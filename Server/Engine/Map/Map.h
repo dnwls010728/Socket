@@ -28,14 +28,13 @@ public:
     void RemovePlayer(uint32_t player_id);
     void AddPlayers();
     void RemovePlayers();
-
+    
     void AddObject(const std::shared_ptr<MapObject>& object);
     void RemoveObject(uint32_t object_id);
+    void SpawnObject(const std::shared_ptr<MapObject>& object);
 
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player>& excluded_player_weak);
-
-    void SpawnMob(const std::shared_ptr<Mob>& mob);
 
     void Tick(float delta_time);
 

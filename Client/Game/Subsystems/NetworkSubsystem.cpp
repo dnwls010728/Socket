@@ -24,8 +24,7 @@ NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
     player_(),
     other_players_(),
-    tilemap_(nullptr),
-    test_actor_(nullptr)
+    tilemap_(nullptr)
 {
 }
 
@@ -79,18 +78,6 @@ void NetworkSubsystem::ChangeMap(uint32_t map_id)
     request.map_id = map_id;
     SendPacket(request);
 }
-
-std::shared_ptr<NetworkActor> NetworkSubsystem::SpawnNetworkActor(const std::wstring& type_name, uint32_t unique_id, const std::wstring& name)
-{
-    std::string type_name_a(type_name.begin(), type_name.end());
-    rttr::type type = rttr::type::get_by_name(type_name_a);
-    if (!type.is_valid())
-    {
-        return nullptr;
-    }
-    return SpawnNetworkActor<NetworkActor>(type, unique_id, name);
-}
-
 
 void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
@@ -191,12 +178,11 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case SpawnObjectPacket::StaticPacketID:
         {
             SpawnObjectPacket* spawn_object_packet = static_cast<SpawnObjectPacket*>(packet.get());
-            ObjectInfo  &object_info = spawn_object_packet->object;
-            std::shared_ptr<NetworkActor> new_object = SpawnNetworkActor(object_info.type_name, object_info.unique_id, object_info.name);
-            if (IsValid(new_object))
-            {
-                new_object->GetTransform()->SetPosition({object_info.last_position_x,object_info.last_position_y});
-            }
+
+            ObjectInfo& object_info = spawn_object_packet->object_info;
+            
+            std::shared_ptr<MobBase> actor = SpawnNetworkActor<MobBase>(MobBase::StaticClass(), object_info.object_id);
+            actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
         }
         break;
         
@@ -204,10 +190,8 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
             
-            // std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->object_id);
-            // if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
-
-            if (IsValid(test_actor_)) test_actor_->ReceivePacket(packet.get());
+            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->object_id);
+            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
         }
         break;
         
@@ -263,8 +247,6 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
 
     InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
     in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
-
-    if (!IsValid(test_actor_)) test_actor_ = World::Get()->SpawnActor<MobBase>(MobBase::StaticClass());
 }
 
 RTTR_REGISTRATION

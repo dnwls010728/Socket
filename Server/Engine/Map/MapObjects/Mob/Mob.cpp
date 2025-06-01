@@ -5,15 +5,20 @@
 
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
+#include "Math/Math.h"
+#include "Session/Player.h"
 
 Mob::Mob() :
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
+    timer_(0.f),
+    direction_(0),
     is_grounded_(false),
     foothold_(nullptr)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
+    direction_ = Math::RandRange(-1, 1);
 }
 
 void Mob::Tick(float delta_time)
@@ -21,7 +26,15 @@ void Mob::Tick(float delta_time)
     MapObject::Tick(delta_time);
 
     state_machine_->Tick(delta_time);
+    
+    timer_ += delta_time;
+    if (timer_ >= 1.6f)
+    {
+        timer_ -= 1.6f;
+        direction_ = Math::RandRange(-1, 1);
+    }
 
+    velocity_.x = direction_ * 2.f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
 
