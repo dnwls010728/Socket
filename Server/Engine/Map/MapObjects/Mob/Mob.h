@@ -21,5 +21,7 @@ protected:
     float gravity_;
 
     bool is_grounded_;
+
+    class Foothold* foothold_;
     
 };
