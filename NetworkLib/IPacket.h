@@ -17,14 +17,14 @@ namespace Net {
     };
 #pragma pack(pop)
 
-// 패킷용 직렬화/역직렬화
-#define SERIALIZABLE_PACKET_FIELDS(SeriazerClass,...) SERIALIZABLE_FIELDS(SeriazerClass, sequence,__VA_ARGS__)
-
 // 패킷 등록. packet ID는 사용자가 임의로 지정하며 중복되면 안됨. 100 이상부터 사용 가능
 #define REGISTER_PACKET(PacketType, PacketID) \
-    inline static Net::PacketRegistrar<PacketType> registrar_##PacketType{PacketID};\
+    public:\
     uint16_t GetPacketID() const override { return PacketID; }\
-    static const uint16_t StaticPacketID = PacketID;
+    static const uint16_t StaticPacketID = PacketID;\
+    private:\
+    inline static Net::PacketRegistrar<PacketType> registrar_##PacketType{PacketID};
+    
 
 /* example:
 struct TestPacket : public IPacket{
@@ -42,10 +42,10 @@ struct TestPacket : public IPacket{
         virtual void Serialize(Serializer& serializer) const = 0;
         virtual void Deserialize(Serializer& serializer) = 0;
         virtual uint16_t GetPacketID() const = 0;
-        uint32_t sequence = 0;
-        uint32_t GetSequence() { return sequence; }
         virtual ~IPacket() = default;
     };
+    //  uint32_t sequence = 0;
+    //  uint32_t GetSequence() { return sequence; }
     using PacketFactoryFunc = std::function<std::unique_ptr<IPacket>()>;
 
     // 패킷 팩토리

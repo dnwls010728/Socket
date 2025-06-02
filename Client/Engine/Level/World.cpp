@@ -7,15 +7,15 @@
 #include "DebugDrawHelper.h"
 #include "box2d/box2d.h"
 #include "DirectXTK/CommonStates.h"
-#include "Subsystems/Tickable.h"
-#include "Subsystems/WorldSubsystem.h"
+#include "Subsystem/Tickable.h"
+#include "Subsystem/WorldSubsystem.h"
 #include "Time/TimerManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/ShapeBatch.h"
 
-void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context);
-void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color, void* context);
+void DrawPolygon(const b2Vec2* vertices, int32_t vertexCount, b2HexColor color, void* context);
+void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int32_t vertexCount, float radius, b2HexColor color, void* context);
 void DrawCircle(b2Vec2 center, float radius, b2HexColor color, void* context);
 void DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void* context);
 void DrawSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2HexColor color, void* context);
@@ -212,8 +212,7 @@ void World::GetActors(const rttr::type& type, std::vector<Actor*>& actors)
 {
     for (const auto& kActor : current_level_->actors_)
     {
-        rttr::type actor_type = rttr::type::get(*kActor);
-        if (actor_type.is_derived_from(type))
+        if (kActor->get_type().is_derived_from(type))
         {
             actors.push_back(kActor.get());
         }
@@ -224,8 +223,7 @@ Actor* World::GetActor(const rttr::type& type)
 {
     for (const auto& kActor : current_level_->actors_)
     {
-        rttr::type actor_type = rttr::type::get(*kActor);
-        if (actor_type.is_derived_from(type))
+        if (kActor->get_type().is_derived_from(type))
         {
             return kActor.get();
         }
@@ -300,7 +298,7 @@ void World::TransitionLevel()
 void World::ProcessCollisionEvents()
 {
     b2ContactEvents events = b2World_GetContactEvents(World::Get()->world_id_);
-    for (Type::uint32 i = 0; i < events.beginCount; ++i)
+    for (uint32_t i = 0; i < events.beginCount; ++i)
     {
         b2ContactBeginTouchEvent event = events.beginEvents[i];
         if (!b2Shape_IsValid(event.shapeIdA) || !b2Shape_IsValid(event.shapeIdB)) continue;
@@ -319,7 +317,7 @@ void World::ProcessCollisionEvents()
         actor_b->OnCollisionEnter(actor_a);
     }
 
-    for (Type::uint32 i = 0; i < events.endCount; ++i)
+    for (uint32_t i = 0; i < events.endCount; ++i)
     {
         b2ContactEndTouchEvent event = events.endEvents[i];
         if (!b2Shape_IsValid(event.shapeIdA) || !b2Shape_IsValid(event.shapeIdB)) continue;
@@ -342,7 +340,7 @@ void World::ProcessCollisionEvents()
 void World::ProcessTriggerEvents()
 {
     b2SensorEvents events = b2World_GetSensorEvents(World::Get()->world_id_);
-    for (Type::uint32 i = 0; i < events.beginCount; ++i)
+    for (uint32_t i = 0; i < events.beginCount; ++i)
     {
         b2SensorBeginTouchEvent event = events.beginEvents[i];
         if (!b2Shape_IsValid(event.sensorShapeId) || !b2Shape_IsValid(event.visitorShapeId)) continue;
@@ -360,7 +358,7 @@ void World::ProcessTriggerEvents()
         actor_b->OnTriggerEnter(actor_a);
     }
     
-    for (Type::uint32 i = 0; i < events.endCount; ++i)
+    for (uint32_t i = 0; i < events.endCount; ++i)
     {
         b2SensorEndTouchEvent event = events.endEvents[i];
         if (!b2Shape_IsValid(event.sensorShapeId) || !b2Shape_IsValid(event.visitorShapeId)) continue;
@@ -445,12 +443,12 @@ void World::UpdateCameraBounds(const Bounds& kBounds)
     debug_draw_.drawingBounds = bounds;
 }
 
-void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context)
+void DrawPolygon(const b2Vec2* vertices, int32_t vertexCount, b2HexColor color, void* context)
 {
     static_cast<World*>(context)->debug_draw_helper_.AddPolygon(vertices, vertexCount, color);
 }
 
-void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color, void* context)
+void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int32_t vertexCount, float radius, b2HexColor color, void* context)
 {
     static_cast<World*>(context)->debug_draw_helper_.AddSolidPolygon(transform, vertices, vertexCount, radius, color);
 }

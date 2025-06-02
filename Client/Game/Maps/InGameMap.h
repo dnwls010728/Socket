@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Level/Level.h"
 
 class InGameMap : public Level
 {
@@ -8,5 +9,8 @@ class InGameMap : public Level
 public:
     InGameMap(const std::wstring& kName);
     virtual ~InGameMap() override = default;
+
+protected:
+    virtual void Load() override;
     
 };

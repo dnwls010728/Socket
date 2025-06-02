@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <codecvt>
 #include <fstream>
 #include <vector>
 
@@ -21,8 +22,9 @@ private:
 template <typename T>
 bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
 {
-    std::wifstream file(L".\\Content\\" + kPath);
+    std::wifstream file(L".\\Content\\" + kPath, std::ios::binary);
     if (!file.is_open()) return false;
+    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
 
     std::wstring line;
     std::vector<std::wstring> headers = {};
@@ -37,7 +39,7 @@ bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
         Split(line, L',', values);
 
         T data;
-        for (int i = 0; i < headers.size(); i++)
+        for (int32_t i = 0; i < headers.size(); i++)
         {
             rttr::type type = rttr::type::get<T>();
 
@@ -46,9 +48,9 @@ bool CSVReader::Parse(const std::wstring& kPath, std::vector<T>& out)
             if (prop.is_valid())
             {
                 rttr::type prop_type = prop.get_type();
-                if (prop_type == rttr::type::get<int>())
+                if (prop_type == rttr::type::get<int32_t>())
                 {
-                    int value = std::wcstol(values[i].c_str(), nullptr, 10);
+                    int32_t value = std::wcstol(values[i].c_str(), nullptr, 10);
                     prop.set_value(data, value);
                 }
                 else if (prop_type == rttr::type::get<float>())

@@ -4,7 +4,7 @@
 #include "Input/Mouse.h"
 #include "Misc/EnumClassFlags.h"
 
-enum class EventType : Type::uint32
+enum class EventType : uint32_t
 {
     kNone = 0,
     kWindowSize = (0x01<<0),
@@ -25,8 +25,8 @@ ENUM_CLASS_FLAGS(EventType)
 struct WindowEvent
 {
     EventType type;
-    int data1;
-    int data2;
+    int32_t data1;
+    int32_t data2;
     double timestamp;
 };
 
@@ -75,7 +75,7 @@ struct MouseWheelEvent
 
 union Event
 {
-    Type::uint32 type;
+    uint32_t type;
     WindowEvent window;
     KeyboardEvent key;
     TextEvent text;

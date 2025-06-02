@@ -1,0 +1,9 @@
+# 카테고리 - 0: 장비, 1: 소모품, 4: 기타
+items:
+  - id: 101
+    category: 1
+    name: "101"
+    desc: "더미 아이템입니다."
+    icon: "UI\\Item\\104.png"
+    price: 0
+    max_stock: 99

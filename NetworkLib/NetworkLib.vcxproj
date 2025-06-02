@@ -162,6 +162,7 @@
     <ClInclude Include="ConcurrentQueue.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IPacket.h" />
+    <ClInclude Include="IPacketHandler.h" />
     <ClInclude Include="NetDef.h" />
     <ClInclude Include="NetTCPSocket.h" />
     <ClInclude Include="NetUDPSocket.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="UDPServerSocket.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IPacketHandler.cpp" />
     <ClCompile Include="NetTCPSocket.cpp" />
     <ClCompile Include="NetUDPSocket.cpp" />
     <ClCompile Include="NetworkManager.cpp" />

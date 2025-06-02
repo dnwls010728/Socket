@@ -16,7 +16,7 @@ union Event;
 class ShapeBatch;
 class Level;
 class Shape;
-enum class LevelType : Type::uint64;
+enum class LevelType : uint64_t;
 class WindowsWindow;
 
 struct ActorActivation
@@ -58,8 +58,8 @@ public:
     FORCEINLINE Level* GetLevel() const { return current_level_; }
 
 private:
-    friend void DrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context);
-    friend void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color, void* context);
+    friend void DrawPolygon(const b2Vec2* vertices, int32_t vertexCount, b2HexColor color, void* context);
+    friend void DrawSolidPolygon(b2Transform transform, const b2Vec2* vertices, int32_t vertexCount, float radius, b2HexColor color, void* context);
     friend void DrawCircle(b2Vec2 center, float radius, b2HexColor color, void* context);
     friend void DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void* context);
     friend void DrawSolidCapsule(b2Vec2 p1, b2Vec2 p2, float radius, b2HexColor color, void* context);
@@ -149,11 +149,7 @@ std::shared_ptr<T> World::SpawnActor(const rttr::type& kType, const std::wstring
 
         actor->InitializeActor();
 
-        rttr::type actor_type = rttr::type::get<T>();
-        if (kType.is_derived_from(actor_type))
-        {
-            return std::static_pointer_cast<T>(actor);
-        }
+        return std::dynamic_pointer_cast<T>(actor);
     }
 
     return nullptr;

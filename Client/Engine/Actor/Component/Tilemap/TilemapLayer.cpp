@@ -4,6 +4,7 @@
 #include "TilemapChunk.h"
 #include "Asset/AssetManager.h"
 #include "Data/FileHelper.h"
+#include "Misc/StringHelper.h"
 #include "tmxlite/Map.hpp"
 #include "Windows/DX/Sprite.h"
 
@@ -30,17 +31,17 @@ void TilemapLayer::UpdateShapes(const Math::Vector2& kPosition, const Math::Vect
     }
 }
 
-TilemapChunk* TilemapLayer::GetChunk(int x, int y)
+TilemapChunk* TilemapLayer::GetChunk(int32_t x, int32_t y)
 {
-    Type::uint32 chunk_x = (x * map_tile_size_.x) / chunk_size_.x;
-    Type::uint32 chunk_y = (y * map_tile_size_.y) / chunk_size_.y;
+    uint32_t chunk_x = (x * map_tile_size_.x) / chunk_size_.x;
+    uint32_t chunk_y = (y * map_tile_size_.y) / chunk_size_.y;
     return chunks_[chunk_y * chunk_count_.x + chunk_x].get();
 }
 
-TilemapChunk* TilemapLayer::GetChunk(int x, int y, Math::Vector2& tile_relative_position)
+TilemapChunk* TilemapLayer::GetChunk(int32_t x, int32_t y, Math::Vector2& tile_relative_position)
 {
-    Type::uint32 chunk_x = (x * map_tile_size_.x) / chunk_size_.x;
-    Type::uint32 chunk_y = (y * map_tile_size_.y) / chunk_size_.y;
+    uint32_t chunk_x = (x * map_tile_size_.x) / chunk_size_.x;
+    uint32_t chunk_y = (y * map_tile_size_.y) / chunk_size_.y;
 
     tile_relative_position.x = ((x * map_tile_size_.x) - chunk_x * chunk_size_.x) / map_tile_size_.x;
     tile_relative_position.y = ((y * map_tile_size_.y) - chunk_y * chunk_size_.y) / map_tile_size_.y;
@@ -53,7 +54,7 @@ void TilemapLayer::CreateChunks(const tmx::Map& kMap, const tmx::TileLayer& kLay
     const std::vector<tmx::Tileset>& tilesets = kMap.getTilesets();
     const std::vector<tmx::TileLayer::Tile>& tiles = kLayer.getTiles();
 
-    Type::uint32 max_id = UINT_MAX;
+    uint32_t max_id = UINT_MAX;
 
     std::vector<const tmx::Tileset*> used_tilesets;
 
@@ -73,13 +74,11 @@ void TilemapLayer::CreateChunks(const tmx::Map& kMap, const tmx::TileLayer& kLay
 
     for (const auto& kTileset : used_tilesets)
     {
-        const std::string kPath = kTileset->getImagePath();
-        
-        std::wstring to_wide_string = std::wstring(kPath.begin(), kPath.end());
-        to_wide_string = FileHelper::GetRelativePath(to_wide_string);
+        std::wstring path = StringHelper::UTF8ToUTF16(kTileset->getImagePath());
+        path = FileHelper::GetRelativePath(path);
 
-        Sprite* temp = AssetManager::Get()->Load<Sprite>(to_wide_string);
-        tileset_textures_[to_wide_string] = temp;
+        Sprite* temp = AssetManager::Get()->Load<Sprite>(path);
+        tileset_textures_[path] = temp;
     }
     
     const auto bounds = kMap.getBounds();

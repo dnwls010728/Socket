@@ -9,6 +9,7 @@
 #include "Math/Vector2.h"
 #include "Asset/AssetManager.h"
 #include "Time/Time.h"
+#include "UI/UI.h"
 #include "UI/UIManager.h"
 #include "Windows/WindowDefinition.h"
 #include "Windows/WindowsWindow.h"
@@ -36,8 +37,8 @@ void Core::Init()
     // DirectX 11 렌더러 초기화
     CHECK_IF(Renderer::Get()->Init(), L"Failed to initialize renderer.");
 
-    const int screen_width = GetSystemMetrics(SM_CXSCREEN);
-    const int screen_height = GetSystemMetrics(SM_CYSCREEN);
+    const int32_t screen_width = GetSystemMetrics(SM_CXSCREEN);
+    const int32_t screen_height = GetSystemMetrics(SM_CYSCREEN);
 
     EngineSettings* settings = EngineSettings::Get();
 
@@ -70,7 +71,7 @@ void Core::Init()
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
+bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result)
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
     if (EventManager::Get()->ProcessMessage(hWnd, message, wParam, lParam, handler_result)) return true;
@@ -138,8 +139,8 @@ void Core::MainThread()
             Event event;
             while (event_manager->PollEvent(event))
             {
-                const Type::uint32& kType = event.type;
-                if (kType == static_cast<Type::uint32>(EventType::kWindowSize))
+                const uint32_t& kType = event.type;
+                if (kType == static_cast<uint32_t>(EventType::kWindowSize))
                 {
                     const WindowEvent& kWindowEvent = event.window;
             
@@ -148,7 +149,8 @@ void Core::MainThread()
 
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
-                UI::Manager::Get()->OnEvent(event);
+                UI_OLD::Manager::Get()->OnEvent(event);
+                UI::Get()->OnEvent(event);
             }
             
             game_engine_->GameLoop(delta_time_);

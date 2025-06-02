@@ -22,17 +22,17 @@ bool EventManager::PollEvent(Event& event)
     return true;
 }
 
-bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, Type::uint32 handler_result)
+bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result)
 {
     if (message == WM_SIZE)
     {
         if (wParam == SIZE_MINIMIZED) return false;
 
-        int width = LOWORD(lParam);
-        int height = HIWORD(lParam);
+        int32_t width = LOWORD(lParam);
+        int32_t height = HIWORD(lParam);
         
         Event event;
-        event.type = static_cast<Type::uint32>(EventType::kWindowSize);
+        event.type = static_cast<uint32_t>(EventType::kWindowSize);
         event.window.data1 = width;
         event.window.data2 = height;
         event.window.timestamp = GetEventTimestamp();
@@ -47,14 +47,14 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         WORD key_code = LOWORD(wParam);
         WORD key_flags = HIWORD(lParam);
         
-        Type::uint32 scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
+        uint32_t scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
 
         bool is_released = (key_flags & KF_UP) == KF_UP;
         bool is_repeat = (key_flags & KF_REPEAT) == KF_REPEAT;
 
-        Type::uint32 type = 0;
-        if (!is_released) type = static_cast<Type::uint32>(EventType::kKeyPressed);
-        else type = static_cast<Type::uint32>(EventType::kKeyReleased);
+        uint32_t type = 0;
+        if (!is_released) type = static_cast<uint32_t>(EventType::kKeyPressed);
+        else type = static_cast<uint32_t>(EventType::kKeyReleased);
 
         Event event;
         event.type = type;
@@ -72,7 +72,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         if (kCharacter < 32 || (kCharacter > 126 && kCharacter < 160)) return false;
 
         Event event;
-        event.type = static_cast<Type::uint32>(EventType::kText);
+        event.type = static_cast<uint32_t>(EventType::kText);
         event.text.character = kCharacter;
         event.text.timestamp = GetEventTimestamp();
 
@@ -84,12 +84,12 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         message == WM_RBUTTONDOWN || message == WM_RBUTTONUP ||
         message == WM_MBUTTONDOWN || message == WM_MBUTTONUP)
     {
-        const int x = GET_X_LPARAM(lParam);
-        const int y = GET_Y_LPARAM(lParam);
+        const int32_t x = GET_X_LPARAM(lParam);
+        const int32_t y = GET_Y_LPARAM(lParam);
         
         bool is_pressed = false;
         MouseButton mouse_button = MouseButton::kLeft;
-        Type::uint32 type = 0;
+        uint32_t type = 0;
         
         if ((wParam & MK_LBUTTON))
         {
@@ -107,8 +107,8 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
             mouse_button = MouseButton::kMiddle;
         }
 
-        if (is_pressed) type = static_cast<Type::uint32>(EventType::kMousePressed);
-        else type = static_cast<Type::uint32>(EventType::kMouseReleased);
+        if (is_pressed) type = static_cast<uint32_t>(EventType::kMousePressed);
+        else type = static_cast<uint32_t>(EventType::kMouseReleased);
 
         Event event;
         event.type = type;
@@ -124,11 +124,11 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
     if (message == WM_MOUSEMOVE)
     {
-        const int x = GET_X_LPARAM(lParam);
-        const int y = GET_Y_LPARAM(lParam);
+        const int32_t x = GET_X_LPARAM(lParam);
+        const int32_t y = GET_Y_LPARAM(lParam);
 
         Event event;
-        event.type = static_cast<Type::uint32>(EventType::kMouseMotion);
+        event.type = static_cast<uint32_t>(EventType::kMouseMotion);
         event.motion.x = static_cast<float>(x);
         event.motion.y = static_cast<float>(y);
         event.motion.timestamp = GetEventTimestamp();
@@ -149,7 +149,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         float delta_f = static_cast<float>(delta) / static_cast<float>(WHEEL_DELTA);
 
         Event event;
-        event.type = static_cast<Type::uint32>(EventType::kMouseWheel);
+        event.type = static_cast<uint32_t>(EventType::kMouseWheel);
         event.wheel.mouse_x = static_cast<float>(mouse_position.x);
         event.wheel.mouse_y = static_cast<float>(mouse_position.y);
 

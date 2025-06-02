@@ -82,7 +82,7 @@ void Editor::OpenTextureSettings(bool* is_open)
     static const char* wrap_modes[] = {"Repeat", "Clamp"};
     static const char* filter_modes[] = {"Point", "Bilinear"};
 
-    static int selected_texture_type = 0;
+    static int32_t selected_texture_type = 0;
 
     if (ImGui::Button("Open Texture"))
     {
@@ -139,9 +139,9 @@ void Editor::OpenTextureSettings(bool* is_open)
                             
                             if (!node.IsNull())
                             {
-                                selected_wrap_mode_ = node["wrap_mode"].as<int>();
-                                selected_filter_mode_ = node["filter_mode"].as<int>();
-                                ppu_ = node["ppu"].as<int>();
+                                selected_wrap_mode_ = node["wrap_mode"].as<int32_t>();
+                                selected_filter_mode_ = node["filter_mode"].as<int32_t>();
+                                ppu_ = node["ppu"].as<int32_t>();
 
                                 if (node["frames"].IsSequence())
                                 {
@@ -237,7 +237,7 @@ void Editor::OpenTextureSettings(bool* is_open)
         if (ImGui::Button("Texture Editor")) show_texture_editor_ = true;
 
         ImGui::Text("Frames");
-        bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int index)
+        bool is_selection_changed = ImGui::ListBox("##Frames", &selected_frame_, [](void* user_data, int32_t index)
         {
             std::vector<FrameData>* frames = static_cast<std::vector<FrameData>*>(user_data);
             return frames->at(index).name.c_str();
@@ -312,11 +312,11 @@ void Editor::OpenTextureEditor(bool* is_open)
         return;
     }
 
-    static int grid[2];
+    static int32_t grid[2];
 
     static const char* pivot_modes[] = {"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom"};
 
-    static int selected_pivot_mode = 0;
+    static int32_t selected_pivot_mode = 0;
     static float scale = 1.f;
 
     static float auto_pivot_x = .5f;
@@ -391,18 +391,18 @@ void Editor::OpenTextureEditor(bool* is_open)
     {
         if (grid[0] > 0 && grid[1] > 0)
         {
-            int width = loaded_texture_->GetWidth();
-            int height = loaded_texture_->GetHeight();
+            int32_t width = loaded_texture_->GetWidth();
+            int32_t height = loaded_texture_->GetHeight();
         
             float tile_size_x = width / grid[0];
             float tile_size_y = height / grid[1];
 
             frames_.clear();
-            int index = 0;
+            int32_t index = 0;
         
-            for (int y = 0; y < grid[1]; ++y)
+            for (int32_t y = 0; y < grid[1]; ++y)
             {
-                for (int x = 0; x < grid[0]; ++x)
+                for (int32_t x = 0; x < grid[0]; ++x)
                 {
                     std::wstring filename = FileHelper::GetFilenameWithoutExtension(file_path_);
                     std::string to_string = std::string(filename.begin(), filename.end());
@@ -619,9 +619,9 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         return;
     }
 
-    static int frame_rate = 60;
+    static int32_t frame_rate = 60;
     static float scale = 1.f;
-    static int current_frame = 0;
+    static int32_t current_frame = 0;
 
     static bool is_loop = false;
     static bool is_playing = false;
@@ -711,7 +711,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::Text("Frame Indexes");
     
     ImGui::SetNextItemWidth(100.f);
-    bool is_selection_changed = ImGui::ListBox("##Frame Indexes", &selected_index_, [](void* user_data, int index)
+    bool is_selection_changed = ImGui::ListBox("##Frame Indexes", &selected_index_, [](void* user_data, int32_t index)
     {
         std::vector<std::string>* frame_indexes = static_cast<std::vector<std::string>*>(user_data);
         return frame_indexes->at(index).c_str();
@@ -779,7 +779,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
     ImGui::EndGroup();
 
     ImGui::Text("Animations");
-    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int index)
+    is_selection_changed = ImGui::ListBox("##Animations", &selected_animation_, [](void* user_data, int32_t index)
     {
         std::vector<AnimationData>* animations = static_cast<std::vector<AnimationData>*>(user_data);
         return animations->at(index).name.c_str();
@@ -870,7 +870,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
                 {
                     AnimationData data;
                     data.name = animation["name"].as<std::string>();
-                    data.frame_rate = animation["frame_rate"].as<int>();
+                    data.frame_rate = animation["frame_rate"].as<int32_t>();
                     data.is_loop = animation["loop"].as<bool>();
 
                     for (const YAML::Node& index : animation["frames"])

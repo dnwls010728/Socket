@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "DebugDrawHelper.h"
 
+#include <numbers>
+
 #include "Level/World.h"
 #include "Math/Math.h"
 #include "Windows/DX/Shape.h"
@@ -27,7 +29,7 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
     };
 
     Math::Vector2 p1 = vertices[3];
-    for (int i = 0; i < 4; ++i)
+    for (int32_t i = 0; i < 4; ++i)
     {
         Math::Vector2 p2 = vertices[i];
         DrawSegment(p1, p2, kColor);
@@ -37,15 +39,15 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
 
 void DebugDrawHelper::DrawCircle(const Math::Vector2& kCenter, float radius, const Math::Color& kColor)
 {
-    const int kSegment = 16;
-    const float kIncrement = 2.f * MATH_PI / kSegment;
+    const int32_t kSegment = 16;
+    const float kIncrement = 2.f * std::numbers::pi_v<float> / kSegment;
     float sin_increment = sin(kIncrement);
     float cos_increment = cos(kIncrement);
 
     Math::Vector2 r1 = {radius, 0.f};
     Math::Vector2 v1 = kCenter + r1;
 
-    for (int i = 0; i < kSegment; ++i)
+    for (int32_t i = 0; i < kSegment; ++i)
     {
         Math::Vector2 r2;
         r2.x = r1.x * cos_increment - r1.y * sin_increment;
@@ -88,16 +90,16 @@ void DebugDrawHelper::DrawRay(const Math::Vector2& kStart, const Math::Vector2& 
 void DebugDrawHelper::Init()
 {
     polygon_shape_ = std::make_shared<Shape>();
-    polygon_shape_->SetZOrder(32767);
+    polygon_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     
     circle_shape_ = std::make_shared<Shape>();
-    circle_shape_->SetZOrder(32767);
+    circle_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     
     capsule_shape_ = std::make_shared<Shape>();
-    capsule_shape_->SetZOrder(32767);
+    capsule_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
 
     segment_shape_ = std::make_shared<Shape>();
-    segment_shape_->SetZOrder(32767);
+    segment_shape_->SetZOrder(std::numeric_limits<int32_t>::max());
     segment_shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     
     World::Get()->AddShape(polygon_shape_);

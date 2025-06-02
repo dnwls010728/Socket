@@ -20,13 +20,13 @@ void InGameUISubsystem::Init()
 {
     GameInstanceSubsystem::Init();
 
-    chat_input_ = UI::EditableTextBox::Create(L"ChatInput");
+    chat_input_ = UI_OLD::EditableTextBox::Create(L"ChatInput");
     chat_input_->SetPosition({ 0.f, 600.f });
-    chat_input_->SetSize({ 300.f, 30.f });
+    chat_input_->SetSize({ 300.f, 20.f });
     chat_input_->SetPivot({ 0.f, 0.f });
     chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
 
-    mini_map_ = UI::MiniMap::Create(L"MiniMap");
+    mini_map_ = UI_OLD::MiniMap::Create(L"MiniMap");
     mini_map_->SetPosition({ 0.f, 0.f });
     mini_map_->SetPivot({ 0.f, 1.f });
     
@@ -36,50 +36,47 @@ void InGameUISubsystem::Deinit()
 {
     GameInstanceSubsystem::Deinit();
 
-    UI::Manager* ui_manager = UI::Manager::Get();
-
-    ui_manager->RemoveFromViewport(chat_input_);
-    ui_manager->RemoveFromViewport(mini_map_);
+    chat_input_->RemoveFromViewport();
+    mini_map_->RemoveFromViewport();
     
 }
 
 void InGameUISubsystem::ShowChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->AddToViewport(chat_input_);
+    chat_input_->AddToViewport();
 }
 
 void InGameUISubsystem::HideChatUI()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    
-    ui_manager->RemoveFromViewport(chat_input_);
+    chat_input_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::ShowMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->AddToViewport(mini_map_);
+    mini_map_->AddToViewport();
 }
 
 void InGameUISubsystem::HideMiniMap()
 {
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->RemoveFromViewport(mini_map_);
+    mini_map_->RemoveFromViewport();
+}
+
+InGameUISubsystem* InGameUISubsystem::Get()
+{
+    return GameInstance::Get()->GetSubsystem<InGameUISubsystem>();
 }
 
 void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)
 {
     if (text.empty())
     {
-        UI::Manager::Get()->SetFocus(nullptr);
+        UI_OLD::Manager::Get()->SetFocus(nullptr);
         return;
     }
 
     ChatMessagePacket chat_message_packet;
     chat_message_packet.message = text;
-    GET_SESSION()->SendPacket(chat_message_packet);
+    SessionSubsystem::Get()->SendPacket(chat_message_packet);
 
     chat_input_->SetText(L"");
 }

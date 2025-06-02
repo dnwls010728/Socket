@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include <CommonObject.h>
 
+#include "IPacketHandler.h"
 #include "NetTCPSocket.h"
 #include "TCPClientSocket.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 
-#define GET_SESSION() \
-    GameInstance::Get()->GetSubsystem<SessionSubsystem>()
+class Inventory;
 
 enum class SessionState
 {
@@ -37,11 +37,12 @@ public:
     FORCEINLINE void SetState(SessionState state) { state_ = state; }
 
     FORCEINLINE bool IsInGame() const { return state_ == SessionState::kInGame; }
-
-    FORCEINLINE const CharacterInfo& GetCharacterInfo() const { return character_info_; }
-    FORCEINLINE void SetCharacterInfo(const CharacterInfo& info) { character_info_ = info; }
+    FORCEINLINE float GetServerTime() const { return client_socket_.GetServerTime(); }
+    FORCEINLINE float GetClientTime() const { return Net::GetClientTime(); }
     
     OnPacketDelegate packet_handler;
+
+    static SessionSubsystem* Get();
 
 private:
     bool Connect(const Net::NetAddress& address);
@@ -52,6 +53,6 @@ private:
 
     SessionState state_;
 
-    CharacterInfo character_info_;
+    std::unordered_map<uint16_t, std::unique_ptr<IPacketHandler>> handlers_;
     
 };

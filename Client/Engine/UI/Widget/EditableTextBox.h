@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "UI/Widget.h"
 
-namespace UI
+namespace UI_OLD
 {
     class EditableTextBox : public Widget
     {
@@ -47,7 +47,7 @@ namespace UI
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
         virtual bool OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp) override;
-        virtual bool OnKey(Type::uint16 key_code, bool is_pressed) override;
+        virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
         virtual bool OnChar(wchar_t character) override;
 
         virtual void OnFocus(bool is_focus) override;
@@ -64,7 +64,7 @@ namespace UI
 
         bool cursor_visible_;
 
-        int cursor_position_;
+        int32_t cursor_position_;
 
         Function<void(const std::wstring&)> value_changed_event_;
         Function<void(const std::wstring&)> return_event_;

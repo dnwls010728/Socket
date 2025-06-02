@@ -9,13 +9,13 @@
 struct MessagePacket : public Net::IPacket
 {
     std::string message;
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, message)
+    SERIALIZABLE_FIELDS(message)
     REGISTER_PACKET(MessagePacket, 100)
 };
 
 struct DisconnectPacket : public Net::IPacket
 {
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    SERIALIZABLE_FIELDS()
     REGISTER_PACKET(DisconnectPacket, 101)
 };
 
@@ -25,7 +25,7 @@ struct RegisterRequest : public Net::IPacket
     std::wstring id;
     std::wstring password;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, id, password)
+    SERIALIZABLE_FIELDS(id, password)
     REGISTER_PACKET(RegisterRequest, 200)
 };
 
@@ -35,7 +35,7 @@ struct RegisterResponse : public Net::IPacket
     bool is_success;
     std::wstring message;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message)
+    SERIALIZABLE_FIELDS(is_success, message)
     REGISTER_PACKET(RegisterResponse, 201)
 };
 
@@ -45,7 +45,7 @@ struct LoginRequest : public Net::IPacket
     std::wstring id;
     std::wstring password;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, id, password)
+    SERIALIZABLE_FIELDS(id, password)
     REGISTER_PACKET(LoginRequest, 202)
 };
 
@@ -56,7 +56,7 @@ struct LoginResponse : public Net::IPacket
     std::wstring message;
     std::vector<CharacterInfo> characters;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, characters)
+    SERIALIZABLE_FIELDS(is_success, message, characters)
     REGISTER_PACKET(LoginResponse, 203)
 };
 
@@ -68,7 +68,7 @@ struct SelectCharacterRequest : public Net::IPacket
 {
     uint32_t unique_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
+    SERIALIZABLE_FIELDS(unique_id)
     REGISTER_PACKET(SelectCharacterRequest, 206)
 };
 
@@ -76,26 +76,36 @@ struct SelectCharacterRequest : public Net::IPacket
 struct SelectCharacterResponse : public Net::IPacket
 {
     bool is_success;
-    std::wstring message;
-    CharacterInfo character_info;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, message, character_info)
+    std::wstring message;
+    std::wstring name;
+
+    uint32_t character_id;
+    uint32_t lv;
+    uint32_t color;
+
+    float position_x;
+    float position_y;
+
+    std::vector<ItemInfo> inventory;
+    
+    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, color, position_x, position_y, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
 // 인 게임 맵으로 전환이 완료되었을 때
 struct InGameReadyPacket : public Net::IPacket
 {
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer)
+    SERIALIZABLE_FIELDS()
     REGISTER_PACKET(InGameReadyPacket, 208)
 };
 
 // 맵 전환 요청
 struct ChangeMapRequest : public Net::IPacket
 {
-    uint32_t map_unique_id;
+    uint32_t map_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, map_unique_id)
+    SERIALIZABLE_FIELDS(map_id)
     REGISTER_PACKET(ChangeMapRequest, 209)
 };
 
@@ -103,20 +113,23 @@ struct ChangeMapRequest : public Net::IPacket
 struct ChangeMapResponse : public Net::IPacket
 {
     bool is_success;
-    uint32_t map_unique_id;
+    uint32_t map_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, is_success, map_unique_id)
+    SERIALIZABLE_FIELDS(is_success, map_id)
     REGISTER_PACKET(ChangeMapResponse, 210)
 };
 
 // 플레이어 스폰 패킷
 struct SpawnPlayerPacket : public Net::IPacket
 {
-    CharacterInfo character_info;
+    uint32_t character_id;
+
+    std::wstring name;
+    
     float position_x;
     float position_y;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, character_info, position_x, position_y)
+    SERIALIZABLE_FIELDS(character_id, name, position_x, position_y)
     REGISTER_PACKET(SpawnPlayerPacket, 211)
 };
 
@@ -125,7 +138,7 @@ struct DestroyPlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id)
+    SERIALIZABLE_FIELDS(unique_id)
     REGISTER_PACKET(DestroyPlayerPacket, 212)
 };
 
@@ -134,7 +147,7 @@ struct MovePlayerPacket : public Net::IPacket
     uint32_t unique_id;
     Movement movement;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, movement)
+    SERIALIZABLE_FIELDS(unique_id, movement)
     REGISTER_PACKET(MovePlayerPacket, 213)
 };
 
@@ -143,6 +156,62 @@ struct ChatMessagePacket : public Net::IPacket
     uint32_t unique_id;
     std::wstring message;
     
-    SERIALIZABLE_PACKET_FIELDS(CustomSerializer, unique_id, message)
+    SERIALIZABLE_FIELDS(unique_id, message)
     REGISTER_PACKET(ChatMessagePacket, 214)
+};
+
+struct SpawnObjectPacket : public Net::IPacket
+{
+    ObjectInfo object_info;
+    
+    SERIALIZABLE_FIELDS(object_info)
+    REGISTER_PACKET(SpawnObjectPacket, 230)
+};
+
+struct DestroyObjectPacket : public Net::IPacket
+{
+    uint32_t object_id;
+
+    SERIALIZABLE_FIELDS(object_id)
+    REGISTER_PACKET(DestroyObjectPacket, 231)
+};
+
+struct ObjectPositionPacket : public Net::IPacket
+{
+    uint32_t object_id;
+    float position_x;
+    float position_y;
+    float velocity_x;
+    float velocity_y;
+    float server_time;
+
+    SERIALIZABLE_FIELDS(object_id, position_x, position_y, server_time)
+    REGISTER_PACKET(ObjectPositionPacket, 232)
+};
+
+struct MoveItemRequest : public Net::IPacket
+{
+    ItemMoveType type;
+    uint32_t src;
+    uint32_t dest;
+    uint32_t count;
+    
+    SERIALIZABLE_FIELDS(type, src, dest, count)
+    REGISTER_PACKET(MoveItemRequest, 300)
+};
+
+struct MoveItemResponse : public Net::IPacket
+{
+    std::vector<InventoryChange> changes;
+    
+    SERIALIZABLE_FIELDS(changes)
+    REGISTER_PACKET(MoveItemResponse, 301)
+};
+
+struct AttackRequest : public Net::IPacket
+{
+    uint32_t object_id;
+    
+    SERIALIZABLE_FIELDS(object_id)
+    REGISTER_PACKET(AttackRequest, 400)
 };

@@ -4,8 +4,6 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "Misc/Type.h"
-
 class IndexBuffer
 {
 public:
@@ -21,7 +19,7 @@ public:
     FORCEINLINE ID3D11Buffer* GetResource() const { return buffer_.Get(); }
 
 private:
-    Type::uint32 indices_;
+    uint32_t indices_;
     
     Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_;
     

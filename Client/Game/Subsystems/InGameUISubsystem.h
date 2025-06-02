@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystem/GameInstanceSubsystem.h"
 
-#define GET_IN_GAME_UI() GameInstance::Get()->GetSubsystem<InGameUISubsystem>()
-
-namespace UI
+// TODO: 추후 제거 예정
+namespace UI_OLD
 {
     class ListBox;
     class EditableTextBox;
@@ -26,15 +25,17 @@ public:
     void ShowMiniMap();
     void HideMiniMap();
 
-    FORCEINLINE std::shared_ptr<UI::EditableTextBox> GetChatInput() const { return chat_input_; }
-    FORCEINLINE std::shared_ptr<UI::MiniMap> GetMiniMap() const { return mini_map_; }
+    FORCEINLINE std::shared_ptr<UI_OLD::EditableTextBox> GetChatInput() const { return chat_input_; }
+    FORCEINLINE std::shared_ptr<UI_OLD::MiniMap> GetMiniMap() const { return mini_map_; }
+
+    static InGameUISubsystem* Get();
 
 private:
     void OnChatInputReturn(const std::wstring& text);
     
 #pragma region 위젯
-    std::shared_ptr<UI::EditableTextBox> chat_input_;
-    std::shared_ptr<UI::MiniMap> mini_map_;
+    std::shared_ptr<UI_OLD::EditableTextBox> chat_input_;
+    std::shared_ptr<UI_OLD::MiniMap> mini_map_;
 #pragma endregion
     
 };

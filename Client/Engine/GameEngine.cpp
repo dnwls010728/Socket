@@ -10,12 +10,13 @@
 #include "imgui/imgui_impl_win32.h"
 #include "Level/Level.h"
 #include "Math/Math.h"
+#include "UI/UI.h"
 #include "UI/UIManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
 
-Type::uint32 g_frame_counter = 0;
+uint32_t g_frame_counter = 0;
 
 GameEngine::GameEngine() :
     game_window_(nullptr),
@@ -53,6 +54,8 @@ void GameEngine::Init(const std::shared_ptr<WindowsWindow>& kWindow)
     ImGui_ImplWin32_Init(game_window_->GetHWnd());
     ImGui_ImplDX11_Init(Renderer::Get()->GetDevice(), Renderer::Get()->GetDeviceContext());
 #pragma endregion
+
+    UI::Get()->Init();
     
 }
 
@@ -107,7 +110,8 @@ void GameEngine::Tick(float delta_time)
     g_frame_counter++;
     
     World::Get()->PostTick(delta_time);
-    UI::Manager::Get()->Tick(delta_time);
+    UI_OLD::Manager::Get()->Tick(delta_time);
+    UI::Get()->Tick(delta_time);
 }
 
 void GameEngine::Render(float alpha)
@@ -118,7 +122,8 @@ void GameEngine::Render(float alpha)
     World::Get()->Render(alpha);
     
     Renderer::Get()->BeginRenderD2D(game_window_);
-    UI::Manager::Get()->Render();
+    UI_OLD::Manager::Get()->Render();
+    UI::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

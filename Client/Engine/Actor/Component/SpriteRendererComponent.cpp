@@ -19,7 +19,7 @@ SpriteRendererComponent::SpriteRendererComponent(Actor* owner, const std::wstrin
 {
 }
 
-void SpriteRendererComponent::SetZOrder(int z_order)
+void SpriteRendererComponent::SetZOrder(int32_t z_order)
 {
     z_order_ = z_order;
     if (HasBegunPlay())
@@ -93,8 +93,8 @@ void SpriteRendererComponent::Render(float alpha)
     const float pivot_x = current_frame.pivot.x * width;
     const float pivot_y = current_frame.pivot.y * height;
 
-    const int flip_x = flip_x_ ? -1 : 1;
-    const int flip_y = flip_y_ ? -1 : 1;
+    const int32_t flip_x = flip_x_ ? -1 : 1;
+    const int32_t flip_y = flip_y_ ? -1 : 1;
 
     shape_->SetPosition(transform->GetPosition());
     shape_->SetAngle(transform->GetAngle());

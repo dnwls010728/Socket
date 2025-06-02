@@ -2,6 +2,7 @@
 #include "Sprite.h"
 
 #include "Data/FileHelper.h"
+#include "Misc/StringHelper.h"
 
 const Math::Vector2 Sprite::kCenter = Math::Vector2(.5f, .5f);
 const Math::Vector2 Sprite::kTopLeft = Math::Vector2(0.f, 1.f);
@@ -25,10 +26,10 @@ bool Sprite::Load(const std::wstring& kPath)
 
     if (!meta_data_.IsNull())
     {
-        wrap_mode_ = static_cast<WrapMode>(meta_data_["wrap_mode"].as<Type::uint8>());
-        filter_mode_ = static_cast<FilterMode>(meta_data_["filter_mode"].as<Type::uint8>());
+        wrap_mode_ = static_cast<WrapMode>(meta_data_["wrap_mode"].as<uint8_t>());
+        filter_mode_ = static_cast<FilterMode>(meta_data_["filter_mode"].as<uint8_t>());
         
-        ppu_ = meta_data_["ppu"].as<Type::uint32>();
+        ppu_ = meta_data_["ppu"].as<uint32_t>();
 
         if (meta_data_["frames"].IsSequence())
         {
@@ -42,9 +43,8 @@ bool Sprite::Load(const std::wstring& kPath)
                 sprite_frame.pivot.x = frame["pivot"]["x"].as<float>();
                 sprite_frame.pivot.y = frame["pivot"]["y"].as<float>();
                 
-                std::string name = frame["name"].as<std::string>();
-                std::wstring to_wstring = std::wstring(name.begin(), name.end());
-                frames_[to_wstring] = sprite_frame;
+                std::wstring name = StringHelper::UTF8ToUTF16(frame["name"].as<std::string>());
+                frames_[name] = sprite_frame;
             }
         }
     }

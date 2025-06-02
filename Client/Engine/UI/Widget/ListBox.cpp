@@ -5,10 +5,10 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
-UI::ListBox::ListBox(const std::wstring& kName) :
+UI_OLD::ListBox::ListBox(const std::wstring& kName) :
     Widget(kName),
-    select_event_([&](Type::uint64) {}),
-    double_click_event_([&](Type::uint64) {}),
+    select_event_([&](uint64_t) {}),
+    double_click_event_([&](uint64_t) {}),
     items_(),
     is_hovered_(false),
     is_dragging_(false),
@@ -21,17 +21,17 @@ UI::ListBox::ListBox(const std::wstring& kName) :
 {
 }
 
-void UI::ListBox::OnSelect(void(* func)(Type::uint64))
+void UI_OLD::ListBox::OnSelect(void(* func)(uint64_t))
 {
     select_event_ = func;
 }
 
-void UI::ListBox::OnDoubleClick(void(* func)(Type::uint64))
+void UI_OLD::ListBox::OnDoubleClick(void(* func)(uint64_t))
 {
     double_click_event_ = func;
 }
 
-void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
+void UI_OLD::ListBox::AddItem(const std::wstring& kName, uint64_t user_data)
 {
     Item new_item;
     new_item.name = kName;
@@ -39,7 +39,7 @@ void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
     items_.push_back(new_item);
 
     float offset_y = 0.f;
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         offset_y += 30.f;
     }
@@ -47,7 +47,7 @@ void UI::ListBox::AddItem(const std::wstring& kName, Type::uint64 user_data)
     min_allowed_scroll_offset_y_ = Math::Min(size_.y - offset_y, 0.f);
 }
 
-void UI::ListBox::RemoveItem(int index)
+void UI_OLD::ListBox::RemoveItem(int32_t index)
 {
     if (index < 0 || index >= items_.size())
         return;
@@ -55,7 +55,7 @@ void UI::ListBox::RemoveItem(int index)
     items_.erase(items_.begin() + index);
     
     float offset_y = 0.f;
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         offset_y += 30.f;
     }
@@ -76,7 +76,7 @@ void UI::ListBox::RemoveItem(int index)
     }
 }
 
-void UI::ListBox::ClearItems()
+void UI_OLD::ListBox::ClearItems()
 {
     items_.clear();
 
@@ -85,19 +85,19 @@ void UI::ListBox::ClearItems()
     hovered_index_ = -1;
 }
 
-void UI::ListBox::SetItem(int index, const std::wstring& kName, Type::uint64 user_data)
+void UI_OLD::ListBox::SetItem(int32_t index, const std::wstring& kName, uint64_t user_data)
 {
     if (index < 0 || index >= items_.size()) return;
     items_[index].name = kName;
     items_[index].user_data = user_data;
 }
 
-std::shared_ptr<UI::ListBox> UI::ListBox::Create(const std::wstring& kName)
+std::shared_ptr<UI_OLD::ListBox> UI_OLD::ListBox::Create(const std::wstring& kName)
 {
     return std::make_shared<ListBox>(kName);
 }
 
-void UI::ListBox::Tick(float delta_time)
+void UI_OLD::ListBox::Tick(float delta_time)
 {
     Widget::Tick(delta_time);
 
@@ -121,7 +121,7 @@ void UI::ListBox::Tick(float delta_time)
     }
 }
 
-void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::ListBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -131,7 +131,7 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::White);
 
     renderer->BeginLayer(GetRect());
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         const Item& kItem = items_[i];
         const Math::Rect kItemRect = GetRect(
@@ -192,24 +192,24 @@ void UI::ListBox::Render(Renderer* renderer, WindowsWindow* window)
     renderer->EndLayer();
 }
 
-bool UI::ListBox::OnMouseEnter()
+bool UI_OLD::ListBox::OnMouseEnter()
 {
     is_hovered_ = true;
     return true;
 }
 
-bool UI::ListBox::OnMouseLeave()
+bool UI_OLD::ListBox::OnMouseLeave()
 {
     is_hovered_ = false;
     return true;
 }
 
-bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool UI_OLD::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     if (items_.empty()) return false;
 
     const Math::Rect kRect = GetRect();
-    for (Type::uint32 i = 0; i < items_.size(); ++i)
+    for (uint32_t i = 0; i < items_.size(); ++i)
     {
         const Math::Rect kItemRect = GetRect(
             {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
@@ -227,7 +227,7 @@ bool UI::ListBox::OnMouseMotion(const Math::Vector2& kPosition, const Math::Vect
     return false;
 }
 
-bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
+bool UI_OLD::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
     static double last_time = 0.f;
@@ -235,7 +235,7 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
     if (button == MouseButton::kLeft && is_pressed)
     {
         const Math::Rect kRect = GetRect();
-        for (Type::uint32 i = 0; i < items_.size(); ++i)
+        for (uint32_t i = 0; i < items_.size(); ++i)
         {
             const Math::Rect kItemRect = GetRect(
                 {kRect.x, kRect.y + (i * 30.f) + scroll_offset_y_},
@@ -267,7 +267,7 @@ bool UI::ListBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton butt
     return true;
 }
 
-bool UI::ListBox::OnDragBegin(const Math::Vector2& kPosition)
+bool UI_OLD::ListBox::OnDragBegin(const Math::Vector2& kPosition)
 {
     if (items_.empty()) return false;
     
@@ -278,7 +278,7 @@ bool UI::ListBox::OnDragBegin(const Math::Vector2& kPosition)
     return true;
 }
 
-bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool UI_OLD::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     if (items_.empty()) return false;
     
@@ -289,7 +289,7 @@ bool UI::ListBox::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kD
     return true;
 }
 
-bool UI::ListBox::OnDragEnd(const Math::Vector2& kPosition)
+bool UI_OLD::ListBox::OnDragEnd(const Math::Vector2& kPosition)
 {
     if (items_.empty()) return false;
     is_dragging_ = false;
@@ -297,7 +297,7 @@ bool UI::ListBox::OnDragEnd(const Math::Vector2& kPosition)
     return true;
 }
 
-bool UI::ListBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool UI_OLD::ListBox::OnScroll(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     if (items_.empty()) return false;
     
@@ -311,7 +311,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::ListBox>("UI::ListBox")
+    registration::class_<UI_OLD::ListBox>("UI::ListBox")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

@@ -3,21 +3,23 @@
 
 #include <CustomPacket.h>
 
-#include "GameInstance.h"
+#include "DebugDrawHelper.h"
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimationCondition.h"
+#include "Actor/Component/Animator/AnimationPack.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
+#include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
-#include "Components/InventoryComponent.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
-#include "Subsystems/InGameUISubsystem.h"
+#include "Physics/Physics2D.h"
 #include "Subsystems/NetworkSubsystem.h"
-#include "UI/ChatBalloon.h"
-#include "UI/MiniMap.h"
 #include "UI/UIManager.h"
-#include "UI/Widget/EditableTextBox.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -26,13 +28,27 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_movement_(),
     movements_(),
     is_jump_(false),
-    timer_(0),
-    chat_balloon_(nullptr),
-    chat_balloon_timer_handle_()
+    timer_(0)
 {
-    inventory_ = AddComponent<InventoryComponent>(L"Inventory");
+    SetLayer(ActorLayer::kCharacter);
     
-    SetLayer(ActorLayer::kPlayer);
+    collider_->SetOffset({ 0.f, .5f });
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    if (animation_pack)
+    {
+        animator_->SetAnimationPack(animation_pack);
+        
+        animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            return animator->GetFloat(L"Speed") > .1f;
+        }));
+
+        animator_->AddTransition(L"Run", L"Idle", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            return animator->GetFloat(L"Speed") < .1f;
+        }));
+    }
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -55,63 +71,30 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::InitSpawn(const Math::Vector2& position)
+void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
 {
-    GetTransform()->SetPosition(position);
+    character_name_ = name;
+    
     last_movement_.x = position.x;
     last_movement_.y = position.y;
-}
-
-void PlayerCharacter::Speak(const std::wstring& message)
-{
-    UI::Manager* ui_manager = UI::Manager::Get();
-    TimerManager* timer_manager = TimerManager::Get();
-
-    chat_balloon_->SetText(message);
     
-    if (ui_manager->IsInViewport(chat_balloon_))
-    {
-        if (chat_balloon_timer_handle_.IsValid())
-            timer_manager->ClearTimer(chat_balloon_timer_handle_);
-    }
-    else
-    {
-        Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
-        chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
-        
-        ui_manager->AddToViewport(chat_balloon_);
-    }
-
-    timer_manager->SetTimer(chat_balloon_timer_handle_, [&]()
-    {
-        UI::Manager::Get()->RemoveFromViewport(chat_balloon_);
-    }, 4.f, false);
+    GetTransform()->SetPosition(position);
 }
 
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
-    if (sprite)
-    {
-        renderer_->SetSprite(sprite, L"Box_0");
-    }
-
-    chat_balloon_ = UI::ChatBalloon::Create(L"ChatBalloon");
-    chat_balloon_->SetSize({8.f, 8.f});
+    animator_->PlayAnimation(L"Idle");
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
 {
-    CharacterBase::PhysicsTick(delta_time);
-    
     std::shared_ptr<TransformComponent> transform = GetTransform();
 
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-        if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
 
         if (is_jump_ && collisions.is_below)
         {
@@ -121,7 +104,9 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         
         velocity_.x = movement_input_.x * 5.f;
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ * delta_time);
+        controller_->Move(velocity_ * delta_time, movement_input_);
+        
+        if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
         
         Math::Vector2 position = transform->GetPosition();
         Movement movement = {position.x, position.y};
@@ -133,6 +118,13 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             
             last_movement_ = movement;
         }
+
+        if (movement_input_.Magnitude() > .1f)
+        {
+            renderer_->SetFlipX(movement_input_.x < 0.f);
+        }
+        
+        animator_->SetFloat(L"Speed", movement_input_.Magnitude());
     }
     else
     {
@@ -153,13 +145,8 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         float y_speed = last_movement_.y - position.y;
         transform->Translate({x_speed, y_speed});
     }
-
-    UI::Manager* ui_manager = UI::Manager::Get();
-    if (ui_manager->IsInViewport(chat_balloon_))
-    {
-        Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(transform->GetPosition());
-        chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
-    }
+    
+    CharacterBase::PhysicsTick(delta_time);
 }
 
 void PlayerCharacter::Tick(float delta_time)
@@ -168,8 +155,10 @@ void PlayerCharacter::Tick(float delta_time)
 
     if (IsMine())
     {
+        UI_OLD::Manager* ui_manager = UI_OLD::Manager::Get();
         Keyboard* keyboard = Keyboard::Get();
-        if (!UI::Manager::Get()->HasFocus())
+        
+        if (!ui_manager->HasFocus())
         {
             movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
             movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
@@ -181,12 +170,36 @@ void PlayerCharacter::Tick(float delta_time)
 
             if (keyboard->GetKeyDown('1'))
             {
-                GET_NETWORK()->ChangeMap(0);
+                NetworkSubsystem::Get()->ChangeMap(0);
             }
 
             if (keyboard->GetKeyDown('2'))
             {
-                GET_NETWORK()->ChangeMap(1);
+                NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            // 공격 테스트
+            if (keyboard->GetKeyDown('X'))
+            {
+                std::vector<Actor*> hit_actors;
+                bool is_hit = Physics2D::OverlapBoxAll(
+                    GetTransform()->GetPosition(),
+                    { 3.f, 2.f },
+                    hit_actors,
+                    static_cast<uint16_t>(ActorLayer::kMob)
+                );
+
+                if (is_hit)
+                {
+                    for (const auto& actor : hit_actors)
+                    {
+                        MobBase* mob = static_cast<MobBase*>(actor);
+
+                        AttackRequest request;
+                        request.object_id = mob->GetObjectID();
+                        SendPacket(request);
+                    }
+                }
             }
         }
         else
@@ -194,20 +207,13 @@ void PlayerCharacter::Tick(float delta_time)
             movement_input_.x = 0.f;
             movement_input_.y = 0.f;
         }
+
+        // 공격 범위 확인용
+        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
     }
     else
     {
     }
-}
-
-void PlayerCharacter::EndPlay(EndPlayReason type)
-{
-    CharacterBase::EndPlay(type);
-    
-    TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
-
-    UI::Manager* ui_manager = UI::Manager::Get();
-    ui_manager->RemoveFromViewport(chat_balloon_);
 }
 
 RTTR_REGISTRATION

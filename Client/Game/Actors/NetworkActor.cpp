@@ -6,14 +6,14 @@
 
 NetworkActor::NetworkActor(const std::wstring& kName) :
     Actor(kName),
-    unique_id_(0),
+    object_id_(0),
     is_mine_(false)
 {
 }
 
 void NetworkActor::SendPacket(Net::IPacket& packet)
 {
-    GET_SESSION()->SendPacket(packet);
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
 void NetworkActor::ReceivePacket(Net::IPacket* packet)

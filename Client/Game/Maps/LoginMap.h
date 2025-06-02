@@ -7,8 +7,9 @@ namespace Net
     struct IPacket;
 }
 
-namespace UI
+namespace UI_OLD
 {
+    class Image;
     class TextBox;
     class ListBox;
     class Button;
@@ -34,24 +35,26 @@ private:
     void OnLogin();
     void OnRegisterSwitch();
     void OnLoginSwitch();
-    void OnCharacterSelect(Type::uint64 user_data);
+    void OnCharacterSelect(uint64_t user_data);
 
 #pragma region UI
-    std::shared_ptr<UI::TextBox> version_;
+    std::shared_ptr<UI_OLD::Image> background_;
     
-    std::shared_ptr<UI::EditableTextBox> register_id_;
-    std::shared_ptr<UI::EditableTextBox> register_password_;
-
-    std::shared_ptr<UI::Button> register_;
-    std::shared_ptr<UI::Button> login_switch_;
+    std::shared_ptr<UI_OLD::TextBox> version_;
     
-    std::shared_ptr<UI::EditableTextBox> login_id_;
-    std::shared_ptr<UI::EditableTextBox> login_password_;
+    std::shared_ptr<UI_OLD::EditableTextBox> register_id_;
+    std::shared_ptr<UI_OLD::EditableTextBox> register_password_;
 
-    std::shared_ptr<UI::Button> login_;
-    std::shared_ptr<UI::Button> register_switch_;
+    std::shared_ptr<UI_OLD::Button> register_;
+    std::shared_ptr<UI_OLD::Button> login_switch_;
+    
+    std::shared_ptr<UI_OLD::EditableTextBox> login_id_;
+    std::shared_ptr<UI_OLD::EditableTextBox> login_password_;
 
-    std::shared_ptr<UI::ListBox> character_list_;
+    std::shared_ptr<UI_OLD::Button> login_;
+    std::shared_ptr<UI_OLD::Button> register_switch_;
+
+    std::shared_ptr<UI_OLD::ListBox> character_list_;
 #pragma endregion
 
     std::vector<CharacterInfo> characters_;

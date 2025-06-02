@@ -13,6 +13,8 @@ struct HitResult
     Math::Vector2 end;
     Math::Vector2 point;
     Math::Vector2 normal;
+
+    b2ShapeId shape_id;
  
     float distance;
 };
@@ -28,7 +30,7 @@ public:
      * @param layer 충돌 레이어
      * @return 겹치는 액터가 있으면 true, 없으면 false
      */
-    static bool OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** output_actor, Type::uint16 layer = 0xFFFF);
+    static bool OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** output_actor, uint16_t layer = 0xFFFF);
 
     /**
      * 상자에 겹치는 모든 액터를 찾습니다.
@@ -38,7 +40,7 @@ public:
      * @param layer 충돌 레이어
      * @return 겹쳐진 액터들이 있으면 true, 없으면 false
      */
-    static bool OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& output_actors, Type::uint16 layer = 0xFFFF);
+    static bool OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& output_actors, uint16_t layer = 0xFFFF);
 
     /**
      * 원에 겹치는 액터를 찾습니다.
@@ -48,7 +50,7 @@ public:
      * @param layer 충돌 레이어
      * @return 겹치는 액터가 있으면 true, 없으면 false
      */
-    static bool OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** output_actor, Type::uint16 layer = 0xFFFF);
+    static bool OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** output_actor, uint16_t layer = 0xFFFF);
 
     /**
      * 원에 겹치는 모든 액터를 찾습니다.
@@ -58,7 +60,7 @@ public:
      * @param layer 충돌 레이어
      * @return 겹쳐진 액터들이 있으면 true, 없으면 false
      */
-    static bool OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& output_actors, Type::uint16 layer = 0xFFFF);
+    static bool OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& output_actors, uint16_t layer = 0xFFFF);
 
     /**
      * 광선을 쏴서 충돌하는 액터를 찾습니다.
@@ -69,7 +71,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool RayCast(HitResult& hit_result, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool RayCast(HitResult& hit_result, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 광선을 쏴서 충돌하는 모든 액터를 찾습니다.
@@ -80,7 +82,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool RayCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool RayCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 상자를 쏴서 충돌하는 액터를 찾습니다.
@@ -93,7 +95,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool BoxCast(HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool BoxCast(HitResult& hit_result, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 상자를 쏴서 충돌하는 모든 액터를 찾습니다.
@@ -106,7 +108,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool BoxCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool BoxCastAll(std::vector<HitResult>& hit_results, const Math::Vector2& kSize, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 원을 쏴서 충돌하는 액터를 찾습니다.
@@ -119,7 +121,7 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool CircleCast(HitResult& hit_result, float radius, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool CircleCast(HitResult& hit_result, float radius, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 
     /**
      * 원을 쏴서 충돌하는 모든 액터를 찾습니다.
@@ -132,5 +134,5 @@ public:
      * @param layer 충돌 레이어
      * @return 충돌이 있으면 true, 없으면 false
      */
-    static bool CircleCastAll(std::vector<HitResult>& hit_results, float radius, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, Type::uint16 layer = 0xFFFF);
+    static bool CircleCastAll(std::vector<HitResult>& hit_results, float radius, float angle, const Math::Vector2& kOrigin, const Math::Vector2& kDirection, float max_distance, uint16_t layer = 0xFFFF);
 };

@@ -8,7 +8,7 @@
 #include "Math/Math.h"
 #include "Windows/DX/UITexture.h"
 
-UI::ChatBalloon::ChatBalloon(const std::wstring& name) :
+UI_OLD::ChatBalloon::ChatBalloon(const std::wstring& name) :
     Widget(name),
     advances_(),
     total_advance_(0.f)
@@ -22,7 +22,7 @@ UI::ChatBalloon::ChatBalloon(const std::wstring& name) :
     
 }
 
-void UI::ChatBalloon::SetText(const std::wstring& text)
+void UI_OLD::ChatBalloon::SetText(const std::wstring& text)
 {
     text_ = text;
 
@@ -32,12 +32,12 @@ void UI::ChatBalloon::SetText(const std::wstring& text)
     total_advance_ = std::accumulate(advances_.begin(), advances_.end(), 0.f);
 }
 
-std::shared_ptr<UI::ChatBalloon> UI::ChatBalloon::Create(const std::wstring& name)
+std::shared_ptr<UI_OLD::ChatBalloon> UI_OLD::ChatBalloon::Create(const std::wstring& name)
 {
     return std::make_shared<ChatBalloon>(name);
 }
 
-void UI::ChatBalloon::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::ChatBalloon::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
     
@@ -66,7 +66,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::ChatBalloon>("UI::ChatBalloon")
+    registration::class_<UI_OLD::ChatBalloon>("UI::ChatBalloon")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

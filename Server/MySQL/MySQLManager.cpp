@@ -1,4 +1,5 @@
-﻿#include "MySQLManager.h"
+﻿#include "pch.h"
+#include "MySQLManager.h"
 
 #include "../Helper/StringHelper.h"
 #include "jdbc/cppconn/driver.h"
@@ -60,7 +61,7 @@ void MySQLManager::ExecuteQuery(const std::wstring& query, const std::function<v
     try
     {
         std::unique_ptr<sql::Statement> statement(connection_->createStatement());
-        std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(StringHelper::ToString(query)));
+        std::unique_ptr<sql::ResultSet> result_set(statement->executeQuery(StringHelper::UTF16ToUTF8(query)));
 
         while (result_set->next())
         {
@@ -94,7 +95,7 @@ int MySQLManager::ExecuteUpdate(const std::wstring& query, const std::function<v
     try
     {
         std::unique_ptr<sql::Statement> statement(connection_->createStatement());
-        return statement->executeUpdate(StringHelper::ToString(query));
+        return statement->executeUpdate(StringHelper::UTF16ToUTF8(query));
     }
     catch (sql::SQLException& e)
     {

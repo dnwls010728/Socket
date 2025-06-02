@@ -1,0 +1,2605 @@
+wrap_mode: 0
+filter_mode: 0
+ppu: 32
+frames:
+  - name: PlayerSheet_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_1
+    rect:
+      x: 0.0714285746
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_2
+    rect:
+      x: 0.142857149
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_3
+    rect:
+      x: 0.214285716
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_4
+    rect:
+      x: 0.285714298
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_5
+    rect:
+      x: 0.357142866
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_6
+    rect:
+      x: 0.428571433
+      y: 0
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_14
+    rect:
+      x: 0
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_15
+    rect:
+      x: 0.0714285746
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_16
+    rect:
+      x: 0.142857149
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_17
+    rect:
+      x: 0.214285716
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_18
+    rect:
+      x: 0.285714298
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_19
+    rect:
+      x: 0.357142866
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_20
+    rect:
+      x: 0.428571433
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_21
+    rect:
+      x: 0.5
+      y: 0.020833334
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_28
+    rect:
+      x: 0
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_29
+    rect:
+      x: 0.0714285746
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_30
+    rect:
+      x: 0.142857149
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_31
+    rect:
+      x: 0.214285716
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_32
+    rect:
+      x: 0.285714298
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_33
+    rect:
+      x: 0.357142866
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_34
+    rect:
+      x: 0.428571433
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_35
+    rect:
+      x: 0.5
+      y: 0.0416666679
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_42
+    rect:
+      x: 0
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_43
+    rect:
+      x: 0.0714285746
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_44
+    rect:
+      x: 0.142857149
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_45
+    rect:
+      x: 0.214285716
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_46
+    rect:
+      x: 0.285714298
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_47
+    rect:
+      x: 0.357142866
+      y: 0.0625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_56
+    rect:
+      x: 0
+      y: 0.0833333358
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_57
+    rect:
+      x: 0.0714285746
+      y: 0.0833333358
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_58
+    rect:
+      x: 0.142857149
+      y: 0.0833333358
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_84
+    rect:
+      x: 0
+      y: 0.125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_98
+    rect:
+      x: 0
+      y: 0.145833328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_112
+    rect:
+      x: 0
+      y: 0.166666672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_113
+    rect:
+      x: 0.0714285746
+      y: 0.166666672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_126
+    rect:
+      x: 0
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_127
+    rect:
+      x: 0.0714285746
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_128
+    rect:
+      x: 0.142857149
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_129
+    rect:
+      x: 0.214285716
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_130
+    rect:
+      x: 0.285714298
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_131
+    rect:
+      x: 0.357142866
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_132
+    rect:
+      x: 0.428571433
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_133
+    rect:
+      x: 0.5
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_134
+    rect:
+      x: 0.571428597
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_135
+    rect:
+      x: 0.642857134
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_136
+    rect:
+      x: 0.714285731
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_137
+    rect:
+      x: 0.785714269
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_138
+    rect:
+      x: 0.857142866
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_139
+    rect:
+      x: 0.928571403
+      y: 0.1875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_140
+    rect:
+      x: 0
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_141
+    rect:
+      x: 0.0714285746
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_142
+    rect:
+      x: 0.142857149
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_143
+    rect:
+      x: 0.214285716
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_144
+    rect:
+      x: 0.285714298
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_145
+    rect:
+      x: 0.357142866
+      y: 0.208333328
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_154
+    rect:
+      x: 0
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_155
+    rect:
+      x: 0.0714285746
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_156
+    rect:
+      x: 0.142857149
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_157
+    rect:
+      x: 0.214285716
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_158
+    rect:
+      x: 0.285714298
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_159
+    rect:
+      x: 0.357142866
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_160
+    rect:
+      x: 0.428571433
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_161
+    rect:
+      x: 0.5
+      y: 0.229166672
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_168
+    rect:
+      x: 0
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_169
+    rect:
+      x: 0.0714285746
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_170
+    rect:
+      x: 0.142857149
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_171
+    rect:
+      x: 0.214285716
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_172
+    rect:
+      x: 0.285714298
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_173
+    rect:
+      x: 0.357142866
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_174
+    rect:
+      x: 0.428571433
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_175
+    rect:
+      x: 0.5
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_176
+    rect:
+      x: 0.571428597
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_177
+    rect:
+      x: 0.642857134
+      y: 0.25
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_182
+    rect:
+      x: 0
+      y: 0.270833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_196
+    rect:
+      x: 0
+      y: 0.291666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_197
+    rect:
+      x: 0.0714285746
+      y: 0.291666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_210
+    rect:
+      x: 0
+      y: 0.3125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_211
+    rect:
+      x: 0.0714285746
+      y: 0.3125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_224
+    rect:
+      x: 0
+      y: 0.333333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_225
+    rect:
+      x: 0.0714285746
+      y: 0.333333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_226
+    rect:
+      x: 0.142857149
+      y: 0.333333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_238
+    rect:
+      x: 0
+      y: 0.354166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_252
+    rect:
+      x: 0
+      y: 0.375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_253
+    rect:
+      x: 0.0714285746
+      y: 0.375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_254
+    rect:
+      x: 0.142857149
+      y: 0.375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_255
+    rect:
+      x: 0.214285716
+      y: 0.375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_266
+    rect:
+      x: 0
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_267
+    rect:
+      x: 0.0714285746
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_268
+    rect:
+      x: 0.142857149
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_269
+    rect:
+      x: 0.214285716
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_270
+    rect:
+      x: 0.285714298
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_271
+    rect:
+      x: 0.357142866
+      y: 0.395833343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_280
+    rect:
+      x: 0
+      y: 0.416666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_281
+    rect:
+      x: 0.0714285746
+      y: 0.416666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_282
+    rect:
+      x: 0.142857149
+      y: 0.416666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_283
+    rect:
+      x: 0.214285716
+      y: 0.416666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_284
+    rect:
+      x: 0.285714298
+      y: 0.416666657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_294
+    rect:
+      x: 0
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_295
+    rect:
+      x: 0.0714285746
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_296
+    rect:
+      x: 0.142857149
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_297
+    rect:
+      x: 0.214285716
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_298
+    rect:
+      x: 0.285714298
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_299
+    rect:
+      x: 0.357142866
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_300
+    rect:
+      x: 0.428571433
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_301
+    rect:
+      x: 0.5
+      y: 0.4375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_308
+    rect:
+      x: 0
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_309
+    rect:
+      x: 0.0714285746
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_310
+    rect:
+      x: 0.142857149
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_311
+    rect:
+      x: 0.214285716
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_312
+    rect:
+      x: 0.285714298
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_313
+    rect:
+      x: 0.357142866
+      y: 0.458333343
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_322
+    rect:
+      x: 0
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_323
+    rect:
+      x: 0.0714285746
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_324
+    rect:
+      x: 0.142857149
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_325
+    rect:
+      x: 0.214285716
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_326
+    rect:
+      x: 0.285714298
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_327
+    rect:
+      x: 0.357142866
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_328
+    rect:
+      x: 0.428571433
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_329
+    rect:
+      x: 0.5
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_330
+    rect:
+      x: 0.571428597
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_331
+    rect:
+      x: 0.642857134
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_332
+    rect:
+      x: 0.714285731
+      y: 0.479166657
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_336
+    rect:
+      x: 0
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_337
+    rect:
+      x: 0.0714285746
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_338
+    rect:
+      x: 0.142857149
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_339
+    rect:
+      x: 0.214285716
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_340
+    rect:
+      x: 0.285714298
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_341
+    rect:
+      x: 0.357142866
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_342
+    rect:
+      x: 0.428571433
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_343
+    rect:
+      x: 0.5
+      y: 0.5
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_350
+    rect:
+      x: 0
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_351
+    rect:
+      x: 0.0714285746
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_352
+    rect:
+      x: 0.142857149
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_353
+    rect:
+      x: 0.214285716
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_354
+    rect:
+      x: 0.285714298
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_355
+    rect:
+      x: 0.357142866
+      y: 0.520833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_364
+    rect:
+      x: 0
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_365
+    rect:
+      x: 0.0714285746
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_366
+    rect:
+      x: 0.142857149
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_367
+    rect:
+      x: 0.214285716
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_368
+    rect:
+      x: 0.285714298
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_369
+    rect:
+      x: 0.357142866
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_370
+    rect:
+      x: 0.428571433
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_371
+    rect:
+      x: 0.5
+      y: 0.541666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_378
+    rect:
+      x: 0
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_379
+    rect:
+      x: 0.0714285746
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_380
+    rect:
+      x: 0.142857149
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_381
+    rect:
+      x: 0.214285716
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_382
+    rect:
+      x: 0.285714298
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_383
+    rect:
+      x: 0.357142866
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_384
+    rect:
+      x: 0.428571433
+      y: 0.5625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_392
+    rect:
+      x: 0
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_393
+    rect:
+      x: 0.0714285746
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_394
+    rect:
+      x: 0.142857149
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_395
+    rect:
+      x: 0.214285716
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_396
+    rect:
+      x: 0.285714298
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_397
+    rect:
+      x: 0.357142866
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_398
+    rect:
+      x: 0.428571433
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_399
+    rect:
+      x: 0.5
+      y: 0.583333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_406
+    rect:
+      x: 0
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_407
+    rect:
+      x: 0.0714285746
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_408
+    rect:
+      x: 0.142857149
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_409
+    rect:
+      x: 0.214285716
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_410
+    rect:
+      x: 0.285714298
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_411
+    rect:
+      x: 0.357142866
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_412
+    rect:
+      x: 0.428571433
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_413
+    rect:
+      x: 0.5
+      y: 0.604166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_420
+    rect:
+      x: 0
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_421
+    rect:
+      x: 0.0714285746
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_422
+    rect:
+      x: 0.142857149
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_423
+    rect:
+      x: 0.214285716
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_424
+    rect:
+      x: 0.285714298
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_425
+    rect:
+      x: 0.357142866
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_426
+    rect:
+      x: 0.428571433
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_427
+    rect:
+      x: 0.5
+      y: 0.625
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_434
+    rect:
+      x: 0
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_435
+    rect:
+      x: 0.0714285746
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_436
+    rect:
+      x: 0.142857149
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_437
+    rect:
+      x: 0.214285716
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_438
+    rect:
+      x: 0.285714298
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_439
+    rect:
+      x: 0.357142866
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_440
+    rect:
+      x: 0.428571433
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_441
+    rect:
+      x: 0.5
+      y: 0.645833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_448
+    rect:
+      x: 0
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_449
+    rect:
+      x: 0.0714285746
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_450
+    rect:
+      x: 0.142857149
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_451
+    rect:
+      x: 0.214285716
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_452
+    rect:
+      x: 0.285714298
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_453
+    rect:
+      x: 0.357142866
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_454
+    rect:
+      x: 0.428571433
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_455
+    rect:
+      x: 0.5
+      y: 0.666666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_462
+    rect:
+      x: 0
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_463
+    rect:
+      x: 0.0714285746
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_464
+    rect:
+      x: 0.142857149
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_465
+    rect:
+      x: 0.214285716
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_466
+    rect:
+      x: 0.285714298
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_467
+    rect:
+      x: 0.357142866
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_468
+    rect:
+      x: 0.428571433
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_469
+    rect:
+      x: 0.5
+      y: 0.6875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_476
+    rect:
+      x: 0
+      y: 0.708333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_477
+    rect:
+      x: 0.0714285746
+      y: 0.708333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_478
+    rect:
+      x: 0.142857149
+      y: 0.708333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_490
+    rect:
+      x: 0
+      y: 0.729166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_491
+    rect:
+      x: 0.0714285746
+      y: 0.729166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_492
+    rect:
+      x: 0.142857149
+      y: 0.729166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_493
+    rect:
+      x: 0.214285716
+      y: 0.729166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_504
+    rect:
+      x: 0
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_505
+    rect:
+      x: 0.0714285746
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_506
+    rect:
+      x: 0.142857149
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_507
+    rect:
+      x: 0.214285716
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_508
+    rect:
+      x: 0.285714298
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_509
+    rect:
+      x: 0.357142866
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_510
+    rect:
+      x: 0.428571433
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_511
+    rect:
+      x: 0.5
+      y: 0.75
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_518
+    rect:
+      x: 0
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_519
+    rect:
+      x: 0.0714285746
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_520
+    rect:
+      x: 0.142857149
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_521
+    rect:
+      x: 0.214285716
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_522
+    rect:
+      x: 0.285714298
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_523
+    rect:
+      x: 0.357142866
+      y: 0.770833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_532
+    rect:
+      x: 0
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_533
+    rect:
+      x: 0.0714285746
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_534
+    rect:
+      x: 0.142857149
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_535
+    rect:
+      x: 0.214285716
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_536
+    rect:
+      x: 0.285714298
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_537
+    rect:
+      x: 0.357142866
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_538
+    rect:
+      x: 0.428571433
+      y: 0.791666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_546
+    rect:
+      x: 0
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_547
+    rect:
+      x: 0.0714285746
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_548
+    rect:
+      x: 0.142857149
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_549
+    rect:
+      x: 0.214285716
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_550
+    rect:
+      x: 0.285714298
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_551
+    rect:
+      x: 0.357142866
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_552
+    rect:
+      x: 0.428571433
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_553
+    rect:
+      x: 0.5
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_554
+    rect:
+      x: 0.571428597
+      y: 0.8125
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_560
+    rect:
+      x: 0
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_561
+    rect:
+      x: 0.0714285746
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_562
+    rect:
+      x: 0.142857149
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_563
+    rect:
+      x: 0.214285716
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_564
+    rect:
+      x: 0.285714298
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_565
+    rect:
+      x: 0.357142866
+      y: 0.833333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_574
+    rect:
+      x: 0
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_575
+    rect:
+      x: 0.0714285746
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_576
+    rect:
+      x: 0.142857149
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_577
+    rect:
+      x: 0.214285716
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_578
+    rect:
+      x: 0.285714298
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_579
+    rect:
+      x: 0.357142866
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_580
+    rect:
+      x: 0.428571433
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_581
+    rect:
+      x: 0.5
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_582
+    rect:
+      x: 0.571428597
+      y: 0.854166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_588
+    rect:
+      x: 0
+      y: 0.875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_589
+    rect:
+      x: 0.0714285746
+      y: 0.875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_590
+    rect:
+      x: 0.142857149
+      y: 0.875
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_602
+    rect:
+      x: 0
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_603
+    rect:
+      x: 0.0714285746
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_604
+    rect:
+      x: 0.142857149
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_605
+    rect:
+      x: 0.214285716
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_606
+    rect:
+      x: 0.285714298
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_607
+    rect:
+      x: 0.357142866
+      y: 0.895833313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_616
+    rect:
+      x: 0
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_617
+    rect:
+      x: 0.0714285746
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_618
+    rect:
+      x: 0.142857149
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_619
+    rect:
+      x: 0.214285716
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_620
+    rect:
+      x: 0.285714298
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_621
+    rect:
+      x: 0.357142866
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_622
+    rect:
+      x: 0.428571433
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_623
+    rect:
+      x: 0.5
+      y: 0.916666687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_630
+    rect:
+      x: 0
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_631
+    rect:
+      x: 0.0714285746
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_632
+    rect:
+      x: 0.142857149
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_633
+    rect:
+      x: 0.214285716
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_634
+    rect:
+      x: 0.285714298
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_635
+    rect:
+      x: 0.357142866
+      y: 0.9375
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_644
+    rect:
+      x: 0
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_645
+    rect:
+      x: 0.0714285746
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_646
+    rect:
+      x: 0.142857149
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_647
+    rect:
+      x: 0.214285716
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_648
+    rect:
+      x: 0.285714298
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_649
+    rect:
+      x: 0.357142866
+      y: 0.958333313
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_658
+    rect:
+      x: 0
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_659
+    rect:
+      x: 0.0714285746
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_660
+    rect:
+      x: 0.142857149
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_661
+    rect:
+      x: 0.214285716
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_662
+    rect:
+      x: 0.285714298
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_663
+    rect:
+      x: 0.357142866
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_664
+    rect:
+      x: 0.428571433
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
+  - name: PlayerSheet_665
+    rect:
+      x: 0.5
+      y: 0.979166687
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0

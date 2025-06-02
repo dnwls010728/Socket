@@ -9,7 +9,7 @@
 
 union Event;
 class Actor;
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 
 class Level : public std::enable_shared_from_this<Level>
 {
@@ -57,13 +57,7 @@ T* Level::AddActor(const rttr::type& kType, const std::wstring& kName)
         std::shared_ptr<Actor> actor = var.get_value<std::shared_ptr<Actor>>();
         actors_.push_back(actor);
 
-        rttr::type actor_type = rttr::type::get<T>();
-        if (kType.is_derived_from(actor_type))
-        {
-            return static_cast<T*>(actor.get());
-        }
-
-        return nullptr;
+        return dynamic_cast<T*>(actor.get());
     }
     
     return nullptr;

@@ -4,29 +4,29 @@
 #include "Math/Color.h"
 #include "Windows/DX/Renderer.h"
 
-UI::CheckBox::CheckBox(const std::wstring& kName) :
+UI_OLD::CheckBox::CheckBox(const std::wstring& kName) :
     Widget(kName),
     is_checked_(false),
     check_event([&](bool is_checked) {})
 {
 }
 
-void UI::CheckBox::OnClick(void(* func)(bool))
+void UI_OLD::CheckBox::OnClick(void(* func)(bool))
 {
     check_event = func;
 }
 
-void UI::CheckBox::SetCheck(bool value)
+void UI_OLD::CheckBox::SetCheck(bool value)
 {
     is_checked_ = value;
 }
 
-std::shared_ptr<UI::CheckBox> UI::CheckBox::Create(const std::wstring& kName)
+std::shared_ptr<UI_OLD::CheckBox> UI_OLD::CheckBox::Create(const std::wstring& kName)
 {
     return std::make_shared<CheckBox>(kName);
 }
 
-void UI::CheckBox::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::CheckBox::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
 
@@ -39,7 +39,7 @@ void UI::CheckBox::Render(Renderer* renderer, WindowsWindow* window)
     }
 }
 
-bool UI::CheckBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
+bool UI_OLD::CheckBox::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
     if (button == MouseButton::kLeft && is_pressed)
@@ -56,7 +56,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::CheckBox>("UI::CheckBox")
+    registration::class_<UI_OLD::CheckBox>("UI::CheckBox")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

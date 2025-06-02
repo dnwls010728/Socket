@@ -25,9 +25,7 @@ T* AssetManager::Load(const std::wstring& kPath)
         Asset* asset = assets_[path].get();
         
         rttr::type type = rttr::type::get<T>();
-        rttr::type asset_type = rttr::type::get(*asset);
-
-        if (type == asset_type) return static_cast<T*>(asset);
+        if (type == asset->get_type()) return static_cast<T*>(asset);
         return nullptr;
     }
 

@@ -5,7 +5,7 @@
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
-UI::Slider::Slider(const std::wstring& kName) :
+UI_OLD::Slider::Slider(const std::wstring& kName) :
     Widget(kName),
     value_(0.f),
     min_value_(20.f),
@@ -15,23 +15,23 @@ UI::Slider::Slider(const std::wstring& kName) :
 {
 }
 
-void UI::Slider::OnSlide(void(* func)(float))
+void UI_OLD::Slider::OnSlide(void(* func)(float))
 {
     value_changed_event_ = func;
 }
 
-void UI::Slider::SetValue(float value)
+void UI_OLD::Slider::SetValue(float value)
 {
     value_ = value;
     value_changed_event_(value_);
 }
 
-std::shared_ptr<UI::Slider> UI::Slider::Create(const std::wstring& kName)
+std::shared_ptr<UI_OLD::Slider> UI_OLD::Slider::Create(const std::wstring& kName)
 {
     return std::make_shared<Slider>(kName);
 }
 
-void UI::Slider::Render(Renderer* renderer, WindowsWindow* window)
+void UI_OLD::Slider::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
     
@@ -44,7 +44,7 @@ void UI::Slider::Render(Renderer* renderer, WindowsWindow* window)
     renderer->DrawBox(window, kRect, GetPivotPosition(), Math::Color::Black, 0.f);
 }
 
-bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
+bool UI_OLD::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton button, bool is_pressed, double timestamp)
 {
     Widget::OnMouseButton(kPosition, button, is_pressed, timestamp);
 
@@ -57,23 +57,23 @@ bool UI::Slider::OnMouseButton(const Math::Vector2& kPosition, MouseButton butto
     return false;
 }
 
-bool UI::Slider::OnDragBegin(const Math::Vector2& kPosition)
+bool UI_OLD::Slider::OnDragBegin(const Math::Vector2& kPosition)
 {
     return true;
 }
 
-bool UI::Slider::OnDragEnd(const Math::Vector2& kPosition)
+bool UI_OLD::Slider::OnDragEnd(const Math::Vector2& kPosition)
 {
     return true;
 }
 
-bool UI::Slider::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
+bool UI_OLD::Slider::OnDrag(const Math::Vector2& kPosition, const Math::Vector2& kDelta)
 {
     SetValueInternal(kPosition);
     return true;
 }
 
-void UI::Slider::SetValueInternal(const Math::Vector2& kPosition)
+void UI_OLD::Slider::SetValueInternal(const Math::Vector2& kPosition)
 {
     const Math::Rect kRect = GetRect();
     
@@ -93,7 +93,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<UI::Slider>("UI::Slider")
+    registration::class_<UI_OLD::Slider>("UI::Slider")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

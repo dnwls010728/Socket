@@ -12,7 +12,7 @@ EngineSettings::EngineSettings() :
 {
 }
 
-void EngineSettings::SetScreenSize(Type::uint32 width, Type::uint32 height)
+void EngineSettings::SetScreenSize(uint32_t width, uint32_t height)
 {
     screen_width_ = width;
     screen_height_ = height;

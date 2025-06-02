@@ -5,7 +5,7 @@
 #include "Event/Events.h"
 #include "Windows/DX/Renderer.h"
 
-UI::Manager::Manager() :
+UI_OLD::Manager::Manager() :
     widgets_(),
     focused_widget_(),
     dragging_widget_(),
@@ -15,19 +15,7 @@ UI::Manager::Manager() :
 {
 }
 
-void UI::Manager::AddToViewport(const std::shared_ptr<Widget>& kWidget)
-{
-    if (!kWidget) return;
-    widgets_.push_back(kWidget);
-}
-
-void UI::Manager::RemoveFromViewport(const std::shared_ptr<Widget>& kWidget)
-{
-    if (!kWidget) return;
-    std::erase(widgets_, kWidget);
-}
-
-void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
+void UI_OLD::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
 {
     if (const std::shared_ptr<Widget> widget_ptr = focused_widget_.lock()) widget_ptr->OnFocus(false);
 
@@ -35,14 +23,9 @@ void UI::Manager::SetFocus(const std::shared_ptr<Widget>& kWidget)
     if (kWidget) kWidget->OnFocus(true);
 }
 
-bool UI::Manager::IsInViewport(const std::shared_ptr<Widget>& kWidget)
+std::shared_ptr<UI_OLD::Widget> UI_OLD::Manager::RayCast(const Math::Vector2& kPosition) const
 {
-    return std::ranges::find(widgets_, kWidget) != widgets_.end();
-}
-
-std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition) const
-{
-    for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+    for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
         Widget* widget = widgets_[widgets_.size() - i - 1].get();
         if (widget->Contains(kPosition)) return widget->GetSharedThis();
@@ -51,29 +34,29 @@ std::shared_ptr<UI::Widget> UI::Manager::RayCast(const Math::Vector2& kPosition)
     return nullptr;
 }
 
-void UI::Manager::Tick(float delta_time)
+void UI_OLD::Manager::Tick(float delta_time)
 {
-    for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+    for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
         Widget* widget = widgets_[i].get();
         widget->Tick(delta_time);
     }
 }
 
-void UI::Manager::Render()
+void UI_OLD::Manager::Render()
 {
-    for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+    for (uint64_t i = 0; i < widgets_.size(); ++i)
     {
-        Widget* widget = widgets_[widgets_.size() - i - 1].get();
+        Widget* widget = widgets_[i].get();
         widget->Render(Renderer::Get(), World::Get()->GetWindow());
     }
 }
 
-void UI::Manager::OnEvent(const Event& kEvent)
+void UI_OLD::Manager::OnEvent(const Event& kEvent)
 {
-    const Type::uint32& kType = kEvent.type;
+    const uint32_t& kType = kEvent.type;
 
-    if (kType == static_cast<Type::uint32>(EventType::kMouseMotion))
+    if (kType == static_cast<uint32_t>(EventType::kMouseMotion))
     {
         const Math::Vector2 kMousePosition = {kEvent.motion.x, kEvent.motion.y};
         const Math::Vector2 kMouseDelta = kMousePosition - last_mouse_position_;
@@ -95,7 +78,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
 
         if (!is_handled)
         {
-            for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+            for (uint64_t i = 0; i < widgets_.size(); ++i)
             {
                 Widget* widget = widgets_[widgets_.size() - i - 1].get();
 
@@ -116,7 +99,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
         
         last_mouse_position_ = kMousePosition;
     }
-    else if (kType & static_cast<Type::uint32>(EventType::kMouseChanged))
+    else if (kType & static_cast<uint32_t>(EventType::kMouseChanged))
     {
         const MouseButtonEvent& kButton = kEvent.button;
         const Math::Vector2& kMousePosition = {kButton.x, kButton.y};
@@ -153,7 +136,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
         }
 
         bool is_handled = false;
-        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        for (uint64_t i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
             if (widget->Contains(kMousePosition) && widget->OnMouseButton(kMousePosition, kButton.button, kButton.is_pressed, kButton.timestamp))
@@ -165,19 +148,19 @@ void UI::Manager::OnEvent(const Event& kEvent)
 
         if (!is_handled) SetFocus(nullptr);
     }
-    else if (kType == static_cast<Type::uint32>(EventType::kMouseWheel))
+    else if (kType == static_cast<uint32_t>(EventType::kMouseWheel))
     {
         const MouseWheelEvent& kWheel = kEvent.wheel;
         const Math::Vector2 kMousePosition = {kWheel.mouse_x, kWheel.mouse_y};
         const Math::Vector2 kMouseDelta = {kWheel.x, kWheel.y};
 
-        for (Type::uint64 i = 0; i < widgets_.size(); ++i)
+        for (uint64_t i = 0; i < widgets_.size(); ++i)
         {
             Widget* widget = widgets_[widgets_.size() - i - 1].get();
             if (widget->Contains(kMousePosition) && widget->OnScroll(kMousePosition, kMouseDelta)) break;
         }
     }
-    else if (kType & static_cast<Type::uint32>(EventType::kKeyChanged))
+    else if (kType & static_cast<uint32_t>(EventType::kKeyChanged))
     {
         const KeyboardEvent& kKey = kEvent.key;
         if (std::shared_ptr<Widget> widget = focused_widget_.lock())
@@ -187,7 +170,7 @@ void UI::Manager::OnEvent(const Event& kEvent)
             }
         }
     }
-    else if (kType == static_cast<Type::uint32>(EventType::kText))
+    else if (kType == static_cast<uint32_t>(EventType::kText))
     {
         if (std::shared_ptr<Widget> widget = focused_widget_.lock())
         {

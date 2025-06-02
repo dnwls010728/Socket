@@ -17,7 +17,7 @@ namespace BT
 
     protected:
         std::vector<std::shared_ptr<Node>> children_;
-        int current_child_;
+        int32_t current_child_;
     
     };
 }

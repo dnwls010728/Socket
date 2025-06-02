@@ -5,7 +5,7 @@
 #include "Windows/DX/Shape.h"
 #include "Windows/DX/Sprite.h"
 
-TilemapChunkArray::TilemapChunkArray(Sprite* texture, const tmx::Tileset& kTileset, int order) :
+TilemapChunkArray::TilemapChunkArray(Sprite* texture, const tmx::Tileset& kTileset, int32_t order) :
     texture_(texture),
     order_(order),
     shape_(nullptr)
@@ -25,7 +25,7 @@ TilemapChunkArray::TilemapChunkArray(Sprite* texture, const tmx::Tileset& kTiles
     last_gid_ = kTileset.getLastGID();
 }
 
-void TilemapChunkArray::SetShape(const std::vector<DefaultVertex>& kVertices, const std::vector<Type::uint32>& kIndices)
+void TilemapChunkArray::SetShape(const std::vector<DefaultVertex>& kVertices, const std::vector<uint32_t>& kIndices)
 {
     shape_ = std::make_shared<Shape>();
     shape_->SetVertices(kVertices);

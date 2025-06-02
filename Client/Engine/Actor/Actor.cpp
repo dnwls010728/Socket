@@ -10,6 +10,7 @@ Actor::Actor(const std::wstring& kName) :
     name_(kName),
     tag_(ActorTag::kNone),
     layer_(ActorLayer::kDefault),
+    has_begun_play_(false),
     is_active_(true),
     is_pending_destroy_(false),
     is_persistent_(false),
@@ -27,6 +28,8 @@ void Actor::BeginPlay()
     {
         kComponent->BeginPlay();
     }
+
+    has_begun_play_ = true;
 }
 
 void Actor::EndPlay(EndPlayReason type)
@@ -142,8 +145,7 @@ void Actor::GetComponents(const rttr::type& type, std::vector<ActorComponent*>& 
 {
     for (const auto& component : components_)
     {
-        rttr::type component_type = rttr::type::get(*component);
-        if (component_type.is_derived_from(type))
+        if (component->get_type().is_derived_from(type))
         {
             components.push_back(component.get());
         }

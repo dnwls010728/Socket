@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "Singleton.h"
+#include "Math/Color.h"
 #include "Math/Rect.h"
-#include "Misc/Type.h"
 #include "Windows/WindowsWindow.h"
 
 class DefaultPixelShader;
@@ -59,7 +59,7 @@ public:
     bool CreateViewport(std::shared_ptr<WindowsWindow> window, Math::Vector2 window_size);
     bool CreateD2DViewport(std::shared_ptr<WindowsWindow> window);
     bool CreateDepthStencilBuffer(Viewport& viewport);
-    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, Type::uint32 width, Type::uint32 height);
+    bool ResizeViewport(const std::shared_ptr<WindowsWindow>& kWindow, uint32_t width, uint32_t height);
     bool AddFont(const std::wstring& kPath);
     bool AddTextFormat(const std::wstring& kName, float size);
     
@@ -78,23 +78,36 @@ public:
     void EndRender();
     void BeginRenderD2D(const std::shared_ptr<WindowsWindow>& kWindow);
     void EndRenderD2D();
+    [[deprecated("Use BeginLayer instead.")]]
     void BeginLayer(const Math::Rect& kRect);
-    void EndLayer();
-    void ChangeResolution(WindowsWindow* window, Type::uint32 width, Type::uint32 height, bool is_fullscreen = false);
     
-    Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition) const;
-    Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition) const;
+    void BeginLayer(const Math::Vector2& position, const Math::Vector2& size);
+    void EndLayer();
+    void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
+    
+    Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition);
+    Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition);
 
     // Direct2D
+    [[deprecated("Use DrawBox instead.")]]
     void DrawBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f, float stroke = 1.f);
+    
     void DrawSolidBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f);
     void DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float radius, float angle = 0.f, float stroke = 1.f);
     void DrawSolidRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float radius, float angle = 0.f);
     void DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke = 1.f);
     void DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color);
     void DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector2 end, Math::Color color, float stroke = 1.f);
+
+    [[deprecated("Use DrawString instead.")]]
     void DrawString(WindowsWindow* window, const std::wstring& kString, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f, const std::wstring& kFontName = L"", float font_size = 0.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    
+    [[deprecated("Use DrawBitmap instead.")]]
     void DrawBitmap(WindowsWindow* window, const Microsoft::WRL::ComPtr<ID2D1Bitmap>& kBitmap, const Math::Rect& kRect, const Math::Vector2& kPivot, float angle = 0.f, bool use_slice9 = false, const Math::Rect& kSlice9Rect = Math::Rect::Zero());
+
+    void DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
+    void DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    void DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 

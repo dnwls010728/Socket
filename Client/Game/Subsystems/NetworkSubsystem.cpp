@@ -4,19 +4,21 @@
 #include <CustomPacket.h>
 #include <ranges>
 
+#include "DebugDrawHelper.h"
 #include "GameInstance.h"
 #include "InGameUISubsystem.h"
+#include "PlayerSubsystem.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
+#include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
 #include "UI/MiniMap.h"
-#include "UI/Widget/ListBox.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
@@ -36,22 +38,19 @@ void NetworkSubsystem::Deinit()
 {
     WorldSubsystem::Deinit();
 
-    GET_SESSION()->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
+    SessionSubsystem::Get()->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
 }
 
 void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
 
-    SessionSubsystem* session_subsystem = GET_SESSION();
+    SessionSubsystem* session_subsystem = SessionSubsystem::Get();
     session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
 
     if (session_subsystem->IsInGame())
     {
-        InGameReadyPacket packet;
-        SendPacket(packet);
-
-        InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+        InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
         in_game_ui_subsystem->ShowMiniMap();
         in_game_ui_subsystem->ShowChatUI();
     }
@@ -66,32 +65,21 @@ void NetworkSubsystem::Tick(float delta_time)
     {
         session_subsystem->ProcessPackets();
     }
-
-    if (ImGui::Begin("Camera"))
-    {
-        static float camera_size = 6.f;
-        if (ImGui::SliderFloat("Size", &camera_size, 1.f, 20.f))
-        {
-            CameraManager* camera_manager = CameraManager::Get();
-            camera_manager->SetSize(camera_size);
-        }
-    }
-    ImGui::End();
 }
 
 void NetworkSubsystem::SendPacket(Net::IPacket& packet)
 {
-    GET_SESSION()->SendPacket(packet);
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
-void NetworkSubsystem::ChangeMap(uint32_t map_unique_id)
+void NetworkSubsystem::ChangeMap(uint32_t map_id)
 {
     ChangeMapRequest request;
-    request.map_unique_id = map_unique_id;
+    request.map_id = map_id;
     SendPacket(request);
 }
 
-void NetworkSubsystem::DestroyNetworkActor(Type::uint32 unique_id)
+void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end())
@@ -114,11 +102,16 @@ void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharact
     }
 }
 
-std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const Type::uint32 unique_id)
+std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end()) return iter->second;
     return nullptr;
+}
+
+NetworkSubsystem* NetworkSubsystem::Get()
+{
+    return World::Get()->GetSubsystem<NetworkSubsystem>();
 }
 
 void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
@@ -128,20 +121,20 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
     case ChangeMapResponse::StaticPacketID:
         {
             ChangeMapResponse* response = static_cast<ChangeMapResponse*>(packet.get());
-            if (response->is_success) TransitionMap(response->map_unique_id);
+            if (response->is_success) TransitionMap(response->map_id);
         }
         break;
         
     case SpawnPlayerPacket::StaticPacketID:
         {
             SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
-            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_info.unique_id);
+            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_id);
             if (IsValid(player_character))
             {
                 float position_x = spawn_player_packet->position_x;
                 float position_y = spawn_player_packet->position_y;
 
-                player_character->InitSpawn({position_x, position_y});
+                player_character->InitSpawn(spawn_player_packet->name, {position_x, position_y});
                 other_players_.emplace_back(player_character);
             }
         }
@@ -168,7 +161,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());
             for (const auto& network_actor : network_actors_ | std::views::values)
             {
-                if (network_actor->GetUniqueID() == chat_message_packet->unique_id)
+                if (network_actor->GetObjectID() == chat_message_packet->unique_id)
                 {
                     std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor);
                     if (IsValid(player_character))
@@ -181,13 +174,40 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
+
+    case SpawnObjectPacket::StaticPacketID:
+        {
+            SpawnObjectPacket* spawn_object_packet = static_cast<SpawnObjectPacket*>(packet.get());
+
+            ObjectInfo& object_info = spawn_object_packet->object_info;
+            
+            std::shared_ptr<MobBase> actor = SpawnNetworkActor<MobBase>(MobBase::StaticClass(), object_info.object_id);
+            actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
+        }
+        break;
+
+    case DestroyObjectPacket::StaticPacketID:
+        {
+            DestroyObjectPacket* destroy_object_packet = static_cast<DestroyObjectPacket*>(packet.get());
+            DestroyNetworkActor(destroy_object_packet->object_id);
+        }
+        break;
+        
+    case ObjectPositionPacket::StaticPacketID:
+        {
+            ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
+            
+            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->object_id);
+            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+        }
+        break;
         
     default:
         break;
     }
 }
 
-void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
+void NetworkSubsystem::TransitionMap(uint32_t map_id)
 {
     std::vector<Actor*> actors = {};
     World::Get()->GetActors(Actor::StaticClass(), actors);
@@ -206,31 +226,33 @@ void NetworkSubsystem::TransitionMap(uint32_t map_unique_id)
     std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
     if (IsValid(tilemap_loader))
     {
-        std::wstring wide_str = std::format(L"{:06}", map_unique_id);
+        std::wstring wide_str = std::format(L"{:06}", map_id);
         tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
         if (tilemap_)
         {
             tilemap_loader->SetTilemap(tilemap_);
 
             camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kTick);
+            camera_manager->SetTickType(TickType::kPhysicsTick);
 
             Bounds bounds = tilemap_->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
         }
     }
     
-    const CharacterInfo& character_info = GET_SESSION()->GetCharacterInfo();
-    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), character_info.unique_id);
+    PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), player_subsystem->GetCharacterID());
     if (IsValid(player_character))
     {
+        player_character->InitSpawn(player_subsystem->GetName(), player_subsystem->GetInitialPosition());
         player_character->SetMine(true);
+        
         player_ = player_character;
         
         camera_manager->SetTarget(player_character);
     }
 
-    InGameUISubsystem* in_game_ui_subsystem = GET_IN_GAME_UI();
+    InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
     in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 }
 

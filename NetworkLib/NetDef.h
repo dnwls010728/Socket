@@ -53,4 +53,11 @@ namespace Net {
 			std::chrono::steady_clock::time_point expiration_time;
 		};
 	}
+	
+	inline float GetClientTime()
+	{
+		static const auto startTime = std::chrono::steady_clock::now();
+		auto now = std::chrono::steady_clock::now();
+		return std::chrono::duration<float>(now - startTime).count();
+	}
 }

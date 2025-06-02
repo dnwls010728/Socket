@@ -8,7 +8,7 @@
 #include "box2d/box2d.h"
 #include "Level/World.h"
 #include "Asset/AssetManager.h"
-#include "Subsystems/NetworkSubsystem.h"
+#include "Misc/StringHelper.h"
 #include "Windows/DX/Sprite.h"
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
@@ -16,13 +16,23 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	tilemap_(nullptr),
 	ppu_(0.f),
 	map_size_(Math::Vector2::Zero()),
-	tilemap_layers_()
+	tilemap_layers_(),
+	type_map_()
 {
 }
 
 void TilemapComponent::SetTilemap(Tilemap* tilemap)
 {
 	tilemap_ = tilemap;
+}
+
+int32_t TilemapComponent::GetType(const b2ShapeId shape_id)
+{
+	uint64_t id = b2StoreShapeId(shape_id);
+	
+	auto it = type_map_.find(id);
+	if (it != type_map_.end()) return it->second;
+	return -1;
 }
 
 void TilemapComponent::BeginPlay()
@@ -45,7 +55,7 @@ void TilemapComponent::BeginPlay()
 			{
 				const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
 			
-				if (layer->getName() == "Collision") GeneratePhysics(object);
+				if (layer->getName() == "Foothold") GeneratePhysics(object);
 				else if (layer->getName() == "Spawn") GenerateSpawn(object);
 			}
 			else if (layer->getType() == tmx::Layer::Type::Tile)
@@ -92,37 +102,60 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 	
 	tilemap_body_id_ = b2CreateBody(World::Get()->world_id_, &body_def);
 
+	float point = 0.f;
+	
 	for (const auto& temp : objects)
 	{
-		b2Polygon shape;
+		const std::vector<tmx::Property>& properties = temp.getProperties();
+		
+		b2Filter filter = b2DefaultFilter();
+		filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
+		filter.maskBits = static_cast<uint16_t>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
+		
+		b2ShapeDef shape_def = b2DefaultShapeDef();
+		shape_def.filter = filter;
+		shape_def.userData = nullptr;
+		
+		b2ShapeId shape_id = b2_nullShapeId;
 		
 		if (temp.getShape() == tmx::Object::Shape::Rectangle)
 		{
 			b2Vec2 center = {temp.getPosition().x / ppu_ + ((temp.getAABB().width / 2) / ppu_) - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ - ((temp.getAABB().height / 2) / ppu_) + map_size_.y / 2.f};
-			shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
-		}
-		else if (temp.getShape() == tmx::Object::Shape::Polygon)
-		{
-			std::vector<b2Vec2> vertices;
+			b2Polygon shape = b2MakeOffsetBox(temp.getAABB().width / 2 / ppu_, temp.getAABB().height / 2 / ppu_, center, b2Rot_identity);
 			
-			for (const auto& point : temp.getPoints())
+			shape_id = b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+			
+			if (properties.size() > 0)
 			{
-				b2Vec2 vertex = {point.x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * point.y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f};
-				vertices.push_back(vertex);
+				uint64_t id = b2StoreShapeId(shape_id);
+				type_map_[id] = properties[0].getIntValue();
 			}
-
-			b2Hull hull = b2ComputeHull(vertices.data(), vertices.size());
-			shape = b2MakePolygon(&hull, 0.f);
 		}
-		
-		b2Filter filter = b2DefaultFilter();
-		filter.categoryBits = static_cast<Type::uint16>(GetOwner()->GetLayer());
-		filter.maskBits = static_cast<Type::uint16>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
-		
-		b2ShapeDef shape_def = b2DefaultShapeDef();
-		shape_def.filter = filter;
+		else if (temp.getShape() == tmx::Object::Shape::Polyline)
+		{
+			const auto& points = temp.getPoints();
+			for (int32_t i = 0; i < points.size() - 1; ++i)
+			{
+				b2Segment segment;
+				segment.point1 = {
+					points[i].x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f,
+					-1 * points[i].y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f
+				};
 
-		b2CreatePolygonShape(tilemap_body_id_, &shape_def, &shape);
+				segment.point2 = {
+					points[i + 1].x / ppu_ + temp.getPosition().x / ppu_ - map_size_.x / 2.f,
+					-1 * points[i + 1].y / ppu_ - temp.getPosition().y / ppu_ + map_size_.y / 2.f
+				};
+
+				shape_id = b2CreateSegmentShape(tilemap_body_id_, &shape_def, &segment);
+				
+				if (properties.size() > 0)
+				{
+					uint64_t id = b2StoreShapeId(shape_id);
+					type_map_[id] = properties[0].getIntValue();
+				}
+			}
+		}
 	}
 
 	b2Body_Disable(tilemap_body_id_);
@@ -139,10 +172,8 @@ void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
 			rttr::type type = rttr::type::get_by_name(temp.getClass());
 			if (type.is_valid())
 			{
-				const std::string& name = temp.getName();
-				
-				std::wstring to_wide_string = std::wstring(name.begin(), name.end());
-				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, to_wide_string);
+				std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
+				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, name);
 				if (IsValid(actor))
 				{
 					std::shared_ptr<TransformComponent> transform = actor->GetTransform();

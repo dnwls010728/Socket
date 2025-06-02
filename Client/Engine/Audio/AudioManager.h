@@ -18,15 +18,15 @@ public:
     virtual ~AudioManager() override;
 
     void PlayOneShot(const Audio* audio, float volume = 1.f);
-    void PauseSound(int id);
-    void ResumeSound(int id);
-    void StopSound(int id);
+    void PauseSound(int32_t id);
+    void ResumeSound(int32_t id);
+    void StopSound(int32_t id);
     void StopAllSounds();
-    void SetVolume(int id, int volume);
-    void SetMute(int id, bool is_mute);
+    void SetVolume(int32_t id, int32_t volume);
+    void SetMute(int32_t id, bool is_mute);
     void SetAllMutes(bool is_mute);
 
-    int PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group = nullptr);
+    int32_t PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group = nullptr);
 
 private:
     friend class Audio;

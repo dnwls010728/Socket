@@ -2,7 +2,7 @@
 
 namespace Blackboard
 {
-    Type::uint64 ComputeFNV1aHash(const std::wstring& str);
+    uint64_t ComputeFNV1aHash(const std::wstring& str);
 
     struct BlackboardKey
     {
@@ -24,17 +24,17 @@ namespace Blackboard
         FORCEINLINE bool operator!=(const BlackboardKey& other) const { return !(*this == other); }
 
         FORCEINLINE std::wstring ToString() const { return name_; }
-        FORCEINLINE Type::uint64 GetHashCode() const { return hashed_key_; }
+        FORCEINLINE uint64_t GetHashCode() const { return hashed_key_; }
 
     private:
         std::wstring name_;
-        Type::uint64 hashed_key_;
+        uint64_t hashed_key_;
         
     };
 
     struct BlackboardKeyHasher
     {
-        FORCEINLINE Type::uint64 operator()(const BlackboardKey& key) const { return key.GetHashCode(); }
+        FORCEINLINE uint64_t operator()(const BlackboardKey& key) const { return key.GetHashCode(); }
         
     };
 }

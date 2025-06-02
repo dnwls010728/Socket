@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ActorTag.h"
 #include "box2d/id.h"
+#include "Component/ActorComponent.h"
 #include "Misc/DelegateMacros.h"
 #include "Misc/EngineMacros.h"
 #include "rttr/registration_friend.h"
@@ -9,7 +10,7 @@
 class ActorComponent;
 class Actor;
 
-enum class EndPlayReason : Type::uint64;
+enum class EndPlayReason : uint64_t;
 class TransformComponent;
 
 class Actor : public std::enable_shared_from_this<Actor>
@@ -37,9 +38,6 @@ public:
 
     template <std::derived_from<ActorComponent> T>
     std::shared_ptr<T> GetComponent(const rttr::type& type);
-
-    template <std::derived_from<Actor> T>
-    T* SpawnActor(const rttr::type& kType, const std::wstring& kName);
     
     FORCEINLINE void SetTag(ActorTag tag) { tag_ = tag; }
     FORCEINLINE void SetLayer(ActorLayer layer) { layer_ = layer; }
@@ -51,6 +49,7 @@ public:
 
     FORCEINLINE std::shared_ptr<TransformComponent> GetTransform() const { return transform_; }
 
+    FORCEINLINE bool HasBegunPlay() const { return has_begun_play_; }
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsPendingDeletion() const { return is_pending_destroy_; }
 
@@ -102,6 +101,7 @@ protected:
 
     b2BodyId body_id_;
 
+    bool has_begun_play_;
     bool is_active_;
     bool is_pending_destroy_;
 
@@ -141,20 +141,13 @@ std::shared_ptr<T> Actor::GetComponent(const rttr::type& type)
 {
     for (const auto& component : components_)
     {
-        rttr::type component_type = rttr::type::get(*component);
-        if (component_type.is_derived_from(type))
+        if (component->get_type().is_derived_from(type))
         {
             return std::static_pointer_cast<T>(component);
         }
     }
 
     return nullptr;
-}
-
-template <std::derived_from<Actor> T>
-T* Actor::SpawnActor(const rttr::type& kType, const std::wstring& kName)
-{
-    return World::Get()->SpawnActor<T>(kType, kName);
 }
 
 FORCEINLINE bool IsValid(const Actor* actor)

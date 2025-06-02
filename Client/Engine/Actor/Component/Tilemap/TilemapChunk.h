@@ -16,14 +16,14 @@ class Sprite;
 class TilemapChunk
 {
 public:
-    TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, Type::uint64 row_size, std::map<std::wstring, Sprite*>& tileset_textures);
+    TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, uint64_t row_size, std::map<std::wstring, Sprite*>& tileset_textures);
 
     void UpdateShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot = Math::Vector2::Zero());
     
-    int GetTileIndex(int x, int y) const;
+    int32_t GetTileIndex(int32_t x, int32_t y) const;
 
 private:
-    void GenerateTiles(const Type::uint32& kPosX, const Type::uint32& kPosY, const Math::Vector2& kTileSize);
+    void GenerateTiles(const uint32_t& kPosX, const uint32_t& kPosY, const Math::Vector2& kTileSize);
 
     Math::Vector2 tile_count_;
     

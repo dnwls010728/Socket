@@ -2,7 +2,7 @@
 #include "DirectXTK/SimpleMath.h"
 #include "Math/Vector2.h"
 
-namespace UI
+namespace UI_OLD
 {
     class Widget;
 
@@ -12,11 +12,7 @@ namespace UI
         Manager();
         virtual ~Manager() override = default;
 
-        void AddToViewport(const std::shared_ptr<Widget>& kWidget);
-        void RemoveFromViewport(const std::shared_ptr<Widget>& kWidget);
         void SetFocus(const std::shared_ptr<Widget>& kWidget);
-
-        bool IsInViewport(const std::shared_ptr<Widget>& kWidget);
         
         FORCEINLINE bool HasFocus() const { return focused_widget_.lock() != nullptr; }
 
@@ -25,6 +21,7 @@ namespace UI
     private:
         friend class Core;
         friend class GameEngine;
+        friend class Widget;
         
         void Tick(float delta_time);
         void Render();
