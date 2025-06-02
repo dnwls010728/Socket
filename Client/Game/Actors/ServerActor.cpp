@@ -34,10 +34,7 @@ void ServerActor::PhysicsTick(float delta_time)
 
         float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
 
-        Math::Vector2 position;
-        position.x = Math::Lerp(from.position.x, to.position.x, t);
-        position.y = Math::Lerp(from.position.y, to.position.y, t);
-
+        Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
     }
 }
@@ -62,15 +59,4 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
         }
         break;
     }
-}
-
-RTTR_REGISTRATION
-{
-    using namespace rttr;
-
-    registration::class_<ServerActor>("ServerActor")
-        .constructor<const std::wstring&>()
-        (
-            policy::ctor::as_std_shared_ptr
-        );
 }
