@@ -185,6 +185,13 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
         }
         break;
+
+    case DestroyObjectPacket::StaticPacketID:
+        {
+            DestroyObjectPacket* destroy_object_packet = static_cast<DestroyObjectPacket*>(packet.get());
+            DestroyNetworkActor(destroy_object_packet->object_id);
+        }
+        break;
         
     case ObjectPositionPacket::StaticPacketID:
         {

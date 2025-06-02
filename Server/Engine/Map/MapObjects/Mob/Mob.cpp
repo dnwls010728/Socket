@@ -15,7 +15,8 @@ Mob::Mob() :
     timer_(0.f),
     direction_(0),
     is_grounded_(false),
-    foothold_(nullptr)
+    foothold_(nullptr),
+    hp_(3000)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     direction_ = Math::RandRange(-1, 1);
@@ -42,10 +43,10 @@ void Mob::Tick(float delta_time)
     foothold_ = map_->FindFoothold({ next_position.x, GetPosition().y + 1.f }); // 경사면 체크를 위해 y 좌표를 1만큼 올림
     if (foothold_)
     {
-        float y = foothold_->GetYAt(next_position.x);
-        if (GetPosition().y + 1.f >= y && next_position.y <= y)
+        float foothold_y = foothold_->GetYAt(next_position.x);
+        if (GetPosition().y + 1.f >= foothold_y && next_position.y <= foothold_y)
         {
-            next_position.y = y;
+            next_position.y = foothold_y;
             velocity_.y = 0.f;
             is_grounded_ = true;
         }
@@ -67,4 +68,16 @@ void Mob::Tick(float delta_time)
     
     SetPosition(next_position);
     
+}
+
+void Mob::OnHit(int32_t damage)
+{
+    if (hp_ <= 0) return;
+    
+    hp_ -= damage;
+    if (hp_ <= 0)
+    {
+        hp_ = 0;
+        map_->DestroyObject(GetObjectID());
+    }
 }

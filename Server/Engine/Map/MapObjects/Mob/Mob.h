@@ -13,6 +13,8 @@ protected:
     
     virtual void Tick(float delta_time) override;
 
+    void OnHit(int32_t damage);
+
     std::unique_ptr<FSM::StateMachine> state_machine_;
 
     Math::Vector2 velocity_;
@@ -26,5 +28,7 @@ protected:
     bool is_grounded_;
 
     class Foothold* foothold_;
+
+    std::atomic_int32_t hp_;
     
 };

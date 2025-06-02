@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "DebugDrawHelper.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -12,9 +13,11 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
+#include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
+#include "Physics/Physics2D.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
@@ -175,10 +178,28 @@ void PlayerCharacter::Tick(float delta_time)
                 NetworkSubsystem::Get()->ChangeMap(1);
             }
 
-            if (keyboard->GetKeyDown('D'))
+            // 공격 테스트
+            if (keyboard->GetKeyDown('X'))
             {
-                std::shared_ptr<ItemDrop> item = World::Get()->SpawnActor<ItemDrop>(ItemDrop::StaticClass(), L"Item");
-                item->GetTransform()->SetPosition(GetTransform()->GetPosition());
+                std::vector<Actor*> hit_actors;
+                bool is_hit = Physics2D::OverlapBoxAll(
+                    GetTransform()->GetPosition(),
+                    { 3.f, 2.f },
+                    hit_actors,
+                    static_cast<uint16_t>(ActorLayer::kMob)
+                );
+
+                if (is_hit)
+                {
+                    for (const auto& actor : hit_actors)
+                    {
+                        MobBase* mob = static_cast<MobBase*>(actor);
+
+                        AttackRequest request;
+                        request.object_id = mob->GetObjectID();
+                        SendPacket(request);
+                    }
+                }
             }
         }
         else
@@ -186,6 +207,9 @@ void PlayerCharacter::Tick(float delta_time)
             movement_input_.x = 0.f;
             movement_input_.y = 0.f;
         }
+
+        // 공격 범위 확인용
+        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
     }
     else
     {

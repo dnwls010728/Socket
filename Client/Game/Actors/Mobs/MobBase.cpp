@@ -10,7 +10,7 @@
 MobBase::MobBase(const std::wstring& name) :
     ServerActor(name)
 {
-    SetLayer(ActorLayer::kCharacter);
+    SetLayer(ActorLayer::kMob);
     
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     

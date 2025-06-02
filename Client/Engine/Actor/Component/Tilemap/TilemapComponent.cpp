@@ -55,7 +55,7 @@ void TilemapComponent::BeginPlay()
 			{
 				const auto& object = layer->getLayerAs<tmx::ObjectGroup>();
 			
-				if (layer->getName() == "Collision") GeneratePhysics(object);
+				if (layer->getName() == "Foothold") GeneratePhysics(object);
 				else if (layer->getName() == "Spawn") GenerateSpawn(object);
 			}
 			else if (layer->getType() == tmx::Layer::Type::Tile)

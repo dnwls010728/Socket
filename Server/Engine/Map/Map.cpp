@@ -9,6 +9,7 @@
 #include "tmxlite/Map.hpp"
 
 #include "MapObject.h"
+#include "MapObjects/Mob/Mob.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
@@ -101,18 +102,17 @@ void Map::RemovePlayers()
 
 void Map::AddObject(const std::shared_ptr<MapObject>& object)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
     pending_objects_.push(object);
 }
 
 void Map::RemoveObject(uint32_t object_id)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
     pending_remove_objects_.push(object_id);
 }
 
 void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
 {
+    std::lock_guard<std::mutex> lock(object_mutex_);
     object->SetObjectID(next_object_id_++);
     object->SetMap(this);
 
@@ -125,6 +125,19 @@ void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
     SendPacket(spawn_object_packet);
 
     AddObject(object);
+}
+
+void Map::DestroyObject(uint32_t object_id)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    auto it = map_objects_.find(object_id);
+    if (it == map_objects_.end()) return;
+
+    DestroyObjectPacket destroy_object_packet;
+    destroy_object_packet.object_id = object_id;
+    SendPacket(destroy_object_packet);
+
+    RemoveObject(object_id);
 }
 
 void Map::SendPacket(const Net::IPacket& packet)
@@ -145,6 +158,22 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &ex
         if (player && player != excluded_player)
         {
             player->SendPacket(packet);
+        }
+    }
+}
+
+void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
+{
+    // std::lock_guard<std::mutex> lock(object_mutex_);
+
+    auto it = map_objects_.find(defender_id);
+    if (it != map_objects_.end())
+    {
+        Mob* mob = dynamic_cast<Mob*>(it->second.get());
+        if (mob)
+        {
+            mob->OnHit(1000);
+            mob->velocity_.y = 10.f;
         }
     }
 }
@@ -194,7 +223,7 @@ bool Map::LoadMapData()
         {
             const auto& object_group = layer->getLayerAs<tmx::ObjectGroup>();
 
-            if (layer->getName() == "Collision")
+            if (layer->getName() == "Foothold")
             {
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)

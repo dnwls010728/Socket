@@ -243,6 +243,15 @@ void Player::ReceivePacket(Net::IPacket* packet)
             }
         }
         break;
+
+    case AttackRequest::StaticPacketID:
+        {
+            AttackRequest* attack_request = static_cast<AttackRequest*>(packet);
+            if (!map_) return;
+
+            map_->OnAttack(GetCharacterID(), attack_request->object_id);
+        }
+        break;
         
     default:
         break;

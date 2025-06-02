@@ -26,9 +26,10 @@ void ProjectSettings::Init()
     settings->SetInterpolationDelay(0.25f);
     
     // 레이어 충돌 매트릭스 설정
-    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kItemDrop);
-    settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kItemDrop);
-    settings->AddCollisionLayer(ActorLayer::kItemDrop, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kItemDrop);
+    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kMob | ActorLayer::kItemDrop);
+    settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kMob, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kItemDrop, ActorLayer::kDefault);
 
     settings->AddLevel<EditorMap>(L"Editor");
     settings->AddLevel<LoginMap>(L"Login");

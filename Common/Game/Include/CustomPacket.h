@@ -170,9 +170,9 @@ struct SpawnObjectPacket : public Net::IPacket
 
 struct DestroyObjectPacket : public Net::IPacket
 {
-    uint32_t unique_id;
+    uint32_t object_id;
 
-    SERIALIZABLE_FIELDS(unique_id)
+    SERIALIZABLE_FIELDS(object_id)
     REGISTER_PACKET(DestroyObjectPacket, 231)
 };
 
@@ -206,4 +206,12 @@ struct MoveItemResponse : public Net::IPacket
     
     SERIALIZABLE_FIELDS(changes)
     REGISTER_PACKET(MoveItemResponse, 301)
+};
+
+struct AttackRequest : public Net::IPacket
+{
+    uint32_t object_id;
+    
+    SERIALIZABLE_FIELDS(object_id)
+    REGISTER_PACKET(AttackRequest, 400)
 };
