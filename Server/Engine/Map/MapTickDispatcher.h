@@ -45,4 +45,6 @@ private:
     std::atomic<bool> running_;
     uint32_t tick_interval_ms_;
     size_t max_maps_per_thread_;
+
+    float accumulator_;
 };

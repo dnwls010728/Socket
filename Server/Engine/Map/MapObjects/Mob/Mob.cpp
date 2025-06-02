@@ -35,7 +35,7 @@ void Mob::Tick(float delta_time)
         direction_ = Math::RandRange(-1, 1);
     }
 
-    velocity_.x = direction_ * 2.f;
+    // velocity_.x = direction_ * 2.f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
 

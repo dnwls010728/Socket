@@ -3,10 +3,11 @@
 #include "MapTickDispatcher.h"
 #include <chrono>
 #include "Map.h"
+#include "Math/Math.h"
 
 using namespace std::chrono;
 
-MapTickDispatcher::MapTickDispatcher() : running_(false), tick_interval_ms_(50), max_maps_per_thread_(10) {}
+MapTickDispatcher::MapTickDispatcher() : running_(false), tick_interval_ms_(50), max_maps_per_thread_(10), accumulator_(0.f) {}
 
 MapTickDispatcher::~MapTickDispatcher() { Stop(); }
 
@@ -143,28 +144,41 @@ void MapTickDispatcher::WorkerThread(WorkerContext* context, uint32_t tick_inter
 
             if (context->assigned_maps.empty())
                 break;
-            
-            for (auto* map : context->assigned_maps)
+
+            const float limit_frame_time = Math::Min(delta.count(), .25f);
+            accumulator_ += limit_frame_time;
+
+            while (accumulator_ >= 1.f / 60.f)
             {
-                if (map)
+                for (auto* map : context->assigned_maps)
                 {
-                    // TODO : 실제 delta 계산 및 그에 따른 물리엔진
-                    map->Tick(delta.count());
+                    if (map) map->Tick(1.f / 60.f);
                 }
+                
+                accumulator_ -= 1.f / 60.f;
             }
+            
+            // for (auto* map : context->assigned_maps)
+            // {
+            //     if (map)
+            //     {
+            //         // TODO : 실제 delta 계산 및 그에 따른 물리엔진
+            //         map->Tick(delta.count());
+            //     }
+            // }
         }
 
         auto elapsed = duration_cast<milliseconds>(steady_clock::now() - start);
         context->last_tick_duration_ms.store(static_cast<uint32_t>(elapsed.count()), std::memory_order_relaxed);
 
         // 시간이 초과된경우 업무 분산
-        if (elapsed > interval)
-        {
-            SplitWorker(context);
-        }
-        
-        auto sleep_time = interval - elapsed;
-        if (sleep_time > milliseconds(0))
-            std::this_thread::sleep_for(sleep_time);
+        // if (elapsed > interval)
+        // {
+        //     SplitWorker(context);
+        // }
+        //
+        // auto sleep_time = interval - elapsed;
+        // if (sleep_time > milliseconds(0))
+        //     std::this_thread::sleep_for(sleep_time);
     }
 }
