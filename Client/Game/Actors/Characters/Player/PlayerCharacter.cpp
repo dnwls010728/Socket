@@ -3,9 +3,14 @@
 
 #include <CustomPacket.h>
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimationCondition.h"
+#include "Actor/Component/Animator/AnimationPack.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
@@ -23,6 +28,24 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     timer_(0)
 {
     SetLayer(ActorLayer::kCharacter);
+    
+    collider_->SetOffset({ 0.f, .5f });
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    if (animation_pack)
+    {
+        animator_->SetAnimationPack(animation_pack);
+        
+        animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            return animator->GetFloat(L"Speed") > .1f;
+        }));
+
+        animator_->AddTransition(L"Run", L"Idle", std::make_shared<Condition>([&](AnimatorComponent* animator)
+        {
+            return animator->GetFloat(L"Speed") < .1f;
+        }));
+    }
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -59,12 +82,7 @@ void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
-    if (sprite)
-    {
-        renderer_->SetSprite(sprite, L"Box_0");
-    }
-
+    animator_->PlayAnimation(L"Idle");
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
@@ -97,6 +115,13 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             
             last_movement_ = movement;
         }
+
+        if (movement_input_.Magnitude() > .1f)
+        {
+            renderer_->SetFlipX(movement_input_.x < 0.f);
+        }
+        
+        animator_->SetFloat(L"Speed", movement_input_.Magnitude());
     }
     else
     {
@@ -148,6 +173,12 @@ void PlayerCharacter::Tick(float delta_time)
             if (keyboard->GetKeyDown('2'))
             {
                 NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            if (keyboard->GetKeyDown('D'))
+            {
+                std::shared_ptr<ItemDrop> item = World::Get()->SpawnActor<ItemDrop>(ItemDrop::StaticClass(), L"Item");
+                item->GetTransform()->SetPosition(GetTransform()->GetPosition());
             }
         }
         else

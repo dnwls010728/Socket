@@ -4,10 +4,9 @@
 #include <iostream>
 #include "NetworkManager.h"
 #include "CustomPacket.h"
-#include "EngineSettings.h"
-#include "Actor/Component/TransformComponent.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
+#include "Map/MapObjects/Mob/Mob.h"
 #include "Session/SessionManager.h"
 
 ServerManager::ServerManager()
@@ -18,10 +17,6 @@ ServerManager::ServerManager()
     server_socket_.SetPacketReceivedCallback(std::bind(&ServerManager::OnPacketReceived, this, std::placeholders::_1, std::placeholders::_2));
 
     CommandHandlerInitialize();
-
-    EngineSettings::Get()->SetFixedTimeStep(0.05f);
-    EngineSettings::Get()->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter);
-    EngineSettings::Get()->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
 }
 
 void ServerManager::CommandHandlerInitialize()
@@ -46,67 +41,25 @@ void ServerManager::CommandHandlerInitialize()
         }
     };
 
-    command_handler_[L"/spawn"] = [&](auto& args)
+    command_handler_[L"/Spawn"] = [&](auto& args)
     {
-        if (args.size() < 3) {
-            std::wcout << L"Usage: /spawn <mapKey> <object type> [<x> <y>][\n";
-            return;
-        }
-
         Map* map = nullptr;
-        uint32_t key = 0;
-        try {
-            key = std::stoul(args[1]);
-            map = World::Get()->GetMap(key);
-            if (!map) {
-                std::wcout << L"Error: No map with key " << key << "\n";
-                return;
-            }
-        }
-        catch (...) {
-            std::wcout << L"Error: Invalid key '" << args[1] << "'\n";
-        }
-        std::string type_name = StringHelper::UTF16ToUTF8(args[2]);
-        auto type = rttr::type::get_by_name(type_name);
-        if ( type.is_valid() == false)
+        try
         {
-            std::wcout << L"Error: Invalid object type " << args[2] << "\n";
-            return;
+            map = World::Get()->GetMap(0);
         }
-
-        std::shared_ptr<Actor> object = map->SpawnActor<Actor>(type);
-        if (IsValid(object) == false)
+        catch (...)
         {
-            std::wcout << L"Error: Failed to spawn object\n";
-            return;
         }
 
-        float x = 0.0f;
-        float y = 0.0f;
-        if (args.size() >= 5){
-            try {
-                x = std::stof(args[3]);
-                y = std::stof(args[4]);
-
-                object->GetTransform()->SetPosition({x,y});
-            }
-            catch (...) {
-                std::wcout << L"Error: Invalid position '" << args[3] << " " << args[4] << "'\n";
-                return;
-            }
-        }
-
-        std::wcout << L"Spawned '" << args[2] << L"' on map " << key;
-        if (args.size() >= 5)
-            std::wcout << L" at (" << x << L"," << y << L")";
-        std::wcout << L"\n";
+        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
+        map->SpawnObject(mob);
     };
 
     command_handler_[L"/help"] = [&](auto&) {
         std::wcout << L"Available commands:\n";
         std::wcout << L"  /exit                   - Exit the server\n";
         std::wcout << L"  /disconnect <clientKey> - Disconnect a client by its key\n";
-        std::wcout << L"  /spawn <mapKey> <object type> [<x> <y>] - Spawn a object\n";
         std::wcout << L"  /help                   - Show this help\n";
     };
 }
@@ -127,7 +80,7 @@ bool ServerManager::Execute()
         return false;
     }
 
-    World::Get()->Start(50,10);
+    World::Get()->Start(200, 10);
     
     // 명령어 입력 루프
     std::wstring line;

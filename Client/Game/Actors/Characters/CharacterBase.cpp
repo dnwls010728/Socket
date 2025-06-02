@@ -6,6 +6,7 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Components/Controller2DComponent.h"
 #include "UI/ChatBalloon.h"
@@ -31,6 +32,7 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     renderer_->SetZOrder(std::numeric_limits<int32_t>::max());
 
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
 }

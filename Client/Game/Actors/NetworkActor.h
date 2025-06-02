@@ -19,14 +19,14 @@ public:
     
     virtual void ReceivePacket(Net::IPacket* packet);
 
-    FORCEINLINE void SetUniqueID(uint32_t id) { unique_id_ = id; }
-    FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
+    FORCEINLINE void SetObjectID(uint32_t object_id) { object_id_ = object_id; }
+    FORCEINLINE uint32_t GetObjectID() const { return object_id_; }
 
     FORCEINLINE bool IsMine() const { return is_mine_; }
     FORCEINLINE void SetMine(bool is_mine) { is_mine_ = is_mine; }
 
 private:
-    uint32_t unique_id_;
+    uint32_t object_id_;
 
     bool is_mine_;
     

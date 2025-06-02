@@ -29,7 +29,6 @@ public:
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& type, uint32_t unique_id, const std::wstring& name = L"");
-    std::shared_ptr<NetworkActor> SpawnNetworkActor(const std::wstring& type_name, uint32_t unique_id, const std::wstring& name = L"");
     
     void DestroyNetworkActor(uint32_t unique_id);
     void GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharacter>>& out_players);
@@ -63,7 +62,7 @@ std::shared_ptr<T> NetworkSubsystem::SpawnNetworkActor(const rttr::type& type, u
     if (IsValid(network_actor))
     {
         network_actors_.emplace(unique_id, network_actor);
-        network_actor->SetUniqueID(unique_id);
+        network_actor->SetObjectID(unique_id);
         return network_actor;
     }
 

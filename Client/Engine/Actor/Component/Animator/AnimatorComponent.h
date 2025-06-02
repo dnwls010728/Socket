@@ -13,7 +13,6 @@ DECLARE_DELEGATE(OnAnimationDelegate)
 
 using ParameterType = std::variant<bool, float, int32_t>;
 
-// TODO: 애니메이션 전환 구조를 변경함에 따라 테스트 필요
 class AnimatorComponent : public ActorComponent
 {
     SHADER_CLASS_HELPER(AnimatorComponent)
@@ -23,16 +22,21 @@ private:
     class StateNode
     {
     public:
-        StateNode(const std::wstring& kState);
+        StateNode(const std::wstring& name);
         ~StateNode() = default;
-
+        
         void AddTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
 
-        FORCEINLINE const std::wstring& GetState() const { return state_; }
+        FORCEINLINE const std::wstring& GetName() const { return name_; }
+        
+        FORCEINLINE void SetAnimation(const std::shared_ptr<Animation>& kAnimation) { animation_ = kAnimation; }
+        FORCEINLINE const std::shared_ptr<Animation>& GetAnimation() const { return animation_; }
+        
         FORCEINLINE const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
 
     private:
-        std::wstring state_;
+        std::wstring name_;
+        std::shared_ptr<Animation> animation_;
         std::unordered_set<std::shared_ptr<Transition>> transitions_;
     };
     
@@ -56,17 +60,16 @@ public:
     
     int32_t GetInt(const std::wstring& kName);
     
-    std::shared_ptr<StateNode> GetOrAddNode(const std::wstring& kState);
+    std::shared_ptr<StateNode> GetOrAddNode(const std::wstring& name);
 
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
-
-    FORCEINLINE Animation* GetCurrentAnimation() const { return current_animation_; }
-
+    
     FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
     OnAnimationDelegate OnEndHandler;
 
 protected:
+    virtual void InitializeComponent() override;
     virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
 
@@ -76,8 +79,6 @@ private:
     std::weak_ptr<class SpriteRendererComponent> renderer_weak_ptr_;
     
     AnimationPack* animation_pack_;
-
-    Animation* current_animation_;
 
     float timer_;
 

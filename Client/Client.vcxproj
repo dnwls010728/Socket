@@ -232,17 +232,17 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Characters\Monsters\MonsterBase.h" />
     <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
-    <ClInclude Include="Game\Actors\Characters\ServerObject.h" />
     <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
-    <ClInclude Include="Game\Actors\DropItem.h" />
+    <ClInclude Include="Game\Actors\ItemDrop.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Ladder.h" />
+    <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
+    <ClInclude Include="Game\Actors\ServerActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
     <ClInclude Include="Game\Blackboard\BlackboardEntry.h" />
@@ -610,17 +610,17 @@
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Monsters\MonsterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
-    <ClCompile Include="Game\Actors\Characters\ServerObject.cpp" />
     <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
-    <ClCompile Include="Game\Actors\DropItem.cpp" />
+    <ClCompile Include="Game\Actors\ItemDrop.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\Ladder.cpp" />
+    <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
+    <ClCompile Include="Game\Actors\ServerActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />
     <ClCompile Include="Game\Blackboard\BlackboardEntry.cpp" />
@@ -656,83 +656,7 @@
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />
-    <ClCompile Include="Game\Subsystems\Publisher\PublisherSubsystem.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <UseDynamicDebugging>false</UseDynamicDebugging>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\Client.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\Client.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Woojin Choi\RiderProjects\Socket\\Common\Game\Include;C:\Users\Woojin Choi\RiderProjects\Socket\\NetworkLib;C:\Users\Woojin Choi\RiderProjects\Socket\\Client\Game;C:\Users\Woojin Choi\RiderProjects\Socket\\Client\Engine;C:\Users\Woojin Choi\RiderProjects\Socket\\Client\Include;C:\Users\Woojin Choi\RiderProjects\Socket\\Common\Engine;</AdditionalIncludeDirectories>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
+    <ClCompile Include="Game\Subsystems\Publisher\PublisherSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
@@ -835,9 +759,6 @@
     <Content Include="Lib\libtmxlite-s.lib" />
     <Content Include="Lib\rttr_core.lib" />
     <Content Include="Lib\yaml-cpp.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Game\Actors\Characters\Player\Components\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

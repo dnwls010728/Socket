@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Actors/NetworkActor.h"
 
+class AnimatorComponent;
+
 namespace UI_OLD
 {
     class NameTag;
@@ -37,6 +39,7 @@ protected:
     std::shared_ptr<BoxColliderComponent> collider_;
     std::shared_ptr<Controller2DComponent> controller_;
     std::shared_ptr<SpriteRendererComponent> renderer_;
+    std::shared_ptr<AnimatorComponent> animator_;
     std::shared_ptr<StateMachineComponent> state_machine_;
 #pragma endregion
 

@@ -253,3 +253,8 @@ void Player::Update()
 {
     if (inventory_) inventory_->Update();
 }
+
+void Player::ExitMap()
+{
+    if (map_) map_->RemovePlayer(GetCharacterID());
+}

@@ -36,16 +36,6 @@ namespace Net
 		v.last_position_y
 		)
 
-	// ObjectInfo 직렬화/역직렬화 등록
-	SERIALIZER_EXTEND(ObjectInfo,
-		v.name,
-		v.type_name,
-		v.unique_id,
-		v.last_position_x,
-		v.last_position_y,
-		v.map_unique_id
-		)
-
 	SERIALIZER_EXTEND(ItemInfo,
 		v.item_id,
 		v.slot_index,
