@@ -50,8 +50,8 @@ void Map::AddPlayers()
         auto player = pending_player_weak.lock();
         if (!player) continue;
 
-        uint32_t unique_id = player->GetCharacterID();
-        players_.emplace(unique_id, pending_player_weak);
+        uint32_t object_id = player->GetCharacterID();
+        players_.emplace(object_id, pending_player_weak);
     
         player->SetMap(this);
         {
@@ -65,9 +65,9 @@ void Map::AddPlayers()
         }
 
         // 맵에 추가된 플레이어에게 다른 플레이어들을 스폰하도록 패킷을 전송
-        for (auto & [unique_key, other_player_weak] : players_)
+        for (const auto& player_weak : players_ | std::views::values)
         {
-            auto other_player = other_player_weak.lock();
+            auto other_player = player_weak.lock();
             if (other_player && other_player != player)
             {
                 SpawnPlayerPacket spawn_player_packet;
@@ -77,6 +77,18 @@ void Map::AddPlayers()
                 spawn_player_packet.position_y = other_player->GetPosition().y;
                 player->SendPacket(spawn_player_packet);
             }
+        }
+
+        // 맵에 추가된 플레이어에게 맵 오브젝트들을 스폰하도록 패킷을 전송
+        for (const auto& map_object : map_objects_ | std::views::values)
+        {
+            SpawnObjectPacket spawn_object_packet;
+            spawn_object_packet.object_info.type = ObjectType::kMob; // 예시로 Mob 타입으로 설정
+            spawn_object_packet.object_info.object_id = map_object->GetObjectID();
+            spawn_object_packet.object_info.position_x = map_object->GetPosition().x;
+            spawn_object_packet.object_info.position_y = map_object->GetPosition().y;
+            spawn_object_packet.object_info.info.mob = {}; // Mob 정보는 필요에 따라 설정
+            player->SendPacket(spawn_object_packet);
         }
     }
 }
