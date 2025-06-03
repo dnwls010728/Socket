@@ -12,6 +12,7 @@ protected:
     friend class Map;
     
     virtual void Tick(float delta_time) override;
+    virtual void PhysicsTick(float delta_time) override;
 
     void OnHit(int32_t damage);
 

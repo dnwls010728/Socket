@@ -205,6 +205,14 @@ void Map::Tick(float delta_time)
 
 }
 
+void Map::PhysicsTick(float delta_time)
+{
+    for (const auto& map_object : map_objects_ | std::views::values)
+    {
+        map_object->PhysicsTick(delta_time);
+    }
+}
+
 std::vector<std::weak_ptr<Player>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);

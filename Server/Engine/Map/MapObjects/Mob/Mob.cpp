@@ -22,18 +22,9 @@ Mob::Mob() :
     direction_ = Math::RandRange(-1, 1);
 }
 
-void Mob::Tick(float delta_time)
+void Mob::PhysicsTick(float delta_time)
 {
-    MapObject::Tick(delta_time);
-
-    state_machine_->Tick(delta_time);
-    
-    timer_ += delta_time;
-    if (timer_ >= 1.6f)
-    {
-        timer_ -= 1.6f;
-        direction_ = Math::RandRange(-1, 1);
-    }
+    MapObject::PhysicsTick(delta_time);
 
     velocity_.x = direction_ * 2.f;
     velocity_.y += gravity_ * delta_time;
@@ -51,7 +42,25 @@ void Mob::Tick(float delta_time)
             is_grounded_ = true;
         }
     }
+    
+    SetPosition(next_position);
+}
+#include <iostream>
+void Mob::Tick(float delta_time)
+{
+    MapObject::Tick(delta_time);
 
+    state_machine_->Tick(delta_time);
+    
+    timer_ += delta_time;
+    if (timer_ >= 1.6f)
+    {
+        timer_ -= 1.6f;
+        direction_ = Math::RandRange(-1, 1);
+    }
+
+    Math::Vector2 next_position = GetPosition();
+    
     if (next_position != last_position_)
     {
         last_position_ = next_position;

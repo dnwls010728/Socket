@@ -25,6 +25,7 @@ protected:
     friend class Map;
     
     inline virtual void Tick(float delta_time) {}
+    inline virtual void PhysicsTick(float delta_time){};
     
     uint32_t object_id_;
 
