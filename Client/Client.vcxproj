@@ -234,7 +234,9 @@
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
-    <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerIdleState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\ItemDrop.h" />
@@ -612,7 +614,9 @@
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
-    <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerIdleState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\ItemDrop.cpp" />

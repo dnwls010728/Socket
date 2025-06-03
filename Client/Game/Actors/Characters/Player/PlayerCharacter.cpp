@@ -8,16 +8,16 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
-#include "Actor/Component/Animator/AnimationCondition.h"
-#include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
+#include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
-#include "Asset/AssetManager.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
+#include "State/PlayerIdleState.h"
+#include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
@@ -33,22 +33,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     SetLayer(ActorLayer::kCharacter);
     
     collider_->SetOffset({ 0.f, .5f });
-
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
-    if (animation_pack)
-    {
-        animator_->SetAnimationPack(animation_pack);
-        
-        animator_->AddTransition(L"Idle", L"Run", std::make_shared<Condition>([&](AnimatorComponent* animator)
-        {
-            return animator->GetFloat(L"Speed") > .1f;
-        }));
-
-        animator_->AddTransition(L"Run", L"Idle", std::make_shared<Condition>([&](AnimatorComponent* animator)
-        {
-            return animator->GetFloat(L"Speed") < .1f;
-        }));
-    }
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -84,6 +68,9 @@ void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& p
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
+
+    state_machine_->AddState(std::make_shared<PlayerIdleState>(GetSharedThis()));
+    state_machine_->AddState(std::make_shared<PlayerWalkState>(GetSharedThis()));
 
     animator_->PlayAnimation(L"Idle");
 }
@@ -123,8 +110,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         {
             renderer_->SetFlipX(movement_input_.x < 0.f);
         }
-        
-        animator_->SetFloat(L"Speed", movement_input_.Magnitude());
     }
     else
     {

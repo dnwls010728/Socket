@@ -29,6 +29,11 @@ void StateMachineComponent::AddAnyTransition(const std::shared_ptr<FSM::IState>&
     if (state_machine_) state_machine_->AddAnyTransition(kTo, std::make_shared<FSM::Condition>(func));
 }
 
+void StateMachineComponent::AddState(const std::shared_ptr<FSM::IState>& kState) const
+{
+    if (state_machine_) state_machine_->GetOrAddNode(kState);
+}
+
 void StateMachineComponent::InitializeComponent()
 {
     ActorComponent::InitializeComponent();

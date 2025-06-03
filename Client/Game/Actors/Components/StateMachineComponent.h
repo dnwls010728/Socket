@@ -35,6 +35,7 @@ public:
     void AddAnyTransition(const std::shared_ptr<FSM::IState>& kTo, M* target, bool(M::*func)(void) const);
 
     void AddAnyTransition(const std::shared_ptr<FSM::IState>& kTo, bool(*func)(void));
+    void AddState(const std::shared_ptr<FSM::IState>& kState) const;
 
 protected:
     virtual void InitializeComponent() override;
