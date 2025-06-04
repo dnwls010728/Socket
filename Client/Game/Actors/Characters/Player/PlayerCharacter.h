@@ -15,8 +15,8 @@ public:
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
     void InitSpawn(const std::wstring& name, const Math::Vector2& position);
-
-    FORCEINLINE Math::Vector2& GetVelocity() { return velocity_; }
+    
+    FORCEINLINE const Math::Vector2& GetMovementInput() const { return movement_input_; }
 
 protected:
     virtual void BeginPlay() override;

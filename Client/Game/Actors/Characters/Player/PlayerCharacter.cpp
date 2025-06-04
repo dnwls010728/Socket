@@ -70,22 +70,16 @@ void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
-    std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
-    std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
-
-    state_machine_->AddTransition(idle_state, walk_state, [&]()
+    if (IsMine())
     {
-        return movement_input_.Magnitude() > .1f;
-    });
+        std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
+        std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
 
-    state_machine_->AddTransition(walk_state, idle_state, [&]()
-    {
-        return movement_input_.Magnitude() < .1f;
-    });
+        state_machine_->AddTransition(idle_state, walk_state, [&]() { return movement_input_.Magnitude() > .1f; });
+        state_machine_->AddTransition(walk_state, idle_state, [&]() { return movement_input_.Magnitude() < .1f; });
 
-    state_machine_->SetState(idle_state);
-
-    animator_->PlayAnimation(L"Idle");
+        state_machine_->SetState(idle_state);
+    }
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
@@ -102,7 +96,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             is_jump_ = false;
         }
         
-        velocity_.x = movement_input_.x * 5.f;
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, movement_input_);
         

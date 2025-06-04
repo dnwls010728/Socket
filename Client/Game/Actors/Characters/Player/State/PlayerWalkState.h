@@ -8,5 +8,7 @@ public:
     virtual ~PlayerWalkState() override = default;
 
     virtual void Enter() override;
+    virtual void PhysicsTick(float delta_time) override;
+    virtual void Exit() override;
     
 };
