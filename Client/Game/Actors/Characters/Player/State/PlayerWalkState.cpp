@@ -5,3 +5,10 @@ PlayerWalkState::PlayerWalkState(const std::shared_ptr<PlayerCharacter>& player_
     PlayerState(player_character)
 {
 }
+
+void PlayerWalkState::Enter()
+{
+    PlayerState::Enter();
+
+    Logger::Print(L"PlayerWalkState::Enter");
+}

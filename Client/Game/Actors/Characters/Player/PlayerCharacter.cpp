@@ -13,6 +13,7 @@
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
+#include "FSM/Condition.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
@@ -69,8 +70,20 @@ void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
-    state_machine_->AddState(std::make_shared<PlayerIdleState>(GetSharedThis()));
-    state_machine_->AddState(std::make_shared<PlayerWalkState>(GetSharedThis()));
+    std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
+    std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
+
+    state_machine_->AddTransition(idle_state, walk_state, [&]()
+    {
+        return movement_input_.Magnitude() > .1f;
+    });
+
+    state_machine_->AddTransition(walk_state, idle_state, [&]()
+    {
+        return movement_input_.Magnitude() < .1f;
+    });
+
+    state_machine_->SetState(idle_state);
 
     animator_->PlayAnimation(L"Idle");
 }
