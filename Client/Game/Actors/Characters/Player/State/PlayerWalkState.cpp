@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerWalkState.h"
 
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 
 PlayerWalkState::PlayerWalkState(const std::shared_ptr<PlayerCharacter>& player_character) :
@@ -12,7 +13,8 @@ void PlayerWalkState::Enter()
 {
     PlayerState::Enter();
 
-    Logger::Print(L"PlayerWalkState::Enter");
+    std::shared_ptr<AnimatorComponent> animator = player_character_->GetAnimator();
+    if (animator) animator->PlayAnimation(L"Walk");
 }
 
 void PlayerWalkState::PhysicsTick(float delta_time)

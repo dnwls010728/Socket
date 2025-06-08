@@ -8,15 +8,18 @@
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
+#include "Asset/AssetManager.h"
 #include "FSM/Condition.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
+#include "State/PlayerFallState.h"
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
@@ -28,12 +31,14 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     movement_input_(Math::Vector2::Zero()),
     last_movement_(),
     movements_(),
-    is_jump_(false),
     timer_(0)
 {
     SetLayer(ActorLayer::kCharacter);
     
     collider_->SetOffset({ 0.f, .5f });
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    if (animation_pack) animator_->SetAnimationPack(animation_pack);
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -74,10 +79,16 @@ void PlayerCharacter::BeginPlay()
     {
         std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
         std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
+        std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis());
 
-        state_machine_->AddTransition(idle_state, walk_state, [&]() { return movement_input_.Magnitude() > .1f; });
-        state_machine_->AddTransition(walk_state, idle_state, [&]() { return movement_input_.Magnitude() < .1f; });
-
+        state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(idle_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
+        
+        state_machine_->AddTransition(walk_state, idle_state, [&]() { return Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(walk_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
+        
+        state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
+        
         state_machine_->SetState(idle_state);
     }
 }
@@ -89,12 +100,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-
-        if (is_jump_ && collisions.is_below)
-        {
-            velocity_.y = 10.f;
-            is_jump_ = false;
-        }
         
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, movement_input_);
@@ -110,11 +115,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             SendPacket(move_player_packet);
             
             last_movement_ = movement;
-        }
-
-        if (movement_input_.Magnitude() > .1f)
-        {
-            renderer_->SetFlipX(movement_input_.x < 0.f);
         }
     }
     else
@@ -153,11 +153,6 @@ void PlayerCharacter::Tick(float delta_time)
         {
             movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
             movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
-
-            if (keyboard->GetKeyDown(VK_SPACE))
-            {
-                is_jump_ = true;
-            }
 
             if (keyboard->GetKeyDown('1'))
             {

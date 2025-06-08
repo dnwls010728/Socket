@@ -28,8 +28,6 @@ protected:
     Movement last_movement_;
     std::queue<Movement> movements_;
 
-    bool is_jump_;
-
     int32_t timer_;
     
 };
