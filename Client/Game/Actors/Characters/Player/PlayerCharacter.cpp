@@ -23,15 +23,14 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/SessionSubsystem.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     movement_input_(Math::Vector2::Zero()),
-    last_movement_(),
-    movements_(),
-    timer_(0)
+    last_movement_()
 {
     SetLayer(ActorLayer::kCharacter);
     
@@ -50,9 +49,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MovePlayerPacket::StaticPacketID:
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
-            movements_.push(move_player_packet->movement);
-
-            if (timer_ == 0) timer_ = 50;
+            Snapshot snapshot;
+            snapshot.position = {move_player_packet->movement.x,  move_player_packet->movement.y};
+            snapshot.server_time =  move_player_packet->server_time;
+            snapshots_.push_back(snapshot);
         }
         break;
         
@@ -112,6 +112,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         {
             MovePlayerPacket move_player_packet;
             move_player_packet.movement = movement;
+            move_player_packet.server_time = 2;
             SendPacket(move_player_packet);
             
             last_movement_ = movement;
@@ -119,22 +120,30 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     }
     else
     {
-        // 50 프레임 딜레이
-        if (timer_ > 1) timer_--;
-        else if (timer_ == 1)
+        float server_now = SessionSubsystem::Get()->GetServerTime();
+
+        float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
+        
+        while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
         {
-            if (!movements_.empty())
-            {
-                last_movement_ = movements_.front();
-                movements_.pop();
-            }
-            else timer_ = 0;
+            snapshots_.pop_front();
         }
         
-        Math::Vector2 position = transform->GetPosition();
-        float x_speed = last_movement_.x - position.x;
-        float y_speed = last_movement_.y - position.y;
-        transform->Translate({x_speed, y_speed});
+        if (snapshots_.size() >= 2)
+        {
+            const Snapshot& from = snapshots_[0];
+            const Snapshot& to = snapshots_[1];
+
+            float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
+
+            Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
+            GetTransform()->SetPosition(position);
+            /*
+            float x_speed = last_movement_.x - position.x;
+            float y_speed = last_movement_.y - position.y;
+            transform->Translate({x_speed, y_speed});
+            */
+        }
     }
     
     CharacterBase::PhysicsTick(delta_time);

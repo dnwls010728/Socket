@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <CommonObject.h>
+#include <deque>
 
 #include "Actors/Characters/CharacterBase.h"
 
@@ -7,7 +8,14 @@ class PlayerCharacter : public CharacterBase
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
     GENERATED_BODY(PlayerCharacter, CharacterBase)
-    
+
+    struct Snapshot
+    {
+        Math::Vector2 position;
+        Math::Vector2 velocity;
+        
+        float server_time;
+    };
 public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
@@ -26,7 +34,7 @@ protected:
     Math::Vector2 movement_input_;
 
     Movement last_movement_;
-    std::queue<Movement> movements_;
+    std::deque<Snapshot> snapshots_;
 
     int32_t timer_;
     

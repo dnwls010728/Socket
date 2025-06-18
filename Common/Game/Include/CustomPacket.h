@@ -146,8 +146,9 @@ struct MovePlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
     Movement movement;
+    float server_time;
     
-    SERIALIZABLE_FIELDS(unique_id, movement)
+    SERIALIZABLE_FIELDS(unique_id, movement, server_time)
     REGISTER_PACKET(MovePlayerPacket, 213)
 };
 

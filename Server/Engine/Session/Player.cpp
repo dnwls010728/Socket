@@ -5,6 +5,7 @@
 #include <ranges>
 
 #include "IPacket.h"
+#include "NetDef.h"
 #include "Session.h"
 #include "../Helper/StringHelper.h"
 #include "../Map/World.h"
@@ -194,6 +195,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 move_player_broadcast_packet.unique_id = character_id_;
                 move_player_broadcast_packet.movement.x = position_x;
                 move_player_broadcast_packet.movement.y = position_y;
+                move_player_broadcast_packet.server_time = Net::GetClientTime();
                 map_->SendPacket(move_player_broadcast_packet, shared_from_this());
             }
         }
