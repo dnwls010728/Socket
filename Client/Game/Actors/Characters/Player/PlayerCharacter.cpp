@@ -30,7 +30,8 @@
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     movement_input_(Math::Vector2::Zero()),
-    last_movement_()
+    last_movement_(),
+    movement_sync_accumulator_(0.f)
 {
     SetLayer(ActorLayer::kCharacter);
     
@@ -107,15 +108,21 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
         
         Math::Vector2 position = transform->GetPosition();
-        Movement movement = {position.x, position.y};
-        if (!Math::IsEqual(last_movement_.x, movement.x) || !Math::IsEqual(last_movement_.y, movement.y))
+
+        movement_sync_accumulator_ += delta_time;
+        if (movement_sync_accumulator_ >= 0.1f)
         {
-            MovePlayerPacket move_player_packet;
-            move_player_packet.movement = movement;
-            move_player_packet.server_time = 2;
-            SendPacket(move_player_packet);
+            Movement movement = {position.x, position.y};
+            if (!Math::IsEqual(last_movement_.x, movement.x) || !Math::IsEqual(last_movement_.y, movement.y))
+            {
+                MovePlayerPacket move_player_packet;
+                move_player_packet.movement = movement;
+                move_player_packet.server_time = 2;
+                SendPacket(move_player_packet);
             
-            last_movement_ = movement;
+                last_movement_ = movement;
+                movement_sync_accumulator_ = 0.f;
+            }
         }
     }
     else
@@ -126,7 +133,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         
         while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
         {
-            snapshots_.pop_front();
+            snapshots_.pop_front(); 
         }
         
         if (snapshots_.size() >= 2)

@@ -35,6 +35,7 @@ protected:
 
     Movement last_movement_;
     std::deque<Snapshot> snapshots_;
+    float movement_sync_accumulator_;
 
     int32_t timer_;
     
