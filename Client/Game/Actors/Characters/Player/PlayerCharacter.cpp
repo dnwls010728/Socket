@@ -92,6 +92,10 @@ void PlayerCharacter::BeginPlay()
         
         state_machine_->SetState(idle_state);
     }
+    else
+    {
+        animator_->PlayAnimation(L"Idle");
+    }
 }
 
 void PlayerCharacter::PhysicsTick(float delta_time)
