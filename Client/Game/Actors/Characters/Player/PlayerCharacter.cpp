@@ -121,7 +121,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             {
                 MovePlayerPacket move_player_packet;
                 move_player_packet.movement = movement;
-                move_player_packet.server_time = 2;
+                move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
                 SendPacket(move_player_packet);
             
                 last_movement_ = movement;

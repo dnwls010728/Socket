@@ -91,4 +91,4 @@ namespace Net::UDP {
         SOCKET internal_socket_;
         NetAddress net_address_;
     };
-}   // namespace Net
+}   // namespace Net::UDP

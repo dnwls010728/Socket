@@ -233,14 +233,16 @@ namespace Net::TCP {
             BOOL result = GetQueuedCompletionStatus(iocp_handle_, &bytes_transferred, &completion_key, (LPOVERLAPPED*)&p_context, INFINITE);
             if (!result)
             {
-
-
-                
                 continue;
             }
 
             if (bytes_transferred == 0 || p_context == nullptr)
             {
+                if (p_context != nullptr)
+                {
+                    delete p_context->wsabuf.buf;
+                    delete p_context;
+                }
                 if (completion_key != NULL)
                 {
                     std::cout << "Client disconnected, socket: " << completion_key << std::endl;
