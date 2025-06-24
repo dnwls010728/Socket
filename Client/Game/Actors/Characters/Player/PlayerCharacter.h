@@ -19,6 +19,8 @@ class PlayerCharacter : public CharacterBase
         std::wstring animation;
         
         float server_time;
+
+        bool time_update;
     };
 public:
     PlayerCharacter(const std::wstring& kName);
@@ -39,6 +41,7 @@ protected:
     Math::Vector2 movement_input_;
 
     Math::Vector2 last_position_;
+    bool prev_is_moving;
     std::deque<Snapshot> snapshots_;
     float movement_sync_accumulator_;
 

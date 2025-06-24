@@ -360,6 +360,7 @@ void Map::Respawn()
     {
         std::shared_ptr<Mob> mob = std::make_shared<Mob>();
         mob->SetPosition(spawn_point);
+        mob->SetLastPostion(spawn_point);
         SpawnObject(mob);
     }
 }

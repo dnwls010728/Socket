@@ -8,6 +8,7 @@
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Math/Math.h"
 #include "Subsystems/SessionSubsystem.h"
 
 ServerActor::ServerActor(const std::wstring& name) :
@@ -24,15 +25,22 @@ ServerActor::ServerActor(const std::wstring& name) :
 
 void ServerActor::PhysicsTick(float delta_time)
 {
-    NetworkActor::PhysicsTick(delta_time);
-
     float server_now = SessionSubsystem::Get()->GetServerTime();
-
     float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
 
     while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
     {
         snapshots_.pop_front();
+    }
+    
+    if (snapshots_.size() >= 2 && snapshots_[1].time_update)
+    {
+        snapshots_.pop_front();
+    }
+
+    if (snapshots_.size() >= 2 && snapshots_[0].time_update)
+    {
+        snapshots_[0].server_time = snapshots_[1].server_time - EngineSettings::Get()->GetInterpolationDelay();
     }
 
     if (snapshots_.size() >= 2)
@@ -42,15 +50,30 @@ void ServerActor::PhysicsTick(float delta_time)
 
         float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
         
+        t = Math::Clamp(t, 0.f, 1.f);
+
         bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
         std::wstring animation = t < .5f ? from.animation : to.animation;
-
+        
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
-        
+
         renderer_->SetFlipX(is_flipped);
         animator_->PlayAnimation(animation);
+        
     }
+    /*
+     *    else if (snapshots_.size() == 1) {
+        const Snapshot& s = snapshots_[0];
+        float delta = interpolation_time - s.server_time;
+        // delta 클램프 대신, 움직임 강도에 따라 늘리거나 줄인다
+        float maxDelta = std::max(0.1f, std::min(delta, 0.5f));
+        Math::Vector2 pos = s.position + s.velocity * maxDelta;
+        // 애니메이션·플립도 바로 적용
+        GetTransform()->SetPosition(pos);
+        renderer_->SetFlipX(s.is_flipped);
+        animator_->PlayAnimation(s.animation);
+    }*/
 }
 
 void ServerActor::ReceivePacket(Net::IPacket* packet)
@@ -71,6 +94,7 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
             snapshot.is_flipped = object_position_packet->is_flipped;
             snapshot.animation = object_position_packet->animation;
             snapshot.server_time = object_position_packet->server_time;
+            snapshot.time_update =  object_position_packet->time_update;
             snapshots_.push_back(snapshot);
         }
         break;

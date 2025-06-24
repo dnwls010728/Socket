@@ -200,6 +200,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 move_player_broadcast_packet.is_flipped = move_player_packet->is_flipped;
                 move_player_broadcast_packet.animation = move_player_packet->animation;
                 move_player_broadcast_packet.server_time = Net::GetClientTime();
+                move_player_broadcast_packet.time_update = move_player_packet->time_update;
                 map_->SendPacket(move_player_broadcast_packet, shared_from_this());
             }
         }

@@ -18,7 +18,8 @@ Mob::Mob() :
     foothold_(nullptr),
     hp_(3000),
     is_flipped_(false),
-    animation_(L"Idle")
+    animation_(L"Idle"),
+    prev_is_moving_(false)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     direction_ = Math::RandRange(-1, 1);
@@ -74,8 +75,21 @@ void Mob::Tick(float delta_time)
     
     if (next_position != last_position_)
     {
-        last_position_ = next_position;
-        
+        if (prev_is_moving_ == false)
+        {
+            ObjectPositionPacket dummy_packet;
+            dummy_packet.object_id = GetObjectID();
+            dummy_packet.position_x = last_position_.x;
+            dummy_packet.position_y = last_position_.y;
+            dummy_packet.velocity_x = velocity_.x;
+            dummy_packet.velocity_y = velocity_.y;
+            dummy_packet.is_flipped = is_flipped_;
+            dummy_packet.animation = animation_;
+            dummy_packet.server_time = Net::GetClientTime();
+            dummy_packet.time_update = true;
+            map_->SendPacket(dummy_packet);
+        }
+
         ObjectPositionPacket packet;
         packet.object_id = GetObjectID();
         packet.position_x = next_position.x;
@@ -85,7 +99,30 @@ void Mob::Tick(float delta_time)
         packet.is_flipped = is_flipped_;
         packet.animation = animation_;
         packet.server_time = Net::GetClientTime();
+        packet.time_update = false;
         map_->SendPacket(packet);
+
+        prev_is_moving_ = true;
+        last_position_ = next_position;
+    }
+    else
+    {
+        if (prev_is_moving_)
+        {
+            Math::Vector2 stop_position = GetPosition();
+            ObjectPositionPacket stop_packet;
+            stop_packet.object_id = GetObjectID();
+            stop_packet.position_x = stop_position.x;
+            stop_packet.position_y = stop_position.y;
+            stop_packet.velocity_x = velocity_.x;
+            stop_packet.velocity_y = velocity_.y;
+            stop_packet.is_flipped = is_flipped_;
+            stop_packet.animation = animation_;
+            stop_packet.server_time = Net::GetClientTime();
+            stop_packet.time_update = false;
+            map_->SendPacket(stop_packet);
+        }
+        prev_is_moving_ = false;
     }
     
     SetPosition(next_position);

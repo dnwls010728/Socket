@@ -17,6 +17,8 @@ public:
         std::wstring animation;
         
         float server_time;
+
+        bool time_update;
     };
     
     ServerActor(const std::wstring& name);

@@ -8,6 +8,7 @@ public:
     Mob();
     virtual ~Mob() override = default;
 
+    inline void SetLastPostion(Math::Vector2 last_position){last_position_ =  last_position; }
 protected:
     friend class Map;
     
@@ -27,6 +28,7 @@ protected:
     int32_t direction_;
 
     bool is_grounded_;
+    bool prev_is_moving_;
 
     class Foothold* foothold_;
 
