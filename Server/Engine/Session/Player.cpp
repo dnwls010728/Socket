@@ -186,15 +186,19 @@ void Player::ReceivePacket(Net::IPacket* packet)
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
             if (map_)
             {
-                float position_x = move_player_packet->movement.x;
-                float position_y = move_player_packet->movement.y;
+                float position_x = move_player_packet->position_x;
+                float position_y = move_player_packet->position_y;
                 
                 SetPosition({position_x, position_y});
                 
                 MovePlayerPacket move_player_broadcast_packet;
                 move_player_broadcast_packet.unique_id = character_id_;
-                move_player_broadcast_packet.movement.x = position_x;
-                move_player_broadcast_packet.movement.y = position_y;
+                move_player_broadcast_packet.position_x = position_x;
+                move_player_broadcast_packet.position_y = position_y;
+                move_player_broadcast_packet.velocity_x = move_player_packet->velocity_x;
+                move_player_broadcast_packet.velocity_y = move_player_packet->velocity_y;
+                move_player_broadcast_packet.is_flipped = move_player_packet->is_flipped;
+                move_player_broadcast_packet.animation = move_player_packet->animation;
                 move_player_broadcast_packet.server_time = Net::GetClientTime();
                 map_->SendPacket(move_player_broadcast_packet, shared_from_this());
             }

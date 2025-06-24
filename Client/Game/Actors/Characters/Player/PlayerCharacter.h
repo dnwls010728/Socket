@@ -13,6 +13,8 @@ class PlayerCharacter : public CharacterBase
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
+        bool is_flipped;
+        std::wstring animation;
         
         float server_time;
     };
@@ -30,10 +32,11 @@ protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
+    virtual void PostTick(float delta_time) override;
 
     Math::Vector2 movement_input_;
 
-    Movement last_movement_;
+    Math::Vector2 last_position_;
     std::deque<Snapshot> snapshots_;
     float movement_sync_accumulator_;
 

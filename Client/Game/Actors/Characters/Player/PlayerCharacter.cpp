@@ -30,7 +30,7 @@
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     movement_input_(Math::Vector2::Zero()),
-    last_movement_(),
+    last_position_(Math::Vector2::Zero()),
     movement_sync_accumulator_(0.f)
 {
     SetLayer(ActorLayer::kCharacter);
@@ -51,7 +51,12 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
             Snapshot snapshot;
-            snapshot.position = {move_player_packet->movement.x,  move_player_packet->movement.y};
+            snapshot.position.x = move_player_packet->position_x;
+            snapshot.position.y = move_player_packet->position_y;
+            snapshot.velocity.x = move_player_packet->velocity_x;
+            snapshot.velocity.y = move_player_packet->velocity_y;
+            snapshot.is_flipped = move_player_packet->is_flipped;
+            snapshot.animation = move_player_packet->animation;
             snapshot.server_time =  move_player_packet->server_time;
             snapshots_.push_back(snapshot);
         }
@@ -65,9 +70,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
 {
     character_name_ = name;
-    
-    last_movement_.x = position.x;
-    last_movement_.y = position.y;
+
+    last_position_ = position;
     
     GetTransform()->SetPosition(position);
 }
@@ -116,15 +120,19 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         movement_sync_accumulator_ += delta_time;
         if (movement_sync_accumulator_ >= 0.1f)
         {
-            Movement movement = {position.x, position.y};
-            if (!Math::IsEqual(last_movement_.x, movement.x) || !Math::IsEqual(last_movement_.y, movement.y))
+            if (position != last_position_)
             {
                 MovePlayerPacket move_player_packet;
-                move_player_packet.movement = movement;
+                move_player_packet.position_x = position.x;
+                move_player_packet.position_y = position.y;
+                move_player_packet.velocity_x = velocity_.x;
+                move_player_packet.velocity_y = velocity_.y;
+                move_player_packet.is_flipped = renderer_->IsFlipX();
+                move_player_packet.animation = animator_->GetCurrentState()->GetName();
                 move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
                 SendPacket(move_player_packet);
             
-                last_movement_ = movement;
+                last_position_ = position;
                 movement_sync_accumulator_ = 0.f;
             }
         }
@@ -147,8 +155,15 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 
             float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
 
+            bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
+            std::wstring animation = t < .5f ? from.animation : to.animation;
+
             Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
             GetTransform()->SetPosition(position);
+
+            renderer_->SetFlipX(is_flipped);
+            animator_->PlayAnimation(animation);
+            
             /*
             float x_speed = last_movement_.x - position.x;
             float y_speed = last_movement_.y - position.y;
@@ -219,6 +234,16 @@ void PlayerCharacter::Tick(float delta_time)
     }
     else
     {
+    }
+}
+
+void PlayerCharacter::PostTick(float delta_time)
+{
+    CharacterBase::PostTick(delta_time);
+
+    if (movement_input_.x != 0.f)
+    {
+        renderer_->SetFlipX(movement_input_.x < 0.f);
     }
 }
 
