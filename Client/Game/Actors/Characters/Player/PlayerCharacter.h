@@ -13,7 +13,9 @@ class PlayerCharacter : public CharacterBase
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
+        
         bool is_flipped;
+        
         std::wstring animation;
         
         float server_time;

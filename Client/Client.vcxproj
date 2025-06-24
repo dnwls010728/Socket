@@ -280,6 +280,7 @@
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
+    <ClInclude Include="Game\Subsystems\ObjectPoolSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
     <ClInclude Include="Game\Subsystems\Publisher\EventData.h" />
     <ClInclude Include="Game\Subsystems\Publisher\ISubscriber.h" />
@@ -659,6 +660,7 @@
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\ObjectPoolSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />

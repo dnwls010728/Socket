@@ -1,27 +1,26 @@
 ﻿#include "pch.h"
 #include "MobBase.h"
 
-#include "Actor/Component/BoxColliderComponent.h"
-#include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "Windows/DX/Sprite.h"
 
 MobBase::MobBase(const std::wstring& name) :
     ServerActor(name)
 {
     SetLayer(ActorLayer::kMob);
-    
-    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
-    
-    renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
-    renderer_->SetZOrder(10000);
-    
-    animator_ = AddComponent<AnimatorComponent>(L"Animator");
 
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Default\\Box.png");
-    if (sprite) renderer_->SetSprite(sprite, L"Box_0");
+    // 임시
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Mobs\\MushroomSheet.png.animpack");
+    if (animation_pack) animator_->SetAnimationPack(animation_pack);
     
+}
+
+void MobBase::BeginPlay()
+{
+    ServerActor::BeginPlay();
+
+    animator_->PlayAnimation(L"Idle");
 }
 
 RTTR_REGISTRATION

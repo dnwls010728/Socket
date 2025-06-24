@@ -1,0 +1,25 @@
+target: Sprites\Mobs\MushroomSheet.png
+animations:
+  - name: Idle
+    frame_rate: 8
+    loop: true
+    frames:
+      - MushroomSheet_49
+      - MushroomSheet_48
+      - MushroomSheet_47
+      - MushroomSheet_46
+      - MushroomSheet_45
+      - MushroomSheet_44
+      - MushroomSheet_43
+  - name: Walk
+    frame_rate: 8
+    loop: true
+    frames:
+      - MushroomSheet_59
+      - MushroomSheet_58
+      - MushroomSheet_57
+      - MushroomSheet_56
+      - MushroomSheet_55
+      - MushroomSheet_54
+      - MushroomSheet_53
+      - MushroomSheet_52

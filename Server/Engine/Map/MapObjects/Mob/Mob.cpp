@@ -16,7 +16,9 @@ Mob::Mob() :
     direction_(0),
     is_grounded_(false),
     foothold_(nullptr),
-    hp_(3000)
+    hp_(3000),
+    is_flipped_(false),
+    animation_(L"Idle")
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     direction_ = Math::RandRange(-1, 1);
@@ -42,6 +44,15 @@ void Mob::PhysicsTick(float delta_time)
             is_grounded_ = true;
         }
     }
+
+    // 테스트
+    if (direction_ > 0)
+        is_flipped_ = false;
+    else if (direction_ < 0)
+        is_flipped_ = true;
+
+    if (!Math::IsEqual(velocity_.x, 0.f)) animation_ = L"Walk";
+    else animation_ = L"Idle";
     
     SetPosition(next_position);
 }
@@ -71,6 +82,8 @@ void Mob::Tick(float delta_time)
         packet.position_y = next_position.y;
         packet.velocity_x = velocity_.x;
         packet.velocity_y = velocity_.y;
+        packet.is_flipped = is_flipped_;
+        packet.animation = animation_;
         packet.server_time = Net::GetClientTime();
         map_->SendPacket(packet);
     }

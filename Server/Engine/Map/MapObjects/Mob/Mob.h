@@ -31,5 +31,9 @@ protected:
     class Foothold* foothold_;
 
     std::atomic_int32_t hp_;
+
+    // 임시
+    bool is_flipped_;
+    std::wstring animation_;
     
 };
