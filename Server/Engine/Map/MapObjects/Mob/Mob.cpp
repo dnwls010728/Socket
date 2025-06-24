@@ -31,7 +31,7 @@ void Mob::PhysicsTick(float delta_time)
     Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
 
     is_grounded_ = false;
-    foothold_ = map_->FindFoothold({ next_position.x, GetPosition().y + 1.f }); // 경사면 체크를 위해 y 좌표를 1만큼 올림
+    foothold_ = map_->FindFoothold({ next_position.x, GetPosition().y + .1f }); // 경사면 체크를 위해 y 좌표를 0.1만큼 올림
     if (foothold_)
     {
         float foothold_y = foothold_->GetYAt(next_position.x);
