@@ -45,7 +45,7 @@ void Mob::PhysicsTick(float delta_time)
     
     SetPosition(next_position);
 }
-#include <iostream>
+
 void Mob::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);

@@ -22,7 +22,10 @@ Map::Map(uint32_t map_id) :
     pending_remove_players_(),
     pending_objects_(),
     pending_remove_objects_(),
-    footholds_()
+    footholds_(),
+    mob_ids(),
+    respawn_timer_(0.f),
+    monitor_timer_(0.f)
 {
 }
 
@@ -142,14 +145,7 @@ void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
 void Map::DestroyObject(uint32_t object_id)
 {
     std::lock_guard<std::mutex> lock(object_mutex_);
-    auto it = map_objects_.find(object_id);
-    if (it == map_objects_.end()) return;
-
-    DestroyObjectPacket destroy_object_packet;
-    destroy_object_packet.object_id = object_id;
-    SendPacket(destroy_object_packet);
-
-    RemoveObject(object_id);
+    DestroyObject_Internal(object_id);
 }
 
 void Map::SendPacket(const Net::IPacket& packet)
@@ -201,6 +197,27 @@ void Map::Tick(float delta_time)
     for (const auto& map_object : map_objects_ | std::views::values)
     {
         map_object->Tick(delta_time);
+    }
+
+    respawn_timer_ += delta_time;
+    if (respawn_timer_ >= 10.f)
+    {
+        Respawn();
+        respawn_timer_ -= 10.f;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        if (players_.empty())
+        {
+            monitor_timer_ += delta_time;
+            if (monitor_timer_ >= 5.f)
+            {
+                KillAllMobs();
+                monitor_timer_ -= 5.f;
+            }
+        }
+        else monitor_timer_ = 0.f;
     }
 
 }
@@ -268,6 +285,20 @@ bool Map::LoadMapData()
                     }
                 }
             }
+            
+            if (layer->getName() == "SpawnPoint")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() != tmx::Object::Shape::Point) continue;
+                    Math::Vector2 spawn_point = {
+                        object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                        -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                    };
+                    spawn_points_.emplace_back(spawn_point);
+                }
+            }
         }
     }
 
@@ -316,4 +347,43 @@ void Map::RemoveObjects()
 
         map_objects_.erase(object_id);
     }
+}
+
+void Map::Respawn()
+{
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        if (players_.empty()) return;
+    }
+
+    for (const auto& spawn_point : spawn_points_)
+    {
+        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
+        mob->SetPosition(spawn_point);
+        SpawnObject(mob);
+    }
+}
+
+void Map::KillAllMobs()
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    for (const auto& map_object : map_objects_ | std::views::values)
+    {
+        if (const auto& mob = std::dynamic_pointer_cast<Mob>(map_object))
+        {
+            DestroyObject_Internal(mob->GetObjectID());
+        }
+    }
+}
+
+void Map::DestroyObject_Internal(uint32_t object_id)
+{
+    auto it = map_objects_.find(object_id);
+    if (it == map_objects_.end()) return;
+
+    DestroyObjectPacket destroy_object_packet;
+    destroy_object_packet.object_id = object_id;
+    SendPacket(destroy_object_packet);
+
+    RemoveObject(object_id);
 }
