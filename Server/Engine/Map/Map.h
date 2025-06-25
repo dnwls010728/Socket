@@ -40,6 +40,7 @@ public:
     void OnAttack(uint32_t attacker_id, uint32_t defender_id);
 
     void Tick(float delta_time);
+    void PhysicsTick(float delta_time);
 
     bool LoadMapData();
 
@@ -53,6 +54,9 @@ public:
 private:
     void AddObjects();
     void RemoveObjects();
+    void Respawn();
+    void KillAllMobs();
+    void DestroyObject_Internal(uint32_t object_id);
 
     uint32_t map_id_;
 
@@ -72,4 +76,11 @@ private:
     std::queue<uint32_t> pending_remove_objects_;
 
     std::vector<std::unique_ptr<Foothold>> footholds_;
+    std::vector<uint32_t> mob_ids;
+
+    float respawn_timer_;
+    float monitor_timer_;
+
+    // 임시
+    std::vector<Math::Vector2> spawn_points_;
 };

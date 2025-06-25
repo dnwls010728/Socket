@@ -95,9 +95,9 @@ bool NetTCPSocket::Listen(int backlog)
 bool NetTCPSocket::Accept(NetTCPSocket& client_socket)
 {
 	SOCKET client_internal;
-	sockaddr addr;
+	sockaddr_in addr = { 0, };
 	int addr_len = sizeof(addr);
-	client_internal = accept(internal_socket_, &addr, &addr_len);
+	client_internal = accept(internal_socket_, reinterpret_cast<sockaddr*>(&addr), &addr_len);
 	if (client_internal == INVALID_SOCKET)
 	{
 		return false;
@@ -106,10 +106,13 @@ bool NetTCPSocket::Accept(NetTCPSocket& client_socket)
 	client_socket.internal_socket_ = client_internal;
 
 	char ip_buffer[INET_ADDRSTRLEN];
-	if (inet_ntop(AF_INET, &addr.sa_data, ip_buffer, INET_ADDRSTRLEN) == NULL)
+	if (inet_ntop(AF_INET, &addr.sin_addr, ip_buffer, INET_ADDRSTRLEN) == NULL)
 	{
-		client_socket.net_address_.ip_address = ip_buffer;
+		return false;
 	}
+
+	client_socket.net_address_.ip_address = ip_buffer;
+	client_socket.net_address_.port = ntohs(addr.sin_port);
 	return true;
 }
 

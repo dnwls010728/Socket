@@ -25,8 +25,18 @@ public:
     void Speak(const std::wstring& message, float duration = 4.f);
     
     FORCEINLINE const std::wstring& GetCharacterName() const { return character_name_; }
-    FORCEINLINE std::shared_ptr<SpriteRendererComponent> GetRenderer() const { return renderer_; }
-    FORCEINLINE std::shared_ptr<StateMachineComponent> GetStateMachine() const { return state_machine_; }
+    FORCEINLINE const std::shared_ptr<SpriteRendererComponent>& GetRenderer() const { return renderer_; }
+    FORCEINLINE const std::shared_ptr<AnimatorComponent>& GetAnimator() const { return animator_; }
+    FORCEINLINE const std::shared_ptr<StateMachineComponent>& GetStateMachine() const { return state_machine_; }
+    
+    FORCEINLINE const Math::Vector2& GetVelocity() const { return velocity_; }
+    FORCEINLINE void SetVelocity(const Math::Vector2& velocity) { velocity_ = velocity; }
+
+    FORCEINLINE void SetVelocityX(float x) { velocity_.x = x; }
+    FORCEINLINE float GetVelocityX() const { return velocity_.x; }
+    
+    FORCEINLINE void SetVelocityY(float y) { velocity_.y = y; }
+    FORCEINLINE float GetVelocityY() const { return velocity_.y; }
 
 protected:
     virtual void BeginPlay() override;

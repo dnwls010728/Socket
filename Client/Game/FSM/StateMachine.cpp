@@ -40,13 +40,13 @@ void FSM::StateMachine::PostTick(float delta_time)
     if (current_state_ && current_state_->GetState()) current_state_->GetState()->PostTick(delta_time);
 }
 
-void FSM::StateMachine::SetState(std::shared_ptr<IState> kState)
+void FSM::StateMachine::SetState(const std::shared_ptr<IState>& kState)
 {
     current_state_ = nodes_[typeid(*kState)];
     if (current_state_ && current_state_->GetState()) current_state_->GetState()->Enter();
 }
 
-void FSM::StateMachine::ChangeState(std::shared_ptr<IState> kState)
+void FSM::StateMachine::ChangeState(const std::shared_ptr<IState>& kState)
 {
     if (kState == current_state_->GetState()) return;
 

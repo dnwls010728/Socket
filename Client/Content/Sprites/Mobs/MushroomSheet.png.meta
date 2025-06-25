@@ -1,0 +1,544 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: MushroomSheet_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_1
+    rect:
+      x: 0.100000001
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_2
+    rect:
+      x: 0.200000003
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_3
+    rect:
+      x: 0.300000012
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_4
+    rect:
+      x: 0.400000006
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_5
+    rect:
+      x: 0.5
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_6
+    rect:
+      x: 0.600000024
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_7
+    rect:
+      x: 0.699999988
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_8
+    rect:
+      x: 0.800000012
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_9
+    rect:
+      x: 0.899999976
+      y: 0
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_10
+    rect:
+      x: 0
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_11
+    rect:
+      x: 0.100000001
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_12
+    rect:
+      x: 0.200000003
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_13
+    rect:
+      x: 0.300000012
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_14
+    rect:
+      x: 0.400000006
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_15
+    rect:
+      x: 0.5
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_16
+    rect:
+      x: 0.600000024
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_17
+    rect:
+      x: 0.699999988
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_18
+    rect:
+      x: 0.800000012
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_19
+    rect:
+      x: 0.899999976
+      y: 0.142857149
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_20
+    rect:
+      x: 0
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_21
+    rect:
+      x: 0.100000001
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_22
+    rect:
+      x: 0.200000003
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_23
+    rect:
+      x: 0.300000012
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_24
+    rect:
+      x: 0.400000006
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_25
+    rect:
+      x: 0.5
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_26
+    rect:
+      x: 0.600000024
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_27
+    rect:
+      x: 0.699999988
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_28
+    rect:
+      x: 0.800000012
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_29
+    rect:
+      x: 0.899999976
+      y: 0.285714298
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_35
+    rect:
+      x: 0.5
+      y: 0.428571433
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_36
+    rect:
+      x: 0.600000024
+      y: 0.428571433
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_37
+    rect:
+      x: 0.699999988
+      y: 0.428571433
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_38
+    rect:
+      x: 0.800000012
+      y: 0.428571433
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_39
+    rect:
+      x: 0.899999976
+      y: 0.428571433
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_43
+    rect:
+      x: 0.300000012
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_44
+    rect:
+      x: 0.400000006
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_45
+    rect:
+      x: 0.5
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_46
+    rect:
+      x: 0.600000024
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_47
+    rect:
+      x: 0.699999988
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_48
+    rect:
+      x: 0.800000012
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_49
+    rect:
+      x: 0.899999976
+      y: 0.571428597
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_52
+    rect:
+      x: 0.200000003
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_53
+    rect:
+      x: 0.300000012
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_54
+    rect:
+      x: 0.400000006
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_55
+    rect:
+      x: 0.5
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_56
+    rect:
+      x: 0.600000024
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_57
+    rect:
+      x: 0.699999988
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_58
+    rect:
+      x: 0.800000012
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_59
+    rect:
+      x: 0.899999976
+      y: 0.714285731
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_60
+    rect:
+      x: 0
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_61
+    rect:
+      x: 0.100000001
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_62
+    rect:
+      x: 0.200000003
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_63
+    rect:
+      x: 0.300000012
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_64
+    rect:
+      x: 0.400000006
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_65
+    rect:
+      x: 0.5
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_66
+    rect:
+      x: 0.600000024
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_67
+    rect:
+      x: 0.699999988
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_68
+    rect:
+      x: 0.800000012
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0
+  - name: MushroomSheet_69
+    rect:
+      x: 0.899999976
+      y: 0.857142866
+      width: 0.100000001
+      height: 0.142857149
+    pivot:
+      x: 0.5
+      y: 0

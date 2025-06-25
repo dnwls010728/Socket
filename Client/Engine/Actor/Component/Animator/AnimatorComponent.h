@@ -61,6 +61,8 @@ public:
     int32_t GetInt(const std::wstring& kName);
     
     std::shared_ptr<StateNode> GetOrAddNode(const std::wstring& name);
+    
+    FORCEINLINE std::shared_ptr<StateNode> GetCurrentState() const { return current_state_; }
 
     FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
     

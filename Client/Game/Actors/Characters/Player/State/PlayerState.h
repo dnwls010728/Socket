@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "FSM/IState.h"
 
-class CharacterBase;
+class PlayerCharacter;
 
-class BaseState : public FSM::IState
+class PlayerState : public FSM::IState
 {
 public:
-    BaseState(const std::shared_ptr<CharacterBase>& kCharacter);
-    virtual ~BaseState() override = default;
+    PlayerState(const std::shared_ptr<PlayerCharacter>& player_character);
+    virtual ~PlayerState() override = default;
     
     virtual void Enter() override;
     virtual void PhysicsTick(float delta_time) override;
@@ -16,6 +16,6 @@ public:
     virtual void Exit() override;
 
 protected:
-    std::weak_ptr<CharacterBase> character_;
+    std::shared_ptr<PlayerCharacter> player_character_;
     
 };

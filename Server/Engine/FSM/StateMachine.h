@@ -34,8 +34,8 @@ namespace FSM
         ~StateMachine() = default;
 
         void Tick(float delta_time);
-        void SetState(std::shared_ptr<IState> kState);
-        void ChangeState(std::shared_ptr<IState> kState);
+        void SetState(const std::shared_ptr<IState>& kState);
+        void ChangeState(const std::shared_ptr<IState>& kState);
         void AddTransition(const std::shared_ptr<IState>& kFrom, const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition);
         void AddAnyTransition(const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition);
 

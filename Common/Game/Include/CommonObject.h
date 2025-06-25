@@ -2,24 +2,6 @@
 #include <vector>
 #include <string>
 
-struct Movement
-{
-    Movement() :
-        x(0.f),
-        y(0.f)
-    {
-    }
-
-    Movement(float x, float y) :
-        x(x),
-        y(y)
-    {
-    }
-    
-    float x;
-    float y;
-};
-
 struct CharacterInfo
 {
     int unique_id;

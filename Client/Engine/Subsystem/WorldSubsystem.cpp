@@ -9,7 +9,6 @@ void WorldSubsystem::OnWorldBeginPlay()
 {
 }
 
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

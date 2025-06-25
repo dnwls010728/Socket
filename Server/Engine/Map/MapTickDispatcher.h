@@ -23,10 +23,16 @@ public:
 
     inline bool running() const { return running_.load(); }
 private:
+    struct MapData
+    {
+        Map* map;
+        std::chrono::time_point<std::chrono::steady_clock> last_tick_time;
+        float accumulator;
+    };
     struct WorkerContext
     {
         std::thread thread;
-        std::vector<Map*> assigned_maps;
+        std::vector<MapData> assigned_maps;
         std::mutex mutex;
         std::atomic<uint32_t> last_tick_duration_ms{ 0 };
     };
@@ -45,6 +51,4 @@ private:
     std::atomic<bool> running_;
     uint32_t tick_interval_ms_;
     size_t max_maps_per_thread_;
-
-    float accumulator_;
 };

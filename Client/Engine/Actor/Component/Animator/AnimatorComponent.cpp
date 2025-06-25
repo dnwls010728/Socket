@@ -47,11 +47,15 @@ void AnimatorComponent::AddAnyTransition(const std::wstring& kTo, const std::sha
 
 void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 {
-    current_state_ = GetOrAddNode(kName);
+    std::shared_ptr<StateNode> state = GetOrAddNode(kName);
+
+    if (!state || !HasBegunPlay()) return;
+    if (current_state_ == state && is_playing_) return;
+
+    current_state_ = state;
+    
     current_frame_ = 0;
     timer_ = 0.f;
-
-    if (!current_state_ || !HasBegunPlay()) return;
 
     const std::shared_ptr<Animation>& animation = current_state_->GetAnimation();
     if (!animation || animation->frames_.empty()) return;

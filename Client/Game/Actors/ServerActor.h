@@ -12,7 +12,13 @@ public:
         Math::Vector2 position;
         Math::Vector2 velocity;
         
+        bool is_flipped;
+        
+        std::wstring animation;
+        
         float server_time;
+
+        bool time_update;
     };
     
     ServerActor(const std::wstring& name);
@@ -23,5 +29,11 @@ protected:
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
     std::deque<Snapshot> snapshots_;
+    
+#pragma region 컴포넌트
+    std::shared_ptr<class BoxColliderComponent> collider_;
+    std::shared_ptr<class SpriteRendererComponent> renderer_;
+    std::shared_ptr<class AnimatorComponent> animator_;
+#pragma endregion
     
 };

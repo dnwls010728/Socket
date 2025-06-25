@@ -145,9 +145,16 @@ struct DestroyPlayerPacket : public Net::IPacket
 struct MovePlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
-    Movement movement;
+    float position_x;
+    float position_y;
+    float velocity_x;
+    float velocity_y;
+    bool is_flipped;
+    std::wstring animation; // 추후 더 작은 크기로 변경할 수 있음
+    float server_time;
+    bool time_update;
     
-    SERIALIZABLE_FIELDS(unique_id, movement)
+    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, is_flipped, animation, server_time, time_update)
     REGISTER_PACKET(MovePlayerPacket, 213)
 };
 
@@ -183,9 +190,12 @@ struct ObjectPositionPacket : public Net::IPacket
     float position_y;
     float velocity_x;
     float velocity_y;
+    bool is_flipped;
+    std::wstring animation; // 추후 더 작은 크기로 변경할 수 있음
     float server_time;
+    bool time_update;
 
-    SERIALIZABLE_FIELDS(object_id, position_x, position_y, server_time)
+    SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, is_flipped, animation, server_time, time_update)
     REGISTER_PACKET(ObjectPositionPacket, 232)
 };
 

@@ -234,7 +234,10 @@
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
-    <ClInclude Include="Game\Actors\Characters\States\BaseState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerFallState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerIdleState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerState.h" />
+    <ClInclude Include="Game\Actors\Characters\Player\State\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\ItemDrop.h" />
@@ -277,6 +280,7 @@
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
+    <ClInclude Include="Game\Subsystems\ObjectPoolSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
     <ClInclude Include="Game\Subsystems\Publisher\EventData.h" />
     <ClInclude Include="Game\Subsystems\Publisher\ISubscriber.h" />
@@ -612,7 +616,10 @@
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
-    <ClCompile Include="Game\Actors\Characters\States\BaseState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerFallState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerIdleState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerState.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Player\State\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\ItemDrop.cpp" />
@@ -653,6 +660,7 @@
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\ObjectPoolSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />

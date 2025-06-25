@@ -20,9 +20,6 @@ namespace Net
 		return s;
 	}
 	*/
-	
-	// Movement
-	SERIALIZER_EXTEND(Movement,v.x,v.y)
 
 	// CharacterInfo
 	SERIALIZER_EXTEND(CharacterInfo,

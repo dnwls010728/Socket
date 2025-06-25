@@ -7,7 +7,7 @@
 
 using namespace std::chrono;
 
-MapTickDispatcher::MapTickDispatcher() : running_(false), tick_interval_ms_(50), max_maps_per_thread_(10), accumulator_(0.f) {}
+MapTickDispatcher::MapTickDispatcher() : running_(false), tick_interval_ms_(50), max_maps_per_thread_(10) {}
 
 MapTickDispatcher::~MapTickDispatcher() { Stop(); }
 
@@ -36,6 +36,9 @@ void MapTickDispatcher::Stop()
 
 void MapTickDispatcher::AddMap(Map* map)
 {
+    MapData map_data {0,};
+    map_data.map = map;
+    
     WorkerContext* best = FindBestWorker();
     if (!best)
     {
@@ -43,7 +46,7 @@ void MapTickDispatcher::AddMap(Map* map)
         WorkerContext* ptr = context.get();
         {
             std::lock_guard<std::mutex> lock(ptr->mutex);
-            ptr->assigned_maps.push_back(map);
+            ptr->assigned_maps.push_back(map_data);
         }
         worker_contexts_.push_back(std::move(context));
         ptr->thread = std::thread(&MapTickDispatcher::WorkerThread, this, ptr, tick_interval_ms_);
@@ -51,7 +54,7 @@ void MapTickDispatcher::AddMap(Map* map)
     else
     {
         std::lock_guard<std::mutex> lock(best->mutex);
-        best->assigned_maps.push_back(map);
+        best->assigned_maps.push_back(map_data);
     }
 }
 
@@ -65,7 +68,9 @@ void MapTickDispatcher::RemoveMap(Map* map)
         {
             std::lock_guard<std::mutex> map_lock(context->mutex);
             auto& maps = context->assigned_maps;
-            maps.erase(std::remove(maps.begin(), maps.end(), map), maps.end());
+            maps.erase(std::remove_if(maps.begin(), maps.end(),
+            [map](const MapData& md) { return md.map == map; }),
+                maps.end());
 
             if (maps.empty())
             {
@@ -115,9 +120,9 @@ void MapTickDispatcher::SplitWorker(WorkerContext* context)
     size_t move_count = context->assigned_maps.size() / 2;
     for (size_t i = 0; i < move_count; ++i)
     {
-        Map* map = context->assigned_maps.back();
+        MapData map_dat = context->assigned_maps.back();
         context->assigned_maps.pop_back();
-        new_ptr->assigned_maps.push_back(map);
+        new_ptr->assigned_maps.push_back(map_dat);
     }
 
     new_ptr->thread = std::thread(&MapTickDispatcher::WorkerThread, this, new_ptr, tick_interval_ms_);
@@ -131,54 +136,57 @@ void MapTickDispatcher::SplitWorker(WorkerContext* context)
 void MapTickDispatcher::WorkerThread(WorkerContext* context, uint32_t tick_interval_ms)
 {
     const milliseconds interval(tick_interval_ms);
-    auto last_time = steady_clock::now();
     
     while (running_.load())
     {
         auto start = steady_clock::now();
-        duration<float> delta = start - last_time;
-        last_time = start;
-
         {
             std::lock_guard<std::mutex> lock(context->mutex);
 
             if (context->assigned_maps.empty())
                 break;
-
-            const float limit_frame_time = Math::Min(delta.count(), .25f);
-            accumulator_ += limit_frame_time;
-
-            while (accumulator_ >= 1.f / 60.f)
+            
+            // 각 맵별로 실제 delta계산하여 Tick 처리
+            for (auto &map_data : context->assigned_maps)
             {
-                for (auto* map : context->assigned_maps)
+                Map* map = map_data.map;
+
+                std::chrono::duration<float> map_delta;
+                if (map_data.last_tick_time == steady_clock::time_point() )
                 {
-                    if (map) map->Tick(1.f / 60.f);
+                    map_delta = duration_cast<duration<float>>(interval);
+                }
+                else
+                {
+                    map_delta = std::chrono::steady_clock::now() - map_data.last_tick_time;
+                }
+                map_data.last_tick_time = steady_clock::now();
+
+                const float limit_frame_time = Math::Min(map_delta.count(), .25f);
+                map_data.accumulator += limit_frame_time;
+                while (map_data.accumulator >= 1.f / 60.f)
+                {
+                    map->PhysicsTick(1.f / 60.f);
+                
+                    map_data.accumulator -= 1.f / 60.f;
                 }
                 
-                accumulator_ -= 1.f / 60.f;
+                map->Tick(map_delta.count());
+                
             }
-            
-            // for (auto* map : context->assigned_maps)
-            // {
-            //     if (map)
-            //     {
-            //         // TODO : 실제 delta 계산 및 그에 따른 물리엔진
-            //         map->Tick(delta.count());
-            //     }
-            // }
         }
 
         auto elapsed = duration_cast<milliseconds>(steady_clock::now() - start);
         context->last_tick_duration_ms.store(static_cast<uint32_t>(elapsed.count()), std::memory_order_relaxed);
 
         // 시간이 초과된경우 업무 분산
-        // if (elapsed > interval)
-        // {
-        //     SplitWorker(context);
-        // }
-        //
-        // auto sleep_time = interval - elapsed;
-        // if (sleep_time > milliseconds(0))
-        //     std::this_thread::sleep_for(sleep_time);
+        if (elapsed > interval)
+        {
+            SplitWorker(context);
+        }
+        
+        auto sleep_time = interval - elapsed;
+        if (sleep_time > milliseconds(0))
+            std::this_thread::sleep_for(sleep_time);
     }
 }
