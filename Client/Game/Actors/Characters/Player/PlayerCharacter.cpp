@@ -111,6 +111,8 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
+
+        if (Keyboard::Get()->GetKeyDown(VK_SPACE) && collisions.is_below) velocity_.y = 6.7f;
         
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, movement_input_);

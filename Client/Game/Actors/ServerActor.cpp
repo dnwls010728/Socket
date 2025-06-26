@@ -100,3 +100,14 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
         break;
     }
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<ServerActor>("ServerActor")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
+}

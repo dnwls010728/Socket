@@ -26,6 +26,8 @@ public:
 
     void SendPacket(Net::IPacket& packet);
     void ChangeMap(uint32_t map_id);
+    void RegisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
+    void UnregisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
     
     template <std::derived_from<NetworkActor> T>
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& type, uint32_t unique_id, const std::wstring& name = L"");
@@ -33,7 +35,7 @@ public:
     void DestroyNetworkActor(uint32_t unique_id);
     void GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharacter>>& out_players);
 
-    std::shared_ptr<NetworkActor> GetNetworkActor(uint32_t unique_id);
+    std::shared_ptr<NetworkActor> FindNetworkActor(uint32_t unique_id);
 
     FORCEINLINE const std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>>& GetNetworkActors() { return network_actors_; }
     FORCEINLINE std::shared_ptr<PlayerCharacter> GetPlayer() const { return player_.lock(); }

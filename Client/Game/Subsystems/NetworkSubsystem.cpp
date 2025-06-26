@@ -18,6 +18,7 @@
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Level/CameraManager.h"
+#include "ObjectPool/ObjectPoolSubsystem.h"
 #include "UI/MiniMap.h"
 
 NetworkSubsystem::NetworkSubsystem() :
@@ -79,6 +80,24 @@ void NetworkSubsystem::ChangeMap(uint32_t map_id)
     SendPacket(request);
 }
 
+void NetworkSubsystem::RegisterNetworkActor(const std::shared_ptr<NetworkActor>& actor)
+{
+    if (!IsValid(actor)) return;
+    
+    uint32_t object_id = actor->GetObjectID();
+    if (!network_actors_.contains(object_id)) network_actors_[object_id] = actor;
+}
+
+void NetworkSubsystem::UnregisterNetworkActor(const std::shared_ptr<NetworkActor>& actor)
+{
+    if (!IsValid(actor)) return;
+    
+    uint32_t object_id = actor->GetObjectID();
+    
+    auto iter = network_actors_.find(object_id);
+    if (iter != network_actors_.end()) network_actors_.erase(iter);
+}
+
 void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
@@ -102,7 +121,7 @@ void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharact
     }
 }
 
-std::shared_ptr<NetworkActor> NetworkSubsystem::GetNetworkActor(const uint32_t unique_id)
+std::shared_ptr<NetworkActor> NetworkSubsystem::FindNetworkActor(const uint32_t unique_id)
 {
     auto iter = network_actors_.find(unique_id);
     if (iter != network_actors_.end()) return iter->second;
@@ -151,7 +170,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet.get());
             
-            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(move_player_packet->unique_id);
+            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(move_player_packet->unique_id);
             if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
         }
         break;
@@ -180,16 +199,29 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             SpawnObjectPacket* spawn_object_packet = static_cast<SpawnObjectPacket*>(packet.get());
 
             ObjectInfo& object_info = spawn_object_packet->object_info;
-            
-            std::shared_ptr<MobBase> actor = SpawnNetworkActor<MobBase>(MobBase::StaticClass(), object_info.object_id);
-            actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
+
+            std::shared_ptr<Actor> out_actor = nullptr;
+            if (ObjectPoolSubsystem::Get()->GetFromPool(MobBase::StaticClass(), out_actor))
+            {
+                if (IsValid(out_actor))
+                {
+                    std::shared_ptr<NetworkActor> network_actor = std::dynamic_pointer_cast<NetworkActor>(out_actor);
+                    if (IsValid(network_actor))
+                    {
+                        network_actor->SetObjectID(object_info.object_id);
+                        network_actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
+                    }
+                }
+            }
         }
         break;
 
     case DestroyObjectPacket::StaticPacketID:
         {
             DestroyObjectPacket* destroy_object_packet = static_cast<DestroyObjectPacket*>(packet.get());
-            DestroyNetworkActor(destroy_object_packet->object_id);
+            
+            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(destroy_object_packet->object_id);
+            if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
         }
         break;
         
@@ -197,7 +229,7 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         {
             ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
             
-            std::shared_ptr<NetworkActor> network_actor = GetNetworkActor(object_position_packet->object_id);
+            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(object_position_packet->object_id);
             if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
         }
         break;

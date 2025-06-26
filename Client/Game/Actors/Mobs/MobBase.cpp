@@ -4,6 +4,7 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/NetworkSubsystem.h"
 
 MobBase::MobBase(const std::wstring& name) :
     ServerActor(name)
@@ -16,11 +17,33 @@ MobBase::MobBase(const std::wstring& name) :
     
 }
 
+void MobBase::OnActivate()
+{
+    SetActive(true);
+}
+
+void MobBase::OnDeactivate()
+{
+    SetActive(false);
+}
+
 void MobBase::BeginPlay()
 {
     ServerActor::BeginPlay();
 
     animator_->PlayAnimation(L"Idle");
+}
+
+void MobBase::OnEnable()
+{
+    ServerActor::OnEnable();
+    NetworkSubsystem::Get()->RegisterNetworkActor(GetSharedThis());
+}
+
+void MobBase::OnDisable()
+{
+    ServerActor::OnDisable();
+    NetworkSubsystem::Get()->UnregisterNetworkActor(GetSharedThis());
 }
 
 RTTR_REGISTRATION

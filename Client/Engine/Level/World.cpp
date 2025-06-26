@@ -9,6 +9,7 @@
 #include "DirectXTK/CommonStates.h"
 #include "Subsystem/Tickable.h"
 #include "Subsystem/WorldSubsystem.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "Time/TimerManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"

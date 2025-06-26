@@ -22,12 +22,12 @@ void PlayerWalkState::PhysicsTick(float delta_time)
     PlayerState::PhysicsTick(delta_time);
 
     const Math::Vector2& movement_input = player_character_->GetMovementInput();
-    player_character_->SetVelocityX(movement_input.x * 5.f);
+    player_character_->SetVelocityX(movement_input.x * 3.75f);
 }
 
 void PlayerWalkState::Exit()
 {
     PlayerState::Exit();
 
-    if (IsValid(player_character_)) player_character_->SetVelocityX(0.f);
+    // if (IsValid(player_character_)) player_character_->SetVelocityX(0.f);
 }
