@@ -161,6 +161,9 @@
     <ClCompile Include="Engine\Map\MapObjects\Foothold.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\ItemDrop.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\Mob.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobIdleState.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobWalkState.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobStateBase.cpp" />
     <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
@@ -194,6 +197,9 @@
     <ClInclude Include="Engine\Map\MapObjects\Foothold.h" />
     <ClInclude Include="Engine\Map\MapObjects\ItemDrop.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\Mob.h" />
+    <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobIdleState.h" />
+    <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobWalkState.h" />
+    <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobStateBase.h" />
     <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />

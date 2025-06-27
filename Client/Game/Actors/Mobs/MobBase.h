@@ -14,10 +14,16 @@ public:
 
     virtual void OnActivate() override;
     virtual void OnDeactivate() override;
+    
+    FORCEINLINE bool IsDead() const { return is_dead_; }
 
 protected:
     virtual void BeginPlay() override;
     virtual void OnEnable() override;
     virtual void OnDisable() override;
+
+    bool is_dead_;
+
+    float fade_timer_;
     
 };

@@ -5,15 +5,14 @@
 
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
-#include "Math/Math.h"
 #include "Session/Player.h"
+#include "States/MobIdleState.h"
+#include "States/MobWalkState.h"
 
 Mob::Mob() :
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
-    timer_(0.f),
-    direction_(0),
     is_grounded_(false),
     foothold_(nullptr),
     hp_(3000),
@@ -22,14 +21,29 @@ Mob::Mob() :
     prev_is_moving_(false)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
-    direction_ = Math::RandRange(-1, 1);
+    
+}
+
+void Mob::BeginPlay()
+{
+    MapObject::BeginPlay();
+
+    std::shared_ptr<Mob> shared_ptr = std::static_pointer_cast<Mob>(shared_from_this());
+    idle_state_ = std::make_shared<MobIdleState>(shared_ptr, *state_machine_);
+    walk_state_ = std::make_shared<MobWalkState>(shared_ptr, *state_machine_);
+    
+    state_machine_->GetOrAddNode(idle_state_);
+    state_machine_->GetOrAddNode(walk_state_);
+    
+    state_machine_->SetState(idle_state_);
+    
 }
 
 void Mob::PhysicsTick(float delta_time)
 {
     MapObject::PhysicsTick(delta_time);
+    state_machine_->PhysicsTick(delta_time);
 
-    velocity_.x = direction_ * 2.f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
 
@@ -45,15 +59,6 @@ void Mob::PhysicsTick(float delta_time)
             is_grounded_ = true;
         }
     }
-
-    // 테스트
-    if (direction_ > 0)
-        is_flipped_ = false;
-    else if (direction_ < 0)
-        is_flipped_ = true;
-
-    if (!Math::IsEqual(velocity_.x, 0.f)) animation_ = L"Walk";
-    else animation_ = L"Idle";
     
     SetPosition(next_position);
 }
@@ -61,19 +66,11 @@ void Mob::PhysicsTick(float delta_time)
 void Mob::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
-
     state_machine_->Tick(delta_time);
-    
-    timer_ += delta_time;
-    if (timer_ >= 1.6f)
-    {
-        timer_ -= 1.6f;
-        direction_ = Math::RandRange(-1, 1);
-    }
 
-    Math::Vector2 next_position = GetPosition();
+    Math::Vector2 position = GetPosition();
     
-    if (next_position != last_position_)
+    if (position != last_position_)
     {
         if (prev_is_moving_ == false)
         {
@@ -92,8 +89,8 @@ void Mob::Tick(float delta_time)
 
         ObjectPositionPacket packet;
         packet.object_id = GetObjectID();
-        packet.position_x = next_position.x;
-        packet.position_y = next_position.y;
+        packet.position_x = position.x;
+        packet.position_y = position.y;
         packet.velocity_x = velocity_.x;
         packet.velocity_y = velocity_.y;
         packet.is_flipped = is_flipped_;
@@ -103,7 +100,7 @@ void Mob::Tick(float delta_time)
         map_->SendPacket(packet);
 
         prev_is_moving_ = true;
-        last_position_ = next_position;
+        last_position_ = position;
     }
     else
     {
@@ -124,8 +121,6 @@ void Mob::Tick(float delta_time)
         }
         prev_is_moving_ = false;
     }
-    
-    SetPosition(next_position);
     
 }
 

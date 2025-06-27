@@ -39,8 +39,8 @@ public:
 
     void OnAttack(uint32_t attacker_id, uint32_t defender_id);
 
-    void Tick(float delta_time);
     void PhysicsTick(float delta_time);
+    void Tick(float delta_time);
 
     bool LoadMapData();
 

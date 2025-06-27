@@ -23,3 +23,17 @@ animations:
       - MushroomSheet_54
       - MushroomSheet_53
       - MushroomSheet_52
+  - name: Die
+    frame_rate: 8
+    loop: false
+    frames:
+      - MushroomSheet_29
+      - MushroomSheet_28
+      - MushroomSheet_27
+      - MushroomSheet_26
+      - MushroomSheet_25
+      - MushroomSheet_24
+      - MushroomSheet_23
+      - MushroomSheet_22
+      - MushroomSheet_21
+      - MushroomSheet_20

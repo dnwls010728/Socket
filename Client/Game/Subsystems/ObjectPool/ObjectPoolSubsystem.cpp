@@ -13,8 +13,6 @@ bool ObjectPoolSubsystem::GetFromPool(const rttr::type& type, std::shared_ptr<Ac
     std::shared_ptr<Actor> result_actor = nullptr;
     
     auto it = pool_map_.find(type.get_id());
-    Logger::Print(L"Pool Size: %d", it != pool_map_.end() ? it->second.size() : 0);
-    
     if (it == pool_map_.end() || it->second.empty())
     {
         result_actor = World::Get()->SpawnActor<Actor>(type);

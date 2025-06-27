@@ -7,7 +7,9 @@
 #include "Subsystems/NetworkSubsystem.h"
 
 MobBase::MobBase(const std::wstring& name) :
-    ServerActor(name)
+    ServerActor(name),
+    is_dead_(false),
+    fade_timer_(0.f)
 {
     SetLayer(ActorLayer::kMob);
 

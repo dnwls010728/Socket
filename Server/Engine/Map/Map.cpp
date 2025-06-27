@@ -186,6 +186,14 @@ void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
     }
 }
 
+void Map::PhysicsTick(float delta_time)
+{
+    for (const auto& map_object : map_objects_ | std::views::values)
+    {
+        map_object->PhysicsTick(delta_time);
+    }
+}
+
 void Map::Tick(float delta_time)
 {
     AddPlayers();
@@ -220,14 +228,6 @@ void Map::Tick(float delta_time)
         else monitor_timer_ = 0.f;
     }
 
-}
-
-void Map::PhysicsTick(float delta_time)
-{
-    for (const auto& map_object : map_objects_ | std::views::values)
-    {
-        map_object->PhysicsTick(delta_time);
-    }
 }
 
 std::vector<std::weak_ptr<Player>> Map::GetPlayers()
@@ -333,6 +333,7 @@ void Map::AddObjects()
         std::shared_ptr<MapObject> object = pending_objects_.front();
         pending_objects_.pop();
 
+        object->BeginPlay();
         map_objects_.emplace(object->GetObjectID(), object);
     }
 }
@@ -360,7 +361,7 @@ void Map::Respawn()
     {
         std::shared_ptr<Mob> mob = std::make_shared<Mob>();
         mob->SetPosition(spawn_point);
-        mob->SetLastPostion(spawn_point);
+        mob->SetLastPosition(spawn_point);
         SpawnObject(mob);
     }
 }

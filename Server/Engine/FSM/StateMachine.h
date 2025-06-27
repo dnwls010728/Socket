@@ -33,6 +33,7 @@ namespace FSM
         StateMachine();
         ~StateMachine() = default;
 
+        void PhysicsTick(float delta_time);
         void Tick(float delta_time);
         void SetState(const std::shared_ptr<IState>& kState);
         void ChangeState(const std::shared_ptr<IState>& kState);
