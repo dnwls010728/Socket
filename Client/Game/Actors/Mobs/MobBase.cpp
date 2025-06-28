@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MobBase.h"
 
+#include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
@@ -22,18 +23,14 @@ MobBase::MobBase(const std::wstring& name) :
 void MobBase::OnActivate()
 {
     SetActive(true);
+
+    renderer_->SetFlipX(false);
+    animator_->PlayAnimation(L"Idle");
 }
 
 void MobBase::OnDeactivate()
 {
     SetActive(false);
-}
-
-void MobBase::BeginPlay()
-{
-    ServerActor::BeginPlay();
-
-    animator_->PlayAnimation(L"Idle");
 }
 
 void MobBase::OnEnable()

@@ -18,7 +18,6 @@ public:
     FORCEINLINE bool IsDead() const { return is_dead_; }
 
 protected:
-    virtual void BeginPlay() override;
     virtual void OnEnable() override;
     virtual void OnDisable() override;
 
