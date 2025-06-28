@@ -2,6 +2,7 @@
 #include "Engine/Map/MapObject.h"
 #include "FSM/StateMachine.h"
 
+class MobHitState;
 class MobWalkState;
 class MobIdleState;
 
@@ -30,6 +31,7 @@ public:
     
     inline std::shared_ptr<MobIdleState> GetIdleState() const { return idle_state_; }
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
+    inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
 protected:
     friend class Map;
@@ -60,5 +62,6 @@ protected:
 #pragma region 상태
     std::shared_ptr<MobIdleState> idle_state_;
     std::shared_ptr<MobWalkState> walk_state_;
+    std::shared_ptr<MobHitState> hit_state_;
 #pragma endregion
 };

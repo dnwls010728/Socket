@@ -181,7 +181,6 @@ void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
         if (mob)
         {
             mob->OnHit(1000);
-            mob->velocity_.y = 10.f;
         }
     }
 }

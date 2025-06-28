@@ -13,7 +13,9 @@
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
-    snapshots_()
+    snapshots_(),
+    animation_changed_time_(0.f),
+    last_animation_(L"")
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -53,7 +55,13 @@ void ServerActor::PhysicsTick(float delta_time)
         t = Math::Clamp(t, 0.f, 1.f);
 
         bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
+        
         std::wstring animation = t < .5f ? from.animation : to.animation;
+        if (last_animation_ != animation)
+        {
+            animation_changed_time_ = t < .5f ? from.server_time : to.server_time;
+            last_animation_ = animation;
+        }
         
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);

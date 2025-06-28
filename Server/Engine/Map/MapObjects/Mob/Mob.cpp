@@ -6,6 +6,7 @@
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
 #include "Session/Player.h"
+#include "States/MobHitState.h"
 #include "States/MobIdleState.h"
 #include "States/MobWalkState.h"
 
@@ -31,9 +32,11 @@ void Mob::BeginPlay()
     std::shared_ptr<Mob> shared_ptr = std::static_pointer_cast<Mob>(shared_from_this());
     idle_state_ = std::make_shared<MobIdleState>(shared_ptr, *state_machine_);
     walk_state_ = std::make_shared<MobWalkState>(shared_ptr, *state_machine_);
+    hit_state_ = std::make_shared<MobHitState>(shared_ptr, *state_machine_);
     
     state_machine_->GetOrAddNode(idle_state_);
     state_machine_->GetOrAddNode(walk_state_);
+    state_machine_->GetOrAddNode(hit_state_);
     
     state_machine_->SetState(idle_state_);
     
@@ -119,6 +122,7 @@ void Mob::Tick(float delta_time)
             stop_packet.time_update = false;
             map_->SendPacket(stop_packet);
         }
+        
         prev_is_moving_ = false;
     }
     
@@ -127,6 +131,8 @@ void Mob::Tick(float delta_time)
 void Mob::OnHit(int32_t damage)
 {
     if (hp_ <= 0) return;
+
+    state_machine_->ChangeState(hit_state_);
     
     hp_ -= damage;
     if (hp_ <= 0)

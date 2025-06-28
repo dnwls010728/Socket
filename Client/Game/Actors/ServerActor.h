@@ -29,6 +29,10 @@ protected:
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
     std::deque<Snapshot> snapshots_;
+
+    float animation_changed_time_;
+
+    std::wstring last_animation_;
     
 #pragma region 컴포넌트
     std::shared_ptr<class BoxColliderComponent> collider_;
