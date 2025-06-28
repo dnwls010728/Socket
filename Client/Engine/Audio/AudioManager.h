@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <map>
 
 #include "Singleton.h"
 
@@ -26,7 +25,7 @@ public:
     void SetMute(int32_t id, bool is_mute);
     void SetAllMutes(bool is_mute);
 
-    int32_t PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group = nullptr);
+    int32_t PlaySound2D(const Audio* audio/*, FMOD_CHANNELGROUP* channel_group = nullptr*/);
 
 private:
     friend class Audio;
