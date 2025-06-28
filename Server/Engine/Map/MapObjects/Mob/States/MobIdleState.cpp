@@ -14,6 +14,11 @@ MobIdleState::MobIdleState(const std::shared_ptr<Mob>& owner, FSM::StateMachine&
 void MobIdleState::Enter()
 {
     MobStateBase::Enter();
+
+    if (auto owner = owner_.lock())
+    {
+        owner->SetAnimation(L"Idle");
+    }
 }
 
 void MobIdleState::Tick(float delta_time)

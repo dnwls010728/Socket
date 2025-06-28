@@ -21,6 +21,12 @@ public:
     inline float GetVelocityY() const { return velocity_.y; }
     
     inline void SetLastPosition(const Math::Vector2& last_position) { last_position_ = last_position; }
+
+    inline void SetFlipped(bool is_flipped) { is_flipped_ = is_flipped; }
+    inline bool IsFlipped() const { return is_flipped_; }
+
+    inline void SetAnimation(const std::wstring& animation) { animation_ = animation; }
+    inline const std::wstring& GetAnimation() const { return animation_; }
     
     inline std::shared_ptr<MobIdleState> GetIdleState() const { return idle_state_; }
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
@@ -43,13 +49,12 @@ protected:
 
     bool is_grounded_;
     bool prev_is_moving_;
+    bool is_flipped_;
 
     class Foothold* foothold_;
 
     std::atomic_int32_t hp_;
 
-    // 임시
-    bool is_flipped_;
     std::wstring animation_;
 
 #pragma region 상태

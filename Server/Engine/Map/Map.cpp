@@ -285,8 +285,7 @@ bool Map::LoadMapData()
                     }
                 }
             }
-            
-            if (layer->getName() == "SpawnPoint")
+            else if (layer->getName() == "SpawnPoint")
             {
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)

@@ -14,11 +14,11 @@ Mob::Mob() :
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
     is_grounded_(false),
+    prev_is_moving_(false),
+    is_flipped_(false),
     foothold_(nullptr),
     hp_(3000),
-    is_flipped_(false),
-    animation_(L"Idle"),
-    prev_is_moving_(false)
+    animation_(L"Idle")
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     

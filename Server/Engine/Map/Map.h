@@ -5,7 +5,7 @@
 #include <vector>
 #include <queue>
 
-#include "MapObjects/Foothold.h"
+#include "Foothold.h"
 #include "Math/Vector2.h"
 
 class Mob;
