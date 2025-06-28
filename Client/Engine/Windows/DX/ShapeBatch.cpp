@@ -90,9 +90,13 @@ bool ShapeBatch::Init()
     D3D11_DEPTH_STENCIL_DESC depth_stencil_state_desc;
     ZeroMemory(&depth_stencil_state_desc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
-    depth_stencil_state_desc.DepthEnable = true;
-    depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    // depth_stencil_state_desc.DepthEnable = true;
+    // depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    // depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    
+    depth_stencil_state_desc.DepthEnable = false;
+    depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 
     hr = Renderer::Get()->GetDevice()->CreateDepthStencilState(&depth_stencil_state_desc, depth_stencil_state_.GetAddressOf());
     return SUCCEEDED(hr);
