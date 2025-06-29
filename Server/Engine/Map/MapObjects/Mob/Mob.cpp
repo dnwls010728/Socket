@@ -16,13 +16,24 @@ Mob::Mob() :
     gravity_(-20.f),
     is_grounded_(false),
     prev_is_moving_(false),
-    is_flipped_(false),
     foothold_(nullptr),
     hp_(3000),
-    animation_(L"Idle")
+    state_(0)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     
+}
+
+void Mob::SetState(MobState state)
+{
+    // 상위 8비트에 상태를 저장
+    state_ = (state_ & 0x00FF) | (static_cast<uint16_t>(state) << 8);
+}
+
+void Mob::SetFlipped(bool is_flipped)
+{
+    // 하위 1비트에 플립 상태를 저장
+    state_ = (state_ & 0xFF00) | static_cast<uint16_t>(is_flipped);
 }
 
 void Mob::BeginPlay()
@@ -83,8 +94,7 @@ void Mob::Tick(float delta_time)
             dummy_packet.position_y = last_position_.y;
             dummy_packet.velocity_x = velocity_.x;
             dummy_packet.velocity_y = velocity_.y;
-            dummy_packet.is_flipped = is_flipped_;
-            dummy_packet.animation = animation_;
+            dummy_packet.state = state_;
             dummy_packet.server_time = Net::GetClientTime();
             dummy_packet.time_update = true;
             map_->SendPacket(dummy_packet);
@@ -96,8 +106,7 @@ void Mob::Tick(float delta_time)
         packet.position_y = position.y;
         packet.velocity_x = velocity_.x;
         packet.velocity_y = velocity_.y;
-        packet.is_flipped = is_flipped_;
-        packet.animation = animation_;
+        packet.state = state_;
         packet.server_time = Net::GetClientTime();
         packet.time_update = false;
         map_->SendPacket(packet);
@@ -116,8 +125,7 @@ void Mob::Tick(float delta_time)
             stop_packet.position_y = stop_position.y;
             stop_packet.velocity_x = velocity_.x;
             stop_packet.velocity_y = velocity_.y;
-            stop_packet.is_flipped = is_flipped_;
-            stop_packet.animation = animation_;
+            stop_packet.state = state_;
             stop_packet.server_time = Net::GetClientTime();
             stop_packet.time_update = false;
             map_->SendPacket(stop_packet);

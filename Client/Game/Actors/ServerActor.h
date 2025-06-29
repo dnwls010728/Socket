@@ -11,10 +11,8 @@ public:
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
-        
-        bool is_flipped;
-        
-        std::wstring animation;
+
+        uint16_t state;
         
         float server_time;
 
@@ -28,11 +26,9 @@ protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
+   virtual void OnState(uint8_t state, bool is_flipped);
+
     std::deque<Snapshot> snapshots_;
-
-    float animation_changed_time_;
-
-    std::wstring last_animation_;
     
 #pragma region 컴포넌트
     std::shared_ptr<class BoxColliderComponent> collider_;

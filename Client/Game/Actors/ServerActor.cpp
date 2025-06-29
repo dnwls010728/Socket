@@ -13,9 +13,7 @@
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
-    snapshots_(),
-    animation_changed_time_(0.f),
-    last_animation_(L"")
+    snapshots_()
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -51,24 +49,17 @@ void ServerActor::PhysicsTick(float delta_time)
         const Snapshot& to = snapshots_[1];
 
         float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
-        
         t = Math::Clamp(t, 0.f, 1.f);
-
-        bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
-        
-        std::wstring animation = t < .5f ? from.animation : to.animation;
-        if (last_animation_ != animation)
-        {
-            animation_changed_time_ = t < .5f ? from.server_time : to.server_time;
-            last_animation_ = animation;
-        }
         
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
-
-        renderer_->SetFlipX(is_flipped);
-        animator_->PlayAnimation(animation);
         
+        uint16_t packed_state = t < .5f ? from.state : to.state;
+        
+        uint8_t state = (packed_state & 0xFF00) >> 8;
+        bool is_flipped = (packed_state & 0x0001) != 0;
+
+        OnState(state, is_flipped);
     }
     /*
      *    else if (snapshots_.size() == 1) {
@@ -99,14 +90,17 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
             snapshot.position.y = object_position_packet->position_y;
             snapshot.velocity.x = object_position_packet->velocity_x;
             snapshot.velocity.y = object_position_packet->velocity_y;
-            snapshot.is_flipped = object_position_packet->is_flipped;
-            snapshot.animation = object_position_packet->animation;
+            snapshot.state = object_position_packet->state;
             snapshot.server_time = object_position_packet->server_time;
             snapshot.time_update =  object_position_packet->time_update;
             snapshots_.push_back(snapshot);
         }
         break;
     }
+}
+
+void ServerActor::OnState(uint8_t state, bool is_flipped)
+{
 }
 
 RTTR_REGISTRATION

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "MobBase.h"
 
+#include <CommonObject.h>
+
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
@@ -88,6 +90,24 @@ void MobBase::Tick(float delta_time)
             fade_timer_ = 0.f;
         }
     }
+}
+
+void MobBase::OnState(uint8_t state, bool is_flipped)
+{
+    ServerActor::OnState(state, is_flipped);
+
+    MobState mob_state = static_cast<MobState>(state);
+    switch (mob_state)
+    {
+    case MobState::kIdle: animator_->PlayAnimation(L"Idle");
+        break;
+    case MobState::kWalk: animator_->PlayAnimation(L"Walk");
+        break;
+    case MobState::kHit: animator_->PlayAnimation(L"Hit");
+        break;
+    }
+
+    renderer_->SetFlipX(is_flipped);
 }
 
 RTTR_REGISTRATION

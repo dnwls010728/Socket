@@ -18,6 +18,7 @@ public:
     virtual void OnDeath();
     
     FORCEINLINE bool IsDead() const { return is_dead_; }
+    FORCEINLINE bool IsFading() const { return fade_state_ != FadeState::kNone; }
 
 protected:
     enum class FadeState : uint8_t
@@ -30,6 +31,8 @@ protected:
     virtual void OnEnable() override;
     virtual void OnDisable() override;
     virtual void Tick(float delta_time) override;
+
+    virtual void OnState(uint8_t state, bool is_flipped) override;
 
     bool is_dead_;
 

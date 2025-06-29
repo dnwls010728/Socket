@@ -58,3 +58,11 @@ struct ObjectInfo
         MobInfo mob;
     } info;
 };
+
+enum class MobState : uint8_t
+{
+    kIdle = 0,
+    kWalk,
+    kHit,
+    kDie
+};

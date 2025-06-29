@@ -17,7 +17,7 @@ void MobHitState::Enter()
     
     if (auto owner = owner_.lock())
     {
-        owner->SetAnimation(L"Hit");
+        owner->SetState(MobState::kHit);
     }
 }
 

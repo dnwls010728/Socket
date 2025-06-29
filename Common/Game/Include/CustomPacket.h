@@ -192,10 +192,11 @@ struct ObjectPositionPacket : public Net::IPacket
     float velocity_y;
     bool is_flipped;
     std::wstring animation; // 추후 더 작은 크기로 변경할 수 있음
+    uint16_t state;
     float server_time;
     bool time_update;
 
-    SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, is_flipped, animation, server_time, time_update)
+    SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, is_flipped, animation, state, server_time, time_update)
     REGISTER_PACKET(ObjectPositionPacket, 232)
 };
 
