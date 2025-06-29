@@ -12,7 +12,7 @@
 MobBase::MobBase(const std::wstring& name) :
     ServerActor(name),
     is_dead_(false),
-    is_fade_in_(false),
+    fade_state_(FadeState::kNone),
     fade_timer_(0.f)
 {
     SetLayer(ActorLayer::kMob);
@@ -27,12 +27,20 @@ MobBase::MobBase(const std::wstring& name) :
 
 void MobBase::OnActivate()
 {
-    SetActive(true);
+    if (HasBegunPlay()) SetActive(true);
 }
 
 void MobBase::OnDeactivate()
 {
-    SetActive(false);
+    OnDeath();
+}
+
+void MobBase::OnDeath()
+{
+    animator_->PlayAnimation(L"Die");
+    
+    fade_state_ = FadeState::kFadeOut;
+    fade_timer_ = 0.f;
 }
 
 void MobBase::OnEnable()
@@ -43,8 +51,8 @@ void MobBase::OnEnable()
     renderer_->SetFlipX(false);
     animator_->PlayAnimation(L"Idle");
 
+    fade_state_ = FadeState::kFadeIn;
     fade_timer_ = 0.f;
-    is_fade_in_ = true;
 }
 
 void MobBase::OnDisable()
@@ -57,16 +65,28 @@ void MobBase::Tick(float delta_time)
 {
     ServerActor::Tick(delta_time);
 
-    if (is_fade_in_)
+    if (fade_state_ != FadeState::kNone)
     {
-        Math::Color color = renderer_->GetColor();
-        if (fade_timer_ < 2.f)
-        {
-            color.a = Math::Lerp(0.f, 1.f, fade_timer_ / 2.f) * 255.f;
-            fade_timer_ += delta_time;
-        }
+        fade_timer_ += delta_time;
 
+        float t = Math::Clamp(fade_timer_ / 1.f, 0.f, 1.f);
+        t = (fade_state_ == FadeState::kFadeIn) ? t : (1.f - t);
+
+        Math::Color color = renderer_->GetColor();
+        color.a = static_cast<uint8_t>(t * 255.f);
         renderer_->SetColor(color);
+
+        if (t >= 1.f)
+        {
+            if (fade_state_ == FadeState::kFadeOut)
+            {
+                is_dead_ = true;
+                SetActive(false);
+            }
+            
+            fade_state_ = FadeState::kNone;
+            fade_timer_ = 0.f;
+        }
     }
 }
 

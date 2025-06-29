@@ -15,15 +15,25 @@ public:
     virtual void OnActivate() override;
     virtual void OnDeactivate() override;
     
+    virtual void OnDeath();
+    
     FORCEINLINE bool IsDead() const { return is_dead_; }
 
 protected:
+    enum class FadeState : uint8_t
+    {
+        kNone,
+        kFadeIn,
+        kFadeOut
+    };
+    
     virtual void OnEnable() override;
     virtual void OnDisable() override;
     virtual void Tick(float delta_time) override;
 
     bool is_dead_;
-    bool is_fade_in_;;
+
+    FadeState fade_state_;
 
     float fade_timer_;
     
