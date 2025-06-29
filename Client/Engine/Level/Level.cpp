@@ -47,6 +47,7 @@ void Level::InitializeActors()
     for (const auto& actor : actors_)
     {
         actor->BeginPlay();
+        if (actor->IsActive()) actor->OnEnable();
     }
     
     has_begun_play_ = true;

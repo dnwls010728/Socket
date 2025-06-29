@@ -45,7 +45,13 @@ void MobWalkState::Tick(float delta_time)
     transition_timer_ += delta_time;
     if (transition_timer_ >= 1.6f)
     {
-        if (auto owner = owner_.lock()) state_machine_.ChangeState(owner->GetIdleState());
+        if (auto owner = owner_.lock())
+        {
+            int32_t rand_state = Math::RandRange(0, 1);
+            if (rand_state == 0) state_machine_.ChangeState(owner->GetIdleState());
+            else if (rand_state == 1) state_machine_.ChangeState(owner->GetWalkState());
+        }
+        
         transition_timer_ -= 1.6f;
     }
     

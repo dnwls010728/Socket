@@ -111,6 +111,7 @@ float Actor::TakeDamage(float damage_amount, Actor* event_instigator, Actor* dam
 
 void Actor::SetActive(bool is_active)
 {
+    if (is_active == is_active_) return;
     World::Get()->ActivateActor(this, is_active);
 }
 

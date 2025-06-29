@@ -20,8 +20,10 @@ public:
 protected:
     virtual void OnEnable() override;
     virtual void OnDisable() override;
+    virtual void Tick(float delta_time) override;
 
     bool is_dead_;
+    bool is_fade_in_;;
 
     float fade_timer_;
     
