@@ -53,13 +53,6 @@ void ServerActor::PhysicsTick(float delta_time)
         
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
-        
-        uint16_t packed_state = t < .5f ? from.state : to.state;
-        
-        uint8_t state = (packed_state & 0xFF00) >> 8;
-        bool is_flipped = (packed_state & 0x0001) != 0;
-
-        OnState(state, is_flipped);
     }
     /*
      *    else if (snapshots_.size() == 1) {
@@ -90,17 +83,12 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
             snapshot.position.y = object_position_packet->position_y;
             snapshot.velocity.x = object_position_packet->velocity_x;
             snapshot.velocity.y = object_position_packet->velocity_y;
-            snapshot.state = object_position_packet->state;
             snapshot.server_time = object_position_packet->server_time;
             snapshot.time_update =  object_position_packet->time_update;
             snapshots_.push_back(snapshot);
         }
         break;
     }
-}
-
-void ServerActor::OnState(uint8_t state, bool is_flipped)
-{
 }
 
 RTTR_REGISTRATION

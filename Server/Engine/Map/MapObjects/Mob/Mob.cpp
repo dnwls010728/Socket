@@ -15,7 +15,7 @@ Mob::Mob() :
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
     is_grounded_(false),
-    prev_is_moving_(false),
+    was_moving_(false),
     foothold_(nullptr),
     hp_(3000),
     state_(0)
@@ -86,54 +86,36 @@ void Mob::Tick(float delta_time)
     
     if (position != last_position_)
     {
-        if (prev_is_moving_ == false)
-        {
-            ObjectPositionPacket dummy_packet;
-            dummy_packet.object_id = GetObjectID();
-            dummy_packet.position_x = last_position_.x;
-            dummy_packet.position_y = last_position_.y;
-            dummy_packet.velocity_x = velocity_.x;
-            dummy_packet.velocity_y = velocity_.y;
-            dummy_packet.state = state_;
-            dummy_packet.server_time = Net::GetClientTime();
-            dummy_packet.time_update = true;
-            map_->SendPacket(dummy_packet);
-        }
+        if (was_moving_ == false) SendPositionPacket(last_position_, true);
+        SendPositionPacket(position);
 
-        ObjectPositionPacket packet;
-        packet.object_id = GetObjectID();
-        packet.position_x = position.x;
-        packet.position_y = position.y;
-        packet.velocity_x = velocity_.x;
-        packet.velocity_y = velocity_.y;
-        packet.state = state_;
-        packet.server_time = Net::GetClientTime();
-        packet.time_update = false;
-        map_->SendPacket(packet);
-
-        prev_is_moving_ = true;
+        was_moving_ = true;
         last_position_ = position;
     }
     else
     {
-        if (prev_is_moving_)
+        if (was_moving_)
         {
             Math::Vector2 stop_position = GetPosition();
-            ObjectPositionPacket stop_packet;
-            stop_packet.object_id = GetObjectID();
-            stop_packet.position_x = stop_position.x;
-            stop_packet.position_y = stop_position.y;
-            stop_packet.velocity_x = velocity_.x;
-            stop_packet.velocity_y = velocity_.y;
-            stop_packet.state = state_;
-            stop_packet.server_time = Net::GetClientTime();
-            stop_packet.time_update = false;
-            map_->SendPacket(stop_packet);
+            SendPositionPacket(stop_position);
         }
         
-        prev_is_moving_ = false;
+        was_moving_ = false;
     }
     
+}
+
+void Mob::SendPositionPacket(const Math::Vector2& position, bool time_update) const
+{
+    ObjectPositionPacket packet;
+    packet.object_id = GetObjectID();
+    packet.position_x = position.x;
+    packet.position_y = position.y;
+    packet.velocity_x = velocity_.x;
+    packet.velocity_y = velocity_.y;
+    packet.server_time = Net::GetClientTime();
+    packet.time_update = time_update;
+    map_->SendPacket(packet);
 }
 
 void Mob::OnHit(int32_t damage)

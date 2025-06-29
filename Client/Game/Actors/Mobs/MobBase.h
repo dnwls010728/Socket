@@ -3,6 +3,8 @@
 #include "Actors/ServerActor.h"
 #include "Subsystems/ObjectPool/IPoolable.h"
 
+class Audio;
+
 class MobBase : public ServerActor, public IPoolable
 {
     SHADER_CLASS_HELPER(MobBase)
@@ -32,12 +34,12 @@ protected:
     virtual void OnDisable() override;
     virtual void Tick(float delta_time) override;
 
-    virtual void OnState(uint8_t state, bool is_flipped) override;
-
     bool is_dead_;
 
     FadeState fade_state_;
 
     float fade_timer_;
+
+    Audio* hit_sound_;
     
 };

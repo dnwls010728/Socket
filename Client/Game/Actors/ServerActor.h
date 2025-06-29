@@ -11,8 +11,6 @@ public:
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
-
-        uint16_t state;
         
         float server_time;
 
@@ -25,8 +23,6 @@ public:
 protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;
-
-   virtual void OnState(uint8_t state, bool is_flipped);
 
     std::deque<Snapshot> snapshots_;
     

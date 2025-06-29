@@ -7,6 +7,8 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
 #include "Subsystems/NetworkSubsystem.h"
@@ -24,6 +26,8 @@ MobBase::MobBase(const std::wstring& name) :
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
     
     animator_->PlayAnimation(L"Idle");
+
+    hit_sound_ = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\damage5.mp3");
     
 }
 
@@ -90,24 +94,6 @@ void MobBase::Tick(float delta_time)
             fade_timer_ = 0.f;
         }
     }
-}
-
-void MobBase::OnState(uint8_t state, bool is_flipped)
-{
-    ServerActor::OnState(state, is_flipped);
-
-    MobState mob_state = static_cast<MobState>(state);
-    switch (mob_state)
-    {
-    case MobState::kIdle: animator_->PlayAnimation(L"Idle");
-        break;
-    case MobState::kWalk: animator_->PlayAnimation(L"Walk");
-        break;
-    case MobState::kHit: animator_->PlayAnimation(L"Hit");
-        break;
-    }
-
-    renderer_->SetFlipX(is_flipped);
 }
 
 RTTR_REGISTRATION

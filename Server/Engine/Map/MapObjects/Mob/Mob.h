@@ -39,6 +39,7 @@ protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
 
+    void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
     void OnHit(int32_t damage);
 
     std::unique_ptr<FSM::StateMachine> state_machine_;
@@ -49,7 +50,7 @@ protected:
     float gravity_;
 
     bool is_grounded_;
-    bool prev_is_moving_;
+    bool was_moving_;
 
     class Foothold* foothold_;
 
