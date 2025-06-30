@@ -108,7 +108,7 @@ void LoginMap::Load()
     login_->AddToViewport();
     register_switch_->AddToViewport();
 
-    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dream Pulse.mp3");
+    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dreamscape.mp3");
     bgm->SetLoop(true);
     
     AudioManager::Get()->PlaySound2D(bgm);
