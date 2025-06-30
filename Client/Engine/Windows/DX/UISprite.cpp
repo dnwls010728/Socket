@@ -29,7 +29,7 @@ bool UISprite::Load(const std::wstring& path)
         {
             for (const auto& frame : meta_data_["frames"])
             {
-                UISpriteFrame sprite_frame;
+                Frame sprite_frame;
                 sprite_frame.offset.x = frame["rect"]["x"].as<float>();
                 sprite_frame.offset.y = frame["rect"]["y"].as<float>();
                 sprite_frame.size.x = frame["rect"]["width"].as<float>();
@@ -48,7 +48,7 @@ bool UISprite::Load(const std::wstring& path)
     {
         frames_.clear();
 
-        UISpriteFrame frame;
+        Frame frame;
         frame.offset = Math::Vector2::Zero();
         frame.size = { static_cast<float>(width_), static_cast<float>(height_) };
         frame.border_min = Math::Vector2::Zero();

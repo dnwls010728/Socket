@@ -1,11 +1,44 @@
-filter_mode: 0
+filter_mode: 1
 frames:
   - name: LoginBackground_0
     rect:
       x: 0
       y: 0
-      width: 1366
-      height: 768
+      width: 768
+      height: 512
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: LoginBackground_1
+    rect:
+      x: 768
+      y: 0
+      width: 768
+      height: 512
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: LoginBackground_2
+    rect:
+      x: 0
+      y: 512
+      width: 768
+      height: 512
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: LoginBackground_3
+    rect:
+      x: 768
+      y: 512
+      width: 768
+      height: 512
     border:
       left: 0
       top: 0

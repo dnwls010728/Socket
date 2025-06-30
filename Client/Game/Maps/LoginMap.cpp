@@ -41,10 +41,10 @@ void LoginMap::Load()
 
     UI::Get()->ChangeState(UILoginState::StaticClass());
 
-    background_ = UI_OLD::Image::Create(L"Background");
-    background_->SetPosition({683.f, 384.f});
-    background_->SetSize({1366.f, 768.f});
-    background_->SetTexture(L"\\UI\\LoginBackground.png");
+    // background_ = UI_OLD::Image::Create(L"Background");
+    // background_->SetPosition({683.f, 384.f});
+    // background_->SetSize({1366.f, 768.f});
+    // background_->SetTexture(L"\\UI\\LoginBackground.png");
 
     version_ = UI_OLD::TextBox::Create(L"Version");
     version_->SetPosition({10.f, 768.f});
@@ -101,7 +101,7 @@ void LoginMap::Load()
     character_list_->SetSize({200.f, 300.f});
     character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
-    background_->AddToViewport();
+    // background_->AddToViewport();
     version_->AddToViewport();
     login_id_->AddToViewport();
     login_password_->AddToViewport();
@@ -118,7 +118,7 @@ void LoginMap::Unload(EndPlayReason type)
 {
     Level::Unload(type);
     
-    background_->RemoveFromViewport();
+    // background_->RemoveFromViewport();
     
     version_->RemoveFromViewport();
 

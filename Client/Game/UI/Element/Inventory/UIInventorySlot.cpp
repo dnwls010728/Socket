@@ -26,13 +26,13 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     if (item_id > 0)
     {
         UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (ui_sprite) i_icon_->SetTexture(ui_sprite);
+        if (ui_sprite) i_icon_->SetSprite(ui_sprite);
 
         t_count_->SetText(std::to_wstring(count));
     }
     else
     {
-        i_icon_->SetTexture(nullptr);
+        i_icon_->SetSprite(nullptr);
         t_count_->SetText(L"");
     }
 }

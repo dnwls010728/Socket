@@ -8,8 +8,24 @@
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
     ui_sprite_(nullptr),
-    filter_mode_(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR)
+    timer_(0.f),
+    frame_index_(0)
 {
+}
+
+void UIImage::Tick(float delta_time)
+{
+    UIElement::Tick(delta_time);
+
+    timer_ += delta_time;
+    if (timer_ >= 1.f / 2.f)
+    {
+        timer_ -= 1.f / 2.f;
+        if (ui_sprite_)
+        {
+            frame_index_ = (frame_index_ + 1) % 4;
+        }
+    }
 }
 
 void UIImage::Render()
@@ -17,7 +33,8 @@ void UIImage::Render()
     UIElement::Render();
     if (!ui_sprite_) return;
 
-    Renderer::Get()->DrawBitmap(ui_sprite_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
+    // Renderer::Get()->DrawBitmap(ui_sprite_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
+    Renderer::Get()->DrawSprite(ui_sprite_, L"LoginBackground_" + std::to_wstring(frame_index_), GetAbsolutePosition(), size_);
 }
 
 RTTR_REGISTRATION

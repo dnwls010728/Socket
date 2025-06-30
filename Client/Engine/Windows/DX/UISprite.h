@@ -8,14 +8,6 @@
 
 #include "Asset/Asset.h"
 
-struct UISpriteFrame
-{
-    Math::Vector2 offset;
-    Math::Vector2 size;
-    Math::Vector2 border_min;
-    Math::Vector2 border_max;
-};
-
 class UISprite : public Asset
 {
     GENERATED_BODY(UISprite, Asset)
@@ -25,6 +17,14 @@ public:
     {
         kPoint,
         kBilinear
+    };
+    
+    struct Frame
+    {
+        Math::Vector2 offset;
+        Math::Vector2 size;
+        Math::Vector2 border_min;
+        Math::Vector2 border_max;
     };
     
     UISprite();
@@ -41,6 +41,8 @@ public:
     FORCEINLINE const Math::Rect& GetSlice9Rect() const { return slice9_rect_; }
 
 private:
+    friend class Renderer;
+    
     bool LoadBitmap(const std::wstring& path);
     
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
@@ -50,7 +52,7 @@ private:
 
     FilterMode filter_mode_;
 
-    std::map<std::wstring, UISpriteFrame> frames_;
+    std::map<std::wstring, Frame> frames_;
 
     Math::Rect slice9_rect_;
     
