@@ -1,11 +1,23 @@
 ﻿#include "pch.h"
 #include "PlayerFallState.h"
 
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 
 PlayerFallState::PlayerFallState(const std::shared_ptr<PlayerCharacter>& owner, const std::shared_ptr<AnimatorComponent>& animator) :
     PlayerStateBase(owner, animator)
 {
+}
+
+void PlayerFallState::Enter()
+{
+    PlayerStateBase::Enter();
+
+    if (auto animator = animator_.lock())
+    {
+        animator->PlayAnimation(L"Fall");
+    }
+    
 }
 
 void PlayerFallState::PhysicsTick(float delta_time)
