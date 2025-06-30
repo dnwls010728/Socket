@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
-#include "UITexture.h"
+#include "UISprite.h"
 
 #include "Level/World.h"
 
-UITexture::UITexture() :
+UISprite::UISprite() :
     bitmap_(nullptr),
     width_(0),
     height_(0),
@@ -11,7 +11,7 @@ UITexture::UITexture() :
 {
 }
 
-bool UITexture::Load(const std::wstring& kPath)
+bool UISprite::Load(const std::wstring& kPath)
 {
     Asset::Load(kPath);
     
@@ -46,7 +46,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<UITexture>("UITexture")
+    registration::class_<UISprite>("UISprite")
         .constructor<>()
         (
             policy::ctor::as_raw_ptr

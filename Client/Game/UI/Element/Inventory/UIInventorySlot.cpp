@@ -8,7 +8,7 @@
 #include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/Renderer.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
@@ -25,8 +25,8 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     item_id_ = item_id;
     if (item_id > 0)
     {
-        UITexture* texture = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (texture) i_icon_->SetTexture(texture);
+        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+        if (ui_sprite) i_icon_->SetTexture(ui_sprite);
 
         t_count_->SetText(std::to_wstring(count));
     }

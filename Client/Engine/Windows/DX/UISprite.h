@@ -8,13 +8,13 @@
 
 #include "Asset/Asset.h"
 
-class UITexture : public Asset
+class UISprite : public Asset
 {
-    GENERATED_BODY(UITexture, Asset)
+    GENERATED_BODY(UISprite, Asset)
     
 public:
-    UITexture();
-    virtual ~UITexture() override = default;
+    UISprite();
+    virtual ~UISprite() override = default;
 
     virtual bool Load(const std::wstring& kPath) override;
 

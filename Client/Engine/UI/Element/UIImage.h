@@ -3,7 +3,7 @@
 
 #include "UI/UIElement.h"
 
-class UITexture;
+class UISprite;
 
 class UIImage : public UIElement
 {
@@ -13,7 +13,7 @@ public:
     UIImage(const std::wstring& name);
     virtual ~UIImage() override = default;
 
-    FORCEINLINE void SetTexture(UITexture* texture) { texture_ = texture; }
+    FORCEINLINE void SetTexture(UISprite* ui_sprite) { ui_sprite_ = ui_sprite; }
 
     FORCEINLINE void SetFilterMode(const D2D1_BITMAP_INTERPOLATION_MODE mode) { filter_mode_ = mode; }
     FORCEINLINE D2D1_BITMAP_INTERPOLATION_MODE GetFilterMode() const { return filter_mode_; }
@@ -21,7 +21,7 @@ public:
 protected:
     virtual void Render() override;
 
-    UITexture* texture_;
+    UISprite* ui_sprite_;
 
     D2D1_BITMAP_INTERPOLATION_MODE filter_mode_;
     

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 class UIElement;
-class UITexture;
+class UISprite;
 class UIState;
 
 class UI : public Singleton<UI>
@@ -36,7 +36,7 @@ private:
 
     CursorState cursor_state_;
     
-    std::unordered_map<CursorState, UITexture*> cursor_textures_;
+    std::unordered_map<CursorState, UISprite*> cursor_sprites_;
 
     Math::Vector2 last_position_;
     Math::Vector2 cursor_position_;

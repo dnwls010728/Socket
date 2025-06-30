@@ -6,7 +6,7 @@
 #include "Asset/AssetManager.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UI_OLD::ChatBalloon::ChatBalloon(const std::wstring& name) :
     Widget(name),
@@ -15,8 +15,8 @@ UI_OLD::ChatBalloon::ChatBalloon(const std::wstring& name) :
 {
     AssetManager* asset_manager = AssetManager::Get();
 
-    arrow_texture_ = asset_manager->Load<UITexture>(L"UI\\ChatBalloon_Arrow.png");
-    body_texture_ = asset_manager->Load<UITexture>(L"UI\\ChatBalloon_Body.png");
+    arrow_sprite_ = asset_manager->Load<UISprite>(L"UI\\ChatBalloon_Arrow.png");
+    body_sprite_ = asset_manager->Load<UISprite>(L"UI\\ChatBalloon_Body.png");
 
     SetText(L"Text");
     
@@ -44,7 +44,7 @@ void UI_OLD::ChatBalloon::Render(Renderer* renderer, WindowsWindow* window)
     const Math::Rect rect = GetRect();
     const Math::Vector2 pivot_position = GetPivotPosition();
     
-    renderer->DrawBitmap(window, arrow_texture_->GetTexture(), rect, pivot_position);
+    renderer->DrawBitmap(window, arrow_sprite_->GetTexture(), rect, pivot_position);
     
     Math::Rect text_rect = GetRect(
         {pivot_position.x, pivot_position.y - 13.f},
@@ -58,7 +58,7 @@ void UI_OLD::ChatBalloon::Render(Renderer* renderer, WindowsWindow* window)
         {.5f, .5f}
     );
 
-    renderer->DrawBitmap(window, body_texture_->GetTexture(), body_rect, GetPivotPosition(body_rect), 0.f, true, {11.f, 11.f, 21.f, 21.f});
+    renderer->DrawBitmap(window, body_sprite_->GetTexture(), body_rect, GetPivotPosition(body_rect), 0.f, true, {11.f, 11.f, 21.f, 21.f});
     renderer->DrawString(window, text_, text_rect, GetPivotPosition(text_rect), Math::Color::Black, 0.f, L"NanumBarunGothic", 12.f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 

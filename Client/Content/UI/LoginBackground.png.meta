@@ -1,0 +1,13 @@
+filter_mode: 0
+frames:
+  - name: LoginBackground_0
+    rect:
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    border:
+      left: 0
+      bottom: 0
+      right: 0
+      top: 0

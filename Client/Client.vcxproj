@@ -201,6 +201,7 @@
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
     <ClInclude Include="Engine\UI\Element\UIImage.h" />
+    <ClInclude Include="Engine\UI\Element\UIInputField.h" />
     <ClInclude Include="Engine\UI\Element\UIText.h" />
     <ClInclude Include="Engine\UI\UI.h" />
     <ClInclude Include="Engine\UI\UIContainer.h" />
@@ -223,7 +224,7 @@
     <ClInclude Include="Engine\Windows\DX\ShapeBatch.h" />
     <ClInclude Include="Engine\Windows\DX\Sprite.h" />
     <ClInclude Include="Engine\Windows\DX\Texture.h" />
-    <ClInclude Include="Engine\Windows\DX\UITexture.h" />
+    <ClInclude Include="Engine\Windows\DX\UISprite.h" />
     <ClInclude Include="Engine\Windows\DX\Vertex.h" />
     <ClInclude Include="Engine\Windows\DX\VertexBuffer.h" />
     <ClInclude Include="Engine\Windows\WindowDefinition.h" />
@@ -588,6 +589,7 @@
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIInputField.cpp" />
     <ClCompile Include="Engine\UI\Element\UIText.cpp" />
     <ClCompile Include="Engine\UI\UI.cpp" />
     <ClCompile Include="Engine\UI\UIContainer.cpp" />
@@ -609,7 +611,7 @@
     <ClCompile Include="Engine\Windows\DX\ShapeBatch.cpp" />
     <ClCompile Include="Engine\Windows\DX\Sprite.cpp" />
     <ClCompile Include="Engine\Windows\DX\Texture.cpp" />
-    <ClCompile Include="Engine\Windows\DX\UITexture.cpp" />
+    <ClCompile Include="Engine\Windows\DX\UISprite.cpp" />
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />

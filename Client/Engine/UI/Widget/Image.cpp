@@ -2,17 +2,17 @@
 #include "Image.h"
 
 #include "Asset/AssetManager.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UI_OLD::Image::Image(const std::wstring& kName) :
     Widget(kName),
-    texture_(nullptr)
+    ui_sprite_(nullptr)
 {
 }
 
 void UI_OLD::Image::SetTexture(const std::wstring& path)
 {
-    texture_ = AssetManager::Get()->Load<UITexture>(path);
+    ui_sprite_ = AssetManager::Get()->Load<UISprite>(path);
 }
 
 std::shared_ptr<UI_OLD::Image> UI_OLD::Image::Create(const std::wstring& name)
@@ -23,9 +23,9 @@ std::shared_ptr<UI_OLD::Image> UI_OLD::Image::Create(const std::wstring& name)
 void UI_OLD::Image::Render(Renderer* renderer, WindowsWindow* window)
 {
     Widget::Render(renderer, window);
-    if (!texture_) return;
+    if (!ui_sprite_) return;
 
-    renderer->DrawBitmap(window, texture_->GetTexture(), GetRect(), GetPivotPosition());
+    renderer->DrawBitmap(window, ui_sprite_->GetTexture(), GetRect(), GetPivotPosition());
 }
 
 RTTR_REGISTRATION

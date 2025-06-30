@@ -117,7 +117,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-
         
         if (is_jump_pressed_ && collisions.is_below) velocity_.y = 6.7f;
         is_jump_pressed_ = false;

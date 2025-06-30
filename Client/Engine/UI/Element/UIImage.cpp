@@ -3,11 +3,11 @@
 
 #include "UI/UIContainer.h"
 #include "Windows/DX/Renderer.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
-    texture_(nullptr),
+    ui_sprite_(nullptr),
     filter_mode_(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR)
 {
 }
@@ -15,9 +15,9 @@ UIImage::UIImage(const std::wstring& name) :
 void UIImage::Render()
 {
     UIElement::Render();
-    if (!texture_) return;
+    if (!ui_sprite_) return;
 
-    Renderer::Get()->DrawBitmap(texture_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
+    Renderer::Get()->DrawBitmap(ui_sprite_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
 }
 
 RTTR_REGISTRATION

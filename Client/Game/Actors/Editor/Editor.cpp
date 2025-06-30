@@ -7,7 +7,7 @@
 #include "Data/FileHelper.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 #include "yaml-cpp/yaml.h"
 
 Editor::Editor(const std::wstring& kName) :

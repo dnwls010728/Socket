@@ -4,11 +4,11 @@
 #include "UIState.h"
 #include "Asset/AssetManager.h"
 #include "Event/Events.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UI::UI() :
     cursor_state_(CursorState::kIdle),
-    cursor_textures_(),
+    cursor_sprites_(),
     last_position_(Math::Vector2::Zero()),
     cursor_position_(Math::Vector2::Zero()),
     state_(nullptr)
@@ -30,7 +30,7 @@ void UI::ChangeState(const rttr::type& type)
 
 void UI::Init()
 {
-    cursor_textures_[CursorState::kIdle] = AssetManager::Get()->Load<UITexture>(L"UI\\Cursor\\pointer_a.png");
+    cursor_sprites_[CursorState::kIdle] = AssetManager::Get()->Load<UISprite>(L"UI\\Cursor\\pointer_a.png");
     
     ChangeState(UIState::StaticClass());
 }
@@ -47,7 +47,7 @@ void UI::Render()
     Renderer* renderer = Renderer::Get();
     WindowsWindow* window = World::Get()->GetWindow();
 
-    UITexture* cursor_texture = cursor_textures_[cursor_state_];
+    UISprite* cursor_texture = cursor_sprites_[cursor_state_];
     if (cursor_texture)
     {
         Math::Rect cursor_rect = {
