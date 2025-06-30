@@ -29,20 +29,25 @@ public:
     virtual void ReceivePacket(Net::IPacket* packet) override;
 
     void InitSpawn(const std::wstring& name, const Math::Vector2& position);
+    void UpdateFlip();
     
-    FORCEINLINE const Math::Vector2& GetMovementInput() const { return movement_input_; }
+    FORCEINLINE Math::Vector2 GetMoveAxis() const { return move_axis_; }
+    FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
+    FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
 
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
-    virtual void PostTick(float delta_time) override;
 
-    Math::Vector2 movement_input_;
-
+    Math::Vector2 move_axis_;
     Math::Vector2 last_position_;
-    bool prev_is_moving;
+    
+    bool was_moving_;
+    bool is_jump_pressed_;
+    
     std::deque<Snapshot> snapshots_;
+    
     float movement_sync_accumulator_;
 
     int32_t timer_;

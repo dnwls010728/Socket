@@ -26,7 +26,7 @@ public:
 
     Math::Vector2 ClosestPoint(const Math::Vector2& kPoint) const;
 
-    FORCEINLINE const Math::Vector2& GetOffset() const { return offset_; }
+    FORCEINLINE Math::Vector2 GetOffset() const { return offset_; }
 
     const Bounds& GetBounds();
 

@@ -4,30 +4,40 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 
-PlayerWalkState::PlayerWalkState(const std::shared_ptr<PlayerCharacter>& player_character) :
-    PlayerState(player_character)
+PlayerWalkState::PlayerWalkState(const std::shared_ptr<PlayerCharacter>& owner, const std::shared_ptr<AnimatorComponent>& animator) :
+    PlayerStateBase(owner, animator)
 {
 }
 
 void PlayerWalkState::Enter()
 {
-    PlayerState::Enter();
+    PlayerStateBase::Enter();
 
-    std::shared_ptr<AnimatorComponent> animator = player_character_->GetAnimator();
-    if (animator) animator->PlayAnimation(L"Walk");
+    if (auto animator = animator_.lock())
+    {
+        animator->PlayAnimation(L"Walk");
+    }
+    
 }
 
 void PlayerWalkState::PhysicsTick(float delta_time)
 {
-    PlayerState::PhysicsTick(delta_time);
+    PlayerStateBase::PhysicsTick(delta_time);
 
-    const Math::Vector2& movement_input = player_character_->GetMovementInput();
-    player_character_->SetVelocityX(movement_input.x * 3.75f);
+    if (auto owner = owner_.lock())
+    {
+        owner->SetVelocityX(owner->GetMoveAxisX() * 3.75f);
+    }
+    
 }
 
-void PlayerWalkState::Exit()
+void PlayerWalkState::PostTick(float delta_time)
 {
-    PlayerState::Exit();
+    PlayerStateBase::PostTick(delta_time);
 
-    // if (IsValid(player_character_)) player_character_->SetVelocityX(0.f);
+    if (auto owner = owner_.lock())
+    {
+        owner->UpdateFlip();
+    }
+    
 }

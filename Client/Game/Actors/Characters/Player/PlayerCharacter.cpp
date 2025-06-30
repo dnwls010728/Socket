@@ -29,9 +29,10 @@
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
-    movement_input_(Math::Vector2::Zero()),
+    move_axis_(Math::Vector2::Zero()),
     movement_sync_accumulator_(0.f),
-    prev_is_moving(false),
+    was_moving_(false),
+    is_jump_pressed_(false),
     last_position_(Math::Vector2::Zero())
 {
     SetLayer(ActorLayer::kCharacter);
@@ -78,22 +79,27 @@ void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& p
     GetTransform()->SetPosition(position);
 }
 
+void PlayerCharacter::UpdateFlip()
+{
+    if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
     if (IsMine())
     {
-        std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
-        std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
-        std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis());
+        std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis(), animator_);
 
-        state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(idle_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
         
-        state_machine_->AddTransition(walk_state, idle_state, [&]() { return Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(walk_state, idle_state, [&]() { return Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(walk_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
-        
+
         state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
         
         state_machine_->SetState(idle_state);
@@ -112,10 +118,12 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
 
-        if (Keyboard::Get()->GetKeyDown(VK_SPACE) && collisions.is_below) velocity_.y = 6.7f;
+        
+        if (is_jump_pressed_ && collisions.is_below) velocity_.y = 6.7f;
+        is_jump_pressed_ = false;
         
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ * delta_time, movement_input_);
+        controller_->Move(velocity_ * delta_time, move_axis_);
         
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
         
@@ -133,7 +141,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         }
         
         bool is_moving_start = false;
-        if (is_moving_now != prev_is_moving)
+        if (is_moving_now != was_moving_)
         {
             should_send = true;
             if (is_moving_now)
@@ -169,7 +177,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
             move_player_packet.time_update = false;
             SendPacket(move_player_packet);
 
-            prev_is_moving = is_moving_now;
+            was_moving_ = is_moving_now;
             last_position_ = position;
             movement_sync_accumulator_ = 0.f;
         }
@@ -246,8 +254,13 @@ void PlayerCharacter::Tick(float delta_time)
         
         if (!ui_manager->HasFocus())
         {
-            movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-            movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+
+            if (keyboard->GetKey('C'))
+            {
+                is_jump_pressed_ = true;
+            }
 
             if (keyboard->GetKeyDown('1'))
             {
@@ -285,8 +298,8 @@ void PlayerCharacter::Tick(float delta_time)
         }
         else
         {
-            movement_input_.x = 0.f;
-            movement_input_.y = 0.f;
+            move_axis_.x = 0.f;
+            move_axis_.y = 0.f;
         }
 
         // 공격 범위 확인용
@@ -294,16 +307,6 @@ void PlayerCharacter::Tick(float delta_time)
     }
     else
     {
-    }
-}
-
-void PlayerCharacter::PostTick(float delta_time)
-{
-    CharacterBase::PostTick(delta_time);
-
-    if (movement_input_.x != 0.f)
-    {
-        renderer_->SetFlipX(movement_input_.x < 0.f);
     }
 }
 

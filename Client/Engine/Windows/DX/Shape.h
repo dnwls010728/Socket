@@ -35,15 +35,15 @@ public:
 
     FORCEINLINE D3D11_PRIMITIVE_TOPOLOGY GetPrimitiveTopology() const { return primitive_topology_; }
 
-    FORCEINLINE const Math::Vector2& GetPosition() const { return position_; }
-    FORCEINLINE const Math::Vector2& GetScale() const { return scale_; }
-    FORCEINLINE const Math::Vector2& GetPivot() const { return pivot_; }
+    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+    FORCEINLINE Math::Vector2 GetScale() const { return scale_; }
+    FORCEINLINE Math::Vector2 GetPivot() const { return pivot_; }
 
     FORCEINLINE void SetUVOffset(const Math::Vector2& uv_offset) { uv_offset_ = uv_offset; }
-    FORCEINLINE const Math::Vector2& GetUVOffset() const { return uv_offset_; }
+    FORCEINLINE Math::Vector2 GetUVOffset() const { return uv_offset_; }
 
     FORCEINLINE void SetUVScale(const Math::Vector2& uv_scale) { uv_scale_ = uv_scale; }
-    FORCEINLINE const Math::Vector2& GetUVScale() const { return uv_scale_; }
+    FORCEINLINE Math::Vector2 GetUVScale() const { return uv_scale_; }
 
     FORCEINLINE void SetColor(const Math::Color& kColor) { color_ = kColor; }
     FORCEINLINE const Math::Color& GetColor() const { return color_; }
