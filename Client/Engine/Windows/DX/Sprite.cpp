@@ -61,7 +61,7 @@ bool Sprite::Load(const std::wstring& kPath)
         frames_[filename + L"_0"] = frame;
     }
     
-    return true;;
+    return true;
 }
 
 RTTR_REGISTRATION

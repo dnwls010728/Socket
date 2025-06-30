@@ -151,24 +151,24 @@ void ShapeBatch::DrawShapes(const std::shared_ptr<WindowsWindow>& kWindow, const
 
         if (const Texture* texture = shape->GetTexture())
         {
-            if (texture->GetWrapMode() == WrapMode::kClamp)
+            if (texture->GetWrapMode() == Texture::WrapMode::kClamp)
             {
-                if (texture->GetFilterMode() == FilterMode::kPoint)
+                if (texture->GetFilterMode() == Texture::FilterMode::kPoint)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, point_sampler_state_clamp_.GetAddressOf());
                 }
-                else if (texture->GetFilterMode() == FilterMode::kBilinear)
+                else if (texture->GetFilterMode() == Texture::FilterMode::kBilinear)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, bilinear_sampler_state_clamp_.GetAddressOf());
                 }
             }
             else
             {
-                if (texture->GetFilterMode() == FilterMode::kPoint)
+                if (texture->GetFilterMode() == Texture::FilterMode::kPoint)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, point_sampler_state_wrap_.GetAddressOf());
                 }
-                else if (texture->GetFilterMode() == FilterMode::kBilinear)
+                else if (texture->GetFilterMode() == Texture::FilterMode::kBilinear)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, bilinear_sampler_state_wrap_.GetAddressOf());
                 }

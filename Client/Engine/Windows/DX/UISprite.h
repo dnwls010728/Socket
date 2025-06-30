@@ -8,15 +8,29 @@
 
 #include "Asset/Asset.h"
 
+struct UISpriteFrame
+{
+    Math::Vector2 offset;
+    Math::Vector2 size;
+    Math::Vector2 border_min;
+    Math::Vector2 border_max;
+};
+
 class UISprite : public Asset
 {
     GENERATED_BODY(UISprite, Asset)
     
 public:
+    enum class FilterMode : uint8_t
+    {
+        kPoint,
+        kBilinear
+    };
+    
     UISprite();
     virtual ~UISprite() override = default;
 
-    virtual bool Load(const std::wstring& kPath) override;
+    virtual bool Load(const std::wstring& path) override;
 
     FORCEINLINE Microsoft::WRL::ComPtr<ID2D1Bitmap> GetTexture() const { return bitmap_; }
     
@@ -27,10 +41,16 @@ public:
     FORCEINLINE const Math::Rect& GetSlice9Rect() const { return slice9_rect_; }
 
 private:
+    bool LoadBitmap(const std::wstring& path);
+    
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap_;
     
     uint32_t width_;
     uint32_t height_;
+
+    FilterMode filter_mode_;
+
+    std::map<std::wstring, UISpriteFrame> frames_;
 
     Math::Rect slice9_rect_;
     
