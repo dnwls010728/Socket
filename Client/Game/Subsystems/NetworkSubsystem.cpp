@@ -9,7 +9,6 @@
 #include "InGameUISubsystem.h"
 #include "PlayerSubsystem.h"
 #include "SessionSubsystem.h"
-#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
@@ -29,26 +28,11 @@ NetworkSubsystem::NetworkSubsystem() :
 {
 }
 
-void NetworkSubsystem::Init()
-{
-    WorldSubsystem::Init();
-    
-}
-
-void NetworkSubsystem::Deinit()
-{
-    WorldSubsystem::Deinit();
-
-    SessionSubsystem::Get()->packet_handler.Remove(this, &NetworkSubsystem::ProcessPackets);
-}
-
 void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
 
     SessionSubsystem* session_subsystem = SessionSubsystem::Get();
-    session_subsystem->packet_handler.Add(this, &NetworkSubsystem::ProcessPackets);
-
     if (session_subsystem->IsInGame())
     {
         InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
@@ -131,72 +115,6 @@ std::shared_ptr<NetworkActor> NetworkSubsystem::FindNetworkActor(const uint32_t 
 NetworkSubsystem* NetworkSubsystem::Get()
 {
     return World::Get()->GetSubsystem<NetworkSubsystem>();
-}
-
-void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
-{
-    switch (packet->GetPacketID())
-    {
-    case ChangeMapResponse::StaticPacketID:
-        {
-            ChangeMapResponse* response = static_cast<ChangeMapResponse*>(packet.get());
-            if (response->is_success) TransitionMap(response->map_id);
-        }
-        break;
-        
-    case SpawnPlayerPacket::StaticPacketID:
-        {
-            SpawnPlayerPacket* spawn_player_packet = static_cast<SpawnPlayerPacket*>(packet.get());
-            std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), spawn_player_packet->character_id);
-            if (IsValid(player_character))
-            {
-                float position_x = spawn_player_packet->position_x;
-                float position_y = spawn_player_packet->position_y;
-
-                player_character->InitSpawn(spawn_player_packet->name, {position_x, position_y});
-                other_players_.emplace_back(player_character);
-            }
-        }
-        break;
-
-    case DestroyPlayerPacket::StaticPacketID:
-        {
-            DestroyPlayerPacket* destroy_player_packet = static_cast<DestroyPlayerPacket*>(packet.get());
-            DestroyNetworkActor(destroy_player_packet->unique_id);
-        }
-        break;
-
-    case MovePlayerPacket::StaticPacketID:
-        {
-            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet.get());
-            
-            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(move_player_packet->unique_id);
-            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
-        }
-        break;
-
-    case ChatMessagePacket::StaticPacketID:
-        {
-            ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());
-            for (const auto& network_actor : network_actors_ | std::views::values)
-            {
-                if (network_actor->GetObjectID() == chat_message_packet->unique_id)
-                {
-                    std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor);
-                    if (IsValid(player_character))
-                    {
-                        std::wstring message = chat_message_packet->message;
-                        player_character->Speak(message);
-                    }
-                    break;
-                }
-            }
-        }
-        break;
-        
-    default:
-        break;
-    }
 }
 
 void NetworkSubsystem::TransitionMap(uint32_t map_id)
