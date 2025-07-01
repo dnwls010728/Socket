@@ -8,33 +8,22 @@
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
     ui_sprite_(nullptr),
-    timer_(0.f),
-    frame_index_(0)
+    current_frame_(L"")
 {
 }
 
-void UIImage::Tick(float delta_time)
+void UIImage::SetSprite(UISprite* ui_sprite, const std::wstring& frame_name)
 {
-    UIElement::Tick(delta_time);
-
-    timer_ += delta_time;
-    if (timer_ >= 1.f / 2.f)
-    {
-        timer_ -= 1.f / 2.f;
-        if (ui_sprite_)
-        {
-            frame_index_ = (frame_index_ + 1) % 4;
-        }
-    }
+    ui_sprite_ = ui_sprite;
+    current_frame_ = frame_name;
 }
 
 void UIImage::Render()
 {
     UIElement::Render();
     if (!ui_sprite_) return;
-
-    // Renderer::Get()->DrawBitmap(ui_sprite_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
-    Renderer::Get()->DrawSprite(ui_sprite_, L"LoginBackground_" + std::to_wstring(frame_index_), GetAbsolutePosition(), size_);
+    
+    Renderer::Get()->DrawSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
 }
 
 RTTR_REGISTRATION

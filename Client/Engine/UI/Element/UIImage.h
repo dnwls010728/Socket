@@ -13,16 +13,13 @@ public:
     UIImage(const std::wstring& name);
     virtual ~UIImage() override = default;
 
-    FORCEINLINE void SetSprite(UISprite* ui_sprite) { ui_sprite_ = ui_sprite; }
+    void SetSprite(UISprite* ui_sprite, const std::wstring& frame_name);
 
 protected:
-    virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
     UISprite* ui_sprite_;
 
-    // 테스트
-    float timer_;
-    int32_t frame_index_;
+    std::wstring current_frame_;
     
 };

@@ -1,11 +1,11 @@
-filter_mode: 1
+filter_mode: 0
 frames:
-  - name: LoginBackground_0
+  - name: Miss_0
     rect:
       x: 0
       y: 0
-      width: 1536
-      height: 1024
+      width: 68
+      height: 28
     border:
       left: 0
       top: 0

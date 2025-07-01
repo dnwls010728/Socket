@@ -872,7 +872,7 @@ void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, con
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size)
+void Renderer::DrawSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& scale, float alpha)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
@@ -888,9 +888,11 @@ void Renderer::DrawSprite(const UISprite* ui_sprite, const std::wstring& frame_n
     D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
     if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 
+    Math::Vector2 size = frame.size * scale;
+
     const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + size.x, position.y + size.y };
     const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
-    d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, 1.f, filter_mode, src_rect);
+    d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
     
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }

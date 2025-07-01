@@ -2,6 +2,7 @@
 #include "UILoginState.h"
 
 #include "Asset/AssetManager.h"
+#include "Element/UIDamageNumber.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
 
@@ -16,8 +17,11 @@ void UILoginState::Init()
     UISprite* sprite = AssetManager::Get()->Load<UISprite>(L"UI\\LoginBackground.png");
 
     UIImage* image = AddElement<UIImage>(UIImage::StaticClass(), L"LoginBackground");
-    image->SetSize({1366.f, 768.f});
-    image->SetSprite(sprite);
+    image->SetSize({1.f, 1.f});
+    image->SetSprite(sprite, L"LoginBackground_0");
+
+    UIDamageNumber* damage_number = AddElement<UIDamageNumber>(UIDamageNumber::StaticClass(), L"DamageNumber");
+    damage_number->SetSize({5.f, 5.f});
 
 }
 
