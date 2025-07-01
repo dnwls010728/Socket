@@ -6,7 +6,9 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
+#include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
@@ -32,7 +34,7 @@ void SessionSubsystem::Init()
         return;
     }
 
-    // 핸들러 등록
+#pragma region 핸들러 등록
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
         std::make_unique<SelectCharacterHandler>()
@@ -42,6 +44,17 @@ void SessionSubsystem::Init()
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
     );
+
+    handlers_.emplace(
+        DestroyObjectPacket::StaticPacketID,
+        std::make_unique<DestroyObjectHandler>()
+    );
+
+    handlers_.emplace(
+        ObjectPositionPacket::StaticPacketID,
+        std::make_unique<ObjectPositionHandler>()
+    );
+#pragma endregion
 
     SetState(SessionState::kConnected);
 }

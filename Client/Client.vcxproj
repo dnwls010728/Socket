@@ -277,7 +277,9 @@
     <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
+    <ClInclude Include="Game\PacketHandlers\DestroyObjectHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MoveItemHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
@@ -660,7 +662,9 @@
     <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DestroyObjectHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MoveItemHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />

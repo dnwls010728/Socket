@@ -215,24 +215,6 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
-
-    case DestroyObjectPacket::StaticPacketID:
-        {
-            DestroyObjectPacket* destroy_object_packet = static_cast<DestroyObjectPacket*>(packet.get());
-            
-            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(destroy_object_packet->object_id);
-            if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
-        }
-        break;
-        
-    case ObjectPositionPacket::StaticPacketID:
-        {
-            ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet.get());
-            
-            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(object_position_packet->object_id);
-            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
-        }
-        break;
         
     default:
         break;
