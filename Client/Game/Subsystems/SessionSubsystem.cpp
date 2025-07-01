@@ -10,6 +10,7 @@
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
+#include "PacketHandlers/SpawnObjectHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
@@ -43,6 +44,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
+    );
+
+    handlers_.emplace(
+        SpawnObjectPacket::StaticPacketID,
+        std::make_unique<SpawnObjectHandler>()
     );
 
     handlers_.emplace(

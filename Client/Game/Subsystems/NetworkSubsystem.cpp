@@ -193,28 +193,6 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
             }
         }
         break;
-
-    case SpawnObjectPacket::StaticPacketID:
-        {
-            SpawnObjectPacket* spawn_object_packet = static_cast<SpawnObjectPacket*>(packet.get());
-
-            ObjectInfo& object_info = spawn_object_packet->object_info;
-
-            std::shared_ptr<Actor> out_actor = nullptr;
-            if (ObjectPoolSubsystem::Get()->GetFromPool(MobBase::StaticClass(), out_actor))
-            {
-                if (IsValid(out_actor))
-                {
-                    std::shared_ptr<NetworkActor> network_actor = std::dynamic_pointer_cast<NetworkActor>(out_actor);
-                    if (IsValid(network_actor))
-                    {
-                        network_actor->SetObjectID(object_info.object_id);
-                        network_actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
-                    }
-                }
-            }
-        }
-        break;
         
     default:
         break;
