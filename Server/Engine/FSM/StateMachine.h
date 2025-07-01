@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include <memory>
 #include <typeindex>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace FSM
 {

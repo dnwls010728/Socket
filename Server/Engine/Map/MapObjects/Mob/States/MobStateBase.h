@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <memory>
+
 #include "FSM/IState.h"
 
 class Mob;

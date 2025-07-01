@@ -53,12 +53,12 @@ void UIDamageNumber::Render()
         {
             wchar_t digit = damage[i];
             std::wstring frame_name = L"Number_" + std::to_wstring(digit - L'0');
-            renderer->DrawSprite(number_sprite_, frame_name, GetAbsolutePosition() + Math::Vector2(i * (20 * size_.x), 0), size_, alpha_);
+            renderer->DrawSimpleSprite(number_sprite_, frame_name, GetAbsolutePosition() + Math::Vector2(i * (20 * size_.x), 0), size_, alpha_);
         }
     }
     else
     {
-        renderer->DrawSprite(miss_sprite_, L"Miss_0", GetAbsolutePosition(), size_, alpha_);
+        renderer->DrawSimpleSprite(miss_sprite_, L"Miss_0", GetAbsolutePosition(), size_, alpha_);
     }
 }
 

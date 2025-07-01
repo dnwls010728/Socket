@@ -18,6 +18,12 @@ public:
         kPoint,
         kBilinear
     };
+
+    enum class DrawMode : uint8_t
+    {
+        kSimple,
+        kSliced
+    };
     
     struct Frame
     {

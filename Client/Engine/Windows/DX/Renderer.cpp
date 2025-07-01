@@ -872,7 +872,7 @@ void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, con
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& scale, float alpha)
+void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& scale, float alpha)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
@@ -893,6 +893,90 @@ void Renderer::DrawSprite(const UISprite* ui_sprite, const std::wstring& frame_n
     const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + size.x, position.y + size.y };
     const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
     d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& scale, float alpha)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    
+    auto it = ui_sprite->frames_.find(frame_name);
+    if (it == ui_sprite->frames_.end()) return;
+
+    const UISprite::Frame& frame = it->second;
+
+    D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+    Math::Vector2 scaled_frame_size = frame.size * scale;
+
+    // Top Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + frame.border_min.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Top Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y, position.x + scaled_frame_size.x - frame.border_max.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Top Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + scaled_frame_size.x - frame.border_max.x, position.y, position.x + scaled_frame_size.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y + frame.border_min.y, position.x + frame.border_min.x, position.y + scaled_frame_size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + frame.border_min.y, position.x + scaled_frame_size.x - frame.border_max.x, position.y + scaled_frame_size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + scaled_frame_size.x - frame.border_max.x, position.y + frame.border_min.y, position.x + scaled_frame_size.x, position.y + scaled_frame_size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y + scaled_frame_size.y - frame.border_max.y, position.x + frame.border_min.x, position.y + scaled_frame_size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + scaled_frame_size.y - frame.border_max.y, position.x + scaled_frame_size.x - frame.border_max.x, position.y + scaled_frame_size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + scaled_frame_size.x - frame.border_max.x, position.y + scaled_frame_size.y - frame.border_max.y, position.x + scaled_frame_size.x, position.y + scaled_frame_size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
     
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }

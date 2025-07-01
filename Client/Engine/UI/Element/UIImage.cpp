@@ -23,7 +23,7 @@ void UIImage::Render()
     UIElement::Render();
     if (!ui_sprite_) return;
     
-    Renderer::Get()->DrawSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
+    Renderer::Get()->DrawSlicedSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
 }
 
 RTTR_REGISTRATION

@@ -21,7 +21,7 @@ void UILoginState::Init()
     image->SetSprite(sprite, L"LoginBackground_0");
 
     UIDamageNumber* damage_number = AddElement<UIDamageNumber>(UIDamageNumber::StaticClass(), L"DamageNumber");
-    damage_number->SetSize({5.f, 5.f});
+    damage_number->SetSize({1.f, 1.f});
 
 }
 
