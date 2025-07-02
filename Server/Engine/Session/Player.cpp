@@ -197,11 +197,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 move_player_broadcast_packet.position_y = position_y;
                 move_player_broadcast_packet.velocity_x = move_player_packet->velocity_x;
                 move_player_broadcast_packet.velocity_y = move_player_packet->velocity_y;
-                move_player_broadcast_packet.is_flipped = move_player_packet->is_flipped;
-                move_player_broadcast_packet.animation = move_player_packet->animation;
                 move_player_broadcast_packet.server_time = Net::GetClientTime();
                 move_player_broadcast_packet.time_update = move_player_packet->time_update;
                 map_->SendPacket(move_player_broadcast_packet, shared_from_this());
+            }
+        }
+        break;
+
+    case PlayerAnimationPacket::StaticPacketID:
+        {
+            PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet);
+            if (map_)
+            {
+                PlayerAnimationPacket player_animation_broadcast_packet;
+                player_animation_broadcast_packet.unique_id = character_id_;
+                player_animation_broadcast_packet.server_time = Net::GetClientTime();
+                player_animation_broadcast_packet.animation = player_animation_packet->animation;
+                player_animation_broadcast_packet.is_flipped =  player_animation_packet->is_flipped;
+                map_->SendPacket(player_animation_broadcast_packet, shared_from_this());
             }
         }
         break;

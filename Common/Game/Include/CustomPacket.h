@@ -149,13 +149,22 @@ struct MovePlayerPacket : public Net::IPacket
     float position_y;
     float velocity_x;
     float velocity_y;
-    bool is_flipped;
-    std::wstring animation; // 추후 더 작은 크기로 변경할 수 있음
     float server_time;
     bool time_update;
     
-    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, is_flipped, animation, server_time, time_update)
+    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
     REGISTER_PACKET(MovePlayerPacket, 213)
+};
+
+struct PlayerAnimationPacket : public Net::IPacket
+{
+    uint32_t unique_id;
+    bool is_flipped;
+    std::wstring animation;
+    float server_time;
+    
+    SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
+    REGISTER_PACKET(PlayerAnimationPacket, 214)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -164,7 +173,7 @@ struct ChatMessagePacket : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_FIELDS(unique_id, message)
-    REGISTER_PACKET(ChatMessagePacket, 214)
+    REGISTER_PACKET(ChatMessagePacket, 215)
 };
 
 struct SpawnObjectPacket : public Net::IPacket
@@ -195,6 +204,17 @@ struct ObjectPositionPacket : public Net::IPacket
 
     SERIALIZABLE_FIELDS(object_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
     REGISTER_PACKET(ObjectPositionPacket, 232)
+};
+
+struct ObjectAnimationPacket : public Net::IPacket
+{
+    uint32_t object_id;
+    bool is_flipped;
+    std::wstring animation;
+    float server_time;
+    
+    SERIALIZABLE_FIELDS(object_id, is_flipped, animation, server_time)
+    REGISTER_PACKET(ObjectAnimationPacket, 233)
 };
 
 struct MoveItemRequest : public Net::IPacket

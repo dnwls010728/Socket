@@ -9,6 +9,7 @@
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
+#include "PacketHandlers/ObjectAnimationHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
 #include "UI/UILoginState.h"
@@ -59,6 +60,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         ObjectPositionPacket::StaticPacketID,
         std::make_unique<ObjectPositionHandler>()
+    );
+
+    handlers_.emplace(
+        ObjectAnimationPacket::StaticPacketID,
+        std::make_unique<ObjectAnimationHandler>()
     );
 #pragma endregion
 

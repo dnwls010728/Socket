@@ -175,6 +175,15 @@ void NetworkSubsystem::ProcessPackets(const std::shared_ptr<Net::IPacket>& packe
         }
         break;
 
+    case PlayerAnimationPacket::StaticPacketID:
+        {
+            PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet.get());
+            
+            std::shared_ptr<NetworkActor> network_actor = FindNetworkActor(player_animation_packet->unique_id);
+            if (IsValid(network_actor)) network_actor->ReceivePacket(packet.get());
+        }
+        break;
+
     case ChatMessagePacket::StaticPacketID:
         {
             ChatMessagePacket* chat_message_packet = static_cast<ChatMessagePacket*>(packet.get());

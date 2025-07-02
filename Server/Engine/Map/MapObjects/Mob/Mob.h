@@ -14,8 +14,11 @@ public:
     Mob();
     virtual ~Mob() override = default;
 
-    void SetState(MobState state);
-    void SetFlipped(bool is_flipped);
+    inline void SetFlipped(bool is_flipped) { is_flipped_ = is_flipped; }
+    inline bool IsFlipped() const { return is_flipped_; }
+
+    inline void SetAnimation(const std::wstring& animation) { animation_ = animation; }
+    inline const std::wstring& GetAnimation() const { return animation_; }
     
     inline const Math::Vector2& GetVelocity() const { return velocity_; }
     inline void SetVelocity(const Math::Vector2& velocity) { velocity_ = velocity; }
@@ -40,6 +43,7 @@ protected:
     virtual void Tick(float delta_time) override;
 
     void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
+    void SendAnimationPoacket(const std::wstring& animation, bool is_flip) const;
     void OnHit(int32_t damage);
 
     std::unique_ptr<FSM::StateMachine> state_machine_;
@@ -51,12 +55,16 @@ protected:
 
     bool is_grounded_;
     bool was_moving_;
+    
+    bool is_flipped_;
+    bool last_flipped_;
+
+    std::wstring animation_;
+    std::wstring last_animation_;
 
     class Foothold* foothold_;
 
     std::atomic_int32_t hp_;
-
-    uint16_t state_;
 
 #pragma region 상태
     std::shared_ptr<MobIdleState> idle_state_;

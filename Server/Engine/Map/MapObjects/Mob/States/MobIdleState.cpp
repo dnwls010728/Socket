@@ -17,7 +17,7 @@ void MobIdleState::Enter()
 
     if (auto owner = owner_.lock())
     {
-        owner->SetState(MobState::kIdle);
+        owner->SetAnimation(L"Idle");
     }
 }
 

@@ -8,7 +8,9 @@ EngineSettings::EngineSettings() :
     screen_height_(480),
     use_vsync_(false),
     fixed_time_step_(.02f),
-    layer_collision_matrix_()
+    layer_collision_matrix_(),
+    object_interpolation_delay_(0.25f),
+    character_interpolation_delay_(0.15f)
 {
 }
 

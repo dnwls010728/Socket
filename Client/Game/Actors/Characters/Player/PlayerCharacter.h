@@ -9,19 +9,21 @@ class PlayerCharacter : public CharacterBase
     SHADER_CLASS_HELPER(PlayerCharacter)
     GENERATED_BODY(PlayerCharacter, CharacterBase)
 
-    struct Snapshot
+    struct MovementSnapshot
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
-        
-        bool is_flipped;
-        
-        std::wstring animation;
-        
-        float server_time;
-
-        bool time_update;
+        float         server_time;
+        bool          time_update;
     };
+    
+    struct AnimationSnapshot
+    {
+        bool          is_flipped;
+        std::wstring  animation;
+        float         server_time;
+    };
+    
 public:
     PlayerCharacter(const std::wstring& kName);
     virtual ~PlayerCharacter() override = default;
@@ -39,17 +41,23 @@ protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
+    virtual void SyncCharacterMovement(float delta_time);
 
     Math::Vector2 move_axis_;
     Math::Vector2 last_position_;
+    std::wstring  last_animation_;
+    bool          last_flip_;
     
     bool was_moving_;
     bool is_jump_pressed_;
     
-    std::deque<Snapshot> snapshots_;
+    std::deque<MovementSnapshot>  movement_snapshots_;
+    std::deque<AnimationSnapshot> animation_snapshots_;
     
     float movement_sync_accumulator_;
+    
 
     int32_t timer_;
+
     
 };

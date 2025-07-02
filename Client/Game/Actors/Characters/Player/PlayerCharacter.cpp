@@ -33,7 +33,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     movement_sync_accumulator_(0.f),
     was_moving_(false),
     is_jump_pressed_(false),
-    last_position_(Math::Vector2::Zero())
+    last_position_(Math::Vector2::Zero()),
+    last_flip_(false)
 {
     SetLayer(ActorLayer::kCharacter);
     
@@ -52,16 +53,24 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MovePlayerPacket::StaticPacketID:
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
-            Snapshot snapshot;
+            MovementSnapshot snapshot;
             snapshot.position.x = move_player_packet->position_x;
             snapshot.position.y = move_player_packet->position_y;
             snapshot.velocity.x = move_player_packet->velocity_x;
             snapshot.velocity.y = move_player_packet->velocity_y;
-            snapshot.is_flipped = move_player_packet->is_flipped;
-            snapshot.animation = move_player_packet->animation;
             snapshot.server_time =  move_player_packet->server_time;
             snapshot.time_update =  move_player_packet->time_update;
-            snapshots_.push_back(snapshot);
+            movement_snapshots_.push_back(snapshot);
+        }
+        break;
+    case PlayerAnimationPacket::StaticPacketID:
+        {
+            PlayerAnimationPacket* player_packet = static_cast<PlayerAnimationPacket*>(packet);
+            AnimationSnapshot snapshot;
+			snapshot.animation = player_packet->animation;
+			snapshot.is_flipped = player_packet->is_flipped;
+			snapshot.server_time = player_packet->server_time;
+			animation_snapshots_.push_back(snapshot);
         }
         break;
         
@@ -125,127 +134,18 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         controller_->Move(velocity_ * delta_time, move_axis_);
         
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
-        
-        Math::Vector2 position = transform->GetPosition();
-
-        movement_sync_accumulator_ += delta_time;
-        bool is_moving_now = !Math::IsEqual(velocity_.x, 0.f) || !Math::IsEqual(velocity_.y, 0.f);
-        
-        bool should_send = false;
-
-        if (is_moving_now)
-        {
-            if (movement_sync_accumulator_ >= 0.1f)
-                should_send = true;
-        }
-        
-        bool is_moving_start = false;
-        if (is_moving_now != was_moving_)
-        {
-            should_send = true;
-            if (is_moving_now)
-            {
-                is_moving_start = true;
-            }
-        }
-        
-        if (should_send)
-        {
-            if (is_moving_start)
-            {
-                MovePlayerPacket dummy_packet;
-                dummy_packet.position_x = last_position_.x;
-                dummy_packet.position_y = last_position_.y;
-                dummy_packet.velocity_x = velocity_.x;
-                dummy_packet.velocity_y = velocity_.y;
-                dummy_packet.is_flipped = renderer_->IsFlipX();
-                dummy_packet.animation = animator_->GetCurrentState()->GetName();
-                dummy_packet.server_time = SessionSubsystem::Get()->GetServerTime();
-                dummy_packet.time_update = true;
-                SendPacket(dummy_packet);
-            }
-            
-            MovePlayerPacket move_player_packet;
-            move_player_packet.position_x = position.x;
-            move_player_packet.position_y = position.y;
-            move_player_packet.velocity_x = velocity_.x;
-            move_player_packet.velocity_y = velocity_.y;
-            move_player_packet.is_flipped = renderer_->IsFlipX();
-            move_player_packet.animation = animator_->GetCurrentState()->GetName();
-            move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
-            move_player_packet.time_update = false;
-            SendPacket(move_player_packet);
-
-            was_moving_ = is_moving_now;
-            last_position_ = position;
-            movement_sync_accumulator_ = 0.f;
-        }
-    }
-    else
-    {
-        float server_now = SessionSubsystem::Get()->GetServerTime();
-
-        float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
-        
-        while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
-        {
-            snapshots_.pop_front(); 
-        }
-
-        if (snapshots_.size() >= 2 && snapshots_[1].time_update)
-        {
-            snapshots_.pop_front();
-        }
-
-        if (snapshots_.size() >= 2 && snapshots_[0].time_update)
-        {
-            snapshots_[0].server_time = snapshots_[1].server_time - EngineSettings::Get()->GetInterpolationDelay();
-        }
-        
-        if (snapshots_.size() >= 2)
-        {
-            const Snapshot& from = snapshots_[0];
-            const Snapshot& to = snapshots_[1];
-
-            float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
-            t = Math::Clamp(t, 0.f, 1.f);
-
-            bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
-            std::wstring animation = t < .5f ? from.animation : to.animation;
-
-            Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
-            GetTransform()->SetPosition(position);
-
-            renderer_->SetFlipX(is_flipped);
-            animator_->PlayAnimation(animation);
-        }
-        /*
-        else if (snapshots_.size() == 1)
-        {
-            const Snapshot& snapshot = snapshots_[0];
-
-            float delta = interpolation_time - snapshot.server_time;
-            delta = Math::Clamp(delta, 0.f, 0.2f);
-
-            if (delta > 0.f)
-            {
-                Math::Vector2 position = snapshot.position + snapshot.velocity * delta;
-                GetTransform()->SetPosition(position);
-
-                renderer_->SetFlipX(snapshot.is_flipped);
-                animator_->PlayAnimation(snapshot.animation);
-            }
-        }
-        */
     }
     
     CharacterBase::PhysicsTick(delta_time);
 }
 
+
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
 
+    SyncCharacterMovement(delta_time);
+    
     if (IsMine())
     {
         UI_OLD::Manager* ui_manager = UI_OLD::Manager::Get();
@@ -306,6 +206,113 @@ void PlayerCharacter::Tick(float delta_time)
     }
     else
     {
+    }
+}
+
+void PlayerCharacter::SyncCharacterMovement(float delta_time)
+{
+    std::shared_ptr<TransformComponent> transform = GetTransform();
+    
+    if (IsMine())
+    {
+        Math::Vector2 position = transform->GetPosition();
+        movement_sync_accumulator_ += delta_time;
+        
+        bool is_moving_now = last_position_ != position;
+        bool is_moving_start = (is_moving_now && !was_moving_);
+        bool is_interval_elapsed = (is_moving_now && movement_sync_accumulator_ >= 0.1f);
+        
+        // 전송할지 결정
+        if (is_moving_start || is_interval_elapsed)
+        {
+            if (is_moving_start)
+            {
+                MovePlayerPacket dummy_packet;
+                dummy_packet.position_x = last_position_.x;
+                dummy_packet.position_y = last_position_.y;
+                dummy_packet.velocity_x = velocity_.x;
+                dummy_packet.velocity_y = velocity_.y;
+                dummy_packet.server_time = SessionSubsystem::Get()->GetServerTime();
+                dummy_packet.time_update = true;
+                SendPacket(dummy_packet);
+            }
+
+            MovePlayerPacket move_player_packet;
+            move_player_packet.position_x = position.x;
+            move_player_packet.position_y = position.y;
+            move_player_packet.velocity_x = velocity_.x;
+            move_player_packet.velocity_y = velocity_.y;
+            move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
+            move_player_packet.time_update = false;
+            SendPacket(move_player_packet);
+
+            was_moving_ = is_moving_now;
+            last_position_ = position;
+            movement_sync_accumulator_ = 0.f;
+        }
+
+        std::wstring current_anim = animator_->GetCurrentState()->GetName();
+        bool is_flip = renderer_->IsFlipX();
+        if (current_anim != last_animation_ || is_flip != last_flip_)
+        {
+            PlayerAnimationPacket anim_pkt;
+            anim_pkt.is_flipped  = renderer_->IsFlipX();
+            anim_pkt.animation   = current_anim;
+            anim_pkt.server_time = SessionSubsystem::Get()->GetServerTime();
+            SendPacket(anim_pkt);
+            
+            last_animation_ = current_anim;
+            last_flip_ = is_flip;
+        }
+    }
+    else
+    {
+        float server_now = SessionSubsystem::Get()->GetServerTime();
+
+        float interpolation_time = server_now - EngineSettings::Get()->GetCharacterInterpolationDelay();
+
+        // 오래된 스냅샷 제거
+        while (movement_snapshots_.size() >= 2 &&
+            movement_snapshots_[1].server_time < interpolation_time)
+        {
+            movement_snapshots_.pop_front(); 
+        }
+
+        if (movement_snapshots_.size() >= 2 &&
+            movement_snapshots_[1].time_update)
+        {
+            movement_snapshots_.pop_front();
+        }
+        
+        if (movement_snapshots_.size() >= 2)
+        {
+            if (movement_snapshots_[0].time_update)
+            {
+                movement_snapshots_[0].server_time = movement_snapshots_[1].server_time - EngineSettings::Get()->GetCharacterInterpolationDelay();
+            }
+            
+            const MovementSnapshot& from = movement_snapshots_[0];
+            const MovementSnapshot& to = movement_snapshots_[1];
+
+            float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
+            t = Math::Clamp(t, 0.f, 1.f);
+
+            Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
+            GetTransform()->SetPosition(position);
+        }
+
+        while (animation_snapshots_.size() >= 2 &&
+           animation_snapshots_[1].server_time < interpolation_time)
+        {
+            animation_snapshots_.pop_front();
+        }
+        
+        if (!animation_snapshots_.empty())
+        {
+            const auto& anim = animation_snapshots_.front();
+            renderer_->SetFlipX(anim.is_flipped);
+            animator_->PlayAnimation(anim.animation);
+        }
     }
 }
 
