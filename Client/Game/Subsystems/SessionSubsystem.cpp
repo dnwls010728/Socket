@@ -12,6 +12,7 @@
 #include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
+#include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
@@ -70,6 +71,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MovePlayerPacket::StaticPacketID,
         std::make_unique<MovePlayerHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerAnimationPacket::StaticPacketID,
+        std::make_unique<PlayerAnimationHandler>()
     );
 
     handlers_.emplace(
