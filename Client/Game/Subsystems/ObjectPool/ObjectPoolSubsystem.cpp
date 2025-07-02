@@ -52,6 +52,11 @@ bool ObjectPoolSubsystem::ReturnToPool(const std::shared_ptr<Actor>& actor)
     return true;
 }
 
+void ObjectPoolSubsystem::ClearPool()
+{
+    pool_map_.clear();
+}
+
 ObjectPoolSubsystem* ObjectPoolSubsystem::Get()
 {
     return World::Get()->GetSubsystem<ObjectPoolSubsystem>();

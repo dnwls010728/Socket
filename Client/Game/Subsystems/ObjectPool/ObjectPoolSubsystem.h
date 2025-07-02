@@ -12,6 +12,8 @@ public:
     bool GetFromPool(const rttr::type& type, std::shared_ptr<Actor>& out_actor);
     bool ReturnToPool(const std::shared_ptr<Actor>& actor);
 
+    void ClearPool();
+
     static ObjectPoolSubsystem* Get();
 
 private:

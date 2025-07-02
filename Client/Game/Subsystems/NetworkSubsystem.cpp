@@ -119,6 +119,8 @@ NetworkSubsystem* NetworkSubsystem::Get()
 
 void NetworkSubsystem::TransitionMap(uint32_t map_id)
 {
+    ObjectPoolSubsystem::Get()->ClearPool();
+    
     std::vector<Actor*> actors = {};
     World::Get()->GetActors(Actor::StaticClass(), actors);
 
