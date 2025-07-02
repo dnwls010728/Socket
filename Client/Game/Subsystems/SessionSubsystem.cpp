@@ -116,6 +116,7 @@ void SessionSubsystem::ProcessPackets()
             if (!it->second->Handle(packet.get()))
             {
                 uint16_t packet_id = packet->GetPacketID(); // 디버깅용
+                MessageBox(nullptr, (L"패킷 핸들링 실패: " + std::to_wstring(packet_id)).c_str(), EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
                 WindowsApplication::Get()->QuitApplication();
             }
         }

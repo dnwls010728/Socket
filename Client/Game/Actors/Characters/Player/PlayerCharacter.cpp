@@ -10,12 +10,12 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Actors/Damage.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
-#include "Components/DamageRendererComponent.h"
 #include "FSM/Condition.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
@@ -42,14 +42,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
-
-    damage_renderer_ = AddComponent<DamageRendererComponent>(L"DamageRenderer");
-
-    Sprite* damage_sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Damage.png");
-    Sprite* miss_sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Miss.png");
-
-    damage_renderer_->SetDamageSprite(damage_sprite);
-    damage_renderer_->SetMissSprite(miss_sprite);
     
 }
 
@@ -297,10 +289,17 @@ void PlayerCharacter::Tick(float delta_time)
                     for (const auto& actor : hit_actors)
                     {
                         MobBase* mob = static_cast<MobBase*>(actor);
+                        if (!IsValid(mob) || mob->IsDead()) continue;
 
                         AttackRequest request;
                         request.object_id = mob->GetObjectID();
                         SendPacket(request);
+
+                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                        if (IsValid(damage))
+                        {
+                            damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                        }
                     }
                 }
             }

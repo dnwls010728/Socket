@@ -16,9 +16,7 @@ DamageRendererComponent::DamageRendererComponent(Actor* owner, const std::wstrin
     shape_(nullptr),
     damage_sprite_(nullptr),
     miss_sprite_(nullptr),
-    count_timer_(0.f),
-    fade_timer_(0.f),
-    alpha_(0.f)
+    color_(Math::Color::White)
 {
 }
 
@@ -53,27 +51,6 @@ void DamageRendererComponent::UninitializeComponent()
     World::Get()->RemoveShape(shape_);
 }
 
-void DamageRendererComponent::TickComponent(float delta_time)
-{
-    ActorComponent::TickComponent(delta_time);
-    
-    count_timer_ += delta_time;
-    if (count_timer_ >= 1.f)
-    {
-        count_timer_ = 0.f;
-        Refresh(++damage_);
-    }
-
-    fade_timer_ += delta_time;
-    if (fade_timer_ < 1.f)
-    {
-        float t = Math::Clamp(fade_timer_ / 1.f, 0.f, 1.f);
-        alpha_ = 1.f - t;
-    }
-    else fade_timer_ = 0.f;
-
-}
-
 void DamageRendererComponent::Render(float alpha)
 {
     ActorComponent::Render(alpha);
@@ -104,7 +81,7 @@ void DamageRendererComponent::Render(float alpha)
     shape_->SetAngle(transform->GetAngle());
     shape_->SetScale({width, height});
     shape_->SetPivot({pivot_x, pivot_y});
-    shape_->SetColor({ 255, 255, 255, static_cast<uint8_t>(alpha_ * 255) });
+    shape_->SetColor(color_);
     shape_->SetZOrder(std::numeric_limits<int32_t>::max());
 }
 

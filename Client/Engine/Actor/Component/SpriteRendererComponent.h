@@ -41,6 +41,7 @@ protected:
 
 private:
     std::shared_ptr<class Shape> shape_;
+    
     Sprite* sprite_;
 
     uint64_t frame_index_;

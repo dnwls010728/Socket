@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Math/Color.h"
 
 class Sprite;
 
@@ -16,10 +17,12 @@ public:
     FORCEINLINE void SetDamageSprite(Sprite* sprite) { damage_sprite_ = sprite; }
     FORCEINLINE void SetMissSprite(Sprite* sprite) { miss_sprite_ = sprite; }
 
+    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
+    FORCEINLINE Math::Color GetColor() const { return color_; }
+
 protected:
     virtual void InitializeComponent() override;
     virtual void UninitializeComponent() override;
-    virtual void TickComponent(float delta_time) override;
     virtual void Render(float alpha) override;
     virtual void OnEnable() override;
     virtual void OnDisable() override;
@@ -36,9 +39,7 @@ private:
 
     Sprite* damage_sprite_;
     Sprite* miss_sprite_;
-
-    float count_timer_;
-    float fade_timer_;
-    float alpha_;
+    
+    Math::Color color_;
     
 };

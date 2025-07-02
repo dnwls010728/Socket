@@ -241,6 +241,7 @@
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
+    <ClInclude Include="Game\Actors\Damage.h" />
     <ClInclude Include="Game\Actors\ItemDrop.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Ladder.h" />
@@ -634,6 +635,7 @@
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
+    <ClCompile Include="Game\Actors\Damage.cpp" />
     <ClCompile Include="Game\Actors\ItemDrop.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\Ladder.cpp" />

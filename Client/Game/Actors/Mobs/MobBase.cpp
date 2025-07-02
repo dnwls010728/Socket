@@ -43,6 +43,7 @@ void MobBase::OnDeactivate()
 
 void MobBase::OnDeath()
 {
+    is_dead_ = true;
     animator_->PlayAnimation(L"Die");
     
     fade_state_ = FadeState::kFadeOut;
@@ -59,6 +60,8 @@ void MobBase::OnEnable()
 
     fade_state_ = FadeState::kFadeIn;
     fade_timer_ = 0.f;
+
+    is_dead_ = false;
 }
 
 void MobBase::OnDisable()
@@ -76,17 +79,16 @@ void MobBase::Tick(float delta_time)
         fade_timer_ += delta_time;
 
         float t = Math::Clamp(fade_timer_ / 1.f, 0.f, 1.f);
-        t = (fade_state_ == FadeState::kFadeIn) ? t : (1.f - t);
+        float alpha = (fade_state_ == FadeState::kFadeIn) ? t : (1.f - t);
 
         Math::Color color = renderer_->GetColor();
-        color.a = static_cast<uint8_t>(t * 255.f);
+        color.a = static_cast<uint8_t>(alpha * 255.f);
         renderer_->SetColor(color);
 
         if (t >= 1.f)
         {
             if (fade_state_ == FadeState::kFadeOut)
             {
-                is_dead_ = true;
                 SetActive(false);
             }
             
