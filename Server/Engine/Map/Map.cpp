@@ -195,8 +195,8 @@ void Map::PhysicsTick(float delta_time)
 
 void Map::Tick(float delta_time)
 {
-    AddPlayers();
     RemovePlayers();
+    AddPlayers();
     
     AddObjects();
     RemoveObjects();
