@@ -10,6 +10,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Actors/Damage.h"
 #include "Actors/ItemDrop.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
@@ -42,6 +43,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
+    
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -187,10 +189,17 @@ void PlayerCharacter::Tick(float delta_time)
                     for (const auto& actor : hit_actors)
                     {
                         MobBase* mob = static_cast<MobBase*>(actor);
+                        if (!IsValid(mob) || mob->IsDead()) continue;
 
                         AttackRequest request;
                         request.object_id = mob->GetObjectID();
                         SendPacket(request);
+
+                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                        if (IsValid(damage))
+                        {
+                            damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                        }
                     }
                 }
             }

@@ -13,8 +13,7 @@ bool DestroyObjectHandler::Handle(Net::IPacket* packet)
     if (!received_packet) return false;
 
     std::shared_ptr<NetworkActor> network_actor = NetworkSubsystem::Get()->FindNetworkActor(received_packet->object_id);
-    if (!IsValid(network_actor)) return false;
-
-    ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
+    if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
+    
     return true;
 }

@@ -241,6 +241,7 @@
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerWalkState.h" />
     <ClInclude Include="Game\Actors\Components\BehaviorTreeComponent.h" />
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
+    <ClInclude Include="Game\Actors\Damage.h" />
     <ClInclude Include="Game\Actors\ItemDrop.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Ladder.h" />
@@ -269,6 +270,7 @@
     <ClInclude Include="Game\BT\Decorators\Start.h" />
     <ClInclude Include="Game\BT\Decorators\TimeOut.h" />
     <ClInclude Include="Game\BT\Node.h" />
+    <ClInclude Include="Game\Components\DamageRendererComponent.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
@@ -277,12 +279,17 @@
     <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\InGameMap.h" />
+    <ClInclude Include="Game\PacketHandlers\ChangeMapHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ChatMessageHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DestroyObjectHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\DestroyPlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MoveItemHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SpawnObjectHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\SpawnPlayerHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\InGameUISubsystem.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
@@ -295,7 +302,6 @@
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
-    <ClInclude Include="Game\UI\Element\UIDamageNumber.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
@@ -630,6 +636,7 @@
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerWalkState.cpp" />
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
+    <ClCompile Include="Game\Actors\Damage.cpp" />
     <ClCompile Include="Game\Actors\ItemDrop.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\Ladder.cpp" />
@@ -657,6 +664,7 @@
     <ClCompile Include="Game\BT\Decorators\Start.cpp" />
     <ClCompile Include="Game\BT\Decorators\TimeOut.cpp" />
     <ClCompile Include="Game\BT\Node.cpp" />
+    <ClCompile Include="Game\Components\DamageRendererComponent.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
@@ -664,86 +672,17 @@
     <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\InGameMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ChangeMapHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ChatMessageHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DestroyObjectHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DestroyPlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MoveItemHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\Client.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\Client.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Users\Desktop\태양\게임엔진\Socket\\Common\Game\Include;D:\Users\Desktop\태양\게임엔진\Socket\\NetworkLib;D:\Users\Desktop\태양\게임엔진\Socket\\Client\Game;D:\Users\Desktop\태양\게임엔진\Socket\\Client\Engine;D:\Users\Desktop\태양\게임엔진\Socket\\Client\Include;D:\Users\Desktop\태양\게임엔진\Socket\\Common\Engine;</AdditionalIncludeDirectories>
-      <LinkCompiled>true</LinkCompiled>
-    </ClCompile>
+    <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp">
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SpawnObjectHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SpawnPlayerHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\InGameUISubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
@@ -756,7 +695,6 @@
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
-    <ClCompile Include="Game\UI\Element\UIDamageNumber.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />

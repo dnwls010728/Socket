@@ -19,8 +19,6 @@ public:
     NetworkSubsystem();
     virtual ~NetworkSubsystem() override = default;
 
-    virtual void Init() override;
-    virtual void Deinit() override;
     virtual void OnWorldBeginPlay() override;
     virtual void Tick(float delta_time) override;
 
@@ -45,7 +43,9 @@ public:
     static NetworkSubsystem* Get();
 
 private:
-    void ProcessPackets(const std::shared_ptr<Net::IPacket>& packet);
+    friend class ChangeMapHandler;
+    friend class SpawnPlayerHandler;
+    
     void TransitionMap(uint32_t map_id);
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;

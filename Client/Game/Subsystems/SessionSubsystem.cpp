@@ -6,12 +6,17 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/ChangeMapHandler.h"
+#include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
+#include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
+#include "PacketHandlers/MovePlayerHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
+#include "PacketHandlers/SpawnPlayerHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
@@ -45,6 +50,31 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
+    );
+
+    handlers_.emplace(
+        ChangeMapResponse::StaticPacketID,
+        std::make_unique<ChangeMapHandler>()
+    );
+
+    handlers_.emplace(
+        SpawnPlayerPacket::StaticPacketID,
+        std::make_unique<SpawnPlayerHandler>()
+    );
+
+    handlers_.emplace(
+        DestroyPlayerPacket::StaticPacketID,
+        std::make_unique<DestroyPlayerHandler>()
+    );
+
+    handlers_.emplace(
+        MovePlayerPacket::StaticPacketID,
+        std::make_unique<MovePlayerHandler>()
+    );
+
+    handlers_.emplace(
+        ChatMessagePacket::StaticPacketID,
+        std::make_unique<ChatMessageHandler>()
     );
 
     handlers_.emplace(
@@ -90,7 +120,11 @@ void SessionSubsystem::ProcessPackets()
         {
             // 패킷 핸들링 실패 시 애플리케이션 종료
             if (!it->second->Handle(packet.get()))
+            {
+                uint16_t packet_id = packet->GetPacketID(); // 디버깅용
+                MessageBox(nullptr, (L"패킷 핸들링 실패: " + std::to_wstring(packet_id)).c_str(), EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
                 WindowsApplication::Get()->QuitApplication();
+            }
         }
     });
 }

@@ -56,8 +56,4 @@ protected:
     
     float movement_sync_accumulator_;
     
-
-    int32_t timer_;
-
-    
 };

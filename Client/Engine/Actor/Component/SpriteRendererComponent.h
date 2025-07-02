@@ -20,8 +20,6 @@ public:
     Bounds GetBounds() const;
 
     FORCEINLINE Sprite* GetSprite() const { return sprite_; }
-    
-    FORCEINLINE std::wstring GetFrame() const { return current_frame_; }
 
     FORCEINLINE void SetFlipX(bool flip_x) { flip_x_ = flip_x; }
     FORCEINLINE bool IsFlipX() const { return flip_x_; }
@@ -43,9 +41,10 @@ protected:
 
 private:
     std::shared_ptr<class Shape> shape_;
+    
     Sprite* sprite_;
 
-    std::wstring current_frame_;
+    uint64_t frame_index_;
 
     bool flip_x_;
     bool flip_y_;
