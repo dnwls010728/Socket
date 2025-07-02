@@ -51,5 +51,7 @@ protected:
     float movement_sync_accumulator_;
 
     int32_t timer_;
+
+    std::shared_ptr<class DamageRendererComponent> damage_renderer_;
     
 };

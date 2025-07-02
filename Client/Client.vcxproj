@@ -269,6 +269,7 @@
     <ClInclude Include="Game\BT\Decorators\Start.h" />
     <ClInclude Include="Game\BT\Decorators\TimeOut.h" />
     <ClInclude Include="Game\BT\Node.h" />
+    <ClInclude Include="Game\Components\DamageRendererComponent.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
@@ -299,7 +300,6 @@
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
-    <ClInclude Include="Game\UI\Element\UIDamageNumber.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
@@ -661,6 +661,7 @@
     <ClCompile Include="Game\BT\Decorators\Start.cpp" />
     <ClCompile Include="Game\BT\Decorators\TimeOut.cpp" />
     <ClCompile Include="Game\BT\Node.cpp" />
+    <ClCompile Include="Game\Components\DamageRendererComponent.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
@@ -690,7 +691,6 @@
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
-    <ClCompile Include="Game\UI\Element\UIDamageNumber.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />

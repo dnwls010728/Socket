@@ -19,7 +19,8 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
 
-    FORCEINLINE const std::map<std::wstring, SpriteFrame>& GetFrames() const { return frames_; }
+    FORCEINLINE const std::unordered_map<std::wstring, uint64_t>& GetFrameIndexes() const { return frame_indexes_; }
+    FORCEINLINE const std::vector<SpriteFrame>& GetFrames() const { return frames_; }
     FORCEINLINE uint32_t GetPPU() const { return ppu_; }
 
     static const Math::Vector2 kCenter;
@@ -33,7 +34,8 @@ public:
     static const Math::Vector2 kBottomRight;
 
 private:
-    std::map<std::wstring, SpriteFrame> frames_;
+    std::unordered_map<std::wstring, uint64_t> frame_indexes_;
+    std::vector<SpriteFrame> frames_;
     
     uint32_t ppu_;
     

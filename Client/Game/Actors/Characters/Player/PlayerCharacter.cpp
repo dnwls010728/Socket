@@ -15,6 +15,7 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
+#include "Components/DamageRendererComponent.h"
 #include "FSM/Condition.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
@@ -41,6 +42,15 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
 
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
+
+    damage_renderer_ = AddComponent<DamageRendererComponent>(L"DamageRenderer");
+
+    Sprite* damage_sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Damage.png");
+    Sprite* miss_sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\Miss.png");
+
+    damage_renderer_->SetDamageSprite(damage_sprite);
+    damage_renderer_->SetMissSprite(miss_sprite);
+    
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
