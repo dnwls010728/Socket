@@ -16,7 +16,7 @@ void UILoginState::Init()
     UISprite* sprite = AssetManager::Get()->Load<UISprite>(L"UI\\LoginBackground.png");
 
     UIImage* image = AddElement<UIImage>(UIImage::StaticClass(), L"LoginBackground");
-    image->SetSize({1.f, 1.f});
+    image->SetSize({1366.f, 768.f});
     image->SetSprite(sprite, L"LoginBackground_0");
 
 }
