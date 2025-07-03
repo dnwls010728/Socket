@@ -8,7 +8,8 @@
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
     ui_sprite_(nullptr),
-    current_frame_(L"")
+    current_frame_(L""),
+    draw_mode_(DrawMode::kSimple)
 {
 }
 
@@ -23,7 +24,8 @@ void UIImage::Render()
     UIElement::Render();
     if (!ui_sprite_) return;
     
-    Renderer::Get()->DrawSlicedSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
+    if (draw_mode_ == DrawMode::kSimple) Renderer::Get()->DrawSimpleSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
+    else if (draw_mode_ == DrawMode::kSliced) Renderer::Get()->DrawSlicedSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
 }
 
 RTTR_REGISTRATION

@@ -42,7 +42,7 @@ void UIInventorySlot::Init()
     UIContainer::Init();
 
     i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    i_icon_->SetSize(size_);
+    i_icon_->SetSize({1.f, 1.f});
     i_icon_->SetIgnoreRayCast(true);
     
     t_count_ = AddChild<UIText>(UIText::StaticClass(), L"Count");

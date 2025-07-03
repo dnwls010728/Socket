@@ -3,30 +3,35 @@
 #include <vector>
 #include <type_traits>
 
-template<typename Signature>
+template <typename Signature>
 class Delegate;
 
-template<typename Ret, typename... Args>
-class Delegate<Ret(Args...)> {
+template <typename Ret, typename... Args>
+class Delegate<Ret(Args...)>
+{
 public:
     using FunctionType = Function<Ret(Args...)>;
 
-    template<typename F, typename = std::enable_if_t<!std::is_same_v<FunctionType, std::decay_t<F>>>>
-    void Add(F&& func) {
+    template <typename F, typename = std::enable_if_t<!std::is_same_v<FunctionType, std::decay_t<F>>>>
+    void Add(F&& func)
+    {
         functions_.emplace_back(std::forward<F>(func));
     }
 
-    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void Add(M* target, Ret(M::*func)(Args...)) {
+    template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void Add(M* target, Ret (M::*func)(Args...))
+    {
         functions_.emplace_back(target, func);
     }
 
-    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void Add(M* target, Ret(M::*func)(Args...) const) {
+    template <typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void Add(M* target, Ret (M::*func)(Args...) const)
+    {
         functions_.emplace_back(target, func);
     }
 
-    void Add(Ret(*func)(Args...)) {
+    void Add(Ret (*func)(Args...))
+    {
         functions_.emplace_back(func);
     }
 
@@ -36,8 +41,10 @@ public:
     //     }
     // }
 
-    void Execute(Args&... args) const {
-        for (const auto& func : functions_) {
+    void Execute(Args&... args) const
+    {
+        for (const auto& func : functions_)
+        {
             func(args...);
         }
     }
@@ -47,27 +54,32 @@ public:
         if (IsBound()) Execute(args...);
     }
 
-    void RemoveAll() {
+    void RemoveAll()
+    {
         functions_.clear();
     }
 
-    template<typename F>
-    void Remove(F&& func) {
+    template <typename F>
+    void Remove(F&& func)
+    {
         RemoveImpl(GetFunctionAddress(std::forward<F>(func)));
     }
-    
-    void Remove(Ret(*func)(Args...)) {
+
+    void Remove(Ret (*func)(Args...))
+    {
         RemoveImpl(GetFunctionAddress(func));
     }
 
-    template<typename M>
-    void Remove(M* target, Ret(M::*func)(Args...)) {
+    template <typename M>
+    void Remove(M* target, Ret (M::*func)(Args...))
+    {
         FunctionType temp(target, func);
         RemoveImpl(temp.GetAddr());
     }
 
-    template<typename M>
-    void Remove(M* target, Ret(M::*func)(Args...) const) {
+    template <typename M>
+    void Remove(M* target, Ret (M::*func)(Args...) const)
+    {
         FunctionType temp(target, func);
         RemoveImpl(temp.GetAddr());
     }
@@ -89,20 +101,25 @@ public:
 private:
     std::vector<FunctionType> functions_;
 
-    template<typename F>
-    static std::uintptr_t GetFunctionAddress(F&& func) {
-        if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
+    template <typename F>
+    static std::uintptr_t GetFunctionAddress(F&& func)
+    {
+        if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>)
+        {
             return reinterpret_cast<std::uintptr_t&>(func);
-        } else {
+        }
+        else
+        {
             std::uintptr_t addr = 0;
             std::memcpy(&addr, &func, sizeof(addr));
             return addr;
         }
     }
 
-    void RemoveImpl(std::uintptr_t addr) {
+    void RemoveImpl(std::uintptr_t addr)
+    {
         auto it = std::remove_if(functions_.begin(), functions_.end(),
-            [addr](const auto& func) { return func.GetAddr() == addr; });
+                                 [addr](const auto& func) { return func.GetAddr() == addr; });
         functions_.erase(it, functions_.end());
     }
 
