@@ -4,6 +4,7 @@
 #include <iostream>
 #include "NetworkManager.h"
 #include "CustomPacket.h"
+#include "DataManager.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
 #include "Map/MapObjects/Mob/Mob.h"
@@ -21,7 +22,6 @@ ServerManager::ServerManager()
 
 void ServerManager::CommandHandlerInitialize()
 {
-    
     command_handler_[L"/disconnect"] = [&](auto& args) {
         if (args.size() < 2) {
             std::wcout << L"Usage: /disconnect <clientKey>\n";
@@ -66,6 +66,8 @@ void ServerManager::CommandHandlerInitialize()
 
 bool ServerManager::Execute()
 {
+    DataManager::Get()->Init();
+    
     MySQLManager* mysql_manager = MySQLManager::Get();
     if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
     {

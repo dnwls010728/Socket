@@ -1,0 +1,7 @@
+mobs:
+  1: # Dummy
+    stats:
+      lv: 1 # INT
+      hp: 100 # INT
+      speed: 1.0 # FLOAT
+    animation_pack: "Slime.png.animpack" # STRING
