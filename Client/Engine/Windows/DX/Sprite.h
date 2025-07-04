@@ -9,6 +9,25 @@ struct SpriteFrame
     Math::Vector2 pivot;
 };
 
+namespace YAML
+{
+    template<>
+    struct convert<SpriteFrame>
+    {
+        static bool decode(const Node& node, SpriteFrame& data)
+        {
+            if (!node.IsMap()) return false;
+            data.uv_offset.x = node["rect"]["x"].as<float>();
+            data.uv_offset.y = node["rect"]["y"].as<float>();
+            data.uv_scale.x = node["rect"]["width"].as<float>();
+            data.uv_scale.y = node["rect"]["height"].as<float>();
+            data.pivot.x = node["pivot"]["x"].as<float>();
+            data.pivot.y = node["pivot"]["y"].as<float>();
+            return true;
+        }
+    };
+}
+
 class Sprite : public Texture
 {
     GENERATED_BODY(Sprite, Texture)

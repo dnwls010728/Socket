@@ -36,14 +36,7 @@ bool Sprite::Load(const std::wstring& kPath)
         {
             for (const auto& frame : meta_data_["frames"])
             {
-                SpriteFrame sprite_frame;
-                sprite_frame.uv_offset.x = frame["rect"]["x"].as<float>();
-                sprite_frame.uv_offset.y = frame["rect"]["y"].as<float>();
-                sprite_frame.uv_scale.x = frame["rect"]["width"].as<float>();
-                sprite_frame.uv_scale.y = frame["rect"]["height"].as<float>();
-                sprite_frame.pivot.x = frame["pivot"]["x"].as<float>();
-                sprite_frame.pivot.y = frame["pivot"]["y"].as<float>();
-
+                SpriteFrame sprite_frame = frame.as<SpriteFrame>();
                 frames_.push_back(sprite_frame);
                 
                 std::wstring name = StringHelper::UTF8ToUTF16(frame["name"].as<std::string>());
