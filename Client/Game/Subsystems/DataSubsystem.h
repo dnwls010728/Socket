@@ -54,5 +54,8 @@ public:
     virtual ~DataSubsystem() override = default;
 
     virtual void Init() override;
+
+private:
+    std::unordered_map<uint32_t, MobData> mob_data_map;
     
 };

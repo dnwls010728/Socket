@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "AnimatorComponent.h"
 
-#include "Animation.h"
 #include "AnimationPack.h"
 #include "AnimationTransition.h"
 #include "Actor/Actor.h"
@@ -11,7 +10,7 @@
 
 AnimatorComponent::StateNode::StateNode(const std::wstring& name) :
     name_(name),
-    animation_(nullptr),
+    animation_(),
     transitions_()
 {
 }
@@ -57,14 +56,14 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
     current_frame_ = 0;
     timer_ = 0.f;
 
-    const std::shared_ptr<Animation>& animation = current_state_->GetAnimation();
-    if (!animation || animation->frames_.empty()) return;
+    const Animation& animation = current_state_->GetAnimation();
+    if (animation.frame.empty()) return;
 
     std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
     if (renderer)
     {
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer->SetSprite(sprite, animation->frames_.front());
+        if (sprite) renderer->SetSprite(sprite, animation.frame.front());
     }
     
     is_playing_ = true;
@@ -172,21 +171,21 @@ void AnimatorComponent::TickComponent(float delta_time)
     
     if (!current_state_ || !is_playing_) return;
     
-    const std::shared_ptr<Animation>& animation = current_state_->GetAnimation();
-    if (!animation || animation->frames_.empty()) return;
+    const Animation& animation = current_state_->GetAnimation();
+    if (animation.frame.empty()) return;
 
     std::shared_ptr<SpriteRendererComponent> renderer = renderer_weak_ptr_.lock();
     if (!renderer) return;
 
-    const float frame_time = 1.f / animation->frame_rate_;
+    const float frame_time = 1.f / animation.frame_rate;
     timer_ += delta_time;
 
     if (timer_ >= frame_time)
     {
         timer_ -= frame_time;
-        if (current_frame_ >= animation->frames_.size() - 1)
+        if (current_frame_ >= animation.frame.size() - 1)
         {
-            if (!animation->is_loop_)
+            if (!animation.is_loop)
             {
                 if (OnEndHandler.IsBound()) OnEndHandler.Execute();
                 is_playing_ = false;
@@ -194,10 +193,10 @@ void AnimatorComponent::TickComponent(float delta_time)
             }
         }
 
-        current_frame_ = (current_frame_ + 1) % animation->frames_.size();
+        current_frame_ = (current_frame_ + 1) % animation.frame.size();
 
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
-        if (sprite) renderer->SetSprite(sprite, animation->frames_[current_frame_]);
+        if (sprite) renderer->SetSprite(sprite, animation.frame[current_frame_]);
     }
 }
 

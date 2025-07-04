@@ -142,7 +142,6 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="Engine\Actor\Actor.h" />
     <ClInclude Include="Engine\Actor\Component\ActorComponent.h" />
-    <ClInclude Include="Engine\Actor\Component\Animator\Animation.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationCondition.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationPack.h" />
     <ClInclude Include="Engine\Actor\Component\Animator\AnimationTransition.h" />
@@ -550,7 +549,6 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Engine\Actor\Actor.cpp" />
     <ClCompile Include="Engine\Actor\Component\ActorComponent.cpp" />
-    <ClCompile Include="Engine\Actor\Component\Animator\Animation.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationCondition.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationPack.cpp" />
     <ClCompile Include="Engine\Actor\Component\Animator\AnimationTransition.cpp" />

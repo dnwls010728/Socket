@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "AnimationPack.h"
 
-#include "Animation.h"
 #include "Data/FileHelper.h"
 #include "Misc/StringHelper.h"
 
@@ -29,20 +28,8 @@ bool AnimationPack::Load(const std::wstring& kPath)
             {
                 for (const YAML::Node& animation : node["animations"])
                 {
-                    std::string name = animation["name"].as<std::string>();
-                    std::wstring to_wide_string(name.begin(), name.end());
-                    
-                    std::shared_ptr<Animation> data = std::make_shared<Animation>(to_wide_string);
-                    data->frame_rate_ = animation["frame_rate"].as<int32_t>();
-                    data->is_loop_ = animation["loop"].as<bool>();
-
-                    for (const YAML::Node& index : animation["frames"])
-                    {
-                        std::wstring frame = StringHelper::UTF8ToUTF16(index.as<std::string>());
-                        data->frames_.push_back(frame);
-                    }
-
-                    animations_[to_wide_string] = data;
+                    Animation temp = animation.as<Animation>();
+                    animations_[temp.name] = temp;
                 }
             }
         }

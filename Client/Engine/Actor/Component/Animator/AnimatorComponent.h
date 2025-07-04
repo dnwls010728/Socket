@@ -1,13 +1,12 @@
 ﻿#pragma once
 #include <variant>
 
+#include "AnimationPack.h"
 #include "Actor/Component/ActorComponent.h"
 #include "Misc/DelegateMacros.h"
 
 class Condition;
 class Transition;
-class Animation;
-class AnimationPack;
 
 DECLARE_DELEGATE(OnAnimationDelegate)
 
@@ -29,14 +28,14 @@ private:
 
         FORCEINLINE const std::wstring& GetName() const { return name_; }
         
-        FORCEINLINE void SetAnimation(const std::shared_ptr<Animation>& kAnimation) { animation_ = kAnimation; }
-        FORCEINLINE const std::shared_ptr<Animation>& GetAnimation() const { return animation_; }
+        FORCEINLINE void SetAnimation(const Animation& kAnimation) { animation_ = kAnimation; }
+        FORCEINLINE const Animation& GetAnimation() const { return animation_; }
         
         FORCEINLINE const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
 
     private:
         std::wstring name_;
-        std::shared_ptr<Animation> animation_;
+        Animation animation_;
         std::unordered_set<std::shared_ptr<Transition>> transitions_;
     };
     
