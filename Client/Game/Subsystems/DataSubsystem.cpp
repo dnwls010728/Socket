@@ -26,6 +26,13 @@ void DataSubsystem::Init()
     
 }
 
+const MobData* DataSubsystem::GetMobData(uint32_t id) const
+{
+    auto it = mob_data_map.find(id);
+    if (it == mob_data_map.end()) return nullptr;
+    return &it->second;
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

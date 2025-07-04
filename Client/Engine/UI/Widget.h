@@ -30,13 +30,13 @@ namespace UI_OLD
 
         FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-        FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+        FORCEINLINE const Math::Vector2& GetPosition() const { return position_; }
         FORCEINLINE void SetPosition(const Math::Vector2& kPosition) { position_ = kPosition; }
 
-        FORCEINLINE Math::Vector2 GetSize() const { return size_; }
+        FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
         FORCEINLINE void SetSize(const Math::Vector2& kSize) { size_ = kSize; }
 
-        FORCEINLINE Math::Vector2 GetPivot() const { return pivot_; }
+        FORCEINLINE const Math::Vector2& GetPivot() const { return pivot_; }
         FORCEINLINE void SetPivot(const Math::Vector2& kPivot) { pivot_ = kPivot; }
 
         FORCEINLINE bool IsFocused() const { return is_focused_; }

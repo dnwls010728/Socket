@@ -81,7 +81,7 @@ public:
 
     const Bounds& GetBounds();
 
-    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetPosition() const { return position_; }
 
     FORCEINLINE void SetTickType(TickType kTickType) { tick_type_ = kTickType; }
     FORCEINLINE TickType GetTickType() const { return tick_type_; }

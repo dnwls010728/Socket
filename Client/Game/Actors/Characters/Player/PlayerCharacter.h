@@ -33,7 +33,7 @@ public:
     void InitSpawn(const std::wstring& name, const Math::Vector2& position);
     void UpdateFlip();
     
-    FORCEINLINE Math::Vector2 GetMoveAxis() const { return move_axis_; }
+    FORCEINLINE const Math::Vector2& GetMoveAxis() const { return move_axis_; }
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
 

@@ -40,7 +40,7 @@ public:
     inline const std::wstring& GetName() const { return name_; }
 
     inline void SetPosition(const Math::Vector2 &position) {position_ = position;}
-    inline Math::Vector2 GetPosition() const { return position_; }
+    inline const Math::Vector2& GetPosition() const { return position_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 

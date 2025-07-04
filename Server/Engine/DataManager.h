@@ -52,6 +52,8 @@ public:
 
     void Init();
 
+    const MobData* GetMobData(uint32_t id) const;
+
 private:
     std::unordered_map<uint32_t, MobData> mob_data_map;
     

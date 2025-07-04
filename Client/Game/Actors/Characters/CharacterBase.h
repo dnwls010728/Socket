@@ -29,7 +29,7 @@ public:
     FORCEINLINE const std::shared_ptr<AnimatorComponent>& GetAnimator() const { return animator_; }
     FORCEINLINE const std::shared_ptr<StateMachineComponent>& GetStateMachine() const { return state_machine_; }
     
-    FORCEINLINE Math::Vector2 GetVelocity() const { return velocity_; }
+    FORCEINLINE const Math::Vector2& GetVelocity() const { return velocity_; }
     FORCEINLINE void SetVelocity(const Math::Vector2& velocity) { velocity_ = velocity; }
 
     FORCEINLINE void SetVelocityX(float x) { velocity_.x = x; }

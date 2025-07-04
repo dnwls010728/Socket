@@ -19,10 +19,10 @@ public:
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
     FORCEINLINE void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
-    FORCEINLINE Math::Vector2 GetRelativePosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return position_; }
 
     FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
-    FORCEINLINE Math::Vector2 GetSize() const { return size_; }
+    FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE virtual void SetActive(bool active) { is_active_ = active; }

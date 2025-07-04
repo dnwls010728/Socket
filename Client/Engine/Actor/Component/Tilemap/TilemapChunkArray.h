@@ -22,8 +22,8 @@ public:
 
     Math::Vector2 GetTextureSize();
     
-    FORCEINLINE Math::Vector2 GetTilesetSize() const { return tileset_size_; }
-    FORCEINLINE Math::Vector2 GetTileCount() const { return tile_count_; }
+    FORCEINLINE const Math::Vector2& GetTilesetSize() const { return tileset_size_; }
+    FORCEINLINE const Math::Vector2& GetTileCount() const { return tile_count_; }
 
     FORCEINLINE uint32_t GetFirstGID() const { return first_gid_; }
     FORCEINLINE uint32_t GetLastGID() const { return last_gid_; }

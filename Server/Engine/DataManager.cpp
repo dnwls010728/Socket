@@ -26,3 +26,10 @@ void DataManager::Init()
         std::cout << e.what() << std::endl;
     }
 }
+
+const MobData* DataManager::GetMobData(uint32_t id) const
+{
+    auto it = mob_data_map.find(id);
+    if (it == mob_data_map.end()) return nullptr;
+    return &it->second;
+}
