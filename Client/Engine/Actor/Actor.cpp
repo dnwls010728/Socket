@@ -10,6 +10,7 @@ Actor::Actor(const std::wstring& kName) :
     name_(kName),
     tag_(ActorTag::kNone),
     layer_(ActorLayer::kDefault),
+    body_id_(b2_nullBodyId),
     has_begun_play_(false),
     is_active_(true),
     is_pending_destroy_(false),

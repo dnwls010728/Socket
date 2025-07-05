@@ -11,6 +11,7 @@
 #include "Audio/AudioManager.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 
 MobBase::MobBase(const std::wstring& name) :
@@ -20,12 +21,6 @@ MobBase::MobBase(const std::wstring& name) :
     fade_timer_(0.f)
 {
     SetLayer(ActorLayer::kMob);
-
-    // 임시
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Mobs\\MushroomSheet.png.apack");
-    if (animation_pack) animator_->SetAnimationPack(animation_pack);
-    
-    animator_->PlayAnimation(L"Idle");
 
     hit_sound_ = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\damage5.mp3");
     
@@ -48,6 +43,19 @@ void MobBase::OnDeath()
     
     fade_state_ = FadeState::kFadeOut;
     fade_timer_ = 0.f;
+}
+
+bool MobBase::Init(uint32_t mob_id) const
+{
+    const MobData* mob_data = DataSubsystem::Get()->GetMobData(mob_id);
+    if (!mob_data) return false;
+    
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(mob_data->animation_pack);
+    if (animation_pack) animator_->SetAnimationPack(animation_pack);
+
+    animator_->PlayAnimation(L"Idle");
+
+    return true;
 }
 
 void MobBase::OnEnable()

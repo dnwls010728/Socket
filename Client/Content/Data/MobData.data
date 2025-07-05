@@ -4,4 +4,4 @@ mobs:
       lv: 1 # INT
       hp: 100 # INT
       speed: 1.0 # FLOAT
-    animation_pack: "Sprites\\Mobs\\Mushroom.png.apack" # STRING
+    animation_pack: "Sprites\\Mobs\\MushroomSheet.png.apack" # STRING

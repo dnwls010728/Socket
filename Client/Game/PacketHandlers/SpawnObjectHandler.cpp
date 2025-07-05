@@ -22,6 +22,10 @@ bool SpawnObjectHandler::Handle(Net::IPacket* packet)
     {
         network_actor->SetObjectID(object_info.object_id);
         network_actor->GetTransform()->SetPosition({object_info.position_x, object_info.position_y});
+
+        // 테스트
+        const auto& mob = std::dynamic_pointer_cast<MobBase>(network_actor);
+        mob->Init(object_info.info.mob.mob_id);
     }
 
     return true;

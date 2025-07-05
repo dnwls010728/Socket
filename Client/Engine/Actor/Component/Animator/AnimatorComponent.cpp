@@ -50,6 +50,8 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 
     if (!state || !HasBegunPlay()) return;
     if (current_state_ == state && is_playing_) return;
+    
+    is_playing_ = false;
 
     current_state_ = state;
     
@@ -143,11 +145,17 @@ std::shared_ptr<AnimatorComponent::StateNode> AnimatorComponent::GetOrAddNode(co
     return node;
 }
 
-void AnimatorComponent::InitializeComponent()
+void AnimatorComponent::SetAnimationPack(AnimationPack* animation_pack)
 {
-    ActorComponent::InitializeComponent();
+    animation_pack_ = animation_pack;
     if (!animation_pack_) return;
-    
+
+    is_playing_ = false;
+    current_state_ = nullptr;
+
+    nodes_.clear();
+    any_transitions_.clear();
+
     const auto& animations = animation_pack_->animations_;
     for (const auto& animation : animations)
     {

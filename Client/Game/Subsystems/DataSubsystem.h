@@ -57,6 +57,8 @@ public:
 
     const MobData* GetMobData(uint32_t id) const;
 
+    static DataSubsystem* Get();
+
 private:
     std::unordered_map<uint32_t, MobData> mob_data_map;
     

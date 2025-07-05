@@ -63,14 +63,13 @@ public:
     
     FORCEINLINE std::shared_ptr<StateNode> GetCurrentState() const { return current_state_; }
 
-    FORCEINLINE void SetAnimationPack(AnimationPack* animation_pack) { animation_pack_ = animation_pack; }
+    void SetAnimationPack(AnimationPack* animation_pack);
     
     FORCEINLINE bool IsPlaying() const { return is_playing_; }
 
     OnAnimationDelegate OnEndHandler;
 
 protected:
-    virtual void InitializeComponent() override;
     virtual void BeginPlay() override;
     virtual void TickComponent(float delta_time) override;
 

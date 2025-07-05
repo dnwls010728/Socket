@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "DataSubsystem.h"
 
+#include "GameInstance.h"
+
 DataSubsystem::DataSubsystem() :
     mob_data_map()
 {
@@ -31,6 +33,11 @@ const MobData* DataSubsystem::GetMobData(uint32_t id) const
     auto it = mob_data_map.find(id);
     if (it == mob_data_map.end()) return nullptr;
     return &it->second;
+}
+
+DataSubsystem* DataSubsystem::Get()
+{
+    return GameInstance::Get()->GetSubsystem<DataSubsystem>();
 }
 
 RTTR_REGISTRATION
