@@ -22,7 +22,7 @@ MobBase::MobBase(const std::wstring& name) :
     SetLayer(ActorLayer::kMob);
 
     // 임시
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Mobs\\MushroomSheet.png.animpack");
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Mobs\\MushroomSheet.png.apack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
     
     animator_->PlayAnimation(L"Idle");

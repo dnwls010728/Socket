@@ -41,7 +41,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     
     collider_->SetOffset({ 0.f, .5f });
 
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.apack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
     
 }
