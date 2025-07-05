@@ -6,12 +6,13 @@
 struct MobStats
 {
     int32_t lv;
-    float hp;
+    int32_t hp;
     float speed;
 };
 
 struct MobData
 {
+    uint32_t mob_id;
     MobStats stats;
     std::wstring animation_pack;
 };

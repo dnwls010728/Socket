@@ -9,15 +9,20 @@
 #include "Foothold.h"
 #include "Math/Vector2.h"
 
-class Mob;
-
 namespace Net
 {
     struct IPacket;
 }
 
+struct SpawnPoint
+{
+    Math::Vector2 position;
+    uint32_t mob_id;
+};
+
 class Player;
 class MapObject;
+class Mob;
 
 class Map
 {
@@ -82,6 +87,5 @@ private:
     float respawn_timer_;
     float monitor_timer_;
 
-    // 임시
-    std::vector<Math::Vector2> spawn_points_;
+    std::vector<SpawnPoint> spawn_points_;
 };

@@ -30,10 +30,10 @@ void MobWalkState::PhysicsTick(float delta_time)
 {
     MobStateBase::PhysicsTick(delta_time);
 
-    float velocity_x = 2.f * (is_right_ ? 1.f : -1.f);
+    float direction = is_right_ ? 1.f : -1.f;
     if (auto owner = owner_.lock())
     {
-        owner->SetVelocityX(velocity_x);
+        owner->SetVelocityX(direction * owner->GetMoveSpeed());
     }
     
 }

@@ -41,21 +41,6 @@ void ServerManager::CommandHandlerInitialize()
         }
     };
 
-    command_handler_[L"/Spawn"] = [&](auto& args)
-    {
-        Map* map = nullptr;
-        try
-        {
-            map = World::Get()->GetMap(0);
-        }
-        catch (...)
-        {
-        }
-
-        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
-        map->SpawnObject(mob);
-    };
-
     command_handler_[L"/help"] = [&](auto&) {
         std::wcout << L"Available commands:\n";
         std::wcout << L"  /exit                   - Exit the server\n";

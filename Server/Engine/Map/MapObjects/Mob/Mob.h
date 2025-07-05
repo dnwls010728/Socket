@@ -4,6 +4,7 @@
 #include "Engine/Map/MapObject.h"
 #include "FSM/StateMachine.h"
 
+struct MobData;
 class MobHitState;
 class MobWalkState;
 class MobIdleState;
@@ -11,8 +12,10 @@ class MobIdleState;
 class Mob : public MapObject
 {
 public:
-    Mob();
+    Mob(const MobData& mob_data);
     virtual ~Mob() override = default;
+
+    inline uint32_t GetMobID() const { return mob_id_; }
 
     inline void SetFlipped(bool is_flipped) { is_flipped_ = is_flipped; }
     inline bool IsFlipped() const { return is_flipped_; }
@@ -31,6 +34,8 @@ public:
     
     inline void SetLastPosition(const Math::Vector2& last_position) { last_position_ = last_position; }
     
+    inline float GetMoveSpeed() const { return move_speed_; }
+    
     inline std::shared_ptr<MobIdleState> GetIdleState() const { return idle_state_; }
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
@@ -46,12 +51,15 @@ protected:
     void SendAnimationPoacket(const std::wstring& animation, bool is_flip) const;
     void OnHit(int32_t damage);
 
+    uint32_t mob_id_;
+
     std::unique_ptr<FSM::StateMachine> state_machine_;
 
     Math::Vector2 velocity_;
     Math::Vector2 last_position_;
 
     float gravity_;
+    float move_speed_;
 
     bool is_grounded_;
     bool was_moving_;

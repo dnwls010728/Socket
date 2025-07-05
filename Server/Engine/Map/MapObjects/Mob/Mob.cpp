@@ -2,7 +2,9 @@
 #include "Mob.h"
 
 #include <CustomPacket.h>
+#include <iostream>
 
+#include "DataManager.h"
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
 #include "Session/Player.h"
@@ -10,19 +12,26 @@
 #include "States/MobIdleState.h"
 #include "States/MobWalkState.h"
 
-Mob::Mob() :
+Mob::Mob(const MobData& mob_data) :
+    mob_id_(mob_data.mob_id),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
+    move_speed_(mob_data.stats.speed),
     is_grounded_(false),
     was_moving_(false),
     foothold_(nullptr),
-    hp_(3000),
+    hp_(mob_data.stats.hp),
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
+
+    std::wcout << mob_data.stats.lv << L" " 
+              << mob_data.stats.hp << L" "
+              << mob_data.stats.speed << L" "
+              << mob_data.animation_pack << std::endl;
     
 }
 

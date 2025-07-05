@@ -44,6 +44,7 @@ enum class ObjectType : uint8_t
 
 struct MobInfo
 {
+    uint32_t mob_id;
 };
 
 struct ObjectInfo

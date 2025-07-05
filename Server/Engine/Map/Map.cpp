@@ -8,6 +8,7 @@
 #include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
+#include "DataManager.h"
 #include "MapObject.h"
 #include "MapObjects/Mob/Mob.h"
 
@@ -131,12 +132,14 @@ void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
     object->SetObjectID(next_object_id_++);
     object->SetMap(this);
 
+    const auto& mob = std::dynamic_pointer_cast<Mob>(object);
+
     SpawnObjectPacket spawn_object_packet;
     spawn_object_packet.object_info.type = ObjectType::kMob;
     spawn_object_packet.object_info.object_id = object->GetObjectID();
     spawn_object_packet.object_info.position_x = object->GetPosition().x;
     spawn_object_packet.object_info.position_y = object->GetPosition().y;
-    spawn_object_packet.object_info.info.mob = {};
+    spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
     SendPacket(spawn_object_packet);
 
     AddObject(object);
@@ -290,11 +293,16 @@ bool Map::LoadMapData()
                 for (const auto& object : objects)
                 {
                     if (object.getShape() != tmx::Object::Shape::Point) continue;
-                    Math::Vector2 spawn_point = {
+                    
+                    Math::Vector2 position = {
                         object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                         -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                     };
-                    spawn_points_.emplace_back(spawn_point);
+
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+                    
+                    spawn_points_.emplace_back(position, properties[0].getIntValue());
                 }
             }
         }
@@ -357,10 +365,13 @@ void Map::Respawn()
 
     for (const auto& spawn_point : spawn_points_)
     {
-        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
-        mob->SetPosition(spawn_point);
-        mob->SetLastPosition(spawn_point);
-        SpawnObject(mob);
+        if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
+        {
+            std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
+            mob->SetPosition(spawn_point.position);
+            mob->SetLastPosition(spawn_point.position);
+            SpawnObject(mob);
+        }
     }
 }
 
