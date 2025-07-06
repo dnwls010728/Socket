@@ -7,7 +7,7 @@ struct MobStats
 {
     int32_t lv;
     int32_t hp;
-    int32_t atk;
+    int32_t dmg;
     int32_t def;
     float speed;
 };
@@ -36,7 +36,7 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.lv = node["lv"].as<int32_t>(0);
             data.hp = node["hp"].as<int32_t>(0);
-            data.atk = node["atk"].as<int32_t>(0);
+            data.dmg = node["dmg"].as<int32_t>(0);
             data.def = node["def"].as<int32_t>(0);
             data.speed = node["speed"].as<float>(0.f);
             return true;

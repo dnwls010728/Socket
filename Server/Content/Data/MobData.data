@@ -3,10 +3,10 @@ mobs:
     stats:
       lv: 1
       hp: 100
-      atk: 10
+      dmg: 10
       def: 5
       speed: 1.0
     drops:
       exp: 10
       color: 3
-    animation_pack: "Sprites\\Mobs\\MushroomSheet.png.apack" # STRING
+    animation_pack: "Sprites\\Mobs\\MushroomSheet.png.apack"
