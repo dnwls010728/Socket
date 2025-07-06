@@ -365,7 +365,13 @@ void RigidBody2DComponent::SetCollisionDetectionModeInternal(b2BodyId body_id)
 
 void RigidBody2DComponent::SetFixedRotationInternal(b2BodyId body_id)
 {
-    b2Body_SetFixedRotation(body_id, is_fixed_rotation_);
+    // TODO: 테스트 확인 필요
+    
+    // b2Body_SetFixedRotation(body_id, is_fixed_rotation_);
+    
+    b2MotionLocks locks = b2Body_GetMotionLocks(body_id);
+    locks.angularZ = is_fixed_rotation_;
+    b2Body_SetMotionLocks(body_id, locks);
 }
 
 void RigidBody2DComponent::SetAutoMassInternal(b2BodyId body_id)
