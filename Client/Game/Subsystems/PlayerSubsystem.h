@@ -17,7 +17,7 @@ public:
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-    FORCEINLINE const Math::Vector2& GetInitialPosition() const { return { initial_position_x_, initial_position_y_ }; }
+    FORCEINLINE Math::Vector2 GetInitialPosition() const { return { initial_position_x_, initial_position_y_ }; }
     
     FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
 

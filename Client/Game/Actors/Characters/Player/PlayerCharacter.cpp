@@ -84,9 +84,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
 {
     character_name_ = name;
-
     last_position_ = position;
-    
     GetTransform()->SetPosition(position);
 }
 

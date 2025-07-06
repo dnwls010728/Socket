@@ -23,8 +23,6 @@ Actor::Actor(const std::wstring& kName) :
 
 void Actor::BeginPlay()
 {
-    if (b2Body_IsValid(body_id_) && !b2Body_IsEnabled(body_id_)) b2Body_Enable(body_id_);
-    
     for (const auto& kComponent : components_)
     {
         kComponent->BeginPlay();
@@ -86,7 +84,7 @@ void Actor::Render(float alpha)
 void Actor::OnEnable()
 {
     is_active_ = true;
-    if (b2Body_IsValid(body_id_)) b2Body_Enable(body_id_);
+    if (b2Body_IsValid(body_id_) && !b2Body_IsEnabled(body_id_)) b2Body_Enable(body_id_);
 
     for (const auto& component : components_)
     {
@@ -97,7 +95,7 @@ void Actor::OnEnable()
 void Actor::OnDisable()
 {
     is_active_ = false;
-    if (b2Body_IsValid(body_id_)) b2Body_Disable(body_id_);
+    if (b2Body_IsValid(body_id_) && b2Body_IsEnabled(body_id_)) b2Body_Disable(body_id_);
 
     for (const auto& component : components_)
     {
