@@ -4,6 +4,7 @@
 #include "UIInventorySlot.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
+#include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "Windows/DX/Renderer.h"
 
 UIInventory::UIInventory(const std::wstring& name) :
@@ -53,6 +54,8 @@ void UIInventory::UpdateColor(uint32_t color)
 void UIInventory::Init()
 {
     UIContainer::Init();
+
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnItemSwapped);
 
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
@@ -110,6 +113,15 @@ bool UIInventory::OnDrag(const Math::Vector2& position, const Math::Vector2& del
 bool UIInventory::OnDragEnd(const Math::Vector2& position)
 {
     return true;
+}
+
+void UIInventory::OnItemSwapped(const EventData& event_data)
+{
+    const ItemSwappedEventData& data = static_cast<const ItemSwappedEventData&>(event_data);
+
+    UpdateSlot(data.first_slot);
+    UpdateSlot(data.second_slot);
+
 }
 
 RTTR_REGISTRATION

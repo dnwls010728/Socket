@@ -3,6 +3,8 @@
 
 #include <ranges>
 
+#include "Subsystems/Publisher/PublisherSubsystem.h"
+
 Inventory::Inventory() :
     slots_(),
     color_(0)
@@ -73,8 +75,9 @@ void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
 {
     auto it = slots_.find(slot_index);
-    if (it != slots_.end())
-        it->second.count = count;
+    if (it == slots_.end()) return;
+
+    it->second.count = count;
 }
 
 void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
@@ -85,6 +88,12 @@ void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
 
     if (!slots_[first_slot].item_id) Remove(first_slot);
     if (!slots_[second_slot].item_id) Remove(second_slot);
+
+    ItemSwappedEventData event_data;
+    event_data.first_slot = first_slot;
+    event_data.second_slot = second_slot;
+    
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemSwapped, event_data);
 }
 
 void Inventory::Remove(uint32_t slot_index)

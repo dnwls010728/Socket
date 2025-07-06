@@ -7,8 +7,6 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "Audio/Audio.h"
-#include "Audio/AudioManager.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
 #include "Subsystems/DataSubsystem.h"
@@ -21,8 +19,6 @@ MobBase::MobBase(const std::wstring& name) :
     fade_timer_(0.f)
 {
     SetLayer(ActorLayer::kMob);
-
-    hit_sound_ = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\damage5.mp3");
     
 }
 

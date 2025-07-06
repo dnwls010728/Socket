@@ -41,7 +41,5 @@ protected:
     FadeState fade_state_;
 
     float fade_timer_;
-
-    Audio* hit_sound_;
     
 };

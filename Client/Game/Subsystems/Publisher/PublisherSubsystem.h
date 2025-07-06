@@ -5,6 +5,12 @@ struct EventData
 {
 };
 
+struct ItemSwappedEventData : EventData
+{
+    uint32_t first_slot;
+    uint32_t second_slot;
+};
+
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
 
 class PublisherSubsystem : public GameInstanceSubsystem
@@ -14,7 +20,8 @@ class PublisherSubsystem : public GameInstanceSubsystem
 public:
     enum class EventType : uint8_t
     {
-        kNone = 0
+        kNone = 0,
+        kItemSwapped
     };
     
     PublisherSubsystem();

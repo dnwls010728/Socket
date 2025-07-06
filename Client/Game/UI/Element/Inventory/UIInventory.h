@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
@@ -26,6 +27,8 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position) override;
 
 private:
+    void OnItemSwapped(const EventData& event_data);
+    
     std::vector<UIInventorySlot*> slots_;
 
     UIText* t_color_;

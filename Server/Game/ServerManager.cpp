@@ -54,8 +54,8 @@ bool ServerManager::Execute()
     DataManager::Get()->Init();
     
     MySQLManager* mysql_manager = MySQLManager::Get();
-    // if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
-    if (!mysql_manager->Connect("localhost", "root", "12345"))
+    if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
+    // if (!mysql_manager->Connect("localhost", "root", "12345"))
     {
         return false;
     }
