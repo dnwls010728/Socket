@@ -18,7 +18,8 @@ void DataSubsystem::Init()
         for (const auto& mob : mob_data["mobs"])
         {
             MobData data = mob.second.as<MobData>();
-            mob_data_map[mob.first.as<uint32_t>()] = data;
+            data.mob_id = mob.first.as<uint32_t>();
+            mob_data_map[data.mob_id] = data;
         }
     }
     catch (const YAML::BadFile& e)

@@ -8,12 +8,22 @@ struct MobStats
 {
     int32_t lv;
     int32_t hp;
+    int32_t atk;
+    int32_t def;
     float speed;
+};
+
+struct MobDrops
+{
+    int32_t exp;
+    int32_t color;
 };
 
 struct MobData
 {
+    uint32_t mob_id;
     MobStats stats;
+    MobDrops drops;
     std::wstring animation_pack;
 };
 
@@ -26,8 +36,22 @@ namespace YAML
         {
             if (!node.IsMap()) return false;
             data.lv = node["lv"].as<int32_t>(0);
-            data.hp = node["hp"].as<float>(0.f);
+            data.hp = node["hp"].as<int32_t>(0);
+            data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
             data.speed = node["speed"].as<float>(0.f);
+            return true;
+        }
+    };
+    
+    template<>
+    struct convert<MobDrops>
+    {
+        static bool decode(const Node& node, MobDrops& data)
+        {
+            if (!node.IsMap()) return false;
+            data.exp = node["exp"].as<int32_t>(0);
+            data.color = node["color"].as<int32_t>(0);
             return true;
         }
     };
@@ -39,6 +63,7 @@ namespace YAML
         {
             if (!node.IsMap()) return false;
             data.stats = node["stats"].as<MobStats>();
+            data.drops = node["drops"].as<MobDrops>();
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
             return true;
         }

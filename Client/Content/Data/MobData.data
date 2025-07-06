@@ -1,7 +1,12 @@
 mobs:
   1: # Dummy
     stats:
-      lv: 1 # INT
-      hp: 100 # INT
-      speed: 1.0 # FLOAT
+      lv: 1
+      hp: 100
+      atk: 10
+      def: 5
+      speed: 1.0
+    drops:
+      exp: 10
+      color: 3
     animation_pack: "Sprites\\Mobs\\MushroomSheet.png.apack" # STRING
