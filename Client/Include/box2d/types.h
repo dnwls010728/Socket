@@ -164,6 +164,19 @@ typedef enum b2BodyType
 	b2_bodyTypeCount,
 } b2BodyType;
 
+/// Motion locks to restrict the body movement
+typedef struct b2MotionLocks
+{
+	/// Prevent translation along the x-axis
+	bool linearX;
+
+	/// Prevent translation along the y-axis
+	bool linearY;
+
+	/// Prevent rotation around the z-axis
+	bool angularZ;
+} b2MotionLocks;
+
 /// A body definition holds all the data needed to construct a rigid body.
 /// You can safely re-use body definitions. Shapes are added to a body after construction.
 /// Body definitions are temporary objects used to bundle creation parameters.
@@ -213,26 +226,21 @@ typedef struct b2BodyDef
 	/// Use this to store application specific body data.
 	void* userData;
 
+	/// Motions locks to restrict linear and angular movement.
+	/// Caution: may lead to softer constraints along the locked direction
+	b2MotionLocks motionLocks;
+
 	/// Set this flag to false if this body should never fall asleep.
 	bool enableSleep;
 
 	/// Is this body initially awake or sleeping?
 	bool isAwake;
 
-	/// Should this body be prevented from rotating? Useful for characters.
-	bool fixedRotation;
-
 	/// Treat this body as high speed object that performs continuous collision detection
 	/// against dynamic and kinematic bodies, but not other bullet bodies.
 	/// @warning Bullets should be used sparingly. They are not a solution for general dynamic-versus-dynamic
 	/// continuous collision.
 	bool isBullet;
-
-	/// Option to perform continuous collision checks with sensors. This only applies to dynamic bodies.
-	/// This is expensive and should be used sparingly. You still need to enable sensor events on the child shapes
-	/// for this to work. This only works if the body is awake. This will use a time of impact calculation to
-	/// generate sensor begin touch events, but not end events. End events are handled using regular overlap checks.
-	bool enableSensorHits;
 
 	/// Used to disable a body. A disabled body does not move or collide.
 	bool isEnabled;
@@ -1082,20 +1090,6 @@ typedef struct b2JointEvents
 	/// Number of events
 	int count;
 } b2JointEvents;
-
-/// The contact data for two shapes. By convention the manifold normal points
-/// from shape A to shape B.
-/// @see b2Shape_GetContactData() and b2Body_GetContactData()
-typedef struct b2SensorData
-{
-	/// The visiting shape
-	b2ShapeId visitorId;
-
-	/// The transform of the body of the visiting shape. This is normally
-	/// the current transform of the body. However, for a sensor hit, this is
-	/// the transform of the visiting body when it hit.
-	b2Transform visitTransform;
-} b2SensorData;
 
 /// The contact data for two shapes. By convention the manifold normal points
 /// from shape A to shape B.
