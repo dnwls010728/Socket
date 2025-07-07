@@ -11,6 +11,10 @@ public:
     PlayerSubsystem();
     virtual ~PlayerSubsystem() override = default;
 
+    void SetHP(uint32_t hp);
+    void SetMaxHP(uint32_t max_hp);
+    void SetExp(uint32_t exp);
+
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
     FORCEINLINE uint32_t GetLv() const { return lv_; }
@@ -29,6 +33,9 @@ private:
     uint32_t account_id_;
     uint32_t character_id_;
     uint32_t lv_;
+    uint32_t hp_;
+    uint32_t max_hp_;
+    uint32_t exp_;
 
     std::wstring name_;
     

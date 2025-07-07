@@ -61,10 +61,14 @@ private:
     std::wstring name_;
 
     int32_t lv_;
+    int32_t hp_;
+    int32_t max_hp_;
     int32_t map_id_;
-    int32_t color_;
 
     std::unique_ptr<Inventory> inventory_;
     Math::Vector2 position_;
+
+    std::atomic_int32_t exp_;
+    std::atomic_int32_t color_;
     
 };

@@ -5,6 +5,17 @@ struct EventData
 {
 };
 
+struct HPChangedEventData : EventData
+{
+    uint32_t hp;
+    uint32_t max_hp;
+};
+
+struct ExpChangedEventData : EventData
+{
+    uint32_t exp;
+};
+
 struct ItemSwappedEventData : EventData
 {
     uint32_t first_slot;
@@ -21,6 +32,8 @@ public:
     enum class EventType : uint8_t
     {
         kNone = 0,
+        kHPChanged,
+        kExpChanged,
         kItemSwapped
     };
     

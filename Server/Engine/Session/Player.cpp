@@ -21,10 +21,13 @@ Player::Player(Session* session, uint32_t account_id) :
     character_info_(),
     name_(L""),
     lv_(0),
+    hp_(0),
+    max_hp_(0),
     map_id_(0),
-    color_(0),
     inventory_(nullptr),
-    position_(Math::Vector2::Zero())
+    position_(Math::Vector2::Zero()),
+    exp_(0),
+    color_(0)
 {
 }
 
@@ -51,9 +54,12 @@ void Player::LoadCharacter(uint32_t unique_id)
             {
                 name_ = StringHelper::UTF8ToUTF16(result->getString("name"));
                 lv_ = result->getInt("lv");
+                hp_ = result->getInt("hp");
+                max_hp_ = result->getInt("max_hp");
                 map_id_ = result->getInt("map_id");
                 position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 position_.y = static_cast<float>(result->getDouble("last_position_y"));
+                exp_ = result->getInt("exp");
                 color_ = result->getInt("color");
             }
         }
@@ -114,6 +120,9 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.name = name_;
             response.character_id = character_id_;
             response.lv = lv_;
+            response.hp = hp_;
+            response.max_hp = max_hp_;
+            response.exp = exp_;
             response.color = color_;
             response.position_x = position_.x;
             response.position_y = position_.y;
