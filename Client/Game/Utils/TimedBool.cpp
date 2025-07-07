@@ -21,6 +21,7 @@ TimedBool& TimedBool::operator=(bool value)
 
 void TimedBool::Set(float seconds)
 {
+    duration_ = seconds;
     remaining_ = seconds;
     value_ = true;
 }
