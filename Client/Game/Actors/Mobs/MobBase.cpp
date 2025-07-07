@@ -102,6 +102,16 @@ void MobBase::Tick(float delta_time)
     }
 }
 
+void MobBase::OnTriggerEnter(Actor* other)
+{
+    ServerActor::OnTriggerEnter(other);
+}
+
+void MobBase::OnTriggerExit(Actor* other)
+{
+    ServerActor::OnTriggerExit(other);
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

@@ -35,6 +35,8 @@ protected:
     virtual void OnEnable() override;
     virtual void OnDisable() override;
     virtual void Tick(float delta_time) override;
+    virtual void OnTriggerEnter(Actor* other) override;
+    virtual void OnTriggerExit(Actor* other) override;
 
     bool is_dead_;
 

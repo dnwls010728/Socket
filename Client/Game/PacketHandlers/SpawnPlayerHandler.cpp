@@ -19,7 +19,7 @@ bool SpawnPlayerHandler::Handle(Net::IPacket* packet)
         float position_x = received_packet->position_x;
         float position_y = received_packet->position_y;
 
-        player_character->InitSpawn(received_packet->name, {position_x, position_y});
+        player_character->Init(received_packet->name, {position_x, position_y});
         network_subsystem->other_players_.emplace_back(player_character);
     }
 

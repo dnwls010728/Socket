@@ -17,6 +17,7 @@
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
 #include "FSM/Condition.h"
+#include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
@@ -81,7 +82,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
+void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& position)
 {
     character_name_ = name;
     last_position_ = position;
@@ -143,6 +144,7 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
+    is_invincible_.Tick(delta_time);
 
     SyncCharacterMovement(delta_time);
     
@@ -174,6 +176,8 @@ void PlayerCharacter::Tick(float delta_time)
             // 공격 테스트
             if (keyboard->GetKeyDown('X'))
             {
+                is_invincible_.Set(5.f);
+                
                 std::vector<Actor*> hit_actors;
                 bool is_hit = Physics2D::OverlapBoxAll(
                     GetTransform()->GetPosition(),
@@ -210,6 +214,7 @@ void PlayerCharacter::Tick(float delta_time)
 
         // 공격 범위 확인용
         DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
+        
     }
     else
     {

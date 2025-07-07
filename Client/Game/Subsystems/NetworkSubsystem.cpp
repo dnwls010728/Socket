@@ -156,7 +156,7 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
     std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), player_subsystem->GetCharacterID());
     if (IsValid(player_character))
     {
-        player_character->InitSpawn(player_subsystem->GetName(), player_subsystem->GetInitialPosition());
+        player_character->Init(player_subsystem->GetName(), player_subsystem->GetInitialPosition());
         player_character->SetMine(true);
         
         player_ = player_character;
