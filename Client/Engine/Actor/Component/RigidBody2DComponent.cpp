@@ -111,7 +111,7 @@ void RigidBody2DComponent::SetAngle(float angle)
 {
     b2BodyId body_id = GetValidBodyId();
 
-    b2Body_SetTransform(body_id, b2Body_GetPosition(body_id), b2MakeRot(angle * std::numbers::pi_v<float> / 180.f));
+    b2Body_SetTransform(body_id, b2Body_GetPosition(body_id), b2MakeRot(angle * Math::PI() / 180.f));
 }
 
 void RigidBody2DComponent::SetLinearVelocity(const Math::Vector2& kLinearVelocity)
@@ -256,7 +256,7 @@ float RigidBody2DComponent::GetAngle() const
 {
     b2BodyId body_id = GetValidBodyId();
 
-    return b2Rot_GetAngle(b2Body_GetRotation(body_id)) * 180.f / std::numbers::pi_v<float>;
+    return b2Rot_GetAngle(b2Body_GetRotation(body_id)) * 180.f / Math::PI();
 }
 
 float RigidBody2DComponent::GetAngularVelocity() const

@@ -2,6 +2,7 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <numbers>
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/BoxColliderComponent.h"
@@ -146,6 +147,16 @@ void PlayerCharacter::Tick(float delta_time)
     CharacterBase::Tick(delta_time);
     is_invincible_.Tick(delta_time);
 
+    if (is_invincible_)
+    {
+        float phase = is_invincible_.GetAlpha() * 10 * Math::PI(); // 10회
+        float value = .9f - .5f * std::abs(std::sin(phase)); // 0.4 ~ 0.9 사이의 값
+        
+        uint8_t lum = static_cast<uint8_t>(value * 255);
+        renderer_->SetColor(Math::Color(lum, lum, lum, 255));
+    }
+    else renderer_->SetColor(Math::Color::White);
+
     SyncCharacterMovement(delta_time);
     
     if (IsMine())
@@ -176,7 +187,7 @@ void PlayerCharacter::Tick(float delta_time)
             // 공격 테스트
             if (keyboard->GetKeyDown('X'))
             {
-                is_invincible_.Set(5.f);
+                is_invincible_.Set(2.f);
                 
                 std::vector<Actor*> hit_actors;
                 bool is_hit = Physics2D::OverlapBoxAll(

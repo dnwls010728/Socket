@@ -8,6 +8,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Characters/Components/Controller2DComponent.h"
+#include "Math/Math.h"
 #include "Windows/DX/Sprite.h"
 
 ItemDrop::ItemDrop(const std::wstring& name) :
@@ -73,7 +74,7 @@ void ItemDrop::Tick(float delta_time)
             position.y = base_y_ + .25f + (std::sin(moved_) - 1.f) * .125f;
             GetTransform()->SetPosition(position);
             
-            moved_ = (moved_ < std::numbers::pi_v<float> * 2.f) ? moved_ + 2.f * delta_time : 0.f;
+            moved_ = (moved_ < Math::PI() * 2.f) ? moved_ + 2.f * delta_time : 0.f;
         }
         break;
 

@@ -54,12 +54,12 @@ float Math::Pow(float f, float p)
 
 float Math::Rad2Deg()
 {
-    return 360.f / (std::numbers::pi_v<float> * 2.f);
+    return 360.f / (Math::PI() * 2.f);
 }
 
 float Math::Deg2Rad()
 {
-    return std::numbers::pi_v<float> / 180.f;
+    return Math::PI() / 180.f;
 }
 
 float Math::RandRange(float min, float max)
@@ -78,9 +78,9 @@ float Math::RandRange(float min, float max)
     return dis(gen);
 }
 
-bool Math::IsEqual(float a, float b)
+float Math::PI()
 {
-    return std::abs(a - b) < std::numeric_limits<float>::epsilon();
+    return std::numbers::pi_v<float>;
 }
 
 int32_t Math::RandRange(int32_t min, int32_t max)
@@ -97,6 +97,11 @@ int32_t Math::RandRange(int32_t min, int32_t max)
     std::uniform_int_distribution<int32_t> dis(min, max);
 
     return dis(gen);
+}
+
+bool Math::IsEqual(float a, float b)
+{
+    return std::abs(a - b) < std::numeric_limits<float>::epsilon();
 }
 
 bool Math::IsValid(float f)

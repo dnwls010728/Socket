@@ -14,9 +14,10 @@ namespace Math
     float Rad2Deg();
     float Deg2Rad();
     float RandRange(float min, float max);
-    bool IsEqual(float a, float b);
+    float PI();
     
     int32_t RandRange(int32_t min, int32_t max);
     
+    bool IsEqual(float a, float b);
     bool IsValid(float f);
 }
