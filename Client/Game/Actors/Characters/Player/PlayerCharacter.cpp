@@ -39,9 +39,10 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_position_(Math::Vector2::Zero()),
     last_flip_(false)
 {
-    SetLayer(ActorLayer::kCharacter);
+    SetLayer(ActorLayer::kPlayer);
     
     collider_->SetOffset({ 0.f, .5f });
+    collider_->SetSize({1.f, 1.f});
 
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.apack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
@@ -93,6 +94,11 @@ void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& positi
 void PlayerCharacter::UpdateFlip()
 {
     if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
+}
+
+void PlayerCharacter::OnDamaged()
+{
+    is_invincible_.Set(2.f);
 }
 
 void PlayerCharacter::BeginPlay()
@@ -187,8 +193,6 @@ void PlayerCharacter::Tick(float delta_time)
             // 공격 테스트
             if (keyboard->GetKeyDown('X'))
             {
-                is_invincible_.Set(2.f);
-                
                 std::vector<Actor*> hit_actors;
                 bool is_hit = Physics2D::OverlapBoxAll(
                     GetTransform()->GetPosition(),

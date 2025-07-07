@@ -105,7 +105,7 @@ float MultiRayCastCallback(b2ShapeId shapeId, b2Vec2 point, b2Vec2 normal, float
     return 1.f;
 }
 
-bool Physics2D::OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** output_actor, uint16_t layer)
+bool Physics2D::OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** out_actor, uint16_t layer)
 {
     b2Transform transform = b2Transform_identity;
     transform.p = {kCenter.x, kCenter.y};
@@ -117,14 +117,14 @@ bool Physics2D::OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kS
     filter.categoryBits = 65535;
     filter.maskBits = layer;
 
-    SingleOverlapContext context = {output_actor};
+    SingleOverlapContext context = {out_actor};
     b2World_OverlapShape(World::Get()->world_id_, &proxy, filter, SingleOverlapCallback, &context);
-    if (*output_actor) return true;
+    if (*out_actor) return true;
 
     return false;
 }
 
-bool Physics2D::OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& output_actors, uint16_t layer)
+bool Physics2D::OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& out_actors, uint16_t layer)
 {
     b2Transform transform = b2Transform_identity;
     transform.p = {kCenter.x, kCenter.y};
@@ -136,14 +136,14 @@ bool Physics2D::OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2&
     filter.categoryBits = 65535;
     filter.maskBits = layer;
 
-    MultiOverlapContext context = {output_actors};
+    MultiOverlapContext context = {out_actors};
     b2World_OverlapShape(World::Get()->world_id_, &proxy, filter, MultiOverlapCallback, &context);
-    if (!output_actors.empty()) return true;
+    if (!out_actors.empty()) return true;
 
     return false;
 }
 
-bool Physics2D::OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** output_actor, uint16_t layer)
+bool Physics2D::OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** out_actor, uint16_t layer)
 {
     b2Transform transform = b2Transform_identity;
     transform.p = {kCenter.x, kCenter.y};
@@ -155,14 +155,14 @@ bool Physics2D::OverlapCircle(const Math::Vector2& kCenter, float radius, Actor*
     filter.categoryBits = 65535;
     filter.maskBits = layer;
     
-    SingleOverlapContext context = {output_actor};
+    SingleOverlapContext context = {out_actor};
     b2World_OverlapShape(World::Get()->world_id_, &proxy, filter, SingleOverlapCallback, &context);
-    if (*output_actor) return true;
+    if (*out_actor) return true;
 
     return false;
 }
 
-bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& output_actors, uint16_t layer)
+bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& out_actors, uint16_t layer)
 {
     b2Transform transform = b2Transform_identity;
     transform.p = {kCenter.x, kCenter.y};
@@ -174,9 +174,9 @@ bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std
     filter.categoryBits = 65535;
     filter.maskBits = layer;
     
-    MultiOverlapContext context = {output_actors};
+    MultiOverlapContext context = {out_actors};
     b2World_OverlapShape(World::Get()->world_id_, &proxy, filter, MultiOverlapCallback, &context);
-    if (!output_actors.empty()) return true;
+    if (!out_actors.empty()) return true;
 
     return false;
 }

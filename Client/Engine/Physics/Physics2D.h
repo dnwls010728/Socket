@@ -26,41 +26,41 @@ public:
      * 상자에 겹치는 액터를 찾습니다.
      * @param kCenter 상자의 중심
      * @param kSize 상자의 크기
-     * @param output_actor 겹치는 액터
+     * @param out_actor 겹치는 액터
      * @param layer 충돌 레이어
      * @return 겹치는 액터가 있으면 true, 없으면 false
      */
-    static bool OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** output_actor, uint16_t layer = 0xFFFF);
+    static bool OverlapBox(const Math::Vector2& kCenter, const Math::Vector2& kSize, Actor** out_actor, uint16_t layer = 0xFFFF);
 
     /**
      * 상자에 겹치는 모든 액터를 찾습니다.
      * @param kCenter 상자의 중심
      * @param kSize 상자의 크기
-     * @param output_actors 겹치는 액터들
+     * @param out_actors 겹치는 액터들
      * @param layer 충돌 레이어
      * @return 겹쳐진 액터들이 있으면 true, 없으면 false
      */
-    static bool OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& output_actors, uint16_t layer = 0xFFFF);
+    static bool OverlapBoxAll(const Math::Vector2& kCenter, const Math::Vector2& kSize, std::vector<Actor*>& out_actors, uint16_t layer = 0xFFFF);
 
     /**
      * 원에 겹치는 액터를 찾습니다.
      * @param kCenter 원의 중심
      * @param radius 원의 반지름
-     * @param output_actor 겹치는 액터
+     * @param out_actor 겹치는 액터
      * @param layer 충돌 레이어
      * @return 겹치는 액터가 있으면 true, 없으면 false
      */
-    static bool OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** output_actor, uint16_t layer = 0xFFFF);
+    static bool OverlapCircle(const Math::Vector2& kCenter, float radius, Actor** out_actor, uint16_t layer = 0xFFFF);
 
     /**
      * 원에 겹치는 모든 액터를 찾습니다.
      * @param kCenter 원의 중심
      * @param radius 원의 반지름
-     * @param output_actors 겹치는 액터들
+     * @param out_actors 겹치는 액터들
      * @param layer 충돌 레이어
      * @return 겹쳐진 액터들이 있으면 true, 없으면 false
      */
-    static bool OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& output_actors, uint16_t layer = 0xFFFF);
+    static bool OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& out_actors, uint16_t layer = 0xFFFF);
 
     /**
      * 광선을 쏴서 충돌하는 액터를 찾습니다.

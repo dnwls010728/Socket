@@ -4,11 +4,14 @@
 #include <CommonObject.h>
 
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
+#include "Physics/Physics2D.h"
 #include "Subsystems/DataSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 
@@ -74,6 +77,28 @@ void MobBase::OnDisable()
     NetworkSubsystem::Get()->UnregisterNetworkActor(GetSharedThis());
 }
 
+void MobBase::PhysicsTick(float delta_time)
+{
+    ServerActor::PhysicsTick(delta_time);
+
+    Math::Vector2 center = GetTransform()->GetPosition() + Math::Vector2::Up() * .5f;
+    Math::Vector2 size = { 1.f, 1.f };
+    
+    Actor* out_actor = nullptr;
+    bool is_hit = Physics2D::OverlapBox(center, size, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
+    if (is_hit)
+    {
+        if (auto player = dynamic_cast<PlayerCharacter*>(out_actor))
+        {
+            if (!player->IsInvincible())
+            {
+                player->OnDamaged();
+                Logger::Print(L"Damaged!");
+            }
+        }
+    }
+}
+
 void MobBase::Tick(float delta_time)
 {
     ServerActor::Tick(delta_time);
@@ -100,16 +125,6 @@ void MobBase::Tick(float delta_time)
             fade_timer_ = 0.f;
         }
     }
-}
-
-void MobBase::OnTriggerEnter(Actor* other)
-{
-    ServerActor::OnTriggerEnter(other);
-}
-
-void MobBase::OnTriggerExit(Actor* other)
-{
-    ServerActor::OnTriggerExit(other);
 }
 
 RTTR_REGISTRATION

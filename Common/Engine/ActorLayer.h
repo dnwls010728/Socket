@@ -4,9 +4,10 @@
 enum class ActorLayer : uint16_t
 {
     kDefault = (0x01<<0),
-    kCharacter = (0x01<<1),
-    kMob = (0x01<<2),
-    kItemDrop = (0x01<<3)
+    kPlayer = (0x01<<1),
+    kNPC = (0x01<<2),
+    kMob = (0x01<<3),
+    kItemDrop = (0x01<<4)
 };
 
 #define ActorLayer_FLAGS(ActorLayer) 

@@ -27,8 +27,9 @@ void ProjectSettings::Init()
     settings->SetCharacterInterpolationDelay(0.15f);
     
     // 레이어 충돌 매트릭스 설정
-    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kCharacter | ActorLayer::kMob | ActorLayer::kItemDrop);
-    settings->AddCollisionLayer(ActorLayer::kCharacter, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kNPC | ActorLayer::kMob | ActorLayer::kItemDrop);
+    settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
+    settings->AddCollisionLayer(ActorLayer::kNPC, ActorLayer::kDefault | ActorLayer::kPlayer);
     settings->AddCollisionLayer(ActorLayer::kMob, ActorLayer::kDefault);
     settings->AddCollisionLayer(ActorLayer::kItemDrop, ActorLayer::kDefault);
 

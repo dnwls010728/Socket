@@ -33,11 +33,14 @@ public:
 
     void Init(const std::wstring& name, const Math::Vector2& position);
     void UpdateFlip();
+    void OnDamaged();
     
     FORCEINLINE const Math::Vector2& GetMoveAxis() const { return move_axis_; }
     
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
+
+    FORCEINLINE bool IsInvincible() const { return is_invincible_ == true; }
 
 protected:
     virtual void BeginPlay() override;
