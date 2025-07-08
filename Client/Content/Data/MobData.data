@@ -2,7 +2,7 @@ mobs:
   1: # Dummy
     stats:
       lv: 1
-      hp: 100
+      hp: 3000
       dmg: 10
       def: 5
       speed: 1.0
