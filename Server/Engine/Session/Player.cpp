@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 #include <ranges>
 
+#include "DataManager.h"
 #include "IPacket.h"
 #include "NetDef.h"
 #include "Session.h"
@@ -123,6 +124,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.hp = hp_;
             response.max_hp = max_hp_;
             response.exp = exp_;
+            response.max_exp = DataManager::Get()->GetExp(lv_);
             response.color = color_;
             response.position_x = position_.x;
             response.position_y = position_.y;

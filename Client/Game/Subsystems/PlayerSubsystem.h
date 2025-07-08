@@ -14,6 +14,7 @@ public:
     void SetHP(uint32_t hp);
     void SetMaxHP(uint32_t max_hp);
     void SetExp(uint32_t exp);
+    void SetMaxExp(uint32_t max_exp);
 
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
@@ -36,6 +37,7 @@ private:
     uint32_t hp_;
     uint32_t max_hp_;
     uint32_t exp_;
+    uint32_t max_exp_;
 
     std::wstring name_;
     

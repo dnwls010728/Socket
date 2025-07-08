@@ -78,8 +78,12 @@ public:
     void Init();
 
     const MobData* GetMobData(uint32_t id) const;
+    // GetExp
+    uint32_t GetExp(uint32_t level) const;
 
 private:
-    std::unordered_map<uint32_t, MobData> mob_data_map;
+    std::unordered_map<uint32_t, MobData> mob_data_map_;
+
+    std::array<uint32_t, 2> exp_table_;
     
 };

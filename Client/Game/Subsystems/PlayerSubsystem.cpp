@@ -45,6 +45,18 @@ void PlayerSubsystem::SetExp(uint32_t exp)
 
     ExpChangedEventData event_data;
     event_data.exp = exp_;
+    event_data.max_exp = max_exp_;
+
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kExpChanged, event_data);
+}
+
+void PlayerSubsystem::SetMaxExp(uint32_t max_exp)
+{
+    max_exp_ = max_exp;
+
+    ExpChangedEventData event_data;
+    event_data.exp = exp_;
+    event_data.max_exp = max_exp_;
 
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kExpChanged, event_data);
 }

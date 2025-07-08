@@ -14,6 +14,7 @@ struct HPChangedEventData : EventData
 struct ExpChangedEventData : EventData
 {
     uint32_t exp;
+    uint32_t max_exp;
 };
 
 struct ItemSwappedEventData : EventData
