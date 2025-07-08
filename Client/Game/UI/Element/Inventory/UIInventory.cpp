@@ -92,6 +92,13 @@ void UIInventory::Init()
     
 }
 
+void UIInventory::Uninit()
+{
+    UIContainer::Uninit();
+
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnItemSwapped);
+}
+
 void UIInventory::Render()
 {
     Math::Vector2 parent_position = parent_ ? parent_->GetRelativePosition() : Math::Vector2::Zero();

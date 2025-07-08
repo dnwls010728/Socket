@@ -13,6 +13,7 @@ public:
 
 protected:
     virtual void Init() override;
+    virtual void Uninit() override;
     virtual void Render() override;
 
 private:

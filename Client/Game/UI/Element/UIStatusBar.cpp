@@ -35,6 +35,14 @@ void UIStatusBar::Init()
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
 }
 
+void UIStatusBar::Uninit()
+{
+    UIContainer::Uninit();
+
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
+}
+
 void UIStatusBar::Render()
 {
     Renderer* renderer = Renderer::Get();

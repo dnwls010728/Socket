@@ -20,6 +20,7 @@ public:
 
 protected:
     virtual void Init() override;
+    virtual void Uninit() override;
     virtual void Render() override;
 
     virtual bool OnDragBegin(const Math::Vector2& position) override;
