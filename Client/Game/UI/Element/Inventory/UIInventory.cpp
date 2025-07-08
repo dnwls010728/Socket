@@ -14,6 +14,37 @@ UIInventory::UIInventory(const std::wstring& name) :
     inventory_(nullptr)
 {
     size_ = { 158.f, 224.f };
+    
+    UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
+    t_title->SetRelativePosition({ 8.f, 0.f });
+    t_title->SetSize({ 142.f, 20.f });
+    t_title->SetColor(Math::Color::White);
+    t_title->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    t_title->SetText(L"인벤토리");
+    t_title->SetIgnoreRayCast(true);
+
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        for (uint32_t j = 0; j < 4; ++j)
+        {
+            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
+            slot->SetRelativePosition({ 8.f + j * 36.f, 24.f + i * 36.f });
+            
+            slot->SetSlotID(i * 4 + j + 1);
+            slots_.push_back(slot);
+        }
+    }
+    
+    t_color_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
+    t_color_->SetRelativePosition({ 8.f, 204.f });
+    t_color_->SetSize({ 142.f, 20.f });
+    t_color_->SetColor(Math::Color::White);
+    t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+    t_color_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    t_color_->SetText(L"0Color");
+    t_color_->SetIgnoreRayCast(true);
+
 }
 
 void UIInventory::UpdateSlot(uint32_t slot_index)
@@ -57,37 +88,8 @@ void UIInventory::Init()
 
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnItemSwapped);
 
-    UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
-    t_title->SetRelativePosition({ 8.f, 0.f });
-    t_title->SetSize({ 142.f, 20.f });
-    t_title->SetColor(Math::Color::White);
-    t_title->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    t_title->SetText(L"인벤토리");
-    t_title->SetIgnoreRayCast(true);
-
-    for (uint32_t i = 0; i < 5; ++i)
-    {
-        for (uint32_t j = 0; j < 4; ++j)
-        {
-            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ 8.f + j * 36.f, 24.f + i * 36.f });
-            
-            slot->SetSlotID(i * 4 + j + 1);
-            slots_.push_back(slot);
-        }
-    }
-    
-    t_color_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
-    t_color_->SetRelativePosition({ 8.f, 204.f });
-    t_color_->SetSize({ 142.f, 20.f });
-    t_color_->SetColor(Math::Color::White);
-    t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-    t_color_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    t_color_->SetText(L"0Color");
-    t_color_->SetIgnoreRayCast(true);
-
     SetActive(false);
+    
 }
 
 void UIInventory::Render()

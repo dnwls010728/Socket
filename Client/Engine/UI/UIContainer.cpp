@@ -18,6 +18,26 @@ UIContainer::UIContainer(const std::wstring& name) :
 {
 }
 
+void UIContainer::Init()
+{
+    for (auto& child : children_)
+    {
+        if (child) child->Init();
+    }
+    
+    UIElement::Init();
+}
+
+void UIContainer::Uninit()
+{
+    for (auto& child : children_)
+    {
+        if (child) child->Uninit();
+    }
+    
+    UIElement::Uninit();
+}
+
 void UIContainer::Tick(float delta_time)
 {
     UIElement::Tick(delta_time);

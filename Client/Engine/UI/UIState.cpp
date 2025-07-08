@@ -6,6 +6,7 @@
 UIState::UIState() :
     elements_(),
     focus_path_(),
+    has_initialized_(false),
     is_dragging_(false),
     has_begun_drag_(false),
     dragging_element_(nullptr)
@@ -22,6 +23,26 @@ UIElement* UIState::RayCast(const Math::Vector2& position) const
     }
 
     return nullptr;
+}
+
+void UIState::Init()
+{
+    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    {
+        UIElement* element = elements_[i].get();
+        if (element) element->Init();
+    }
+
+    has_initialized_ = true;
+}
+
+void UIState::Uninit()
+{
+    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    {
+        UIElement* element = elements_[i].get();
+        if (element) element->Uninit();
+    }
 }
 
 void UIState::Tick(float delta_time)

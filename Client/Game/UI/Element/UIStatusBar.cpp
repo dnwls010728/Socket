@@ -10,15 +10,6 @@ UIStatusBar::UIStatusBar(const std::wstring& name) :
     exp_(0),
     max_exp_(0)
 {
-}
-
-void UIStatusBar::Init()
-{
-    UIContainer::Init();
-
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
-
     lv_text_ = AddChild<UIText>(UIText::StaticClass(), L"LvText");
     lv_text_->SetAbsolutePosition({10.f, 729.f});
     lv_text_->SetSize({100.f, 30.f});
@@ -34,6 +25,14 @@ void UIStatusBar::Init()
     exp_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     exp_text_->SetColor(Math::Color::White);
     exp_text_->SetText(L"0 [0%]");
+}
+
+void UIStatusBar::Init()
+{
+    UIContainer::Init();
+
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
 }
 
 void UIStatusBar::Render()

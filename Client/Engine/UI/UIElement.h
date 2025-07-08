@@ -36,11 +36,13 @@ protected:
     friend class UIContainer;
     
     UIElement(const std::wstring& name);
-    
-    FORCEINLINE virtual void Init() {}
+
+    FORCEINLINE virtual void Uninit() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
     FORCEINLINE virtual void Render() {}
 
+    virtual void Init();
+    
     virtual UIElement* RayCast(const Math::Vector2& position);
     
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
@@ -61,6 +63,7 @@ protected:
     Math::Vector2 position_;
     Math::Vector2 size_;
 
+    bool has_initialized_;
     bool is_active_;
     bool is_focused_;
     bool is_ignore_raycast;

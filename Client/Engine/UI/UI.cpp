@@ -17,7 +17,11 @@ UI::UI() :
 
 void UI::ChangeState(const rttr::type& type)
 {
-    if (state_ && state_->get_type() == type) return;
+    if (state_)
+    {
+        if (state_->get_type() == type) return;
+        state_->Uninit();
+    }
     
     rttr::variant var = type.create();
     if (var.is_valid())

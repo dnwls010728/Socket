@@ -43,11 +43,17 @@ UIElement::UIElement(const std::wstring& name) :
     name_(name),
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero()),
+    has_initialized_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),
     parent_(nullptr)
 {
+}
+
+void UIElement::Init()
+{
+    has_initialized_ = true;
 }
 
 UIElement* UIElement::RayCast(const Math::Vector2& position)

@@ -18,6 +18,8 @@ public:
 protected:
     UIContainer(const std::wstring& name);
 
+    virtual void Init() override;
+    virtual void Uninit() override;
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
@@ -44,7 +46,7 @@ T* UIContainer::AddChild(const rttr::type& type, const std::wstring& name)
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
-        child->Init();
+        if (has_initialized_) child->Init();
         
         children_.push_back(std::unique_ptr<UIElement>(child));
 

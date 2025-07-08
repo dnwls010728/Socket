@@ -18,6 +18,18 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     item_id_(0)
 {
     size_ = { 32.f, 32.f };
+    
+    i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
+    i_icon_->SetSize(size_);
+    i_icon_->SetIgnoreRayCast(true);
+    
+    t_count_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
+    t_count_->SetSize(size_);
+    t_count_->SetColor(Math::Color::White);
+    t_count_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+    t_count_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+    t_count_->SetIgnoreRayCast(true);
+    t_count_->SetActive(false);
 }
 
 void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
@@ -41,17 +53,6 @@ void UIInventorySlot::Init()
 {
     UIContainer::Init();
 
-    i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    i_icon_->SetSize(size_);
-    i_icon_->SetIgnoreRayCast(true);
-    
-    t_count_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
-    t_count_->SetSize(size_);
-    t_count_->SetColor(Math::Color::White);
-    t_count_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
-    t_count_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
-    t_count_->SetIgnoreRayCast(true);
-    t_count_->SetActive(false);
 }
 
 void UIInventorySlot::Render()
