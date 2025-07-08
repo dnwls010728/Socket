@@ -302,8 +302,7 @@ void Player::GainExp(uint32_t amount)
 {
     if (lv_ >= 50) return;
 
-    uint32_t next_exp = exp_ + amount;
-    exp_ += next_exp;
+    exp_ += amount;
 
     while (exp_ > DataManager::Get()->GetExp(lv_))
     {
