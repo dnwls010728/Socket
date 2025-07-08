@@ -3,6 +3,8 @@
 #include "Serializer.h"
 #include "CustomSerializer.h"
 
+#include <array>
+
 // TODO : 오류코드 추가해서 클라이언트에서 오류 메시지 출력.......
 
 // 메시지 패킷
@@ -85,7 +87,6 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t hp;
     uint32_t max_hp;
     uint32_t exp;
-    uint32_t max_exp;
     uint32_t color;
 
     float position_x;
@@ -93,7 +94,7 @@ struct SelectCharacterResponse : public Net::IPacket
 
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, hp, max_hp, exp, max_exp, color, position_x, position_y, inventory)
+    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, hp, max_hp, exp, color, position_x, position_y, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
@@ -246,4 +247,12 @@ struct AttackRequest : public Net::IPacket
     
     SERIALIZABLE_FIELDS(object_id)
     REGISTER_PACKET(AttackRequest, 400)
+};
+
+struct PlayerStatsUpdatePacket : public Net::IPacket
+{
+    std::array<uint32_t, static_cast<uint8_t>(PlayerStat::kCount)> stats = {0};
+    
+    SERIALIZABLE_FIELDS(stats)
+    REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };

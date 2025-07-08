@@ -287,6 +287,7 @@
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SpawnObjectHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SpawnPlayerHandler.h" />
@@ -305,6 +306,7 @@
     <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
     <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
@@ -682,6 +684,7 @@
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SpawnObjectHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SpawnPlayerHandler.cpp" />
@@ -700,6 +703,7 @@
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
     <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />

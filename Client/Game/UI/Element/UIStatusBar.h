@@ -1,0 +1,23 @@
+﻿#pragma once
+#include "Subsystems/Publisher/PublisherSubsystem.h"
+#include "UI/UIContainer.h"
+#include "UI/Element/UIText.h"
+
+class UIStatusBar : public UIContainer
+{
+    GENERATED_BODY(UIStatusBar, UIContainer)
+    
+public:
+    UIStatusBar(const std::wstring& name);
+    virtual ~UIStatusBar() override = default;
+
+protected:
+    virtual void Init() override;
+    virtual void Render() override;
+
+private:
+    void OnEvent(const EventData& data);
+    
+    UIText* lv_text_;
+    
+};

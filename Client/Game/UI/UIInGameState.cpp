@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIInGameState.h"
 
+#include "Element/UIStatusBar.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Subsystems/PlayerSubsystem.h"
 
@@ -15,6 +16,8 @@ void UIInGameState::Init()
 
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
     inventory_->InitInventory(PlayerSubsystem::Get()->GetInventory());
+
+    AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
 }
 
 bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)

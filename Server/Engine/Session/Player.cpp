@@ -124,7 +124,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.hp = hp_;
             response.max_hp = max_hp_;
             response.exp = exp_;
-            response.max_exp = DataManager::Get()->GetExp(lv_);
             response.color = color_;
             response.position_x = position_.x;
             response.position_y = position_.y;
@@ -297,4 +296,26 @@ void Player::Update()
 void Player::ExitMap()
 {
     if (map_) map_->RemovePlayer(GetCharacterID());
+}
+
+void Player::GainExp(uint32_t amount)
+{
+    if (lv_ >= 50) return;
+
+    uint32_t next_exp = exp_ + amount;
+    exp_ += next_exp;
+
+    while (exp_ > DataManager::Get()->GetExp(lv_))
+    {
+        exp_ -= DataManager::Get()->GetExp(lv_);
+        if (exp_ < 0) exp_ = 0;
+        
+        ++lv_;
+    }
+
+    PlayerStatsUpdatePacket packet;
+    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_;
+    packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
+    SendPacket(packet);
+    
 }

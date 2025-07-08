@@ -84,6 +84,6 @@ public:
 private:
     std::unordered_map<uint32_t, MobData> mob_data_map_;
 
-    std::array<uint32_t, 2> exp_table_;
+    std::array<uint32_t, 51> exp_table_;
     
 };

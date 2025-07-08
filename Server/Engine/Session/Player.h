@@ -45,6 +45,8 @@ public:
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
 private:
+    void GainExp(uint32_t amount);
+    
     inline void SetMap(Map* kMap) { map_ = kMap; }
     inline void SetCharacterID(uint32_t character_id) { character_id_ = character_id; }
     
@@ -68,7 +70,7 @@ private:
     std::unique_ptr<Inventory> inventory_;
     Math::Vector2 position_;
 
-    std::atomic_int32_t exp_;
-    std::atomic_int32_t color_;
+    std::atomic_uint32_t exp_;
+    std::atomic_uint32_t color_;
     
 };

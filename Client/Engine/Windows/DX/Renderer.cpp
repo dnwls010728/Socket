@@ -817,6 +817,31 @@ void Renderer::DrawBox(const Math::Vector2& position, const Math::Vector2& size,
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
 void Renderer::DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     // 추후 Window 얻는 방식 변경

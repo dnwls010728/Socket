@@ -16,12 +16,11 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->name_ = response->name;
 
     player_subsystem->character_id_ = response->character_id;
-    player_subsystem->lv_ = response->lv;
 
-    player_subsystem->SetHP(response->hp);
-    player_subsystem->SetMaxHP(response->max_hp);
-    player_subsystem->SetExp(response->exp);
-    player_subsystem->SetMaxExp(response->max_exp);
+    player_subsystem->UpdateStat(PlayerStat::kLv, response->lv);
+    player_subsystem->UpdateStat(PlayerStat::kHP, response->hp);
+    player_subsystem->UpdateStat(PlayerStat::kMaxHP, response->max_hp);
+    player_subsystem->UpdateStat(PlayerStat::kExp, response->exp);
     
     player_subsystem->initial_position_x_ = response->position_x;
     player_subsystem->initial_position_y_ = response->position_y;

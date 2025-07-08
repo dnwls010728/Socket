@@ -15,6 +15,7 @@
 #include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
+#include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
 #include "PacketHandlers/SpawnPlayerHandler.h"
@@ -101,6 +102,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         ObjectAnimationPacket::StaticPacketID,
         std::make_unique<ObjectAnimationHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerStatsUpdatePacket::StaticPacketID,
+        std::make_unique<PlayerStatsUpdateHandler>()
     );
 #pragma endregion
 

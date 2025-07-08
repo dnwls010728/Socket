@@ -17,48 +17,55 @@ PlayerSubsystem::PlayerSubsystem() :
 {
 }
 
-void PlayerSubsystem::SetHP(uint32_t hp)
+void PlayerSubsystem::UpdateStat(PlayerStat stat, uint32_t value)
 {
-    hp_ = hp;
+    switch (stat)
+    {
+    case PlayerStat::kHP:
+        {
+            hp_ = value;
 
-    HPChangedEventData event_data;
-    event_data.hp = hp_;
-    event_data.max_hp = max_hp_;
+            HPChangedEventData event_data;
+            event_data.hp = hp_;
+            event_data.max_hp = max_hp_;
 
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kHPChanged, event_data);
-}
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kHPChanged, event_data);
+        }
+        break;
+    case PlayerStat::kMaxHP:
+        {
+            max_hp_ = value;
 
-void PlayerSubsystem::SetMaxHP(uint32_t max_hp)
-{
-    max_hp_ = max_hp;
+            HPChangedEventData event_data;
+            event_data.hp = hp_;
+            event_data.max_hp = max_hp_;
 
-    HPChangedEventData event_data;
-    event_data.hp = hp_;
-    event_data.max_hp = max_hp_;
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kHPChanged, event_data);
+        }
+        break;
+    case PlayerStat::kExp:
+        {
+            exp_ = value;
 
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kHPChanged, event_data);
-}
+            ExpChangedEventData event_data;
+            event_data.exp = exp_;
 
-void PlayerSubsystem::SetExp(uint32_t exp)
-{
-    exp_ = exp;
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kExpChanged, event_data);
+        }
+        break;
+    case PlayerStat::kLv:
+        {
+            lv_ = value;
 
-    ExpChangedEventData event_data;
-    event_data.exp = exp_;
-    event_data.max_exp = max_exp_;
+            LvChangedEventData event_data;
+            event_data.lv = lv_;
 
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kExpChanged, event_data);
-}
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kLvChanged, event_data);
+        }
+        break;
+    }
 
-void PlayerSubsystem::SetMaxExp(uint32_t max_exp)
-{
-    max_exp_ = max_exp;
-
-    ExpChangedEventData event_data;
-    event_data.exp = exp_;
-    event_data.max_exp = max_exp_;
-
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kExpChanged, event_data);
+    Logger::Print(L"PlayerSubsystem::UpdateStat: Updated stat %d to value %u", static_cast<int>(stat), value);
 }
 
 PlayerSubsystem* PlayerSubsystem::Get()

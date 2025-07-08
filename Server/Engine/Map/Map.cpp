@@ -177,6 +177,17 @@ void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
 
+    {
+        auto it = players_.find(attacker_id);
+        if (it != players_.end())
+        {
+            if (auto player = it->second.lock())
+            {
+                player->GainExp(10000); // 예시로 10000 경험치 추가
+            }
+        }
+    }
+
     auto it = map_objects_.find(defender_id);
     if (it != map_objects_.end())
     {

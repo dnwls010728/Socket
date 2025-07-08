@@ -20,11 +20,11 @@ void InGameUISubsystem::Init()
 {
     GameInstanceSubsystem::Init();
 
-    chat_input_ = UI_OLD::EditableTextBox::Create(L"ChatInput");
-    chat_input_->SetPosition({ 0.f, 768.f });
-    chat_input_->SetSize({ 300.f, 20.f });
-    chat_input_->SetPivot({ 0.f, 0.f });
-    chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
+    // chat_input_ = UI_OLD::EditableTextBox::Create(L"ChatInput");
+    // chat_input_->SetPosition({ 0.f, 768.f });
+    // chat_input_->SetSize({ 300.f, 20.f });
+    // chat_input_->SetPivot({ 0.f, 0.f });
+    // chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
 
     mini_map_ = UI_OLD::MiniMap::Create(L"MiniMap");
     mini_map_->SetPosition({ 0.f, 0.f });
@@ -36,19 +36,19 @@ void InGameUISubsystem::Deinit()
 {
     GameInstanceSubsystem::Deinit();
 
-    chat_input_->RemoveFromViewport();
+    // chat_input_->RemoveFromViewport();
     mini_map_->RemoveFromViewport();
     
 }
 
 void InGameUISubsystem::ShowChatUI()
 {
-    chat_input_->AddToViewport();
+    // chat_input_->AddToViewport();
 }
 
 void InGameUISubsystem::HideChatUI()
 {
-    chat_input_->RemoveFromViewport();
+    // chat_input_->RemoveFromViewport();
 }
 
 void InGameUISubsystem::ShowMiniMap()
@@ -68,17 +68,17 @@ InGameUISubsystem* InGameUISubsystem::Get()
 
 void InGameUISubsystem::OnChatInputReturn(const std::wstring& text)
 {
-    if (text.empty())
-    {
-        UI_OLD::Manager::Get()->SetFocus(nullptr);
-        return;
-    }
-
-    ChatMessagePacket chat_message_packet;
-    chat_message_packet.message = text;
-    SessionSubsystem::Get()->SendPacket(chat_message_packet);
-
-    chat_input_->SetText(L"");
+    // if (text.empty())
+    // {
+    //     UI_OLD::Manager::Get()->SetFocus(nullptr);
+    //     return;
+    // }
+    //
+    // ChatMessagePacket chat_message_packet;
+    // chat_message_packet.message = text;
+    // SessionSubsystem::Get()->SendPacket(chat_message_packet);
+    //
+    // chat_input_->SetText(L"");
 }
 
 RTTR_REGISTRATION

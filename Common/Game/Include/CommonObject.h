@@ -60,6 +60,15 @@ struct ObjectInfo
     } info;
 };
 
+enum class PlayerStat : uint8_t
+{
+    kHP = 0,
+    kMaxHP,
+    kExp,
+    kLv,
+    kCount
+};
+
 enum class MobState : uint8_t
 {
     kIdle = 0,

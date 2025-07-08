@@ -69,7 +69,7 @@ private:
     std::mutex player_mutex_;
     std::mutex object_mutex_;
 
-    std::atomic<uint32_t> next_object_id_;
+    std::atomic_uint32_t next_object_id_;
 
     std::unordered_map<uint32_t, std::weak_ptr<Player>> players_;
 

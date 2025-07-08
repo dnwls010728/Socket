@@ -3,24 +3,37 @@
 
 struct EventData
 {
+    virtual ~EventData() = default;
 };
 
 struct HPChangedEventData : EventData
 {
     uint32_t hp;
     uint32_t max_hp;
+
+    virtual ~HPChangedEventData() override = default;
 };
 
 struct ExpChangedEventData : EventData
 {
     uint32_t exp;
-    uint32_t max_exp;
+
+    virtual ~ExpChangedEventData() override = default;
+};
+
+struct LvChangedEventData : EventData
+{
+    uint32_t lv;
+
+    virtual ~LvChangedEventData() override = default;
 };
 
 struct ItemSwappedEventData : EventData
 {
     uint32_t first_slot;
     uint32_t second_slot;
+
+    virtual ~ItemSwappedEventData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -35,6 +48,7 @@ public:
         kNone = 0,
         kHPChanged,
         kExpChanged,
+        kLvChanged,
         kItemSwapped
     };
     
