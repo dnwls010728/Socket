@@ -7,11 +7,13 @@
 
 UIStatusBar::UIStatusBar(const std::wstring& name) :
     UIContainer(name),
+    hp_(0),
+    max_hp_(0),
     exp_(0),
     max_exp_(0)
 {
     lv_text_ = AddChild<UIText>(UIText::StaticClass(), L"LvText");
-    lv_text_->SetAbsolutePosition({10.f, 729.f});
+    lv_text_->SetAbsolutePosition({10.f, 719.f});
     lv_text_->SetSize({60.f, 30.f});
     lv_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     lv_text_->SetFontSize(18.f);
@@ -19,12 +21,20 @@ UIStatusBar::UIStatusBar(const std::wstring& name) :
     lv_text_->SetText(L"Lv. 1");
 
     name_text_ = AddChild<UIText>(UIText::StaticClass(), L"NameText");
-    name_text_->SetAbsolutePosition({70.f, 729.f});
-    name_text_->SetSize({200.f, 30.f});
+    name_text_->SetAbsolutePosition({70.f, 719.f});
+    name_text_->SetSize({100.f, 30.f});
     name_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     name_text_->SetFontSize(18.f);
     name_text_->SetColor(Math::Color::White);
     name_text_->SetText(L"Player Name");
+
+    hp_text_ = AddChild<UIText>(UIText::StaticClass(), L"HPText");
+    hp_text_->SetAbsolutePosition({583.f, 719.f});
+    hp_text_->SetSize({200.f, 30.f});
+    hp_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    hp_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    hp_text_->SetColor(Math::Color::White);
+    hp_text_->SetText(L"0 / 0");
 
     exp_text_ = AddChild<UIText>(UIText::StaticClass(), L"ExpText");
     exp_text_->SetAbsolutePosition({583.f, 759.f});
@@ -39,16 +49,33 @@ void UIStatusBar::Init()
 {
     UIContainer::Init();
 
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kHPChanged, this, &UIStatusBar::OnEvent);
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
 
-    name_text_->SetText(PlayerSubsystem::Get()->GetName());
+    PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+
+    name_text_->SetText(player_subsystem->GetName());
+
+    lv_text_->SetText(L"Lv. " + std::to_wstring(player_subsystem->GetLv()));
+    
+    hp_ = player_subsystem->GetHP();
+    max_hp_ = player_subsystem->GetMaxHP();
+
+    hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
+
+    exp_ = player_subsystem->GetExp();
+    max_exp_ = DataSubsystem::Get()->GetExp(player_subsystem->GetLv());
+
+    float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
+    exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
 }
 
 void UIStatusBar::Uninit()
 {
     UIContainer::Uninit();
 
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kHPChanged, this, &UIStatusBar::OnEvent);
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
 }
@@ -57,6 +84,13 @@ void UIStatusBar::Render()
 {
     Renderer* renderer = Renderer::Get();
 
+    renderer->DrawSolidBox({ 0.f, 719.f }, { 180.f, 30.f }, {0, 0, 0, 128});
+
+    renderer->DrawRoundBox({ 583.f, 722.f }, { 200.f, 24.f }, Math::Color::Gray);
+
+    float hp_ratio = static_cast<float>(hp_) / static_cast<float>(max_hp_);
+    renderer->DrawSolidRoundBox({ 583.f, 722.f }, { 200.f * hp_ratio, 24.f }, Math::Color::Red);
+    
     renderer->DrawSolidBox({ 0.f, 759.f }, { 1366.f, 9.f }, Math::Color::Gray);
 
     float exp_ratio = static_cast<float>(exp_) / static_cast<float>(max_exp_);
@@ -79,6 +113,13 @@ void UIStatusBar::OnEvent(const EventData& data)
 
         float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
         exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
+    }
+    else if (const auto* hp_data = dynamic_cast<const HPChangedEventData*>(&data))
+    {
+        hp_ = hp_data->hp;
+        max_hp_ = hp_data->max_hp;
+
+        hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
     }
 }
 
