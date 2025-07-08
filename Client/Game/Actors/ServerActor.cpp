@@ -22,6 +22,12 @@ ServerActor::ServerActor(const std::wstring& name) :
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
 }
 
+void ServerActor::PlayPredictedAnimation(std::wstring animation)
+{
+    animation_snapshots_.clear();
+    animator_->PlayAnimation(animation);
+}
+
 void ServerActor::PhysicsTick(float delta_time)
 {
     float server_now = SessionSubsystem::Get()->GetServerTime();

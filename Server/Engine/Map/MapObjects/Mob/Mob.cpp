@@ -139,14 +139,24 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
 {
     if (hp_ <= 0) return;
 
+    const auto& player = map_->FindPlayer(attacker);
     state_machine_->ChangeState(hit_state_);
+
+    ObjectAnimationPacket packet;
+    packet.object_id = GetObjectID();
+    packet.animation = L"Hit";
+    packet.is_flipped = is_flipped_;
+    packet.server_time = Net::GetClientTime();
+    if (player)
+        map_->SendPacket(packet, player);
+    else
+        map_->SendPacket(packet);
     
+    last_animation_ = animation_;
     hp_ -= damage;
     if (hp_ <= 0)
     {
-        const auto& player = map_->FindPlayer(attacker);
         if (player) player->GainExp(100); // 예시로 100 경험치 추가
-        
         hp_ = 0;
         map_->DestroyObject(GetObjectID());
     }

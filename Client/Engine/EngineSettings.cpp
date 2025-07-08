@@ -9,8 +9,8 @@ EngineSettings::EngineSettings() :
     use_vsync_(false),
     fixed_time_step_(.02f),
     layer_collision_matrix_(),
-    object_interpolation_delay_(0.25f),
-    character_interpolation_delay_(0.15f)
+    object_interpolation_delay_(0.13f),
+    character_interpolation_delay_(0.13f)
 {
 }
 

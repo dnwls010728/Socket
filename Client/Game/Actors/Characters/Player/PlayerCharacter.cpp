@@ -212,6 +212,8 @@ void PlayerCharacter::Tick(float delta_time)
                         request.object_id = mob->GetObjectID();
                         SendPacket(request);
 
+                        mob->PlayPredictedAnimation(L"Hit");
+                        
                         std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
                         if (IsValid(damage))
                         {
