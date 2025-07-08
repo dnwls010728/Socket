@@ -45,6 +45,8 @@ public:
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
 private:
+    friend class Mob;
+    
     void GainExp(uint32_t amount);
     
     inline void SetMap(Map* kMap) { map_ = kMap; }

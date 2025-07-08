@@ -173,28 +173,17 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &ex
     }
 }
 
-void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
+void Map::OnAttack(uint32_t attacker, uint32_t defender)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
 
-    {
-        auto it = players_.find(attacker_id);
-        if (it != players_.end())
-        {
-            if (auto player = it->second.lock())
-            {
-                player->GainExp(10000); // 예시로 10000 경험치 추가
-            }
-        }
-    }
-
-    auto it = map_objects_.find(defender_id);
+    auto it = map_objects_.find(defender);
     if (it != map_objects_.end())
     {
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->OnHit(1000);
+            mob->OnHit(attacker, 1000);
         }
     }
 }
@@ -340,6 +329,15 @@ Foothold* Map::FindFoothold(const Math::Vector2& position)
     }
 
     return best;
+}
+
+const std::shared_ptr<Player>& Map::FindPlayer(uint32_t player_id)
+{
+    std::lock_guard<std::mutex> lock(player_mutex_);
+    
+    auto it = players_.find(player_id);
+    if (it == players_.end()) return nullptr;
+    return it->second.lock();
 }
 
 void Map::AddObjects()

@@ -20,6 +20,7 @@ private:
     void OnEvent(const EventData& data);
     
     UIText* lv_text_;
+    UIText* name_text_;
     UIText* exp_text_;
 
     uint32_t exp_;

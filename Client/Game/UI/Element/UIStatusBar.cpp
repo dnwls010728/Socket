@@ -2,21 +2,29 @@
 #include "UIStatusBar.h"
 
 #include "Subsystems/DataSubsystem.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Windows/DX/Renderer.h"
 
 UIStatusBar::UIStatusBar(const std::wstring& name) :
     UIContainer(name),
-    lv_text_(nullptr),
     exp_(0),
     max_exp_(0)
 {
     lv_text_ = AddChild<UIText>(UIText::StaticClass(), L"LvText");
     lv_text_->SetAbsolutePosition({10.f, 729.f});
-    lv_text_->SetSize({100.f, 30.f});
+    lv_text_->SetSize({60.f, 30.f});
     lv_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     lv_text_->SetFontSize(18.f);
     lv_text_->SetColor(Math::Color::White);
     lv_text_->SetText(L"Lv. 1");
+
+    name_text_ = AddChild<UIText>(UIText::StaticClass(), L"NameText");
+    name_text_->SetAbsolutePosition({70.f, 729.f});
+    name_text_->SetSize({200.f, 30.f});
+    name_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    name_text_->SetFontSize(18.f);
+    name_text_->SetColor(Math::Color::White);
+    name_text_->SetText(L"Player Name");
 
     exp_text_ = AddChild<UIText>(UIText::StaticClass(), L"ExpText");
     exp_text_->SetAbsolutePosition({583.f, 759.f});
@@ -33,6 +41,8 @@ void UIStatusBar::Init()
 
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
+
+    name_text_->SetText(PlayerSubsystem::Get()->GetName());
 }
 
 void UIStatusBar::Uninit()

@@ -43,7 +43,7 @@ public:
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player>& excluded_player_weak);
 
-    void OnAttack(uint32_t attacker_id, uint32_t defender_id);
+    void OnAttack(uint32_t attacker, uint32_t defender);
 
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
@@ -51,6 +51,8 @@ public:
     bool LoadMapData();
 
     Foothold* FindFoothold(const Math::Vector2& position);
+
+    const std::shared_ptr<Player>& FindPlayer(uint32_t player_id);
 
     std::vector<std::weak_ptr<Player>> GetPlayers();
 

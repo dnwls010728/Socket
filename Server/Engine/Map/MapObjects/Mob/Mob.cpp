@@ -135,7 +135,7 @@ void Mob::SendAnimationPoacket(const std::wstring& animation, bool is_flip) cons
     map_->SendPacket(packet);
 }
 
-void Mob::OnHit(int32_t damage)
+void Mob::OnHit(uint32_t attacker, uint32_t damage)
 {
     if (hp_ <= 0) return;
 
@@ -144,6 +144,9 @@ void Mob::OnHit(int32_t damage)
     hp_ -= damage;
     if (hp_ <= 0)
     {
+        const auto& player = map_->FindPlayer(attacker);
+        if (player) player->GainExp(100); // 예시로 100 경험치 추가
+        
         hp_ = 0;
         map_->DestroyObject(GetObjectID());
     }

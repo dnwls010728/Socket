@@ -49,7 +49,7 @@ protected:
 
     void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
     void SendAnimationPoacket(const std::wstring& animation, bool is_flip) const;
-    void OnHit(int32_t damage);
+    void OnHit(uint32_t attacker, uint32_t damage);
 
     uint32_t mob_id_;
 
@@ -72,7 +72,7 @@ protected:
 
     class Foothold* foothold_;
 
-    std::atomic_int32_t hp_;
+    std::atomic_uint32_t hp_;
 
 #pragma region 상태
     std::shared_ptr<MobIdleState> idle_state_;
