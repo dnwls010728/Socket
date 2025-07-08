@@ -117,10 +117,10 @@ bool UIInventory::OnDragEnd(const Math::Vector2& position)
 
 void UIInventory::OnItemSwapped(const EventData& event_data)
 {
-    const ItemSwappedEventData& data = static_cast<const ItemSwappedEventData&>(event_data);
+    const ItemSwappedEventData* data = dynamic_cast<const ItemSwappedEventData*>(&event_data);
 
-    UpdateSlot(data.first_slot);
-    UpdateSlot(data.second_slot);
+    UpdateSlot(data->first_slot);
+    UpdateSlot(data->second_slot);
 
 }
 

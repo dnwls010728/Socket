@@ -19,5 +19,8 @@ private:
     void OnEvent(const EventData& data);
     
     UIText* lv_text_;
+
+    uint32_t exp_;
+    uint32_t max_exp_;
     
 };

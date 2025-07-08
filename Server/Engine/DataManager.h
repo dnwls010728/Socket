@@ -78,7 +78,7 @@ public:
     void Init();
 
     const MobData* GetMobData(uint32_t id) const;
-    // GetExp
+    
     uint32_t GetExp(uint32_t level) const;
 
 private:

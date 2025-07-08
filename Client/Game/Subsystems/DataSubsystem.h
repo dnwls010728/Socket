@@ -81,10 +81,14 @@ public:
     virtual void Init() override;
 
     const MobData* GetMobData(uint32_t id) const;
+    
+    uint32_t GetExp(uint32_t level) const;
 
     static DataSubsystem* Get();
 
 private:
-    std::unordered_map<uint32_t, MobData> mob_data_map;
+    std::unordered_map<uint32_t, MobData> mob_data_map_;
+    
+    std::array<uint32_t, 51> exp_table_;
     
 };

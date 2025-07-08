@@ -311,6 +311,12 @@ void Player::GainExp(uint32_t amount)
         if (exp_ < 0) exp_ = 0;
         
         ++lv_;
+
+        if (lv_ == 50)
+        {
+            exp_ = 0;
+            break;
+        }
     }
 
     PlayerStatsUpdatePacket packet;
