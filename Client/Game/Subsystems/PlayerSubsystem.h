@@ -17,6 +17,9 @@ public:
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
     FORCEINLINE uint32_t GetLv() const { return lv_; }
+    FORCEINLINE uint32_t GetHP() const { return hp_; }
+    FORCEINLINE uint32_t GetMaxHP() const { return max_hp_; }
+    FORCEINLINE uint32_t GetExp() const { return exp_; }
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 

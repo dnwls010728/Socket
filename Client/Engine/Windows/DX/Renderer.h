@@ -96,8 +96,12 @@ public:
     [[deprecated("Use DrawSolidBox instead.")]]
     void DrawSolidBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float angle = 0.f);
     
+    [[deprecated("Use DrawRoundBox instead.")]]
     void DrawRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float radius, float angle = 0.f, float stroke = 1.f);
+    
+    [[deprecated("Use DrawSolidRoundBox instead.")]]
     void DrawSolidRoundBox(WindowsWindow* window, const Math::Rect& kRect, const Math::Vector2& kPivot, const Math::Color& kColor, float radius, float angle = 0.f);
+    
     void DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke = 1.f);
     void DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color);
     void DrawLine(WindowsWindow* window, Math::Vector2 start, Math::Vector2 end, Math::Color color, float stroke = 1.f);
@@ -110,6 +114,8 @@ public:
 
     void DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
     void DrawSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black);
+    void DrawRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f, float stroke = 1.f);
+    void DrawSolidRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f);
     void DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     
     [[deprecated("Use DrawBitmap instead.")]]

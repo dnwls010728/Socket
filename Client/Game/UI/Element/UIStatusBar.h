@@ -21,8 +21,11 @@ private:
     
     UIText* lv_text_;
     UIText* name_text_;
+    UIText* hp_text_;
     UIText* exp_text_;
 
+    uint32_t hp_;
+    uint32_t max_hp_;
     uint32_t exp_;
     uint32_t max_exp_;
     
