@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "MapObject.h"
+#include "Utils/TimedBool.h"
 
 namespace Net
 {
@@ -25,12 +26,15 @@ public:
     inline const std::wstring& GetName() const { return name_; }
 
 protected:
+    friend class Map;
     friend class Player;
     friend class Mob;
 
     void ExitMap();
     void UpdateCharacter();
     void GainExp(uint32_t amount);
+
+    virtual void Tick(float delta_time) override;
     
     std::weak_ptr<Player> player_;
     
@@ -47,4 +51,6 @@ protected:
     std::atomic_uint32_t color_;
 
     std::unique_ptr<Inventory> inventory_;
+    
+    TimedBool is_invincible_;
 };

@@ -22,8 +22,6 @@ public:
     virtual HRESULT DrawInlineObject(void* clientDrawingContext, FLOAT originX, FLOAT originY, IDWriteInlineObject* inlineObject, BOOL isSideways, BOOL isRightToLeft, IUnknown* clientDrawingEffect) override;
 
 private:
-    ULONG ref_;
-    
     Microsoft::WRL::ComPtr<ID2D1Brush> outline_brush_;
     Microsoft::WRL::ComPtr<ID2D1Brush> fill_brush_;
 

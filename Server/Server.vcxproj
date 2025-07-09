@@ -181,6 +181,7 @@
     <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Engine\Utils\TimedBool.cpp" />
     <ClCompile Include="Game\ServerManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
     <ClCompile Include="MySQL\MySQLManager.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Engine\Utils\TimedBool.h" />
     <ClInclude Include="Game\ServerManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />

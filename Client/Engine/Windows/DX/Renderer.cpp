@@ -929,7 +929,7 @@ void Renderer::DrawString(const std::wstring& string, const Math::Vector2& posit
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
+void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& outline_color, const Math::Color& fill_color, float stroke, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
@@ -938,20 +938,22 @@ void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vec
     if (!text_format) return;
 
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
-    // HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), kRect.width, kRect.height, text_layout.GetAddressOf());
-    HRESULT hr = dwrite_factory_->CreateTextLayout(string.c_str(), static_cast<UINT32>(string.size()), text_format.Get(), FLT_MAX, FLT_MAX, text_layout.GetAddressOf());
+    HRESULT hr = dwrite_factory_->CreateTextLayout(string.c_str(), static_cast<UINT32>(string.size()), text_format.Get(), size.x, size.y, text_layout.GetAddressOf());
     if (FAILED(hr)) return;
+
+    text_layout->SetTextAlignment(text_alignment);
+    text_layout->SetParagraphAlignment(paragraph_alignment);
     
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> outline_brush;
     hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(0.f, 0.f, 0.f, 1.f), // Black outline
+        D2D1::ColorF(outline_color.r / 255.f, outline_color.g / 255.f, outline_color.b / 255.f, outline_color.a / 255.f),
         outline_brush.GetAddressOf()
     );
     if (FAILED(hr)) return;
     
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> fill_brush;
     hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        D2D1::ColorF(fill_color.r / 255.f, fill_color.g / 255.f, fill_color.b / 255.f, fill_color.a / 255.f),
         fill_brush.GetAddressOf()
     );
     if (FAILED(hr)) return;
@@ -960,7 +962,7 @@ void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vec
     hr = d2d_viewport->d2d_render_target.As(&device_context);
     if (FAILED(hr)) return;
     
-    OutlineRenderer renderer(outline_brush, fill_brush, 1.f);
+    OutlineRenderer renderer(outline_brush, fill_brush, stroke);
     hr = text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
     if (FAILED(hr)) return;
 }

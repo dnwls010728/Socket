@@ -21,7 +21,8 @@ PlayerCharacter::PlayerCharacter() :
     map_id_(0),
     exp_(0),
     color_(0),
-    inventory_(nullptr)
+    inventory_(nullptr),
+    is_invincible_()
 {
 }
 
@@ -295,4 +296,12 @@ void PlayerCharacter::GainExp(uint32_t amount)
     packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_;
     packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
     SendPacket(packet);
+}
+
+void PlayerCharacter::Tick(float delta_time)
+{
+    MapObject::Tick(delta_time);
+
+    is_invincible_.Tick(delta_time);
+    
 }

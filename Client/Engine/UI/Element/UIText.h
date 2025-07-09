@@ -36,7 +36,7 @@ protected:
 private:
     std::wstring text_;
     std::wstring font_name_;
-
+    
     float font_size_;
 
     Math::Color color_;

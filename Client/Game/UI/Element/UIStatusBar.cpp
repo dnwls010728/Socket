@@ -18,7 +18,7 @@ UIStatusBar::UIStatusBar(const std::wstring& name) :
     lv_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     lv_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     lv_text_->SetFontSize(16.f);
-    lv_text_->SetColor(Math::Color::Orange);
+    lv_text_->SetColor(Math::Color::White);
     lv_text_->SetText(L"Lv. 1 Player Name");
 
     hp_text_ = AddChild<UIText>(UIText::StaticClass(), L"HPText");
@@ -86,11 +86,6 @@ void UIStatusBar::Render()
     renderer->DrawSolidBox({ 0.f, 759.f }, { 1366.f * exp_ratio, 9.f }, Math::Color::Green);
     
     UIContainer::Render();
-
-    renderer->DrawStringWithOutline(
-        L"Hello, World!", { 583.f, 300.f }, { 200.f, 30.f }, Math::Color::White, L"NanumBarunGothic", 16.f,
-        DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER
-    );
     
 }
 

@@ -4,7 +4,6 @@
 #include "ConstantBuffer.h"
 
 OutlineRenderer::OutlineRenderer(const Microsoft::WRL::ComPtr<ID2D1Brush>& outline_brush, const Microsoft::WRL::ComPtr<ID2D1Brush>& fill_brush, float stroke) :
-    ref_(1),
     outline_brush_(outline_brush),
     fill_brush_(fill_brush),
     stroke_(stroke)
@@ -13,55 +12,31 @@ OutlineRenderer::OutlineRenderer(const Microsoft::WRL::ComPtr<ID2D1Brush>& outli
 
 HRESULT OutlineRenderer::QueryInterface(const IID& riid, void** ppvObject)
 {
-    if (!ppvObject) return E_POINTER;
-    if (riid == __uuidof(IUnknown) ||
-        riid == __uuidof(IDWriteTextRenderer) ||
-        riid == __uuidof(IDWritePixelSnapping))
-    {
-        *ppvObject = this; AddRef(); return S_OK;
-    }
-    
-    *ppvObject = nullptr; return E_NOINTERFACE;
+    return S_OK;
 }
 
 ULONG OutlineRenderer::AddRef()
 {
-    return InterlockedIncrement(&ref_);
+    return 0;
 }
 
 ULONG OutlineRenderer::Release()
 {
-    ULONG ref = InterlockedDecrement(&ref_);
-    if (ref == 0) delete this;
-    return ref;
+    return 0;
 }
 
 HRESULT OutlineRenderer::IsPixelSnappingDisabled(void* clientDrawingContext, BOOL* isDisabled)
 {
-    if (!isDisabled) return E_POINTER;
-
-    *isDisabled = FALSE;
     return S_OK;
 }
 
 HRESULT OutlineRenderer::GetCurrentTransform(void* clientDrawingContext, DWRITE_MATRIX* transform)
 {
-    if (!clientDrawingContext || !transform) return E_POINTER;
-
-    ID2D1RenderTarget* render_target = static_cast<ID2D1RenderTarget*>(clientDrawingContext);
-    render_target->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform));
-
     return S_OK;
 }
 
 HRESULT OutlineRenderer::GetPixelsPerDip(void* clientDrawingContext, FLOAT* pixelsPerDip)
 {
-    if (!clientDrawingContext || !pixelsPerDip) return E_POINTER;
-
-    float dpi_x, dpi_y;
-    static_cast<ID2D1RenderTarget*>(clientDrawingContext)->GetDpi(&dpi_x, &dpi_y);
-    *pixelsPerDip = dpi_x / 96.f;
-    
     return S_OK;
 }
 
@@ -105,7 +80,18 @@ HRESULT OutlineRenderer::DrawGlyphRun(void* clientDrawingContext, FLOAT baseline
     );
     if (FAILED(hr)) return hr;
 
-    device_context->DrawGeometry(geo.Get(), outline_brush_.Get(), stroke_);
+    D2D1_STROKE_STYLE_PROPERTIES props = D2D1::StrokeStyleProperties(
+        D2D1_CAP_STYLE_FLAT,
+        D2D1_CAP_STYLE_FLAT,
+        D2D1_CAP_STYLE_FLAT,
+        D2D1_LINE_JOIN_ROUND,
+        1.f
+    );
+    
+    Microsoft::WRL::ComPtr<ID2D1StrokeStyle> stroke_style;
+    factory->CreateStrokeStyle(props, nullptr, 0, stroke_style.GetAddressOf());
+    
+    device_context->DrawGeometry(geo.Get(), outline_brush_.Get(), stroke_, stroke_style.Get());
     device_context->FillGeometry(geo.Get(), fill_brush_.Get());
 
     return S_OK;
