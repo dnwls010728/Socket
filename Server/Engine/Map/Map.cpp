@@ -87,11 +87,16 @@ void Map::AddPlayers()
         for (const auto& map_object : map_objects_ | std::views::values)
         {
             SpawnObjectPacket spawn_object_packet;
-            spawn_object_packet.object_info.type = ObjectType::kMob; // 예시로 Mob 타입으로 설정
             spawn_object_packet.object_info.object_id = map_object->GetObjectID();
             spawn_object_packet.object_info.position_x = map_object->GetPosition().x;
             spawn_object_packet.object_info.position_y = map_object->GetPosition().y;
-            spawn_object_packet.object_info.info.mob = {}; // Mob 정보는 필요에 따라 설정
+            
+            if (const auto& mob = std::dynamic_pointer_cast<Mob>(map_object))
+            {
+                spawn_object_packet.object_info.type = ObjectType::kMob;
+                spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
+            }
+            
             player->SendPacket(spawn_object_packet);
         }
     }
