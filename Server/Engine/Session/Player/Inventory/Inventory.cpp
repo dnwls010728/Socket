@@ -6,11 +6,11 @@
 
 #include "jdbc/cppconn/exception.h"
 #include "jdbc/cppconn/prepared_statement.h"
+#include "Map/PlayerCharacter.h"
 #include "MySQL/MySQLManager.h"
-#include "Session/Player.h"
 
-Inventory::Inventory(Player* player) :
-    player_(player),
+Inventory::Inventory(const std::shared_ptr<PlayerCharacter>& player) :
+    player_character_(player),
     slots_()
 {
 }
@@ -106,40 +106,43 @@ void Inventory::Update()
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
-    
-    try
-    {
-        {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
-            statement->setUInt(1, player_->GetCharacterID());
-            statement->executeUpdate();
-        }
 
+    if (auto player_character = player_character_.lock())
+    {
+        try
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, item_id, slot_index, count) VALUES (?, ?, ?, ?, ?)"));
-            for (const auto& it : slots_)
             {
-                statement->setUInt(1, player_->GetAccountID());
-                statement->setUInt(2, player_->GetCharacterID());
-                statement->setUInt(3, it.second.item_id);
-                statement->setUInt(4, it.first);
-                statement->setUInt(5, it.second.count);
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+                statement->setUInt(1, player_character->GetObjectID());
                 statement->executeUpdate();
             }
+
+            {
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, item_id, slot_index, count) VALUES (?, ?, ?, ?, ?)"));
+                for (const auto& it : slots_)
+                {
+                    statement->setUInt(1, player_character->GetAccountID());
+                    statement->setUInt(2, player_character->GetObjectID());
+                    statement->setUInt(3, it.second.item_id);
+                    statement->setUInt(4, it.first);
+                    statement->setUInt(5, it.second.count);
+                    statement->executeUpdate();
+                }
+            }
         }
-    }
-    catch (sql::SQLException& e)
-    {
-        std::cerr << "SQLException: " << e.what() << std::endl;
-        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
-        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-    catch (...)
-    {
-        std::cerr << "Unknown Exception" << std::endl;
+        catch (sql::SQLException& e)
+        {
+            std::cerr << "SQLException: " << e.what() << std::endl;
+            std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+            std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+        catch (...)
+        {
+            std::cerr << "Unknown Exception" << std::endl;
+        }
     }
 }

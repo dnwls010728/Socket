@@ -7,6 +7,7 @@
 #include "DataManager.h"
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
+#include "Map/PlayerCharacter.h"
 #include "Session/Player.h"
 #include "States/MobHitState.h"
 #include "States/MobIdleState.h"

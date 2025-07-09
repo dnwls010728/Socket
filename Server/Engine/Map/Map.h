@@ -9,6 +9,8 @@
 #include "Foothold.h"
 #include "Math/Vector2.h"
 
+class PlayerCharacter;
+
 namespace Net
 {
     struct IPacket;
@@ -20,7 +22,6 @@ struct SpawnPoint
     uint32_t mob_id;
 };
 
-class Player;
 class MapObject;
 class Mob;
 
@@ -30,7 +31,7 @@ public:
     Map(uint32_t map_id);
     ~Map() = default;
 
-    void AddPlayer(const std::weak_ptr<Player>& player_weak);
+    void AddPlayer(const std::weak_ptr<PlayerCharacter>& player_weak);
     void RemovePlayer(uint32_t player_id);
     void AddPlayers();
     void RemovePlayers();
@@ -41,7 +42,7 @@ public:
     void DestroyObject(uint32_t object_id);
 
     void SendPacket(const Net::IPacket& packet);
-    void SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player>& excluded_player_weak);
+    void SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter>& excluded_player_weak);
 
     void OnAttack(uint32_t attacker, uint32_t defender);
 
@@ -52,9 +53,9 @@ public:
 
     Foothold* FindFoothold(const Math::Vector2& position);
 
-    const std::shared_ptr<Player>& FindPlayer(uint32_t player_id);
+    const std::shared_ptr<PlayerCharacter>& FindPlayer(uint32_t player_id);
 
-    std::vector<std::weak_ptr<Player>> GetPlayers();
+    std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapID() const { return map_id_; }
@@ -73,11 +74,11 @@ private:
 
     std::atomic_uint32_t next_object_id_;
 
-    std::unordered_map<uint32_t, std::weak_ptr<Player>> players_;
+    std::unordered_map<uint32_t, std::weak_ptr<PlayerCharacter>> players_;
 
     std::map<uint32_t, std::shared_ptr<MapObject>> map_objects_;
 
-    std::queue<std::weak_ptr<Player>> pending_players_;
+    std::queue<std::weak_ptr<PlayerCharacter>> pending_players_;
     std::queue<uint32_t> pending_remove_players_;
 
     std::queue<std::shared_ptr<MapObject>> pending_objects_;

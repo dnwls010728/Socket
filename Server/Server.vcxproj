@@ -169,6 +169,7 @@
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobWalkState.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobStateBase.cpp" />
     <ClCompile Include="Engine\Map\MapTickDispatcher.cpp" />
+    <ClCompile Include="Engine\Map\PlayerCharacter.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
     <ClCompile Include="Engine\Math\Color.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobWalkState.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobStateBase.h" />
     <ClInclude Include="Engine\Map\MapTickDispatcher.h" />
+    <ClInclude Include="Engine\Map\PlayerCharacter.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />

@@ -1,0 +1,50 @@
+﻿#pragma once
+#include "MapObject.h"
+
+namespace Net
+{
+    struct IPacket;
+}
+
+class Inventory;
+class Player;
+
+class PlayerCharacter : public MapObject
+{
+public:
+    PlayerCharacter();
+    virtual ~PlayerCharacter() override;
+
+    static std::shared_ptr<PlayerCharacter> LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player);
+    
+    void SendPacket(const Net::IPacket& packet) const;
+    void ReceivePacket(Net::IPacket* packet);
+
+    inline uint32_t GetAccountID() const { return account_id_; }
+
+    inline const std::wstring& GetName() const { return name_; }
+
+protected:
+    friend class Player;
+    friend class Mob;
+
+    void ExitMap();
+    void UpdateCharacter();
+    void GainExp(uint32_t amount);
+    
+    std::weak_ptr<Player> player_;
+    
+    uint32_t account_id_;
+
+    std::wstring name_;
+
+    uint32_t lv_;
+    uint32_t hp_;
+    uint32_t max_hp_;
+    uint32_t map_id_;
+    
+    std::atomic_uint32_t exp_;
+    std::atomic_uint32_t color_;
+
+    std::unique_ptr<Inventory> inventory_;
+};

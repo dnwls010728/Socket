@@ -2,12 +2,12 @@
 #include <map>
 #include <memory>
 
-class Player;
+class PlayerCharacter;
 
 class Inventory
 {
 public:
-    Inventory(Player* owner);
+    Inventory(const std::shared_ptr<PlayerCharacter>& owner);
     ~Inventory() = default;
     
     uint32_t GetItemID(uint32_t slot_index) const;
@@ -31,7 +31,7 @@ private:
         uint32_t count;
     };
 
-    Player* player_;
+    std::weak_ptr<PlayerCharacter> player_character_;
     
     std::map<uint32_t, Slot> slots_;
 

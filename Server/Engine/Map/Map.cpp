@@ -5,11 +5,11 @@
 #include <format>
 #include <ranges>
 
-#include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
 #include "DataManager.h"
 #include "MapObject.h"
+#include "PlayerCharacter.h"
 #include "MapObjects/Mob/Mob.h"
 
 Map::Map(uint32_t map_id) :
@@ -30,7 +30,7 @@ Map::Map(uint32_t map_id) :
 {
 }
 
-void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
+void Map::AddPlayer(const std::weak_ptr<PlayerCharacter> &player_weak)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
     pending_players_.push(player_weak);
@@ -54,14 +54,14 @@ void Map::AddPlayers()
         auto player = pending_player_weak.lock();
         if (!player) continue;
 
-        uint32_t object_id = player->GetCharacterID();
+        uint32_t object_id = player->GetObjectID();
         players_.emplace(object_id, pending_player_weak);
     
         player->SetMap(this);
         {
             // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
             SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_id = player->GetCharacterID();
+            spawn_player_packet.character_id = player->GetObjectID();
             spawn_player_packet.name = player->GetName();
             spawn_player_packet.position_x = player->GetPosition().x;
             spawn_player_packet.position_y = player->GetPosition().y;
@@ -75,7 +75,7 @@ void Map::AddPlayers()
             if (other_player && other_player != player)
             {
                 SpawnPlayerPacket spawn_player_packet;
-                spawn_player_packet.character_id = other_player->GetCharacterID();
+                spawn_player_packet.character_id = other_player->GetObjectID();
                 spawn_player_packet.name = other_player->GetName();
                 spawn_player_packet.position_x = other_player->GetPosition().x;
                 spawn_player_packet.position_y = other_player->GetPosition().y;
@@ -165,7 +165,7 @@ void Map::SendPacket(const Net::IPacket& packet)
     }
 }
 
-void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &excluded_player_weak)
+void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter> &excluded_player_weak)
 {
     auto excluded_player = excluded_player_weak.lock();
     for (const auto& player_weak : std::views::values(players_))
@@ -237,10 +237,10 @@ void Map::Tick(float delta_time)
 
 }
 
-std::vector<std::weak_ptr<Player>> Map::GetPlayers()
+std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
-    std::vector<std::weak_ptr<Player>> players;
+    std::vector<std::weak_ptr<PlayerCharacter>> players;
     for (const auto& player_weak : players_ | std::views::values)
     {
         players.push_back(player_weak);
@@ -336,7 +336,7 @@ Foothold* Map::FindFoothold(const Math::Vector2& position)
     return best;
 }
 
-const std::shared_ptr<Player>& Map::FindPlayer(uint32_t player_id)
+const std::shared_ptr<PlayerCharacter>& Map::FindPlayer(uint32_t player_id)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
     
