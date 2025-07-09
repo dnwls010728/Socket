@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Renderer.h"
 
+#include "OutlineRenderer.h"
 #include "UISprite.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
@@ -90,6 +91,7 @@ bool Renderer::CreateDWrite()
     // Add TextFormat
     if (!AddTextFormat(L"Silver", 24.f)) return false;
     if (!AddTextFormat(L"NanumBarunGothic", 12.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 16.f)) return false;
     if (!AddTextFormat(L"NanumBarunGothic", 18.f)) return false;
 
     return SUCCEEDED(hr);
@@ -925,6 +927,42 @@ void Renderer::DrawString(const std::wstring& string, const Math::Vector2& posit
         text_format.Get(), rect, brush.Get()
     );
     d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(font_name, font_size);
+    if (!text_format) return;
+
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    // HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), kRect.width, kRect.height, text_layout.GetAddressOf());
+    HRESULT hr = dwrite_factory_->CreateTextLayout(string.c_str(), static_cast<UINT32>(string.size()), text_format.Get(), FLT_MAX, FLT_MAX, text_layout.GetAddressOf());
+    if (FAILED(hr)) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> outline_brush;
+    hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(0.f, 0.f, 0.f, 1.f), // Black outline
+        outline_brush.GetAddressOf()
+    );
+    if (FAILED(hr)) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> fill_brush;
+    hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        fill_brush.GetAddressOf()
+    );
+    if (FAILED(hr)) return;
+
+    Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
+    hr = d2d_viewport->d2d_render_target.As(&device_context);
+    if (FAILED(hr)) return;
+    
+    OutlineRenderer renderer(outline_brush, fill_brush, 1.f);
+    hr = text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
+    if (FAILED(hr)) return;
 }
 
 void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode)

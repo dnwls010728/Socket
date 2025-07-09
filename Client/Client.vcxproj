@@ -216,6 +216,7 @@
     <ClInclude Include="Engine\UI\Widget\TextBox.h" />
     <ClInclude Include="Engine\Windows\DX\ConstantBuffer.h" />
     <ClInclude Include="Engine\Windows\DX\IndexBuffer.h" />
+    <ClInclude Include="Engine\Windows\DX\OutlineRenderer.h" />
     <ClInclude Include="Engine\Windows\DX\Renderer.h" />
     <ClInclude Include="Engine\Windows\DX\Shaders.h" />
     <ClInclude Include="Engine\Windows\DX\Shape.h" />
@@ -617,6 +618,7 @@
     <ClCompile Include="Engine\UI\Widget\Slider.cpp" />
     <ClCompile Include="Engine\UI\Widget\TextBox.cpp" />
     <ClCompile Include="Engine\Windows\DX\IndexBuffer.cpp" />
+    <ClCompile Include="Engine\Windows\DX\OutlineRenderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Renderer.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shaders.cpp" />
     <ClCompile Include="Engine\Windows\DX\Shape.cpp" />

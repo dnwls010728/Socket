@@ -13,23 +13,16 @@ UIStatusBar::UIStatusBar(const std::wstring& name) :
     max_exp_(0)
 {
     lv_text_ = AddChild<UIText>(UIText::StaticClass(), L"LvText");
-    lv_text_->SetAbsolutePosition({10.f, 719.f});
-    lv_text_->SetSize({60.f, 30.f});
+    lv_text_->SetAbsolutePosition({583.f, 739.f});
+    lv_text_->SetSize({200.f, 20.f});
+    lv_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     lv_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    lv_text_->SetFontSize(18.f);
-    lv_text_->SetColor(Math::Color::White);
-    lv_text_->SetText(L"Lv. 1");
-
-    name_text_ = AddChild<UIText>(UIText::StaticClass(), L"NameText");
-    name_text_->SetAbsolutePosition({70.f, 719.f});
-    name_text_->SetSize({100.f, 30.f});
-    name_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    name_text_->SetFontSize(18.f);
-    name_text_->SetColor(Math::Color::White);
-    name_text_->SetText(L"Player Name");
+    lv_text_->SetFontSize(16.f);
+    lv_text_->SetColor(Math::Color::Orange);
+    lv_text_->SetText(L"Lv. 1 Player Name");
 
     hp_text_ = AddChild<UIText>(UIText::StaticClass(), L"HPText");
-    hp_text_->SetAbsolutePosition({583.f, 719.f});
+    hp_text_->SetAbsolutePosition({583.f, 709.f});
     hp_text_->SetSize({200.f, 30.f});
     hp_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     hp_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -55,9 +48,7 @@ void UIStatusBar::Init()
 
     PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
 
-    name_text_->SetText(player_subsystem->GetName());
-
-    lv_text_->SetText(L"Lv. " + std::to_wstring(player_subsystem->GetLv()));
+    lv_text_->SetText(L"Lv. " + std::to_wstring(player_subsystem->GetLv()) + L" " + player_subsystem->GetName());
     
     hp_ = player_subsystem->GetHP();
     max_hp_ = player_subsystem->GetMaxHP();
@@ -84,12 +75,10 @@ void UIStatusBar::Render()
 {
     Renderer* renderer = Renderer::Get();
 
-    renderer->DrawSolidBox({ 0.f, 719.f }, { 180.f, 30.f }, {0, 0, 0, 128});
-
-    renderer->DrawRoundBox({ 583.f, 722.f }, { 200.f, 24.f }, Math::Color::Gray);
+    renderer->DrawRoundBox({ 583.f, 712.f }, { 200.f, 24.f }, Math::Color::Gray);
 
     float hp_ratio = static_cast<float>(hp_) / static_cast<float>(max_hp_);
-    renderer->DrawSolidRoundBox({ 583.f, 722.f }, { 200.f * hp_ratio, 24.f }, Math::Color::Red);
+    renderer->DrawSolidRoundBox({ 583.f, 712.f }, { 200.f * hp_ratio, 24.f }, Math::Color::Red);
     
     renderer->DrawSolidBox({ 0.f, 759.f }, { 1366.f, 9.f }, Math::Color::Gray);
 
@@ -97,6 +86,11 @@ void UIStatusBar::Render()
     renderer->DrawSolidBox({ 0.f, 759.f }, { 1366.f * exp_ratio, 9.f }, Math::Color::Green);
     
     UIContainer::Render();
+
+    renderer->DrawStringWithOutline(
+        L"Hello, World!", { 583.f, 300.f }, { 200.f, 30.f }, Math::Color::White, L"NanumBarunGothic", 16.f,
+        DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER
+    );
     
 }
 
@@ -105,7 +99,7 @@ void UIStatusBar::OnEvent(const EventData& data)
     if (const auto* lv_data = dynamic_cast<const LvChangedEventData*>(&data))
     {
         max_exp_ = DataSubsystem::Get()->GetExp(lv_data->lv);
-        lv_text_->SetText(L"Lv. " + std::to_wstring(lv_data->lv));
+        lv_text_->SetText(L"Lv. " + std::to_wstring(lv_data->lv) + L" " + PlayerSubsystem::Get()->GetName());
     }
     else if (const auto* exp_data = dynamic_cast<const ExpChangedEventData*>(&data))
     {
