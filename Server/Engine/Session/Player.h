@@ -27,18 +27,16 @@ public:
     void Update();
 
     void ExitMap();
+
+    std::vector<std::shared_ptr<PlayerCharacter>> GetCharacters();
     
     inline Session* GetSession() const { return session_; }
     inline uint32_t GetAccountID() const { return account_id_; }
-
-    inline const CharacterInfo& GetCharacterInfo() const { return character_info_; }
 
 private:
     Session* session_;
 
     uint32_t account_id_;
-
-    CharacterInfo character_info_;
 
     std::shared_ptr<PlayerCharacter> player_character_;
     

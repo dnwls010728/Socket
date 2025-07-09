@@ -13,7 +13,15 @@
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
-    account_id_(0)
+    account_id_(0),
+    name_(L"Unknown"),
+    lv_(0),
+    hp_(0),
+    max_hp_(0),
+    map_id_(0),
+    exp_(0),
+    color_(0),
+    inventory_(nullptr)
 {
 }
 

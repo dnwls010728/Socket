@@ -195,6 +195,14 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
 
 void Map::PhysicsTick(float delta_time)
 {
+    for (const auto& player_weak : std::views::values(players_))
+    {
+        auto player_shared = player_weak.lock();
+        if (!player_shared) continue;
+        
+        player_shared->PhysicsTick(delta_time);
+    }
+    
     for (const auto& map_object : map_objects_ | std::views::values)
     {
         map_object->PhysicsTick(delta_time);
@@ -208,6 +216,14 @@ void Map::Tick(float delta_time)
     
     AddObjects();
     RemoveObjects();
+
+    for (const auto& player_weak : std::views::values(players_))
+    {
+        auto player_shared = player_weak.lock();
+        if (!player_shared) continue;
+        
+        player_shared->Tick(delta_time);
+    }
 
     for (const auto& map_object : map_objects_ | std::views::values)
     {

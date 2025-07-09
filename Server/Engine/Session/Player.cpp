@@ -15,7 +15,6 @@
 Player::Player(Session* session, uint32_t account_id) :
     session_(session),
     account_id_(account_id),
-    character_info_(),
     player_character_(nullptr)
 {
 }
@@ -93,4 +92,48 @@ void Player::ExitMap()
         player_character_->ExitMap();
         player_character_ = nullptr;
     }
+}
+
+std::vector<std::shared_ptr<PlayerCharacter>> Player::GetCharacters()
+{
+    std::vector<std::shared_ptr<PlayerCharacter>> characters;
+    
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return {};
+    
+    try
+    {
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT character_id FROM character_info WHERE account_id = ?"));
+            statement->setInt(1, account_id_);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                uint32_t character_id = result->getInt("character_id");
+                auto character = PlayerCharacter::LoadCharacter(character_id, shared_from_this());
+                if (character) characters.push_back(character);
+            }
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+
+        return {};
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return {};
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+        return {};
+    }
+    
+    return characters;
 }
