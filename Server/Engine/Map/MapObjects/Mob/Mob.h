@@ -52,6 +52,7 @@ protected:
     void OnHit(uint32_t attacker, uint32_t damage);
 
     uint32_t mob_id_;
+    uint32_t damage_;
 
     std::unique_ptr<FSM::StateMachine> state_machine_;
 

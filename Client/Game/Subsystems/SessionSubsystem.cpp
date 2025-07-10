@@ -19,6 +19,7 @@
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
 #include "PacketHandlers/SpawnPlayerHandler.h"
+#include "PacketHandlers/TakeDamageHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
@@ -107,6 +108,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PlayerStatsUpdatePacket::StaticPacketID,
         std::make_unique<PlayerStatsUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        TakeDamagePacket::StaticPacketID,
+        std::make_unique<TakeDamageHandler>()
     );
 #pragma endregion
 

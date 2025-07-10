@@ -103,11 +103,6 @@ void Actor::OnDisable()
     }
 }
 
-float Actor::TakeDamage(float damage_amount, Actor* event_instigator, Actor* damage_causer)
-{
-    return damage_amount;
-}
-
 void Actor::SetActive(bool is_active)
 {
     if (is_active == is_active_) return;

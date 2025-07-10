@@ -77,28 +77,6 @@ void MobBase::OnDisable()
     NetworkSubsystem::Get()->UnregisterNetworkActor(GetSharedThis());
 }
 
-void MobBase::PhysicsTick(float delta_time)
-{
-    ServerActor::PhysicsTick(delta_time);
-
-    Math::Vector2 center = GetTransform()->GetPosition() + Math::Vector2::Up() * .5f;
-    Math::Vector2 size = { 1.f, 1.f };
-    
-    Actor* out_actor = nullptr;
-    bool is_hit = Physics2D::OverlapBox(center, size, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
-    if (is_hit)
-    {
-        if (auto player = dynamic_cast<PlayerCharacter*>(out_actor))
-        {
-            if (!player->IsInvincible())
-            {
-                player->OnDamaged();
-                Logger::Print(L"Damaged!");
-            }
-        }
-    }
-}
-
 void MobBase::Tick(float delta_time)
 {
     ServerActor::Tick(delta_time);

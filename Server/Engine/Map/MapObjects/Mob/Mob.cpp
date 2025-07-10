@@ -15,6 +15,7 @@
 
 Mob::Mob(const MobData& mob_data) :
     mob_id_(mob_data.mob_id),
+    damage_(mob_data.stats.dmg),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
@@ -28,11 +29,6 @@ Mob::Mob(const MobData& mob_data) :
     last_flipped_(false)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
-
-    std::wcout << mob_data.stats.lv << L" " 
-              << mob_data.stats.hp << L" "
-              << mob_data.stats.speed << L" "
-              << mob_data.animation_pack << std::endl;
     
 }
 

@@ -176,7 +176,6 @@
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
-    <ClCompile Include="Engine\Misc\GameplayStatics.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
@@ -216,11 +215,8 @@
     <ClInclude Include="Engine\Math\Vector2.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
-    <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
-    <ClInclude Include="Engine\Misc\GameplayStatics.h" />
-    <ClInclude Include="Engine\Misc\Type.h" />
     <ClInclude Include="Engine\Session\Player.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Inventory.h" />
     <ClInclude Include="Engine\Session\Session.h" />

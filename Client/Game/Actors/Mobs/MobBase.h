@@ -34,7 +34,6 @@ protected:
     
     virtual void OnEnable() override;
     virtual void OnDisable() override;
-    virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
 
     bool is_dead_;

@@ -232,7 +232,6 @@ void Map::Tick(float delta_time)
         map_object->Tick(delta_time);
     }
 
-#pragma region 테스트
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
         for (const auto& player_weak : players_ | std::views::values)
@@ -248,13 +247,12 @@ void Map::Tick(float delta_time)
                 float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
                 if (distance < 1.f && !player->IsInvincible())
                 {
-                    player->ApplyDamage(10);
+                    player->TakeDamage(mob->damage_);
                     break;
                 }
             }
         }
     }
-#pragma endregion
 
     respawn_timer_ += delta_time;
     if (respawn_timer_ >= 10.f)

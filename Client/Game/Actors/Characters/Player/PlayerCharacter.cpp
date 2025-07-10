@@ -26,6 +26,7 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
@@ -37,7 +38,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     was_moving_(false),
     is_jump_pressed_(false),
     last_position_(Math::Vector2::Zero()),
-    last_flip_(false)
+    last_flip_(false),
+    invincible_time_(0.f)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -84,6 +86,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
+void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time)
+{
+    if (damage_amount == 0) return;
+    if (IsMine())
+    {
+        PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
+    }
+
+    invincible_time_ = server_time + 2.f;
+}
+
 void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& position)
 {
     character_name_ = name;
@@ -91,14 +104,9 @@ void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& positi
     GetTransform()->SetPosition(position);
 }
 
-void PlayerCharacter::UpdateFlip()
+void PlayerCharacter::  UpdateFlip()
 {
     if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
-}
-
-void PlayerCharacter::OnDamaged()
-{
-    is_invincible_.Set(2.f);
 }
 
 void PlayerCharacter::BeginPlay()
@@ -151,11 +159,12 @@ void PlayerCharacter::PhysicsTick(float delta_time)
 void PlayerCharacter::Tick(float delta_time)
 {
     CharacterBase::Tick(delta_time);
-    is_invincible_.Tick(delta_time);
 
-    if (is_invincible_)
+    float server_now = SessionSubsystem::Get()->GetServerTime();
+    if (invincible_time_ > server_now)
     {
-        float phase = is_invincible_.GetAlpha() * 10 * Math::PI(); // 10회
+        float alpha = 1.f - (invincible_time_ - server_now) / 2.f;
+        float phase = alpha * 10 * Math::PI(); // 10회
         float value = .9f - .5f * std::abs(std::sin(phase)); // 0.4 ~ 0.9 사이의 값
         
         uint8_t lum = static_cast<uint8_t>(value * 255);

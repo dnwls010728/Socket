@@ -258,15 +258,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::ApplyDamage(uint32_t damage)
+void PlayerCharacter::TakeDamage(uint32_t damage_amount)
 {
     if (hp_ <= 0 || is_invincible_) return;
-    hp_ -= damage;
-    
-    PlayerStatsUpdatePacket packet;
-    packet.flags |= static_cast<uint8_t>(PlayerStat::kHP);
-    packet.stats[0] = hp_;
-    SendPacket(packet);
+    hp_ -= damage_amount;
+
+    TakeDamagePacket packet;
+    packet.object_id = object_id_;
+    packet.updated_hp = hp_;
+    packet.damage_amount = damage_amount;
+    packet.server_time = Net::GetClientTime();
+    map_->SendPacket(packet);
 
     is_invincible_.Set(2.f);
 }

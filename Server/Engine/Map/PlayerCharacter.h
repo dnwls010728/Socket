@@ -20,7 +20,7 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    void ApplyDamage(uint32_t damage);
+    void TakeDamage(uint32_t damage_amount);
 
     inline bool IsInvincible() const { return is_invincible_ == true; }
 

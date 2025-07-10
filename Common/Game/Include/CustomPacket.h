@@ -249,6 +249,17 @@ struct AttackRequest : public Net::IPacket
     REGISTER_PACKET(AttackRequest, 400)
 };
 
+struct TakeDamagePacket : public Net::IPacket
+{
+    uint32_t object_id;
+    uint32_t updated_hp;
+    uint32_t damage_amount;
+    float server_time;
+    
+    SERIALIZABLE_FIELDS(object_id, updated_hp, damage_amount, server_time)
+    REGISTER_PACKET(TakeDamagePacket, 401)
+};
+
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
     uint8_t flags = 0;

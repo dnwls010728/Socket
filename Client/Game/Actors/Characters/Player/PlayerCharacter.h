@@ -3,9 +3,10 @@
 #include <deque>
 
 #include "Actors/Characters/CharacterBase.h"
+#include "Actors/Interfaces/IDamageable.h"
 #include "Utils/TimedBool.h"
 
-class PlayerCharacter : public CharacterBase
+class PlayerCharacter : public CharacterBase, public IDamageable
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
     GENERATED_BODY(PlayerCharacter, CharacterBase)
@@ -30,17 +31,15 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     virtual void ReceivePacket(Net::IPacket* packet) override;
+    virtual void TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time) override;
 
     void Init(const std::wstring& name, const Math::Vector2& position);
     void UpdateFlip();
-    void OnDamaged();
     
     FORCEINLINE const Math::Vector2& GetMoveAxis() const { return move_axis_; }
     
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
-
-    FORCEINLINE bool IsInvincible() const { return is_invincible_ == true; }
 
 protected:
     virtual void BeginPlay() override;
@@ -56,12 +55,11 @@ protected:
     
     bool was_moving_;
     bool is_jump_pressed_;
-
-    TimedBool is_invincible_;
     
     std::deque<MovementSnapshot>  movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
     
     float movement_sync_accumulator_;
+    float invincible_time_;
     
 };
