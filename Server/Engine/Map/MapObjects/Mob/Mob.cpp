@@ -157,7 +157,7 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
     hp_ -= damage;
     if (hp_ <= 0)
     {
-        if (player) player->GainExp(100); // 예시로 100 경험치 추가
+        if (player) player->GainExp(10000); // 예시로 100 경험치 추가
         hp_ = 0;
         map_->DestroyObject(GetObjectID());
     }

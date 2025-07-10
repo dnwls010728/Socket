@@ -7,6 +7,8 @@
 
 #include "tmxlite/Map.hpp"
 
+#include <iostream>
+
 #include "DataManager.h"
 #include "MapObject.h"
 #include "PlayerCharacter.h"
@@ -158,7 +160,7 @@ void Map::DestroyObject(uint32_t object_id)
 
 void Map::SendPacket(const Net::IPacket& packet)
 {
-    for (auto& player_weak : std::views::values(players_))
+    for (auto& player_weak : players_ | std::views::values)
     {
         if (auto player = player_weak.lock())
             player->SendPacket(packet);
@@ -229,6 +231,30 @@ void Map::Tick(float delta_time)
     {
         map_object->Tick(delta_time);
     }
+
+#pragma region 테스트
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        for (const auto& player_weak : players_ | std::views::values)
+        {
+            auto player = player_weak.lock();
+            if (!player) continue;
+
+            for (const auto& map_object : map_objects_ | std::views::values)
+            {
+                const auto& mob = std::dynamic_pointer_cast<Mob>(map_object);
+                if (!mob) continue;
+
+                float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
+                if (distance < 1.f && !player->IsInvincible())
+                {
+                    player->ApplyDamage(10);
+                    break;
+                }
+            }
+        }
+    }
+#pragma endregion
 
     respawn_timer_ += delta_time;
     if (respawn_timer_ >= 10.f)

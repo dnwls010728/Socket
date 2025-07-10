@@ -251,8 +251,9 @@ struct AttackRequest : public Net::IPacket
 
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
-    std::array<uint32_t, static_cast<uint8_t>(PlayerStat::kCount)> stats = {0};
+    uint8_t flags = 0;
+    std::array<uint32_t, 4> stats = {0};
     
-    SERIALIZABLE_FIELDS(stats)
+    SERIALIZABLE_FIELDS(flags, stats)
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };

@@ -20,6 +20,9 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
+    void ApplyDamage(uint32_t damage);
+
+    inline bool IsInvincible() const { return is_invincible_ == true; }
 
     inline uint32_t GetAccountID() const { return account_id_; }
 

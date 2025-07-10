@@ -80,11 +80,10 @@ void UIStatusBar::Tick(float delta_time)
     UIContainer::Tick(delta_time);
 
     float hp_ratio = static_cast<float>(hp_) / static_cast<float>(max_hp_);
-    if (!Math::IsEqual(hp_effect_ratio_, hp_ratio)) timer_ = 0.f;
     
-    if (timer_ < .5f)
+    if (timer_ < 1.f)
     {
-        float t = timer_ / .5f;
+        float t = timer_ / 1.f;
         t = t * t * (3.f - 2.f * t);
             
         hp_effect_ratio_ = Math::Lerp(hp_effect_ratio_, hp_ratio, t);
@@ -133,6 +132,8 @@ void UIStatusBar::OnEvent(const EventData& data)
         max_hp_ = hp_data->max_hp;
 
         hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
+
+        timer_ = 0.f;
     }
 }
 

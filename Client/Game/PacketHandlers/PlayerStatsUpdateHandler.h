@@ -8,7 +8,5 @@ public:
     virtual ~PlayerStatsUpdateHandler() override = default;
 
     virtual bool Handle(Net::IPacket* packet) override;
-
-    bool IsValid(const std::array<uint32_t, static_cast<uint8_t>(PlayerStat::kCount)>& stats, PlayerStat stat) const;
     
 };

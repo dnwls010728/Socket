@@ -258,6 +258,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
+void PlayerCharacter::ApplyDamage(uint32_t damage)
+{
+    if (hp_ <= 0 || is_invincible_) return;
+    hp_ -= damage;
+    
+    PlayerStatsUpdatePacket packet;
+    packet.flags |= static_cast<uint8_t>(PlayerStat::kHP);
+    packet.stats[0] = hp_;
+    SendPacket(packet);
+
+    is_invincible_.Set(2.f);
+}
+
 void PlayerCharacter::ExitMap()
 {
     if (map_)
@@ -293,8 +306,11 @@ void PlayerCharacter::GainExp(uint32_t amount)
     }
 
     PlayerStatsUpdatePacket packet;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
+    packet.flags |= static_cast<uint8_t>(PlayerStat::kExp);
+    packet.flags |= static_cast<uint8_t>(PlayerStat::kLv);
+    
+    packet.stats[2] = exp_;
+    packet.stats[3] = lv_;
     SendPacket(packet);
 }
 
