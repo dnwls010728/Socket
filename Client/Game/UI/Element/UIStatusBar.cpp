@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "UIStatusBar.h"
 
+#include "imgui/imgui.h"
+#include "Math/Math.h"
 #include "Subsystems/DataSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Windows/DX/Renderer.h"
@@ -10,7 +12,9 @@ UIStatusBar::UIStatusBar(const std::wstring& name) :
     hp_(0),
     max_hp_(0),
     exp_(0),
-    max_exp_(0)
+    max_exp_(0),
+    timer_(0.f),
+    hp_effect_ratio_(0.f)
 {
     lv_text_ = AddChild<UIText>(UIText::StaticClass(), L"LvText");
     lv_text_->SetAbsolutePosition({583.f, 739.f});
@@ -71,11 +75,31 @@ void UIStatusBar::Uninit()
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
 }
 
+void UIStatusBar::Tick(float delta_time)
+{
+    UIContainer::Tick(delta_time);
+
+    float hp_ratio = static_cast<float>(hp_) / static_cast<float>(max_hp_);
+    if (!Math::IsEqual(hp_effect_ratio_, hp_ratio)) timer_ = 0.f;
+    
+    if (timer_ < .5f)
+    {
+        float t = timer_ / .5f;
+        t = t * t * (3.f - 2.f * t);
+            
+        hp_effect_ratio_ = Math::Lerp(hp_effect_ratio_, hp_ratio, t);
+        timer_ += delta_time;
+    }
+    else hp_effect_ratio_ = hp_ratio;
+}
+
 void UIStatusBar::Render()
 {
     Renderer* renderer = Renderer::Get();
 
-    renderer->DrawRoundBox({ 583.f, 712.f }, { 200.f, 24.f }, Math::Color::Gray);
+    renderer->DrawSolidRoundBox({ 583.f, 712.f }, { 200.f, 24.f }, Math::Color::Gray);
+
+    renderer->DrawSolidRoundBox({ 583.f, 712.f }, { 200.f * hp_effect_ratio_, 24.f }, Math::Color::White);
 
     float hp_ratio = static_cast<float>(hp_) / static_cast<float>(max_hp_);
     renderer->DrawSolidRoundBox({ 583.f, 712.f }, { 200.f * hp_ratio, 24.f }, Math::Color::Red);

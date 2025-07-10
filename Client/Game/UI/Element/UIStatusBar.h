@@ -14,6 +14,7 @@ public:
 protected:
     virtual void Init() override;
     virtual void Uninit() override;
+    virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
 private:
@@ -22,10 +23,13 @@ private:
     UIText* lv_text_;
     UIText* hp_text_;
     UIText* exp_text_;
-
+    
     uint32_t hp_;
     uint32_t max_hp_;
     uint32_t exp_;
     uint32_t max_exp_;
+
+    float timer_;
+    float hp_effect_ratio_;
     
 };
