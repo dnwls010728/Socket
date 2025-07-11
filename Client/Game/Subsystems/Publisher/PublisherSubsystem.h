@@ -36,6 +36,21 @@ struct ItemSwappedEventData : EventData
     virtual ~ItemSwappedEventData() override = default;
 };
 
+struct ItemCountChangedEventData : EventData
+{
+    uint32_t slot;
+    uint32_t count;
+
+    virtual ~ItemCountChangedEventData() override = default;
+};
+
+struct ItemRemovedEventData : EventData
+{
+    uint32_t slot;
+
+    virtual ~ItemRemovedEventData() override = default;
+};
+
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
 
 class PublisherSubsystem : public GameInstanceSubsystem
@@ -49,7 +64,9 @@ public:
         kHPChanged,
         kExpChanged,
         kLvChanged,
-        kItemSwapped
+        kItemSwapped,
+        kItemCountChanged,
+        kItemRemoved
     };
     
     PublisherSubsystem();

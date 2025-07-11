@@ -2,6 +2,7 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
+class Inventory;
 class UIImage;
 
 class UIInventorySlot : public UIContainer
@@ -23,16 +24,22 @@ protected:
     virtual void Init() override;
     virtual void Render() override;
 
+    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
+    
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
     virtual bool OnDrop(const Math::Vector2& position, UIElement* target) override;
 
 private:
+    Inventory* inventory_;
+    
     UIImage* i_icon_;
     UIText* t_count_;
 
     uint32_t slot_id_;
     uint32_t item_id_;
+    
+    float last_time_;
     
 };

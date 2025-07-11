@@ -15,8 +15,6 @@ void UIInGameState::Init()
     UIState::Init();
 
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
-    inventory_->InitInventory(PlayerSubsystem::Get()->GetInventory());
-
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
 }
 

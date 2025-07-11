@@ -4,6 +4,7 @@
 #include "UIInventorySlot.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "Windows/DX/Renderer.h"
 
@@ -58,19 +59,6 @@ void UIInventory::UpdateSlot(uint32_t slot_index)
     else slots_[slot_index - 1]->UpdateSlot(0, 0);
 }
 
-void UIInventory::InitInventory(Inventory* inventory)
-{
-    if (!inventory) return;
-    inventory_ = inventory;
-
-    for (uint32_t i = 0; i < 20; ++i)
-    {
-        UpdateSlot(i + 1);
-    }
-
-    UpdateColor(inventory->GetColor());
-}
-
 void UIInventory::UpdateColor(uint32_t color)
 {
     std::wstring color_str = std::to_wstring(color);
@@ -86,8 +74,17 @@ void UIInventory::Init()
 {
     UIContainer::Init();
 
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnItemSwapped);
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
 
+    inventory_ = PlayerSubsystem::Get()->GetInventory();
+    for (uint32_t i = 0; i < 20; ++i)
+    {
+        UpdateSlot(i + 1);
+    }
+
+    UpdateColor(inventory_->GetColor());
     SetActive(false);
     
 }
@@ -96,14 +93,16 @@ void UIInventory::Uninit()
 {
     UIContainer::Uninit();
 
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnItemSwapped);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
 }
 
 void UIInventory::Render()
 {
-    Math::Vector2 parent_position = parent_ ? parent_->GetRelativePosition() : Math::Vector2::Zero();
-    Math::Vector2 position = parent_position + position_;
-    Renderer::Get()->DrawBox(position, size_, Math::Color::Red);
+    Renderer* renderer = Renderer::Get();
+    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, { 0, 0, 0, 128 });
+    renderer->DrawRoundBox(GetAbsolutePosition(), size_, { 255, 255, 255, 255 });
     
     UIContainer::Render();
 }
@@ -124,12 +123,21 @@ bool UIInventory::OnDragEnd(const Math::Vector2& position)
     return true;
 }
 
-void UIInventory::OnItemSwapped(const EventData& event_data)
+void UIInventory::OnEvent(const EventData& event_data)
 {
-    const ItemSwappedEventData* data = dynamic_cast<const ItemSwappedEventData*>(&event_data);
-
-    UpdateSlot(data->first_slot);
-    UpdateSlot(data->second_slot);
+    if (const ItemSwappedEventData* data = dynamic_cast<const ItemSwappedEventData*>(&event_data))
+    {
+        UpdateSlot(data->first_slot);
+        UpdateSlot(data->second_slot);
+    }
+    else if (const ItemCountChangedEventData* data = dynamic_cast<const ItemCountChangedEventData*>(&event_data))
+    {
+        UpdateSlot(data->slot);
+    }
+    else if (const ItemRemovedEventData* data = dynamic_cast<const ItemRemovedEventData*>(&event_data))
+    {
+        UpdateSlot(data->slot);
+    }
 
 }
 

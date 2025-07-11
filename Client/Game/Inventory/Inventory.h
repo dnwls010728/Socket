@@ -13,7 +13,7 @@ public:
     uint32_t GetItemCount(uint32_t slot_index) const;
     uint32_t GetTotalItemCount(uint32_t item_id) const;
     
-    void AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count);
+    uint32_t AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count);
     void ChangeCount(uint32_t slot_index, uint32_t count);
     void Swap(uint32_t first_slot, uint32_t second_slot);
     void Remove(uint32_t slot_index);
@@ -24,6 +24,7 @@ public:
 private:
     struct Slot
     {
+        uint32_t unique_id;
         uint32_t item_id;
         uint32_t count;
     };
@@ -32,5 +33,7 @@ private:
 
     // 재화
     uint32_t color_;
+
+    uint32_t next_unique_id_;
     
 };

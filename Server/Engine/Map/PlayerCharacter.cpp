@@ -232,15 +232,30 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     SendPacket(response);
                 }
                 break;
-
-            case ItemMoveType::kDrop:
-                {
-                    if (!inventory_->GetItemID(src)) break;
-                    // inventory_->Remove(src);
-                }
-                break;
-                
             }
+        }
+        break;
+
+    case DropItemRequest::StaticPacketID:
+        {
+            DropItemRequest* request = static_cast<DropItemRequest*>(packet);
+
+            uint32_t count = inventory_->GetItemCount(request->slot_id);
+            uint32_t remaining_count = 0;
+
+            if (request->count >= count) inventory_->Remove(request->slot_id);
+            else
+            {
+                remaining_count = count - request->count;
+                inventory_->ChangeCount(request->slot_id, remaining_count);
+            }
+
+            DropItemResponse response;
+            response.slot_id = request->slot_id;
+            response.count = remaining_count;
+            response.position_x = position_.x;
+            response.position_y = position_.y;
+            SendPacket(response);
         }
         break;
 

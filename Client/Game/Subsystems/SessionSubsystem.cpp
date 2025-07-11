@@ -10,6 +10,7 @@
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
+#include "PacketHandlers/DropItemHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
 #include "PacketHandlers/PlayerAnimationHandler.h"
@@ -113,6 +114,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         TakeDamagePacket::StaticPacketID,
         std::make_unique<TakeDamageHandler>()
+    );
+
+    handlers_.emplace(
+        DropItemResponse::StaticPacketID,
+        std::make_unique<DropItemHandler>()
     );
 #pragma endregion
 

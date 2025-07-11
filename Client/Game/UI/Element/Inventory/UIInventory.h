@@ -16,7 +16,6 @@ public:
 
     void UpdateSlot(uint32_t slot_index);
     void UpdateColor(uint32_t color);
-    void InitInventory(Inventory* inventory);
 
 protected:
     virtual void Init() override;
@@ -28,7 +27,7 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position) override;
 
 private:
-    void OnItemSwapped(const EventData& event_data);
+    void OnEvent(const EventData& event_data);
     
     std::vector<UIInventorySlot*> slots_;
 

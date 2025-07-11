@@ -7,7 +7,8 @@
 
 Inventory::Inventory() :
     slots_(),
-    color_(0)
+    color_(0),
+    next_unique_id_(0)
 {
 }
 
@@ -67,9 +68,10 @@ uint32_t Inventory::GetTotalItemCount(uint32_t item_id) const
     return total_count;
 }
 
-void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
+uint32_t Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
-    slots_[slot_index] = { item_id, count };
+    slots_[slot_index] = { ++next_unique_id_, item_id, count };
+    return next_unique_id_;
 }
 
 void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
@@ -78,6 +80,12 @@ void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
     if (it == slots_.end()) return;
 
     it->second.count = count;
+
+    ItemCountChangedEventData event_data;
+    event_data.slot = slot_index;
+    event_data.count = count;
+        
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemCountChanged, event_data);
 }
 
 void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
@@ -102,4 +110,9 @@ void Inventory::Remove(uint32_t slot_index)
     if (it == slots_.end()) return;
     
     slots_.erase(it);
+
+    ItemRemovedEventData event_data;
+    event_data.slot = slot_index;
+    
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemRemoved, event_data);
 }

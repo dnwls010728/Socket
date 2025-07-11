@@ -241,6 +241,27 @@ struct MoveItemResponse : public Net::IPacket
     REGISTER_PACKET(MoveItemResponse, 301)
 };
 
+struct DropItemRequest : public Net::IPacket
+{
+    uint32_t slot_id;
+    uint32_t count;
+    
+    SERIALIZABLE_FIELDS(slot_id, count)
+    REGISTER_PACKET(DropItemRequest, 302)
+};
+
+struct DropItemResponse : public Net::IPacket
+{
+    uint32_t slot_id;
+    uint32_t item_id;
+    uint32_t count;
+    float position_x;
+    float position_y;
+    
+    SERIALIZABLE_FIELDS(slot_id, item_id, count, position_x, position_y)
+    REGISTER_PACKET(DropItemResponse, 303)
+};
+
 struct AttackRequest : public Net::IPacket
 {
     uint32_t object_id;

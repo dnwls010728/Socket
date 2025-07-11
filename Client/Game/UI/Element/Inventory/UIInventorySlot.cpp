@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 
 #include "Asset/AssetManager.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
@@ -12,10 +13,12 @@
 
 UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
+    inventory_(nullptr),
     i_icon_(nullptr),
     t_count_(nullptr),
     slot_id_(0),
-    item_id_(0)
+    item_id_(0),
+    last_time_(0.f)
 {
     size_ = { 32.f, 32.f };
     
@@ -52,14 +55,34 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
 void UIInventorySlot::Init()
 {
     UIContainer::Init();
+    inventory_ = PlayerSubsystem::Get()->GetInventory();
 
 }
 
 void UIInventorySlot::Render()
 {
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), size_, Math::Color::Red);
+    Renderer::Get()->DrawSolidRoundBox(GetAbsolutePosition(), size_, {0, 0, 0, 128});
+    Renderer::Get()->DrawRoundBox(GetAbsolutePosition(), size_, {255, 255, 255, 255});
     
     UIContainer::Render();
+}
+
+UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+{
+    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    if (button != MouseButton::kLeft || !is_pressed) return result;
+    if (item_id_ == 0) return result;
+
+    result.is_handled = true;
+    if (timestamp - last_time_ < .2f)
+    {
+        Logger::Print(L"Double click!");
+        last_time_ = 0.f;
+        return result;
+    }
+    
+    last_time_ = timestamp;
+    return result;
 }
 
 bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
@@ -80,15 +103,16 @@ bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2&
 bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
+    
     i_icon_->SetRelativePosition(Math::Vector2::Zero());
     t_count_->SetRelativePosition(Math::Vector2::Zero());
 
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        MoveItemRequest request;
-        request.type = ItemMoveType::kDrop;
-        request.src = slot_id_;
+        DropItemRequest request;
+        request.slot_id = slot_id_;
+        request.count = inventory_->GetItemCount(slot_id_);
         SessionSubsystem::Get()->SendPacket(request);
     }
     
