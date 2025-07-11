@@ -136,7 +136,7 @@ void Map::RemoveObject(uint32_t object_id)
 void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
 {
     std::lock_guard<std::mutex> lock(object_mutex_);
-    object->SetObjectID(next_object_id_++);
+    object->SetObjectID(next_object_id_.fetch_add(1));
     object->SetMap(this);
 
     const auto& mob = std::dynamic_pointer_cast<Mob>(object);

@@ -58,8 +58,8 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
-                character->exp_ = result->getInt("exp");
-                character->color_ = result->getInt("color");
+                character->exp_.store(result->getInt("exp"));
+                character->color_.store(result->getInt("color"));
             }
         }
 
@@ -291,18 +291,18 @@ void PlayerCharacter::GainExp(uint32_t amount)
 {
     if (lv_ >= 50) return;
 
-    exp_ += amount;
+    exp_.fetch_add(amount);
 
     while (exp_ > DataManager::Get()->GetExp(lv_))
     {
-        exp_ -= DataManager::Get()->GetExp(lv_);
-        if (exp_ < 0) exp_ = 0;
+        exp_.fetch_sub(DataManager::Get()->GetExp(lv_));
+        if (exp_ < 0) exp_.store(0);
         
         ++lv_;
 
         if (lv_ == 50)
         {
-            exp_ = 0;
+            exp_.store(0);
             break;
         }
     }
