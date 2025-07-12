@@ -39,7 +39,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     is_jump_pressed_(false),
     last_position_(Math::Vector2::Zero()),
     last_flip_(false),
-    invincible_time_(0.f)
+    invincible_time_(0.f),
+    prev_animation{0,}
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -220,8 +221,6 @@ void PlayerCharacter::Tick(float delta_time)
                         AttackRequest request;
                         request.object_id = mob->GetObjectID();
                         SendPacket(request);
-
-                        mob->PlayPredictedAnimation(L"Hit");
                         
                         std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
                         if (IsValid(damage))
@@ -348,8 +347,14 @@ void PlayerCharacter::SyncCharacterMovement(float delta_time)
         if (!animation_snapshots_.empty())
         {
             const auto& anim = animation_snapshots_.front();
-            renderer_->SetFlipX(anim.is_flipped);
-            animator_->PlayAnimation(anim.animation);
+
+            // 이전 스냅샷과 다를 경우에만 처리
+            if ( prev_animation.server_time != anim.server_time)
+            {
+                renderer_->SetFlipX(anim.is_flipped);
+                animator_->PlayAnimation(anim.animation);
+                prev_animation = anim;
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ protected:
     
     std::deque<MovementSnapshot>  movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
+    AnimationSnapshot prev_animation;
     
     float movement_sync_accumulator_;
     float invincible_time_;

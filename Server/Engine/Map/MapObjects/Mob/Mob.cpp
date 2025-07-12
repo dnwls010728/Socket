@@ -122,13 +122,14 @@ void Mob::SendPositionPacket(const Math::Vector2& position, bool time_update) co
     map_->SendPacket(packet);
 }
 
-void Mob::SendAnimationPoacket(const std::wstring& animation, bool is_flip) const
+void Mob::SendAnimationPoacket(const std::wstring& animation, bool is_flip, bool instant_play) const
 {
     ObjectAnimationPacket packet;
     packet.object_id = GetObjectID();
     packet.animation = animation;
     packet.is_flipped = is_flip;
     packet.server_time = Net::GetClientTime();
+    packet.instant_play = instant_play;
     map_->SendPacket(packet);
 }
 
@@ -138,23 +139,18 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
 
     const auto& player = map_->FindPlayer(attacker);
     state_machine_->ChangeState(hit_state_);
-
-    ObjectAnimationPacket packet;
-    packet.object_id = GetObjectID();
-    packet.animation = L"Hit";
-    packet.is_flipped = is_flipped_;
-    packet.server_time = Net::GetClientTime();
-    if (player)
-        map_->SendPacket(packet, player);
-    else
-        map_->SendPacket(packet);
     
     last_animation_ = animation_;
     hp_ -= damage;
-    if (hp_ <= 0)
+     if (hp_ <= 0)
+     {
+         SendAnimationPoacket(L"Die", is_flipped_, true);
+         if (player) player->GainExp(10000); // 예시로 100 경험치 추가
+         hp_ = 0;
+         map_->DestroyObject(GetObjectID());
+     }
+     else
     {
-        if (player) player->GainExp(10000); // 예시로 100 경험치 추가
-        hp_ = 0;
-        map_->DestroyObject(GetObjectID());
+        SendAnimationPoacket(L"Hit", is_flipped_, true);
     }
 }

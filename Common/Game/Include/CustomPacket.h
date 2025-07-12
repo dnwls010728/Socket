@@ -217,8 +217,9 @@ struct ObjectAnimationPacket : public Net::IPacket
     bool is_flipped;
     std::wstring animation;
     float server_time;
+    bool instant_play;
     
-    SERIALIZABLE_FIELDS(object_id, is_flipped, animation, server_time)
+    SERIALIZABLE_FIELDS(object_id, is_flipped, animation, server_time, instant_play)
     REGISTER_PACKET(ObjectAnimationPacket, 233)
 };
 

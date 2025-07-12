@@ -12,7 +12,8 @@
 #include "Subsystems/SessionSubsystem.h"
 
 ServerActor::ServerActor(const std::wstring& name) :
-    NetworkActor(name)
+    NetworkActor(name),
+    prev_animation{0,}
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -20,12 +21,6 @@ ServerActor::ServerActor(const std::wstring& name) :
     renderer_->SetZOrder(10000);
     
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
-}
-
-void ServerActor::PlayPredictedAnimation(std::wstring animation)
-{
-    animation_snapshots_.clear();
-    animator_->PlayAnimation(animation);
 }
 
 void ServerActor::PhysicsTick(float delta_time)
@@ -62,18 +57,24 @@ void ServerActor::PhysicsTick(float delta_time)
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
     }
-
+    
     while (animation_snapshots_.size() >= 2 &&
        animation_snapshots_[1].server_time < interpolation_time)
     {
         animation_snapshots_.pop_front();
     }
-        
+
     if (!animation_snapshots_.empty())
     {
         const auto& anim = animation_snapshots_.front();
-        renderer_->SetFlipX(anim.is_flipped);
-        animator_->PlayAnimation(anim.animation);
+
+        // 이전 스냅샷과 다를 경우에만 처리
+        if (prev_animation.server_time != anim.server_time)
+        {
+            renderer_->SetFlipX(anim.is_flipped);
+            animator_->PlayAnimation(anim.animation);
+            prev_animation = anim;
+        }
     }
 }
 
@@ -102,6 +103,8 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
         {
             ObjectAnimationPacket* object_position_packet = static_cast<ObjectAnimationPacket*>(packet);
 
+            if (object_position_packet->instant_play)
+                animation_snapshots_.clear();
             AnimationSnapshot snapshot;
             snapshot.animation = object_position_packet->animation;
             snapshot.is_flipped = object_position_packet->is_flipped;
