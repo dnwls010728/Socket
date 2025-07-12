@@ -253,12 +253,9 @@ struct DropItemRequest : public Net::IPacket
 struct DropItemResponse : public Net::IPacket
 {
     uint32_t slot_id;
-    uint32_t item_id;
     uint32_t count;
-    float position_x;
-    float position_y;
     
-    SERIALIZABLE_FIELDS(slot_id, item_id, count, position_x, position_y)
+    SERIALIZABLE_FIELDS(slot_id, count)
     REGISTER_PACKET(DropItemResponse, 303)
 };
 

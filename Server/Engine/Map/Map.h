@@ -7,6 +7,7 @@
 #include <queue>
 
 #include "Foothold.h"
+#include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
 class PlayerCharacter;
@@ -48,6 +49,8 @@ public:
 
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
+    
+    void SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
 
     bool LoadMapData();
 
@@ -56,6 +59,8 @@ public:
     const std::shared_ptr<PlayerCharacter>& FindPlayer(uint32_t player_id);
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
+    
+    Math::Vector2 GetDropPosition(const Math::Vector2& position);
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapID() const { return map_id_; }
@@ -68,6 +73,8 @@ private:
     void DestroyObject_Internal(uint32_t object_id);
 
     uint32_t map_id_;
+
+    Bounds map_bounds_;
 
     std::mutex player_mutex_;
     std::mutex object_mutex_;

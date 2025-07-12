@@ -241,7 +241,7 @@
     <ClInclude Include="Game\Actors\Components\StateMachineComponent.h" />
     <ClInclude Include="Game\Actors\Damage.h" />
     <ClInclude Include="Game\Actors\Interfaces\IDamageable.h" />
-    <ClInclude Include="Game\Actors\ItemDrop.h" />
+    <ClInclude Include="Game\Actors\DroppedItem.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Ladder.h" />
     <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
@@ -641,7 +641,7 @@
     <ClCompile Include="Game\Actors\Components\BehaviorTreeComponent.cpp" />
     <ClCompile Include="Game\Actors\Components\StateMachineComponent.cpp" />
     <ClCompile Include="Game\Actors\Damage.cpp" />
-    <ClCompile Include="Game\Actors\ItemDrop.cpp" />
+    <ClCompile Include="Game\Actors\DroppedItem.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\Ladder.cpp" />
     <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />

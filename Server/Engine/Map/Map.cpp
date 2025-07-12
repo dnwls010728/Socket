@@ -7,15 +7,16 @@
 
 #include "tmxlite/Map.hpp"
 
-#include <iostream>
-
 #include "DataManager.h"
 #include "MapObject.h"
 #include "PlayerCharacter.h"
+#include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
+#include "Math/Math.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
+    map_bounds_(),
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
@@ -277,6 +278,35 @@ void Map::Tick(float delta_time)
 
 }
 
+void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetItemID(item_id);
+    dropped_item->SetCount(count);
+    dropped_item->SetPosition(drop_position);
+
+    // TODO: 구조 개선 필요
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    SpawnObjectPacket packet;
+    packet.object_info.type = ObjectType::kDroppedItem;
+    packet.object_info.object_id = dropped_item->GetObjectID();
+    packet.object_info.position_x = drop_position.x;
+    packet.object_info.position_y = drop_position.y;
+
+    DroppedItemInfo& info = packet.object_info.info.dropped_item;
+    info.item_id = item_id;
+    info.dropper_position_x = dropper->GetPosition().x;
+    info.dropper_position_y = dropper->GetPosition().y;
+    SendPacket(packet);
+    
+    AddObject(dropped_item);
+}
+
 std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
@@ -286,6 +316,17 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
         players.push_back(player_weak);
     }
     return players;
+}
+
+Math::Vector2 Map::GetDropPosition(const Math::Vector2& position)
+{
+    Math::Vector2 drop_position = position;
+    drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
+
+    Foothold* foothold = FindFoothold(drop_position);
+    if (foothold) drop_position.y = foothold->GetYAt(drop_position.x);
+    
+    return drop_position;
 }
 
 bool Map::LoadMapData()
@@ -299,6 +340,12 @@ bool Map::LoadMapData()
     if (properties.empty()) return false;
 
     float ppu = properties[1].getFloatValue();
+
+    tmx::FloatRect local_bounds = map_data.getBounds();
+    float world_width = local_bounds.width / ppu;
+    float world_height = local_bounds.height / ppu;
+
+    map_bounds_ = { Math::Vector2::Zero(), { world_width, world_height } };
 
     const auto& layers = map_data.getLayers();
     for (const auto& layer : layers)

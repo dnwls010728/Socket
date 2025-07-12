@@ -240,6 +240,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             DropItemRequest* request = static_cast<DropItemRequest*>(packet);
 
+            uint32_t item_id = inventory_->GetItemID(request->slot_id);
             uint32_t count = inventory_->GetItemCount(request->slot_id);
             uint32_t remaining_count = 0;
 
@@ -253,9 +254,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             DropItemResponse response;
             response.slot_id = request->slot_id;
             response.count = remaining_count;
-            response.position_x = position_.x;
-            response.position_y = position_.y;
             SendPacket(response);
+
+            Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
+            map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 

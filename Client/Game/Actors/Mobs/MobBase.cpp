@@ -44,17 +44,15 @@ void MobBase::OnDeath()
     fade_timer_ = 0.f;
 }
 
-bool MobBase::Init(uint32_t mob_id) const
+void MobBase::Init(uint32_t mob_id) const
 {
     const MobData* mob_data = DataSubsystem::Get()->GetMobData(mob_id);
-    if (!mob_data) return false;
+    if (!mob_data) return;
     
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(mob_data->animation_pack);
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
 
     animator_->PlayAnimation(L"Idle");
-
-    return true;
 }
 
 void MobBase::OnEnable()

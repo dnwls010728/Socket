@@ -7,6 +7,12 @@ class PlayerCharacter;
 class Inventory
 {
 public:
+    struct Slot
+    {
+        uint32_t item_id;
+        uint32_t count;
+    };
+    
     Inventory(const std::shared_ptr<PlayerCharacter>& owner);
     ~Inventory() = default;
     
@@ -25,12 +31,6 @@ public:
     void Update();
 
 private:
-    struct Slot
-    {
-        uint32_t item_id;
-        uint32_t count;
-    };
-
     std::weak_ptr<PlayerCharacter> player_character_;
     
     std::map<uint32_t, Slot> slots_;

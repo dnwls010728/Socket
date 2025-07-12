@@ -12,7 +12,7 @@
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Damage.h"
-#include "Actors/ItemDrop.h"
+#include "Actors/DroppedItem.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"

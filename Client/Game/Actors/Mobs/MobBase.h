@@ -19,7 +19,7 @@ public:
     
     virtual void OnDeath();
 
-    bool Init(uint32_t mob_id) const;
+    void Init(uint32_t mob_id) const;
     
     FORCEINLINE bool IsDead() const { return is_dead_; }
     FORCEINLINE bool IsFading() const { return fade_state_ != FadeState::kNone; }
