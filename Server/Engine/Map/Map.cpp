@@ -89,18 +89,7 @@ void Map::AddPlayers()
         // 맵에 추가된 플레이어에게 맵 오브젝트들을 스폰하도록 패킷을 전송
         for (const auto& map_object : map_objects_ | std::views::values)
         {
-            SpawnObjectPacket spawn_object_packet;
-            spawn_object_packet.object_info.object_id = map_object->GetObjectID();
-            spawn_object_packet.object_info.position_x = map_object->GetPosition().x;
-            spawn_object_packet.object_info.position_y = map_object->GetPosition().y;
-            
-            if (const auto& mob = std::dynamic_pointer_cast<Mob>(map_object))
-            {
-                spawn_object_packet.object_info.type = ObjectType::kMob;
-                spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
-            }
-            
-            player->SendPacket(spawn_object_packet);
+            if (map_object) map_object->SendSpawn(player);
         }
     }
 }

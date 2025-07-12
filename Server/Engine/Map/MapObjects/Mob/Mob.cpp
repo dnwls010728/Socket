@@ -32,6 +32,23 @@ Mob::Mob(const MobData& mob_data) :
     
 }
 
+void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
+{
+    MapObject::SendSpawn(player);
+    if (!player) return;
+
+    SpawnObjectPacket packet;
+    packet.object_info.type = ObjectType::kMob;
+    packet.object_info.object_id = GetObjectID();
+    packet.object_info.position_x = GetPosition().x;
+    packet.object_info.position_y = GetPosition().y;
+
+    MobInfo& info = packet.object_info.info.mob;
+    info.mob_id = mob_id_;
+    
+    player->SendPacket(packet);
+}
+
 void Mob::BeginPlay()
 {
     MapObject::BeginPlay();

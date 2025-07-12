@@ -7,6 +7,8 @@ public:
     DroppedItem();
     virtual ~DroppedItem() override = default;
 
+    virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
+
     inline void SetDropper(const std::shared_ptr<MapObject>& dropper) { dropper_ = dropper; }
     inline std::shared_ptr<MapObject> GetDropper() const { return dropper_.lock(); }
 

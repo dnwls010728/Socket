@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <CommonObject.h>
 
 #include "Engine/Map/MapObject.h"
 #include "FSM/StateMachine.h"
@@ -14,6 +13,8 @@ class Mob : public MapObject
 public:
     Mob(const MobData& mob_data);
     virtual ~Mob() override = default;
+
+    virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
     inline uint32_t GetMobID() const { return mob_id_; }
 

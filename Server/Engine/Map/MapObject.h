@@ -2,6 +2,7 @@
 #include "Math/Vector2.h"
 #include "tmxlite/Types.hpp"
 
+class PlayerCharacter;
 class Map;
 
 class MapObject : public std::enable_shared_from_this<MapObject>
@@ -9,6 +10,8 @@ class MapObject : public std::enable_shared_from_this<MapObject>
 public:
     MapObject();
     virtual ~MapObject() = default;
+
+    virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player);
 
     inline void SetObjectID(uint32_t id) { object_id_ = id; }
     inline uint32_t GetObjectID() const { return object_id_; }
