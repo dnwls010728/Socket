@@ -21,27 +21,16 @@ public:
     void Init(uint32_t item_id, const Math::Vector2& drop_position);
 
 protected:
-    enum class State
-    {
-        kDropped,
-        kFloating,
-        kPickedUp
-    };
-    
     virtual void BeginPlay() override;
     virtual void Tick(float delta_time) override;
     virtual void OnEnable() override;
     virtual void OnDisable() override;
 
     std::shared_ptr<SpriteRendererComponent> renderer_;
-    std::shared_ptr<BoxColliderComponent> collider_;
-    std::shared_ptr<Controller2DComponent> controller_;
-
-    State current_state_;
 
     Math::Vector2 start_position_;
     Math::Vector2 drop_position_;
-    Math::Vector2 velocity_;
+    Math::Vector2 control_;
 
     float timer_;
     

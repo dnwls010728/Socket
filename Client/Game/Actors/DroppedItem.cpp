@@ -3,20 +3,17 @@
 
 #include <numbers>
 
-#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
-#include "Characters/Components/Controller2DComponent.h"
 #include "Math/Math.h"
 #include "Windows/DX/Sprite.h"
 
 DroppedItem::DroppedItem(const std::wstring& name) :
     NetworkActor(name),
-    current_state_(State::kDropped),
     start_position_(Math::Vector2::Zero()),
     drop_position_(Math::Vector2::Zero()),
-    velocity_(Math::Vector2::Zero()),
+    control_(Math::Vector2::Zero()),
     timer_(0.f)
 {
     SetLayer(ActorLayer::kItemDrop);
@@ -26,11 +23,6 @@ DroppedItem::DroppedItem(const std::wstring& name) :
 
     Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\101.png");
     if (sprite) renderer_->SetSprite(sprite, L"101_0");
-
-    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
-    collider_->SetSize({ 1.f, 1.f });
-
-    controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
 }
 
@@ -58,21 +50,19 @@ void DroppedItem::BeginPlay()
 void DroppedItem::Tick(float delta_time)
 {
     NetworkActor::Tick(delta_time);
-    
-    Math::Vector2 position = GetTransform()->GetPosition();
 
-    if (timer_ < 1.f)
-    {
-        timer_ += delta_time;
+    if (timer_ >= 1.f) return;
 
-        float distance = drop_position_.x - position.x;
-        velocity_.x = distance / (1.f - timer_);
-        GetTransform()->Translate(velocity_ * delta_time);
+    timer_ += delta_time / 1.f;
+    float t = Math::Clamp01(timer_);
 
-        float angle = Math::Lerp(0.f, 360.f, timer_ / 1.f);
-        GetTransform()->SetAngle(angle);
-    }
-    else velocity_.x = 0.f;
+    Math::Vector2 m1 = Math::Vector2::Lerp(start_position_, control_, t);
+    Math::Vector2 m2 = Math::Vector2::Lerp(control_, drop_position_, t);
+    Math::Vector2 position = Math::Vector2::Lerp(m1, m2, t);
+    GetTransform()->SetPosition(position);
+
+    float angle = Math::Lerp(0.f, 360.f, t);
+    GetTransform()->SetAngle(angle);
 
 }
 
@@ -84,8 +74,13 @@ void DroppedItem::OnEnable()
     Math::Vector2 position = GetTransform()->GetPosition();
     start_position_ = position;
 
-    timer_ = 0.f;
+    float h = 2.f;
+    float dy = drop_position_.y - start_position_.y;
+    float p = h + std::sqrtf(h * (h - dy));
+    control_.x = (start_position_.x + drop_position_.x) * .5f;
+    control_.y = start_position_.y + p;
 
+    timer_ = 0.f;
 }
 
 void DroppedItem::OnDisable()
