@@ -26,9 +26,9 @@ void InGameUISubsystem::Init()
     // chat_input_->SetPivot({ 0.f, 0.f });
     // chat_input_->OnReturn(this, &InGameUISubsystem::OnChatInputReturn);
 
-    mini_map_ = UI_OLD::MiniMap::Create(L"MiniMap");
-    mini_map_->SetPosition({ 0.f, 0.f });
-    mini_map_->SetPivot({ 0.f, 1.f });
+    // mini_map_ = UI_OLD::MiniMap::Create(L"MiniMap");
+    // mini_map_->SetPosition({ 0.f, 0.f });
+    // mini_map_->SetPivot({ 0.f, 1.f });
     
 }
 
@@ -37,7 +37,7 @@ void InGameUISubsystem::Deinit()
     GameInstanceSubsystem::Deinit();
 
     // chat_input_->RemoveFromViewport();
-    mini_map_->RemoveFromViewport();
+    // mini_map_->RemoveFromViewport();
     
 }
 
@@ -53,12 +53,12 @@ void InGameUISubsystem::HideChatUI()
 
 void InGameUISubsystem::ShowMiniMap()
 {
-    mini_map_->AddToViewport();
+    // mini_map_->AddToViewport();
 }
 
 void InGameUISubsystem::HideMiniMap()
 {
-    mini_map_->RemoveFromViewport();
+    // mini_map_->RemoveFromViewport();
 }
 
 InGameUISubsystem* InGameUISubsystem::Get()

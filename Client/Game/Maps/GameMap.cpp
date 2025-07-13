@@ -19,8 +19,15 @@ void GameMap::Load()
 {
     Level::Load();
     
-    InGameReadyPacket packet;
-    SessionSubsystem::Get()->SendPacket(packet);
+    {
+        // InGameReadyPacket packet;
+        // SessionSubsystem::Get()->SendPacket(packet);
+    }
+
+    {
+        MapReadyCompletePacket packet;
+        SessionSubsystem::Get()->SendPacket(packet);
+    }
 
     UI::Get()->ChangeState(UIInGameState::StaticClass());
     

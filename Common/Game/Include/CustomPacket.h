@@ -111,6 +111,14 @@ struct MapReadyCompletePacket : public Net::IPacket
     REGISTER_PACKET(MapReadyCompletePacket, 500)
 };
 
+struct MapSetupPacket : public Net::IPacket
+{
+    uint32_t map_id;
+    
+    SERIALIZABLE_FIELDS(map_id)
+    REGISTER_PACKET(MapSetupPacket, 501)
+};
+
 // 맵 전환 요청
 struct ChangeMapRequest : public Net::IPacket
 {
@@ -118,6 +126,12 @@ struct ChangeMapRequest : public Net::IPacket
     
     SERIALIZABLE_FIELDS(map_id)
     REGISTER_PACKET(ChangeMapRequest, 209)
+};
+
+struct MapResetPacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(MapResetPacket, 502)
 };
 
 // 맵 전환 응답

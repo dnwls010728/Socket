@@ -116,46 +116,25 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 {
     switch (packet->GetPacketID())
     {
-    case InGameReadyPacket::StaticPacketID:
+    case MapReadyCompletePacket::StaticPacketID:
         {
-            if (map_)
-            {
-                ChangeMapResponse response;
-                response.is_success = true;
-                response.map_id = initial_map_id_;
-                SendPacket(response);
-                
-                map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
-
-                SetPosition({position_.x, position_.y});
-            }
+            MapSetupPacket map_setup_packet;
+            map_setup_packet.map_id = map_->GetMapID();
+            SendPacket(map_setup_packet);
+            
+            map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
         }
         break;
 
     case ChangeMapRequest::StaticPacketID:
         {
             ChangeMapRequest* request = static_cast<ChangeMapRequest*>(packet);
-            if (map_)
-            {
-                map_->RemovePlayer(GetObjectID());
-                
-                map_ = World::Get()->GetMap(request->map_id);
-                if (map_)
-                {
-                    ChangeMapResponse response;
-                    response.is_success = true;
-                    response.map_id = request->map_id;
-                    SendPacket(response);
-                    
-                    map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
-                    break;
-                }
-            }
+            
+            map_->RemovePlayer(GetObjectID());
+            map_ = World::Get()->GetMap(request->map_id);
 
-            ChangeMapResponse response;
-            response.is_success = false;
-            response.map_id = 0;
-            SendPacket(response);
+            MapResetPacket map_reset_packet;
+            SendPacket(map_reset_packet);
         }
         break;
 

@@ -72,6 +72,11 @@ void Player::ReceivePacket(Net::IPacket* packet)
             session_->SetState(Session::State::kInGame);
         }
         break;
+
+    case MapReadyCompletePacket::StaticPacketID:
+        {
+        }
+        break;
         
     default:
         break;

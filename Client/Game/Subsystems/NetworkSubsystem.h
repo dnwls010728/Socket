@@ -43,10 +43,11 @@ public:
     static NetworkSubsystem* Get();
 
 private:
+    friend class MapSetupHandler;
     friend class ChangeMapHandler;
     friend class SpawnObjectHandler;
     
-    void TransitionMap(uint32_t map_id);
+    void SetupMap(uint32_t map_id);
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 

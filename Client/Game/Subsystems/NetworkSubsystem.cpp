@@ -117,7 +117,7 @@ NetworkSubsystem* NetworkSubsystem::Get()
     return World::Get()->GetSubsystem<NetworkSubsystem>();
 }
 
-void NetworkSubsystem::TransitionMap(uint32_t map_id)
+void NetworkSubsystem::SetupMap(uint32_t map_id)
 {
     ObjectPoolSubsystem::Get()->ClearPool();
     
@@ -164,8 +164,8 @@ void NetworkSubsystem::TransitionMap(uint32_t map_id)
         camera_manager->SetTarget(player_character);
     }
 
-    InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
-    in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
+    // InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
+    // in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 }
 
 RTTR_REGISTRATION

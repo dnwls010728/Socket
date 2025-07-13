@@ -36,6 +36,6 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->inventory_->SetColor(response->color);
     
     SessionSubsystem::Get()->SetState(SessionState::kInGame);
-    World::Get()->OpenLevel(L"InGame");
+    World::Get()->OpenLevel(L"Game");
     return true;
 }
