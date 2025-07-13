@@ -39,9 +39,9 @@ void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     SpawnObjectPacket packet;
     packet.object_info.type = ObjectType::kMob;
-    packet.object_info.object_id = GetObjectID();
-    packet.object_info.position_x = GetPosition().x;
-    packet.object_info.position_y = GetPosition().y;
+    packet.object_info.object_id = object_id_;
+    packet.object_info.position_x = position_.x;
+    packet.object_info.position_y = position_.y;
 
     MobInfo& info = packet.object_info.info.mob;
     info.mob_id = mob_id_;

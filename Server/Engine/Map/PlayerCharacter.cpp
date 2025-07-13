@@ -290,6 +290,22 @@ void PlayerCharacter::TakeDamage(uint32_t damage_amount)
     is_invincible_.Set(2.f);
 }
 
+void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
+{
+    MapObject::SendSpawn(player);
+
+    SpawnObjectPacket packet;
+    packet.object_info.type = ObjectType::kPlayer;
+    packet.object_info.object_id = object_id_;
+    packet.object_info.position_x = position_.x;
+    packet.object_info.position_y = position_.y;
+
+    PlayerInfo& info = packet.object_info.info.player;
+    wcscpy_s(info.name, name_.c_str());
+
+    player->SendPacket(packet);
+}
+
 void PlayerCharacter::ExitMap()
 {
     if (map_)

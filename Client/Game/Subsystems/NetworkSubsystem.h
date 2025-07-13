@@ -44,7 +44,7 @@ public:
 
 private:
     friend class ChangeMapHandler;
-    friend class SpawnPlayerHandler;
+    friend class SpawnObjectHandler;
     
     void TransitionMap(uint32_t map_id);
 

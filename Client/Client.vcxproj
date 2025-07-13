@@ -291,7 +291,6 @@
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SpawnObjectHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\SpawnPlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\TakeDamageHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
@@ -689,7 +688,6 @@
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SpawnObjectHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\SpawnPlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\TakeDamageHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />

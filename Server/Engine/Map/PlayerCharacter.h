@@ -22,6 +22,8 @@ public:
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(uint32_t damage_amount);
 
+    virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
+
     inline bool IsInvincible() const { return is_invincible_ == true; }
 
     inline uint32_t GetAccountID() const { return account_id_; }

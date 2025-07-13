@@ -62,13 +62,14 @@ void Map::AddPlayers()
     
         player->SetMap(this);
         {
-            // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
-            SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_id = player->GetObjectID();
-            spawn_player_packet.name = player->GetName();
-            spawn_player_packet.position_x = player->GetPosition().x;
-            spawn_player_packet.position_y = player->GetPosition().y;
-            SendPacket(spawn_player_packet, player);
+            for (const auto& player_weak : players_ | std::views::values)
+            {
+                auto other_player = player_weak.lock();
+                if (other_player && other_player != player)
+                {
+                    player->SendSpawn(other_player);
+                }
+            }
         }
 
         // 맵에 추가된 플레이어에게 다른 플레이어들을 스폰하도록 패킷을 전송
@@ -77,12 +78,7 @@ void Map::AddPlayers()
             auto other_player = player_weak.lock();
             if (other_player && other_player != player)
             {
-                SpawnPlayerPacket spawn_player_packet;
-                spawn_player_packet.character_id = other_player->GetObjectID();
-                spawn_player_packet.name = other_player->GetName();
-                spawn_player_packet.position_x = other_player->GetPosition().x;
-                spawn_player_packet.position_y = other_player->GetPosition().y;
-                player->SendPacket(spawn_player_packet);
+                other_player->SendSpawn(player);
             }
         }
 
@@ -309,7 +305,7 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 
 Math::Vector2 Map::GetDropPosition(const Math::Vector2& position)
 {
-    Math::Vector2 drop_position = position;
+    Math::Vector2 drop_position = { position.x, position.y + 2.f };
     drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
 
     Foothold* foothold = FindFoothold(drop_position);

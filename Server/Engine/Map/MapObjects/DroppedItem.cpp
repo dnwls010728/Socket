@@ -19,14 +19,14 @@ void DroppedItem::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     SpawnObjectPacket packet;
     packet.object_info.type = ObjectType::kDroppedItem;
-    packet.object_info.object_id = GetObjectID();
-    packet.object_info.position_x = GetPosition().x;
-    packet.object_info.position_y = GetPosition().y;
+    packet.object_info.object_id = object_id_;
+    packet.object_info.position_x = position_.x;
+    packet.object_info.position_y = position_.y;
 
     DroppedItemInfo& info = packet.object_info.info.dropped_item;
     info.item_id = item_id_;
-    info.dropper_position_x = 0.f;
-    info.dropper_position_y = 0.f;
+    info.dropper_position_x = position_.x;
+    info.dropper_position_y = position_.y;
     
     player->SendPacket(packet);
 }

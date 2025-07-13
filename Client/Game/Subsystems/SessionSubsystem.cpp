@@ -19,7 +19,6 @@
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
-#include "PacketHandlers/SpawnPlayerHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
@@ -65,11 +64,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         ChangeMapResponse::StaticPacketID,
         std::make_unique<ChangeMapHandler>()
-    );
-
-    handlers_.emplace(
-        SpawnPlayerPacket::StaticPacketID,
-        std::make_unique<SpawnPlayerHandler>()
     );
 
     handlers_.emplace(

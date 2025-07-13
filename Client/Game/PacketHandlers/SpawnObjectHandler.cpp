@@ -5,6 +5,7 @@
 
 #include "Actor/Component/TransformComponent.h"
 #include "Actors/DroppedItem.h"
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
@@ -16,11 +17,22 @@ bool SpawnObjectHandler::Handle(Net::IPacket* packet)
 
     const ObjectInfo& object_info = received_packet->object_info;
 
-    std::shared_ptr<Actor> out_actor = nullptr;
     switch (object_info.type)
     {
+    case ObjectType::kPlayer:
+        {
+            NetworkSubsystem* network_subsystem = NetworkSubsystem::Get();
+            std::shared_ptr<PlayerCharacter> player_character = network_subsystem->SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), object_info.object_id);
+            if (IsValid(player_character))
+            {
+                player_character->Init(object_info.info.player.name, {object_info.position_x, object_info.position_y});
+                network_subsystem->other_players_.emplace_back(player_character);
+            }
+        }
+        break;
     case ObjectType::kMob:
         {
+            std::shared_ptr<Actor> out_actor = nullptr;
             if (!ObjectPoolSubsystem::Get()->GetFromPool(MobBase::StaticClass(), out_actor)) return false;
             if (auto mob = std::dynamic_pointer_cast<MobBase>(out_actor))
             {
@@ -34,6 +46,7 @@ bool SpawnObjectHandler::Handle(Net::IPacket* packet)
 
     case ObjectType::kDroppedItem:
         {
+            std::shared_ptr<Actor> out_actor = nullptr;
             if (!ObjectPoolSubsystem::Get()->GetFromPool(DroppedItem::StaticClass(), out_actor)) return false;
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(out_actor))
             {

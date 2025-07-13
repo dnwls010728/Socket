@@ -39,8 +39,14 @@ enum class ItemMoveType : uint8_t
 enum class ObjectType : uint8_t
 {
     kNone = 0,
+    kPlayer,
     kMob,
     kDroppedItem
+};
+
+struct PlayerInfo
+{
+    wchar_t name[256];
 };
 
 struct MobInfo
@@ -64,6 +70,7 @@ struct ObjectInfo
 
     union
     {
+        PlayerInfo player;
         MobInfo mob;
         DroppedItemInfo dropped_item;
     } info;

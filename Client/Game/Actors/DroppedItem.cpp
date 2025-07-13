@@ -7,6 +7,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 DroppedItem::DroppedItem(const std::wstring& name) :
@@ -70,6 +71,7 @@ void DroppedItem::Tick(float delta_time)
 void DroppedItem::OnEnable()
 {
     NetworkActor::OnEnable();
+    NetworkSubsystem::Get()->RegisterNetworkActor(GetSharedThis());
 
     Math::Vector2 position = GetTransform()->GetPosition();
     start_position_ = position;
@@ -86,6 +88,7 @@ void DroppedItem::OnEnable()
 void DroppedItem::OnDisable()
 {
     NetworkActor::OnDisable();
+    NetworkSubsystem::Get()->UnregisterNetworkActor(GetSharedThis());
 }
 
 RTTR_REGISTRATION
