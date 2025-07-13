@@ -15,8 +15,9 @@ Inventory::Inventory(const std::shared_ptr<PlayerCharacter>& player) :
 {
 }
 
-uint32_t Inventory::GetItemID(uint32_t slot_index) const
+uint32_t Inventory::GetItemID(uint32_t slot_index)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
         return it->second.item_id;
@@ -24,8 +25,9 @@ uint32_t Inventory::GetItemID(uint32_t slot_index) const
     return 0;
 }
 
-uint32_t Inventory::FindItem(uint32_t item_id) const
+uint32_t Inventory::FindItem(uint32_t item_id)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& it : slots_)
     {
         if (it.second.item_id == item_id)
@@ -35,8 +37,9 @@ uint32_t Inventory::FindItem(uint32_t item_id) const
     return 0;
 }
 
-uint32_t Inventory::FindFreeSlot() const
+uint32_t Inventory::FindFreeSlot()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     uint32_t counter = 1;
 
     for (const auto& it : slots_)
@@ -50,8 +53,9 @@ uint32_t Inventory::FindFreeSlot() const
     return counter;
 }
 
-uint32_t Inventory::GetItemCount(uint32_t slot_index) const
+uint32_t Inventory::GetItemCount(uint32_t slot_index)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
         return it->second.count;
@@ -59,8 +63,9 @@ uint32_t Inventory::GetItemCount(uint32_t slot_index) const
     return 0;
 }
 
-uint32_t Inventory::GetTotalItemCount(uint32_t item_id) const
+uint32_t Inventory::GetTotalItemCount(uint32_t item_id)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     uint32_t total_count = 0;
     for (const auto& slot : slots_ | std::views::values)
     {
@@ -73,12 +78,14 @@ uint32_t Inventory::GetTotalItemCount(uint32_t item_id) const
 
 void Inventory::AddSlot(uint32_t slot_index, uint32_t item_id, uint32_t count)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (slot_index == 0 || item_id == 0) return;
     slots_[slot_index] = { item_id, count };
 }
 
 void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = slots_.find(slot_index);
     if (it != slots_.end())
         it->second.count = count;
@@ -86,6 +93,7 @@ void Inventory::ChangeCount(uint32_t slot_index, uint32_t count)
 
 void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     Slot first = std::move(slots_[first_slot]);
     slots_[first_slot] = std::move(slots_[second_slot]);
     slots_[second_slot] = std::move(first);
@@ -96,6 +104,7 @@ void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
 
 void Inventory::Remove(uint32_t slot_index)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = slots_.find(slot_index);
     if (it == slots_.end()) return;
     
