@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "InGameMap.h"
+#include "GameMap.h"
 
 #include <CustomPacket.h>
 
@@ -10,12 +10,12 @@
 #include "UI/UI.h"
 #include "UI/UIInGameState.h"
 
-InGameMap::InGameMap(const std::wstring& kName) :
+GameMap::GameMap(const std::wstring& kName) :
     Level(kName)
 {
 }
 
-void InGameMap::Load()
+void GameMap::Load()
 {
     Level::Load();
     
@@ -34,7 +34,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<InGameMap>("InGameMap")
+    registration::class_<GameMap>("GameMap")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

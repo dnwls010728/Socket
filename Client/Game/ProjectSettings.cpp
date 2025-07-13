@@ -3,7 +3,7 @@
 
 #include "Maps/EditorMap.h"
 #include "Maps/LoginMap.h"
-#include "Maps/InGameMap.h"
+#include "Maps/GameMap.h"
 
 ProjectSettings::ProjectSettings()
 {
@@ -35,7 +35,7 @@ void ProjectSettings::Init()
 
     settings->AddLevel<EditorMap>(L"Editor");
     settings->AddLevel<LoginMap>(L"Login");
-    settings->AddLevel<InGameMap>(L"InGame");
+    settings->AddLevel<GameMap>(L"Game");
 
     settings->SetDefaultLevel(L"Login");
     // settings->SetDefaultLevel(L"Editor");

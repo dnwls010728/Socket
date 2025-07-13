@@ -50,7 +50,7 @@ protected:
     uint32_t lv_;
     uint32_t hp_;
     uint32_t max_hp_;
-    uint32_t map_id_;
+    uint32_t initial_map_id_;
     
     std::atomic_uint32_t exp_;
     std::atomic_uint32_t color_;

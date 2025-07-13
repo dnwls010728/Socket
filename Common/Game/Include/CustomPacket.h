@@ -105,6 +105,12 @@ struct InGameReadyPacket : public Net::IPacket
     REGISTER_PACKET(InGameReadyPacket, 208)
 };
 
+struct MapReadyCompletePacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(MapReadyCompletePacket, 500)
+};
+
 // 맵 전환 요청
 struct ChangeMapRequest : public Net::IPacket
 {

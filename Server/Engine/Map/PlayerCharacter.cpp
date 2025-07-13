@@ -18,7 +18,7 @@ PlayerCharacter::PlayerCharacter() :
     lv_(0),
     hp_(0),
     max_hp_(0),
-    map_id_(0),
+    initial_map_id_(0),
     exp_(0),
     color_(0),
     inventory_(nullptr),
@@ -55,7 +55,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
                 character->max_hp_ = result->getInt("max_hp");
-                character->map_id_ = result->getInt("map_id");
+                character->initial_map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->exp_.store(result->getInt("exp"));
@@ -80,7 +80,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
-        character->map_ = World::Get()->GetMap(character->map_id_);
+        character->map_ = World::Get()->GetMap(character->initial_map_id_);
     }
     catch (sql::SQLException& e)
     {
@@ -122,7 +122,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             {
                 ChangeMapResponse response;
                 response.is_success = true;
-                response.map_id = map_id_;
+                response.map_id = initial_map_id_;
                 SendPacket(response);
                 
                 map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
@@ -148,8 +148,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     SendPacket(response);
                     
                     map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
-
-                    SetPosition(Math::Vector2::Zero());
                     break;
                 }
             }
@@ -318,6 +316,39 @@ void PlayerCharacter::ExitMap()
 void PlayerCharacter::UpdateCharacter()
 {
     if (inventory_) inventory_->Update();
+    
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return;
+    
+    try
+    {
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, last_position_x = ?, last_position_y = ?, map_id = ? WHERE character_id = ?"));
+            statement->setUInt(1, hp_);
+            statement->setUInt(2, max_hp_);
+            statement->setUInt(3, exp_);
+            statement->setUInt(4, lv_);
+            statement->setDouble(5, position_.x);
+            statement->setDouble(6, position_.y);
+            statement->setUInt(7, map_->GetMapID());
+            statement->setUInt(8, object_id_);
+            statement->executeUpdate();
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+    }
 }
 
 void PlayerCharacter::GainExp(uint32_t amount)
