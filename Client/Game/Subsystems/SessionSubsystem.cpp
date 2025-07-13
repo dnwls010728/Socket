@@ -45,6 +45,12 @@ void SessionSubsystem::Init()
         return;
     }
 
+    client_socket_.SetDisconnectedCallback([]()
+    {
+        MessageBox(nullptr, L"서버와의 연결이 끊어졌습니다.", EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
+        WindowsApplication::Get()->QuitApplication();
+    });
+
 #pragma region 핸들러 등록
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
