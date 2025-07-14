@@ -48,8 +48,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.max_hp = player_character_->max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
-            response.position_x = player_character_->position_.x;
-            response.position_y = player_character_->position_.y;
 
             for (const auto& it : player_character_->inventory_->GetSlots())
             {

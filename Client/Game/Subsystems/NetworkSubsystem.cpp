@@ -6,7 +6,6 @@
 
 #include "DebugDrawHelper.h"
 #include "GameInstance.h"
-#include "InGameUISubsystem.h"
 #include "PlayerSubsystem.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
@@ -32,13 +31,6 @@ void NetworkSubsystem::OnWorldBeginPlay()
 {
     WorldSubsystem::OnWorldBeginPlay();
 
-    SessionSubsystem* session_subsystem = SessionSubsystem::Get();
-    if (session_subsystem->IsInGame())
-    {
-        InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
-        in_game_ui_subsystem->ShowMiniMap();
-        in_game_ui_subsystem->ShowChatUI();
-    }
 }
 
 void NetworkSubsystem::Tick(float delta_time)
@@ -119,20 +111,6 @@ NetworkSubsystem* NetworkSubsystem::Get()
 
 void NetworkSubsystem::SetupMap(uint32_t map_id, const Math::Vector2& spawn_position)
 {
-    // ObjectPoolSubsystem::Get()->ClearPool();
-    //
-    // std::vector<Actor*> actors = {};
-    // World::Get()->GetActors(Actor::StaticClass(), actors);
-    //
-    // for (const auto& actor : actors)
-    // {
-    //     if (IsValid(actor)) actor->Destroy();
-    // }
-    //
-    // other_players_.clear();
-    // player_.reset();
-    // network_actors_.clear();
-
     CameraManager* camera_manager = CameraManager::Get();
 
     std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
@@ -163,9 +141,6 @@ void NetworkSubsystem::SetupMap(uint32_t map_id, const Math::Vector2& spawn_posi
         
         camera_manager->SetTarget(player_character);
     }
-
-    // InGameUISubsystem* in_game_ui_subsystem = InGameUISubsystem::Get();
-    // in_game_ui_subsystem->GetMiniMap()->SetTilemap(tilemap_);
 }
 
 RTTR_REGISTRATION

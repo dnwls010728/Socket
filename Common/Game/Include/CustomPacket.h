@@ -89,12 +89,9 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t exp;
     uint32_t color;
 
-    float position_x;
-    float position_y;
-
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, hp, max_hp, exp, color, position_x, position_y, inventory)
+    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, hp, max_hp, exp, color, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 

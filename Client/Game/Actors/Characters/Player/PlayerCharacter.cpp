@@ -105,7 +105,7 @@ void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& positi
     GetTransform()->SetPosition(position);
 }
 
-void PlayerCharacter::  UpdateFlip()
+void PlayerCharacter::UpdateFlip() const
 {
     if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
 }
@@ -198,6 +198,11 @@ void PlayerCharacter::Tick(float delta_time)
             if (keyboard->GetKeyDown('2'))
             {
                 NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            // 아이템 줍기
+            if (keyboard->GetKeyDown('Z'))
+            {
             }
 
             // 공격 테스트
