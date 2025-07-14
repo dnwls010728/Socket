@@ -77,9 +77,6 @@ struct SelectCharacterRequest : public Net::IPacket
 // 캐릭터 선택 응답
 struct SelectCharacterResponse : public Net::IPacket
 {
-    bool is_success;
-    
-    std::wstring message;
     std::wstring name;
 
     uint32_t character_id;
@@ -88,10 +85,17 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t max_hp;
     uint32_t exp;
     uint32_t color;
+    uint32_t map_id;
+
+    struct
+    {
+        float x;
+        float y;
+    } spawn_position;
 
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(is_success, message, name, character_id, lv, hp, max_hp, exp, color, inventory)
+    SERIALIZABLE_FIELDS(name, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
@@ -103,26 +107,24 @@ struct ChangeMapPacket : public Net::IPacket
     REGISTER_PACKET(ChangeMapPacket, 208)
 };
 
-struct MapResetPacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(MapResetPacket, 209)
-};
-
-struct MapReadyCompletePacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(MapReadyCompletePacket, 210)
-};
-
-struct MapSetupPacket : public Net::IPacket
+struct MapLoadPacket : public Net::IPacket
 {
     uint32_t map_id;
-    float position_x;
-    float position_y;
+
+    struct
+    {
+        float x;
+        float y;
+    } spawn_position;
     
-    SERIALIZABLE_FIELDS(map_id, position_x, position_y)
-    REGISTER_PACKET(MapSetupPacket, 211)
+    SERIALIZABLE_FIELDS(map_id, spawn_position)
+    REGISTER_PACKET(MapLoadPacket, 209)
+};
+
+struct MapLoadCompletePacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(MapLoadCompletePacket, 210)
 };
 
 // 플레이어 스폰 패킷

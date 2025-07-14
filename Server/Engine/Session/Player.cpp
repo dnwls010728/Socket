@@ -39,8 +39,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             player_character_ = PlayerCharacter::LoadCharacter(request->unique_id, shared_from_this());
             
             SelectCharacterResponse response;
-            response.is_success = true;
-            response.message = L"";
             response.name = player_character_->name_;
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
@@ -48,6 +46,9 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.max_hp = player_character_->max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
+            response.map_id = player_character_->map_->GetMapID();
+            response.spawn_position.x = player_character_->position_.x;
+            response.spawn_position.y = player_character_->position_.y;
 
             for (const auto& it : player_character_->inventory_->GetSlots())
             {
@@ -102,7 +103,7 @@ std::vector<std::shared_ptr<PlayerCharacter>> Player::GetCharacters()
     {
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT character_id FROM character_info WHERE account_id = ?"));
-            statement->setInt(1, account_id_);
+            statement->setUInt(1, account_id_);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())

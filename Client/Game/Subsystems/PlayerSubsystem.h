@@ -29,6 +29,8 @@ public:
 
 private:
     friend class SelectCharacterHandler;
+    friend class MapLoadHandler;
+    friend class GameMap;
     
     uint32_t account_id_;
     uint32_t character_id_;
@@ -36,6 +38,9 @@ private:
     uint32_t hp_;
     uint32_t max_hp_;
     uint32_t exp_;
+    uint32_t map_id_;
+
+    Math::Vector2 spawn_position;
 
     std::wstring name_;
     

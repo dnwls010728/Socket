@@ -7,7 +7,7 @@
 #include "Windows/DX/Renderer.h"
 
 CameraManager::CameraManager() :
-    size_(3.f),
+    size_(6.f),
     near_z_(.3f),
     far_z_(1000.f),
     angle_(0.f),
@@ -17,7 +17,7 @@ CameraManager::CameraManager() :
     collider_weak_ptr_(),
     position_(Math::Vector2::Zero()),
     focus_area_size_({2.f, 2.f}),
-    tick_type_(TickType::kTick)
+    tick_type_(TickType::kPhysicsTick)
 {
     limit_half_width_ = std::numeric_limits<float>::max();
     limit_half_height_ = std::numeric_limits<float>::max();

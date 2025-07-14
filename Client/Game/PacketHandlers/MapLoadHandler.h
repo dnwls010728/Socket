@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "IPacketHandler.h"
 
-class MapSetupHandler : public IPacketHandler
+class MapLoadHandler : public IPacketHandler
 {
 public:
-    virtual ~MapSetupHandler() override = default;
+    virtual ~MapLoadHandler() override = default;
 
     virtual bool Handle(Net::IPacket* packet) override;
     

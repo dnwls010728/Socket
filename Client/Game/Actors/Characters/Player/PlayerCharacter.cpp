@@ -177,69 +177,60 @@ void PlayerCharacter::Tick(float delta_time)
     
     if (IsMine())
     {
-        UI_OLD::Manager* ui_manager = UI_OLD::Manager::Get();
         Keyboard* keyboard = Keyboard::Get();
         
-        if (!ui_manager->HasFocus())
+        move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+        move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+
+        if (keyboard->GetKey('C'))
         {
-            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+            is_jump_pressed_ = true;
+        }
 
-            if (keyboard->GetKey('C'))
+        if (keyboard->GetKeyDown('1'))
+        {
+            NetworkSubsystem::Get()->ChangeMap(0);
+        }
+
+        if (keyboard->GetKeyDown('2'))
+        {
+            NetworkSubsystem::Get()->ChangeMap(1);
+        }
+
+        // 아이템 줍기
+        if (keyboard->GetKeyDown('Z'))
+        {
+        }
+
+        // 공격 테스트
+        if (keyboard->GetKeyDown('X'))
+        {
+            std::vector<Actor*> hit_actors;
+            bool is_hit = Physics2D::OverlapBoxAll(
+                GetTransform()->GetPosition(),
+                { 3.f, 2.f },
+                hit_actors,
+                static_cast<uint16_t>(ActorLayer::kMob)
+            );
+
+            if (is_hit)
             {
-                is_jump_pressed_ = true;
-            }
-
-            if (keyboard->GetKeyDown('1'))
-            {
-                NetworkSubsystem::Get()->ChangeMap(0);
-            }
-
-            if (keyboard->GetKeyDown('2'))
-            {
-                NetworkSubsystem::Get()->ChangeMap(1);
-            }
-
-            // 아이템 줍기
-            if (keyboard->GetKeyDown('Z'))
-            {
-            }
-
-            // 공격 테스트
-            if (keyboard->GetKeyDown('X'))
-            {
-                std::vector<Actor*> hit_actors;
-                bool is_hit = Physics2D::OverlapBoxAll(
-                    GetTransform()->GetPosition(),
-                    { 3.f, 2.f },
-                    hit_actors,
-                    static_cast<uint16_t>(ActorLayer::kMob)
-                );
-
-                if (is_hit)
+                for (const auto& actor : hit_actors)
                 {
-                    for (const auto& actor : hit_actors)
-                    {
-                        MobBase* mob = static_cast<MobBase*>(actor);
-                        if (!IsValid(mob) || mob->IsDead()) continue;
+                    MobBase* mob = static_cast<MobBase*>(actor);
+                    if (!IsValid(mob) || mob->IsDead()) continue;
 
-                        AttackRequest request;
-                        request.object_id = mob->GetObjectID();
-                        SendPacket(request);
+                    AttackRequest request;
+                    request.object_id = mob->GetObjectID();
+                    SendPacket(request);
                         
-                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
-                        if (IsValid(damage))
-                        {
-                            damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
-                        }
+                    std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                    if (IsValid(damage))
+                    {
+                        damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
                     }
                 }
             }
-        }
-        else
-        {
-            move_axis_.x = 0.f;
-            move_axis_.y = 0.f;
         }
 
         // 공격 범위 확인용

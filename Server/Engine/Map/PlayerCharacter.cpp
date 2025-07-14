@@ -128,19 +128,16 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             // 추후 포탈 이용 시 포탈 위치로 이동하도록 수정 필요
             SetPosition(Math::Vector2::Zero());
 
-            MapResetPacket map_reset_packet;
+            MapLoadPacket map_reset_packet;
+            map_reset_packet.map_id = map_->GetMapID();
+            map_reset_packet.spawn_position.x = GetPosition().x;
+            map_reset_packet.spawn_position.y = GetPosition().y;
             SendPacket(map_reset_packet);
         }
         break;
         
-    case MapReadyCompletePacket::StaticPacketID:
+    case MapLoadCompletePacket::StaticPacketID:
         {
-            MapSetupPacket map_setup_packet;
-            map_setup_packet.map_id = map_->GetMapID();
-            map_setup_packet.position_x = position_.x;
-            map_setup_packet.position_y = position_.y;
-            SendPacket(map_setup_packet);
-            
             map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
         }
         break;

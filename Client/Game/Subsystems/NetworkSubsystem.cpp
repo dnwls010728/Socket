@@ -6,7 +6,6 @@
 
 #include "DebugDrawHelper.h"
 #include "GameInstance.h"
-#include "PlayerSubsystem.h"
 #include "SessionSubsystem.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
@@ -15,22 +14,12 @@
 #include "Asset/AssetManager.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
-#include "Level/CameraManager.h"
-#include "ObjectPool/ObjectPoolSubsystem.h"
-#include "UI/MiniMap.h"
 
 NetworkSubsystem::NetworkSubsystem() :
     network_actors_(),
     player_(),
-    other_players_(),
-    tilemap_(nullptr)
+    other_players_()
 {
-}
-
-void NetworkSubsystem::OnWorldBeginPlay()
-{
-    WorldSubsystem::OnWorldBeginPlay();
-
 }
 
 void NetworkSubsystem::Tick(float delta_time)
@@ -85,6 +74,17 @@ void NetworkSubsystem::DestroyNetworkActor(uint32_t unique_id)
     }
 }
 
+void NetworkSubsystem::SetPlayerCharacter(const std::shared_ptr<PlayerCharacter>& player)
+{
+    if (IsValid(player))
+    {
+        player->SetMine(true);
+        
+        player_ = player;
+        network_actors_[player->GetObjectID()] = player;
+    }
+}
+
 void NetworkSubsystem::GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharacter>>& out_players)
 {
     for (const auto& player : other_players_)
@@ -107,40 +107,6 @@ std::shared_ptr<NetworkActor> NetworkSubsystem::FindNetworkActor(const uint32_t 
 NetworkSubsystem* NetworkSubsystem::Get()
 {
     return World::Get()->GetSubsystem<NetworkSubsystem>();
-}
-
-void NetworkSubsystem::SetupMap(uint32_t map_id, const Math::Vector2& spawn_position)
-{
-    CameraManager* camera_manager = CameraManager::Get();
-
-    std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
-    if (IsValid(tilemap_loader))
-    {
-        std::wstring wide_str = std::format(L"{:06}", map_id);
-        tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
-        if (tilemap_)
-        {
-            tilemap_loader->SetTilemap(tilemap_);
-
-            camera_manager->SetSize(6.f);
-            camera_manager->SetTickType(TickType::kPhysicsTick);
-
-            Bounds bounds = tilemap_->GetWorldBounds();
-            camera_manager->SetLimit(bounds.size.x, bounds.size.y);
-        }
-    }
-    
-    PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
-    std::shared_ptr<PlayerCharacter> player_character = SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), player_subsystem->GetCharacterID());
-    if (IsValid(player_character))
-    {
-        player_character->Init(player_subsystem->GetName(), spawn_position);
-        player_character->SetMine(true);
-        
-        player_ = player_character;
-        
-        camera_manager->SetTarget(player_character);
-    }
 }
 
 RTTR_REGISTRATION

@@ -19,7 +19,6 @@ public:
     NetworkSubsystem();
     virtual ~NetworkSubsystem() override = default;
 
-    virtual void OnWorldBeginPlay() override;
     virtual void Tick(float delta_time) override;
 
     void SendPacket(Net::IPacket& packet);
@@ -31,14 +30,13 @@ public:
     std::shared_ptr<T> SpawnNetworkActor(const rttr::type& type, uint32_t unique_id, const std::wstring& name = L"");
     
     void DestroyNetworkActor(uint32_t unique_id);
+    void SetPlayerCharacter(const std::shared_ptr<PlayerCharacter>& player);
     void GetOtherPlayers(std::vector<std::shared_ptr<PlayerCharacter>>& out_players);
 
     std::shared_ptr<NetworkActor> FindNetworkActor(uint32_t unique_id);
-
+    
     FORCEINLINE const std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>>& GetNetworkActors() { return network_actors_; }
     FORCEINLINE std::shared_ptr<PlayerCharacter> GetPlayer() const { return player_.lock(); }
-
-    FORCEINLINE Tilemap* GetTilemap() const { return tilemap_; }
 
     static NetworkSubsystem* Get();
 
@@ -46,15 +44,11 @@ private:
     friend class MapSetupHandler;
     friend class ChangeMapHandler;
     friend class SpawnObjectHandler;
-    
-    void SetupMap(uint32_t map_id, const Math::Vector2& spawn_position);
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 
     std::weak_ptr<PlayerCharacter> player_;
     std::vector<std::weak_ptr<PlayerCharacter>> other_players_;
-
-    Tilemap* tilemap_;
     
 };
 
