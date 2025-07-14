@@ -28,6 +28,8 @@ public:
 
     void ExitMap();
 
+    bool Disconnect();
+
     std::vector<std::shared_ptr<PlayerCharacter>> GetCharacters();
     
     inline Session* GetSession() const { return session_; }

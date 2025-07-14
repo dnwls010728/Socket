@@ -47,7 +47,7 @@ private:
     friend class ChangeMapHandler;
     friend class SpawnObjectHandler;
     
-    void SetupMap(uint32_t map_id);
+    void SetupMap(uint32_t map_id, const Math::Vector2& spawn_position);
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 

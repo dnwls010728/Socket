@@ -18,7 +18,6 @@ PlayerCharacter::PlayerCharacter() :
     lv_(0),
     hp_(0),
     max_hp_(0),
-    initial_map_id_(0),
     exp_(0),
     color_(0),
     inventory_(nullptr),
@@ -40,6 +39,8 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return nullptr;
+
+    uint32_t map_id = 0;
     
     try
     {
@@ -55,11 +56,12 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
                 character->max_hp_ = result->getInt("max_hp");
-                character->initial_map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->exp_.store(result->getInt("exp"));
                 character->color_.store(result->getInt("color"));
+                
+                map_id = result->getInt("map_id");
             }
         }
 
@@ -80,7 +82,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
-        character->map_ = World::Get()->GetMap(character->initial_map_id_);
+        character->map_ = World::Get()->GetMap(map_id);
     }
     catch (sql::SQLException& e)
     {
@@ -116,25 +118,30 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 {
     switch (packet->GetPacketID())
     {
+    case ChangeMapPacket::StaticPacketID:
+        {
+            ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet);
+            
+            map_->RemovePlayer(GetObjectID());
+            map_ = World::Get()->GetMap(change_map_packet->map_id);
+
+            // 추후 포탈 이용 시 포탈 위치로 이동하도록 수정 필요
+            SetPosition(Math::Vector2::Zero());
+
+            MapResetPacket map_reset_packet;
+            SendPacket(map_reset_packet);
+        }
+        break;
+        
     case MapReadyCompletePacket::StaticPacketID:
         {
             MapSetupPacket map_setup_packet;
             map_setup_packet.map_id = map_->GetMapID();
+            map_setup_packet.position_x = position_.x;
+            map_setup_packet.position_y = position_.y;
             SendPacket(map_setup_packet);
             
             map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
-        }
-        break;
-
-    case ChangeMapRequest::StaticPacketID:
-        {
-            ChangeMapRequest* request = static_cast<ChangeMapRequest*>(packet);
-            
-            map_->RemovePlayer(GetObjectID());
-            map_ = World::Get()->GetMap(request->map_id);
-
-            MapResetPacket map_reset_packet;
-            SendPacket(map_reset_packet);
         }
         break;
 
@@ -265,6 +272,16 @@ void PlayerCharacter::TakeDamage(uint32_t damage_amount)
     map_->SendPacket(packet);
 
     is_invincible_.Set(2.f);
+}
+
+bool PlayerCharacter::Disconnect()
+{
+    if (auto player = player_.lock())
+    {
+        player->Disconnect();
+    }
+    
+    return false;
 }
 
 void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)

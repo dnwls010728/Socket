@@ -34,6 +34,11 @@ void Session::Update()
     if (player_) player_->Update();
 }
 
+bool Session::Disconnect()
+{
+    return ServerManager::Get()->DisconnectClient(client_id_);
+}
+
 std::shared_ptr<Player> Session::CreatePlayer(uint32_t account_id)
 {
     if (player_) player_->ExitMap();

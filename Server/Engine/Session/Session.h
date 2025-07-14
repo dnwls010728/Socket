@@ -28,6 +28,8 @@ public:
     void ReceivePacket(Net::IPacket* packet) const;
     void Update();
 
+    bool Disconnect();
+
     std::shared_ptr<Player> CreatePlayer(uint32_t account_id);
 
     uint32_t GetAccountUniqueID() const;

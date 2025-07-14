@@ -21,9 +21,6 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->UpdateStat(PlayerStat::kHP, response->hp);
     player_subsystem->UpdateStat(PlayerStat::kMaxHP, response->max_hp);
     player_subsystem->UpdateStat(PlayerStat::kExp, response->exp);
-    
-    player_subsystem->initial_position_x_ = response->position_x;
-    player_subsystem->initial_position_y_ = response->position_y;
 
     player_subsystem->inventory_ = std::make_unique<Inventory>();
     Inventory* inventory = player_subsystem->inventory_.get();

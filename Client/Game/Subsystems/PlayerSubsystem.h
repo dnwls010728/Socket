@@ -22,8 +22,6 @@ public:
     FORCEINLINE uint32_t GetExp() const { return exp_; }
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
-
-    FORCEINLINE Math::Vector2 GetInitialPosition() const { return { initial_position_x_, initial_position_y_ }; }
     
     FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
 
@@ -40,9 +38,6 @@ private:
     uint32_t exp_;
 
     std::wstring name_;
-    
-    float initial_position_x_;
-    float initial_position_y_;
     
     std::unique_ptr<Inventory> inventory_;
     

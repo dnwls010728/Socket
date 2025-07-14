@@ -119,6 +119,11 @@ bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
     return true;
 }
 
+bool ServerManager::DisconnectClient(int client_id)
+{
+    return server_socket_.DisconnectClient(client_id);
+}
+
 void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 {
     std::cout << "Client disconnected: " << state.address.ToString().c_str() << std::endl;

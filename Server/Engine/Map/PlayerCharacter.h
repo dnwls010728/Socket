@@ -22,6 +22,8 @@ public:
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(uint32_t damage_amount);
 
+    bool Disconnect();
+
     virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
     inline bool IsInvincible() const { return is_invincible_ == true; }
@@ -50,7 +52,6 @@ protected:
     uint32_t lv_;
     uint32_t hp_;
     uint32_t max_hp_;
-    uint32_t initial_map_id_;
     
     std::atomic_uint32_t exp_;
     std::atomic_uint32_t color_;

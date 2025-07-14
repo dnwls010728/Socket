@@ -67,17 +67,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
         }
         break;
         
-    case InGameReadyPacket::StaticPacketID:
-        {
-            session_->SetState(Session::State::kInGame);
-        }
-        break;
-
-    case MapReadyCompletePacket::StaticPacketID:
-        {
-        }
-        break;
-        
     default:
         break;
     }
@@ -97,6 +86,11 @@ void Player::ExitMap()
         player_character_->ExitMap();
         player_character_ = nullptr;
     }
+}
+
+bool Player::Disconnect()
+{
+    return session_->Disconnect();
 }
 
 std::vector<std::shared_ptr<PlayerCharacter>> Player::GetCharacters()

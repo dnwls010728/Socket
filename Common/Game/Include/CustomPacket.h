@@ -98,50 +98,34 @@ struct SelectCharacterResponse : public Net::IPacket
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 
-// 인 게임 맵으로 전환이 완료되었을 때
-struct InGameReadyPacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(InGameReadyPacket, 208)
-};
-
-struct MapReadyCompletePacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(MapReadyCompletePacket, 500)
-};
-
-struct MapSetupPacket : public Net::IPacket
+struct ChangeMapPacket : public Net::IPacket
 {
     uint32_t map_id;
     
     SERIALIZABLE_FIELDS(map_id)
-    REGISTER_PACKET(MapSetupPacket, 501)
-};
-
-// 맵 전환 요청
-struct ChangeMapRequest : public Net::IPacket
-{
-    uint32_t map_id;
-    
-    SERIALIZABLE_FIELDS(map_id)
-    REGISTER_PACKET(ChangeMapRequest, 209)
+    REGISTER_PACKET(ChangeMapPacket, 208)
 };
 
 struct MapResetPacket : public Net::IPacket
 {
     SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(MapResetPacket, 502)
+    REGISTER_PACKET(MapResetPacket, 209)
 };
 
-// 맵 전환 응답
-struct ChangeMapResponse : public Net::IPacket
+struct MapReadyCompletePacket : public Net::IPacket
 {
-    bool is_success;
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(MapReadyCompletePacket, 210)
+};
+
+struct MapSetupPacket : public Net::IPacket
+{
     uint32_t map_id;
+    float position_x;
+    float position_y;
     
-    SERIALIZABLE_FIELDS(is_success, map_id)
-    REGISTER_PACKET(ChangeMapResponse, 210)
+    SERIALIZABLE_FIELDS(map_id, position_x, position_y)
+    REGISTER_PACKET(MapSetupPacket, 211)
 };
 
 // 플레이어 스폰 패킷
@@ -155,7 +139,7 @@ struct SpawnPlayerPacket : public Net::IPacket
     float position_y;
     
     SERIALIZABLE_FIELDS(character_id, name, position_x, position_y)
-    REGISTER_PACKET(SpawnPlayerPacket, 211)
+    REGISTER_PACKET(SpawnPlayerPacket, 212)
 };
 
 // 플레이어 파괴 패킷
@@ -164,7 +148,7 @@ struct DestroyPlayerPacket : public Net::IPacket
     uint32_t unique_id;
     
     SERIALIZABLE_FIELDS(unique_id)
-    REGISTER_PACKET(DestroyPlayerPacket, 212)
+    REGISTER_PACKET(DestroyPlayerPacket, 213)
 };
 
 struct MovePlayerPacket : public Net::IPacket
@@ -178,7 +162,7 @@ struct MovePlayerPacket : public Net::IPacket
     bool time_update;
     
     SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 213)
+    REGISTER_PACKET(MovePlayerPacket, 214)
 };
 
 struct PlayerAnimationPacket : public Net::IPacket
@@ -189,7 +173,7 @@ struct PlayerAnimationPacket : public Net::IPacket
     float server_time;
     
     SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 214)
+    REGISTER_PACKET(PlayerAnimationPacket, 215)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -198,7 +182,7 @@ struct ChatMessagePacket : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_FIELDS(unique_id, message)
-    REGISTER_PACKET(ChatMessagePacket, 215)
+    REGISTER_PACKET(ChatMessagePacket, 216)
 };
 
 struct SpawnObjectPacket : public Net::IPacket

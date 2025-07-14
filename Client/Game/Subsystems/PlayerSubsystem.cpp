@@ -11,8 +11,6 @@ PlayerSubsystem::PlayerSubsystem() :
     max_hp_(0),
     exp_(0),
     name_(L""),
-    initial_position_x_(0.f),
-    initial_position_y_(0.f),
     inventory_(nullptr)
 {
 }

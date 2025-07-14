@@ -6,7 +6,6 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
-#include "PacketHandlers/ChangeMapHandler.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
@@ -71,11 +70,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
-    );
-
-    handlers_.emplace(
-        ChangeMapResponse::StaticPacketID,
-        std::make_unique<ChangeMapHandler>()
     );
 
     handlers_.emplace(
