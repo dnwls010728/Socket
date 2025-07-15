@@ -3,6 +3,7 @@
 
 #include <numbers>
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Asset/AssetManager.h"
@@ -17,10 +18,15 @@ DroppedItem::DroppedItem(const std::wstring& name) :
     control_(Math::Vector2::Zero()),
     timer_(0.f)
 {
-    SetLayer(ActorLayer::kItemDrop);
+    SetLayer(ActorLayer::kDroppedItem);
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     renderer_->SetZOrder(1001);
+
+    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
+    collider_->SetOffset({ 0.f, 0.f });
+    collider_->SetSize({ 1.f, 1.f });
+    collider_->SetTrigger(true);
 
     Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\101.png");
     if (sprite) renderer_->SetSprite(sprite, L"101_0");

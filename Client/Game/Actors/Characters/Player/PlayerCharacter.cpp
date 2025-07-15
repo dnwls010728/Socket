@@ -200,6 +200,27 @@ void PlayerCharacter::Tick(float delta_time)
         // 아이템 줍기
         if (keyboard->GetKeyDown('Z'))
         {
+            Math::Vector2 center = GetTransform()->GetPosition();
+            Math::Vector2 size = { 1.f, 1.f };
+            
+            Actor* out_actor = nullptr;
+            bool is_hit = Physics2D::OverlapBox(
+                center,
+                size,
+                &out_actor,
+                static_cast<uint16_t>(ActorLayer::kDroppedItem)
+            );
+
+            if (is_hit)
+            {
+                DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
+                if (IsValid(dropped_item))
+                {
+                    PickupItemRequest request;
+                    request.object_id = dropped_item->GetObjectID();
+                    SendPacket(request);
+                }
+            }
         }
 
         // 공격 테스트

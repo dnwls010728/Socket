@@ -29,6 +29,7 @@ protected:
     float ApproxBezierLength(const Math::Vector2& p1, const Math::Vector2& p2, const Math::Vector2& p3, int32_t steps = 100);
 
     std::shared_ptr<SpriteRendererComponent> renderer_;
+    std::shared_ptr<BoxColliderComponent> collider_;
 
     Math::Vector2 start_position_;
     Math::Vector2 drop_position_;

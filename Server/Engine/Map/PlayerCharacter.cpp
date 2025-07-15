@@ -8,6 +8,7 @@
 #include "World.h"
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
+#include "MapObjects/DroppedItem.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player.h"
 
@@ -239,6 +240,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
             map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+        }
+        break;
+
+    case PickupItemRequest::StaticPacketID:
+        {
+            PickupItemRequest* request = static_cast<PickupItemRequest*>(packet);
+
+            std::shared_ptr<MapObject> map_object = map_->FindMapObject(request->object_id);
+            if (!map_object) return;
+            
+            if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
+            {
+            }
         }
         break;
 

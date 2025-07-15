@@ -32,6 +32,8 @@ public:
     void Update();
 
 private:
+    void Remove_Internal(uint32_t slot_index);
+    
     std::weak_ptr<PlayerCharacter> player_character_;
     
     std::map<uint32_t, Slot> slots_;

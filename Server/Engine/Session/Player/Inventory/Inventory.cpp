@@ -50,6 +50,7 @@ uint32_t Inventory::FindFreeSlot()
         counter++;
     }
 
+    // 인벤토리 슬롯의 최대 개수를 초과하지 않는지 확인 필요
     return counter;
 }
 
@@ -98,17 +99,14 @@ void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
     slots_[first_slot] = std::move(slots_[second_slot]);
     slots_[second_slot] = std::move(first);
 
-    if (!slots_[first_slot].item_id) Remove(first_slot);
-    if (!slots_[second_slot].item_id) Remove(second_slot);
+    if (!slots_[first_slot].item_id) Remove_Internal(first_slot);
+    if (!slots_[second_slot].item_id) Remove_Internal(second_slot);
 }
 
 void Inventory::Remove(uint32_t slot_index)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    auto it = slots_.find(slot_index);
-    if (it == slots_.end()) return;
-    
-    slots_.erase(it);
+    Remove_Internal(slot_index);
 }
 
 void Inventory::Update()
@@ -154,4 +152,12 @@ void Inventory::Update()
             std::cerr << "Unknown Exception" << std::endl;
         }
     }
+}
+
+void Inventory::Remove_Internal(uint32_t slot_index)
+{
+    auto it = slots_.find(slot_index);
+    if (it == slots_.end()) return;
+    
+    slots_.erase(it);
 }

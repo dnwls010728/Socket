@@ -53,6 +53,8 @@ public:
     void SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
 
     bool LoadMapData();
+    
+    std::shared_ptr<MapObject> FindMapObject(uint32_t object_id);
 
     Foothold* FindFoothold(const Math::Vector2& position);
 

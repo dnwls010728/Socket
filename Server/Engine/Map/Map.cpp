@@ -388,6 +388,13 @@ bool Map::LoadMapData()
     return true;
 }
 
+std::shared_ptr<MapObject> Map::FindMapObject(uint32_t object_id)
+{
+    auto it = map_objects_.find(object_id);
+    if (it == map_objects_.end()) return nullptr;
+    return it->second;
+}
+
 Foothold* Map::FindFoothold(const Math::Vector2& position)
 {
     Foothold* best = nullptr;

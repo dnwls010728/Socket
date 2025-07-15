@@ -263,6 +263,14 @@ struct DropItemResponse : public Net::IPacket
     REGISTER_PACKET(DropItemResponse, 303)
 };
 
+struct PickupItemRequest : public Net::IPacket
+{
+    uint32_t object_id;
+    
+    SERIALIZABLE_FIELDS(object_id)
+    REGISTER_PACKET(PickupItemRequest, 304)
+};
+
 struct AttackRequest : public Net::IPacket
 {
     uint32_t object_id;
