@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Inventory/Inventory.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
@@ -34,5 +35,7 @@ private:
     UIText* t_color_;
 
     Inventory* inventory_;
+
+    Inventory::Type tab_;
     
 };

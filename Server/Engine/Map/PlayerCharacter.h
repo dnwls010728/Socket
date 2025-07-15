@@ -31,6 +31,8 @@ public:
     inline uint32_t GetAccountID() const { return account_id_; }
 
     inline const std::wstring& GetName() const { return name_; }
+    
+    inline Inventory* GetInventory() const { return inventory_.get(); }
 
 protected:
     friend class Map;

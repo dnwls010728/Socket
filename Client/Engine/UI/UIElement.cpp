@@ -7,7 +7,7 @@
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
-    Math::Vector2 parent_position = parent_ ? parent_->GetRelativePosition() : Math::Vector2::Zero();
+    Math::Vector2 parent_position = parent_ ? parent_->GetAbsolutePosition() : Math::Vector2::Zero();
     Math::Rect rect = {
         parent_position.x + position_.x, parent_position.y + position_.y,
         size_.x, size_.y

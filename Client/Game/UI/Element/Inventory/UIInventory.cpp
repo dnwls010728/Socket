@@ -15,7 +15,8 @@ UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
     slots_(),
     t_color_(nullptr),
-    inventory_(nullptr)
+    inventory_(nullptr),
+    tab_(Inventory::Type::kEquip)
 {
     size_ = { 158.f, 246.f };
     
@@ -39,6 +40,16 @@ UIInventory::UIInventory(const std::wstring& name) :
     equip_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
     equip_button->SetTextColor(Math::Color::White);
     equip_button->SetText(L"장비");
+    equip_button->OnClick([&]()
+    {
+        if (tab_ == Inventory::Type::kEquip) return;
+        tab_ = Inventory::Type::kEquip;
+        
+        for (uint32_t i = 0; i < 20; ++i)
+        {
+            UpdateSlot(i + 1);
+        }
+    });
     
     UIButton* use_button = AddChild<UIButton>(UIButton::StaticClass(), L"UseButton");
     use_button->SetRelativePosition({ 43.f, 20.f });
@@ -49,6 +60,16 @@ UIInventory::UIInventory(const std::wstring& name) :
     use_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
     use_button->SetTextColor(Math::Color::White);
     use_button->SetText(L"소비");
+    use_button->OnClick([&]()
+    {
+        if (tab_ == Inventory::Type::kUse) return;
+        tab_ = Inventory::Type::kUse;
+        
+        for (uint32_t i = 0; i < 20; ++i)
+        {
+            UpdateSlot(i + 1);
+        }
+    });
     
     UIButton* etc_button = AddChild<UIButton>(UIButton::StaticClass(), L"EtcButton");
     etc_button->SetRelativePosition({ 78.f, 20.f });
@@ -59,6 +80,16 @@ UIInventory::UIInventory(const std::wstring& name) :
     etc_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
     etc_button->SetTextColor(Math::Color::White);
     etc_button->SetText(L"기타");
+    etc_button->OnClick([&]()
+    {
+        if (tab_ == Inventory::Type::kEtc) return;
+        tab_ = Inventory::Type::kEtc;
+        
+        for (uint32_t i = 0; i < 20; ++i)
+        {
+            UpdateSlot(i + 1);
+        }
+    });
 
     for (uint32_t i = 0; i < 5; ++i)
     {
@@ -86,12 +117,12 @@ UIInventory::UIInventory(const std::wstring& name) :
 void UIInventory::UpdateSlot(uint32_t slot_index)
 {
     if (!inventory_) return;
-    // if (uint32_t item_id = inventory_->GetItemID(slot_index))
-    // {
-    //     uint32_t count = inventory_->GetItemCount(slot_index);
-    //     slots_[slot_index - 1]->UpdateSlot(item_id, count);
-    // }
-    // else slots_[slot_index - 1]->UpdateSlot(0, 0);
+    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
+    {
+        uint32_t count = inventory_->GetItemCount(tab_, slot_index);
+        slots_[slot_index - 1]->UpdateSlot(item_id, count);
+    }
+    else slots_[slot_index - 1]->UpdateSlot(0, 0);
 }
 
 void UIInventory::UpdateColor(uint32_t color)

@@ -50,14 +50,19 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
 
-            for (const auto& it : player_character_->inventory_->GetSlots())
+            const auto& inventories = player_character_->GetInventory()->GetInventories();
+            for (const auto& inventory : inventories)
             {
-                ItemInfo item_info;
-                item_info.item_id = it.second.item_id;
-                item_info.slot_index = it.first;
-                item_info.count = it.second.count;
-
-                response.inventory.push_back(item_info);
+                Inventory::Type type = inventory.first;
+                for (const auto& slot : inventory.second)
+                {
+                    ItemInfo item_info;
+                    item_info.inventory_type = static_cast<uint8_t>(type);
+                    item_info.item_id = slot.second.item_id;
+                    item_info.slot_index = slot.first;
+                    item_info.count = slot.second.count;
+                    response.inventory.push_back(item_info);
+                }
             }
 
             SendPacket(response);

@@ -75,11 +75,14 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
+                uint8_t inventory_type = result->getInt("inventory_type");
+                
                 uint32_t item_id = result->getInt("item_id");
                 uint32_t slot_index = result->getInt("slot_index");
                 uint32_t count = result->getInt("count");
 
-                character->inventory_->AddSlot(slot_index, item_id, count);
+                Inventory::Type type = static_cast<Inventory::Type>(inventory_type);
+                character->inventory_->AddSlot(type, slot_index, item_id, count);
             }
         }
 
@@ -206,8 +209,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             {
             case ItemMoveType::kMove:
                 {
-                    if (!inventory_->GetItemID(src)) break;
-                    inventory_->Swap(src, dest);
+                    // if (!inventory_->GetItemID(src)) break;
+                    // inventory_->Swap(src, dest);
 
                     MoveItemResponse response;
                     response.changes.push_back({ src, dest });
@@ -222,24 +225,24 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             DropItemRequest* request = static_cast<DropItemRequest*>(packet);
 
-            uint32_t item_id = inventory_->GetItemID(request->slot_id);
-            uint32_t count = inventory_->GetItemCount(request->slot_id);
-            uint32_t remaining_count = 0;
+            // uint32_t item_id = inventory_->GetItemID(request->slot_id);
+            // uint32_t count = inventory_->GetItemCount(request->slot_id);
+            // uint32_t remaining_count = 0;
+            //
+            // if (request->count >= count) inventory_->Remove(request->slot_id);
+            // else
+            // {
+            //     remaining_count = count - request->count;
+            //     inventory_->ChangeCount(request->slot_id, remaining_count);
+            // }
 
-            if (request->count >= count) inventory_->Remove(request->slot_id);
-            else
-            {
-                remaining_count = count - request->count;
-                inventory_->ChangeCount(request->slot_id, remaining_count);
-            }
-
-            DropItemResponse response;
-            response.slot_id = request->slot_id;
-            response.count = remaining_count;
-            SendPacket(response);
-
-            Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
-            map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            // DropItemResponse response;
+            // response.slot_id = request->slot_id;
+            // response.count = remaining_count;
+            // SendPacket(response);
+            //
+            // Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
+            // map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 

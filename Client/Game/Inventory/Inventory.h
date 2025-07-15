@@ -37,7 +37,7 @@ private:
         uint32_t count;
     };
     
-    std::unordered_map<Type, std::map<uint32_t, Slot>> slots_;
+    std::unordered_map<Type, std::map<uint32_t, Slot>> inventories_;
 
     // 재화
     uint32_t color_;

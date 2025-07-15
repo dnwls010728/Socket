@@ -18,6 +18,8 @@ struct CharacterInfo
 
 struct ItemInfo
 {
+    uint8_t inventory_type; // 0: 장비, 1: 소비, 2: 기타
+    
     uint32_t item_id;
     uint32_t slot_index;
     uint32_t count;

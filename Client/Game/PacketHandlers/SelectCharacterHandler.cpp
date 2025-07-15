@@ -31,7 +31,8 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 
     for (const auto& item : response->inventory)
     {
-        // inventory->AddSlot(item.slot_index, item.item_id, item.count);
+        Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
+        inventory->AddSlot(type, item.slot_index, item.item_id, item.count);
     }
     
     player_subsystem->inventory_->SetColor(response->color);
