@@ -8,7 +8,8 @@ public:
         kNone = 0,
         kEquip,
         kUse,
-        kEtc
+        kEtc,
+        kCount
     };
     
     Inventory();

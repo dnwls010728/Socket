@@ -40,9 +40,4 @@ namespace Net
 		v.count
 		)
 
-	SERIALIZER_EXTEND(InventoryChange,
-		v.dest,
-		v.arg
-		)
-
 } // namespace Net

@@ -201,23 +201,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
             if (!inventory_) return;
+
+            Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
-            uint32_t src = request->src;
-            uint32_t dest = request->dest;
+            if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
+            inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
 
-            switch (request->type)
-            {
-            case ItemMoveType::kMove:
-                {
-                    // if (!inventory_->GetItemID(src)) break;
-                    // inventory_->Swap(src, dest);
-
-                    MoveItemResponse response;
-                    response.changes.push_back({ src, dest });
-                    SendPacket(response);
-                }
-                break;
-            }
+            MoveItemResponse response;
+            response.inventory_type = request->inventory_type;
+            response.first_slot = request->first_slot;
+            response.second_slot = request->second_slot;
+            SendPacket(response);
         }
         break;
 

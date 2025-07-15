@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "UIInventory.h"
 #include "Asset/AssetManager.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
@@ -13,7 +14,7 @@
 
 UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
-    inventory_(nullptr),
+    ui_inventory_(nullptr),
     i_icon_(nullptr),
     t_count_(nullptr),
     slot_id_(0),
@@ -45,18 +46,15 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
 
         t_count_->SetText(std::to_wstring(count));
     }
-    else
-    {
-        i_icon_->SetSprite(nullptr, L"");
-        t_count_->SetText(L"");
-    }
 }
 
-void UIInventorySlot::Init()
+void UIInventorySlot::ResetSlot()
 {
-    UIContainer::Init();
-    inventory_ = PlayerSubsystem::Get()->GetInventory();
-
+    i_icon_->SetRelativePosition(Math::Vector2::Zero());
+    t_count_->SetRelativePosition(Math::Vector2::Zero());
+    
+    i_icon_->SetSprite(nullptr, L"");
+    t_count_->SetText(L"");
 }
 
 void UIInventorySlot::Render()
@@ -124,10 +122,12 @@ bool UIInventorySlot::OnDrop(const Math::Vector2& position, UIElement* target)
     UIInventorySlot* target_slot = dynamic_cast<UIInventorySlot*>(target);
     if (!target_slot) return false;
 
+    uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+
     MoveItemRequest request;
-    request.type = ItemMoveType::kMove;
-    request.src = target_slot->GetSlotID();
-    request.dest = slot_id_;
+    request.inventory_type = inventory_type;
+    request.first_slot = target_slot->GetSlotID();
+    request.second_slot = slot_id_;
     SessionSubsystem::Get()->SendPacket(request);
     
     return true;

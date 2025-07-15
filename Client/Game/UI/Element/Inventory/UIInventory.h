@@ -4,6 +4,7 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
+class UIButton;
 class Inventory;
 class UIInventorySlot;
 
@@ -26,9 +27,14 @@ protected:
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
+    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
 
 private:
+    friend class UIInventorySlot;
+    
     void OnEvent(const EventData& event_data);
+
+    std::array<UIButton*, static_cast<uint8_t>(Inventory::Type::kCount)> tab_buttons_;
     
     std::vector<UIInventorySlot*> slots_;
 

@@ -43,7 +43,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     equip_button->OnClick([&]()
     {
         if (tab_ == Inventory::Type::kEquip) return;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
+        
         tab_ = Inventory::Type::kEquip;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 20; ++i)
         {
@@ -63,7 +66,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     use_button->OnClick([&]()
     {
         if (tab_ == Inventory::Type::kUse) return;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
+        
         tab_ = Inventory::Type::kUse;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 20; ++i)
         {
@@ -83,7 +89,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     etc_button->OnClick([&]()
     {
         if (tab_ == Inventory::Type::kEtc) return;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
+        
         tab_ = Inventory::Type::kEtc;
+        tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 20; ++i)
         {
@@ -91,13 +100,18 @@ UIInventory::UIInventory(const std::wstring& name) :
         }
     });
 
+    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEquip)] = equip_button;
+    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kUse)] = use_button;
+    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEtc)] = etc_button;
+
     for (uint32_t i = 0; i < 5; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
             UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
             slot->SetRelativePosition({ 8.f + j * 36.f, 48.f + i * 36.f });
-            
+
+            slot->SetUIInventory(this);
             slot->SetSlotID(i * 4 + j + 1);
             slots_.push_back(slot);
         }
@@ -122,7 +136,7 @@ void UIInventory::UpdateSlot(uint32_t slot_index)
         uint32_t count = inventory_->GetItemCount(tab_, slot_index);
         slots_[slot_index - 1]->UpdateSlot(item_id, count);
     }
-    else slots_[slot_index - 1]->UpdateSlot(0, 0);
+    else slots_[slot_index - 1]->ResetSlot();
 }
 
 void UIInventory::UpdateColor(uint32_t color)
@@ -152,6 +166,8 @@ void UIInventory::Init()
 
     UpdateColor(inventory_->GetColor());
     SetActive(false);
+
+    tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
     
 }
 
@@ -186,6 +202,26 @@ bool UIInventory::OnDrag(const Math::Vector2& position, const Math::Vector2& del
 
 bool UIInventory::OnDragEnd(const Math::Vector2& position)
 {
+    return true;
+}
+
+bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
+{
+    if (key_code != VK_TAB || !is_pressed) return false;
+
+    uint8_t current_tab = static_cast<uint8_t>(tab_);
+    tab_buttons_[current_tab]->SetTextColor(Math::Color::White);
+    
+    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 1)) + 1;
+    tab_buttons_[current_tab]->SetTextColor(Math::Color::Yellow);
+    
+    tab_ = static_cast<Inventory::Type>(current_tab);
+    
+    for (uint32_t i = 0; i < 20; ++i)
+    {
+        UpdateSlot(i + 1);
+    }
+    
     return true;
 }
 

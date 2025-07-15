@@ -228,20 +228,23 @@ struct ObjectAnimationPacket : public Net::IPacket
 
 struct MoveItemRequest : public Net::IPacket
 {
-    ItemMoveType type;
-    uint32_t src;
-    uint32_t dest;
-    uint32_t count;
+    uint8_t inventory_type;
     
-    SERIALIZABLE_FIELDS(type, src, dest, count)
+    uint32_t first_slot;
+    uint32_t second_slot;
+    
+    SERIALIZABLE_FIELDS(inventory_type, first_slot, second_slot)
     REGISTER_PACKET(MoveItemRequest, 300)
 };
 
 struct MoveItemResponse : public Net::IPacket
 {
-    std::vector<InventoryChange> changes;
+    uint8_t inventory_type;
     
-    SERIALIZABLE_FIELDS(changes)
+    uint32_t first_slot;
+    uint32_t second_slot;
+    
+    SERIALIZABLE_FIELDS(inventory_type, first_slot, second_slot)
     REGISTER_PACKET(MoveItemResponse, 301)
 };
 

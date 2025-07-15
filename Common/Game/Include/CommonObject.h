@@ -25,12 +25,6 @@ struct ItemInfo
     uint32_t count;
 };
 
-struct InventoryChange
-{
-    uint32_t dest;
-    uint32_t arg;
-};
-
 enum class ItemMoveType : uint8_t
 {
     kNone = 0,
