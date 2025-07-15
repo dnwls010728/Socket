@@ -46,7 +46,7 @@ void UI_OLD::MiniMap::Render(Renderer* renderer, WindowsWindow* window)
 
     if (tilemap_)
     {
-        renderer->DrawBitmap(window, tilemap_->GetUISprite()->GetTexture(), rect, GetPivotPosition());
+        renderer->DrawBitmap(window, tilemap_->GetUISprite()->GetSprite(), rect, GetPivotPosition());
 
         Bounds map_world_bounds = tilemap_->GetWorldBounds();
         Math::Vector2 scale { rect.width / (map_world_bounds.max.x - map_world_bounds.min.x), rect.height / (map_world_bounds.max.y - map_world_bounds.min.y) };

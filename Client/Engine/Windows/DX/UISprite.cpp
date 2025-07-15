@@ -29,36 +29,52 @@ bool UISprite::Load(const std::wstring& path)
         {
             for (const auto& frame : meta_data_["frames"])
             {
-                Frame sprite_frame;
-                sprite_frame.offset.x = frame["rect"]["x"].as<float>();
-                sprite_frame.offset.y = frame["rect"]["y"].as<float>();
-                sprite_frame.size.x = frame["rect"]["width"].as<float>();
-                sprite_frame.size.y = frame["rect"]["height"].as<float>();
-                sprite_frame.border_min.x = frame["border"]["left"].as<float>();
-                sprite_frame.border_min.y = frame["border"]["top"].as<float>();
-                sprite_frame.border_max.x = frame["border"]["right"].as<float>();
-                sprite_frame.border_max.y = frame["border"]["bottom"].as<float>();
+                UISpriteFrame sprite_frame = frame.as<UISpriteFrame>();
+                frames_.push_back(sprite_frame);
                 
                 std::wstring name = StringHelper::UTF8ToUTF16(frame["name"].as<std::string>());
-                frames_[name] = sprite_frame;
+                frame_indexes_[name] = frames_.size() - 1;
             }
         }
     }
     else
     {
-        frames_.clear();
-
-        Frame frame;
+        UISpriteFrame frame;
         frame.offset = Math::Vector2::Zero();
         frame.size = { static_cast<float>(width_), static_cast<float>(height_) };
         frame.border_min = Math::Vector2::Zero();
         frame.border_max = Math::Vector2::Zero();
+        frames_.push_back(frame);
 
         std::wstring filename = FileHelper::GetFilenameWithoutExtension(path);
-        frames_[filename + L"_0"] = frame;
+        frame_indexes_[filename + L"_0"] = frames_.size() - 1;
     }
     
     return true;
+}
+
+uint32_t UISprite::GetWidth(const std::wstring& frame_name) const
+{
+    auto it = frame_indexes_.find(frame_name);
+    if (it != frame_indexes_.end())
+    {
+        const UISpriteFrame& frame = frames_[it->second];
+        return static_cast<uint32_t>(frame.size.x);
+    }
+
+    return 0;
+}
+
+uint32_t UISprite::GetHeight(const std::wstring& frame_name) const
+{
+    auto it = frame_indexes_.find(frame_name);
+    if (it != frame_indexes_.end())
+    {
+        const UISpriteFrame& frame = frames_[it->second];
+        return static_cast<uint32_t>(frame.size.x);
+    }
+
+    return 0;
 }
 
 bool UISprite::LoadBitmap(const std::wstring& path)

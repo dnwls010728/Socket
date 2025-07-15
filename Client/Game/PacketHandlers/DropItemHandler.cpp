@@ -14,11 +14,11 @@ bool DropItemHandler::Handle(Net::IPacket* packet)
     Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
     if (received_packet->count > 0)
     {
-        inventory->ChangeCount(received_packet->slot_id, received_packet->count);
+        // inventory->ChangeCount(received_packet->slot_id, received_packet->count);
     }
     else
     {
-        inventory->Remove(received_packet->slot_id);
+        // inventory->Remove(received_packet->slot_id);
     }
     
     return true;

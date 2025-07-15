@@ -87,11 +87,26 @@ UI::MouseEventResult UIState::OnMouseMotion(const Math::Vector2& position, const
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[elements_.size() - i - 1].get();
-        if (element && element->IsActive() && element->IsInRange(position))
+        if (!element || !element->IsActive()) continue;
+
+        bool is_in_range = element->IsInRange(position);
+        bool was_in_range = element->IsInRange(position - delta);
+
+        if (is_in_range && !was_in_range) result.is_handled |= element->OnMouseEnter();
+        if (!is_in_range && was_in_range)
         {
-            result = element->OnMouseMotion(position, delta);
+            result.is_handled |= element->OnMouseLeave();
             if (result.is_handled) return result;
         }
+
+        if (is_in_range || was_in_range)
+        {
+            UI::MouseEventResult temp_result = element->OnMouseMotion(position, delta);
+            result.cursor_state = temp_result.cursor_state;
+            result.is_handled |= temp_result.is_handled;
+        }
+
+        if (result.is_handled) return result;
     }
 
     return result;

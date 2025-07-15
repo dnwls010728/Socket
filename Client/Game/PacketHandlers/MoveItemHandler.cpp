@@ -15,7 +15,7 @@ bool MoveItemHandler::Handle(Net::IPacket* packet)
     if (!changes.empty())
     {
         Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
-        inventory->Swap(changes[0].dest, changes[0].arg);
+        // inventory->Swap(changes[0].dest, changes[0].arg);
     }
     
     return true;

@@ -48,6 +48,8 @@ protected:
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
 
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseLeave();
     virtual bool OnDragBegin(const Math::Vector2& position);
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta);
     virtual bool OnDragEnd(const Math::Vector2& position);

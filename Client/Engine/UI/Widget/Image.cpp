@@ -25,7 +25,7 @@ void UI_OLD::Image::Render(Renderer* renderer, WindowsWindow* window)
     Widget::Render(renderer, window);
     if (!ui_sprite_) return;
 
-    renderer->DrawBitmap(window, ui_sprite_->GetTexture(), GetRect(), GetPivotPosition());
+    renderer->DrawBitmap(window, ui_sprite_->GetSprite(), GetRect(), GetPivotPosition());
 }
 
 RTTR_REGISTRATION

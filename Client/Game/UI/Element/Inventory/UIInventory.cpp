@@ -51,12 +51,12 @@ UIInventory::UIInventory(const std::wstring& name) :
 void UIInventory::UpdateSlot(uint32_t slot_index)
 {
     if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(slot_index))
-    {
-        uint32_t count = inventory_->GetItemCount(slot_index);
-        slots_[slot_index - 1]->UpdateSlot(item_id, count);
-    }
-    else slots_[slot_index - 1]->UpdateSlot(0, 0);
+    // if (uint32_t item_id = inventory_->GetItemID(slot_index))
+    // {
+    //     uint32_t count = inventory_->GetItemCount(slot_index);
+    //     slots_[slot_index - 1]->UpdateSlot(item_id, count);
+    // }
+    // else slots_[slot_index - 1]->UpdateSlot(0, 0);
 }
 
 void UIInventory::UpdateColor(uint32_t color)

@@ -995,10 +995,10 @@ void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& f
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
     
-    auto it = ui_sprite->frames_.find(frame_name);
-    if (it == ui_sprite->frames_.end()) return;
+    auto it = ui_sprite->frame_indexes_.find(frame_name);
+    if (it == ui_sprite->frame_indexes_.end()) return;
 
-    const UISprite::Frame& frame = it->second;
+    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
 
     D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
     if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
@@ -1018,10 +1018,10 @@ void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& f
     D2D1_MATRIX_3X2_F transform;
     d2d_viewport->d2d_render_target->GetTransform(&transform);
     
-    auto it = ui_sprite->frames_.find(frame_name);
-    if (it == ui_sprite->frames_.end()) return;
+    auto it = ui_sprite->frame_indexes_.find(frame_name);
+    if (it == ui_sprite->frame_indexes_.end()) return;
 
-    const UISprite::Frame& frame = it->second;
+    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
 
     D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
     if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;

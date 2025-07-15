@@ -74,6 +74,16 @@ UI::MouseEventResult UIElement::OnMouseButton(const Math::Vector2& position, Mou
     return { false, UI::CursorState::kIdle };
 }
 
+bool UIElement::OnMouseEnter()
+{
+    return false;
+}
+
+bool UIElement::OnMouseLeave()
+{
+    return false;
+}
+
 bool UIElement::OnDragBegin(const Math::Vector2& position)
 {
     return false;

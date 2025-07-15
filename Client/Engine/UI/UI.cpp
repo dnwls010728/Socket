@@ -51,17 +51,17 @@ void UI::Render()
     Renderer* renderer = Renderer::Get();
     WindowsWindow* window = World::Get()->GetWindow();
 
-    UISprite* cursor_texture = cursor_sprites_[cursor_state_];
-    if (cursor_texture)
+    UISprite* cursor_sprite = cursor_sprites_[cursor_state_];
+    if (cursor_sprite)
     {
         Math::Rect cursor_rect = {
             cursor_position_.x,
             cursor_position_.y,
-            static_cast<float>(cursor_texture->GetWidth()),
-            static_cast<float>(cursor_texture->GetHeight())
+            static_cast<float>(cursor_sprite->GetWidth()),
+            static_cast<float>(cursor_sprite->GetHeight())
         };
         
-        renderer->DrawBitmap(window, cursor_texture->GetTexture(), cursor_rect, Math::Vector2::Zero(), 0.f);
+        renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
     }
 }
 
