@@ -2,11 +2,14 @@
 #include "UIInventory.h"
 
 #include "UIInventorySlot.h"
+#include "Asset/AssetManager.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
+#include "UI/Element/UIButton.h"
 #include "Windows/DX/Renderer.h"
+#include "Windows/DX/UISprite.h"
 
 UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
@@ -14,7 +17,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     t_color_(nullptr),
     inventory_(nullptr)
 {
-    size_ = { 158.f, 224.f };
+    size_ = { 158.f, 246.f };
     
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
@@ -25,12 +28,44 @@ UIInventory::UIInventory(const std::wstring& name) :
     t_title->SetText(L"인벤토리");
     t_title->SetIgnoreRayCast(true);
 
+    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
+
+    UIButton* equip_button = AddChild<UIButton>(UIButton::StaticClass(), L"EquipButton");
+    equip_button->SetRelativePosition({ 8.f, 20.f });
+    equip_button->SetSize({ 35.f, 22.f });
+    equip_button->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
+    equip_button->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
+    equip_button->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
+    equip_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
+    equip_button->SetTextColor(Math::Color::White);
+    equip_button->SetText(L"장비");
+    
+    UIButton* use_button = AddChild<UIButton>(UIButton::StaticClass(), L"UseButton");
+    use_button->SetRelativePosition({ 43.f, 20.f });
+    use_button->SetSize({ 35.f, 22.f });
+    use_button->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
+    use_button->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
+    use_button->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
+    use_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
+    use_button->SetTextColor(Math::Color::White);
+    use_button->SetText(L"소비");
+    
+    UIButton* etc_button = AddChild<UIButton>(UIButton::StaticClass(), L"EtcButton");
+    etc_button->SetRelativePosition({ 78.f, 20.f });
+    etc_button->SetSize({ 35.f, 22.f });
+    etc_button->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
+    etc_button->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
+    etc_button->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
+    etc_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
+    etc_button->SetTextColor(Math::Color::White);
+    etc_button->SetText(L"기타");
+
     for (uint32_t i = 0; i < 5; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
             UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ 8.f + j * 36.f, 24.f + i * 36.f });
+            slot->SetRelativePosition({ 8.f + j * 36.f, 48.f + i * 36.f });
             
             slot->SetSlotID(i * 4 + j + 1);
             slots_.push_back(slot);
@@ -38,7 +73,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     }
     
     t_color_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
-    t_color_->SetRelativePosition({ 8.f, 204.f });
+    t_color_->SetRelativePosition({ 8.f, 224.f });
     t_color_->SetSize({ 142.f, 20.f });
     t_color_->SetColor(Math::Color::White);
     t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);

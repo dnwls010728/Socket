@@ -85,13 +85,6 @@ UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& positio
     return result;
 }
 
-bool UIInventorySlot::OnMouseEnter()
-{
-    Logger::Print(L"InventorySlot::OnMouseEnter");
-    
-    return true;
-}
-
 bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;

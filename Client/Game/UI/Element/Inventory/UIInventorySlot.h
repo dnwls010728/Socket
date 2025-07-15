@@ -26,7 +26,6 @@ protected:
 
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
 
-    virtual bool OnMouseEnter() override;
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
