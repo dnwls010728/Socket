@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UI/UIState.h"
 
+class UIItemTooltip;
 class UIInventory;
 
 class UIInGameState : public UIState
@@ -11,6 +12,8 @@ public:
     UIInGameState();
     virtual ~UIInGameState() override = default;
 
+    FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
+
 protected:
     virtual void Init() override;
 
@@ -18,5 +21,7 @@ protected:
 
 private:
     UIInventory* inventory_;
+
+    UIItemTooltip* item_tooltip_;
     
 };

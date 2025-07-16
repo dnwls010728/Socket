@@ -165,8 +165,6 @@ void UIInventory::Init()
     }
 
     UpdateColor(inventory_->GetColor());
-    SetActive(false);
-
     tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
     
 }

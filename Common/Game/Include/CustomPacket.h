@@ -250,19 +250,23 @@ struct MoveItemResponse : public Net::IPacket
 
 struct DropItemRequest : public Net::IPacket
 {
+    uint8_t inventory_type;
+    
     uint32_t slot_id;
     uint32_t count;
     
-    SERIALIZABLE_FIELDS(slot_id, count)
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
     REGISTER_PACKET(DropItemRequest, 302)
 };
 
 struct DropItemResponse : public Net::IPacket
 {
+    uint8_t inventory_type;
+    
     uint32_t slot_id;
     uint32_t count;
     
-    SERIALIZABLE_FIELDS(slot_id, count)
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
     REGISTER_PACKET(DropItemResponse, 303)
 };
 

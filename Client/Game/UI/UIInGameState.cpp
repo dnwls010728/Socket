@@ -3,19 +3,29 @@
 
 #include "Element/UIStatusBar.h"
 #include "Element/Inventory/UIInventory.h"
+#include "Element/Inventory/UIItemTooltip.h"
 #include "Subsystems/PlayerSubsystem.h"
 
 UIInGameState::UIInGameState() :
-    inventory_(nullptr)
+    inventory_(nullptr),
+    item_tooltip_(nullptr)
 {
 }
 
 void UIInGameState::Init()
 {
-    UIState::Init();
-
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
+    inventory_->SetActive(false);
+    
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
+
+    item_tooltip_ = AddElement<UIItemTooltip>(UIItemTooltip::StaticClass(), L"ItemTooltip");
+    item_tooltip_->SetAbsolutePosition({ 100.f, 100.f });
+    item_tooltip_->SetSize({ 322.f, 122.f });
+    item_tooltip_->SetActive(false);
+    item_tooltip_->SetIgnoreRayCast(true);
+    
+    UIState::Init();
 }
 
 bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)

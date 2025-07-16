@@ -305,6 +305,7 @@
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
     <ClInclude Include="Game\UI\ChatPanel.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
@@ -702,6 +703,7 @@
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
     <ClCompile Include="Game\UI\ChatPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />

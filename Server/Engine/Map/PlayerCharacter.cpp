@@ -219,24 +219,27 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             DropItemRequest* request = static_cast<DropItemRequest*>(packet);
 
-            // uint32_t item_id = inventory_->GetItemID(request->slot_id);
-            // uint32_t count = inventory_->GetItemCount(request->slot_id);
-            // uint32_t remaining_count = 0;
-            //
-            // if (request->count >= count) inventory_->Remove(request->slot_id);
-            // else
-            // {
-            //     remaining_count = count - request->count;
-            //     inventory_->ChangeCount(request->slot_id, remaining_count);
-            // }
+            Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
+            
+            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
+            uint32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
+            uint32_t remaining_count = 0;
+            
+            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_id);
+            else
+            {
+                remaining_count = count - request->count;
+                inventory_->ChangeCount(inventory_type, request->slot_id, remaining_count);
+            }
 
-            // DropItemResponse response;
-            // response.slot_id = request->slot_id;
-            // response.count = remaining_count;
-            // SendPacket(response);
-            //
-            // Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
-            // map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            DropItemResponse response;
+            response.inventory_type = request->inventory_type;
+            response.slot_id = request->slot_id;
+            response.count = remaining_count;
+            SendPacket(response);
+            
+            Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
+            map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 
