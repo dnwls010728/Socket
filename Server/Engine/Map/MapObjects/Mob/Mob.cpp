@@ -75,52 +75,43 @@ void Mob::PhysicsTick(float delta_time)
     // state_machine_->PhysicsTick(delta_time);
 
     velocity_.x = -2.f;
-
+    
+    bool was_slope = foothold_ && foothold_->IsSlope();
+    if (is_grounded_)
     {
-        Math::Vector2 position = position_;
-        float previous = foothold_->GetSlope();
+        if (position_.x > foothold_->GetX2())
+            foothold_ = map_->FindFootholdByID(foothold_->GetNext());
+        else if (position_.x < foothold_->GetX1())
+            foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
+
+        if (!foothold_) foothold_ = map_->FindFoothold(position_);
+    }
+    else
+    {
+        foothold_ = map_->FindFoothold(position_);
+        if (!foothold_) return;
+    }
+    
+    float ground_y = foothold_->GetYAt(position_.x);
+    if (was_slope || foothold_->IsSlope())
+    {
+        position_.y = ground_y;
+    }
+
+    is_grounded_ = Math::IsEqual(position_.y, ground_y);
+
+    velocity_.y += gravity_ * delta_time;
+    Math::Vector2 next_position = position_ + velocity_ * delta_time;
+    
+    float next_ground_y = foothold_->GetYAt(next_position.x);
         
-        if (is_grounded_)
-        {
-            if (position.x > foothold_->GetX2()) foothold_ = map_->FindFootholdByID(foothold_->GetNext());
-            else if (position.x < foothold_->GetX1()) foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
-
-            if (!foothold_) foothold_ = map_->FindFoothold(position);
-        }
-
-        if (foothold_)
-        {
-            float ground_y = foothold_->GetYAt(position.x);
-            if (!Math::IsEqual(foothold_->GetSlope(), 0.f) || !Math::IsEqual(previous, 0.f))
-            {
-                position_.y = ground_y;
-            }
-            
-            is_grounded_ = Math::IsEqual(position_.y, ground_y);
-        }
-    }
-
+    if (position_.y >= ground_y && next_position.y <= next_ground_y)
     {
-        if (!is_grounded_) velocity_.y += gravity_ * delta_time;
+        position_.y = next_ground_y;
+        velocity_.y = 0;
     }
 
-    {
-        float y = position_.y;
-        float next_y = position_.y + velocity_.y * delta_time;
-
-        float ground_y = foothold_->GetYAt(y);
-        float next_ground_y = foothold_->GetYAt(next_y);
-
-        bool is_grounded = y >= ground_y && next_y <= next_ground_y;
-        if (is_grounded)
-        {
-            position_.y = next_ground_y;
-            velocity_.y = 0.f;
-        }
-    }
-
-    position_.x += velocity_.x * delta_time;
-    position_.y += velocity_.y * delta_time;
+    Translate(velocity_ * delta_time);
     
 }
 

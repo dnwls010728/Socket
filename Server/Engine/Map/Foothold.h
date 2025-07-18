@@ -21,9 +21,7 @@ public:
     inline uint32_t GetNext() const { return next_; }
     
     float GetYAt(float x) const;
-    float GetXDelta() const;
-    float GetYDelta() const;
-    float GetSlope() const;
+    bool IsSlope() const;
 
 private:
     Math::Vector2 point1_;
