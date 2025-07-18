@@ -21,12 +21,12 @@ Map::Map(uint32_t map_id) :
     object_mutex_(),
     next_object_id_(1000),
     players_(),
+    footholds_(),
     map_objects_(),
     pending_players_(),
     pending_remove_players_(),
     pending_objects_(),
     pending_remove_objects_(),
-    footholds_(),
     mob_ids(),
     respawn_timer_(0.f),
     monitor_timer_(0.f)
@@ -346,21 +346,25 @@ bool Map::LoadMapData()
                 {
                     if (object.getShape() == tmx::Object::Shape::Polyline)
                     {
-                        const auto& points = object.getPoints();
-                        for (size_t i = 0; i < points.size() - 1; ++i)
-                        {
-                            Math::Vector2 point1 = {
-                                points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            };
-                            
-                            Math::Vector2 point2 = {
-                                points[i + 1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[i + 1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            };
+                        const auto& object_properties = object.getProperties();
+                        if (object_properties.empty()) continue;
 
-                            footholds_.emplace_back(std::make_unique<Foothold>(point1, point2));
-                        }
+                        uint32_t id = object_properties[0].getIntValue();
+                        uint32_t next = object_properties[1].getIntValue();
+                        uint32_t previous = object_properties[2].getIntValue();
+                        
+                        const auto& points = object.getPoints();
+                        Math::Vector2 point1 = {
+                            points[0].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                            -1 * points[0].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                        };
+                            
+                        Math::Vector2 point2 = {
+                            points[1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                            -1 * points[1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                        };
+
+                        footholds_[id] = std::make_unique<Foothold>(point1, point2, id, previous, next);
                     }
                 }
             }
@@ -395,27 +399,35 @@ std::shared_ptr<MapObject> Map::FindMapObject(uint32_t object_id)
     return it->second;
 }
 
-Foothold* Map::FindFoothold(const Math::Vector2& position)
+Foothold* Map::FindFoothold(const Math::Vector2& position) const
 {
     Foothold* best = nullptr;
-    float best_y = -std::numeric_limits<float>::max();
-    
-    for (const auto& foothold : footholds_)
+    float best_y = map_bounds_.min.y;
+
+    for (const auto& it : footholds_)
     {
+        Foothold* foothold = it.second.get();
         if (position.x < foothold->GetX1() || position.x > foothold->GetX2()) continue;
-        
+
         float y = foothold->GetYAt(position.x);
         if (best_y <= y && position.y >= y)
         {
             best_y = y;
-            best = foothold.get();
+            best = foothold;
         }
     }
-
+    
     return best;
 }
 
-const std::shared_ptr<PlayerCharacter>& Map::FindPlayer(uint32_t player_id)
+Foothold* Map::FindFootholdByID(uint32_t foothold_id)
+{
+    auto it = footholds_.find(foothold_id);
+    if (it == footholds_.end()) return nullptr;
+    return it->second.get();
+}
+
+std::shared_ptr<PlayerCharacter> Map::FindPlayer(uint32_t player_id)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
     
@@ -461,8 +473,8 @@ void Map::Respawn()
         if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
-            mob->SetPosition(spawn_point.position);
-            mob->SetLastPosition(spawn_point.position);
+            mob->SetPosition(spawn_point.position + Math::Vector2(0.f, 5.f));
+            mob->SetLastPosition(spawn_point.position + Math::Vector2(0.f, 5.f));
             SpawnObject(mob);
         }
     }

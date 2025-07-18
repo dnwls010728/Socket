@@ -63,6 +63,8 @@ void Mob::BeginPlay()
     state_machine_->GetOrAddNode(hit_state_);
     
     state_machine_->SetState(idle_state_);
+
+    foothold_ = map_->FindFoothold(position_);
     
 }
 
@@ -72,22 +74,59 @@ void Mob::PhysicsTick(float delta_time)
     state_machine_->PhysicsTick(delta_time);
 
     velocity_.y += gravity_ * delta_time;
-    Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
+    Math::Vector2 next_position = position_ + velocity_ * delta_time;
+    
+    const Bounds& bounds = map_->GetMapBounds();
 
-    is_grounded_ = false;
-    foothold_ = map_->FindFoothold({ next_position.x, GetPosition().y + .1f }); // 경사면 체크를 위해 y 좌표를 0.1만큼 올림
-    if (foothold_)
+    if (is_grounded_)
     {
-        float foothold_y = foothold_->GetYAt(next_position.x);
-        if (GetPosition().y + 1.f >= foothold_y && next_position.y <= foothold_y)
+        if (position_.x > foothold_->GetX2()) map_->FindFootholdByID(foothold_->GetNext());
+        else if (position_.x < foothold_->GetX1()) map_->FindFootholdByID(foothold_->GetPrevious());
+
+        if (!foothold_) foothold_ = map_->FindFoothold(position_);
+    }
+    else
+    {
+        foothold_ = map_->FindFoothold(position_);
+        if (!foothold_) return;
+    }
+
+    if (next_position.x < bounds.min.x)
+    {
+        next_position.x = bounds.min.x;
+        velocity_.x = 0.f;
+    }
+    else if (next_position.x > bounds.max.x)
+    {
+        next_position.x = bounds.max.x;
+        velocity_.x = 0.f;
+    }
+
+    float ground_y = foothold_->GetYAt(position_.x);
+    float next_ground_y = foothold_->GetYAt(next_position.x);
+
+    is_grounded_ = position_.y >= ground_y && next_position.y <= next_ground_y;
+    if (is_grounded_)
+    {
+        next_position.y = next_ground_y;
+        velocity_.y = 0.f;
+    }
+    else
+    {
+        if (next_ground_y < bounds.min.y)
         {
-            next_position.y = foothold_y;
+            next_position.y = bounds.min.y;
             velocity_.y = 0.f;
-            is_grounded_ = true;
+        }
+        else if (next_ground_y > bounds.max.y)
+        {
+            next_position.y = bounds.max.y;
+            velocity_.y = 0.f;
         }
     }
-    
+
     SetPosition(next_position);
+    
 }
 
 void Mob::Tick(float delta_time)

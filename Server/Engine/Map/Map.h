@@ -56,9 +56,11 @@ public:
     
     std::shared_ptr<MapObject> FindMapObject(uint32_t object_id);
 
-    Foothold* FindFoothold(const Math::Vector2& position);
+    Foothold* FindFoothold(const Math::Vector2& position) const;
 
-    const std::shared_ptr<PlayerCharacter>& FindPlayer(uint32_t player_id);
+    Foothold* FindFootholdByID(uint32_t foothold_id);
+
+    std::shared_ptr<PlayerCharacter> FindPlayer(uint32_t player_id);
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
     
@@ -66,6 +68,7 @@ public:
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapID() const { return map_id_; }
+    inline const Bounds& GetMapBounds() const { return map_bounds_; }
 
 private:
     void AddObjects();
@@ -84,6 +87,7 @@ private:
     std::atomic_uint32_t next_object_id_;
 
     std::unordered_map<uint32_t, std::weak_ptr<PlayerCharacter>> players_;
+    std::unordered_map<uint32_t, std::unique_ptr<Foothold>> footholds_;
 
     std::map<uint32_t, std::shared_ptr<MapObject>> map_objects_;
 
@@ -93,7 +97,6 @@ private:
     std::queue<std::shared_ptr<MapObject>> pending_objects_;
     std::queue<uint32_t> pending_remove_objects_;
 
-    std::vector<std::unique_ptr<Foothold>> footholds_;
     std::vector<uint32_t> mob_ids;
 
     float respawn_timer_;

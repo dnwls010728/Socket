@@ -3,9 +3,12 @@
 
 #include "Math/Math.h"
 
-Foothold::Foothold(const Math::Vector2& point1, const Math::Vector2& point2) :
+Foothold::Foothold(const Math::Vector2& point1, const Math::Vector2& point2, uint32_t id, uint32_t previous, uint32_t next) :
     point1_(point1),
-    point2_(point2)
+    point2_(point2),
+    id_(id),
+    previous_(previous),
+    next_(next)
 {
 }
 

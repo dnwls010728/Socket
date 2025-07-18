@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="25">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="35">
  <properties>
   <property name="name" value="Unknown Area 1"/>
   <property name="ppu" type="float" value="32"/>
@@ -55,29 +55,68 @@
 </data>
  </layer>
  <objectgroup id="2" name="Foothold">
-  <object id="16" x="0" y="544">
-   <properties>
-    <property name="Type" type="int" value="0"/>
-   </properties>
-   <polyline points="0,0 800,0"/>
-  </object>
-  <object id="17" x="64" y="544">
-   <properties>
-    <property name="Type" type="int" value="0"/>
-   </properties>
-   <polyline points="0,0 64,-64 128,-64 192,0"/>
-  </object>
   <object id="18" x="288" y="352">
    <properties>
+    <property name="ID" type="int" value="7"/>
+    <property name="Next" type="int" value="0"/>
+    <property name="Previous" type="int" value="0"/>
     <property name="Type" type="int" value="1"/>
    </properties>
    <polyline points="0,0 160,0"/>
   </object>
   <object id="19" x="480" y="448">
    <properties>
+    <property name="ID" type="int" value="6"/>
+    <property name="Next" type="int" value="0"/>
+    <property name="Previous" type="int" value="0"/>
     <property name="Type" type="int" value="1"/>
    </properties>
    <polyline points="0,0 128,0"/>
+  </object>
+  <object id="28" x="0" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+    <property name="Next" type="int" value="2"/>
+    <property name="Previous" type="int" value="0"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object id="29" x="64" y="544">
+   <properties>
+    <property name="ID" type="int" value="2"/>
+    <property name="Next" type="int" value="3"/>
+    <property name="Previous" type="int" value="1"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,-64"/>
+  </object>
+  <object id="30" x="128" y="480">
+   <properties>
+    <property name="ID" type="int" value="3"/>
+    <property name="Next" type="int" value="4"/>
+    <property name="Previous" type="int" value="2"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object id="33" x="192" y="480">
+   <properties>
+    <property name="ID" type="int" value="4"/>
+    <property name="Next" type="int" value="5"/>
+    <property name="Previous" type="int" value="3"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,64"/>
+  </object>
+  <object id="34" x="256" y="544">
+   <properties>
+    <property name="ID" type="int" value="5"/>
+    <property name="Next" type="int" value="0"/>
+    <property name="Previous" type="int" value="4"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 544,0"/>
   </object>
  </objectgroup>
  <objectgroup id="7" name="SpawnPoint">
