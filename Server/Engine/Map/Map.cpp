@@ -473,8 +473,8 @@ void Map::Respawn()
         if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
-            mob->SetPosition(spawn_point.position + Math::Vector2(0.f, 5.f));
-            mob->SetLastPosition(spawn_point.position + Math::Vector2(0.f, 5.f));
+            mob->SetPosition(spawn_point.position);
+            mob->SetLastPosition(spawn_point.position);
             SpawnObject(mob);
         }
     }

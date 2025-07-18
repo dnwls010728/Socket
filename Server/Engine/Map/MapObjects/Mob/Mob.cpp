@@ -72,25 +72,20 @@ void Mob::BeginPlay()
 void Mob::PhysicsTick(float delta_time)
 {
     MapObject::PhysicsTick(delta_time);
-    // state_machine_->PhysicsTick(delta_time);
-
-    velocity_.x = -2.f;
+    state_machine_->PhysicsTick(delta_time);
     
     bool was_slope = foothold_ && foothold_->IsSlope();
     if (is_grounded_)
     {
-        if (position_.x > foothold_->GetX2())
+        if (foothold_ && position_.x > foothold_->GetX2())
             foothold_ = map_->FindFootholdByID(foothold_->GetNext());
-        else if (position_.x < foothold_->GetX1())
+        else if (foothold_ && position_.x < foothold_->GetX1())
             foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
 
         if (!foothold_) foothold_ = map_->FindFoothold(position_);
     }
-    else
-    {
-        foothold_ = map_->FindFoothold(position_);
-        if (!foothold_) return;
-    }
+    else foothold_ = map_->FindFoothold(position_);
+    if (!foothold_) return;
     
     float ground_y = foothold_->GetYAt(position_.x);
     if (was_slope || foothold_->IsSlope())
