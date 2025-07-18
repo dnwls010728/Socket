@@ -126,30 +126,6 @@
    </properties>
    <point/>
   </object>
-  <object id="21" name="SpawnPoint" x="512" y="448">
-   <properties>
-    <property name="ID" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="22" name="SpawnPoint" x="416" y="352">
-   <properties>
-    <property name="ID" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="23" name="SpawnPoint" x="320" y="352">
-   <properties>
-    <property name="ID" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="24" name="SpawnPoint" x="480" y="544">
-   <properties>
-    <property name="ID" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
  </objectgroup>
  <objectgroup id="6" name="Spawn">
   <object id="12" name="NPC" type="NPC" x="304" y="352">

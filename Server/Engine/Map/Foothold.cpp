@@ -17,3 +17,18 @@ float Foothold::GetYAt(float x) const
     float t = (x - point1_.x) / (point2_.x - point1_.x);
     return Math::Lerp(point1_.y, point2_.y, t);
 }
+
+float Foothold::GetXDelta() const
+{
+    return point2_.x - point1_.x;
+}
+
+float Foothold::GetYDelta() const
+{
+    return point2_.y - point1_.y;
+}
+
+float Foothold::GetSlope() const
+{
+    return GetYDelta() / GetXDelta();
+}
