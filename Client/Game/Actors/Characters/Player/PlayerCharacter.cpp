@@ -2,6 +2,7 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <numbers>
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/BoxColliderComponent.h"
@@ -10,12 +11,14 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
-#include "Actors/ItemDrop.h"
+#include "Actors/Damage.h"
+#include "Actors/DroppedItem.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
 #include "FSM/Condition.h"
+#include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
@@ -23,23 +26,30 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
-    movement_input_(Math::Vector2::Zero()),
+    move_axis_(Math::Vector2::Zero()),
     movement_sync_accumulator_(0.f),
-    prev_is_moving(false),
-    last_position_(Math::Vector2::Zero())
+    was_moving_(false),
+    is_jump_pressed_(false),
+    last_position_(Math::Vector2::Zero()),
+    last_flip_(false),
+    invincible_time_(0.f),
+    prev_animation{0,}
 {
-    SetLayer(ActorLayer::kCharacter);
+    SetLayer(ActorLayer::kPlayer);
     
     collider_->SetOffset({ 0.f, .5f });
+    collider_->SetSize({1.f, 1.f});
 
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.animpack");
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Characters\\Player\\PlayerSheet.png.apack");
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
+    
 }
 
 void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
@@ -51,16 +61,24 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MovePlayerPacket::StaticPacketID:
         {
             MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
-            Snapshot snapshot;
+            MovementSnapshot snapshot;
             snapshot.position.x = move_player_packet->position_x;
             snapshot.position.y = move_player_packet->position_y;
             snapshot.velocity.x = move_player_packet->velocity_x;
             snapshot.velocity.y = move_player_packet->velocity_y;
-            snapshot.is_flipped = move_player_packet->is_flipped;
-            snapshot.animation = move_player_packet->animation;
             snapshot.server_time =  move_player_packet->server_time;
             snapshot.time_update =  move_player_packet->time_update;
-            snapshots_.push_back(snapshot);
+            movement_snapshots_.push_back(snapshot);
+        }
+        break;
+    case PlayerAnimationPacket::StaticPacketID:
+        {
+            PlayerAnimationPacket* player_packet = static_cast<PlayerAnimationPacket*>(packet);
+            AnimationSnapshot snapshot;
+			snapshot.animation = player_packet->animation;
+			snapshot.is_flipped = player_packet->is_flipped;
+			snapshot.server_time = player_packet->server_time;
+			animation_snapshots_.push_back(snapshot);
         }
         break;
         
@@ -69,13 +87,27 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::InitSpawn(const std::wstring& name, const Math::Vector2& position)
+void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time)
+{
+    if (damage_amount == 0) return;
+    if (IsMine())
+    {
+        PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
+    }
+
+    invincible_time_ = server_time + 2.f;
+}
+
+void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& position)
 {
     character_name_ = name;
-
     last_position_ = position;
-    
     GetTransform()->SetPosition(position);
+}
+
+void PlayerCharacter::UpdateFlip() const
+{
+    if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
 }
 
 void PlayerCharacter::BeginPlay()
@@ -84,16 +116,16 @@ void PlayerCharacter::BeginPlay()
 
     if (IsMine())
     {
-        std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis());
-        std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis());
-        std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis());
+        std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis(), animator_);
 
-        state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(idle_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
         
-        state_machine_->AddTransition(walk_state, idle_state, [&]() { return Math::IsEqual(movement_input_.x, 0.f); });
+        state_machine_->AddTransition(walk_state, idle_state, [&]() { return Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(walk_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
-        
+
         state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
         
         state_machine_->SetState(idle_state);
@@ -112,35 +144,140 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
         
+        if (is_jump_pressed_ && collisions.is_below) velocity_.y = 6.7f;
+        is_jump_pressed_ = false;
+        
         velocity_.y += gravity_ * delta_time;
-        controller_->Move(velocity_ * delta_time, movement_input_);
+        controller_->Move(velocity_ * delta_time, move_axis_);
         
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
-        
-        Math::Vector2 position = transform->GetPosition();
+    }
+    
+    CharacterBase::PhysicsTick(delta_time);
+}
 
-        movement_sync_accumulator_ += delta_time;
-        bool is_moving_now = !Math::IsEqual(velocity_.x, 0.f) || !Math::IsEqual(velocity_.y, 0.f);
-        
-        bool should_send = false;
 
-        if (is_moving_now)
+void PlayerCharacter::Tick(float delta_time)
+{
+    CharacterBase::Tick(delta_time);
+
+    float server_now = SessionSubsystem::Get()->GetServerTime();
+    if (invincible_time_ > server_now)
+    {
+        float alpha = 1.f - (invincible_time_ - server_now) / 2.f;
+        float phase = alpha * 10 * Math::PI(); // 10회
+        float value = .9f - .5f * std::abs(std::sin(phase)); // 0.4 ~ 0.9 사이의 값
+        
+        uint8_t lum = static_cast<uint8_t>(value * 255);
+        renderer_->SetColor(Math::Color(lum, lum, lum, 255));
+    }
+    else renderer_->SetColor(Math::Color::White);
+
+    SyncCharacterMovement(delta_time);
+    
+    if (IsMine())
+    {
+        Keyboard* keyboard = Keyboard::Get();
+        
+        move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+        move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+
+        if (keyboard->GetKey('C'))
         {
-            if (movement_sync_accumulator_ >= 0.1f)
-                should_send = true;
+            is_jump_pressed_ = true;
         }
-        
-        bool is_moving_start = false;
-        if (is_moving_now != prev_is_moving)
+
+        if (keyboard->GetKeyDown('1'))
         {
-            should_send = true;
-            if (is_moving_now)
+            NetworkSubsystem::Get()->ChangeMap(0);
+        }
+
+        if (keyboard->GetKeyDown('2'))
+        {
+            NetworkSubsystem::Get()->ChangeMap(1);
+        }
+
+        // 아이템 줍기
+        if (keyboard->GetKeyDown('Z'))
+        {
+            Math::Vector2 center = GetTransform()->GetPosition();
+            Math::Vector2 size = { 1.f, 1.f };
+            
+            Actor* out_actor = nullptr;
+            bool is_hit = Physics2D::OverlapBox(
+                center,
+                size,
+                &out_actor,
+                static_cast<uint16_t>(ActorLayer::kDroppedItem)
+            );
+
+            if (is_hit)
             {
-                is_moving_start = true;
+                DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
+                if (IsValid(dropped_item))
+                {
+                    PickupItemRequest request;
+                    request.object_id = dropped_item->GetObjectID();
+                    SendPacket(request);
+                }
             }
         }
+
+        // 공격 테스트
+        if (keyboard->GetKeyDown('X'))
+        {
+            std::vector<Actor*> hit_actors;
+            bool is_hit = Physics2D::OverlapBoxAll(
+                GetTransform()->GetPosition(),
+                { 3.f, 2.f },
+                hit_actors,
+                static_cast<uint16_t>(ActorLayer::kMob)
+            );
+
+            if (is_hit)
+            {
+                for (const auto& actor : hit_actors)
+                {
+                    MobBase* mob = static_cast<MobBase*>(actor);
+                    if (!IsValid(mob) || mob->IsDead()) continue;
+
+                    AttackRequest request;
+                    request.object_id = mob->GetObjectID();
+                    SendPacket(request);
+                        
+                    std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                    if (IsValid(damage))
+                    {
+                        damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                    }
+                }
+            }
+        }
+
+        // 공격 범위 확인용
+        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
         
-        if (should_send)
+    }
+    else
+    {
+    }
+}
+
+void PlayerCharacter::SyncCharacterMovement(float delta_time)
+{
+    std::shared_ptr<TransformComponent> transform = GetTransform();
+    
+    if (IsMine())
+    {
+        Math::Vector2 position = transform->GetPosition();
+        movement_sync_accumulator_ += delta_time;
+        
+        bool is_moving_now = last_position_ != position;
+        bool is_moving_start = (is_moving_now && !was_moving_);
+        bool is_interval_elapsed = (is_moving_now && movement_sync_accumulator_ >= 0.1f);
+        
+        // 전송할지 결정
+        if (is_moving_start || is_interval_elapsed)
         {
             if (is_moving_start)
             {
@@ -149,159 +286,93 @@ void PlayerCharacter::PhysicsTick(float delta_time)
                 dummy_packet.position_y = last_position_.y;
                 dummy_packet.velocity_x = velocity_.x;
                 dummy_packet.velocity_y = velocity_.y;
-                dummy_packet.is_flipped = renderer_->IsFlipX();
-                dummy_packet.animation = animator_->GetCurrentState()->GetName();
                 dummy_packet.server_time = SessionSubsystem::Get()->GetServerTime();
                 dummy_packet.time_update = true;
                 SendPacket(dummy_packet);
             }
-            
+
             MovePlayerPacket move_player_packet;
             move_player_packet.position_x = position.x;
             move_player_packet.position_y = position.y;
             move_player_packet.velocity_x = velocity_.x;
             move_player_packet.velocity_y = velocity_.y;
-            move_player_packet.is_flipped = renderer_->IsFlipX();
-            move_player_packet.animation = animator_->GetCurrentState()->GetName();
             move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
             move_player_packet.time_update = false;
             SendPacket(move_player_packet);
 
-            prev_is_moving = is_moving_now;
+            was_moving_ = is_moving_now;
             last_position_ = position;
             movement_sync_accumulator_ = 0.f;
+        }
+
+        std::wstring current_anim = animator_->GetCurrentState()->GetName();
+        bool is_flip = renderer_->IsFlipX();
+        if (current_anim != last_animation_ || is_flip != last_flip_)
+        {
+            PlayerAnimationPacket anim_pkt;
+            anim_pkt.is_flipped  = renderer_->IsFlipX();
+            anim_pkt.animation   = current_anim;
+            anim_pkt.server_time = SessionSubsystem::Get()->GetServerTime();
+            SendPacket(anim_pkt);
+            
+            last_animation_ = current_anim;
+            last_flip_ = is_flip;
         }
     }
     else
     {
         float server_now = SessionSubsystem::Get()->GetServerTime();
 
-        float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
-        
-        while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
+        float interpolation_time = server_now - EngineSettings::Get()->GetCharacterInterpolationDelay();
+
+        // 오래된 스냅샷 제거
+        while (movement_snapshots_.size() >= 2 &&
+            movement_snapshots_[1].server_time < interpolation_time)
         {
-            snapshots_.pop_front(); 
+            movement_snapshots_.pop_front(); 
         }
 
-        if (snapshots_.size() >= 2 && snapshots_[1].time_update)
+        if (movement_snapshots_.size() >= 2 &&
+            movement_snapshots_[1].time_update)
         {
-            snapshots_.pop_front();
-        }
-
-        if (snapshots_.size() >= 2 && snapshots_[0].time_update)
-        {
-            snapshots_[0].server_time = snapshots_[1].server_time - EngineSettings::Get()->GetInterpolationDelay();
+            movement_snapshots_.pop_front();
         }
         
-        if (snapshots_.size() >= 2)
+        if (movement_snapshots_.size() >= 2)
         {
-            const Snapshot& from = snapshots_[0];
-            const Snapshot& to = snapshots_[1];
+            if (movement_snapshots_[0].time_update)
+            {
+                movement_snapshots_[0].server_time = movement_snapshots_[1].server_time - EngineSettings::Get()->GetCharacterInterpolationDelay();
+            }
+            
+            const MovementSnapshot& from = movement_snapshots_[0];
+            const MovementSnapshot& to = movement_snapshots_[1];
 
             float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
             t = Math::Clamp(t, 0.f, 1.f);
 
-            bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
-            std::wstring animation = t < .5f ? from.animation : to.animation;
-
             Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
             GetTransform()->SetPosition(position);
-
-            renderer_->SetFlipX(is_flipped);
-            animator_->PlayAnimation(animation);
         }
-        /*
-        else if (snapshots_.size() == 1)
+
+        while (animation_snapshots_.size() >= 2 &&
+           animation_snapshots_[1].server_time < interpolation_time)
         {
-            const Snapshot& snapshot = snapshots_[0];
-
-            float delta = interpolation_time - snapshot.server_time;
-            delta = Math::Clamp(delta, 0.f, 0.2f);
-
-            if (delta > 0.f)
-            {
-                Math::Vector2 position = snapshot.position + snapshot.velocity * delta;
-                GetTransform()->SetPosition(position);
-
-                renderer_->SetFlipX(snapshot.is_flipped);
-                animator_->PlayAnimation(snapshot.animation);
-            }
+            animation_snapshots_.pop_front();
         }
-        */
-    }
-    
-    CharacterBase::PhysicsTick(delta_time);
-}
-
-void PlayerCharacter::Tick(float delta_time)
-{
-    CharacterBase::Tick(delta_time);
-
-    if (IsMine())
-    {
-        UI_OLD::Manager* ui_manager = UI_OLD::Manager::Get();
-        Keyboard* keyboard = Keyboard::Get();
         
-        if (!ui_manager->HasFocus())
+        if (!animation_snapshots_.empty())
         {
-            movement_input_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-            movement_input_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+            const auto& anim = animation_snapshots_.front();
 
-            if (keyboard->GetKeyDown('1'))
+            // 이전 스냅샷과 다를 경우에만 처리
+            if ( prev_animation.server_time != anim.server_time)
             {
-                NetworkSubsystem::Get()->ChangeMap(0);
-            }
-
-            if (keyboard->GetKeyDown('2'))
-            {
-                NetworkSubsystem::Get()->ChangeMap(1);
-            }
-
-            // 공격 테스트
-            if (keyboard->GetKeyDown('X'))
-            {
-                std::vector<Actor*> hit_actors;
-                bool is_hit = Physics2D::OverlapBoxAll(
-                    GetTransform()->GetPosition(),
-                    { 3.f, 2.f },
-                    hit_actors,
-                    static_cast<uint16_t>(ActorLayer::kMob)
-                );
-
-                if (is_hit)
-                {
-                    for (const auto& actor : hit_actors)
-                    {
-                        MobBase* mob = static_cast<MobBase*>(actor);
-
-                        AttackRequest request;
-                        request.object_id = mob->GetObjectID();
-                        SendPacket(request);
-                    }
-                }
+                renderer_->SetFlipX(anim.is_flipped);
+                animator_->PlayAnimation(anim.animation);
+                prev_animation = anim;
             }
         }
-        else
-        {
-            movement_input_.x = 0.f;
-            movement_input_.y = 0.f;
-        }
-
-        // 공격 범위 확인용
-        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
-    }
-    else
-    {
-    }
-}
-
-void PlayerCharacter::PostTick(float delta_time)
-{
-    CharacterBase::PostTick(delta_time);
-
-    if (movement_input_.x != 0.f)
-    {
-        renderer_->SetFlipX(movement_input_.x < 0.f);
     }
 }
 

@@ -1,7 +1,9 @@
 ﻿#include "pch.h"
 #include "UILoginState.h"
 
-#include "Element/Inventory/UIInventory.h"
+#include "Asset/AssetManager.h"
+#include "UI/Element/UIImage.h"
+#include "Windows/DX/UISprite.h"
 
 UILoginState::UILoginState()
 {
@@ -10,6 +12,12 @@ UILoginState::UILoginState()
 void UILoginState::Init()
 {
     UIState::Init();
+
+    UISprite* sprite = AssetManager::Get()->Load<UISprite>(L"UI\\LoginBackground.png");
+
+    UIImage* image = AddElement<UIImage>(UIImage::StaticClass(), L"LoginBackground");
+    image->SetSize({1366.f, 768.f});
+    image->SetSprite(sprite, L"LoginBackground_0");
 
 }
 

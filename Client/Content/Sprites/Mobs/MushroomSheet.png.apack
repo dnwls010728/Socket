@@ -1,0 +1,48 @@
+target: Sprites\Mobs\MushroomSheet.png
+animations:
+  - name: Idle
+    frame_rate: 8
+    loop: true
+    frames:
+      - MushroomSheet_49
+      - MushroomSheet_48
+      - MushroomSheet_47
+      - MushroomSheet_46
+      - MushroomSheet_45
+      - MushroomSheet_44
+      - MushroomSheet_43
+  - name: Walk
+    frame_rate: 8
+    loop: true
+    frames:
+      - MushroomSheet_59
+      - MushroomSheet_58
+      - MushroomSheet_57
+      - MushroomSheet_56
+      - MushroomSheet_55
+      - MushroomSheet_54
+      - MushroomSheet_53
+      - MushroomSheet_52
+  - name: Die
+    frame_rate: 8
+    loop: false
+    frames:
+      - MushroomSheet_29
+      - MushroomSheet_28
+      - MushroomSheet_27
+      - MushroomSheet_26
+      - MushroomSheet_25
+      - MushroomSheet_24
+      - MushroomSheet_23
+      - MushroomSheet_22
+      - MushroomSheet_21
+      - MushroomSheet_20
+  - name: Hit
+    frame_rate: 8
+    loop: false
+    frames:
+      - MushroomSheet_39
+      - MushroomSheet_38
+      - MushroomSheet_37
+      - MushroomSheet_36
+      - MushroomSheet_35

@@ -3,7 +3,9 @@
 
 #include <CustomPacket.h>
 
-#include "GameInstance.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
@@ -16,7 +18,6 @@
 
 LoginMap::LoginMap(const std::wstring& kName) :
     Level(kName),
-    background_(nullptr),
     version_(nullptr),
     register_id_(nullptr),
     register_password_(nullptr),
@@ -39,79 +40,76 @@ void LoginMap::Load()
 
     UI::Get()->ChangeState(UILoginState::StaticClass());
 
-    background_ = UI_OLD::Image::Create(L"Background");
-    background_->SetPosition({400.f, 300.f});
-    background_->SetSize({800.f, 600.f});
-    background_->SetTexture(L"\\UI\\LoginBackground.png");
-
     version_ = UI_OLD::TextBox::Create(L"Version");
-    version_->SetPosition({10.f, 600.f});
+    version_->SetPosition({10.f, 768.f});
     version_->SetSize({200.f, 30.f});
     version_->SetPivot({0.f, 0.f});
     version_->SetText(L"Ver: 0.0.1-development");
 
     register_id_ = UI_OLD::EditableTextBox::Create(L"RegisterID");
-    register_id_->SetPosition({400.f, 400.f});
+    register_id_->SetPosition({683.f, 400.f});
     register_id_->SetSize({200.f, 30.f});
     register_id_->SetPlaceholder(L"아이디");
 
     register_password_ = UI_OLD::EditableTextBox::Create(L"RegisterPassword");
-    register_password_->SetPosition({400.f, 440.f});
+    register_password_->SetPosition({683.f, 440.f});
     register_password_->SetSize({200.f, 30.f});
     register_password_->SetPlaceholder(L"비밀번호");
 
     register_ = UI_OLD::Button::Create(L"Register");
-    register_->SetPosition({400.f, 480.f});
+    register_->SetPosition({683.f, 480.f});
     register_->SetSize({200.f, 30.f});
     register_->SetText(L"회원가입");
     register_->OnClick(this, &LoginMap::OnRegister);
 
     login_switch_ = UI_OLD::Button::Create(L"LoginSwitch");
-    login_switch_->SetPosition({400.f, 520.f});
+    login_switch_->SetPosition({683.f, 520.f});
     login_switch_->SetSize({200.f, 30.f});
     login_switch_->SetText(L"로그인");
     login_switch_->OnClick(this, &LoginMap::OnLoginSwitch);
 
     login_id_ = UI_OLD::EditableTextBox::Create(L"LoginID");
-    login_id_->SetPosition({400.f, 400.f});
+    login_id_->SetPosition({683.f, 400.f});
     login_id_->SetSize({200.f, 30.f});
     login_id_->SetPlaceholder(L"아이디");
 
     login_password_ = UI_OLD::EditableTextBox::Create(L"LoginPassword");
-    login_password_->SetPosition({400.f, 440.f});
+    login_password_->SetPosition({683.f, 440.f});
     login_password_->SetSize({200.f, 30.f});
     login_password_->SetPlaceholder(L"비밀번호");
 
     login_ = UI_OLD::Button::Create(L"Login");
-    login_->SetPosition({400.f, 480.f});
+    login_->SetPosition({683.f, 480.f});
     login_->SetSize({200.f, 30.f});
     login_->SetText(L"로그인");
     login_->OnClick(this, &LoginMap::OnLogin);
 
     register_switch_ = UI_OLD::Button::Create(L"RegisterSwitch");
-    register_switch_->SetPosition({400.f, 520.f});
+    register_switch_->SetPosition({683.f, 520.f});
     register_switch_->SetSize({200.f, 30.f});
     register_switch_->SetText(L"회원가입");
     register_switch_->OnClick(this, &LoginMap::OnRegisterSwitch);
 
     character_list_ = UI_OLD::ListBox::Create(L"CharacterList");
-    character_list_->SetPosition({400.f, 400.f});
+    character_list_->SetPosition({683.f, 400.f});
     character_list_->SetSize({200.f, 300.f});
     character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
-    background_->AddToViewport();
     version_->AddToViewport();
     login_id_->AddToViewport();
     login_password_->AddToViewport();
     login_->AddToViewport();
     register_switch_->AddToViewport();
+
+    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dreamscape.mp3");
+    bgm->SetLoop(true);
+    
+    AudioManager::Get()->PlaySound2D(bgm);
 }
 
 void LoginMap::Unload(EndPlayReason type)
 {
     Level::Unload(type);
-    
-    background_->RemoveFromViewport();
     
     version_->RemoveFromViewport();
 

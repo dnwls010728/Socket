@@ -28,7 +28,7 @@ public:
 
     FORCEINLINE const Math::Vector2& GetOffset() const { return offset_; }
 
-    const Bounds& GetBounds();
+    Bounds GetBounds() const;
 
 protected:
     friend class World;

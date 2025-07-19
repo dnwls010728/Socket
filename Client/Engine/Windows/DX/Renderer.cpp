@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Renderer.h"
 
+#include "OutlineRenderer.h"
+#include "UISprite.h"
 #include "Math/Color.h"
 #include "Math/Rect.h"
 #include "Math/Vector2.h"
@@ -89,6 +91,7 @@ bool Renderer::CreateDWrite()
     // Add TextFormat
     if (!AddTextFormat(L"Silver", 24.f)) return false;
     if (!AddTextFormat(L"NanumBarunGothic", 12.f)) return false;
+    if (!AddTextFormat(L"NanumBarunGothic", 16.f)) return false;
     if (!AddTextFormat(L"NanumBarunGothic", 18.f)) return false;
 
     return SUCCEEDED(hr);
@@ -816,6 +819,81 @@ void Renderer::DrawBox(const Math::Vector2& position, const Math::Vector2& size,
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, float radius, float stroke)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    d2d_viewport->d2d_render_target->DrawRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get(), stroke);
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawSolidRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, float radius)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf()
+    );
+    
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    d2d_viewport->d2d_render_target->FillRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
 void Renderer::DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     // 추후 Window 얻는 방식 변경
@@ -851,6 +929,44 @@ void Renderer::DrawString(const std::wstring& string, const Math::Vector2& posit
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& outline_color, const Math::Color& fill_color, float stroke, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(font_name, font_size);
+    if (!text_format) return;
+
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    HRESULT hr = dwrite_factory_->CreateTextLayout(string.c_str(), static_cast<UINT32>(string.size()), text_format.Get(), size.x, size.y, text_layout.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    text_layout->SetTextAlignment(text_alignment);
+    text_layout->SetParagraphAlignment(paragraph_alignment);
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> outline_brush;
+    hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(outline_color.r / 255.f, outline_color.g / 255.f, outline_color.b / 255.f, outline_color.a / 255.f),
+        outline_brush.GetAddressOf()
+    );
+    if (FAILED(hr)) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> fill_brush;
+    hr = current_d2d_viewport_->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(fill_color.r / 255.f, fill_color.g / 255.f, fill_color.b / 255.f, fill_color.a / 255.f),
+        fill_brush.GetAddressOf()
+    );
+    if (FAILED(hr)) return;
+
+    Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
+    hr = d2d_viewport->d2d_render_target.As(&device_context);
+    if (FAILED(hr)) return;
+    
+    OutlineRenderer renderer(outline_brush, fill_brush, stroke);
+    hr = text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
+    if (FAILED(hr)) return;
+}
+
 void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
@@ -867,6 +983,111 @@ void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, con
 
     const D2D1_RECT_F temp_rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
     d2d_viewport->d2d_render_target->DrawBitmap(bitmap.Get(), temp_rect, 1.f, filter_mode);
+    
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    
+    auto it = ui_sprite->frame_indexes_.find(frame_name);
+    if (it == ui_sprite->frame_indexes_.end()) return;
+
+    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
+
+    D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+    const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + size.x, position.y + size.y };
+    const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
+    d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    
+    auto it = ui_sprite->frame_indexes_.find(frame_name);
+    if (it == ui_sprite->frame_indexes_.end()) return;
+
+    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
+
+    D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+    // Top Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + frame.border_min.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Top Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y, position.x + size.x - frame.border_max.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Top Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y, position.x + size.x, position.y + frame.border_min.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.border_min.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y + frame.border_min.y, position.x + frame.border_min.x, position.y + size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + frame.border_min.y, position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Center Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y + frame.border_min.y, position.x + size.x, position.y + size.y - frame.border_max.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y - frame.border_max.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Left
+    {
+        const D2D1_RECT_F dest_rect = { position.x, position.y + size.y - frame.border_max.y, position.x + frame.border_min.x, position.y + size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Center
+    {
+        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + size.y - frame.border_max.y, position.x + size.x - frame.border_max.x, position.y + size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
+
+    // Bottom Right
+    {
+        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y, position.x + size.x, position.y + size.y };
+        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
+        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    }
     
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }

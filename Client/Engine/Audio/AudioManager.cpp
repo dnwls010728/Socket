@@ -5,7 +5,6 @@
 
 #include "FMOD/fmod.hpp"
 #include "Math/Math.h"
-#include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 
 AudioManager::AudioManager() :
@@ -92,7 +91,7 @@ void AudioManager::SetAllMutes(bool is_mute)
     }
 }
 
-int32_t AudioManager::PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel_group)
+int32_t AudioManager::PlaySound2D(const Audio* audio/*, FMOD_CHANNELGROUP* channel_group*/)
 {
     if (!audio) return -1;
     
@@ -104,7 +103,8 @@ int32_t AudioManager::PlaySound2D(const Audio* audio, FMOD_CHANNELGROUP* channel
         
         if (!is_playing)
         {
-            FMOD_System_PlaySound(fmod_system_, audio->sound_, channel_group, false, &channels_[i]);
+            // FMOD_System_PlaySound(fmod_system_, audio->sound_, channel_group, false, &channels_[i]);
+            FMOD_System_PlaySound(fmod_system_, audio->sound_, nullptr, false, &channels_[i]);
             return i;
         }
     }

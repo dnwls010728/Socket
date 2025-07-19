@@ -1,5 +1,8 @@
 ﻿#pragma once
+#include <memory>
 #include <typeindex>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace FSM
 {
@@ -33,6 +36,7 @@ namespace FSM
         StateMachine();
         ~StateMachine() = default;
 
+        void PhysicsTick(float delta_time);
         void Tick(float delta_time);
         void SetState(const std::shared_ptr<IState>& kState);
         void ChangeState(const std::shared_ptr<IState>& kState);

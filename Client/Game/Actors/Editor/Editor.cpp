@@ -7,7 +7,7 @@
 #include "Data/FileHelper.h"
 #include "imgui/imgui.h"
 #include "Math/Math.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 #include "yaml-cpp/yaml.h"
 
 Editor::Editor(const std::wstring& kName) :
@@ -853,7 +853,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
 
         try
         {
-            node = YAML::LoadFile(to_string + ".animpack");
+            node = YAML::LoadFile(to_string + ".apack");
         }
         catch (const YAML::BadFile& e)
         {
@@ -893,7 +893,7 @@ void Editor::OpenSpriteAnimator(bool* is_open)
         std::wstring relative_path = FileHelper::GetRelativePath(file_path_);
         std::string to_string(relative_path.begin(), relative_path.end());
 
-        std::wofstream file(file_path_ + L".animpack");
+        std::wofstream file(file_path_ + L".apack");
         YAML::Emitter emitter;
 
         emitter << YAML::BeginMap;

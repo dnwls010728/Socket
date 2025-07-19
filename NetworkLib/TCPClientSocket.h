@@ -30,7 +30,7 @@ namespace Net::TCP {
         void ProcessPacketsFromQueue(std::function<void(ReceivedPacketInfo&)> callback);
 
         // 서버 연결 끊김 콜백
-        void SetClientAcceptedCallback(std::function<void()> callback) { OnDisconnected = callback; }
+        void SetDisconnectedCallback(std::function<void()> callback) { OnDisconnected = callback; }
 
         inline void SetPingRequestPeriod(int ms) { ping_request_period_ms_ = ms; }
         inline int GetPingRequestPeriod() const { return ping_request_period_ms_; }

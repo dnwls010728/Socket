@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "PlayerState.h"
+#include "PlayerStateBase.h"
 
-class PlayerIdleState : public PlayerState
+class PlayerIdleState : public PlayerStateBase
 {
 public:
-    PlayerIdleState(const std::shared_ptr<PlayerCharacter>& player_character);
+    PlayerIdleState(const std::shared_ptr<PlayerCharacter>& owner, const std::shared_ptr<AnimatorComponent>& animator);
     virtual ~PlayerIdleState() override = default;
 
     virtual void Enter() override;

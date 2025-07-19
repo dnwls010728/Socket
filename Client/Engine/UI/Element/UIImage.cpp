@@ -3,21 +3,29 @@
 
 #include "UI/UIContainer.h"
 #include "Windows/DX/Renderer.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
-    texture_(nullptr),
-    filter_mode_(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR)
+    ui_sprite_(nullptr),
+    current_frame_(L""),
+    draw_mode_(DrawMode::kSimple)
 {
+}
+
+void UIImage::SetSprite(UISprite* ui_sprite, const std::wstring& frame_name)
+{
+    ui_sprite_ = ui_sprite;
+    current_frame_ = frame_name;
 }
 
 void UIImage::Render()
 {
     UIElement::Render();
-    if (!texture_) return;
-
-    Renderer::Get()->DrawBitmap(texture_->GetTexture(), GetAbsolutePosition(), size_, filter_mode_);
+    if (!ui_sprite_) return;
+    
+    if (draw_mode_ == DrawMode::kSimple) Renderer::Get()->DrawSimpleSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
+    else if (draw_mode_ == DrawMode::kSliced) Renderer::Get()->DrawSlicedSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), size_);
 }
 
 RTTR_REGISTRATION

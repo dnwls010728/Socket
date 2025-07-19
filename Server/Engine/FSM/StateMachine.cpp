@@ -22,6 +22,11 @@ FSM::StateMachine::StateMachine() :
 {
 }
 
+void FSM::StateMachine::PhysicsTick(float delta_time)
+{
+    if (current_state_ && current_state_->GetState()) current_state_->GetState()->PhysicsTick(delta_time);
+}
+
 void FSM::StateMachine::Tick(float delta_time)
 {
     const std::shared_ptr<Transition> transition = GetTransition();
@@ -38,7 +43,7 @@ void FSM::StateMachine::SetState(const std::shared_ptr<IState>& kState)
 
 void FSM::StateMachine::ChangeState(const std::shared_ptr<IState>& kState)
 {
-    if (kState == current_state_->GetState()) return;
+    // if (kState == current_state_->GetState()) return;
 
     std::shared_ptr<IState> previous_state = current_state_->GetState();
     std::shared_ptr<IState> next_state = nodes_[typeid(*kState)]->GetState();

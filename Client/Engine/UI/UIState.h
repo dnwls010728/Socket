@@ -24,8 +24,8 @@ public:
 protected:
     friend class UI;
 
-    FORCEINLINE virtual void Init() {}
-
+    virtual void Init();
+    virtual void Uninit();
     virtual void Tick(float delta_time);
     virtual void Render();
 
@@ -47,6 +47,7 @@ private:
     std::vector<std::unique_ptr<UIElement>> elements_;
     std::vector<UIElement*> focus_path_;
 
+    bool has_initialized_;
     bool is_dragging_;
     bool has_begun_drag_;
 
@@ -62,7 +63,8 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
-        element->Init();
+        if (has_initialized_) element->Init();
+        
         elements_.emplace_back(std::unique_ptr<UIElement>(element));
 
         return dynamic_cast<T*>(element);

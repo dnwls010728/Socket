@@ -16,22 +16,28 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->name_ = response->name;
 
     player_subsystem->character_id_ = response->character_id;
-    player_subsystem->lv_ = response->lv;
-    
-    player_subsystem->initial_position_x_ = response->position_x;
-    player_subsystem->initial_position_y_ = response->position_y;
+
+    player_subsystem->UpdateStat(PlayerStat::kLv, response->lv);
+    player_subsystem->UpdateStat(PlayerStat::kHP, response->hp);
+    player_subsystem->UpdateStat(PlayerStat::kMaxHP, response->max_hp);
+    player_subsystem->UpdateStat(PlayerStat::kExp, response->exp);
+
+    player_subsystem->map_id_ = response->map_id;
+    player_subsystem->spawn_position.x = response->spawn_position.x;
+    player_subsystem->spawn_position.y = response->spawn_position.y;
 
     player_subsystem->inventory_ = std::make_unique<Inventory>();
     Inventory* inventory = player_subsystem->inventory_.get();
 
     for (const auto& item : response->inventory)
     {
-        inventory->AddSlot(item.slot_index, item.item_id, item.count);
+        Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
+        inventory->AddSlot(type, item.slot_index, item.item_id, item.count);
     }
     
     player_subsystem->inventory_->SetColor(response->color);
     
     SessionSubsystem::Get()->SetState(SessionState::kInGame);
-    World::Get()->OpenLevel(L"InGame");
+    World::Get()->OpenLevel(L"Game");
     return true;
 }

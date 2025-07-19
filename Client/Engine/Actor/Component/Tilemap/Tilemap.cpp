@@ -11,7 +11,7 @@ Tilemap::Tilemap() :
     unique_id_(0),
     name_(L""),
     ppu_(0.f),
-    ui_texture_(nullptr)
+    ui_sprite_(nullptr)
 {
 }
 
@@ -30,10 +30,10 @@ bool Tilemap::Load(const std::wstring& kPath)
     ppu_ = properties[1].getFloatValue();
     unique_id_ = properties[2].getIntValue();
 
-    ui_texture_ = std::make_unique<UITexture>();
+    ui_sprite_ = std::make_unique<UISprite>();
     
     std::wstring texture_path = L".\\Content\\" + FileHelper::GetRelativePath(kPath) + L".png";
-    ui_texture_->Load(texture_path);
+    ui_sprite_->Load(texture_path);
     
     return true;
 }

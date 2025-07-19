@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "NPC.h"
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Asset/AssetManager.h"
 #include "Windows/DX/Sprite.h"
@@ -12,7 +13,10 @@ NPC::NPC(const std::wstring& name) :
     is_showing_(false),
     timer_handle_()
 {
-    SetLayer(ActorLayer::kCharacter);
+    SetLayer(ActorLayer::kNPC);
+    
+    collider_->SetOffset({ 0.f, .5f });
+    collider_->SetSize({1.f, 1.f});
 }
 
 void NPC::BeginPlay()

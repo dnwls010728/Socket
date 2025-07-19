@@ -76,7 +76,7 @@ void TransformComponent::TickComponent(float delta_time)
         position_ = {position.x, position.y};
 
         const b2Rot& rotation = b2Body_GetRotation(body_id);
-        angle_ = b2Rot_GetAngle(rotation) * 180.f / std::numbers::pi_v<float>;
+        angle_ = b2Rot_GetAngle(rotation) * 180.f / Math::PI();
     }
 }
 
@@ -85,7 +85,7 @@ void TransformComponent::UpdateBody()
     b2BodyId  body_id = GetOwner()->body_id_;
     if (b2Body_IsValid(body_id))
     {
-        b2Body_SetTransform(body_id, {position_.x, position_.y}, b2MakeRot(angle_ * std::numbers::pi_v<float> / 180.f));
+        b2Body_SetTransform(body_id, {position_.x, position_.y}, b2MakeRot(angle_ * Math::PI() / 180.f));
         b2Body_SetAwake(body_id, true);
     }
 }

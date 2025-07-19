@@ -40,7 +40,7 @@ void DebugDrawHelper::DrawBox(const Math::Vector2& kCenter, const Math::Vector2&
 void DebugDrawHelper::DrawCircle(const Math::Vector2& kCenter, float radius, const Math::Color& kColor)
 {
     const int32_t kSegment = 16;
-    const float kIncrement = 2.f * std::numbers::pi_v<float> / kSegment;
+    const float kIncrement = 2.f * Math::PI() / kSegment;
     float sin_increment = sin(kIncrement);
     float cos_increment = cos(kIncrement);
 

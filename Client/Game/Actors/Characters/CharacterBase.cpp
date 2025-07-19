@@ -25,8 +25,6 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     chat_balloon_timer_handle_()
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
-    collider_->SetSize({1.f, 1.f});
-
     controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");

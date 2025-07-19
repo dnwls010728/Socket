@@ -2,141 +2,216 @@
 #include "Mob.h"
 
 #include <CustomPacket.h>
+#include <iostream>
 
+#include "DataManager.h"
 #include "NetDef.h"
 #include "Engine/Map/Map.h"
+#include "Map/PlayerCharacter.h"
 #include "Math/Math.h"
 #include "Session/Player.h"
+#include "States/MobHitState.h"
+#include "States/MobIdleState.h"
+#include "States/MobWalkState.h"
 
-Mob::Mob() :
+Mob::Mob(const MobData& mob_data) :
+    mob_id_(mob_data.mob_id),
+    damage_(mob_data.stats.dmg),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
-    timer_(0.f),
-    direction_(0),
+    move_speed_(mob_data.stats.speed),
     is_grounded_(false),
+    was_moving_(false),
     foothold_(nullptr),
-    hp_(3000),
-    is_flipped_(false),
+    hp_(mob_data.stats.hp),
     animation_(L"Idle"),
-    prev_is_moving_(false)
+    is_flipped_(false),
+    last_flipped_(false)
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
-    direction_ = Math::RandRange(-1, 1);
+    
+}
+
+void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
+{
+    MapObject::SendSpawn(player);
+    if (!player) return;
+
+    SpawnObjectPacket packet;
+    packet.object_info.type = ObjectType::kMob;
+    packet.object_info.object_id = object_id_;
+    packet.object_info.position_x = position_.x;
+    packet.object_info.position_y = position_.y;
+
+    MobInfo& info = packet.object_info.info.mob;
+    info.mob_id = mob_id_;
+    
+    player->SendPacket(packet);
+}
+
+void Mob::BeginPlay()
+{
+    MapObject::BeginPlay();
+
+    std::shared_ptr<Mob> shared_ptr = std::static_pointer_cast<Mob>(shared_from_this());
+    idle_state_ = std::make_shared<MobIdleState>(shared_ptr, *state_machine_);
+    walk_state_ = std::make_shared<MobWalkState>(shared_ptr, *state_machine_);
+    hit_state_ = std::make_shared<MobHitState>(shared_ptr, *state_machine_);
+    
+    state_machine_->GetOrAddNode(idle_state_);
+    state_machine_->GetOrAddNode(walk_state_);
+    state_machine_->GetOrAddNode(hit_state_);
+    
+    state_machine_->SetState(idle_state_);
+
+    foothold_ = map_->FindFoothold(position_);
+    
 }
 
 void Mob::PhysicsTick(float delta_time)
 {
     MapObject::PhysicsTick(delta_time);
+    state_machine_->PhysicsTick(delta_time);
+    
+    bool was_slope = foothold_ && foothold_->IsSlope();
 
-    velocity_.x = direction_ * 2.f;
-    velocity_.y += gravity_ * delta_time;
-    Math::Vector2 next_position = GetPosition() + velocity_ * delta_time;
-
-    is_grounded_ = false;
-    foothold_ = map_->FindFoothold({ next_position.x, GetPosition().y + .1f }); // 경사면 체크를 위해 y 좌표를 0.1만큼 올림
     if (foothold_)
     {
-        float foothold_y = foothold_->GetYAt(next_position.x);
-        if (GetPosition().y + 1.f >= foothold_y && next_position.y <= foothold_y)
+        if (foothold_ && position_.x > foothold_->GetX2())
+            foothold_ = map_->FindFootholdByID(foothold_->GetNext());
+        else if (foothold_ && position_.x < foothold_->GetX1())
+            foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
+    }
+
+    if (!foothold_ || !is_grounded_)
+        foothold_ = map_->FindFoothold(position_);
+
+    if (!foothold_) return;
+    
+    float ground_y = foothold_->GetYAt(position_.x);
+    if (was_slope || foothold_->IsSlope()) position_.y = ground_y;
+
+    is_grounded_ = Math::IsEqual(position_.y, ground_y);
+
+    velocity_.y += gravity_ * delta_time;
+    Math::Vector2 next_position = position_ + velocity_ * delta_time;
+
+    const Bounds& map_bounds = map_->GetMapBounds();
+
+    if (next_position.x < map_bounds.min.x)
+    {
+        next_position.x = map_bounds.min.x;
+        velocity_.x = 0;
+    }
+    else if (next_position.x > map_bounds.max.x)
+    {
+        next_position.x = map_bounds.max.x;
+        velocity_.x = 0;
+    }
+    
+    float next_ground_y = foothold_->GetYAt(next_position.x);
+    if (position_.y >= ground_y && next_position.y <= next_ground_y)
+    {
+        position_.y = next_ground_y;
+        velocity_.y = 0;
+    }
+    else
+    {
+        if (next_position.y < map_bounds.min.y)
         {
-            next_position.y = foothold_y;
-            velocity_.y = 0.f;
-            is_grounded_ = true;
+            position_.y = map_bounds.min.y;
+            velocity_.y = 0;
+        }
+        else if (next_position.y > map_bounds.max.y)
+        {
+            position_.y = map_bounds.max.y;
+            velocity_.y = 0;
         }
     }
 
-    // 테스트
-    if (direction_ > 0)
-        is_flipped_ = false;
-    else if (direction_ < 0)
-        is_flipped_ = true;
-
-    if (!Math::IsEqual(velocity_.x, 0.f)) animation_ = L"Walk";
-    else animation_ = L"Idle";
+    Translate(velocity_ * delta_time);
     
-    SetPosition(next_position);
 }
 
 void Mob::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
-
     state_machine_->Tick(delta_time);
+
+    Math::Vector2 position = GetPosition();
     
-    timer_ += delta_time;
-    if (timer_ >= 1.6f)
+    if (position != last_position_)
     {
-        timer_ -= 1.6f;
-        direction_ = Math::RandRange(-1, 1);
-    }
+        if (was_moving_ == false) SendPositionPacket(last_position_, true);
+        SendPositionPacket(position);
 
-    Math::Vector2 next_position = GetPosition();
-    
-    if (next_position != last_position_)
-    {
-        if (prev_is_moving_ == false)
-        {
-            ObjectPositionPacket dummy_packet;
-            dummy_packet.object_id = GetObjectID();
-            dummy_packet.position_x = last_position_.x;
-            dummy_packet.position_y = last_position_.y;
-            dummy_packet.velocity_x = velocity_.x;
-            dummy_packet.velocity_y = velocity_.y;
-            dummy_packet.is_flipped = is_flipped_;
-            dummy_packet.animation = animation_;
-            dummy_packet.server_time = Net::GetClientTime();
-            dummy_packet.time_update = true;
-            map_->SendPacket(dummy_packet);
-        }
-
-        ObjectPositionPacket packet;
-        packet.object_id = GetObjectID();
-        packet.position_x = next_position.x;
-        packet.position_y = next_position.y;
-        packet.velocity_x = velocity_.x;
-        packet.velocity_y = velocity_.y;
-        packet.is_flipped = is_flipped_;
-        packet.animation = animation_;
-        packet.server_time = Net::GetClientTime();
-        packet.time_update = false;
-        map_->SendPacket(packet);
-
-        prev_is_moving_ = true;
-        last_position_ = next_position;
+        was_moving_ = true;
+        last_position_ = position;
     }
     else
     {
-        if (prev_is_moving_)
+        if (was_moving_)
         {
             Math::Vector2 stop_position = GetPosition();
-            ObjectPositionPacket stop_packet;
-            stop_packet.object_id = GetObjectID();
-            stop_packet.position_x = stop_position.x;
-            stop_packet.position_y = stop_position.y;
-            stop_packet.velocity_x = velocity_.x;
-            stop_packet.velocity_y = velocity_.y;
-            stop_packet.is_flipped = is_flipped_;
-            stop_packet.animation = animation_;
-            stop_packet.server_time = Net::GetClientTime();
-            stop_packet.time_update = false;
-            map_->SendPacket(stop_packet);
+            SendPositionPacket(stop_position);
         }
-        prev_is_moving_ = false;
+        
+        was_moving_ = false;
     }
     
-    SetPosition(next_position);
+    if (animation_ != last_animation_ || is_flipped_ != last_flipped_)
+    {
+        SendAnimationPacket(animation_, is_flipped_);
+            
+        last_animation_ = animation_;
+        last_flipped_ = is_flipped_;
+    }
     
 }
 
-void Mob::OnHit(int32_t damage)
+void Mob::SendPositionPacket(const Math::Vector2& position, bool time_update) const
+{
+    ObjectPositionPacket packet;
+    packet.object_id = GetObjectID();
+    packet.position_x = position.x;
+    packet.position_y = position.y;
+    packet.velocity_x = velocity_.x;
+    packet.velocity_y = velocity_.y;
+    packet.server_time = Net::GetClientTime();
+    packet.time_update = time_update;
+    map_->SendPacket(packet);
+}
+
+void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play) const
+{
+    ObjectAnimationPacket packet;
+    packet.object_id = GetObjectID();
+    packet.animation = animation;
+    packet.is_flipped = is_flip;
+    packet.server_time = Net::GetClientTime();
+    packet.instant_play = instant_play;
+    map_->SendPacket(packet);
+}
+
+void Mob::OnHit(uint32_t attacker, uint32_t damage)
 {
     if (hp_ <= 0) return;
+
+    const auto& player = map_->FindPlayer(attacker);
+    state_machine_->ChangeState(hit_state_);
     
+    last_animation_ = animation_;
     hp_ -= damage;
-    if (hp_ <= 0)
+     if (hp_ <= 0)
+     {
+         SendAnimationPacket(L"Die", is_flipped_, true);
+         if (player) player->GainExp(10000); // 예시로 100 경험치 추가
+         hp_ = 0;
+         map_->DestroyObject(GetObjectID());
+     }
+     else
     {
-        hp_ = 0;
-        map_->DestroyObject(GetObjectID());
+        SendAnimationPacket(L"Hit", is_flipped_, true);
     }
 }

@@ -37,7 +37,7 @@ public:
     FORCEINLINE int32_t GetWheelAxis() const { return wheel_axis_; }
     FORCEINLINE int32_t GetWheelHAxis() const { return wheel_h_axis_; }
     
-    FORCEINLINE Math::Vector2 GetMousePosition() const { return mouse_position_; }
+    FORCEINLINE const Math::Vector2& GetMousePosition() const { return mouse_position_; }
 
 private:
     friend class Core;

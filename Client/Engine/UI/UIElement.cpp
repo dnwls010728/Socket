@@ -7,7 +7,7 @@
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
-    Math::Vector2 parent_position = parent_ ? parent_->GetRelativePosition() : Math::Vector2::Zero();
+    Math::Vector2 parent_position = parent_ ? parent_->GetAbsolutePosition() : Math::Vector2::Zero();
     Math::Rect rect = {
         parent_position.x + position_.x, parent_position.y + position_.y,
         size_.x, size_.y
@@ -43,11 +43,17 @@ UIElement::UIElement(const std::wstring& name) :
     name_(name),
     position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero()),
+    has_initialized_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),
     parent_(nullptr)
 {
+}
+
+void UIElement::Init()
+{
+    has_initialized_ = true;
 }
 
 UIElement* UIElement::RayCast(const Math::Vector2& position)
@@ -66,6 +72,16 @@ UI::MouseEventResult UIElement::OnMouseButton(const Math::Vector2& position, Mou
         UI::Get()->GetState()->UpdateFocus(this);
     
     return { false, UI::CursorState::kIdle };
+}
+
+bool UIElement::OnMouseEnter()
+{
+    return false;
+}
+
+bool UIElement::OnMouseLeave()
+{
+    return false;
 }
 
 bool UIElement::OnDragBegin(const Math::Vector2& position)

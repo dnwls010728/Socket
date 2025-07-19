@@ -152,7 +152,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 				if (properties.size() > 0)
 				{
 					uint64_t id = b2StoreShapeId(shape_id);
-					type_map_[id] = properties[0].getIntValue();
+					type_map_[id] = properties[3].getIntValue();
 				}
 			}
 		}

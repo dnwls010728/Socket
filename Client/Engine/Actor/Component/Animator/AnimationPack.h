@@ -1,7 +1,37 @@
 ﻿#pragma once
 #include "Asset/Asset.h"
+#include "Misc/StringHelper.h"
 
-class Animation;
+struct Animation
+{
+    std::wstring name;
+    int32_t frame_rate;
+    bool is_loop;
+    std::vector<std::wstring> frame;
+};
+
+namespace YAML
+{
+    template<>
+    struct convert<Animation>
+    {
+        static bool decode(const Node& node, Animation& animation)
+        {
+            if (!node.IsMap()) return false;
+
+            animation.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>());
+            animation.frame_rate = node["frame_rate"].as<int32_t>();
+            animation.is_loop = node["loop"].as<bool>();
+
+            for (const auto& frame : node["frames"])
+            {
+                animation.frame.push_back(StringHelper::UTF8ToUTF16(frame.as<std::string>()));
+            }
+
+            return true;
+        }
+    };
+}
 
 class AnimationPack : public Asset
 {
@@ -18,6 +48,6 @@ private:
     
     std::wstring target_;
     
-    std::map<std::wstring, std::shared_ptr<Animation>> animations_;
+    std::map<std::wstring, Animation> animations_;
     
 };

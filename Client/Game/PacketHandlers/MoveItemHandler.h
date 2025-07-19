@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "IPacketHandler.h"
 
+// TODO: 패킷 수정 필요
 class MoveItemHandler : public IPacketHandler
 {
 public:

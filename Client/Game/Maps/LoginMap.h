@@ -38,8 +38,6 @@ private:
     void OnCharacterSelect(uint64_t user_data);
 
 #pragma region UI
-    std::shared_ptr<UI_OLD::Image> background_;
-    
     std::shared_ptr<UI_OLD::TextBox> version_;
     
     std::shared_ptr<UI_OLD::EditableTextBox> register_id_;

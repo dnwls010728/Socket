@@ -6,8 +6,20 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/ChatMessageHandler.h"
+#include "PacketHandlers/DestroyObjectHandler.h"
+#include "PacketHandlers/DestroyPlayerHandler.h"
+#include "PacketHandlers/DropItemHandler.h"
+#include "PacketHandlers/MapLoadHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
+#include "PacketHandlers/MovePlayerHandler.h"
+#include "PacketHandlers/PlayerAnimationHandler.h"
+#include "PacketHandlers/ObjectPositionHandler.h"
+#include "PacketHandlers/ObjectAnimationHandler.h"
+#include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
+#include "PacketHandlers/SpawnObjectHandler.h"
+#include "PacketHandlers/TakeDamageHandler.h"
 #include "UI/UILoginState.h"
 #include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
@@ -24,6 +36,7 @@ void SessionSubsystem::Init()
 
     bool result = Connect({"127.0.0.1", 9000});
     // bool result = Connect({"175.198.74.36", 9000});
+    // bool result = Connect({"222.108.73.155", 9000});
     if (!result)
     {
         MessageBox(nullptr, L"서버와 연결할 수 없습니다.", EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
@@ -31,16 +44,83 @@ void SessionSubsystem::Init()
         return;
     }
 
-    // 핸들러 등록
+    client_socket_.SetDisconnectedCallback([]()
+    {
+        MessageBox(nullptr, L"서버와의 연결이 끊어졌습니다.", EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
+        WindowsApplication::Get()->QuitApplication();
+    });
+
+#pragma region 핸들러 등록
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
         std::make_unique<SelectCharacterHandler>()
     );
 
     handlers_.emplace(
+        MapLoadPacket::StaticPacketID,
+        std::make_unique<MapLoadHandler>()
+    );
+
+    handlers_.emplace(
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
     );
+
+    handlers_.emplace(
+        DestroyPlayerPacket::StaticPacketID,
+        std::make_unique<DestroyPlayerHandler>()
+    );
+
+    handlers_.emplace(
+        MovePlayerPacket::StaticPacketID,
+        std::make_unique<MovePlayerHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerAnimationPacket::StaticPacketID,
+        std::make_unique<PlayerAnimationHandler>()
+    );
+
+    handlers_.emplace(
+        ChatMessagePacket::StaticPacketID,
+        std::make_unique<ChatMessageHandler>()
+    );
+
+    handlers_.emplace(
+        SpawnObjectPacket::StaticPacketID,
+        std::make_unique<SpawnObjectHandler>()
+    );
+
+    handlers_.emplace(
+        DestroyObjectPacket::StaticPacketID,
+        std::make_unique<DestroyObjectHandler>()
+    );
+
+    handlers_.emplace(
+        ObjectPositionPacket::StaticPacketID,
+        std::make_unique<ObjectPositionHandler>()
+    );
+
+    handlers_.emplace(
+        ObjectAnimationPacket::StaticPacketID,
+        std::make_unique<ObjectAnimationHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerStatsUpdatePacket::StaticPacketID,
+        std::make_unique<PlayerStatsUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        TakeDamagePacket::StaticPacketID,
+        std::make_unique<TakeDamageHandler>()
+    );
+
+    handlers_.emplace(
+        DropItemResponse::StaticPacketID,
+        std::make_unique<DropItemHandler>()
+    );
+#pragma endregion
 
     SetState(SessionState::kConnected);
 }
@@ -64,7 +144,11 @@ void SessionSubsystem::ProcessPackets()
         {
             // 패킷 핸들링 실패 시 애플리케이션 종료
             if (!it->second->Handle(packet.get()))
+            {
+                uint16_t packet_id = packet->GetPacketID(); // 디버깅용
+                MessageBox(nullptr, (L"패킷 핸들링 실패: " + std::to_wstring(packet_id)).c_str(), EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
                 WindowsApplication::Get()->QuitApplication();
+            }
         }
     });
 }

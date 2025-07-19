@@ -9,3 +9,7 @@ MapObject::MapObject() :
     position_(Math::Vector2::Zero())
 {
 }
+
+void MapObject::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
+{
+}

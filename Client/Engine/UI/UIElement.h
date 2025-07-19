@@ -19,10 +19,10 @@ public:
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
     FORCEINLINE void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
-    FORCEINLINE Math::Vector2 GetRelativePosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return position_; }
 
     FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
-    FORCEINLINE Math::Vector2 GetSize() const { return size_; }
+    FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE virtual void SetActive(bool active) { is_active_ = active; }
@@ -36,16 +36,20 @@ protected:
     friend class UIContainer;
     
     UIElement(const std::wstring& name);
-    
-    FORCEINLINE virtual void Init() {}
+
+    FORCEINLINE virtual void Uninit() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
     FORCEINLINE virtual void Render() {}
 
+    virtual void Init();
+    
     virtual UIElement* RayCast(const Math::Vector2& position);
     
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
 
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseLeave();
     virtual bool OnDragBegin(const Math::Vector2& position);
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta);
     virtual bool OnDragEnd(const Math::Vector2& position);
@@ -61,6 +65,7 @@ protected:
     Math::Vector2 position_;
     Math::Vector2 size_;
 
+    bool has_initialized_;
     bool is_active_;
     bool is_focused_;
     bool is_ignore_raycast;

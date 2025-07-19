@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "UI/Widget.h"
 
-class UITexture;
+class UISprite;
 
 namespace UI_OLD
 {
@@ -22,8 +22,8 @@ namespace UI_OLD
         virtual void Render(Renderer* renderer, WindowsWindow* window) override;
 
     private:
-        UITexture* arrow_texture_;
-        UITexture* body_texture_;
+        UISprite* arrow_sprite_;
+        UISprite* body_sprite_;
 
         std::wstring text_;
 

@@ -122,8 +122,8 @@ void GameEngine::Render(float alpha)
     World::Get()->Render(alpha);
     
     Renderer::Get()->BeginRenderD2D(game_window_);
-    UI_OLD::Manager::Get()->Render();
     UI::Get()->Render();
+    UI_OLD::Manager::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

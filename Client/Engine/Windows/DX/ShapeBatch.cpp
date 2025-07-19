@@ -90,9 +90,13 @@ bool ShapeBatch::Init()
     D3D11_DEPTH_STENCIL_DESC depth_stencil_state_desc;
     ZeroMemory(&depth_stencil_state_desc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
-    depth_stencil_state_desc.DepthEnable = true;
-    depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    // depth_stencil_state_desc.DepthEnable = true;
+    // depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    // depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    
+    depth_stencil_state_desc.DepthEnable = false;
+    depth_stencil_state_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    depth_stencil_state_desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 
     hr = Renderer::Get()->GetDevice()->CreateDepthStencilState(&depth_stencil_state_desc, depth_stencil_state_.GetAddressOf());
     return SUCCEEDED(hr);
@@ -147,24 +151,24 @@ void ShapeBatch::DrawShapes(const std::shared_ptr<WindowsWindow>& kWindow, const
 
         if (const Texture* texture = shape->GetTexture())
         {
-            if (texture->GetWrapMode() == WrapMode::kClamp)
+            if (texture->GetWrapMode() == Texture::WrapMode::kClamp)
             {
-                if (texture->GetFilterMode() == FilterMode::kPoint)
+                if (texture->GetFilterMode() == Texture::FilterMode::kPoint)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, point_sampler_state_clamp_.GetAddressOf());
                 }
-                else if (texture->GetFilterMode() == FilterMode::kBilinear)
+                else if (texture->GetFilterMode() == Texture::FilterMode::kBilinear)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, bilinear_sampler_state_clamp_.GetAddressOf());
                 }
             }
             else
             {
-                if (texture->GetFilterMode() == FilterMode::kPoint)
+                if (texture->GetFilterMode() == Texture::FilterMode::kPoint)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, point_sampler_state_wrap_.GetAddressOf());
                 }
-                else if (texture->GetFilterMode() == FilterMode::kBilinear)
+                else if (texture->GetFilterMode() == Texture::FilterMode::kBilinear)
                 {
                     Renderer::Get()->GetDeviceContext()->PSSetSamplers(0, 1, bilinear_sampler_state_wrap_.GetAddressOf());
                 }

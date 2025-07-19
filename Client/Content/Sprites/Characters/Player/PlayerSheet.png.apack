@@ -1,0 +1,30 @@
+target: Sprites\Characters\Player\PlayerSheet.png
+animations:
+  - name: Idle
+    frame_rate: 10
+    loop: true
+    frames:
+      - PlayerSheet_0
+      - PlayerSheet_1
+      - PlayerSheet_2
+      - PlayerSheet_3
+      - PlayerSheet_4
+      - PlayerSheet_5
+      - PlayerSheet_6
+  - name: Walk
+    frame_rate: 10
+    loop: true
+    frames:
+      - PlayerSheet_14
+      - PlayerSheet_15
+      - PlayerSheet_16
+      - PlayerSheet_17
+      - PlayerSheet_18
+      - PlayerSheet_19
+      - PlayerSheet_20
+      - PlayerSheet_21
+  - name: Fall
+    frame_rate: 10
+    loop: true
+    frames:
+      - PlayerSheet_70

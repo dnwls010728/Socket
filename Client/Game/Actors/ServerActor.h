@@ -7,18 +7,21 @@ class ServerActor : public NetworkActor
     GENERATED_BODY(ServerActor, NetworkActor)
     
 public:
-    struct Snapshot
+    struct MovementSnapshot
     {
         Math::Vector2 position;
         Math::Vector2 velocity;
         
-        bool is_flipped;
-        
-        std::wstring animation;
-        
         float server_time;
 
         bool time_update;
+    };
+
+    struct AnimationSnapshot
+    {
+        bool          is_flipped;
+        std::wstring  animation;
+        float         server_time;
     };
     
     ServerActor(const std::wstring& name);
@@ -27,9 +30,12 @@ public:
 protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;
-
-    std::deque<Snapshot> snapshots_;
     
+    std::deque<MovementSnapshot>  movement_snapshots_;
+    std::deque<AnimationSnapshot> animation_snapshots_;
+
+    AnimationSnapshot prev_animation;
+
 #pragma region 컴포넌트
     std::shared_ptr<class BoxColliderComponent> collider_;
     std::shared_ptr<class SpriteRendererComponent> renderer_;

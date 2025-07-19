@@ -5,31 +5,35 @@
 #include <format>
 #include <ranges>
 
-#include "Session/Player.h"
 #include "tmxlite/Map.hpp"
 
+#include "DataManager.h"
 #include "MapObject.h"
+#include "PlayerCharacter.h"
+#include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
+#include "Math/Math.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
+    map_bounds_(),
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
     players_(),
+    footholds_(),
     map_objects_(),
     pending_players_(),
     pending_remove_players_(),
     pending_objects_(),
     pending_remove_objects_(),
-    footholds_(),
     mob_ids(),
     respawn_timer_(0.f),
     monitor_timer_(0.f)
 {
 }
 
-void Map::AddPlayer(const std::weak_ptr<Player> &player_weak)
+void Map::AddPlayer(const std::weak_ptr<PlayerCharacter> &player_weak)
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
     pending_players_.push(player_weak);
@@ -53,18 +57,19 @@ void Map::AddPlayers()
         auto player = pending_player_weak.lock();
         if (!player) continue;
 
-        uint32_t object_id = player->GetCharacterID();
+        uint32_t object_id = player->GetObjectID();
         players_.emplace(object_id, pending_player_weak);
     
         player->SetMap(this);
         {
-            // 맵에 플레이어가 추가되면, 다른 플레이어에게 스폰하도록 패킷을 전송
-            SpawnPlayerPacket spawn_player_packet;
-            spawn_player_packet.character_id = player->GetCharacterID();
-            spawn_player_packet.name = player->GetName();
-            spawn_player_packet.position_x = player->GetPosition().x;
-            spawn_player_packet.position_y = player->GetPosition().y;
-            SendPacket(spawn_player_packet, player);
+            for (const auto& player_weak : players_ | std::views::values)
+            {
+                auto other_player = player_weak.lock();
+                if (other_player && other_player != player)
+                {
+                    player->SendSpawn(other_player);
+                }
+            }
         }
 
         // 맵에 추가된 플레이어에게 다른 플레이어들을 스폰하도록 패킷을 전송
@@ -73,25 +78,14 @@ void Map::AddPlayers()
             auto other_player = player_weak.lock();
             if (other_player && other_player != player)
             {
-                SpawnPlayerPacket spawn_player_packet;
-                spawn_player_packet.character_id = other_player->GetCharacterID();
-                spawn_player_packet.name = other_player->GetName();
-                spawn_player_packet.position_x = other_player->GetPosition().x;
-                spawn_player_packet.position_y = other_player->GetPosition().y;
-                player->SendPacket(spawn_player_packet);
+                other_player->SendSpawn(player);
             }
         }
 
         // 맵에 추가된 플레이어에게 맵 오브젝트들을 스폰하도록 패킷을 전송
         for (const auto& map_object : map_objects_ | std::views::values)
         {
-            SpawnObjectPacket spawn_object_packet;
-            spawn_object_packet.object_info.type = ObjectType::kMob; // 예시로 Mob 타입으로 설정
-            spawn_object_packet.object_info.object_id = map_object->GetObjectID();
-            spawn_object_packet.object_info.position_x = map_object->GetPosition().x;
-            spawn_object_packet.object_info.position_y = map_object->GetPosition().y;
-            spawn_object_packet.object_info.info.mob = {}; // Mob 정보는 필요에 따라 설정
-            player->SendPacket(spawn_object_packet);
+            if (map_object) map_object->SendSpawn(player);
         }
     }
 }
@@ -128,15 +122,17 @@ void Map::RemoveObject(uint32_t object_id)
 void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
 {
     std::lock_guard<std::mutex> lock(object_mutex_);
-    object->SetObjectID(next_object_id_++);
+    object->SetObjectID(next_object_id_.fetch_add(1));
     object->SetMap(this);
+
+    const auto& mob = std::dynamic_pointer_cast<Mob>(object);
 
     SpawnObjectPacket spawn_object_packet;
     spawn_object_packet.object_info.type = ObjectType::kMob;
     spawn_object_packet.object_info.object_id = object->GetObjectID();
     spawn_object_packet.object_info.position_x = object->GetPosition().x;
     spawn_object_packet.object_info.position_y = object->GetPosition().y;
-    spawn_object_packet.object_info.info.mob = {};
+    spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
     SendPacket(spawn_object_packet);
 
     AddObject(object);
@@ -150,14 +146,14 @@ void Map::DestroyObject(uint32_t object_id)
 
 void Map::SendPacket(const Net::IPacket& packet)
 {
-    for (auto& player_weak : std::views::values(players_))
+    for (auto& player_weak : players_ | std::views::values)
     {
         if (auto player = player_weak.lock())
             player->SendPacket(packet);
     }
 }
 
-void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &excluded_player_weak)
+void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter> &excluded_player_weak)
 {
     auto excluded_player = excluded_player_weak.lock();
     for (const auto& player_weak : std::views::values(players_))
@@ -170,33 +166,78 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<Player> &ex
     }
 }
 
-void Map::OnAttack(uint32_t attacker_id, uint32_t defender_id)
+void Map::OnAttack(uint32_t attacker, uint32_t defender)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
 
-    auto it = map_objects_.find(defender_id);
+    auto it = map_objects_.find(defender);
     if (it != map_objects_.end())
     {
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->OnHit(1000);
-            mob->velocity_.y = 10.f;
+            mob->OnHit(attacker, 1000);
         }
+    }
+}
+
+void Map::PhysicsTick(float delta_time)
+{
+    for (const auto& player_weak : std::views::values(players_))
+    {
+        auto player_shared = player_weak.lock();
+        if (!player_shared) continue;
+        
+        player_shared->PhysicsTick(delta_time);
+    }
+    
+    for (const auto& map_object : map_objects_ | std::views::values)
+    {
+        map_object->PhysicsTick(delta_time);
     }
 }
 
 void Map::Tick(float delta_time)
 {
-    AddPlayers();
     RemovePlayers();
+    AddPlayers();
     
     AddObjects();
     RemoveObjects();
 
+    for (const auto& player_weak : std::views::values(players_))
+    {
+        auto player_shared = player_weak.lock();
+        if (!player_shared) continue;
+        
+        player_shared->Tick(delta_time);
+    }
+
     for (const auto& map_object : map_objects_ | std::views::values)
     {
         map_object->Tick(delta_time);
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        for (const auto& player_weak : players_ | std::views::values)
+        {
+            auto player = player_weak.lock();
+            if (!player) continue;
+
+            for (const auto& map_object : map_objects_ | std::views::values)
+            {
+                const auto& mob = std::dynamic_pointer_cast<Mob>(map_object);
+                if (!mob) continue;
+
+                float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
+                if (distance < 1.f && !player->IsInvincible())
+                {
+                    player->TakeDamage(mob->damage_);
+                    break;
+                }
+            }
+        }
     }
 
     respawn_timer_ += delta_time;
@@ -222,23 +263,55 @@ void Map::Tick(float delta_time)
 
 }
 
-void Map::PhysicsTick(float delta_time)
+void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
-    for (const auto& map_object : map_objects_ | std::views::values)
-    {
-        map_object->PhysicsTick(delta_time);
-    }
+    std::lock_guard<std::mutex> lock(object_mutex_);
+    
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetItemID(item_id);
+    dropped_item->SetCount(count);
+    dropped_item->SetPosition(drop_position);
+
+    // TODO: 구조 개선 필요
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    SpawnObjectPacket packet;
+    packet.object_info.type = ObjectType::kDroppedItem;
+    packet.object_info.object_id = dropped_item->GetObjectID();
+    packet.object_info.position_x = drop_position.x;
+    packet.object_info.position_y = drop_position.y;
+
+    DroppedItemInfo& info = packet.object_info.info.dropped_item;
+    info.item_id = item_id;
+    info.dropper_position_x = dropper->GetPosition().x;
+    info.dropper_position_y = dropper->GetPosition().y;
+    SendPacket(packet);
+    
+    AddObject(dropped_item);
 }
 
-std::vector<std::weak_ptr<Player>> Map::GetPlayers()
+std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
-    std::vector<std::weak_ptr<Player>> players;
+    std::vector<std::weak_ptr<PlayerCharacter>> players;
     for (const auto& player_weak : players_ | std::views::values)
     {
         players.push_back(player_weak);
     }
     return players;
+}
+
+Math::Vector2 Map::GetDropPosition(const Math::Vector2& position)
+{
+    Math::Vector2 drop_position = { position.x, position.y + 2.f };
+    drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
+
+    Foothold* foothold = FindFoothold(drop_position);
+    if (foothold) drop_position.y = foothold->GetYAt(drop_position.x);
+    
+    return drop_position;
 }
 
 bool Map::LoadMapData()
@@ -252,6 +325,12 @@ bool Map::LoadMapData()
     if (properties.empty()) return false;
 
     float ppu = properties[1].getFloatValue();
+
+    tmx::FloatRect local_bounds = map_data.getBounds();
+    float world_width = local_bounds.width / ppu;
+    float world_height = local_bounds.height / ppu;
+
+    map_bounds_ = { Math::Vector2::Zero(), { world_width, world_height } };
 
     const auto& layers = map_data.getLayers();
     for (const auto& layer : layers)
@@ -267,36 +346,44 @@ bool Map::LoadMapData()
                 {
                     if (object.getShape() == tmx::Object::Shape::Polyline)
                     {
-                        const auto& points = object.getPoints();
-                        for (size_t i = 0; i < points.size() - 1; ++i)
-                        {
-                            Math::Vector2 point1 = {
-                                points[i].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[i].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            };
-                            
-                            Math::Vector2 point2 = {
-                                points[i + 1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
-                                -1 * points[i + 1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
-                            };
+                        const auto& object_properties = object.getProperties();
+                        if (object_properties.empty()) continue;
 
-                            footholds_.emplace_back(std::make_unique<Foothold>(point1, point2));
-                        }
+                        uint32_t id = object_properties[0].getIntValue();
+                        uint32_t next = object_properties[1].getIntValue();
+                        uint32_t previous = object_properties[2].getIntValue();
+                        
+                        const auto& points = object.getPoints();
+                        Math::Vector2 point1 = {
+                            points[0].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                            -1 * points[0].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                        };
+                            
+                        Math::Vector2 point2 = {
+                            points[1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                            -1 * points[1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                        };
+
+                        footholds_[id] = std::make_unique<Foothold>(point1, point2, id, previous, next);
                     }
                 }
             }
-            
-            if (layer->getName() == "SpawnPoint")
+            else if (layer->getName() == "SpawnPoint")
             {
                 const auto& objects = object_group.getObjects();
                 for (const auto& object : objects)
                 {
                     if (object.getShape() != tmx::Object::Shape::Point) continue;
-                    Math::Vector2 spawn_point = {
+                    
+                    Math::Vector2 position = {
                         object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                         -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                     };
-                    spawn_points_.emplace_back(spawn_point);
+
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+                    
+                    spawn_points_.emplace_back(position, properties[0].getIntValue());
                 }
             }
         }
@@ -305,24 +392,48 @@ bool Map::LoadMapData()
     return true;
 }
 
-Foothold* Map::FindFoothold(const Math::Vector2& position)
+std::shared_ptr<MapObject> Map::FindMapObject(uint32_t object_id)
+{
+    auto it = map_objects_.find(object_id);
+    if (it == map_objects_.end()) return nullptr;
+    return it->second;
+}
+
+Foothold* Map::FindFoothold(const Math::Vector2& position) const
 {
     Foothold* best = nullptr;
-    float best_y = -std::numeric_limits<float>::max();
-    
-    for (const auto& foothold : footholds_)
+    float best_y = map_bounds_.min.y;
+
+    for (const auto& it : footholds_)
     {
+        Foothold* foothold = it.second.get();
         if (position.x < foothold->GetX1() || position.x > foothold->GetX2()) continue;
         
         float y = foothold->GetYAt(position.x);
         if (best_y <= y && position.y >= y)
         {
             best_y = y;
-            best = foothold.get();
+            best = foothold;
         }
     }
-
+    
     return best;
+}
+
+Foothold* Map::FindFootholdByID(uint32_t foothold_id)
+{
+    auto it = footholds_.find(foothold_id);
+    if (it == footholds_.end()) return nullptr;
+    return it->second.get();
+}
+
+std::shared_ptr<PlayerCharacter> Map::FindPlayer(uint32_t player_id)
+{
+    std::lock_guard<std::mutex> lock(player_mutex_);
+    
+    auto it = players_.find(player_id);
+    if (it == players_.end()) return nullptr;
+    return it->second.lock();
 }
 
 void Map::AddObjects()
@@ -333,6 +444,7 @@ void Map::AddObjects()
         std::shared_ptr<MapObject> object = pending_objects_.front();
         pending_objects_.pop();
 
+        object->BeginPlay();
         map_objects_.emplace(object->GetObjectID(), object);
     }
 }
@@ -358,10 +470,13 @@ void Map::Respawn()
 
     for (const auto& spawn_point : spawn_points_)
     {
-        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
-        mob->SetPosition(spawn_point);
-        mob->SetLastPostion(spawn_point);
-        SpawnObject(mob);
+        if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
+        {
+            std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
+            mob->SetPosition(spawn_point.position);
+            mob->SetLastPosition(spawn_point.position);
+            SpawnObject(mob);
+        }
     }
 }
 

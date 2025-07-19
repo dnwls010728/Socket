@@ -9,6 +9,25 @@ struct SpriteFrame
     Math::Vector2 pivot;
 };
 
+namespace YAML
+{
+    template<>
+    struct convert<SpriteFrame>
+    {
+        static bool decode(const Node& node, SpriteFrame& data)
+        {
+            if (!node.IsMap()) return false;
+            data.uv_offset.x = node["rect"]["x"].as<float>();
+            data.uv_offset.y = node["rect"]["y"].as<float>();
+            data.uv_scale.x = node["rect"]["width"].as<float>();
+            data.uv_scale.y = node["rect"]["height"].as<float>();
+            data.pivot.x = node["pivot"]["x"].as<float>();
+            data.pivot.y = node["pivot"]["y"].as<float>();
+            return true;
+        }
+    };
+}
+
 class Sprite : public Texture
 {
     GENERATED_BODY(Sprite, Texture)
@@ -19,7 +38,8 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
 
-    FORCEINLINE const std::map<std::wstring, SpriteFrame>& GetFrames() const { return frames_; }
+    FORCEINLINE const std::unordered_map<std::wstring, uint64_t>& GetFrameIndexes() const { return frame_indexes_; }
+    FORCEINLINE const std::vector<SpriteFrame>& GetFrames() const { return frames_; }
     FORCEINLINE uint32_t GetPPU() const { return ppu_; }
 
     static const Math::Vector2 kCenter;
@@ -33,7 +53,8 @@ public:
     static const Math::Vector2 kBottomRight;
 
 private:
-    std::map<std::wstring, SpriteFrame> frames_;
+    std::unordered_map<std::wstring, uint64_t> frame_indexes_;
+    std::vector<SpriteFrame> frames_;
     
     uint32_t ppu_;
     

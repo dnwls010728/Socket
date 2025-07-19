@@ -15,6 +15,7 @@ const Math::Vector2 Sprite::kBottom = Math::Vector2(.5f, 0.f);
 const Math::Vector2 Sprite::kBottomRight = Math::Vector2(1.f, 0.f);
 
 Sprite::Sprite() :
+    frame_indexes_(),
     frames_(),
     ppu_(32)
 {
@@ -35,33 +36,27 @@ bool Sprite::Load(const std::wstring& kPath)
         {
             for (const auto& frame : meta_data_["frames"])
             {
-                SpriteFrame sprite_frame;
-                sprite_frame.uv_offset.x = frame["rect"]["x"].as<float>();
-                sprite_frame.uv_offset.y = frame["rect"]["y"].as<float>();
-                sprite_frame.uv_scale.x = frame["rect"]["width"].as<float>();
-                sprite_frame.uv_scale.y = frame["rect"]["height"].as<float>();
-                sprite_frame.pivot.x = frame["pivot"]["x"].as<float>();
-                sprite_frame.pivot.y = frame["pivot"]["y"].as<float>();
+                SpriteFrame sprite_frame = frame.as<SpriteFrame>();
+                frames_.push_back(sprite_frame);
                 
                 std::wstring name = StringHelper::UTF8ToUTF16(frame["name"].as<std::string>());
-                frames_[name] = sprite_frame;
+                frame_indexes_[name] = frames_.size() - 1;
             }
         }
     }
     else
     {
-        frames_.clear();
-
         SpriteFrame frame;
         frame.uv_offset = Math::Vector2::Zero();
         frame.uv_scale = Math::Vector2::One();
         frame.pivot = kCenter;
+        frames_.push_back(frame);
 
         std::wstring filename = FileHelper::GetFilenameWithoutExtension(kPath);
-        frames_[filename + L"_0"] = frame;
+        frame_indexes_[filename + L"_0"] = frames_.size() - 1;
     }
     
-    return true;;
+    return true;
 }
 
 RTTR_REGISTRATION

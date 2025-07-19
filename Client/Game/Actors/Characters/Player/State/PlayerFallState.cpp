@@ -1,24 +1,49 @@
 ﻿#include "pch.h"
 #include "PlayerFallState.h"
 
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 
-PlayerFallState::PlayerFallState(const std::shared_ptr<PlayerCharacter>& player_character) :
-    PlayerState(player_character)
+PlayerFallState::PlayerFallState(const std::shared_ptr<PlayerCharacter>& owner, const std::shared_ptr<AnimatorComponent>& animator) :
+    PlayerStateBase(owner, animator)
 {
 }
 
 void PlayerFallState::Enter()
 {
-    PlayerState::Enter();
+    PlayerStateBase::Enter();
+
+    if (auto animator = animator_.lock())
+    {
+        animator->PlayAnimation(L"Fall");
+    }
     
-    const Math::Vector2& movement_input = player_character_->GetMovementInput();
-    player_character_->SetVelocityX(movement_input.x * 5.f);
 }
 
-void PlayerFallState::Exit()
+void PlayerFallState::PhysicsTick(float delta_time)
 {
-    PlayerState::Exit();
+    PlayerStateBase::PhysicsTick(delta_time);
 
-    player_character_->SetVelocityX(0.f);
+    if (auto owner = owner_.lock())
+    {
+        float move_axis_x = owner->GetMoveAxisX();
+        float velocity_x = owner->GetVelocityX();
+
+        if (move_axis_x < 0.f && velocity_x > 0.f) velocity_x -= .1f;
+        else if (move_axis_x > 0.f && velocity_x < 0.f) velocity_x += .1f;
+
+        owner->SetVelocityX(velocity_x);
+    }
+    
+}
+
+void PlayerFallState::PostTick(float delta_time)
+{
+    PlayerStateBase::PostTick(delta_time);
+    
+    if (auto owner = owner_.lock())
+    {
+        owner->UpdateFlip();
+    }
+    
 }

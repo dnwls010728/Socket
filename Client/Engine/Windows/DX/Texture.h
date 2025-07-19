@@ -9,23 +9,23 @@
 #include "Vertex.h"
 #include "Asset/Asset.h"
 
-enum class WrapMode : uint8_t
-{
-    kReapet,
-    kClamp
-};
-
-enum class FilterMode : uint8_t
-{
-    kPoint,
-    kBilinear
-};
-
 class Texture : public Asset
 {
     GENERATED_BODY(Texture, Asset)
     
 public:
+    enum class WrapMode : uint8_t
+    {
+        kReapet,
+        kClamp
+    };
+
+    enum class FilterMode : uint8_t
+    {
+        kPoint,
+        kBilinear
+    };
+    
     Texture();
     virtual ~Texture() override = default;
     

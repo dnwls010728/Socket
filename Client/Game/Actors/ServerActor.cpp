@@ -13,7 +13,7 @@
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
-    snapshots_()
+    prev_animation{0,}
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -26,54 +26,56 @@ ServerActor::ServerActor(const std::wstring& name) :
 void ServerActor::PhysicsTick(float delta_time)
 {
     float server_now = SessionSubsystem::Get()->GetServerTime();
-    float interpolation_time = server_now - EngineSettings::Get()->GetInterpolationDelay();
+    float interpolation_time = server_now - EngineSettings::Get()->GetObjectInterpolationDelay();
 
-    while (snapshots_.size() >= 2 && snapshots_[1].server_time < interpolation_time)
+    // 오래된 스냅샷 제거
+    while (movement_snapshots_.size() >= 2 &&
+        movement_snapshots_[1].server_time < interpolation_time)
     {
-        snapshots_.pop_front();
-    }
-    
-    if (snapshots_.size() >= 2 && snapshots_[1].time_update)
-    {
-        snapshots_.pop_front();
+        movement_snapshots_.pop_front(); 
     }
 
-    if (snapshots_.size() >= 2 && snapshots_[0].time_update)
+    if (movement_snapshots_.size() >= 2 &&
+        movement_snapshots_[1].time_update)
     {
-        snapshots_[0].server_time = snapshots_[1].server_time - EngineSettings::Get()->GetInterpolationDelay();
+        movement_snapshots_.pop_front();
     }
-
-    if (snapshots_.size() >= 2)
+        
+    if (movement_snapshots_.size() >= 2)
     {
-        const Snapshot& from = snapshots_[0];
-        const Snapshot& to = snapshots_[1];
+        if (movement_snapshots_[0].time_update)
+        {
+            movement_snapshots_[0].server_time = movement_snapshots_[1].server_time - 0.15f;
+        }
+            
+        const MovementSnapshot& from = movement_snapshots_[0];
+        const MovementSnapshot& to = movement_snapshots_[1];
 
         float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
-        
         t = Math::Clamp(t, 0.f, 1.f);
 
-        bool is_flipped = t < .5f ? from.is_flipped : to.is_flipped;
-        std::wstring animation = t < .5f ? from.animation : to.animation;
-        
         Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
         GetTransform()->SetPosition(position);
-
-        renderer_->SetFlipX(is_flipped);
-        animator_->PlayAnimation(animation);
-        
     }
-    /*
-     *    else if (snapshots_.size() == 1) {
-        const Snapshot& s = snapshots_[0];
-        float delta = interpolation_time - s.server_time;
-        // delta 클램프 대신, 움직임 강도에 따라 늘리거나 줄인다
-        float maxDelta = std::max(0.1f, std::min(delta, 0.5f));
-        Math::Vector2 pos = s.position + s.velocity * maxDelta;
-        // 애니메이션·플립도 바로 적용
-        GetTransform()->SetPosition(pos);
-        renderer_->SetFlipX(s.is_flipped);
-        animator_->PlayAnimation(s.animation);
-    }*/
+    
+    while (animation_snapshots_.size() >= 2 &&
+       animation_snapshots_[1].server_time < interpolation_time)
+    {
+        animation_snapshots_.pop_front();
+    }
+
+    if (!animation_snapshots_.empty())
+    {
+        const auto& anim = animation_snapshots_.front();
+
+        // 이전 스냅샷과 다를 경우에만 처리
+        if (prev_animation.server_time != anim.server_time)
+        {
+            renderer_->SetFlipX(anim.is_flipped);
+            animator_->PlayAnimation(anim.animation);
+            prev_animation = anim;
+        }
+    }
 }
 
 void ServerActor::ReceivePacket(Net::IPacket* packet)
@@ -86,17 +88,40 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
         {
             ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet);
 
-            Snapshot snapshot;
+            MovementSnapshot snapshot;
             snapshot.position.x = object_position_packet->position_x;
             snapshot.position.y = object_position_packet->position_y;
             snapshot.velocity.x = object_position_packet->velocity_x;
             snapshot.velocity.y = object_position_packet->velocity_y;
-            snapshot.is_flipped = object_position_packet->is_flipped;
-            snapshot.animation = object_position_packet->animation;
             snapshot.server_time = object_position_packet->server_time;
             snapshot.time_update =  object_position_packet->time_update;
-            snapshots_.push_back(snapshot);
+            movement_snapshots_.push_back(snapshot);
+        }
+        break;
+
+    case ObjectAnimationPacket::StaticPacketID:
+        {
+            ObjectAnimationPacket* object_position_packet = static_cast<ObjectAnimationPacket*>(packet);
+
+            if (object_position_packet->instant_play)
+                animation_snapshots_.clear();
+            AnimationSnapshot snapshot;
+            snapshot.animation = object_position_packet->animation;
+            snapshot.is_flipped = object_position_packet->is_flipped;
+            snapshot.server_time = object_position_packet->server_time;
+            animation_snapshots_.push_back(snapshot);
         }
         break;
     }
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<ServerActor>("ServerActor")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_std_shared_ptr
+        );
 }

@@ -8,6 +8,7 @@
 
 ColliderComponent::ColliderComponent(Actor* owner, const std::wstring& kName) :
     ActorComponent(owner, kName),
+    shape_id_(b2_nullShapeId),
     offset_(Math::Vector2::Zero()),
     material_(),
     is_trigger_(false)
@@ -52,7 +53,7 @@ Math::Vector2 ColliderComponent::ClosestPoint(const Math::Vector2& kPoint) const
     return {point.x, point.y};
 }
 
-const Bounds& ColliderComponent::GetBounds()
+Bounds ColliderComponent::GetBounds() const
 {
     if (!b2Shape_IsValid(shape_id_)) return Bounds();
     

@@ -106,7 +106,7 @@ void Controller2DComponent::HorizontalCollisions(Math::Vector2& move_amount)
         HitResult hit_result;
         bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Right() * direction_x, ray_length, static_cast<uint16_t>(ActorLayer::kDefault));
 
-        DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Right() * direction_x * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
+        // DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Right() * direction_x * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
         
         if (is_hit)
         {
@@ -169,7 +169,7 @@ void Controller2DComponent::VerticalCollisions(Math::Vector2& move_amount)
         HitResult hit_result;
         bool is_hit = Physics2D::RayCast(hit_result, ray_origin, Math::Vector2::Up() * direction_y, ray_length, static_cast<uint16_t>(ActorLayer::kDefault));
 
-        DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Up() * direction_y * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
+        // DebugDrawHelper::Get()->DrawRay(ray_origin, Math::Vector2::Up() * direction_y * ray_length, is_hit ? Math::Color::Green : Math::Color::Red);
 
         if (is_hit)
         {

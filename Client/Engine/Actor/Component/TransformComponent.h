@@ -20,8 +20,8 @@ public:
     Math::Vector2 GetRightVector() const;
     Math::Vector2 GetUpVector() const;
 
-    FORCEINLINE Math::Vector2 GetPosition() const { return position_; }
-    FORCEINLINE Math::Vector2 GetScale() const { return scale_; }
+    FORCEINLINE const Math::Vector2& GetPosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetScale() const { return scale_; }
 
     FORCEINLINE float GetAngle() const { return angle_; }
 

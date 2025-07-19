@@ -1,0 +1,112 @@
+﻿#pragma once
+#include "Misc/StringHelper.h"
+#include "Subsystem/GameInstanceSubsystem.h"
+
+#include "yaml-cpp/yaml.h"
+
+struct MobStats
+{
+    int32_t lv;
+    int32_t hp;
+    int32_t dmg;
+    int32_t def;
+    float speed;
+};
+
+struct MobDrops
+{
+    int32_t exp;
+    int32_t color;
+};
+
+struct MobData
+{
+    uint32_t mob_id;
+    MobStats stats;
+    MobDrops drops;
+    std::wstring animation_pack;
+};
+
+struct ItemString
+{
+    std::wstring name;
+    std::wstring description;
+};
+
+namespace YAML
+{
+    template<>
+    struct convert<MobStats>
+    {
+        static bool decode(const Node& node, MobStats& data)
+        {
+            if (!node.IsMap()) return false;
+            data.lv = node["lv"].as<int32_t>(0);
+            data.hp = node["hp"].as<int32_t>(0);
+            data.dmg = node["dmg"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.speed = node["speed"].as<float>(0.f);
+            return true;
+        }
+    };
+    
+    template<>
+    struct convert<MobDrops>
+    {
+        static bool decode(const Node& node, MobDrops& data)
+        {
+            if (!node.IsMap()) return false;
+            data.exp = node["exp"].as<int32_t>(0);
+            data.color = node["color"].as<int32_t>(0);
+            return true;
+        }
+    };
+    
+    template<>
+    struct convert<MobData>
+    {
+        static bool decode(const Node& node, MobData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.stats = node["stats"].as<MobStats>();
+            data.drops = node["drops"].as<MobDrops>();
+            data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<ItemString>
+    {
+        static bool decode(const Node& node, ItemString& data)
+        {
+            if (!node.IsMap()) return false;
+            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
+            data.description = StringHelper::UTF8ToUTF16(node["description"].as<std::string>(""));
+            return true;
+        }
+    };
+}
+
+class DataSubsystem : public GameInstanceSubsystem
+{
+    GENERATED_BODY(DataSubsystem, GameInstanceSubsystem)
+    
+public:
+    DataSubsystem();
+    virtual ~DataSubsystem() override = default;
+
+    virtual void Init() override;
+
+    const MobData* GetMobData(uint32_t id) const;
+    
+    uint32_t GetExp(uint32_t level) const;
+
+    static DataSubsystem* Get();
+
+private:
+    std::unordered_map<uint32_t, MobData> mob_data_map_;
+    
+    std::array<uint32_t, 51> exp_table_;
+    
+};

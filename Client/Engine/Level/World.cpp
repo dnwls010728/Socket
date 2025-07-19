@@ -9,6 +9,7 @@
 #include "DirectXTK/CommonStates.h"
 #include "Subsystem/Tickable.h"
 #include "Subsystem/WorldSubsystem.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "Time/TimerManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Shape.h"
@@ -398,6 +399,7 @@ void World::SpawnActors()
         std::shared_ptr<Actor> actor = pending_actors_.front();
         current_level_->actors_.push_back(actor);
         actor->BeginPlay();
+        if (actor->IsActive()) actor->OnEnable();
         
         pending_actors_.pop();
     }

@@ -11,7 +11,7 @@ SpriteRendererComponent::SpriteRendererComponent(Actor* owner, const std::wstrin
     ActorComponent(owner, kName),
     shape_(nullptr),
     sprite_(nullptr),
-    current_frame_(L""),
+    frame_index_(0),
     flip_x_(false),
     flip_y_(false),
     color_(Math::Color::White),
@@ -34,7 +34,12 @@ void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFra
     if (!sprite) return;
     sprite_ = sprite;
     
-    current_frame_ = kFrame;
+    const auto& frame_indexes = sprite->GetFrameIndexes();
+    if (frame_indexes.empty()) return;
+
+    auto it = frame_indexes.find(kFrame);
+    if (it != frame_indexes.end()) frame_index_ = it->second;
+    else frame_index_ = 0;
 
     if (HasBegunPlay())
     {
@@ -82,10 +87,10 @@ void SpriteRendererComponent::Render(float alpha)
     const std::shared_ptr<TransformComponent> transform = GetOwner()->GetTransform();
     if (!transform) return;
 
-    const std::map<std::wstring, SpriteFrame>& frames = sprite_->GetFrames();
-    if (frames.empty() || !frames.contains(current_frame_)) return;
+    const auto& frames = sprite_->GetFrames();
+    if (frames.empty()) return;
 
-    const SpriteFrame& current_frame = frames.at(current_frame_);
+    const SpriteFrame& current_frame = frames[frame_index_];
 
     const float width = (sprite_->GetWidth() * current_frame.uv_scale.x / sprite_->GetPPU()) * transform->GetScale().x;
     const float height = (sprite_->GetHeight() * current_frame.uv_scale.y / sprite_->GetPPU()) * transform->GetScale().y;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "NetworkManager.h"
 #include "CustomPacket.h"
+#include "DataManager.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
 #include "Map/MapObjects/Mob/Mob.h"
@@ -21,7 +22,6 @@ ServerManager::ServerManager()
 
 void ServerManager::CommandHandlerInitialize()
 {
-    
     command_handler_[L"/disconnect"] = [&](auto& args) {
         if (args.size() < 2) {
             std::wcout << L"Usage: /disconnect <clientKey>\n";
@@ -41,21 +41,6 @@ void ServerManager::CommandHandlerInitialize()
         }
     };
 
-    command_handler_[L"/Spawn"] = [&](auto& args)
-    {
-        Map* map = nullptr;
-        try
-        {
-            map = World::Get()->GetMap(0);
-        }
-        catch (...)
-        {
-        }
-
-        std::shared_ptr<Mob> mob = std::make_shared<Mob>();
-        map->SpawnObject(mob);
-    };
-
     command_handler_[L"/help"] = [&](auto&) {
         std::wcout << L"Available commands:\n";
         std::wcout << L"  /exit                   - Exit the server\n";
@@ -66,8 +51,11 @@ void ServerManager::CommandHandlerInitialize()
 
 bool ServerManager::Execute()
 {
+    DataManager::Get()->Init();
+    
     MySQLManager* mysql_manager = MySQLManager::Get();
     if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
+    // if (!mysql_manager->Connect("localhost", "root", "12345"))
     {
         return false;
     }
@@ -80,7 +68,7 @@ bool ServerManager::Execute()
         return false;
     }
 
-    World::Get()->Start(200, 10);
+     World::Get()->Start(100, 10);
     
     // 명령어 입력 루프
     std::wstring line;
@@ -129,6 +117,11 @@ bool ServerManager::OnClientConnected(const Net::TCPConnectionState& state)
     
     SessionManager::Get()->AddSession(session);
     return true;
+}
+
+bool ServerManager::DisconnectClient(int client_id)
+{
+    return server_socket_.DisconnectClient(client_id);
 }
 
 void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)

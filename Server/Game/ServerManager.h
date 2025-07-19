@@ -13,6 +13,7 @@ public:
 
 	bool Execute();
 	bool OnClientConnected(const Net::TCPConnectionState& state);
+	bool DisconnectClient(int client_id);
 	
 	void OnClientDisconnected(const Net::TCPConnectionState& state);
 	void OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet);

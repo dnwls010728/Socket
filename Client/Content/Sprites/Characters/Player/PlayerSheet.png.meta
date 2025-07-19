@@ -290,6 +290,15 @@ frames:
     pivot:
       x: 0.5
       y: 0
+  - name: PlayerSheet_70
+    rect:
+      x: 0
+      y: 0.104166664
+      width: 0.0714285746
+      height: 0.020833334
+    pivot:
+      x: 0.5
+      y: 0
   - name: PlayerSheet_84
     rect:
       x: 0

@@ -18,6 +18,26 @@ UIContainer::UIContainer(const std::wstring& name) :
 {
 }
 
+void UIContainer::Init()
+{
+    for (auto& child : children_)
+    {
+        if (child) child->Init();
+    }
+    
+    UIElement::Init();
+}
+
+void UIContainer::Uninit()
+{
+    for (auto& child : children_)
+    {
+        if (child) child->Uninit();
+    }
+    
+    UIElement::Uninit();
+}
+
 void UIContainer::Tick(float delta_time)
 {
     UIElement::Tick(delta_time);
@@ -57,11 +77,26 @@ UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, c
     for (uint32_t i = 0; i < children_.size(); ++i)
     {
         UIElement* child = children_[children_.size() - i - 1].get();
-        if (child && child->IsActive() && child->IsInRange(position))
+        if (!child || !child->IsActive()) continue;
+        
+        bool is_in_range = child->IsInRange(position);
+        bool was_in_range = child->IsInRange(position - delta);
+
+        if (is_in_range && !was_in_range) result.is_handled |= child->OnMouseEnter();
+        if (!is_in_range && was_in_range)
         {
-            result = child->OnMouseMotion(position, delta);
+            result.is_handled |= child->OnMouseLeave();
             if (result.is_handled) return result;
         }
+
+        if (is_in_range || was_in_range)
+        {
+            UI::MouseEventResult temp_result = child->OnMouseMotion(position, delta);
+            result.cursor_state = temp_result.cursor_state;
+            result.is_handled |= temp_result.is_handled;
+        }
+
+        if (result.is_handled) return result;
     }
 
     return result;

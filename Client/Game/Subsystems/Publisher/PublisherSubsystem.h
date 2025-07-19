@@ -3,6 +3,52 @@
 
 struct EventData
 {
+    virtual ~EventData() = default;
+};
+
+struct HPChangedEventData : EventData
+{
+    uint32_t hp;
+    uint32_t max_hp;
+
+    virtual ~HPChangedEventData() override = default;
+};
+
+struct ExpChangedEventData : EventData
+{
+    uint32_t exp;
+
+    virtual ~ExpChangedEventData() override = default;
+};
+
+struct LvChangedEventData : EventData
+{
+    uint32_t lv;
+
+    virtual ~LvChangedEventData() override = default;
+};
+
+struct ItemSwappedEventData : EventData
+{
+    uint32_t first_slot;
+    uint32_t second_slot;
+
+    virtual ~ItemSwappedEventData() override = default;
+};
+
+struct ItemCountChangedEventData : EventData
+{
+    uint32_t slot;
+    uint32_t count;
+
+    virtual ~ItemCountChangedEventData() override = default;
+};
+
+struct ItemRemovedEventData : EventData
+{
+    uint32_t slot;
+
+    virtual ~ItemRemovedEventData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -14,7 +60,13 @@ class PublisherSubsystem : public GameInstanceSubsystem
 public:
     enum class EventType : uint8_t
     {
-        kNone = 0
+        kNone = 0,
+        kHPChanged,
+        kExpChanged,
+        kLvChanged,
+        kItemSwapped,
+        kItemCountChanged,
+        kItemRemoved
     };
     
     PublisherSubsystem();

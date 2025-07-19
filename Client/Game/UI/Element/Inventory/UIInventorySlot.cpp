@@ -3,44 +3,28 @@
 
 #include <CustomPacket.h>
 
+#include "UIInventory.h"
+#include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UIInGameState.h"
 #include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/Renderer.h"
-#include "Windows/DX/UITexture.h"
+#include "Windows/DX/UISprite.h"
 
 UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
+    ui_inventory_(nullptr),
+    tooltip_(nullptr),
     i_icon_(nullptr),
     t_count_(nullptr),
     slot_id_(0),
-    item_id_(0)
+    item_id_(0),
+    last_time_(0.f)
 {
     size_ = { 32.f, 32.f };
-}
-
-void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
-{
-    item_id_ = item_id;
-    if (item_id > 0)
-    {
-        UITexture* texture = AssetManager::Get()->Load<UITexture>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (texture) i_icon_->SetTexture(texture);
-
-        t_count_->SetText(std::to_wstring(count));
-    }
-    else
-    {
-        i_icon_->SetTexture(nullptr);
-        t_count_->SetText(L"");
-    }
-}
-
-void UIInventorySlot::Init()
-{
-    UIContainer::Init();
-
+    
     i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     i_icon_->SetSize(size_);
     i_icon_->SetIgnoreRayCast(true);
@@ -54,16 +38,113 @@ void UIInventorySlot::Init()
     t_count_->SetActive(false);
 }
 
+void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
+{
+    item_id_ = item_id;
+    if (item_id > 0)
+    {
+        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+        if (ui_sprite) i_icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
+
+        t_count_->SetText(std::to_wstring(count));
+    }
+}
+
+void UIInventorySlot::ResetSlot()
+{
+    item_id_ = 0;
+    
+    i_icon_->SetRelativePosition(Math::Vector2::Zero());
+    t_count_->SetRelativePosition(Math::Vector2::Zero());
+    
+    i_icon_->SetSprite(nullptr, L"");
+    t_count_->SetText(L"");
+}
+
 void UIInventorySlot::Render()
 {
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), size_, Math::Color::Red);
+    Renderer* renderer = Renderer::Get();
+    
+    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, {0, 0, 0, 128});
+    renderer->DrawRoundBox(GetAbsolutePosition(), size_, {255, 255, 255, 255});
     
     UIContainer::Render();
+}
+
+UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+{
+    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    if (button != MouseButton::kLeft || !is_pressed) return result;
+    if (item_id_ == 0) return result;
+
+    result.is_handled = true;
+    if (timestamp - last_time_ < .2f)
+    {
+        Logger::Print(L"Double click!");
+        last_time_ = 0.f;
+        return result;
+    }
+    
+    last_time_ = timestamp;
+    return result;
+}
+
+UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    UI::MouseEventResult result = { false, UI::CursorState::kIdle };
+    
+    if (!tooltip_) return { false, UI::CursorState::kIdle };
+
+    EngineSettings* settings = EngineSettings::Get();
+    
+    Math::Vector2 tooltip_size = tooltip_->GetSize();
+    Math::Vector2 tooltip_position = position;
+
+    int32_t screen_width = settings->GetScreenWidth();
+    int32_t screen_height = settings->GetScreenHeight();
+
+    int32_t overflow_width = tooltip_position.x + tooltip_size.x - screen_width;
+    int32_t overflow_height = tooltip_position.y + tooltip_size.y - screen_height;
+
+    if (overflow_width > 0) tooltip_position.x -= overflow_width;
+    if (overflow_height > 0) tooltip_position.y -= overflow_height;
+
+    tooltip_->SetAbsolutePosition(tooltip_position);
+    return { true, UI::CursorState::kIdle };
+}
+
+bool UIInventorySlot::OnMouseEnter()
+{
+    if (item_id_ == 0) return false;
+
+    auto game_state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+    if (!game_state) return false;
+
+    tooltip_ = game_state->GetItemTooltip();
+    tooltip_->SetActive(true);
+    
+    return true;
+}
+
+bool UIInventorySlot::OnMouseLeave()
+{
+    if (item_id_ == 0 || !tooltip_) return false;
+    
+    tooltip_->SetActive(false);
+    tooltip_ = nullptr;
+    
+    return true;
 }
 
 bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
+    if (tooltip_)
+    {
+        tooltip_->SetActive(false);
+        tooltip_ = nullptr;
+    }
+    
     return true;
 }
 
@@ -79,15 +160,19 @@ bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2&
 bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
+    
     i_icon_->SetRelativePosition(Math::Vector2::Zero());
     t_count_->SetRelativePosition(Math::Vector2::Zero());
 
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        MoveItemRequest request;
-        request.type = ItemMoveType::kDrop;
-        request.src = slot_id_;
+        uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+        
+        DropItemRequest request;
+        request.inventory_type = inventory_type;
+        request.slot_id = slot_id_;
+        request.count = ui_inventory_->inventory_->GetItemCount(ui_inventory_->tab_, slot_id_);
         SessionSubsystem::Get()->SendPacket(request);
     }
     
@@ -99,10 +184,12 @@ bool UIInventorySlot::OnDrop(const Math::Vector2& position, UIElement* target)
     UIInventorySlot* target_slot = dynamic_cast<UIInventorySlot*>(target);
     if (!target_slot) return false;
 
+    uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+
     MoveItemRequest request;
-    request.type = ItemMoveType::kMove;
-    request.src = target_slot->GetSlotID();
-    request.dest = slot_id_;
+    request.inventory_type = inventory_type;
+    request.first_slot = target_slot->GetSlotID();
+    request.second_slot = slot_id_;
     SessionSubsystem::Get()->SendPacket(request);
     
     return true;

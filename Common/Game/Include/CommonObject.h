@@ -18,15 +18,11 @@ struct CharacterInfo
 
 struct ItemInfo
 {
+    uint8_t inventory_type; // 0: 장비, 1: 소비, 2: 기타
+    
     uint32_t item_id;
     uint32_t slot_index;
     uint32_t count;
-};
-
-struct InventoryChange
-{
-    uint32_t dest;
-    uint32_t arg;
 };
 
 enum class ItemMoveType : uint8_t
@@ -39,11 +35,26 @@ enum class ItemMoveType : uint8_t
 enum class ObjectType : uint8_t
 {
     kNone = 0,
-    kMob
+    kPlayer,
+    kMob,
+    kDroppedItem
+};
+
+struct PlayerInfo
+{
+    wchar_t name[256];
 };
 
 struct MobInfo
 {
+    uint32_t mob_id;
+};
+
+struct DroppedItemInfo
+{
+    uint32_t item_id;
+    float dropper_position_x;
+    float dropper_position_y;
 };
 
 struct ObjectInfo
@@ -55,6 +66,24 @@ struct ObjectInfo
 
     union
     {
+        PlayerInfo player;
         MobInfo mob;
+        DroppedItemInfo dropped_item;
     } info;
+};
+
+enum class PlayerStat : uint8_t
+{
+    kHP = (0x01<<0),
+    kMaxHP = (0x01<<1),
+    kExp = (0x01<<2),
+    kLv = (0x01<<3)
+};
+
+enum class MobState : uint8_t
+{
+    kIdle = 0,
+    kWalk,
+    kHit,
+    kDie
 };

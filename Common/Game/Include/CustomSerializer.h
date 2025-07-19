@@ -34,14 +34,10 @@ namespace Net
 		)
 
 	SERIALIZER_EXTEND(ItemInfo,
+		v.inventory_type,
 		v.item_id,
 		v.slot_index,
 		v.count
-		)
-
-	SERIALIZER_EXTEND(InventoryChange,
-		v.dest,
-		v.arg
 		)
 
 } // namespace Net
