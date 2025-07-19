@@ -21,6 +21,8 @@ public:
     inline uint32_t GetNext() const { return next_; }
     
     float GetYAt(float x) const;
+    float GetSlope() const;
+    
     bool IsSlope() const;
 
 private:

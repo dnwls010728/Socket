@@ -94,6 +94,7 @@ void Mob::PhysicsTick(float delta_time)
 
     is_grounded_ = Math::IsEqual(position_.y, ground_y);
 
+    if (is_grounded_) velocity_.y = 5.f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
 
