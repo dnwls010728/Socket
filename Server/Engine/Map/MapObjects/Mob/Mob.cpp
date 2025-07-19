@@ -78,9 +78,9 @@ void Mob::PhysicsTick(float delta_time)
 
     if (foothold_)
     {
-        if (foothold_ && position_.x > foothold_->GetX2())
+        if (position_.x > foothold_->GetX2())
             foothold_ = map_->FindFootholdByID(foothold_->GetNext());
-        else if (foothold_ && position_.x < foothold_->GetX1())
+        else if (position_.x < foothold_->GetX1())
             foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
     }
 
@@ -101,12 +101,12 @@ void Mob::PhysicsTick(float delta_time)
 
     if (next_position.x < map_bounds.min.x)
     {
-        next_position.x = map_bounds.min.x;
+        position_.x = map_bounds.min.x;
         velocity_.x = 0;
     }
     else if (next_position.x > map_bounds.max.x)
     {
-        next_position.x = map_bounds.max.x;
+        position_.x = map_bounds.max.x;
         velocity_.x = 0;
     }
     
