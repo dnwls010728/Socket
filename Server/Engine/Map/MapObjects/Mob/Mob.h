@@ -49,7 +49,7 @@ protected:
     virtual void Tick(float delta_time) override;
 
     void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
-    void SendAnimationPoacket(const std::wstring& animation, bool is_flip, bool instant_play = false) const;
+    void SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play = false) const;
     void OnHit(uint32_t attacker, uint32_t damage);
 
     uint32_t mob_id_;

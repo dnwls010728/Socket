@@ -75,35 +75,59 @@ void Mob::PhysicsTick(float delta_time)
     state_machine_->PhysicsTick(delta_time);
     
     bool was_slope = foothold_ && foothold_->IsSlope();
-    if (is_grounded_)
+
+    if (foothold_)
     {
         if (foothold_ && position_.x > foothold_->GetX2())
             foothold_ = map_->FindFootholdByID(foothold_->GetNext());
         else if (foothold_ && position_.x < foothold_->GetX1())
             foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
-
-        if (!foothold_) foothold_ = map_->FindFoothold(position_);
     }
-    else foothold_ = map_->FindFoothold(position_);
+
+    if (!foothold_ || !is_grounded_)
+        foothold_ = map_->FindFoothold(position_);
+
     if (!foothold_) return;
     
     float ground_y = foothold_->GetYAt(position_.x);
-    if (was_slope || foothold_->IsSlope())
-    {
-        position_.y = ground_y;
-    }
+    if (was_slope || foothold_->IsSlope()) position_.y = ground_y;
 
     is_grounded_ = Math::IsEqual(position_.y, ground_y);
 
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
+
+    const Bounds& map_bounds = map_->GetMapBounds();
+
+    if (next_position.x < map_bounds.min.x)
+    {
+        next_position.x = map_bounds.min.x;
+        velocity_.x = 0;
+    }
+    else if (next_position.x > map_bounds.max.x)
+    {
+        next_position.x = map_bounds.max.x;
+        velocity_.x = 0;
+    }
     
     float next_ground_y = foothold_->GetYAt(next_position.x);
-        
     if (position_.y >= ground_y && next_position.y <= next_ground_y)
     {
         position_.y = next_ground_y;
         velocity_.y = 0;
+    }
+    else
+    {
+        if (next_position.y < map_bounds.min.y)
+        {
+            position_.y = map_bounds.min.y;
+            velocity_.y = 0;
+        }
+        else if (next_position.y > map_bounds.max.y)
+        {
+            position_.y = map_bounds.max.y;
+            velocity_.y = 0;
+        }
     }
 
     Translate(velocity_ * delta_time);
@@ -138,7 +162,7 @@ void Mob::Tick(float delta_time)
     
     if (animation_ != last_animation_ || is_flipped_ != last_flipped_)
     {
-        SendAnimationPoacket(animation_, is_flipped_);
+        SendAnimationPacket(animation_, is_flipped_);
             
         last_animation_ = animation_;
         last_flipped_ = is_flipped_;
@@ -159,7 +183,7 @@ void Mob::SendPositionPacket(const Math::Vector2& position, bool time_update) co
     map_->SendPacket(packet);
 }
 
-void Mob::SendAnimationPoacket(const std::wstring& animation, bool is_flip, bool instant_play) const
+void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play) const
 {
     ObjectAnimationPacket packet;
     packet.object_id = GetObjectID();
@@ -181,13 +205,13 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
     hp_ -= damage;
      if (hp_ <= 0)
      {
-         SendAnimationPoacket(L"Die", is_flipped_, true);
+         SendAnimationPacket(L"Die", is_flipped_, true);
          if (player) player->GainExp(10000); // 예시로 100 경험치 추가
          hp_ = 0;
          map_->DestroyObject(GetObjectID());
      }
      else
     {
-        SendAnimationPoacket(L"Hit", is_flipped_, true);
+        SendAnimationPacket(L"Hit", is_flipped_, true);
     }
 }

@@ -87,7 +87,7 @@ int32_t Math::RandRange(int32_t min, int32_t max)
 {
     if (min > max)
     {
-        float temp = min;
+        int32_t temp = min;
         min = max;
         max = temp;
     }
