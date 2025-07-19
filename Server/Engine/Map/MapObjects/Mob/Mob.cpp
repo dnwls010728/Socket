@@ -90,11 +90,10 @@ void Mob::PhysicsTick(float delta_time)
     if (!foothold_) return;
     
     float ground_y = foothold_->GetYAt(position_.x);
-    if (was_slope || foothold_->IsSlope()) position_.y = ground_y;
+    if ((was_slope || foothold_->IsSlope())) position_.y = ground_y;
 
     is_grounded_ = Math::IsEqual(position_.y, ground_y);
 
-    if (is_grounded_) velocity_.y = 5.f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
 
