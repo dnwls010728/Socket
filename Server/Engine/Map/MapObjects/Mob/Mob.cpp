@@ -90,7 +90,24 @@ void Mob::PhysicsTick(float delta_time)
     if (!foothold_) return;
     
     float ground_y = foothold_->GetYAt(position_.x);
-    if ((was_slope || foothold_->IsSlope())) position_.y = ground_y;
+    if (Math::IsEqual(velocity_.y, 0.f))
+    {
+        // 테스트 코드
+        // ↖ - -1, ↙ 1
+        float slope = foothold_->GetSlope();
+        float y_delta = Math::Abs(slope);
+
+        if (slope < 0.f) y_delta *= ground_y - position_.y;
+        else if (slope > 0.f) y_delta *= position_.y - ground_y;
+        
+        if ((was_slope || foothold_->IsSlope()))
+        {
+            if (velocity_.x > 0.f && y_delta <= velocity_.x)
+                position_.y = ground_y;
+            else if (velocity_.x < 0.f && y_delta >= velocity_.x)
+                position_.y = ground_y;
+        }
+    }
 
     is_grounded_ = Math::IsEqual(position_.y, ground_y);
 
