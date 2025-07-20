@@ -18,11 +18,6 @@ float Foothold::GetYAt(float x) const
     return Math::Lerp(point1_.y, point2_.y, t);
 }
 
-float Foothold::GetSlope() const
-{
-    return (point2_.y - point1_.y) / (point2_.x - point1_.x);
-}
-
 bool Foothold::IsSlope() const
 {
     float dx = point2_.x - point1_.x;
