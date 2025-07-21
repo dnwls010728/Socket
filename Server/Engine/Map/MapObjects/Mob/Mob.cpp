@@ -74,6 +74,7 @@ void Mob::PhysicsTick(float delta_time)
     MapObject::PhysicsTick(delta_time);
     state_machine_->PhysicsTick(delta_time);
 
+    if (is_grounded_) velocity_.y = 6.7f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
 
@@ -91,7 +92,9 @@ void Mob::PhysicsTick(float delta_time)
     if (foothold_)
     {
         float ground_y = foothold_->GetYAt(next_position.x);
-        if (next_position.y <= ground_y)
+        const float epsilon = 0.1f;
+
+        if (next_position.y <= ground_y || (is_grounded_ && next_position.y - ground_y <= epsilon))
         {
             next_position.y = ground_y;
             is_grounded_ = true;
