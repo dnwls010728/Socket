@@ -410,7 +410,7 @@ Foothold* Map::FindFoothold(const Math::Vector2& position) const
         if (position.x < foothold->GetX1() || position.x > foothold->GetX2()) continue;
         
         float y = foothold->GetYAt(position.x);
-        if (best_y <= y && position.y >= y)
+        if (y <= position.y && y > best_y)
         {
             best_y = y;
             best = foothold;

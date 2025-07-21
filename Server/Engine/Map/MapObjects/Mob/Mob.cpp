@@ -72,21 +72,13 @@ void Mob::BeginPlay()
 void Mob::PhysicsTick(float delta_time)
 {
     MapObject::PhysicsTick(delta_time);
-
-    bool was_grounded = is_grounded_;
     state_machine_->PhysicsTick(delta_time);
+    
+    const Bounds& bounds = map_->GetMapBounds();
 
     velocity_.y += gravity_ * delta_time;
-
-    if (was_grounded && velocity_.y > 0.f)
-    {
-        is_grounded_ = false;
-        foothold_ = nullptr;
-    }
     
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
-
-    const Bounds& bounds = map_->GetMapBounds();
     next_position.x = Math::Clamp(next_position.x, bounds.min.x, bounds.max.x);
 
     if (foothold_)
@@ -96,8 +88,14 @@ void Mob::PhysicsTick(float delta_time)
         else if (next_position.x > foothold_->GetX2())
             foothold_ = map_->FindFootholdByID(foothold_->GetNextID());
     }
+    
+    if (foothold_ && velocity_.y > 0.f)
+    {
+        foothold_ = nullptr;
+        is_grounded_ = false;
+    }
 
-    if (velocity_.y < 0.f && !foothold_)
+    if (!foothold_ && velocity_.y < 0.f)
         foothold_ = map_->FindFoothold(next_position);
 
     if (foothold_)
