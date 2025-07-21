@@ -74,31 +74,32 @@ void Mob::PhysicsTick(float delta_time)
     MapObject::PhysicsTick(delta_time);
     state_machine_->PhysicsTick(delta_time);
 
-    if (is_grounded_) velocity_.y = 6.7f;
     velocity_.y += gravity_ * delta_time;
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
 
+    const Bounds& bounds = map_->GetMapBounds();
+    next_position.x = Math::Clamp(next_position.x, bounds.min.x, bounds.max.x);
+    next_position.y = Math::Clamp(next_position.y, bounds.min.y, bounds.max.y);
+
     if (foothold_)
     {
-        if (next_position.x > foothold_->GetX2())
-            foothold_ = map_->FindFootholdByID(foothold_->GetNext());
-        else if (next_position.x < foothold_->GetX1())
-            foothold_ = map_->FindFootholdByID(foothold_->GetPrevious());
+        if (next_position.x < foothold_->GetX1())
+            foothold_ = map_->FindFootholdByID(foothold_->GetPreviousID());
+        else if (next_position.x > foothold_->GetX2())
+            foothold_ = map_->FindFootholdByID(foothold_->GetNextID());
     }
 
-    if (!foothold_ || !is_grounded_)
-        foothold_ = map_->FindFoothold({ next_position.x, position_.y });
+    if (!foothold_)
+        foothold_ = map_->FindFoothold(next_position);
 
     if (foothold_)
     {
         float ground_y = foothold_->GetYAt(next_position.x);
-        const float epsilon = 0.1f;
-
-        if (next_position.y <= ground_y || (is_grounded_ && next_position.y - ground_y <= epsilon))
+        if (next_position.y < ground_y)
         {
             next_position.y = ground_y;
+            velocity_.y = 0.0f;
             is_grounded_ = true;
-            velocity_.y = 0.f;
         }
         else is_grounded_ = false;
     }
