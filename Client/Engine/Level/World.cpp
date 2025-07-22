@@ -86,7 +86,6 @@ void World::InitPhysicsWorld()
     debug_draw_.DrawStringFcn = DrawString;
 
     UpdateCameraBounds(CameraManager::Get()->GetBounds());
-    debug_draw_.useDrawingBounds = false;
 
     debug_draw_.drawShapes = false;
     debug_draw_.drawJoints = false;
