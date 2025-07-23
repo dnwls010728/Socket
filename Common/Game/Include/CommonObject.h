@@ -43,6 +43,7 @@ enum class ObjectType : uint8_t
 struct PlayerInfo
 {
     wchar_t name[256];
+    wchar_t character_color[256];
 };
 
 struct MobInfo

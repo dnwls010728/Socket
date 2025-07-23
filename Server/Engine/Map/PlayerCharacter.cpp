@@ -16,6 +16,7 @@ PlayerCharacter::PlayerCharacter() :
     player_(),
     account_id_(0),
     name_(L"Unknown"),
+    character_color_(L"FFFFFF"),
     lv_(0),
     hp_(0),
     max_hp_(0),
@@ -54,6 +55,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             {
                 character->account_id_ = result->getInt("account_id");
                 character->name_ = StringHelper::UTF8ToUTF16(result->getString("name"));
+                character->character_color_ = StringHelper::UTF8ToUTF16(result->getString("character_color"));
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
                 character->max_hp_ = result->getInt("max_hp");
@@ -307,6 +309,7 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     PlayerInfo& info = packet.object_info.info.player;
     wcscpy_s(info.name, name_.c_str());
+    wcscpy_s(info.character_color, character_color_.c_str());
 
     player->SendPacket(packet);
 }

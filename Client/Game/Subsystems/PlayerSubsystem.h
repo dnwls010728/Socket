@@ -43,6 +43,7 @@ private:
     Math::Vector2 spawn_position;
 
     std::wstring name_;
+    std::wstring character_color_;
     
     std::unique_ptr<Inventory> inventory_;
     

@@ -50,6 +50,7 @@ protected:
     uint32_t account_id_;
 
     std::wstring name_;
+    std::wstring character_color_;
 
     uint32_t lv_;
     uint32_t hp_;

@@ -40,6 +40,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             SelectCharacterResponse response;
             response.name = player_character_->name_;
+            response.character_color = player_character_->character_color_;
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
             response.hp = player_character_->hp_;

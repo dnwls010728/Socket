@@ -57,7 +57,7 @@ void GameMap::Load()
     if (IsValid(player_character))
     {
         player_character->SetObjectID(player_subsystem->GetCharacterID());
-        player_character->Init(player_subsystem->name_, player_subsystem->spawn_position);
+        player_character->Init(player_subsystem->name_, player_subsystem->character_color_, player_subsystem->spawn_position);
 
         camera_manager->SetTarget(player_character);
         NetworkSubsystem::Get()->SetPlayerCharacter(player_character);

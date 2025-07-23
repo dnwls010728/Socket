@@ -78,6 +78,7 @@ struct SelectCharacterRequest : public Net::IPacket
 struct SelectCharacterResponse : public Net::IPacket
 {
     std::wstring name;
+    std::wstring character_color;
 
     uint32_t character_id;
     uint32_t lv;
@@ -95,7 +96,7 @@ struct SelectCharacterResponse : public Net::IPacket
 
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(name, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
+    SERIALIZABLE_FIELDS(name, character_color, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 207)
 };
 

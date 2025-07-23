@@ -81,12 +81,17 @@ void Mob::PhysicsTick(float delta_time)
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
     next_position.x = Math::Clamp(next_position.x, bounds.min.x, bounds.max.x);
 
-    if (foothold_)
+    while (foothold_ && (next_position.x < foothold_->GetX1() || next_position.x > foothold_->GetX2()))
     {
-        if (next_position.x < foothold_->GetX1())
-            foothold_ = map_->FindFootholdByID(foothold_->GetPreviousID());
-        else if (next_position.x > foothold_->GetX2())
-            foothold_ = map_->FindFootholdByID(foothold_->GetNextID());
+        uint32_t next_id = (next_position.x < foothold_->GetX1()) ? foothold_->GetPreviousID() : foothold_->GetNextID();
+        Foothold* next_foothold = map_->FindFootholdByID(next_id);
+        if (!next_foothold)
+        {
+            foothold_ = nullptr;
+            break;
+        }
+
+        foothold_ = next_foothold;
     }
     
     if (foothold_ && velocity_.y > 0.f)

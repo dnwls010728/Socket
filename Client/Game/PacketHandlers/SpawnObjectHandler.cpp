@@ -25,7 +25,7 @@ bool SpawnObjectHandler::Handle(Net::IPacket* packet)
             std::shared_ptr<PlayerCharacter> player_character = network_subsystem->SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), object_info.object_id);
             if (IsValid(player_character))
             {
-                player_character->Init(object_info.info.player.name, {object_info.position_x, object_info.position_y});
+                player_character->Init(object_info.info.player.name, object_info.info.player.character_color, {object_info.position_x, object_info.position_y});
                 network_subsystem->other_players_.emplace_back(player_character);
             }
         }

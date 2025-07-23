@@ -9,6 +9,9 @@ namespace Math
         uint8_t b;
         uint8_t a;
 
+        static Color HexToColor(const std::wstring& hex);
+        static std::wstring ColorToHex(Color color);
+
         static const Color Red;
         static const Color Green;
         static const Color Blue;

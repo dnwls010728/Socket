@@ -40,7 +40,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_position_(Math::Vector2::Zero()),
     last_flip_(false),
     invincible_time_(0.f),
-    prev_animation{0,}
+    prev_animation{0,},
+    color_(Math::Color::White)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -98,11 +99,15 @@ void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, fl
     invincible_time_ = server_time + 2.f;
 }
 
-void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& position)
+void PlayerCharacter::Init(const std::wstring& name, const std::wstring& character_color, const Math::Vector2& position)
 {
     character_name_ = name;
-    last_position_ = position;
+
+    color_ = Math::Color::HexToColor(character_color);
+    renderer_->SetColor(color_);
+    
     GetTransform()->SetPosition(position);
+    last_position_ = position;
 }
 
 void PlayerCharacter::UpdateFlip() const
@@ -168,10 +173,12 @@ void PlayerCharacter::Tick(float delta_time)
         float phase = alpha * 10 * Math::PI(); // 10회
         float value = .9f - .5f * std::abs(std::sin(phase)); // 0.4 ~ 0.9 사이의 값
         
-        uint8_t lum = static_cast<uint8_t>(value * 255);
-        renderer_->SetColor(Math::Color(lum, lum, lum, 255));
+        uint8_t r = static_cast<uint8_t>(value * color_.r);
+        uint8_t g = static_cast<uint8_t>(value * color_.g);
+        uint8_t b = static_cast<uint8_t>(value * color_.b);
+        renderer_->SetColor(Math::Color(r, g, b, color_.a));
     }
-    else renderer_->SetColor(Math::Color::White);
+    else renderer_->SetColor(color_);
 
     SyncCharacterMovement(delta_time);
     
