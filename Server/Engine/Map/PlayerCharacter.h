@@ -20,7 +20,7 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    void TakeDamage(uint32_t damage_amount);
+    void TakeDamage(int32_t damage_amount);
 
     bool Disconnect();
 
@@ -41,7 +41,7 @@ protected:
 
     void ExitMap();
     void UpdateCharacter();
-    void GainExp(uint32_t amount);
+    void GainExp(int32_t amount);
 
     virtual void Tick(float delta_time) override;
     
@@ -52,12 +52,12 @@ protected:
     std::wstring name_;
     std::wstring character_color_;
 
-    uint32_t lv_;
-    uint32_t hp_;
-    uint32_t max_hp_;
+    int32_t lv_;
+    int32_t hp_;
+    int32_t max_hp_;
     
-    std::atomic_uint32_t exp_;
-    std::atomic_uint32_t color_;
+    std::atomic_int32_t exp_;
+    std::atomic_int32_t color_;
 
     std::unique_ptr<Inventory> inventory_;
     

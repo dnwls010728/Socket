@@ -9,6 +9,7 @@
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
+#include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player.h"
 
@@ -81,7 +82,8 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 
                 uint32_t item_id = result->getInt("item_id");
                 uint32_t slot_index = result->getInt("slot_index");
-                uint32_t count = result->getInt("count");
+                
+                int32_t count = result->getInt("count");
 
                 Inventory::Type type = static_cast<Inventory::Type>(inventory_type);
                 character->inventory_->AddSlot(type, slot_index, item_id, count);
@@ -272,10 +274,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(uint32_t damage_amount)
+void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (hp_ <= 0 || is_invincible_) return;
-    hp_ -= damage_amount;
+    hp_ = Math::Clamp(hp_ - damage_amount, 0, max_hp_);
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;
@@ -361,7 +363,7 @@ void PlayerCharacter::UpdateCharacter()
     }
 }
 
-void PlayerCharacter::GainExp(uint32_t amount)
+void PlayerCharacter::GainExp(int32_t amount)
 {
     if (lv_ >= 50) return;
 

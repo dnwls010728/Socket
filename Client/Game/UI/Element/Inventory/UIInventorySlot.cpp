@@ -91,14 +91,12 @@ UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& positio
 
 UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    UI::MouseEventResult result = { false, UI::CursorState::kIdle };
-    
     if (!tooltip_) return { false, UI::CursorState::kIdle };
 
     EngineSettings* settings = EngineSettings::Get();
     
     Math::Vector2 tooltip_size = tooltip_->GetSize();
-    Math::Vector2 tooltip_position = position;
+    Math::Vector2 tooltip_position = position + Math::Vector2::Up() * 32.f;
 
     int32_t screen_width = settings->GetScreenWidth();
     int32_t screen_height = settings->GetScreenHeight();
@@ -110,6 +108,8 @@ UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& positio
     if (overflow_height > 0) tooltip_position.y -= overflow_height;
 
     tooltip_->SetAbsolutePosition(tooltip_position);
+    tooltip_->Set(item_id_);
+    
     return { true, UI::CursorState::kIdle };
 }
 

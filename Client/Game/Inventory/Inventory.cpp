@@ -47,7 +47,7 @@ uint32_t Inventory::FindFreeSlot(Type type)
     return counter;
 }
 
-uint32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
+int32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
 {
     auto it = inventories_[type].find(slot_index);
     if (it != inventories_[type].end())
@@ -56,9 +56,9 @@ uint32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
     return 0;
 }
 
-uint32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
+int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
 {
-    uint32_t total_count = 0;
+    int32_t total_count = 0;
     for (const auto& slot : inventories_[type] | std::views::values)
     {
         if (slot.item_id == item_id)
@@ -68,13 +68,13 @@ uint32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
     return total_count;
 }
 
-uint32_t Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, uint32_t count)
+uint32_t Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, int32_t count)
 {
     inventories_[type][slot_index] = { ++next_unique_id_, item_id, count };
     return next_unique_id_;
 }
 
-void Inventory::ChangeCount(Type type, uint32_t slot_index, uint32_t count)
+void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
 {
     auto it = inventories_[type].find(slot_index);
     if (it == inventories_[type].end()) return;

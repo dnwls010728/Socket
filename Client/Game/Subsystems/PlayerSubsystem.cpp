@@ -16,7 +16,7 @@ PlayerSubsystem::PlayerSubsystem() :
 {
 }
 
-void PlayerSubsystem::UpdateStat(PlayerStat stat, uint32_t value)
+void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
 {
     switch (stat)
     {

@@ -54,7 +54,7 @@ uint32_t Inventory::FindFreeSlot(Type type)
     return counter;
 }
 
-uint32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
+int32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = inventories_[type].find(slot_index);
@@ -64,10 +64,10 @@ uint32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
     return 0;
 }
 
-uint32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
+int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    uint32_t total_count = 0;
+    int32_t total_count = 0;
     for (const auto& slot : inventories_[type] | std::views::values)
     {
         if (slot.item_id == item_id)
@@ -77,14 +77,14 @@ uint32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
     return total_count;
 }
 
-void Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, uint32_t count)
+void Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, int32_t count)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (slot_index == 0 || item_id == 0) return;
     inventories_[type][slot_index] = { item_id, count };
 }
 
-void Inventory::ChangeCount(Type type, uint32_t slot_index, uint32_t count)
+void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = inventories_[type].find(slot_index);
@@ -113,7 +113,7 @@ void Inventory::Update()
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
-    return; // 임시 처리
+    
     if (auto player_character = player_character_.lock())
     {
         try
@@ -125,15 +125,20 @@ void Inventory::Update()
             }
 
             {
-                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, item_id, slot_index, count) VALUES (?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, inventory_type, item_id, slot_index, count) VALUES (?, ?, ?, ?, ?, ?)"));
                 for (const auto& it : inventories_)
                 {
-                    statement->setUInt(1, player_character->GetAccountID());
-                    statement->setUInt(2, player_character->GetObjectID());
-                    // statement->setUInt(3, it.second.item_id);
-                    // statement->setUInt(4, it.first);
-                    // statement->setUInt(5, it.second.count);
-                    statement->executeUpdate();
+                    uint8_t type = static_cast<uint8_t>(it.first);
+                    for (const auto& slot : it.second)
+                    {
+                        statement->setUInt(1, player_character->GetAccountID());
+                        statement->setUInt(2, player_character->GetObjectID());
+                        statement->setUInt(3, type);
+                        statement->setUInt(4, slot.second.item_id);
+                        statement->setUInt(5, slot.first);
+                        statement->setInt(6, slot.second.count);
+                        statement->executeUpdate();
+                    }
                 }
             }
         }

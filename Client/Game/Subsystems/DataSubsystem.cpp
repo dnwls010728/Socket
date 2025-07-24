@@ -26,7 +26,7 @@ void DataSubsystem::Init()
         YAML::Node exp_data = YAML::LoadFile("Content\\Data\\ExpData.data");
         for (const auto& exp : exp_data["exp"])
         {
-            uint32_t level = exp.first.as<uint32_t>();
+            int32_t level = exp.first.as<int32_t>();
             int32_t exp_value = exp.second.as<int32_t>();
             exp_table_[level] = exp_value;
         }
@@ -45,7 +45,7 @@ const MobData* DataSubsystem::GetMobData(uint32_t id) const
     return &it->second;
 }
 
-uint32_t DataSubsystem::GetExp(uint32_t level) const
+int32_t DataSubsystem::GetExp(int32_t level) const
 {
     if (level >= exp_table_.size()) return 0;
     return exp_table_[level];

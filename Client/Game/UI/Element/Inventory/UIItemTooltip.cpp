@@ -21,7 +21,7 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
     icon_slot_->SetDrawMode(UIImage::DrawMode::kSliced);
     
     item_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"ItemIcon");
-    icon_slot_->SetRelativePosition({ 10.f, 30.f });
+    item_icon_->SetRelativePosition({ 10.f, 30.f });
     item_icon_->SetSize({ 82.f, 82.f });
 
     item_name_ = AddChild<UIText>(UIText::StaticClass(), L"ItemName");
@@ -36,6 +36,12 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
     item_description_->SetSize({ 210.f, 92.f });
     item_description_->SetColor(Math::Color::White);
     item_description_->SetText(L"아이템 설명");
+}
+
+void UIItemTooltip::Set(uint32_t item_id)
+{
+    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+    if (ui_sprite) item_icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
 }
 
 void UIItemTooltip::Init()

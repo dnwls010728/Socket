@@ -63,6 +63,8 @@ void UIStatusBar::Init()
     max_exp_ = DataSubsystem::Get()->GetExp(player_subsystem->GetLv());
 
     float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
+    if (!Math::IsValid(exp_ratio)) exp_ratio = 0.f;
+    
     exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
 }
 
@@ -124,6 +126,8 @@ void UIStatusBar::OnEvent(const EventData& data)
         exp_ = exp_data->exp;;
 
         float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
+        if (!Math::IsValid(exp_ratio)) exp_ratio = 0.f;
+        
         exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
     }
     else if (const auto* hp_data = dynamic_cast<const HPChangedEventData*>(&data))

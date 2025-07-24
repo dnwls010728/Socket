@@ -8,22 +8,22 @@ struct EventData
 
 struct HPChangedEventData : EventData
 {
-    uint32_t hp;
-    uint32_t max_hp;
+    int32_t hp;
+    int32_t max_hp;
 
     virtual ~HPChangedEventData() override = default;
 };
 
 struct ExpChangedEventData : EventData
 {
-    uint32_t exp;
+    int32_t exp;
 
     virtual ~ExpChangedEventData() override = default;
 };
 
 struct LvChangedEventData : EventData
 {
-    uint32_t lv;
+    int32_t lv;
 
     virtual ~LvChangedEventData() override = default;
 };
