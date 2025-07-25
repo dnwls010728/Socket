@@ -1,6 +1,19 @@
 ﻿#include "pch.h"
 #include "UIContainer.h"
 
+void UIContainer::RemoveChild(UIElement* child)
+{
+    for (auto it = children_.begin(); it != children_.end(); ++it)
+    {
+        if (it->get() == child)
+        {
+            if (has_initialized_) child->Uninit();
+            children_.erase(it);
+            return;
+        }
+    }
+}
+
 void UIContainer::SetActive(bool active)
 {
     for (uint32_t i = 0; i < children_.size(); ++i)

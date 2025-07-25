@@ -308,9 +308,9 @@
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
-    <ClInclude Include="Game\UI\NameTag.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
     <ClInclude Include="Game\Utils\TimedBool.h" />
@@ -706,9 +706,9 @@
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
-    <ClCompile Include="Game\UI\NameTag.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
     <ClCompile Include="Game\Utils\TimedBool.cpp" />

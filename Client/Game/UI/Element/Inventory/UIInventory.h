@@ -24,6 +24,7 @@ protected:
     virtual void Uninit() override;
     virtual void Render() override;
 
+    virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
@@ -38,10 +39,12 @@ private:
     
     std::vector<UIInventorySlot*> slots_;
 
-    UIText* t_color_;
+    UIText* color_text_;
 
     Inventory* inventory_;
 
     Inventory::Type tab_;
+
+    int32_t scroll_offset_;
     
 };

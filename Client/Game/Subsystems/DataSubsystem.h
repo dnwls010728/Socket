@@ -27,10 +27,13 @@ struct MobData
     std::wstring animation_pack;
 };
 
-struct ItemString
+struct StringData
 {
-    std::wstring name;
-    std::wstring description;
+    uint32_t id;
+
+    union
+    {
+    } data;
 };
 
 namespace YAML
@@ -71,18 +74,6 @@ namespace YAML
             data.stats = node["stats"].as<MobStats>();
             data.drops = node["drops"].as<MobDrops>();
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<ItemString>
-    {
-        static bool decode(const Node& node, ItemString& data)
-        {
-            if (!node.IsMap()) return false;
-            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
-            data.description = StringHelper::UTF8ToUTF16(node["description"].as<std::string>(""));
             return true;
         }
     };

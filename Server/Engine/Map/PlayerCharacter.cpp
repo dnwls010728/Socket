@@ -377,7 +377,7 @@ void PlayerCharacter::GainExp(int32_t amount)
         ++lv_;
 
         max_hp_ += 25;
-        // hp_ = max_hp_;
+        hp_ = max_hp_;
 
         if (lv_ == 50)
         {
@@ -387,12 +387,12 @@ void PlayerCharacter::GainExp(int32_t amount)
     }
 
     PlayerStatsUpdatePacket packet;
-    // packet.flags |= static_cast<uint8_t>(PlayerStat::kHP);
+    packet.flags |= static_cast<uint8_t>(PlayerStat::kHP);
     packet.flags |= static_cast<uint8_t>(PlayerStat::kMaxHP);
     packet.flags |= static_cast<uint8_t>(PlayerStat::kExp);
     packet.flags |= static_cast<uint8_t>(PlayerStat::kLv);
 
-    // packet.stats[0] = hp_;
+    packet.stats[0] = hp_;
     packet.stats[1] = max_hp_;
     packet.stats[2] = exp_;
     packet.stats[3] = lv_;

@@ -11,6 +11,8 @@ public:
     template <std::derived_from<UIElement> T>
     T* AddChild(const rttr::type& type, const std::wstring& name);
 
+    void RemoveChild(UIElement* child);
+
     virtual void SetActive(bool active) override;
 
     FORCEINLINE const std::vector<std::unique_ptr<UIElement>>& GetChildren() const { return children_; }

@@ -43,8 +43,8 @@ private:
     UIInventory* ui_inventory_;
     UIItemTooltip* tooltip_;
     
-    UIImage* i_icon_;
-    UIText* t_count_;
+    UIImage* icon_;
+    UIText* count_text_;
     
     uint32_t slot_id_;
     uint32_t item_id_;

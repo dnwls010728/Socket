@@ -18,6 +18,8 @@ public:
 
     template <std::derived_from<UIElement> T>
     T* FindElement(const std::wstring& name);
+
+    void RemoveElement(UIElement* element);
     
     UIElement* RayCast(const Math::Vector2& position) const;
 

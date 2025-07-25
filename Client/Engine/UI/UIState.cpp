@@ -13,6 +13,19 @@ UIState::UIState() :
 {
 }
 
+void UIState::RemoveElement(UIElement* element)
+{
+    for (auto it = elements_.begin(); it != elements_.end(); ++it)
+    {
+        if (it->get() == element)
+        {
+            if (has_initialized_) element->Uninit();
+            elements_.erase(it);
+            break;
+        }
+    }
+}
+
 UIElement* UIState::RayCast(const Math::Vector2& position) const
 {
     for (uint32_t i = 0; i < elements_.size(); ++i)

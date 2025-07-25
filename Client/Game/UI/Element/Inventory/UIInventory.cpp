@@ -5,6 +5,7 @@
 #include "Asset/AssetManager.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
+#include "Math/Math.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/Element/UIButton.h"
@@ -14,9 +15,10 @@
 UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
     slots_(),
-    t_color_(nullptr),
+    color_text_(nullptr),
     inventory_(nullptr),
-    tab_(Inventory::Type::kEquip)
+    tab_(Inventory::Type::kEquip),
+    scroll_offset_(0)
 {
     size_ = { 158.f, 246.f };
     
@@ -117,23 +119,23 @@ UIInventory::UIInventory(const std::wstring& name) :
         }
     }
     
-    t_color_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
-    t_color_->SetRelativePosition({ 8.f, 224.f });
-    t_color_->SetSize({ 142.f, 20.f });
-    t_color_->SetColor(Math::Color::White);
-    t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-    t_color_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    t_color_->SetText(L"0Color");
-    t_color_->SetIgnoreRayCast(true);
+    color_text_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
+    color_text_->SetRelativePosition({ 8.f, 224.f });
+    color_text_->SetSize({ 142.f, 20.f });
+    color_text_->SetColor(Math::Color::White);
+    color_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+    color_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    color_text_->SetText(L"0Color");
+    color_text_->SetIgnoreRayCast(true);
 
 }
 
 void UIInventory::UpdateSlot(uint32_t slot_index)
 {
     if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
+    if (uint32_t item_id = inventory_->GetItemID(tab_, scroll_offset_ + slot_index))
     {
-        uint32_t count = inventory_->GetItemCount(tab_, slot_index);
+        uint32_t count = inventory_->GetItemCount(tab_, scroll_offset_ + slot_index);
         slots_[slot_index - 1]->UpdateSlot(item_id, count);
     }
     else slots_[slot_index - 1]->ResetSlot();
@@ -147,7 +149,7 @@ void UIInventory::UpdateColor(uint32_t color)
         color_str.insert(i - 3, L",");
     }
     
-    t_color_->SetText(color_str + L" 컬러");
+    color_text_->SetText(color_str + L" 컬러");
 }
 
 void UIInventory::Init()
@@ -185,6 +187,18 @@ void UIInventory::Render()
     renderer->DrawRoundBox(GetAbsolutePosition(), size_, { 255, 255, 255, 255 });
     
     UIContainer::Render();
+}
+
+bool UIInventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    scroll_offset_ = Math::Max(0, scroll_offset_ + (delta.y * -1) * 4);
+    for (uint32_t i = 0; i < 20; ++i)
+    {
+        UpdateSlot(i + 1);
+    }
+
+    Logger::Print(L"Scroll Delta: %f", delta.y);
+    return true;
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
