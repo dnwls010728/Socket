@@ -188,43 +188,29 @@ void UIEditableText::OnFocus(bool is_focused)
     UIMask::OnFocus(is_focused);
 }
 
-void UIEditableText::ScrollToCursor() {
+void UIEditableText::ScrollToCursor()
+{
     const auto& advances = text_->GetAdvances();
+    
+    cursor_position_ = Math::Clamp(cursor_position_, 0.f, advances.size());
+    cursor_advance_ = std::accumulate(advances.begin(), advances.begin() + cursor_position_, 0.f);
 
-    // 안전한 인덱스
-    const size_t cur = std::min<size_t>(cursor_position_, advances.size());
+    const float view_width = GetSize().x;
+    const float text_width = text_->GetTotalAdvance();
 
-    // 커서 x 위치(텍스트 시작 기준 누적 advance)
-    float cursor_x = std::accumulate(advances.begin(), advances.begin() + cur, 0.f);
-
-    const float view_w = GetSize().x;
-    const float text_w = std::accumulate(advances.begin(), advances.end(), 0.f);
-
-    // 텍스트 전체가 뷰 안이면 스크롤 불필요
-    if (text_w <= view_w) {
+    if (text_width <= view_width)
         text_offset_ = 0.f;
-    } else {
-        // 커서가 왼쪽 밖이면 왼쪽으로 당김
-        if (cursor_x < text_offset_) {
-            text_offset_ = cursor_x;
-        }
-        // 커서가 오른쪽 밖이면 오른쪽으로 밀어줌
-        else if (cursor_x > text_offset_ + view_w) {
-            text_offset_ = cursor_x - view_w;
-        }
-
-        // 오프셋 클램프
-        text_offset_ = Math::Clamp(text_offset_, 0.f, text_w - view_w);
+    else
+    {
+        if (cursor_advance_ < text_offset_)
+            text_offset_ = cursor_advance_;
+        else if (cursor_advance_ > text_offset_ + view_width)
+            text_offset_ = cursor_advance_ - view_width;
+        
+        text_offset_ = Math::Clamp(text_offset_, 0.f, text_width - view_width);
     }
 
-    // 실제 위치 갱신은 매번 수행
-    text_->SetAbsolutePosition({
-        GetAbsolutePosition().x - text_offset_,
-        GetAbsolutePosition().y
-    });
-
-    // (선택) 디버그용으로 저장
-    cursor_advance_ = cursor_x;
+    text_->SetAbsolutePosition({GetAbsolutePosition().x - text_offset_, GetAbsolutePosition().y});
 }
 
 
