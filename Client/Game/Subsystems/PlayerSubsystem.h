@@ -35,12 +35,12 @@ private:
     
     uint32_t account_id_;
     uint32_t character_id_;
+    uint32_t map_id_;
     
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;
     int32_t exp_;
-    int32_t map_id_;
 
     Math::Vector2 spawn_position;
 

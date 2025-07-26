@@ -7,6 +7,8 @@
 PlayerSubsystem::PlayerSubsystem() :
     account_id_(0),
     character_id_(0),
+    map_id_(0),
+    lv_(0),
     hp_(0),
     max_hp_(0),
     exp_(0),

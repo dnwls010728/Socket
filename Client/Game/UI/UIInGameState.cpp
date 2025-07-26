@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "UIInGameState.h"
 
+#include "Element/UIChatBar.h"
+#include "Element/UIMiniMap.h"
 #include "Element/UIStatusBar.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
@@ -14,6 +16,11 @@ UIInGameState::UIInGameState() :
 
 void UIInGameState::Init()
 {
+    AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
+    
+    UIChatBar* chat_bar = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
+    chat_bar->SetAbsolutePosition({0.f, 684.f});
+    
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
     inventory_->SetActive(false);
     

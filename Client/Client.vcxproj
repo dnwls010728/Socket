@@ -199,7 +199,9 @@
     <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Engine\Time\TimerManager.h" />
     <ClInclude Include="Engine\UI\Element\UIButton.h" />
+    <ClInclude Include="Engine\UI\Element\UIEditableText.h" />
     <ClInclude Include="Engine\UI\Element\UIImage.h" />
+    <ClInclude Include="Engine\UI\Element\UIMask.h" />
     <ClInclude Include="Engine\UI\Element\UIText.h" />
     <ClInclude Include="Engine\UI\UI.h" />
     <ClInclude Include="Engine\UI\UIContainer.h" />
@@ -304,10 +306,11 @@
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\UI\ChatBalloon.h" />
-    <ClInclude Include="Game\UI\ChatPanel.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\UIChatBar.h" />
+    <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
     <ClInclude Include="Game\UI\MiniMap.h" />
@@ -604,7 +607,9 @@
     <ClCompile Include="Engine\Time\Time.cpp" />
     <ClCompile Include="Engine\Time\TimerManager.cpp" />
     <ClCompile Include="Engine\UI\Element\UIButton.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIEditableText.cpp" />
     <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIMask.cpp" />
     <ClCompile Include="Engine\UI\Element\UIText.cpp" />
     <ClCompile Include="Engine\UI\UI.cpp" />
     <ClCompile Include="Engine\UI\UIContainer.cpp" />
@@ -702,10 +707,11 @@
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\UI\ChatBalloon.cpp" />
-    <ClCompile Include="Game\UI\ChatPanel.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\UIChatBar.cpp" />
+    <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\UI\MiniMap.cpp" />
