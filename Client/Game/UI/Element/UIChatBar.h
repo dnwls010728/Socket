@@ -13,7 +13,11 @@ public:
     UIChatBar(const std::wstring& name);
     virtual ~UIChatBar() override = default;
 
+    void FocusInput();
+
 private:
+    void OnReturn();
+    
     UIImage* chat_background_;
     UIImage* input_background_;
     UIImage* target_background_;

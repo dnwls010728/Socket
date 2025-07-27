@@ -32,6 +32,12 @@ void UI::ChangeState(const rttr::type& type)
     }
 }
 
+void UI::SetFocus(UIElement* element)
+{
+    if (!state_) return;
+    state_->SetFocus(element);
+}
+
 bool UI::IsFocused() const
 {
     if (!state_) return false;

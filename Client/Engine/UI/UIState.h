@@ -20,6 +20,7 @@ public:
     T* FindElement(const std::wstring& name);
 
     void RemoveElement(UIElement* element);
+    void SetFocus(UIElement* element);
     
     UIElement* RayCast(const Math::Vector2& position) const;
 

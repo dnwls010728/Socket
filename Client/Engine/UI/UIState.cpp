@@ -27,6 +27,11 @@ void UIState::RemoveElement(UIElement* element)
     }
 }
 
+void UIState::SetFocus(UIElement* element)
+{
+    UpdateFocus(element);
+}
+
 UIElement* UIState::RayCast(const Math::Vector2& position) const
 {
     for (uint32_t i = 0; i < elements_.size(); ++i)

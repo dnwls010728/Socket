@@ -14,6 +14,28 @@ public:
 
     void SetText(const std::wstring& text);
     
+    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(const std::wstring&)>, std::decay_t<F>>>>
+    void OnValueChanged(F&& func);
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void OnValueChanged(M* target, void(M::*func)(const std::wstring&));
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void OnValueChanged(M* target, void(M::*func)(const std::wstring&) const);
+
+    void OnValueChanged(void(*func)(const std::wstring&));
+        
+    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
+    void OnReturn(F&& func);
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void OnReturn(M* target, void(M::*func)(void));
+
+    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+    void OnReturn(M* target, void(M::*func)(void) const);
+
+    void OnReturn(void(*func)(void));
+    
     FORCEINLINE const std::wstring& GetText() const { return text_->GetText(); }
 
     FORCEINLINE void SetPlaceholderText(const std::wstring& text) const { placeholder_text_->SetText(text); }
@@ -23,8 +45,6 @@ protected:
     virtual void Init() override;
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
-
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
     
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
@@ -48,5 +68,44 @@ private:
     float text_offset_;
 
     bool cursor_visible_;
+
+    Function<void(const std::wstring&)> value_changed_event_;
+    Function<void(void)> return_event_;
     
 };
+
+template <typename F, typename>
+void UIEditableText::OnValueChanged(F&& func)
+{
+    value_changed_event_ = std::forward<F>(func);
+}
+
+template <typename M, typename>
+void UIEditableText::OnValueChanged(M* target, void(M::* func)(const std::wstring&))
+{
+    value_changed_event_ = {target, func};
+}
+
+template <typename M, typename>
+void UIEditableText::OnValueChanged(M* target, void(M::* func)(const std::wstring&) const)
+{
+    value_changed_event_ = {target, func};
+}
+
+template <typename F, typename>
+void UIEditableText::OnReturn(F&& func)
+{
+    return_event_ = std::forward<F>(func);
+}
+
+template <typename M, typename>
+void UIEditableText::OnReturn(M* target, void(M::* func)())
+{
+    return_event_ = {target, func};
+}
+
+template <typename M, typename>
+void UIEditableText::OnReturn(M* target, void(M::* func)() const)
+{
+    return_event_ = {target, func};
+}

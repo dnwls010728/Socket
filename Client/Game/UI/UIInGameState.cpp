@@ -18,8 +18,8 @@ void UIInGameState::Init()
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
-    UIChatBar* chat_bar = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
-    chat_bar->SetAbsolutePosition({0.f, 684.f});
+    char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
+    char_bar_->SetAbsolutePosition({0.f, 684.f});
     
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
     inventory_->SetActive(false);
@@ -37,12 +37,24 @@ void UIInGameState::Init()
 
 bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)
 {
-    if (key_code == 'I' && is_pressed && !IsEditingText())
+    bool is_handled = UIState::OnKey(key_code, is_pressed);
+    
+    if (!is_handled && is_pressed)
     {
-        inventory_->SetActive(!inventory_->IsActive());
+        if (key_code == 'I' && !IsEditingText())
+        {
+            inventory_->SetActive(!inventory_->IsActive());
+            is_handled = true;
+        }
+
+        if (key_code == VK_RETURN && !IsEditingText())
+        {
+            char_bar_->FocusInput();
+            is_handled = true;
+        }
     }
     
-    return UIState::OnKey(key_code, is_pressed);
+    return is_handled;
 }
 
 RTTR_REGISTRATION

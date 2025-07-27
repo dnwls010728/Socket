@@ -13,7 +13,9 @@ UIEditableText::UIEditableText(const std::wstring& name) :
     timer_(0.f),
     cursor_advance_(0.f),
     text_offset_(0.f),
-    cursor_visible_(false)
+    cursor_visible_(false),
+    value_changed_event_([](const std::wstring& value){}),
+    return_event_([](){})
 {
     text_ = AddChild<UIText>(UIText::StaticClass(), L"Text");
     text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -22,7 +24,6 @@ UIEditableText::UIEditableText(const std::wstring& name) :
     placeholder_text_ = AddChild<UIText>(UIText::StaticClass(), L"PlaceholderText");
     placeholder_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     placeholder_text_->SetColor(Math::Color::Gray);
-    placeholder_text_->SetText(L"Enter text here...");
 }
 
 void UIEditableText::SetText(const std::wstring& text)
@@ -30,6 +31,16 @@ void UIEditableText::SetText(const std::wstring& text)
     cursor_position_ = text.size();
     text_->SetText(text);
     PostTextChange(false);
+}
+
+void UIEditableText::OnValueChanged(void(* func)(const std::wstring&))
+{
+    value_changed_event_ = func;
+}
+
+void UIEditableText::OnReturn(void(* func)())
+{
+    return_event_ = func;
 }
 
 void UIEditableText::Init()
@@ -73,11 +84,6 @@ void UIEditableText::Render()
     }
 }
 
-UI::MouseEventResult UIEditableText::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
-{
-    return UIMask::OnMouseButton(position, button, is_pressed, timestamp);
-}
-
 bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 {
     if (!is_pressed) return false;
@@ -101,6 +107,13 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
                 ++cursor_position_;
                 PostCursorMove();
             }
+        }
+        break;
+
+    case VK_RETURN:
+        {
+            ResetCursor();
+            return_event_();
         }
         break;
 
@@ -178,6 +191,7 @@ void UIEditableText::PostCursorMove()
 
 void UIEditableText::PostTextChange(bool is_reset)
 {
+    value_changed_event_(text_->GetText());
     text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
 
     UpdatePlaceholder();

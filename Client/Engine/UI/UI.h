@@ -22,6 +22,7 @@ public:
     virtual ~UI() override = default;
 
     void ChangeState(const rttr::type& type);
+    void SetFocus(UIElement* element);
 
     bool IsFocused() const;
     bool IsEditingText() const;
