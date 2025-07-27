@@ -23,6 +23,9 @@ public:
     
     UIElement* RayCast(const Math::Vector2& position) const;
 
+    bool IsFocused() const;
+    bool IsEditingText() const;
+
 protected:
     friend class UI;
 

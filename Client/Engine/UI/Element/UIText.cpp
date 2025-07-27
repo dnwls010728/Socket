@@ -37,6 +37,11 @@ void UIText::SetFontSize(float font_size)
     UpdateAdvances();
 }
 
+float UIText::GetFontHeight() const
+{
+    return Renderer::Get()->GetTextFormat(font_name_, font_size_)->GetFontSize();
+}
+
 void UIText::Render()
 {
     UIElement::Render();

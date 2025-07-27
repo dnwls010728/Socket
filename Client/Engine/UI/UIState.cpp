@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIState.h"
 
+#include "Element/UIEditableText.h"
 #include "UI/UIContainer.h"
 
 UIState::UIState() :
@@ -36,6 +37,24 @@ UIElement* UIState::RayCast(const Math::Vector2& position) const
     }
 
     return nullptr;
+}
+
+bool UIState::IsFocused() const
+{
+    return !focus_path_.empty();
+}
+
+bool UIState::IsEditingText() const
+{
+    for (const auto& element : focus_path_)
+    {
+        rttr::type element_type = rttr::type::get(*element);
+        if (element_type == UIEditableText::StaticClass() ||
+           element_type.is_derived_from(UIEditableText::StaticClass()))
+            return true;
+    }
+
+    return false;
 }
 
 void UIState::Init()

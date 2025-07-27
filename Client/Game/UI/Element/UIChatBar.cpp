@@ -13,22 +13,35 @@ UIChatBar::UIChatBar(const std::wstring& name) :
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
 
-    input_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"InputBackground");
-    input_background_->SetSize({ 300.f, 50.f });
-    input_background_->SetSprite(panel_sprite, L"Panel_0");
-    input_background_->SetDrawMode(UIImage::DrawMode::kSliced);
-
     chat_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"ChatBackground");
-    chat_background_->SetRelativePosition({ 0.f, 50.f });
-    chat_background_->SetSize({ 300.f, 25.f });
+    chat_background_->SetSize({ 300.f, 50.f });
     chat_background_->SetSprite(panel_sprite, L"Panel_0");
     chat_background_->SetDrawMode(UIImage::DrawMode::kSliced);
-    chat_background_->SetIgnoreRayCast(true);
+
+    target_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"TargetBackground");
+    target_background_->SetRelativePosition({ 0.f, 50.f });
+    target_background_->SetSize({ 80.f, 25.f });
+    target_background_->SetSprite(panel_sprite, L"Panel_0");
+    target_background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    
+    input_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"InputBackground");
+    input_background_->SetRelativePosition({ 80.f, 50.f });
+    input_background_->SetSize({ 220.f, 25.f });
+    input_background_->SetSprite(panel_sprite, L"Panel_0");
+    input_background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    input_background_->SetIgnoreRayCast(true);
+
+    target_text_ = AddChild<UIText>(UIText::StaticClass(), L"TargetText");
+    target_text_->SetRelativePosition({ 4.f, 50.f });
+    target_text_->SetSize({ 72.f, 25.f });
+    target_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    target_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    target_text_->SetColor(Math::Color::White);
+    target_text_->SetText(L"모두에게");
 
     input_text_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"InputText");
-    input_text_->SetRelativePosition({ 4.f, 50.f });
-    input_text_->SetSize({ 292.f, 25.f });
-    input_text_->SetText(L"Type your message here...");
+    input_text_->SetRelativePosition({ 84.f, 50.f });
+    input_text_->SetSize({ 212.f, 25.f });
 }
 
 RTTR_REGISTRATION

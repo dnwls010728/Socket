@@ -23,6 +23,9 @@ public:
 
     void ChangeState(const rttr::type& type);
 
+    bool IsFocused() const;
+    bool IsEditingText() const;
+
     FORCEINLINE UIState* GetState() const { return state_.get(); }
 
 private:

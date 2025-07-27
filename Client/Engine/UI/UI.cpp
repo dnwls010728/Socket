@@ -32,6 +32,18 @@ void UI::ChangeState(const rttr::type& type)
     }
 }
 
+bool UI::IsFocused() const
+{
+    if (!state_) return false;
+    return state_->IsFocused();
+}
+
+bool UI::IsEditingText() const
+{
+    if (!state_) return false;
+    return state_->IsEditingText();
+}
+
 void UI::Init()
 {
     cursor_sprites_[CursorState::kIdle] = AssetManager::Get()->Load<UISprite>(L"UI\\Cursor\\pointer_a.png");

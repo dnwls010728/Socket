@@ -37,7 +37,7 @@ void UIInGameState::Init()
 
 bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)
 {
-    if (key_code == 'I' && is_pressed)
+    if (key_code == 'I' && is_pressed && !IsEditingText())
     {
         inventory_->SetActive(!inventory_->IsActive());
     }

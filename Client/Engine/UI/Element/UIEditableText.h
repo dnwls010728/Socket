@@ -13,8 +13,14 @@ public:
     virtual ~UIEditableText() override = default;
 
     void SetText(const std::wstring& text);
+    
+    FORCEINLINE const std::wstring& GetText() const { return text_->GetText(); }
+
+    FORCEINLINE void SetPlaceholderText(const std::wstring& text) const { placeholder_text_->SetText(text); }
+    FORCEINLINE const std::wstring& GetPlaceholderText() const { return placeholder_text_->GetText(); }
 
 protected:
+    virtual void Init() override;
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
@@ -26,9 +32,14 @@ protected:
     virtual void OnFocus(bool is_focused) override;
     
 private:
+    void PostCursorMove();
+    void PostTextChange(bool is_reset);
+    void UpdatePlaceholder() const;
+    void ResetCursor();
     void ScrollToCursor();
     
     UIText* text_;
+    UIText* placeholder_text_;
 
     int32_t cursor_position_;
 

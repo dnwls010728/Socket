@@ -28,6 +28,7 @@
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UI.h"
 #include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
@@ -185,80 +186,88 @@ void PlayerCharacter::Tick(float delta_time)
     if (IsMine())
     {
         Keyboard* keyboard = Keyboard::Get();
-        
-        move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
 
-        if (keyboard->GetKey('C'))
+        if (!UI::Get()->IsEditingText())
         {
-            is_jump_pressed_ = true;
-        }
+            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
 
-        if (keyboard->GetKeyDown('1'))
-        {
-            NetworkSubsystem::Get()->ChangeMap(0);
-        }
-
-        if (keyboard->GetKeyDown('2'))
-        {
-            NetworkSubsystem::Get()->ChangeMap(1);
-        }
-
-        // 아이템 줍기
-        if (keyboard->GetKeyDown('Z'))
-        {
-            Math::Vector2 center = GetTransform()->GetPosition();
-            Math::Vector2 size = { 1.f, 1.f };
-            
-            Actor* out_actor = nullptr;
-            bool is_hit = Physics2D::OverlapBox(
-                center,
-                size,
-                &out_actor,
-                static_cast<uint16_t>(ActorLayer::kDroppedItem)
-            );
-
-            if (is_hit)
+            if (keyboard->GetKey('C'))
             {
-                DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
-                if (IsValid(dropped_item))
-                {
-                    PickupItemRequest request;
-                    request.object_id = dropped_item->GetObjectID();
-                    SendPacket(request);
-                }
+                is_jump_pressed_ = true;
             }
-        }
 
-        // 공격 테스트
-        if (keyboard->GetKeyDown('X'))
-        {
-            std::vector<Actor*> hit_actors;
-            bool is_hit = Physics2D::OverlapBoxAll(
-                GetTransform()->GetPosition(),
-                { 3.f, 2.f },
-                hit_actors,
-                static_cast<uint16_t>(ActorLayer::kMob)
-            );
-
-            if (is_hit)
+            if (keyboard->GetKeyDown('1'))
             {
-                for (const auto& actor : hit_actors)
-                {
-                    MobBase* mob = static_cast<MobBase*>(actor);
-                    if (!IsValid(mob) || mob->IsDead()) continue;
+                NetworkSubsystem::Get()->ChangeMap(0);
+            }
 
-                    AttackRequest request;
-                    request.object_id = mob->GetObjectID();
-                    SendPacket(request);
-                        
-                    std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
-                    if (IsValid(damage))
+            if (keyboard->GetKeyDown('2'))
+            {
+                NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            // 아이템 줍기
+            if (keyboard->GetKeyDown('Z'))
+            {
+                Math::Vector2 center = GetTransform()->GetPosition();
+                Math::Vector2 size = {1.f, 1.f};
+
+                Actor* out_actor = nullptr;
+                bool is_hit = Physics2D::OverlapBox(
+                    center,
+                    size,
+                    &out_actor,
+                    static_cast<uint16_t>(ActorLayer::kDroppedItem)
+                );
+
+                if (is_hit)
+                {
+                    DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
+                    if (IsValid(dropped_item))
                     {
-                        damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                        PickupItemRequest request;
+                        request.object_id = dropped_item->GetObjectID();
+                        SendPacket(request);
                     }
                 }
             }
+
+            // 공격 테스트
+            if (keyboard->GetKeyDown('X'))
+            {
+                std::vector<Actor*> hit_actors;
+                bool is_hit = Physics2D::OverlapBoxAll(
+                    GetTransform()->GetPosition(),
+                    {3.f, 2.f},
+                    hit_actors,
+                    static_cast<uint16_t>(ActorLayer::kMob)
+                );
+
+                if (is_hit)
+                {
+                    for (const auto& actor : hit_actors)
+                    {
+                        MobBase* mob = static_cast<MobBase*>(actor);
+                        if (!IsValid(mob) || mob->IsDead()) continue;
+
+                        AttackRequest request;
+                        request.object_id = mob->GetObjectID();
+                        SendPacket(request);
+
+                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                        if (IsValid(damage))
+                        {
+                            damage->GetTransform()->SetPosition(
+                                mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            move_axis_ = Math::Vector2::Zero();
         }
 
         // 공격 범위 확인용

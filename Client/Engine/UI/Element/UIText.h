@@ -15,6 +15,8 @@ public:
     void SetText(const std::wstring& text);
     void SetFontName(const std::wstring& font_name);
     void SetFontSize(float font_size);
+
+    float GetFontHeight() const;
     
     FORCEINLINE const std::wstring& GetText() const { return text_; }
     

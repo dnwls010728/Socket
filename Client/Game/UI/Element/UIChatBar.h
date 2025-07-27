@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
+#include "UI/Element/UIText.h"
 
 class UIEditableText;
 class UIImage;
@@ -13,8 +14,11 @@ public:
     virtual ~UIChatBar() override = default;
 
 private:
-    UIImage* input_background_;
     UIImage* chat_background_;
+    UIImage* input_background_;
+    UIImage* target_background_;
+
+    UIText* target_text_;
 
     UIEditableText* input_text_;
     

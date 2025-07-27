@@ -18,15 +18,25 @@ UIEditableText::UIEditableText(const std::wstring& name) :
     text_ = AddChild<UIText>(UIText::StaticClass(), L"Text");
     text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     text_->SetColor(Math::Color::White);
+
+    placeholder_text_ = AddChild<UIText>(UIText::StaticClass(), L"PlaceholderText");
+    placeholder_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    placeholder_text_->SetColor(Math::Color::Gray);
+    placeholder_text_->SetText(L"Enter text here...");
 }
 
 void UIEditableText::SetText(const std::wstring& text)
 {
-    text_->SetText(text);
     cursor_position_ = text.size();
-    text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
+    text_->SetText(text);
+    PostTextChange(false);
+}
 
-    ScrollToCursor();
+void UIEditableText::Init()
+{
+    placeholder_text_->SetSize(GetSize());
+    
+    UIMask::Init();
 }
 
 void UIEditableText::Tick(float delta_time)
@@ -51,10 +61,13 @@ void UIEditableText::Render()
 
     if (cursor_visible_)
     {
+        float font_height = text_->GetFontHeight();
+        float margin = (size_.y - font_height) * .5f;
+        
         Math::Vector2 position = GetAbsolutePosition();
 
-        Math::Vector2 start = {position.x + cursor_advance_ - text_offset_, position.y};
-        Math::Vector2 end = {position.x + cursor_advance_ - text_offset_, position.y + size_.y};
+        Math::Vector2 start = {position.x + cursor_advance_ - text_offset_, position.y + margin};
+        Math::Vector2 end = {position.x + cursor_advance_ - text_offset_, position.y + size_.y - margin};
 
         renderer->DrawLine(start, end, Math::Color::White, 2.f);
     }
@@ -76,10 +89,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
             if (cursor_position_ > 0)
             {
                 --cursor_position_;
-                ScrollToCursor();
-                
-                cursor_visible_ = true;
-                timer_ = 0.f;
+                PostCursorMove();
             }
         }
         break;
@@ -89,10 +99,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
             if (cursor_position_ < text_->GetText().size())
             {
                 ++cursor_position_;
-                ScrollToCursor();
-                
-                cursor_visible_ = true;
-                timer_ = 0.f;
+                PostCursorMove();
             }
         }
         break;
@@ -105,12 +112,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
                 current_text.erase(--cursor_position_, 1);
                 
                 text_->SetText(current_text);
-                text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
-
-                ScrollToCursor();
-                
-                cursor_visible_ = true;
-                timer_ = 0.f;
+                PostTextChange(true);
             }
         }
         break;
@@ -118,20 +120,14 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
     case VK_HOME:
         {
             cursor_position_ = 0;
-            ScrollToCursor();
-            
-            cursor_visible_ = true;
-            timer_ = 0.f;
+            PostCursorMove();
         }
         break;
 
     case VK_END:
         {
             cursor_position_ = text_->GetText().size();
-            ScrollToCursor();
-            
-            cursor_visible_ = true;
-            timer_ = 0.f;
+            PostCursorMove();
         }
         break;
 
@@ -143,12 +139,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
                 current_text.erase(cursor_position_, 1);
                 
                 text_->SetText(current_text);
-                text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
-
-                ScrollToCursor();
-                
-                cursor_visible_ = true;
-                timer_ = 0.f;
+                PostTextChange(true);
             }
         }
         break;
@@ -165,18 +156,9 @@ bool UIEditableText::OnChar(wchar_t character)
 {
     std::wstring current_text = text_->GetText();
     current_text.insert(cursor_position_++, 1, character);
-
-    if (character == 32)
-    {
-        cursor_visible_ = true;
-        timer_ = 0.f;
-    }
     
     text_->SetText(current_text);
-    text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
-
-    ScrollToCursor();
-    
+    PostTextChange(true);
     return true;
 }
 
@@ -188,12 +170,43 @@ void UIEditableText::OnFocus(bool is_focused)
     UIMask::OnFocus(is_focused);
 }
 
+void UIEditableText::PostCursorMove()
+{
+    ScrollToCursor();
+    ResetCursor();
+}
+
+void UIEditableText::PostTextChange(bool is_reset)
+{
+    text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
+
+    UpdatePlaceholder();
+    ScrollToCursor();
+
+    if (is_reset) ResetCursor();
+}
+
+void UIEditableText::UpdatePlaceholder() const
+{
+    const bool is_empty = text_->GetText().empty();
+    placeholder_text_->SetActive(is_empty);
+}
+
+void UIEditableText::ResetCursor()
+{
+    cursor_visible_ = true;
+    timer_ = 0.f;
+}
+
 void UIEditableText::ScrollToCursor()
 {
     const auto& advances = text_->GetAdvances();
     
     cursor_position_ = Math::Clamp(cursor_position_, 0.f, advances.size());
-    cursor_advance_ = std::accumulate(advances.begin(), advances.begin() + cursor_position_, 0.f);
+
+    cursor_advance_ = 0.f;
+    if (!advances.empty() && cursor_position_ > 0)
+        cursor_advance_ = std::accumulate(advances.begin(), advances.begin() + cursor_position_, 0.f);
 
     const float view_width = GetSize().x;
     const float text_width = text_->GetTotalAdvance();
