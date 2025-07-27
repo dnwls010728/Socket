@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
-#include "UI/Element/UIText.h"
 
+class UIText;
+class UIScrollBox;
 class UIEditableText;
 class UIImage;
 
@@ -21,6 +22,8 @@ private:
     UIImage* chat_background_;
     UIImage* input_background_;
     UIImage* target_background_;
+
+    UIScrollBox* scroll_box_;
 
     UIText* target_text_;
 

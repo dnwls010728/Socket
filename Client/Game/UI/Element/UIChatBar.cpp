@@ -7,6 +7,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/UISprite.h"
 
 UIChatBar::UIChatBar(const std::wstring& name) :
@@ -33,6 +34,10 @@ UIChatBar::UIChatBar(const std::wstring& name) :
     input_background_->SetSprite(panel_sprite, L"Panel_0");
     input_background_->SetDrawMode(UIImage::DrawMode::kSliced);
     input_background_->SetIgnoreRayCast(true);
+
+    scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
+    scroll_box_->SetRelativePosition({ 4.f, 4.f });
+    scroll_box_->SetSize({ 292.f, 42.f });
 
     target_text_ = AddChild<UIText>(UIText::StaticClass(), L"TargetText");
     target_text_->SetRelativePosition({ 4.f, 50.f });
