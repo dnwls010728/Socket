@@ -12,7 +12,7 @@ UIScrollBox::UIScrollBox(const std::wstring& name) :
     max_offset_(0.f)
 {
     container_ = AddChild<UIContainer>(UIContainer::StaticClass(), L"ScrollContainer");
-    container_->SetSize({ 292.f, 100.f });
+    container_->SetSize({ 292.f, 25.f });
 }
 
 void UIScrollBox::Init()
@@ -30,8 +30,7 @@ void UIScrollBox::Tick(float delta_time)
 {
     UIMask::Tick(delta_time);
     
-    const float k = 12.f; // 감쇠 세기
-    float alpha = 1.f - std::exp(-k * delta_time);
+    float alpha = 1.f - std::exp(-12.5f * delta_time);
     offset_ += (target_offset_ - offset_) * alpha;
     container_->SetRelativePosition({0.f, -offset_});
 }

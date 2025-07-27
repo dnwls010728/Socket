@@ -9,9 +9,9 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Components/Controller2DComponent.h"
-#include "UI/ChatBalloon.h"
 #include "UI/UIInGameState.h"
 #include "UI/UIManager.h"
+#include "UI/Element/UIChatBalloon.h"
 #include "UI/Element/UINameTag.h"
 #include "Windows/DX/Sprite.h"
 
@@ -52,12 +52,12 @@ void CharacterBase::Speak(const std::wstring& message, float duration)
 
     chat_balloon_->SetText(message);
     
-    if (chat_balloon_->IsInViewport())
+    if (chat_balloon_->IsActive())
     {
         if (chat_balloon_timer_handle_.IsValid())
             timer_manager->ClearTimer(chat_balloon_timer_handle_);
     }
-    else chat_balloon_->AddToViewport();
+    else chat_balloon_->SetActive(true);
 
     timer_manager->SetTimer(chat_balloon_timer_handle_, this, &CharacterBase::OnSpeakEnd, duration, false);
 }
@@ -70,10 +70,10 @@ void CharacterBase::BeginPlay()
     {
         name_tag_ = state->AddElement<UINameTag>(UINameTag::StaticClass(), L"NameTag");
         name_tag_->SetText(character_name_);
+
+        chat_balloon_ = state->AddElement<UIChatBalloon>(UIChatBalloon::StaticClass(), L"ChatBalloon");
+        chat_balloon_->SetActive(false);
     }
-    
-    chat_balloon_ = UI_OLD::ChatBalloon::Create(L"ChatBalloon");
-    chat_balloon_->SetSize({8.f, 8.f});
 }
 
 void CharacterBase::PhysicsTick(float delta_time)
@@ -84,9 +84,9 @@ void CharacterBase::PhysicsTick(float delta_time)
 
     Math::Vector2 name_tag_offset = { -name_tag_->GetSize().x * .5f, 4.f };
     name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);
-    
-    if (chat_balloon_->IsInViewport())
-        chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 70.f);
+
+    Math::Vector2 chat_balloon_offset = { -chat_balloon_->GetSize().x * .5f, -128.f };
+    chat_balloon_->SetAbsolutePosition(screen_position + chat_balloon_offset);
 }
 
 void CharacterBase::EndPlay(EndPlayReason type)
@@ -96,16 +96,15 @@ void CharacterBase::EndPlay(EndPlayReason type)
     if (auto state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->RemoveElement(name_tag_);
+        state->RemoveElement(chat_balloon_);
     }
     
     TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
-    
-    chat_balloon_->RemoveFromViewport();
 }
 
 void CharacterBase::OnSpeakEnd()
 {
-    chat_balloon_->RemoveFromViewport();
+    chat_balloon_->SetActive(false);
 }
 
 RTTR_REGISTRATION
