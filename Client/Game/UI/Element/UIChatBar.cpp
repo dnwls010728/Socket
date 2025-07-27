@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "UIChatBar.h"
 
+#include <CustomPacket.h>
+
 #include "Asset/AssetManager.h"
+#include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
@@ -57,6 +60,10 @@ void UIChatBar::OnReturn()
         UI::Get()->SetFocus(nullptr);
         return;
     }
+
+    ChatMessagePacket chat_message_packet;
+    chat_message_packet.message = input_text_->GetText();
+    SessionSubsystem::Get()->SendPacket(chat_message_packet);
 
     input_text_->SetText(L"");
 }
