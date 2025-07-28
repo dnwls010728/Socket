@@ -13,15 +13,15 @@ public:
     
     bool IsInRange(const Math::Vector2& position) const;
 
-    void SetAbsolutePosition(const Math::Vector2& position);
+    virtual void SetAbsolutePosition(const Math::Vector2& position);
     Math::Vector2 GetAbsolutePosition() const;
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-    FORCEINLINE void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
+    FORCEINLINE virtual void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
     FORCEINLINE const Math::Vector2& GetRelativePosition() const { return position_; }
 
-    FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
+    FORCEINLINE virtual void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }

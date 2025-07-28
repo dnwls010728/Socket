@@ -11,7 +11,7 @@ public:
     template <std::derived_from<UIElement> T>
     T* AddChild(const rttr::type& type, const std::wstring& name);
 
-    void RemoveChild(UIElement* child);
+    virtual void RemoveChild(UIElement* child);
 
     virtual void SetActive(bool active) override;
 
@@ -34,6 +34,8 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
+    virtual UIElement* AddChild_Internal(const rttr::type& type, const std::wstring& name);
+
     std::vector<std::unique_ptr<UIElement>> children_;
     
 };
@@ -41,19 +43,5 @@ protected:
 template <std::derived_from<UIElement> T>
 T* UIContainer::AddChild(const rttr::type& type, const std::wstring& name)
 {
-    if (!type.is_derived_from(T::StaticClass())) return nullptr;
-
-    rttr::variant var = type.create({ name });
-    if (var.is_valid())
-    {
-        UIElement* child = var.get_value<UIElement*>();
-        child->parent_ = this;
-        if (has_initialized_) child->Init();
-        
-        children_.push_back(std::unique_ptr<UIElement>(child));
-
-        return dynamic_cast<T*>(child);
-    }
-    
-    return nullptr;
+    return dynamic_cast<T*>(AddChild_Internal(type, name));
 }

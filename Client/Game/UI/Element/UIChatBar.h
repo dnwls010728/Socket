@@ -16,6 +16,9 @@ public:
 
     void FocusInput();
 
+protected:
+    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+
 private:
     void OnReturn();
     

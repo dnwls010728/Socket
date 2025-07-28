@@ -152,6 +152,22 @@ bool UIContainer::OnChar(wchar_t character)
     return UIElement::OnChar(character);
 }
 
+UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wstring& name)
+{
+    rttr::variant var = type.create({ name });
+    if (var.is_valid())
+    {
+        UIElement* child = var.get_value<UIElement*>();
+        child->parent_ = this;
+        if (has_initialized_) child->Init();
+        
+        children_.push_back(std::unique_ptr<UIElement>(child));
+        return child;
+    }
+    
+    return nullptr;
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

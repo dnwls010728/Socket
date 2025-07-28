@@ -16,6 +16,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UIInGameState.h"
+#include "UI/Element/UIMiniMap.h"
 
 GameMap::GameMap(const std::wstring& kName) :
     Level(kName)

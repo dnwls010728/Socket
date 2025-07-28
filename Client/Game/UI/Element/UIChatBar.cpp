@@ -58,6 +58,21 @@ void UIChatBar::FocusInput()
     UI::Get()->SetFocus(input_text_);
 }
 
+bool UIChatBar::OnKey(uint16_t key_code, bool is_pressed)
+{
+    if (key_code == VK_SPACE && is_pressed)
+    {
+        UIText* text = scroll_box_->AddItem<UIText>(UIText::StaticClass(), L"Text");
+        text->SetSize({ 292.f, 20.f });
+        text->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+        text->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        text->SetColor(Math::Color::White);
+        text->SetText(L"Test message");
+    }
+    
+    return true;
+}
+
 void UIChatBar::OnReturn()
 {
     if (input_text_->GetText().empty())

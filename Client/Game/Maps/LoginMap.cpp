@@ -193,11 +193,13 @@ void LoginMap::OnRegister()
 
 void LoginMap::OnLogin()
 {
-    if (login_id_->GetText().empty() || login_password_->GetText().empty()) return;
+    // if (login_id_->GetText().empty() || login_password_->GetText().empty()) return;
 
     LoginRequest request;
-    request.id = login_id_->GetText();
-    request.password = login_password_->GetText();
+    // request.id = login_id_->GetText();
+    // request.password = login_password_->GetText();
+    request.id = L"master001";
+    request.password = L"12345";
     SessionSubsystem::Get()->SendPacket(request);
 }
 
