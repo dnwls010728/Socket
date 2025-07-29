@@ -2,10 +2,10 @@
 #include "Inventory/Inventory.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIContainer.h"
-#include "UI/Element/UIText.h"
 
+class UIText;
+class UIScrollBox;
 class UIButton;
-class Inventory;
 class UIInventorySlot;
 
 class UIInventory : public UIContainer
@@ -16,7 +16,7 @@ public:
     UIInventory(const std::wstring& name);
     virtual ~UIInventory() override = default;
 
-    void UpdateSlot(uint32_t slot_index);
+    void UpdateSlot(uint32_t slot_index) const;
     void UpdateColor(uint32_t color);
 
 protected:
@@ -24,7 +24,6 @@ protected:
     virtual void Uninit() override;
     virtual void Render() override;
 
-    virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
@@ -39,12 +38,12 @@ private:
     
     std::vector<UIInventorySlot*> slots_;
 
+    UIScrollBox* scroll_box_;
+
     UIText* color_text_;
 
     Inventory* inventory_;
 
     Inventory::Type tab_;
-
-    int32_t scroll_offset_;
     
 };

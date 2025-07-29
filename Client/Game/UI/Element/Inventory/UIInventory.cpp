@@ -9,6 +9,7 @@
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/Element/UIButton.h"
+#include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UISprite.h"
 
@@ -17,8 +18,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     slots_(),
     color_text_(nullptr),
     inventory_(nullptr),
-    tab_(Inventory::Type::kEquip),
-    scroll_offset_(0)
+    tab_(Inventory::Type::kEquip)
 {
     size_ = { 158.f, 246.f };
     
@@ -106,12 +106,19 @@ UIInventory::UIInventory(const std::wstring& name) :
     tab_buttons_[static_cast<uint8_t>(Inventory::Type::kUse)] = use_button;
     tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEtc)] = etc_button;
 
-    for (uint32_t i = 0; i < 5; ++i)
+    scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
+    scroll_box_->SetRelativePosition({ 8.f, 48.f });
+    scroll_box_->SetSize({ 144.f, 180.f });
+
+    UIContainer* content = scroll_box_->AddItem<UIContainer>(UIContainer::StaticClass(), L"Content");
+    content->SetSize({ 144.f, 360.f });
+
+    for (uint32_t i = 0; i < 10; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
-            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ 8.f + j * 36.f, 48.f + i * 36.f });
+            UIInventorySlot* slot = content->AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
+            slot->SetRelativePosition({ j * 36.f, i * 36.f });
 
             slot->SetUIInventory(this);
             slot->SetSlotID(i * 4 + j + 1);
@@ -130,12 +137,12 @@ UIInventory::UIInventory(const std::wstring& name) :
 
 }
 
-void UIInventory::UpdateSlot(uint32_t slot_index)
+void UIInventory::UpdateSlot(uint32_t slot_index) const
 {
     if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(tab_, scroll_offset_ + slot_index))
+    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
     {
-        uint32_t count = inventory_->GetItemCount(tab_, scroll_offset_ + slot_index);
+        uint32_t count = inventory_->GetItemCount(tab_, slot_index);
         slots_[slot_index - 1]->UpdateSlot(item_id, count);
     }
     else slots_[slot_index - 1]->ResetSlot();
@@ -187,18 +194,6 @@ void UIInventory::Render()
     renderer->DrawRoundBox(GetAbsolutePosition(), size_, { 255, 255, 255, 255 });
     
     UIContainer::Render();
-}
-
-bool UIInventory::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
-{
-    scroll_offset_ = Math::Max(0, scroll_offset_ + (delta.y * -1) * 4);
-    for (uint32_t i = 0; i < 20; ++i)
-    {
-        UpdateSlot(i + 1);
-    }
-
-    Logger::Print(L"Scroll Delta: %f", delta.y);
-    return true;
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)

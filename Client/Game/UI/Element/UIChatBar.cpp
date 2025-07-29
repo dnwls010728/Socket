@@ -60,6 +60,7 @@ void UIChatBar::FocusInput()
 
 bool UIChatBar::OnKey(uint16_t key_code, bool is_pressed)
 {
+    static int32_t count = 0;
     if (key_code == VK_SPACE && is_pressed)
     {
         UIText* text = scroll_box_->AddItem<UIText>(UIText::StaticClass(), L"Text");
@@ -67,7 +68,7 @@ bool UIChatBar::OnKey(uint16_t key_code, bool is_pressed)
         text->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
         text->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
         text->SetColor(Math::Color::White);
-        text->SetText(L"Test message");
+        text->SetText(L"Test message " + std::to_wstring(count++));
     }
     
     return true;

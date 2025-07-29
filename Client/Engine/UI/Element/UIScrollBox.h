@@ -14,8 +14,6 @@ public:
     
     UIScrollBox(const std::wstring& name);
     virtual ~UIScrollBox() override = default;
-
-    virtual void Init() override;
     
     template <std::derived_from<UIElement> T>
     T* AddItem(const rttr::type& type, const std::wstring& name);
@@ -26,13 +24,18 @@ protected:
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
+    virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
+
 private:
-    void UpdateLayout() const;
+    void UpdateLayout();
     
     UIContainer* content_;
 
     VerticalAlignment vertical_alignment_;
 
+    float min_offset_;
+    float max_offset_;
+    float scroll_offset_;
     float spacing_;
 
     bool dirty_;
