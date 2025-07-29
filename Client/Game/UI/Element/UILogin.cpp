@@ -1,0 +1,127 @@
+﻿#include "pch.h"
+#include "UILogin.h"
+
+#include <CustomPacket.h>
+
+#include "Asset/AssetManager.h"
+#include "Subsystems/SessionSubsystem.h"
+#include "UI/Element/UIEditableText.h"
+#include "UI/Element/UIImage.h"
+#include "Windows/DX/UISprite.h"
+
+UILogin::UILogin(const std::wstring& name) :
+    UIContainer(name)
+{
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
+
+    background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetSprite(panel_sprite, L"Panel_0");
+    background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    background_->SetIgnoreRayCast(true);
+
+    id_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"IDBackground");
+    id_background_->SetRelativePosition({30.f, 32.f});
+    id_background_->SetSize({278.f, 44.f});
+    id_background_->SetSprite(panel_sprite, L"Panel_0");
+    id_background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    id_background_->SetIgnoreRayCast(true);
+
+    password_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"PasswordBackground");
+    password_background_->SetRelativePosition({30.f, 78.f});
+    password_background_->SetSize({278.f, 44.f});
+    password_background_->SetSprite(panel_sprite, L"Panel_0");
+    password_background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    password_background_->SetIgnoreRayCast(true);
+
+    input_id_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"InputID");
+    input_id_->SetRelativePosition({40.f, 42.f});
+    input_id_->SetSize({258.f, 24.f});
+    input_id_->SetPlaceholderText(L"아이디");
+
+    input_password_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"InputPassword");
+    input_password_->SetRelativePosition({40.f, 88.f});
+    input_password_->SetSize({258.f, 24.f});
+    input_password_->SetPlaceholderText(L"비밀번호");
+
+    login_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"LoginButton");
+    login_button_->SetRelativePosition({30.f, 134.f});
+    login_button_->SetSize({278.f, 53.f});
+    login_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
+    login_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
+    login_button_->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
+    login_button_->SetSprite(UIButton::State::kDisabled, button_sprite, L"ButtonSheet_3");
+    login_button_->SetDrawMode(UIImage::DrawMode::kSliced);
+    login_button_->SetTextColor(Math::Color::White);
+    login_button_->SetText(L"로그인");
+    login_button_->OnClick(this, &UILogin::OnLogin);
+}
+
+void UILogin::SetLoginDisabled(bool is_disabled) const
+{
+    login_button_->SetDisabled(is_disabled);
+}
+
+void UILogin::Init()
+{
+    background_->SetSize(GetSize());
+    
+    UIContainer::Init();
+}
+
+bool UILogin::OnKey(uint16_t key_code, bool is_pressed)
+{
+    if (is_pressed)
+    {
+        switch (key_code)
+        {
+        case VK_TAB:
+            {
+                if (input_id_->IsFocused()) UI::Get()->SetFocus(input_password_);
+                else if (input_password_->IsFocused()) UI::Get()->SetFocus(input_id_);
+                return true;
+            }
+
+        case VK_RETURN:
+            {
+                OnLogin();
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+void UILogin::OnLogin()
+{
+    if (input_id_->GetText().empty())
+    {
+        Logger::Print(L"아이디를 입력해주세요.");
+        return;
+    }
+
+    if (input_password_->GetText().empty())
+    {
+        Logger::Print(L"비밀번호를 입력해주세요.");
+        return;
+    }
+
+    LoginRequest request;
+    request.id = input_id_->GetText();
+    request.password = input_password_->GetText();
+    SessionSubsystem::Get()->SendPacket(request);
+    
+    login_button_->SetDisabled(true);
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+
+    registration::class_<UILogin>("UILogin")
+        .constructor<const std::wstring&>()
+        (
+            policy::ctor::as_raw_ptr
+        );
+}

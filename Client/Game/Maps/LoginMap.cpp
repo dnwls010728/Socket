@@ -95,11 +95,11 @@ void LoginMap::Load()
     character_list_->SetSize({200.f, 300.f});
     character_list_->OnDoubleClick(this, &LoginMap::OnCharacterSelect);
 
-    version_->AddToViewport();
-    login_id_->AddToViewport();
-    login_password_->AddToViewport();
-    login_->AddToViewport();
-    register_switch_->AddToViewport();
+    // version_->AddToViewport();
+    // login_id_->AddToViewport();
+    // login_password_->AddToViewport();
+    // login_->AddToViewport();
+    // register_switch_->AddToViewport();
 
     Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dreamscape.mp3");
     bgm->SetLoop(true);

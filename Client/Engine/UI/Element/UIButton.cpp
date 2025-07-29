@@ -30,6 +30,11 @@ void UIButton::SetSprite(State state, UISprite* sprite, const std::wstring& fram
     sprites_[static_cast<uint8_t>(state)] = std::make_pair(sprite, frame_name);
 }
 
+void UIButton::SetDrawMode(UIImage::DrawMode draw_mode) const
+{
+    ui_image_->SetDrawMode(draw_mode);
+}
+
 void UIButton::OnClick(void(* func)())
 {
     click_event_ = func;
@@ -49,7 +54,7 @@ void UIButton::ChangeState(State state)
 {
     current_state_ = state;
 
-    std::pair<UISprite*, std::wstring> sprite = sprites_[static_cast<uint8_t>(state)];
+    std::pair<UISprite*, std::wstring> sprite = sprites_[static_cast<uint8_t>(current_state_)];
     ui_image_->SetSprite(sprite.first, sprite.second);
 }
 
@@ -60,7 +65,8 @@ void UIButton::Init()
     ui_image_->SetSize(GetSize());
     ui_text_->SetSize(GetSize());
 
-    ChangeState(State::kNormal);
+    std::pair<UISprite*, std::wstring> sprite = sprites_[static_cast<uint8_t>(current_state_)];
+    ui_image_->SetSprite(sprite.first, sprite.second);
 }
 
 UI::MouseEventResult UIButton::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
@@ -70,10 +76,10 @@ UI::MouseEventResult UIButton::OnMouseButton(const Math::Vector2& position, Mous
 
     if (button == MouseButton::kLeft && is_pressed)
     {
-        click_event_();
-        
         ChangeState(State::kPressed);
         result.is_handled = true;
+        
+        click_event_();
     }
     else if (button == MouseButton::kLeft && !is_pressed)
     {

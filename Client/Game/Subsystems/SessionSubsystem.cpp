@@ -10,6 +10,7 @@
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/DropItemHandler.h"
+#include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
@@ -51,6 +52,11 @@ void SessionSubsystem::Init()
     });
 
 #pragma region 핸들러 등록
+    handlers_.emplace(
+        LoginResponse::StaticPacketID,
+        std::make_unique<LoginHandler>()
+    );
+    
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
         std::make_unique<SelectCharacterHandler>()
