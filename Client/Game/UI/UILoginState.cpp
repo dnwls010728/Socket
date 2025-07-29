@@ -4,6 +4,7 @@
 #include "Asset/AssetManager.h"
 #include "Element/UILogin.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIText.h"
 #include "Windows/DX/UISprite.h"
 
 UILoginState::UILoginState()
@@ -22,6 +23,12 @@ void UILoginState::Init()
     UILogin* login = AddElement<UILogin>(UILogin::StaticClass(), L"Login");
     login->SetAbsolutePosition({514.f, 265.f});
     login->SetSize({338.f, 238.f});
+
+    UIText* version_text = AddElement<UIText>(UIText::StaticClass(), L"VersionText");
+    version_text->SetAbsolutePosition({10.f, 748.f});
+    version_text->SetSize({100.f, 20.f});
+    version_text->SetColor(Math::Color::White);
+    version_text->SetText(L"Ver. 0.0.1");
     
     UIState::Init();
 
