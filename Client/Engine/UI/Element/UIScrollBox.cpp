@@ -6,10 +6,11 @@
 
 UIScrollBox::UIScrollBox(const std::wstring& name) :
     UIMask(name),
-    vertical_alignment_(VerticalAlignment::kBottom),
+    vertical_alignment_(VerticalAlignment::kTop),
     min_offset_(0.f),
     max_offset_(0.f),
     scroll_offset_(0.f),
+    scroll_step_(0.f),
     spacing_(0.f),
     dirty_(false)
 {
@@ -19,6 +20,18 @@ UIScrollBox::UIScrollBox(const std::wstring& name) :
 void UIScrollBox::RemoveItem(UIElement* item)
 {
     content_->RemoveChild(item);
+    dirty_ = true;
+}
+
+void UIScrollBox::SetVerticalAlignment(VerticalAlignment alignment)
+{
+    vertical_alignment_ = alignment;
+    dirty_ = true;
+}
+
+void UIScrollBox::SetSpacing(float spacing)
+{
+    spacing_ = spacing;
     dirty_ = true;
 }
 
@@ -44,7 +57,7 @@ void UIScrollBox::Render()
 
 bool UIScrollBox::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    float amount = -delta.y * 36.f;
+    float amount = -delta.y * scroll_step_;
     scroll_offset_ = Math::Clamp(scroll_offset_ + amount, min_offset_, max_offset_);
     
     float base_y = 0.f;

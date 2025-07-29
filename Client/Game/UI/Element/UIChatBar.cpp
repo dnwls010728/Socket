@@ -38,6 +38,8 @@ UIChatBar::UIChatBar(const std::wstring& name) :
     scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
     scroll_box_->SetRelativePosition({ 4.f, 4.f });
     scroll_box_->SetSize({ 292.f, 42.f });
+    scroll_box_->SetVerticalAlignment(UIScrollBox::VerticalAlignment::kBottom);
+    scroll_box_->SetScrollStep(20.f);
 
     target_text_ = AddChild<UIText>(UIText::StaticClass(), L"TargetText");
     target_text_->SetRelativePosition({ 4.f, 50.f });
@@ -58,20 +60,14 @@ void UIChatBar::FocusInput()
     UI::Get()->SetFocus(input_text_);
 }
 
-bool UIChatBar::OnKey(uint16_t key_code, bool is_pressed)
+void UIChatBar::AddMessage(const std::wstring& message)
 {
-    static int32_t count = 0;
-    if (key_code == VK_SPACE && is_pressed)
-    {
-        UIText* text = scroll_box_->AddItem<UIText>(UIText::StaticClass(), L"Text");
-        text->SetSize({ 292.f, 20.f });
-        text->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-        text->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-        text->SetColor(Math::Color::White);
-        text->SetText(L"Test message " + std::to_wstring(count++));
-    }
-    
-    return true;
+    UIText* text = scroll_box_->AddItem<UIText>(UIText::StaticClass(), L"Text");
+    text->SetSize({ 292.f, 20.f });
+    text->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    text->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    text->SetColor(Math::Color::White);
+    text->SetText(message);
 }
 
 void UIChatBar::OnReturn()

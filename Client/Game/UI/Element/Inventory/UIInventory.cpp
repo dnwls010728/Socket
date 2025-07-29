@@ -109,6 +109,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
     scroll_box_->SetRelativePosition({ 8.f, 48.f });
     scroll_box_->SetSize({ 144.f, 180.f });
+    scroll_box_->SetScrollStep(36.f);
 
     UIContainer* content = scroll_box_->AddItem<UIContainer>(UIContainer::StaticClass(), L"Content");
     content->SetSize({ 144.f, 360.f });

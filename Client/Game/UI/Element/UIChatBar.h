@@ -15,9 +15,7 @@ public:
     virtual ~UIChatBar() override = default;
 
     void FocusInput();
-
-protected:
-    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    void AddMessage(const std::wstring& message);
 
 private:
     void OnReturn();

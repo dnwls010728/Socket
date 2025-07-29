@@ -19,6 +19,10 @@ public:
     T* AddItem(const rttr::type& type, const std::wstring& name);
 
     void RemoveItem(UIElement* item);
+    void SetVerticalAlignment(VerticalAlignment alignment);
+    void SetSpacing(float spacing);
+
+    FORCEINLINE void SetScrollStep(float step) { scroll_step_ = step; }
 
 protected:
     virtual void Tick(float delta_time) override;
@@ -36,6 +40,7 @@ private:
     float min_offset_;
     float max_offset_;
     float scroll_offset_;
+    float scroll_step_;
     float spacing_;
 
     bool dirty_;

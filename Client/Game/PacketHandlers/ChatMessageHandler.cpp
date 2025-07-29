@@ -7,6 +7,9 @@
 #include "Actors/NetworkActor.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "UI/UI.h"
+#include "UI/UIState.h"
+#include "UI/Element/UIChatBar.h"
 
 bool ChatMessageHandler::Handle(Net::IPacket* packet)
 {
@@ -22,6 +25,12 @@ bool ChatMessageHandler::Handle(Net::IPacket* packet)
             {
                 std::wstring message = received_packet->message;
                 player_character->Speak(message);
+                
+                if (auto state = UI::Get()->GetState())
+                {
+                    if (auto element = state->FindElement<UIChatBar>(L"ChatBar"))
+                        element->AddMessage(player_character->GetCharacterName() + L": " + message);
+                }
             }
 
             break;
