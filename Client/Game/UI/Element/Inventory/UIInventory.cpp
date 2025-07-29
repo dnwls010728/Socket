@@ -50,7 +50,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kEquip;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 40; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -73,7 +73,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kUse;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 40; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -96,7 +96,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kEtc;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 40; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -169,7 +169,7 @@ void UIInventory::Init()
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
 
     inventory_ = PlayerSubsystem::Get()->GetInventory();
-    for (uint32_t i = 0; i < 20; ++i)
+    for (uint32_t i = 0; i < 40; ++i)
     {
         UpdateSlot(i + 1);
     }
@@ -225,7 +225,7 @@ bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
     
     tab_ = static_cast<Inventory::Type>(current_tab);
     
-    for (uint32_t i = 0; i < 20; ++i)
+    for (uint32_t i = 0; i < 40; ++i)
     {
         UpdateSlot(i + 1);
     }
