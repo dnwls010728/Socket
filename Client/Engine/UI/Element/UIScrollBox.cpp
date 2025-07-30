@@ -53,45 +53,32 @@ void UIScrollBox::Render()
     // renderer->DrawBox(content_->GetAbsolutePosition(), content_->GetSize(), Math::Color::Green);
     
     UIMask::Render();
+    
+    float view_height = GetSize().y;
+    float content_height = content_->GetSize().y;
+    
+    if (content_height > view_height)
+    {
+        float thickness = 4.f;
+        float margin = 2.f;
+        float track_height = Math::Max(view_height - margin * 2.f, 0.f);
 
-    // 스크롤 가능하지 않으면 바 표시 안 함
-    const float view_h    = GetSize().y;
-    const float content_h = content_->GetSize().y;
-    if (content_h <= view_h) return;
+        float thumb_height = track_height * (view_height / content_height);
+        thumb_height = Math::Clamp(thumb_height, 16.f, track_height);
 
-    const float denom = (max_offset_ - min_offset_);
-    if (Math::Abs(denom) < 1e-6f) return;
+        float t = (scroll_offset_ - min_offset_) / (max_offset_ - min_offset_);
+        t = Math::Clamp01(t);
 
-    // 트랙/엄지 기하 정의
-    const float thickness   = 8.f;   // 바 두께
-    const float margin      = 2.f;   // 위/아래 여백
-    const float track_h     = Math::Max(view_h - margin * 2.f, 0.f);
-    const float min_thumb_h = 16.f;  // 최소 엄지 높이
+        Math::Vector2 position = GetAbsolutePosition();
+        float track_x = position.x + GetSize().x - thickness;
+        float track_y = position.y + margin;
 
-    // 엄지 높이: viewport/content 비율
-    float thumb_h = track_h * (view_h / content_h);
-    thumb_h = Math::Clamp(thumb_h, min_thumb_h, track_h);
+        float thumb_travel = track_height - thumb_height;
+        float thumb_y = track_y + thumb_travel * t;
 
-    // 정규화된 스크롤 (0..1)
-    float t = (scroll_offset_ - min_offset_) / denom;
-    t = Math::Clamp(t, 0.f, 1.f);
-
-    // 위치 계산 (컨트롤 오른쪽에 표시)
-    const Math::Vector2 abs_pos = GetAbsolutePosition();
-    const float track_x = abs_pos.x + GetSize().x - thickness - 1.f; // 오른쪽에서 약간 띄우기
-    const float track_y = abs_pos.y + margin;
-
-    const float thumb_travel = track_h - thumb_h;
-    const float thumb_y = track_y + thumb_travel * t;
-
-    // 그리기
-    // 트랙
-    renderer->DrawBox({track_x, track_y}, {thickness, track_h}, Math::Color::Red);
-    // 엄지
-    renderer->DrawSolidBox({track_x, thumb_y}, {thickness, thumb_h}, Math::Color::Blue);
-
-    // 선택: 위/아래 그라데이션 페이드(컨텐츠가 마스크 속에 있다는 느낌)
-    // 필요하면 여기에 반투명 그라데이션 쿼드 추가
+        renderer->DrawSolidBox({track_x, track_y}, {thickness, track_height}, {58, 65, 74, 230});
+        renderer->DrawSolidBox({track_x, thumb_y}, {thickness, thumb_height}, {255, 211, 77, 242});
+    }
 }
 
 bool UIScrollBox::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)

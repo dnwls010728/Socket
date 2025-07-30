@@ -73,7 +73,7 @@ void UIEditableText::Render()
     if (cursor_visible_)
     {
         float font_height = text_->GetFontHeight();
-        float margin = (size_.y - font_height) * .5f;
+        float margin = (GetSize().y - font_height) * .5f;
         
         Math::Vector2 position = GetAbsolutePosition();
 

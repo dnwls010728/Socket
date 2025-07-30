@@ -20,7 +20,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     inventory_(nullptr),
     tab_(Inventory::Type::kEquip)
 {
-    size_ = { 158.f, 246.f };
+    size_ = { 164.f, 246.f };
     
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
@@ -108,7 +108,7 @@ UIInventory::UIInventory(const std::wstring& name) :
 
     scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
     scroll_box_->SetRelativePosition({ 8.f, 48.f });
-    scroll_box_->SetSize({ 144.f, 180.f });
+    scroll_box_->SetSize({ 150.f, 180.f });
     scroll_box_->SetScrollStep(36.f);
 
     UIContainer* content = scroll_box_->AddItem<UIContainer>(UIContainer::StaticClass(), L"Content");
