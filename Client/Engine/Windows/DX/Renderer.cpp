@@ -4,6 +4,7 @@
 #include "OutlineRenderer.h"
 #include "UISprite.h"
 #include "Math/Color.h"
+#include "Math/Math.h"
 #include "Math/Rect.h"
 #include "Math/Vector2.h"
 #include "Windows/WindowsWindow.h"
@@ -1001,109 +1002,264 @@ void Renderer::DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, con
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
-void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha)
+void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
     
+    Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
+    HRESULT hr = d2d_viewport->d2d_render_target.As(&device_context);
+    if (FAILED(hr)) return;
+    
     D2D1_MATRIX_3X2_F transform;
-    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    device_context->GetTransform(&transform);
     
     auto it = ui_sprite->frame_indexes_.find(frame_name);
-    if (it == ui_sprite->frame_indexes_.end()) return;
+    if (it == ui_sprite->frame_indexes_.end())
+    {
+        device_context->SetTransform(transform);
+        return;
+    }
 
     const UISpriteFrame& frame = ui_sprite->frames_[it->second];
 
-    D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
-    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+    Microsoft::WRL::ComPtr<ID2D1Effect> effect;
+    hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);
+    if (FAILED(hr)) return;
+    
+    effect->SetInput(0, ui_sprite->bitmap_.Get());
+
+    float a = Math::Clamp01(color.a / 255.f);
+    float r = (color.r / 255.f) * a;
+    float g = (color.g / 255.f) * a;
+    float b = (color.b / 255.f) * a;
+
+    D2D1_MATRIX_5X4_F color_matrix = {
+        r, 0.f, 0.f, 0.f,
+        0.f, g, 0.f, 0.f,
+        0.f, 0.f, b, 0.f,
+        0.f, 0.f, 0.f, a,
+        0.f, 0.f, 0.f, 0.f
+    };
+
+    effect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, color_matrix);
+    effect->SetValue(D2D1_COLORMATRIX_PROP_ALPHA_MODE, D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED);
+    effect->SetValue(D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, TRUE);
+
+    D2D1_INTERPOLATION_MODE filter_mode = D2D1_INTERPOLATION_MODE_LINEAR;
+    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 
     const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + size.x, position.y + size.y };
     const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
-    d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+    const D2D1_RECT_F src_dip = GetDip(ui_sprite->bitmap_.Get(), src_rect);
+
+    const float dist_width = dest_rect.right - dest_rect.left;
+    const float dist_height = dest_rect.bottom - dest_rect.top;
+    const float src_width = src_dip.right - src_dip.left;
+    const float src_height = src_dip.bottom - src_dip.top;
+
+    if (dist_width <= 0.f || dist_height <= 0.f || src_width <= 0.f || src_height <= 0.f)
+    {
+        device_context->SetTransform(transform);
+        return;
+    }
+
+    D2D1_MATRIX_3X2_F matrix =
+        D2D1::Matrix3x2F::Scale(dist_width / src_width, dist_height / src_height) *
+        D2D1::Matrix3x2F::Translation(dest_rect.left, dest_rect.top) *
+        transform;
+
+    device_context->SetTransform(matrix);
+    device_context->DrawImage(effect.Get(), nullptr, &src_dip, filter_mode);
     
-    d2d_viewport->d2d_render_target->SetTransform(transform);
+    device_context->SetTransform(transform);
 }
 
-void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha)
+void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
+
+    Microsoft::WRL::ComPtr<ID2D1DeviceContext> device_context;
+    HRESULT hr = d2d_viewport->d2d_render_target.As(&device_context);
+    if (FAILED(hr)) return;
     
     D2D1_MATRIX_3X2_F transform;
-    d2d_viewport->d2d_render_target->GetTransform(&transform);
+    device_context->GetTransform(&transform);
     
     auto it = ui_sprite->frame_indexes_.find(frame_name);
-    if (it == ui_sprite->frame_indexes_.end()) return;
+    if (it == ui_sprite->frame_indexes_.end())
+    {
+        device_context->SetTransform(transform);
+        return;
+    }
 
     const UISpriteFrame& frame = ui_sprite->frames_[it->second];
+    
+    Microsoft::WRL::ComPtr<ID2D1Effect> effect;
+    hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);
+    if (FAILED(hr)) return;
+    
+    effect->SetInput(0, ui_sprite->bitmap_.Get());
 
-    D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
-    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+    float a = Math::Clamp01(color.a / 255.f);
+    float r = (color.r / 255.f) * a;
+    float g = (color.g / 255.f) * a;
+    float b = (color.b / 255.f) * a;
+
+    D2D1_MATRIX_5X4_F color_matrix = {
+        r, 0.f, 0.f, 0.f,
+        0.f, g, 0.f, 0.f,
+        0.f, 0.f, b, 0.f,
+        0.f, 0.f, 0.f, a,
+        0.f, 0.f, 0.f, 0.f
+    };
+
+    effect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, color_matrix);
+    effect->SetValue(D2D1_COLORMATRIX_PROP_ALPHA_MODE, D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED);
+    effect->SetValue(D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, TRUE);
+
+    D2D1_INTERPOLATION_MODE filter_mode = D2D1_INTERPOLATION_MODE_LINEAR;
+    if (ui_sprite->filter_mode_ == UISprite::FilterMode::kPoint) filter_mode = D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+    auto DrawSlice = [&](const D2D1_RECT_F& dest_dip, const D2D1_RECT_F& src_px)
+    {
+        const D2D1_RECT_F src_dip = GetDip(ui_sprite->bitmap_.Get(), src_px);
+
+        const float dist_width = dest_dip.right - dest_dip.left;
+        const float dist_height = dest_dip.bottom - dest_dip.top;
+        const float src_width = src_dip.right - src_dip.left;
+        const float src_height = src_dip.bottom - src_dip.top;
+
+        if (dist_width <= 0.f || dist_height <= 0.f || src_width <= 0.f || src_height <= 0.f) return;
+
+        D2D1_MATRIX_3X2_F matrix =
+            D2D1::Matrix3x2F::Scale(dist_width / src_width, dist_height / src_height) *
+            D2D1::Matrix3x2F::Translation(dest_dip.left, dest_dip.top) *
+            transform;
+
+        device_context->SetTransform(matrix);
+        device_context->DrawImage(effect.Get(), nullptr, &src_dip, filter_mode);
+    };
 
     // Top Left
     {
-        const D2D1_RECT_F dest_rect = { position.x, position.y, position.x + frame.border_min.x, position.y + frame.border_min.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x, position.y,
+            position.x + frame.border_min.x, position.y + frame.border_min.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x, frame.offset.y,
+            frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Top Center
     {
-        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y, position.x + size.x - frame.border_max.x, position.y + frame.border_min.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + frame.border_min.x, position.y,
+            position.x + size.x - frame.border_max.x, position.y + frame.border_min.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.border_min.x, frame.offset.y,
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Top Right
     {
-        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y, position.x + size.x, position.y + frame.border_min.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y, frame.offset.x + frame.size.x, frame.offset.y + frame.border_min.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + size.x - frame.border_max.x, position.y,
+            position.x + size.x, position.y + frame.border_min.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y,
+            frame.offset.x + frame.size.x, frame.offset.y + frame.border_min.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Center Left
     {
-        const D2D1_RECT_F dest_rect = { position.x, position.y + frame.border_min.y, position.x + frame.border_min.x, position.y + size.y - frame.border_max.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x, position.y + frame.border_min.y,
+            position.x + frame.border_min.x, position.y + size.y - frame.border_max.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x, frame.offset.y + frame.border_min.y,
+            frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Center
     {
-        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + frame.border_min.y, position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + frame.border_min.x, position.y + frame.border_min.y,
+            position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.border_min.x, frame.offset.y + frame.border_min.y,
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Center Right
     {
-        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y + frame.border_min.y, position.x + size.x, position.y + size.y - frame.border_max.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y - frame.border_max.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + size.x - frame.border_max.x, position.y + frame.border_min.y,
+            position.x + size.x, position.y + size.y - frame.border_max.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.border_min.y,
+            frame.offset.x + frame.size.x, frame.offset.y + frame.size.y - frame.border_max.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Bottom Left
     {
-        const D2D1_RECT_F dest_rect = { position.x, position.y + size.y - frame.border_max.y, position.x + frame.border_min.x, position.y + size.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x, position.y + size.y - frame.border_max.y,
+            position.x + frame.border_min.x, position.y + size.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x, frame.offset.y + frame.size.y - frame.border_max.y,
+            frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Bottom Center
     {
-        const D2D1_RECT_F dest_rect = { position.x + frame.border_min.x, position.y + size.y - frame.border_max.y, position.x + size.x - frame.border_max.x, position.y + size.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + frame.border_min.x, position.y + size.y - frame.border_max.y,
+            position.x + size.x - frame.border_max.x, position.y + size.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.border_min.x, frame.offset.y + frame.size.y - frame.border_max.y,
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y
+        };
+        DrawSlice(dest, src);
     }
 
     // Bottom Right
     {
-        const D2D1_RECT_F dest_rect = { position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y, position.x + size.x, position.y + size.y };
-        const D2D1_RECT_F src_rect = { frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y, frame.offset.x + frame.size.x, frame.offset.y + frame.size.y };
-        d2d_viewport->d2d_render_target->DrawBitmap(ui_sprite->bitmap_.Get(), dest_rect, alpha, filter_mode, src_rect);
+        const D2D1_RECT_F dest = {
+            position.x + size.x - frame.border_max.x, position.y + size.y - frame.border_max.y,
+            position.x + size.x, position.y + size.y
+        };
+        const D2D1_RECT_F src = {
+            frame.offset.x + frame.size.x - frame.border_max.x, frame.offset.y + frame.size.y - frame.border_max.y,
+            frame.offset.x + frame.size.x, frame.offset.y + frame.size.y
+        };
+        DrawSlice(dest, src);
     }
-    
-    d2d_viewport->d2d_render_target->SetTransform(transform);
+
+    device_context->SetTransform(transform);
 }
 
 bool Renderer::LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap)
@@ -1173,6 +1329,21 @@ bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& 
     // text_layout->GetLineMetrics(line_metrics.data(), line_count, &line_count);
 
     return true;
+}
+
+D2D1_RECT_F Renderer::GetDip(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const D2D1_RECT_F& rect)
+{
+    float bmp_dpi_x = 96.f;
+    float bmp_dpi_y = 96.f;
+    bitmap->GetDpi(&bmp_dpi_x, &bmp_dpi_y);
+
+    float px_to_dip_x = 96.f / bmp_dpi_x;
+    float px_to_dip_y = 96.f / bmp_dpi_y;
+
+    return {
+        rect.left * px_to_dip_x, rect.top * px_to_dip_y,
+        rect.right * px_to_dip_x, rect.bottom * px_to_dip_y
+    };
 }
 
 bool Renderer::CreateBackBufferResources(Microsoft::WRL::ComPtr<IDXGISwapChain>& dxgi_swap_chain,

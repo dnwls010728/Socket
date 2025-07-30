@@ -127,14 +127,16 @@ public:
     [[deprecated("Use DrawBitmap instead.")]]
     void DrawBitmap(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const Math::Vector2& position, const Math::Vector2& size, D2D1_BITMAP_INTERPOLATION_MODE filter_mode = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
     
-    void DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha = 1.f);
-    void DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, float alpha = 1.f);
+    void DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
+    void DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 
     Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName, float size);
 
     bool GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, float font_size, std::vector<float>& advances);
+
+    D2D1_RECT_F GetDip(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const D2D1_RECT_F& rect);
 
     FORCEINLINE ID3D11Device* GetDevice() const { return d3d_device_.Get(); }
     FORCEINLINE ID3D11DeviceContext* GetDeviceContext() const { return d3d_device_context_.Get(); }
