@@ -76,8 +76,8 @@ void UIScrollBox::Render()
         float thumb_travel = track_height - thumb_height;
         float thumb_y = track_y + thumb_travel * t;
 
-        renderer->DrawSolidBox({track_x, track_y}, {thickness, track_height}, {58, 65, 74, 230});
-        renderer->DrawSolidBox({track_x, thumb_y}, {thickness, thumb_height}, {255, 211, 77, 242});
+        renderer->DrawSolidRoundBox({track_x, track_y}, {thickness, track_height}, {58, 65, 74, 230}, 2.f);
+        renderer->DrawSolidRoundBox({track_x, thumb_y}, {thickness, thumb_height}, {255, 211, 77, 242}, 2.f);
     }
 }
 
