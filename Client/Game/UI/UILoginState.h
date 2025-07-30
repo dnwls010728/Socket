@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "UI/UIState.h"
+#include "UI/Element/UIButton.h"
 
 class UIInventory;
 
@@ -13,5 +14,8 @@ public:
 
 protected:
     virtual void Init() override;
+
+private:
+    void OnExit();
     
 };

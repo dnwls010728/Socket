@@ -12,10 +12,6 @@ UIInGameState::UIInGameState() :
     inventory_(nullptr),
     item_tooltip_(nullptr)
 {
-}
-
-void UIInGameState::Init()
-{
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
     char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
@@ -31,7 +27,10 @@ void UIInGameState::Init()
     item_tooltip_->SetSize({ 322.f, 122.f });
     item_tooltip_->SetActive(false);
     item_tooltip_->SetIgnoreRayCast(true);
-    
+}
+
+void UIInGameState::Init()
+{
     UIState::Init();
 }
 

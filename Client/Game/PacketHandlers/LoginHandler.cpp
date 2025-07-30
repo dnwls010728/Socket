@@ -22,7 +22,7 @@ bool LoginHandler::Handle(Net::IPacket* packet)
         if (state)
         {
             if (auto element = state->FindElement<UILogin>(L"Login"))
-                state->RemoveElement(element);
+                element->SetActive(false);
         }
     }
     else

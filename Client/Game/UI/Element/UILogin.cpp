@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 
 #include "Asset/AssetManager.h"
+#include <shellapi.h>
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
@@ -55,6 +56,13 @@ UILogin::UILogin(const std::wstring& name) :
     login_button_->SetTextColor(Math::Color::White);
     login_button_->SetText(L"로그인");
     login_button_->OnClick(this, &UILogin::OnLogin);
+
+    register_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"RegisterButton");
+    register_button_->SetRelativePosition({30.f, 194.f});
+    register_button_->SetSize({80.f, 20.f});
+    register_button_->SetTextColor(Math::Color::White);
+    register_button_->SetText(L"회원가입");
+    register_button_->OnClick(this, &UILogin::OnRegister);
 }
 
 void UILogin::SetLoginDisabled(bool is_disabled) const
@@ -108,11 +116,18 @@ void UILogin::OnLogin()
     }
 
     LoginRequest request;
-    request.id = input_id_->GetText();
-    request.password = input_password_->GetText();
+    // request.id = input_id_->GetText();
+    // request.password = input_password_->GetText();
+    request.id = L"master001";
+    request.password = L"12345";
     SessionSubsystem::Get()->SendPacket(request);
     
     login_button_->SetDisabled(true);
+}
+
+void UILogin::OnRegister()
+{
+    ShellExecute(nullptr, nullptr, L"https://www.google.com", nullptr, nullptr, SW_SHOW);
 }
 
 RTTR_REGISTRATION

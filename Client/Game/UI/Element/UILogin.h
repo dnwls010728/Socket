@@ -22,6 +22,7 @@ protected:
 
 private:
     void OnLogin();
+    void OnRegister();
     
     UIImage* background_;
     UIImage* id_background_;
@@ -31,5 +32,6 @@ private:
     UIEditableText* input_password_;
 
     UIButton* login_button_;
+    UIButton* register_button_;
     
 };
