@@ -2,6 +2,7 @@
 #include "Inventory/Inventory.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIContainer.h"
+#include "UI/Element/UIImage.h"
 
 class UIText;
 class UIScrollBox;
@@ -22,7 +23,6 @@ public:
 protected:
     virtual void Init() override;
     virtual void Uninit() override;
-    virtual void Render() override;
 
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
@@ -37,6 +37,8 @@ private:
     std::array<UIButton*, static_cast<uint8_t>(Inventory::Type::kCount)> tab_buttons_;
     
     std::vector<UIInventorySlot*> slots_;
+
+    UIImage* background_;
 
     UIScrollBox* scroll_box_;
 

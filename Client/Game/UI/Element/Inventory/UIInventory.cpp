@@ -22,6 +22,14 @@ UIInventory::UIInventory(const std::wstring& name) :
 {
     size_ = { 164.f, 246.f };
     
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
+
+    background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetSprite(panel_sprite, L"Panel_0");
+    background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    background_->SetIgnoreRayCast(true);
+    
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
     t_title->SetSize({ 142.f, 20.f });
@@ -30,8 +38,6 @@ UIInventory::UIInventory(const std::wstring& name) :
     t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     t_title->SetText(L"인벤토리");
     t_title->SetIgnoreRayCast(true);
-
-    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
 
     UIButton* equip_button = AddChild<UIButton>(UIButton::StaticClass(), L"EquipButton");
     equip_button->SetRelativePosition({ 8.f, 20.f });
@@ -162,6 +168,8 @@ void UIInventory::UpdateColor(uint32_t color)
 
 void UIInventory::Init()
 {
+    background_->SetSize(GetSize());
+    
     UIContainer::Init();
 
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
@@ -186,15 +194,6 @@ void UIInventory::Uninit()
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
-}
-
-void UIInventory::Render()
-{
-    Renderer* renderer = Renderer::Get();
-    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, { 0, 0, 0, 128 });
-    renderer->DrawRoundBox(GetAbsolutePosition(), size_, { 255, 255, 255, 255 });
-    
-    UIContainer::Render();
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)

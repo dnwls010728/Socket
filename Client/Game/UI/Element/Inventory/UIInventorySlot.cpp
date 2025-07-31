@@ -24,6 +24,13 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     last_time_(0.f)
 {
     size_ = { 32.f, 32.f };
+
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    
+    background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetSprite(panel_sprite, L"Panel_0");
+    background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    background_->SetIgnoreRayCast(true);
     
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     icon_->SetSize(size_);
@@ -61,14 +68,11 @@ void UIInventorySlot::ResetSlot()
     count_text_->SetText(L"");
 }
 
-void UIInventorySlot::Render()
+void UIInventorySlot::Init()
 {
-    Renderer* renderer = Renderer::Get();
+    background_->SetSize(GetSize());
     
-    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, {0, 0, 0, 128});
-    renderer->DrawRoundBox(GetAbsolutePosition(), size_, {255, 255, 255, 255});
-    
-    UIContainer::Render();
+    UIContainer::Init();
 }
 
 UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
