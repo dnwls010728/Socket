@@ -67,7 +67,7 @@ public:
     Math::Vector2 GetDropPosition(const Math::Vector2& position);
 
     inline size_t GetPlayerCount() const { return players_.size(); }
-    inline uint32_t GetMapID() const { return map_id_; }
+    inline int32_t GetMapID() const { return map_id_; }
     inline const Bounds& GetMapBounds() const { return map_bounds_; }
 
 private:
@@ -77,7 +77,7 @@ private:
     void KillAllMobs();
     void DestroyObject_Internal(uint32_t object_id);
 
-    uint32_t map_id_;
+    int32_t map_id_;
 
     Bounds map_bounds_;
 

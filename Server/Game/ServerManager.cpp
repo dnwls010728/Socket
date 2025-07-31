@@ -7,6 +7,8 @@
 #include "DataManager.h"
 #include "Session/Session.h"
 #include "Helper/StringHelper.h"
+#include "jdbc/cppconn/prepared_statement.h"
+#include "Map/PlayerCharacter.h"
 #include "Map/MapObjects/Mob/Mob.h"
 #include "Session/SessionManager.h"
 
@@ -140,8 +142,11 @@ void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)
 {
     SessionManager* session_manager = SessionManager::Get();
-    Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
-    if (session) session->ReceivePacket(packet.get());
+    
+    {
+        Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
+        if (session) session->ReceivePacket(packet.get());
+    }
     
     switch (packet->GetPacketID())
     {
@@ -198,55 +203,91 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
     case LoginRequest::StaticPacketID:
         {
             LoginRequest* request = static_cast<LoginRequest*>(packet.get());
-            MySQLManager* mysql_manager = MySQLManager::Get();
+            
+            sql::Connection* connection = MySQLManager::Get()->GetConnection();
+            if (!connection) break;
 
-            bool is_found = false;
-            mysql_manager->ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"' AND password = '" + request->password + L"'", [&](const sql::ResultSet* result)
+            try
             {
-                is_found = true;
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM account_info WHERE id = ? AND password = ?"));
+                statement->setString(1, StringHelper::UTF16ToUTF8(request->id));
+                statement->setString(2, StringHelper::UTF16ToUTF8(request->password));
 
-                int unique_id = result->getInt("account_id");
-                if (session_manager->HasSessionByAccountID(unique_id))
+                std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+                if (result->next())
+                {
+                    int account_id = result->getInt("account_id");
+                    if (session_manager->HasSessionByAccountID(account_id))
+                    {
+                        LoginResponse response;
+                        response.is_success = false;
+                        response.message = L"이미 로그인된 계정입니다.";
+                        server_socket_.SendPacketToClient(state.uniqueKey, response);
+                        break;
+                    }
+
+                    Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
+                    if (!session)
+                    {
+                        LoginResponse response;
+                        response.is_success = false;
+                        response.message = L"세션을 찾을 수 없습니다.";
+                        server_socket_.SendPacketToClient(state.uniqueKey, response);
+                        break;
+                    }
+                    
+                    session->CreatePlayer(account_id);
+
+                    std::vector<CharacterProfile> profiles;
+                    for (const auto& character : session->GetPlayer()->GetCharacters())
+                    {
+                        CharacterProfile profile;
+                        profile.character_id = character->GetObjectID();
+                        profile.map_id = character->GetMap()->GetMapID();
+                        profile.name = character->GetName();
+                        
+                        profile.position.x = character->GetPosition().x;
+                        profile.position.y = character->GetPosition().y;
+
+                        profile.character_color = character->GetCharacterColor();
+
+                        profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = character->hp_;
+                        profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = character->max_hp_;
+                        profile.stats[static_cast<uint8_t>(PlayerStat::kExp)] = character->exp_;
+                        profile.stats[static_cast<uint8_t>(PlayerStat::kLv)] = character->lv_;
+                        
+                        profiles.push_back(profile);
+                    }
+                    
+                    LoginResponse response;
+                    response.is_success = true;
+                    response.message = L"";
+                    response.characters = profiles;
+                    server_socket_.SendPacketToClient(state.uniqueKey, response);
+
+                    session->SetState(Session::State::kLoggedIn);
+                }
+                else
                 {
                     LoginResponse response;
                     response.is_success = false;
-                    response.message = L"Already logged in.";
+                    response.message = L"아이디 또는 비밀번호가 잘못되었습니다.";
                     server_socket_.SendPacketToClient(state.uniqueKey, response);
-                    return;
                 }
-
-                Session* session = SessionManager::Get()->FindSessionByClientID(state.uniqueKey);
-                if (session) session->CreatePlayer(unique_id);
-
-                std::vector<CharacterInfo> characters;
-                mysql_manager->ExecuteQuery(L"SELECT * FROM character_info WHERE account_id = " + std::to_wstring(unique_id), [&](const sql::ResultSet* result)
-                {
-                    CharacterInfo character;
-                    character.unique_id = result->getInt("character_id");
-                    character.account_id = result->getInt("account_id");
-                    character.name = StringHelper::UTF8ToUTF16(result->getString("name"));
-                    character.lv = result->getInt("lv");
-                    // character.job = result->getInt("job");
-                    character.last_position_x = static_cast<float>(result->getDouble("last_position_x"));
-                    character.last_position_y = static_cast<float>(result->getDouble("last_position_y"));
-                    characters.push_back(character);
-                });
-
-                LoginResponse response;
-                response.is_success = true;
-                response.message = L"Login successful.";
-                response.characters = characters;
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
-
-                session->SetState(Session::State::kLoggedIn);
-            });
-
-            if (!is_found)
+            }
+            catch (sql::SQLException& e)
             {
-                LoginResponse response;
-                response.is_success = false;
-                response.message = L"Invalid ID or password.";
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
+                std::cerr << "SQLException: " << e.what() << std::endl;
+                std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+            }
+            catch (std::exception& e)
+            {
+                std::cerr << "Exception: " << e.what() << std::endl;
+            }
+            catch (...)
+            {
+                std::cerr << "Unknown Exception" << std::endl;
             }
         }
         break;

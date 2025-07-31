@@ -31,10 +31,12 @@ public:
     inline uint32_t GetAccountID() const { return account_id_; }
 
     inline const std::wstring& GetName() const { return name_; }
+    inline const std::wstring& GetCharacterColor() const { return character_color_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
 protected:
+    friend class ServerManager;
     friend class Map;
     friend class Player;
     friend class Mob;

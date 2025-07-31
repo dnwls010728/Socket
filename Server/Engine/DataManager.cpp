@@ -44,7 +44,7 @@ const MobData* DataManager::GetMobData(uint32_t id) const
     return &it->second;
 }
 
-uint32_t DataManager::GetExp(uint32_t level) const
+int32_t DataManager::GetExp(uint32_t level) const
 {
     if (level >= exp_table_.size()) return 0;
     return exp_table_[level];

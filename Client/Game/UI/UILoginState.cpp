@@ -2,13 +2,15 @@
 #include "UILoginState.h"
 
 #include "Asset/AssetManager.h"
+#include "Element/CharacterSelect/UICharacterSelect.h"
 #include "Element/UILogin.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
 #include "Windows/WindowsApplication.h"
 #include "Windows/DX/UISprite.h"
 
-UILoginState::UILoginState()
+UILoginState::UILoginState() :
+    character_select_model_(nullptr)
 {
     UISprite* sprite = AssetManager::Get()->Load<UISprite>(L"UI\\LoginBackground.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
@@ -19,9 +21,14 @@ UILoginState::UILoginState()
     image->SetSprite(sprite, L"LoginBackground_0");
     image->SetIgnoreRayCast(true);
 
-    UILogin* login = AddElement<UILogin>(UILogin::StaticClass(), L"Login");
-    login->SetAbsolutePosition({514.f, 265.f});
-    login->SetSize({338.f, 238.f});
+    login_ = AddElement<UILogin>(UILogin::StaticClass(), L"Login");
+    login_->SetAbsolutePosition({514.f, 265.f});
+    login_->SetSize({338.f, 238.f});
+
+    character_select_ = AddElement<UICharacterSelect>(UICharacterSelect::StaticClass(), L"CharacterSelect");
+    character_select_->SetAbsolutePosition({373.f, 84.f});
+    character_select_->SetSize({620.f, 600.f});
+    character_select_->SetActive(false);
 
     UIText* version_text = AddElement<UIText>(UIText::StaticClass(), L"VersionText");
     version_text->SetAbsolutePosition({10.f, 748.f});
@@ -40,6 +47,12 @@ UILoginState::UILoginState()
     exit_button->SetTextColor(Math::Color::White);
     exit_button->SetText(L"끝내기");
     exit_button->OnClick(this, &UILoginState::OnExit);
+}
+
+void UILoginState::InitModel(const std::vector<CharacterProfile>& profiles)
+{
+    character_select_model_ = std::make_unique<CharacterSelectModel>(profiles);
+    character_select_->InitSlots(character_select_model_->GetCharacterProfiles());
 }
 
 void UILoginState::Init()

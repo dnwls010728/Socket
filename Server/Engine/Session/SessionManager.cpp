@@ -35,7 +35,7 @@ Session* SessionManager::FindSessionByAccountID(uint32_t account_id)
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& session : sessions_)
     {
-        if (session.second->GetAccountUniqueID() == account_id)
+        if (session.second->GetAccountID() == account_id)
             return session.second.get();
     }
 

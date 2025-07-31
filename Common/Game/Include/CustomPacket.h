@@ -56,7 +56,7 @@ struct LoginResponse : public Net::IPacket
 {
     bool is_success;
     std::wstring message;
-    std::vector<CharacterInfo> characters;
+    std::vector<CharacterProfile> characters;
     
     SERIALIZABLE_FIELDS(is_success, message, characters)
     REGISTER_PACKET(LoginResponse, 203)
@@ -300,9 +300,8 @@ struct TakeDamagePacket : public Net::IPacket
 
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
-    uint8_t flags = 0;
-    std::array<uint32_t, 4> stats = {0};
+    std::array<int32_t, 4> stats = {-1}; // -1 일 경우 업데이트하지 않음
     
-    SERIALIZABLE_FIELDS(flags, stats)
+    SERIALIZABLE_FIELDS(stats)
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };

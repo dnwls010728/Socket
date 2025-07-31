@@ -1,19 +1,23 @@
 ﻿#pragma	 once
+#include <array>
 #include <vector>
 #include <string>
 
-struct CharacterInfo
+struct CharacterProfile
 {
-    int unique_id;
-    int account_id;
+    uint32_t character_id;
+    int32_t map_id;
     std::wstring name;
-    int lv;
-    int job;
-    int map_id;
-    float last_position_x;
-    float last_position_y;
 
-    inline bool IsValid() const { return unique_id > 0; }
+    struct
+    {
+        float x;
+        float y;
+    } position;
+
+    std::wstring character_color;
+
+    std::array<int32_t, 4> stats = {-1};
 };
 
 struct ItemInfo
@@ -73,12 +77,13 @@ struct ObjectInfo
     } info;
 };
 
+
 enum class PlayerStat : uint8_t
 {
-    kHP = (0x01<<0),
-    kMaxHP = (0x01<<1),
-    kExp = (0x01<<2),
-    kLv = (0x01<<3)
+    kHP = 0,
+    kMaxHP,
+    kExp,
+    kLv
 };
 
 enum class MobState : uint8_t

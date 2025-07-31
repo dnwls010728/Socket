@@ -38,7 +38,7 @@ void NetworkSubsystem::SendPacket(Net::IPacket& packet)
     SessionSubsystem::Get()->SendPacket(packet);
 }
 
-void NetworkSubsystem::ChangeMap(uint32_t map_id)
+void NetworkSubsystem::ChangeMap(int32_t map_id)
 {
     ChangeMapPacket request;
     request.map_id = map_id;

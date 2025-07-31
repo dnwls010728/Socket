@@ -21,16 +21,13 @@ namespace Net
 	}
 	*/
 
-	// CharacterInfo
-	SERIALIZER_EXTEND(CharacterInfo,
-		v.unique_id,
-		v.account_id,
-		v.name,
-		v.lv,
-		v.job,
+	SERIALIZER_EXTEND(CharacterProfile,
+		v.character_id,
 		v.map_id,
-		v.last_position_x,
-		v.last_position_y
+		v.name,
+		v.position.x,
+		v.position.y,
+		v.stats
 		)
 
 	SERIALIZER_EXTEND(ItemInfo,

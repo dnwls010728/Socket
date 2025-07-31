@@ -79,7 +79,7 @@ public:
 
     const MobData* GetMobData(uint32_t id) const;
     
-    uint32_t GetExp(uint32_t level) const;
+    int32_t GetExp(uint32_t level) const;
 
 private:
     std::unordered_map<uint32_t, MobData> mob_data_map_;

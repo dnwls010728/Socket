@@ -54,7 +54,5 @@ private:
 
     std::shared_ptr<UI_OLD::ListBox> character_list_;
 #pragma endregion
-
-    std::vector<CharacterInfo> characters_;
     
 };

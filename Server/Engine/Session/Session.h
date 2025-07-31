@@ -32,7 +32,7 @@ public:
 
     std::shared_ptr<Player> CreatePlayer(uint32_t account_id);
 
-    uint32_t GetAccountUniqueID() const;
+    uint32_t GetAccountID() const;
 
     inline int GetClientID() const { return client_id_; }
 

@@ -27,8 +27,7 @@ LoginMap::LoginMap(const std::wstring& kName) :
     login_password_(nullptr),
     login_(nullptr),
     register_switch_(nullptr),
-    character_list_(nullptr),
-    characters_()
+    character_list_(nullptr)
 {
 }
 
@@ -159,19 +158,19 @@ void LoginMap::ProcessPackets(const std::shared_ptr<Net::IPacket>& packet)
             {
                 SessionSubsystem::Get()->SetState(SessionState::kLoggedIn);
 
-                characters_ = response->characters;
-                for (const auto& character : characters_)
-                {
-                    std::wstring name = character.name + L" (Lv. " + std::to_wstring(character.lv) + L")";
-                    character_list_->AddItem(name, reinterpret_cast<uintptr_t>(&character));
-                }
+                // characters_ = response->characters;
+                // for (const auto& character : characters_)
+                // {
+                //     std::wstring name = character.name + L" (Lv. " + std::to_wstring(character.lv) + L")";
+                //     character_list_->AddItem(name, reinterpret_cast<uintptr_t>(&character));
+                // }
+                //
+                // login_id_->RemoveFromViewport();
+                // login_password_->RemoveFromViewport();
+                // login_->RemoveFromViewport();
+                // register_switch_->RemoveFromViewport();
 
-                login_id_->RemoveFromViewport();
-                login_password_->RemoveFromViewport();
-                login_->RemoveFromViewport();
-                register_switch_->RemoveFromViewport();
-
-                character_list_->AddToViewport();
+                // character_list_->AddToViewport();
             }
         }
         break;
@@ -231,12 +230,12 @@ void LoginMap::OnLoginSwitch()
 
 void LoginMap::OnCharacterSelect(uint64_t user_data)
 {
-    CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
-    if (!character) return;
+    // CharacterInfo* character = reinterpret_cast<CharacterInfo*>(user_data);
+    // if (!character) return;
 
-    SelectCharacterRequest request;
-    request.unique_id = character->unique_id;
-    SessionSubsystem::Get()->SendPacket(request);
+    // SelectCharacterRequest request;
+    // request.unique_id = character->unique_id;
+    // SessionSubsystem::Get()->SendPacket(request);
 }
 
 RTTR_REGISTRATION
