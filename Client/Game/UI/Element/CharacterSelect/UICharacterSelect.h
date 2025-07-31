@@ -3,6 +3,7 @@
 #include "UI/Element/UIImage.h"
 #include "UI/Model/CharacterSelectModel.h"
 
+class UIButton;
 class UICharacterSlot;
 
 class UICharacterSelect : public UIContainer
@@ -20,6 +21,10 @@ protected:
 
 private:
     UIImage* background_;
+    
+    UIButton* delete_button_;
+    UIButton* new_button_;
+    UIButton* select_button_;
     
     std::vector<UICharacterSlot*> slots_;
 };

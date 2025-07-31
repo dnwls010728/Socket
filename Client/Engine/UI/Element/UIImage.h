@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Math/Color.h"
 #include "UI/UIElement.h"
 
 class UISprite;
@@ -23,6 +24,9 @@ public:
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
     FORCEINLINE DrawMode GetDrawMode() const { return draw_mode_; }
 
+    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
+    FORCEINLINE const Math::Color& GetColor() const { return color_; }
+
 protected:
     virtual void Render() override;
 
@@ -31,5 +35,7 @@ protected:
     std::wstring current_frame_;
 
     DrawMode draw_mode_;
+
+    Math::Color color_;
     
 };

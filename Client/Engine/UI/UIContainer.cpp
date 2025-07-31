@@ -16,11 +16,11 @@ void UIContainer::RemoveChild(UIElement* child)
 
 void UIContainer::SetActive(bool active)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
-    {
-        UIElement* child = children_[children_.size() - i - 1].get();
-        if (child) child->SetActive(active);
-    }
+    // for (uint32_t i = 0; i < children_.size(); ++i)
+    // {
+    //     UIElement* child = children_[children_.size() - i - 1].get();
+    //     if (child) child->SetActive(active);
+    // }
     
     UIElement::SetActive(active);
 }

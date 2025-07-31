@@ -24,10 +24,10 @@ bool LoginHandler::Handle(Net::IPacket* packet)
         
         if (state)
         {
-            state->InitModel(received_packet->characters);
-            
             state->GetLogin()->SetActive(false);
             state->GetCharacterSelect()->SetActive(true);
+            
+            state->InitModel(received_packet->characters);
         }
     }
     else
