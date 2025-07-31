@@ -13,12 +13,14 @@ public:
     UICharacterSlot(const std::wstring& name);
     virtual ~UICharacterSlot() override = default;
 
-    void InitSlot(const CharacterProfile& profile) const;
+    void InitSlot(const CharacterProfile& profile);
 
 protected:
     virtual void Init() override;
 
 private:
+    uint32_t character_id_;
+    
     UIImage* background_;
     UIImage* character_;
 

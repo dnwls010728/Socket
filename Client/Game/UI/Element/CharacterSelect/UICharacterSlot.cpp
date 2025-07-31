@@ -7,7 +7,8 @@
 #include "Windows/DX/UISprite.h"
 
 UICharacterSlot::UICharacterSlot(const std::wstring& name) :
-    UIContainer(name)
+    UIContainer(name),
+    character_id_(0)
 {
     size_ = { 200.f,  228.f };
     
@@ -56,9 +57,10 @@ UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     color_code_text_->SetIgnoreRayCast(true);
 }
 
-void UICharacterSlot::InitSlot(const CharacterProfile& profile) const
+void UICharacterSlot::InitSlot(const CharacterProfile& profile)
 {
     if (profile.character_id == 0) return;
+    character_id_ = profile.character_id;
 
     character_->SetActive(true);
     empty_text_->SetActive(false);
