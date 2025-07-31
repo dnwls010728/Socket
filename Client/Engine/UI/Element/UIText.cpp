@@ -20,6 +20,12 @@ UIText::UIText(const std::wstring& name) :
 {
 }
 
+void UIText::SetSize(const Math::Vector2& size)
+{
+    UIElement::SetSize(size);
+    UpdateAdvances();
+}
+
 void UIText::SetText(const std::wstring& text)
 {
     text_ = text;

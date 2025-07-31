@@ -12,6 +12,8 @@ public:
     UIText(const std::wstring& name);
     virtual ~UIText() override = default;
 
+    virtual void SetSize(const Math::Vector2& size) override;
+
     void SetText(const std::wstring& text);
     void SetFontName(const std::wstring& font_name);
     void SetFontSize(float font_size);
@@ -34,7 +36,10 @@ public:
     FORCEINLINE DWRITE_PARAGRAPH_ALIGNMENT GetParagraphAlignment() const { return paragraph_alignment_; }
 
     FORCEINLINE const std::vector<float>& GetAdvances() const { return advances_; }
+    FORCEINLINE const std::vector<float>& GetLineHeights() const { return line_heights_; }
+    
     FORCEINLINE float GetTotalAdvance() const { return total_advance_; }
+    FORCEINLINE float GetTotalLineHeight() const { return total_line_height_; }
 
 protected:
     virtual void Render() override;
