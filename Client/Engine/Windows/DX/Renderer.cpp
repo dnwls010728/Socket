@@ -1337,6 +1337,40 @@ bool Renderer::GetTextAdvances(const std::wstring& kString, const std::wstring& 
     return true;
 }
 
+bool Renderer::GetTextSize(const std::wstring& text, const std::wstring& font_name, float font_size, float& out_width, float& out_height)
+{
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(font_name, font_size);
+    if (!text_format)
+        return false;
+    
+    constexpr float layout_width = 10000.f;
+    constexpr float layout_height = 10000.f;
+
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
+    HRESULT hr = dwrite_factory_->CreateTextLayout(
+        text.c_str(),
+        static_cast<UINT32>(text.length()),
+        text_format.Get(),
+        layout_width,
+        layout_height,
+        text_layout.GetAddressOf()
+    );
+    if (FAILED(hr))
+        return false;
+    
+    text_layout->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
+    
+    DWRITE_TEXT_METRICS metrics = {};
+    hr = text_layout->GetMetrics(&metrics);
+    if (FAILED(hr))
+        return false;
+    
+    out_width = metrics.widthIncludingTrailingWhitespace;
+    out_height = metrics.height;
+
+    return true;
+}
+
 D2D1_RECT_F Renderer::GetDip(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const D2D1_RECT_F& rect)
 {
     float bmp_dpi_x = 96.f;

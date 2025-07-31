@@ -135,6 +135,7 @@ public:
     Microsoft::WRL::ComPtr<IDWriteTextFormat> GetTextFormat(const std::wstring& kName, float size);
 
     bool GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, float font_size, const Math::Vector2& size, std::vector<float>& advances, std::vector<float>& line_heights);
+    bool GetTextSize(const std::wstring& text, const std::wstring& font_name, float font_size, float& out_width, float& out_height);
 
     D2D1_RECT_F GetDip(const Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, const D2D1_RECT_F& rect);
 

@@ -28,6 +28,10 @@ void UIButton::SetDisabled(bool is_disabled)
 void UIButton::SetSprite(State state, UISprite* sprite, const std::wstring& frame_name)
 {
     sprites_[static_cast<uint8_t>(state)] = std::make_pair(sprite, frame_name);
+    if (current_state_ == state)
+    {
+        ui_image_->SetSprite(sprite, frame_name);
+    }
 }
 
 void UIButton::SetDrawMode(UIImage::DrawMode draw_mode) const
@@ -104,6 +108,13 @@ bool UIButton::OnMouseLeave()
     
     ChangeState(State::kNormal);
     return true;
+}
+
+void UIButton::SetSize(const Math::Vector2& size)
+{
+    UIContainer::SetSize(size);
+    ui_image_->SetSize(GetSize());
+    ui_text_->SetSize(GetSize());
 }
 
 RTTR_REGISTRATION
