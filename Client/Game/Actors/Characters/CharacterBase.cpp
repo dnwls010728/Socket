@@ -85,7 +85,7 @@ void CharacterBase::PhysicsTick(float delta_time)
     Math::Vector2 name_tag_offset = { -name_tag_->GetSize().x * .5f, 4.f };
     name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);
 
-    Math::Vector2 chat_balloon_offset = { -chat_balloon_->GetSize().x * .5f, -128.f };
+    Math::Vector2 chat_balloon_offset = { -chat_balloon_->GetSize().x * .5f, -chat_balloon_->GetSize().y - 64.f };
     chat_balloon_->SetAbsolutePosition(screen_position + chat_balloon_offset);
 }
 

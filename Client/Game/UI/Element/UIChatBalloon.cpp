@@ -19,21 +19,25 @@ UIChatBalloon::UIChatBalloon(const std::wstring& name) :
     tail_->SetSprite(sprite, L"ChatBalloon_1");
 
     text_ = AddChild<UIText>(UIText::StaticClass(), L"Text");
-    text_->SetRelativePosition({ 16.f, 0.f });
+    text_->SetRelativePosition({ 16.f, 16.f });
+    text_->SetSize({ 128.f, 32.f });
     text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     
 }
 
 void UIChatBalloon::SetText(const std::wstring& text)
 {
     text_->SetText(text);
-    text_->SetSize({ text_->GetTotalAdvance() + 1.f, 32.f });
 
-    body_->SetSize({ text_->GetSize().x + 32.f, 32.f });
+    Math::Vector2 text_size = text_->GetSize();
+    float total_line_height = text_->GetTotalLineHeight();
+    text_->SetSize({ text_size.x, total_line_height });
 
-    float tail_offset = body_->GetSize().x * .5f - tail_->GetSize().x * .5f;
-    tail_->SetRelativePosition({ tail_offset, 13.f });
+    body_->SetSize({ text_->GetSize().x + 32.f, text_->GetSize().y + 32.f });
+
+    float tail_offset_x = body_->GetSize().x * .5f - tail_->GetSize().x * .5f;
+    float tail_offset_y = body_->GetSize().y - tail_->GetSize().y * .5f - 3.f;
+    tail_->SetRelativePosition({ tail_offset_x, tail_offset_y });
 
     SetSize({body_->GetSize().x, body_->GetSize().y + tail_->GetSize().y});
 }

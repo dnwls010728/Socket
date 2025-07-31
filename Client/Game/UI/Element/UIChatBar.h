@@ -15,7 +15,7 @@ public:
     virtual ~UIChatBar() override = default;
 
     void FocusInput();
-    void AddMessage(const std::wstring& message);
+    void AddMessage(const std::wstring& message) const;
 
 private:
     void OnReturn();

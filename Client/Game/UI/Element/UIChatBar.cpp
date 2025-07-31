@@ -60,14 +60,15 @@ void UIChatBar::FocusInput()
     UI::Get()->SetFocus(input_text_);
 }
 
-void UIChatBar::AddMessage(const std::wstring& message)
+void UIChatBar::AddMessage(const std::wstring& message) const
 {
     UIText* text = scroll_box_->AddItem<UIText>(UIText::StaticClass(), L"Text");
     text->SetSize({ 292.f, 20.f });
-    text->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-    text->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     text->SetColor(Math::Color::White);
     text->SetText(message);
+
+    // 텍스트 크기에 맞춰서 높이를 조정
+    text->SetSize({ text->GetSize().x, text->GetTotalLineHeight() });
 }
 
 void UIChatBar::OnReturn()

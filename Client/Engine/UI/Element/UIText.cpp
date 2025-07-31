@@ -51,8 +51,6 @@ float UIText::GetFontHeight() const
 
 void UIText::Render()
 {
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
-    
     UIElement::Render();
 
     Renderer::Get()->DrawString(text_, GetAbsolutePosition(), GetSize(), color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);

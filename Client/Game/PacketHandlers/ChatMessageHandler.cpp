@@ -23,8 +23,9 @@ bool ChatMessageHandler::Handle(Net::IPacket* packet)
             std::shared_ptr<PlayerCharacter> player_character = std::dynamic_pointer_cast<PlayerCharacter>(network_actor);
             if (IsValid(player_character))
             {
+                std::wstring character_name = player_character->GetCharacterName();
                 std::wstring message = received_packet->message;
-                player_character->Speak(message);
+                player_character->Speak(character_name + L": " + message);
                 
                 if (auto state = UI::Get()->GetState())
                 {
