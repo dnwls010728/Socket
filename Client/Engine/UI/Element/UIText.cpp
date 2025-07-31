@@ -15,7 +15,8 @@ UIText::UIText(const std::wstring& name) :
     text_alignment_(DWRITE_TEXT_ALIGNMENT_LEADING),
     paragraph_alignment_(DWRITE_PARAGRAPH_ALIGNMENT_NEAR),
     advances_(),
-    total_advance_(0.f)
+    total_advance_(0.f),
+    total_line_height_(0.f)
 {
 }
 
@@ -44,6 +45,8 @@ float UIText::GetFontHeight() const
 
 void UIText::Render()
 {
+    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+    
     UIElement::Render();
 
     Renderer::Get()->DrawString(text_, GetAbsolutePosition(), GetSize(), color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);
@@ -53,9 +56,10 @@ void UIText::Render()
 void UIText::UpdateAdvances()
 {
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(text_, font_name_, font_size_, advances_);
+    renderer->GetTextAdvances(text_, font_name_, font_size_, GetSize(), advances_, line_heights_);
 
     total_advance_ = std::accumulate(advances_.begin(), advances_.end(), 0.f);
+    total_line_height_ = std::accumulate(line_heights_.begin(), line_heights_.end(), 0.f);
 }
 
 RTTR_REGISTRATION

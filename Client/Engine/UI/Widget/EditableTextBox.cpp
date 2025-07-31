@@ -228,7 +228,7 @@ void UI_OLD::EditableTextBox::OnFocus(bool is_focus)
 float UI_OLD::EditableTextBox::GetAdvances(const std::wstring& kString, std::vector<float>& advances)
 {
     Renderer* renderer = Renderer::Get();
-    renderer->GetTextAdvances(kString, font_name_, font_size_, advances);
+    // renderer->GetTextAdvances(kString, font_name_, font_size_, advances);
 
     float total_advance = std::accumulate(advances.begin(), advances.end(), 0.f);
     return total_advance;

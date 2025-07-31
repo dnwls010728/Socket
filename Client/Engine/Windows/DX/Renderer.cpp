@@ -1298,14 +1298,13 @@ Microsoft::WRL::ComPtr<IDWriteTextFormat> Renderer::GetTextFormat(const std::wst
     return nullptr;
 }
 
-bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& kString, const std::wstring& kFontName, float font_size, std::vector<float>& advances)
+bool Renderer::GetTextAdvances(const std::wstring& kString, const std::wstring& kFontName, float font_size, const Math::Vector2& size, std::vector<float>& advances, std::vector<float>& line_heights)
 {
     Microsoft::WRL::ComPtr<IDWriteTextFormat> text_format = GetTextFormat(kFontName, font_size);
     if (!text_format) return false;
 
     Microsoft::WRL::ComPtr<IDWriteTextLayout> text_layout;
-    // HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), kRect.width, kRect.height, text_layout.GetAddressOf());
-    HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), FLT_MAX, FLT_MAX, text_layout.GetAddressOf());
+    HRESULT hr = dwrite_factory_->CreateTextLayout(kString.c_str(), static_cast<UINT32>(kString.size()), text_format.Get(), size.x, size.y, text_layout.GetAddressOf());
     if (FAILED(hr)) return false;
     
     std::vector<DWRITE_CLUSTER_METRICS> cluster_metrics;
@@ -1323,10 +1322,17 @@ bool Renderer::GetTextAdvances(/*const Math::Rect& kRect, */const std::wstring& 
         advances.push_back(cluster.width);
     }
 
-    // UINT32 line_count = 0;
-    // text_layout->GetLineMetrics(nullptr, 0, &line_count);
-    // std::vector<DWRITE_LINE_METRICS> line_metrics(line_count);
-    // text_layout->GetLineMetrics(line_metrics.data(), line_count, &line_count);
+    UINT32 line_count = 0;
+    text_layout->GetLineMetrics(nullptr, 0, &line_count);
+    std::vector<DWRITE_LINE_METRICS> line_metrics(line_count);
+    text_layout->GetLineMetrics(line_metrics.data(), line_count, &line_count);
+
+    line_heights.clear();
+
+    for (const auto& line : line_metrics)
+    {
+        line_heights.push_back(line.height);
+    }
 
     return true;
 }

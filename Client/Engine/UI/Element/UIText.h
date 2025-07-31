@@ -53,7 +53,9 @@ private:
     DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment_;
 
     std::vector<float> advances_;
+    std::vector<float> line_heights_;
     
     float total_advance_;
+    float total_line_height_;
     
 };
