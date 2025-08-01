@@ -12,7 +12,7 @@ void UIMask::Render()
 {
     Renderer* renderer = Renderer::Get();
 
-    renderer->BeginLayer(GetAbsolutePosition(), size_);
+    renderer->BeginLayer(GetAbsolutePosition(), GetSize());
     UIContainer::Render();
     renderer->EndLayer();
 }

@@ -13,7 +13,7 @@
 UIChatBar::UIChatBar(const std::wstring& name) :
     UIContainer(name)
 {
-    size_ = { 300.f, 75.f };
+    SetSize({ 300.f, 75.f });
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
 

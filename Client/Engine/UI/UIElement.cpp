@@ -54,14 +54,14 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
 
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
-    relative_position_(Math::Vector2::Zero()),
-    absolute_position_(Math::Vector2::Zero()),
-    size_(Math::Vector2::Zero()),
     has_initialized_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),
-    parent_(nullptr)
+    parent_(nullptr),
+    relative_position_(Math::Vector2::Zero()),
+    absolute_position_(Math::Vector2::Zero()),
+    size_(Math::Vector2::Zero())
 {
 }
 

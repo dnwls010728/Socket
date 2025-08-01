@@ -32,7 +32,7 @@ void UINameTag::Init()
 
 void UINameTag::Render()
 {
-    Renderer::Get()->DrawSolidRoundBox(GetAbsolutePosition(), size_, {0, 0, 0, 128});
+    Renderer::Get()->DrawSolidRoundBox(GetAbsolutePosition(), GetSize(), {0, 0, 0, 128});
     
     UIContainer::Render();
 }

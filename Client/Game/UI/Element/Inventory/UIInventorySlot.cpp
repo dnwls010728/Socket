@@ -23,7 +23,7 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     item_id_(0),
     last_time_(0.f)
 {
-    size_ = { 32.f, 32.f };
+    SetSize({ 32.f, 32.f });
 
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     
@@ -33,11 +33,11 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     background_->SetIgnoreRayCast(true);
     
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    icon_->SetSize(size_);
+    icon_->SetSize(GetSize());
     icon_->SetIgnoreRayCast(true);
     
     count_text_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
-    count_text_->SetSize(size_);
+    count_text_->SetSize(GetSize());
     count_text_->SetColor(Math::Color::White);
     count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
     count_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);

@@ -67,10 +67,6 @@ protected:
     FORCEINLINE virtual void MakeDirty() { is_dirty_ = true; }
 
     std::wstring name_;
-    
-    Math::Vector2 relative_position_;
-    Math::Vector2 absolute_position_;
-    Math::Vector2 size_;
 
     bool is_dirty_;
     bool has_initialized_;
@@ -79,5 +75,10 @@ protected:
     bool is_ignore_raycast;
 
     UIContainer* parent_;
+
+private:
+    Math::Vector2 relative_position_;
+    Math::Vector2 absolute_position_;
+    Math::Vector2 size_;
     
 };

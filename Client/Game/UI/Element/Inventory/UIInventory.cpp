@@ -20,7 +20,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     inventory_(nullptr),
     tab_(Inventory::Type::kEquip)
 {
-    size_ = { 164.f, 246.f };
+    SetSize({164.f, 246.f});
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");

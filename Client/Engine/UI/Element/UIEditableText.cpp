@@ -78,7 +78,7 @@ void UIEditableText::Render()
         Math::Vector2 position = GetAbsolutePosition();
 
         Math::Vector2 start = {position.x + cursor_advance_ - text_offset_, position.y + margin};
-        Math::Vector2 end = {position.x + cursor_advance_ - text_offset_, position.y + size_.y - margin};
+        Math::Vector2 end = {position.x + cursor_advance_ - text_offset_, position.y + GetSize().y - margin};
 
         renderer->DrawLine(start, end, Math::Color::White, 2.f);
     }

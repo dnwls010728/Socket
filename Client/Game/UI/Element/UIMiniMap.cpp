@@ -10,7 +10,7 @@ UIMiniMap::UIMiniMap(const std::wstring& name) :
     UIContainer(name),
     markers_()
 {
-    size_ = { 200.f, 200.f };
+    SetSize({ 200.f, 200.f });
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     

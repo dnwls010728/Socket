@@ -13,7 +13,7 @@ UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     slot_id_(0),
     character_id_(0)
 {
-    size_ = { 200.f,  228.f };
+    SetSize({ 200.f, 228.f });
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     
