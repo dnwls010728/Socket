@@ -12,7 +12,7 @@ UIScrollBox::UIScrollBox(const std::wstring& name) :
     scroll_offset_(0.f),
     scroll_step_(0.f),
     spacing_(0.f),
-    dirty_(false)
+    is_dirty_(false)
 {
     content_ = AddChild<UIContainer>(UIContainer::StaticClass(), L"Content");
 }
@@ -20,29 +20,29 @@ UIScrollBox::UIScrollBox(const std::wstring& name) :
 void UIScrollBox::RemoveItem(UIElement* item)
 {
     content_->RemoveChild(item);
-    dirty_ = true;
+    is_dirty_ = true;
 }
 
 void UIScrollBox::SetVerticalAlignment(VerticalAlignment alignment)
 {
     vertical_alignment_ = alignment;
-    dirty_ = true;
+    is_dirty_ = true;
 }
 
 void UIScrollBox::SetSpacing(float spacing)
 {
     spacing_ = spacing;
-    dirty_ = true;
+    is_dirty_ = true;
 }
 
 void UIScrollBox::Tick(float delta_time)
 {
     UIMask::Tick(delta_time);
 
-    if (dirty_)
+    if (is_dirty_)
     {
         UpdateLayout();
-        dirty_ = false;
+        is_dirty_ = false;
     }
 }
 

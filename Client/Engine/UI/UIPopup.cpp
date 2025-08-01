@@ -231,7 +231,13 @@ void UIPopup::Init()
 }
 
 bool UIPopup::OnDragBegin(const Math::Vector2&) { return true; }
-bool UIPopup::OnDrag(const Math::Vector2&, const Math::Vector2& delta) { position_ += delta; return true; }
+bool UIPopup::OnDrag(const Math::Vector2&, const Math::Vector2& delta)
+{
+    Math::Vector2 new_position = GetRelativePosition() + delta;
+    SetRelativePosition(new_position);
+    return true;
+}
+
 bool UIPopup::OnDragEnd(const Math::Vector2&) { return true; }
 
 bool UIPopup::OnKey(uint16_t key_code, bool is_pressed)

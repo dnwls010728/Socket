@@ -14,14 +14,15 @@ public:
     bool IsInRange(const Math::Vector2& position) const;
 
     virtual void SetAbsolutePosition(const Math::Vector2& position);
-    Math::Vector2 GetAbsolutePosition() const;
+    const Math::Vector2& GetAbsolutePosition();
+
+    virtual void SetRelativePosition(const Math::Vector2& position);
 
     bool IsDescendantOf(UIElement* ancestor) const;
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-    FORCEINLINE virtual void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
-    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return relative_position_; }
 
     FORCEINLINE virtual void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
@@ -61,11 +62,17 @@ protected:
     
     virtual void OnFocus(bool is_focused);
 
-    std::wstring name_;
+    void UpdateAbsolutePosition();
 
-    Math::Vector2 position_;
+    FORCEINLINE virtual void MakeDirty() { is_dirty_ = true; }
+
+    std::wstring name_;
+    
+    Math::Vector2 relative_position_;
+    Math::Vector2 absolute_position_;
     Math::Vector2 size_;
 
+    bool is_dirty_;
     bool has_initialized_;
     bool is_active_;
     bool is_focused_;

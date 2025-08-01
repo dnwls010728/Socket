@@ -9,8 +9,8 @@ bool UIElement::IsInRange(const Math::Vector2& position) const
 {
     Math::Vector2 parent_position = parent_ ? parent_->GetAbsolutePosition() : Math::Vector2::Zero();
     Math::Rect rect = {
-        parent_position.x + position_.x, parent_position.y + position_.y,
-        size_.x, size_.y
+        parent_position.x + relative_position_.x, parent_position.y + relative_position_.y,
+        GetSize().x, GetSize().y
     };
 
     return !is_ignore_raycast ? Math::Rect::Contains(rect, position) : false;
@@ -21,22 +21,22 @@ void UIElement::SetAbsolutePosition(const Math::Vector2& position)
     if (parent_)
     {
         Math::Vector2 parent_position = parent_->GetAbsolutePosition();
-        position_ = position - parent_position;
-        return;
+        relative_position_ = position - parent_position;
     }
-
-    position_ = position;
+    else relative_position_ = position;
+    MakeDirty();
 }
 
-Math::Vector2 UIElement::GetAbsolutePosition() const
+const Math::Vector2& UIElement::GetAbsolutePosition()
 {
-    if (parent_)
-    {
-        Math::Vector2 parent_position = parent_->GetAbsolutePosition();
-        return parent_position + position_;
-    }
-    
-    return position_;
+    if (is_dirty_) UpdateAbsolutePosition();
+    return absolute_position_;
+}
+
+void UIElement::SetRelativePosition(const Math::Vector2& position)
+{
+    relative_position_ = position;
+    MakeDirty();
 }
 
 bool UIElement::IsDescendantOf(UIElement* ancestor) const
@@ -54,7 +54,8 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
 
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
-    position_(Math::Vector2::Zero()),
+    relative_position_(Math::Vector2::Zero()),
+    absolute_position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero()),
     has_initialized_(false),
     is_active_(true),
@@ -135,6 +136,14 @@ bool UIElement::OnChar(wchar_t character)
 void UIElement::OnFocus(bool is_focused)
 {
     is_focused_ = is_focused;
+}
+
+void UIElement::UpdateAbsolutePosition()
+{
+    if (parent_) absolute_position_ = parent_->GetAbsolutePosition() + relative_position_;
+    else absolute_position_ = relative_position_;
+    
+    is_dirty_ = false;
 }
 
 RTTR_REGISTRATION

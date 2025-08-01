@@ -43,7 +43,7 @@ private:
     float scroll_step_;
     float spacing_;
 
-    bool dirty_;
+    bool is_dirty_;
     
 };
 
@@ -51,6 +51,6 @@ template <std::derived_from<UIElement> T>
 T* UIScrollBox::AddItem(const rttr::type& type, const std::wstring& name)
 {
     T* element = content_->AddChild<T>(type, name);
-    dirty_ = true;
+    is_dirty_ = true;
     return element;
 }

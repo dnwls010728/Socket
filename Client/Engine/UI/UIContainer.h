@@ -34,6 +34,8 @@ protected:
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
+    virtual void MakeDirty() override;
+
     virtual UIElement* AddChild_Internal(const rttr::type& type, const std::wstring& name);
 
     std::vector<std::unique_ptr<UIElement>> children_;

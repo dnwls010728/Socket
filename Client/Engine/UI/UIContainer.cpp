@@ -152,6 +152,16 @@ bool UIContainer::OnChar(wchar_t character)
     return UIElement::OnChar(character);
 }
 
+void UIContainer::MakeDirty()
+{
+    UIElement::MakeDirty();
+
+    for (auto& child : children_)
+    {
+        if (child) child->MakeDirty();
+    }
+}
+
 UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wstring& name)
 {
     rttr::variant var = type.create({ name });

@@ -203,7 +203,8 @@ bool UIInventory::OnDragBegin(const Math::Vector2& position)
 
 bool UIInventory::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    position_ += delta;
+    Math::Vector2 new_position = GetRelativePosition() + delta;
+    SetRelativePosition(new_position);
     return true;
 }
 
