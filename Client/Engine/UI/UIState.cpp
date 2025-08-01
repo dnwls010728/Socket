@@ -21,6 +21,9 @@ void UIState::RemoveElement(UIElement* element)
         if (it->get() == element)
         {
             if (has_initialized_) element->Uninit();
+            if (element->IsFocused()) SetFocus(nullptr);
+            if (dragging_element_ && dragging_element_->IsDescendantOf(element))
+                dragging_element_ = nullptr;
             elements_.erase(it);
             break;
         }

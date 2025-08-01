@@ -23,6 +23,8 @@ public:
     UIButton(const std::wstring& name);
     virtual ~UIButton() override = default;
 
+    virtual  void SetSize(const Math::Vector2& size) override;
+
     void SetDisabled(bool is_disabled);
     void SetSprite(State state, UISprite* sprite, const std::wstring& frame_name);
     void SetDrawMode(UIImage::DrawMode draw_mode) const;

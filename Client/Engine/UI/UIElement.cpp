@@ -39,6 +39,19 @@ Math::Vector2 UIElement::GetAbsolutePosition() const
     return position_;
 }
 
+bool UIElement::IsDescendantOf(UIElement* ancestor) const
+{
+    UIElement *parent = parent_;
+    while (parent)
+    {
+        if (parent == ancestor)
+            return true;
+        else
+            parent = parent->parent_;
+    }
+    return false;
+}
+
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
     position_(Math::Vector2::Zero()),

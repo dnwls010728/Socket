@@ -15,6 +15,8 @@ public:
 
     virtual void SetAbsolutePosition(const Math::Vector2& position);
     Math::Vector2 GetAbsolutePosition() const;
+
+    bool IsDescendantOf(UIElement* ancestor) const;
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
@@ -30,7 +32,6 @@ public:
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     FORCEINLINE void SetIgnoreRayCast(bool ignore) { is_ignore_raycast = ignore; }
-
 protected:
     friend class UIState;
     friend class UIContainer;
