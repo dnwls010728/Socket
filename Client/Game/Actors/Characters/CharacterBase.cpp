@@ -66,7 +66,7 @@ void CharacterBase::BeginPlay()
 {
     NetworkActor::BeginPlay();
 
-    if (auto state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         name_tag_ = state->AddElement<UINameTag>(UINameTag::StaticClass(), L"NameTag");
         name_tag_->SetText(character_name_);
@@ -93,7 +93,7 @@ void CharacterBase::EndPlay(EndPlayReason type)
 {
     NetworkActor::EndPlay(type);
 
-    if (auto state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->RemoveElement(name_tag_);
         state->RemoveElement(chat_balloon_);

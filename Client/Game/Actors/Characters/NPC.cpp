@@ -31,7 +31,7 @@ void NPC::BeginPlay()
     
     SetCharacterName(L"알렉스");
 
-    if (auto state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         sub_name_tag_ = state->AddElement<UINameTag>(UINameTag::StaticClass(), L"SubNameTag");
         sub_name_tag_->SetText(L"방어구 상인");
@@ -66,7 +66,7 @@ void NPC::EndPlay(EndPlayReason type)
 
     TimerManager::Get()->ClearTimer(timer_handle_);
 
-    if (auto state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->RemoveElement(sub_name_tag_);
     }

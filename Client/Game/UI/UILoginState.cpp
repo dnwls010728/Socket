@@ -30,6 +30,11 @@ UILoginState::UILoginState() :
     character_select_->SetSize({620.f, 600.f});
     character_select_->SetActive(false);
 
+    character_create_ = AddElement<UICharacterCreate>(UICharacterCreate::StaticClass(), L"CharacterCreate");
+    character_create_->SetAbsolutePosition({373.f, 84.f});
+    character_create_->SetSize({620.f, 600.f});
+    character_create_->SetActive(false);
+
     UIText* version_text = AddElement<UIText>(UIText::StaticClass(), L"VersionText");
     version_text->SetAbsolutePosition({10.f, 748.f});
     version_text->SetSize({100.f, 20.f});

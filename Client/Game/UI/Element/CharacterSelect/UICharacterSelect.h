@@ -22,7 +22,8 @@ protected:
 
 private:
     friend class UICharacterSlot;
-    
+
+    void OnCreateCharacter();
     void OnSlotSelected(uint32_t slot_id);
     void OnCharacterSelected() const;
     

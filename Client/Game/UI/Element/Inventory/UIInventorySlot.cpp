@@ -54,7 +54,11 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
         if (ui_sprite) icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
 
         count_text_->SetText(std::to_wstring(count));
+        count_text_->SetActive(true);
+        return;
     }
+
+    count_text_->SetActive(false);
 }
 
 void UIInventorySlot::ResetSlot()

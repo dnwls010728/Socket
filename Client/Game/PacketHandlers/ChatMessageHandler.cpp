@@ -27,9 +27,9 @@ bool ChatMessageHandler::Handle(Net::IPacket* packet)
                 std::wstring message = received_packet->message;
                 player_character->Speak(character_name + L": " + message);
                 
-                if (auto state = UI::Get()->GetState())
+                if (auto* state = UI::Get()->GetState())
                 {
-                    if (auto element = state->FindElement<UIChatBar>(L"ChatBar"))
+                    if (auto* element = state->FindElement<UIChatBar>(L"ChatBar"))
                         element->AddMessage(player_character->GetCharacterName() + L": " + message);
                 }
             }

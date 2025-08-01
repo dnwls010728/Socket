@@ -6,7 +6,9 @@
 #include "UICharacterSlot.h"
 #include "Asset/AssetManager.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UIState.h"
 #include "UI/Element/UIButton.h"
+#include "UI/Element/UICharacterCreate.h"
 #include "Windows/DX/UISprite.h"
 
 UICharacterSelect::UICharacterSelect(const std::wstring& name) :
@@ -54,6 +56,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     new_button_->SetDrawMode(UIImage::DrawMode::kSliced);
     new_button_->SetTextColor(Math::Color::White);
     new_button_->SetText(L"캐릭터 생성");
+    new_button_->OnClick(this, &UICharacterSelect::OnCreateCharacter);
 
     select_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"SelectButton");
     select_button_->SetRelativePosition({ 410.f, 488.f });
@@ -92,6 +95,17 @@ void UICharacterSelect::Render()
     {
         UICharacterSlot* slot = slots_[selected_slot_id_ - 1];
         Renderer::Get()->DrawRoundBox(slot->GetAbsolutePosition(), slot->GetSize(), {255, 211, 77, 242}, 5.f, 4.f);
+    }
+}
+
+void UICharacterSelect::OnCreateCharacter()
+{
+    SetActive(false);
+    
+    if (auto* state = UI::Get()->GetState())
+    {
+        if (auto* element = state->FindElement<UICharacterCreate>(L"CharacterCreate"))
+            element->SetActive(true);
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include "Element/UICharacterCreate.h"
 #include "Model/CharacterSelectModel.h"
 #include "UI/UIState.h"
-#include "UI/Element/UIButton.h"
 
 class UICharacterSelect;
 class UILogin;
@@ -28,6 +28,7 @@ private:
 
     UILogin* login_;
     UICharacterSelect* character_select_;
+    UICharacterCreate* character_create_;
 
     std::unique_ptr<CharacterSelectModel> character_select_model_;
     
