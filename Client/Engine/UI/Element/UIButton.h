@@ -43,6 +43,8 @@ public:
     void SetText(const std::wstring& text) const;
     void SetTextColor(const Math::Color& color) const;
 
+    FORCEINLINE bool IsDisabled() const { return current_state_ == State::kDisabled; }
+
 protected:
     void ChangeState(State state);
     

@@ -36,7 +36,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
     case SelectCharacterRequest::StaticPacketID:
         {
             SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet);
-            player_character_ = PlayerCharacter::LoadCharacter(request->unique_id, shared_from_this());
+            player_character_ = PlayerCharacter::LoadCharacter(request->character_id, shared_from_this());
             
             SelectCharacterResponse response;
             response.name = player_character_->name_;

@@ -14,12 +14,18 @@ public:
     UICharacterSelect(const std::wstring& name);
     virtual ~UICharacterSelect() override = default;
 
-    void InitSlots(const std::vector<CharacterProfile>& profiles) const;
+    void InitSlots(const std::vector<CharacterProfile>& profiles);
 
 protected:
     virtual void Init() override;
+    virtual void Render() override;
 
 private:
+    friend class UICharacterSlot;
+    
+    void OnSlotSelected(uint32_t slot_id);
+    void OnCharacterSelected() const;
+    
     UIImage* background_;
     
     UIButton* delete_button_;
@@ -27,4 +33,6 @@ private:
     UIButton* select_button_;
     
     std::vector<UICharacterSlot*> slots_;
+
+    uint32_t selected_slot_id_;
 };

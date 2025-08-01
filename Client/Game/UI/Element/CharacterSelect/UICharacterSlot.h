@@ -2,6 +2,7 @@
 #include "UI/UIContainer.h"
 #include "UI/Model/CharacterSelectModel.h"
 
+class UICharacterSelect;
 class UIText;
 class UIImage;
 
@@ -13,13 +14,18 @@ public:
     UICharacterSlot(const std::wstring& name);
     virtual ~UICharacterSlot() override = default;
 
-    void InitSlot(const CharacterProfile& profile);
+    void InitSlot(UICharacterSelect* character_select, uint32_t slot_id, const CharacterProfile& profile);
+
+    FORCEINLINE uint32_t GetSlotID() const { return slot_id_; }
+    FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
 
 protected:
     virtual void Init() override;
 
+    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
+
 private:
-    uint32_t character_id_;
+    UICharacterSelect* character_select_;
     
     UIImage* background_;
     UIImage* character_;
@@ -28,5 +34,8 @@ private:
     UIText* lv_text_;
     UIText* name_text_;
     UIText* color_code_text_;
+
+    uint32_t slot_id_;
+    uint32_t character_id_;
     
 };

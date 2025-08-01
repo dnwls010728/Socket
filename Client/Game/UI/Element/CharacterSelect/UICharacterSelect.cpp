@@ -1,14 +1,18 @@
 ﻿#include "pch.h"
 #include "UICharacterSelect.h"
 
+#include <CustomPacket.h>
+
 #include "UICharacterSlot.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIButton.h"
 #include "Windows/DX/UISprite.h"
 
 UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     UIContainer(name),
-    slots_()
+    slots_(),
+    selected_slot_id_(0)
 {
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
@@ -38,6 +42,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     delete_button_->SetDrawMode(UIImage::DrawMode::kSliced);
     delete_button_->SetTextColor(Math::Color::White);
     delete_button_->SetText(L"캐릭터 삭제");
+    delete_button_->SetDisabled(true);
 
     new_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"NewButton");
     new_button_->SetRelativePosition({ 210.f, 488.f });
@@ -60,13 +65,15 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     select_button_->SetDrawMode(UIImage::DrawMode::kSliced);
     select_button_->SetTextColor(Math::Color::White);
     select_button_->SetText(L"게임 시작");
+    select_button_->OnClick(this, &UICharacterSelect::OnCharacterSelected);
+    select_button_->SetDisabled(true);
 }
 
-void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profiles) const
+void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profiles)
 {
     for (int32_t i = 0; i < profiles.size(); ++i)
     {
-        slots_[i]->InitSlot(profiles[i]);
+        slots_[i]->InitSlot(this, i + 1, profiles[i]);
     }
 }
 
@@ -75,6 +82,37 @@ void UICharacterSelect::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
+}
+
+void UICharacterSelect::Render()
+{
+    UIContainer::Render();
+
+    if (selected_slot_id_ > 0)
+    {
+        UICharacterSlot* slot = slots_[selected_slot_id_ - 1];
+        Renderer::Get()->DrawRoundBox(slot->GetAbsolutePosition(), slot->GetSize(), {255, 211, 77, 242}, 5.f, 4.f);
+    }
+}
+
+void UICharacterSelect::OnSlotSelected(uint32_t slot_id)
+{
+    selected_slot_id_ = slot_id;
+
+    if (delete_button_->IsDisabled()) delete_button_->SetDisabled(false);
+    if (select_button_->IsDisabled()) select_button_->SetDisabled(false);
+}
+
+void UICharacterSelect::OnCharacterSelected() const
+{
+    UICharacterSlot* selected_slot = slots_[selected_slot_id_ - 1];
+    if (selected_slot->GetCharacterID() == 0) return;
+
+    SelectCharacterRequest request;
+    request.character_id = selected_slot->GetCharacterID();
+    SessionSubsystem::Get()->SendPacket(request);
+
+    select_button_->SetDisabled(true);
 }
 
 RTTR_REGISTRATION

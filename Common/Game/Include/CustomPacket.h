@@ -68,9 +68,9 @@ struct LoginResponse : public Net::IPacket
 // 캐릭터 선택 요청
 struct SelectCharacterRequest : public Net::IPacket
 {
-    uint32_t unique_id;
+    uint32_t character_id;
     
-    SERIALIZABLE_FIELDS(unique_id)
+    SERIALIZABLE_FIELDS(character_id)
     REGISTER_PACKET(SelectCharacterRequest, 206)
 };
 

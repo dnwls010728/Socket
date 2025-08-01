@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UICharacterSlot.h"
 
+#include "UICharacterSelect.h"
 #include "Asset/AssetManager.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
@@ -8,6 +9,8 @@
 
 UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     UIContainer(name),
+    character_select_(nullptr),
+    slot_id_(0),
     character_id_(0)
 {
     size_ = { 200.f,  228.f };
@@ -57,8 +60,11 @@ UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     color_code_text_->SetIgnoreRayCast(true);
 }
 
-void UICharacterSlot::InitSlot(const CharacterProfile& profile)
+void UICharacterSlot::InitSlot(UICharacterSelect* character_select, uint32_t slot_id, const CharacterProfile& profile)
 {
+    character_select_ = character_select;
+    slot_id_ = slot_id;
+    
     if (profile.character_id == 0) return;
     character_id_ = profile.character_id;
 
@@ -76,7 +82,7 @@ void UICharacterSlot::InitSlot(const CharacterProfile& profile)
     lv_text_->SetText(L"레벨 " + std::to_wstring(lv));
     
     name_text_->SetText(profile.name);
-    color_code_text_->SetText(L"색상 코드: #" + profile.character_color);
+    color_code_text_->SetText(L"색상코드 #" + profile.character_color);
 }
 
 void UICharacterSlot::Init()
@@ -85,6 +91,19 @@ void UICharacterSlot::Init()
     empty_text_->SetSize(GetSize());
     
     UIContainer::Init();
+}
+
+UI::MouseEventResult UICharacterSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+{
+    UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    if (slot_id_ == 0 || character_id_ == 0) return { false, UI::CursorState::kIdle };
+
+    if (is_pressed && button == MouseButton::kLeft)
+    {
+        character_select_->OnSlotSelected(slot_id_);
+    }
+    
+    return { false, UI::CursorState::kIdle };
 }
 
 RTTR_REGISTRATION
