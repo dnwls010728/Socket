@@ -11,7 +11,6 @@
 #include "Level/Level.h"
 #include "Math/Math.h"
 #include "UI/UI.h"
-#include "UI/UIManager.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/ShapeBatch.h"
@@ -110,7 +109,6 @@ void GameEngine::Tick(float delta_time)
     g_frame_counter++;
     
     World::Get()->PostTick(delta_time);
-    UI_OLD::Manager::Get()->Tick(delta_time);
     UI::Get()->Tick(delta_time);
 }
 
@@ -123,7 +121,6 @@ void GameEngine::Render(float alpha)
     
     Renderer::Get()->BeginRenderD2D(game_window_);
     UI::Get()->Render();
-    UI_OLD::Manager::Get()->Render();
     Renderer::Get()->EndRenderD2D();
     
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

@@ -9,12 +9,6 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
-#include "UI/UIManager.h"
-#include "UI/Widget/Button.h"
-#include "UI/Widget/EditableTextBox.h"
-#include "UI/Widget/Image.h"
-#include "UI/Widget/ListBox.h"
-#include "UI/Widget/TextBox.h"
 
 LoginMap::LoginMap(const std::wstring& kName) :
     Level(kName)

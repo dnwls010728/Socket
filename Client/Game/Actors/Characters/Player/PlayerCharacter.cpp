@@ -29,7 +29,6 @@
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
-#include "UI/UIManager.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :

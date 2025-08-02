@@ -22,7 +22,6 @@
 #include "PacketHandlers/SpawnObjectHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "UI/UILoginState.h"
-#include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :

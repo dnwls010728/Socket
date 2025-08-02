@@ -79,7 +79,7 @@ void UI::Render()
             static_cast<float>(cursor_sprite->GetHeight())
         };
         
-        renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
+        // renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
     }
 }
 

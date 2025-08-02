@@ -10,7 +10,6 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Components/Controller2DComponent.h"
 #include "UI/UIInGameState.h"
-#include "UI/UIManager.h"
 #include "UI/Element/UIChatBalloon.h"
 #include "UI/Element/UINameTag.h"
 #include "Windows/DX/Sprite.h"
