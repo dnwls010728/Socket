@@ -48,11 +48,14 @@ namespace Net::TCP {
     void TCPClientSocket::Stop()
     {
         running_.store(false);
+
+        socket_.Shutdown(SD_BOTH);
+        socket_.Close();
+        
         if (recv_thread_.joinable())
         {
             recv_thread_.join();
         }
-        socket_.Close();
     }
 
     bool TCPClientSocket::SendPacket(IPacket& packet)
