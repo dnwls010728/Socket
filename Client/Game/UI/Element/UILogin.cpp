@@ -6,6 +6,7 @@
 #include "Asset/AssetManager.h"
 #include <shellapi.h>
 #include "Subsystems/SessionSubsystem.h"
+#include "UI/UIPopup.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
@@ -105,13 +106,19 @@ void UILogin::OnLogin()
 {
     if (input_id_->GetText().empty())
     {
-        Logger::Print(L"아이디를 입력해주세요.");
+        UIPopup::ShowPopup(L"아이디를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
+        {
+            return true;
+        });
         return;
     }
 
     if (input_password_->GetText().empty())
     {
-        Logger::Print(L"비밀번호를 입력해주세요.");
+        UIPopup::ShowPopup(L"비밀번호를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
+        {
+            return true;
+        });
         return;
     }
 
