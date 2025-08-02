@@ -21,11 +21,15 @@ protected:
 
 private:
     void OnColorChanged(Math::Color color);
+    void OnCodeChanged(const std::wstring& code);
     
     UIImage* background_;
     UIImage* character_;
+    UIImage* color_background_;
 
     UIText* title_text_;
 
     UIColorPicker* color_picker_;
+
+    UIEditableText* color_input_;
 };

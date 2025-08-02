@@ -2,6 +2,7 @@
 #include "UICharacterCreate.h"
 
 #include "Asset/AssetManager.h"
+#include "UI/Element/UIEditableText.h"
 #include "UI/Element/ColorPicker/UIColorPicker.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
@@ -34,6 +35,19 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     color_picker_ = AddChild<UIColorPicker>(UIColorPicker::StaticClass(), L"ColorPicker");
     color_picker_->SetRelativePosition({212.f, 40.f});
     color_picker_->OnValueChanged(this, &UICharacterCreate::OnColorChanged);
+
+    color_background_ = AddChild<UIImage>(UIImage::StaticClass(), L"ColorBackground");
+    color_background_->SetRelativePosition({212.f, 250.f});
+    color_background_->SetSize({200.f, 40.f});
+    color_background_->SetSprite(panel_sprite, L"Panel_0");
+    color_background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    color_background_->SetIgnoreRayCast(true);
+
+    color_input_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"ColorInput");
+    color_input_->SetRelativePosition({222.f, 260.f});
+    color_input_->SetSize({180.f, 20.f});
+    color_input_->SetPlaceholderText(L"#FFFFFF");
+    color_input_->OnValueChanged(this, &UICharacterCreate::OnCodeChanged);
 }
 
 void UICharacterCreate::Init()
@@ -41,6 +55,8 @@ void UICharacterCreate::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
+
+    color_input_->SetText(Math::Color::ColorToHex(color_picker_->GetColor()));
 }
 
 void UICharacterCreate::Render()
@@ -54,6 +70,11 @@ void UICharacterCreate::Render()
 void UICharacterCreate::OnColorChanged(Math::Color color)
 {
     character_->SetColor(color);
+    color_input_->SetText(Math::Color::ColorToHex(color));
+}
+
+void UICharacterCreate::OnCodeChanged(const std::wstring& code)
+{
 }
 
 RTTR_REGISTRATION
