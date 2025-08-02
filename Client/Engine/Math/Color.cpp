@@ -107,3 +107,24 @@ Math::Color Math::Color::HSVToColor(float h, float s, float v)
 
     return result;
 }
+
+void Math::Color::ColorToHSV(Color color, float& h, float& s, float& v)
+{
+    float temp_r = color.r / 255.f;
+    float temp_g = color.g / 255.f;
+    float temp_b = color.b / 255.f;
+    
+    float max_channel = std::max({temp_r, temp_g, temp_b});
+    float min_channel = std::min({temp_r, temp_g, temp_b});
+    float delta = max_channel - min_channel;
+
+    if (IsEqual(delta, 0.f)) h = 0.f;
+    else if (IsEqual(max_channel, temp_r))
+        h = 60.f * std::fmod(((temp_g - temp_b) / delta), 6.f);
+    else if (IsEqual(max_channel, temp_g))
+        h = 60.f * (((temp_b - temp_r) / delta) + 2.f);
+    else h = 60.f * (((temp_r - temp_g) / delta) + 4.f);
+
+    s = IsEqual(max_channel, 0.f) ? 0.f : delta / max_channel;
+    v = max_channel;
+}
