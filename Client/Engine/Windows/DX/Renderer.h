@@ -48,6 +48,15 @@ struct D2DViewport
     Microsoft::WRL::ComPtr<ID2D1RenderTarget> d2d_render_target;
 };
 
+enum class GradientDirection : uint8_t
+{
+    kHorizontal = (0x01 << 0),
+    kVertical = (0x01 << 1),
+    kDiagonal = (0x01 << 2)
+};
+
+ENUM_CLASS_FLAGS(GradientDirection)
+
 class Renderer : public Singleton<Renderer>
 {
 public:
@@ -79,10 +88,7 @@ public:
     void EndRender();
     void BeginRenderD2D(const std::shared_ptr<WindowsWindow>& kWindow);
     void EndRenderD2D();
-    [[deprecated("Use BeginLayer instead.")]]
-    void BeginLayer(const Math::Rect& kRect);
-    
-    void BeginLayer(const Math::Vector2& position, const Math::Vector2& size);
+    void BeginLayer(const Math::Vector2& position, const Math::Vector2& size) const;
     void EndLayer();
     void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
     
@@ -95,6 +101,7 @@ public:
 
     void DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
     void DrawSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black);
+    void DrawGradientSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& start_color, const Math::Color& end_color, GradientDirection direction = GradientDirection::kHorizontal);
     void DrawRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f, float stroke = 1.f);
     void DrawSolidRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f);
     void DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);

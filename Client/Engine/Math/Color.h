@@ -11,6 +11,7 @@ namespace Math
 
         static Color HexToColor(const std::wstring& hex);
         static std::wstring ColorToHex(Color color);
+        static Color HSVToColor(float h, float s, float v);
 
         static const Color Red;
         static const Color Green;

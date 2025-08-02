@@ -412,26 +412,7 @@ void Renderer::EndRenderD2D()
     current_d2d_viewport_ = nullptr;
 }
 
-void Renderer::BeginLayer(const Math::Rect& kRect)
-{
-    Microsoft::WRL::ComPtr<ID2D1Layer> layer;
-    current_d2d_viewport_->d2d_render_target->CreateLayer(nullptr, &layer);
-
-    D2D1_RECT_F clipRect = D2D1::RectF(kRect.XMin(), kRect.YMin(), kRect.XMax(), kRect.YMax());
-    current_d2d_viewport_->d2d_render_target->PushLayer(
-        D2D1::LayerParameters(
-            clipRect,
-            nullptr,
-            D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
-            D2D1::IdentityMatrix(),
-            1.0f,
-            nullptr,
-            D2D1_LAYER_OPTIONS_NONE),
-        layer.Get()
-    );
-}
-
-void Renderer::BeginLayer(const Math::Vector2& position, const Math::Vector2& size)
+void Renderer::BeginLayer(const Math::Vector2& position, const Math::Vector2& size) const
 {
     Microsoft::WRL::ComPtr<ID2D1Layer> layer;
     current_d2d_viewport_->d2d_render_target->CreateLayer(nullptr, &layer);
@@ -585,6 +566,56 @@ void Renderer::DrawSolidBox(const Math::Vector2& position, const Math::Vector2& 
         brush.GetAddressOf()
     );
     
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
+    d2d_viewport->d2d_render_target->SetTransform(D2D1::Matrix3x2F::Rotation(0.f, center));
+
+    d2d_viewport->d2d_render_target->FillRectangle(rect, brush.Get());
+    d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawGradientSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& start_color, const Math::Color& end_color, GradientDirection direction)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+
+    D2D1_MATRIX_3X2_F transform;
+    d2d_viewport->d2d_render_target->GetTransform(&transform);
+
+    const D2D1_RECT_F rect = D2D1::RectF(position.x, position.y, position.x + size.x, position.y + size.y);
+
+    D2D1_GRADIENT_STOP gradient_stop[2];
+    gradient_stop[0].position = 0.f;
+    gradient_stop[0].color = D2D1::ColorF(start_color.r / 255.f, start_color.g / 255.f, start_color.b / 255.f, start_color.a / 255.f);
+    gradient_stop[1].position = 1.f;
+    gradient_stop[1].color = D2D1::ColorF(end_color.r / 255.f, end_color.g / 255.f, end_color.b / 255.f, end_color.a / 255.f);
+
+    Microsoft::WRL::ComPtr<ID2D1GradientStopCollection> gradient_stop_collection;
+    HRESULT hr = d2d_viewport->d2d_render_target->CreateGradientStopCollection(
+        gradient_stop,
+        2,
+        D2D1_GAMMA_2_2,
+        D2D1_EXTEND_MODE_CLAMP,
+        gradient_stop_collection.GetAddressOf()
+    );
+    if (FAILED(hr)) return;
+
+    D2D1_POINT_2F end_point = { position.x, position.y };
+    if (EnumHasAnyFlags(direction, GradientDirection::kHorizontal))
+        end_point.x = position.x + size.x;
+    if (EnumHasAnyFlags(direction, GradientDirection::kVertical))
+        end_point.y = position.y + size.y;
+    
+    Microsoft::WRL::ComPtr<ID2D1LinearGradientBrush> brush;
+    hr = d2d_viewport->d2d_render_target->CreateLinearGradientBrush(
+        D2D1::LinearGradientBrushProperties(
+            {position.x, position.y},
+            end_point
+        ),
+        gradient_stop_collection.Get(),
+        brush.GetAddressOf()
+    );
     if (FAILED(hr)) return;
 
     D2D1_POINT_2F center = D2D1::Point2F(position.x, position.y);
