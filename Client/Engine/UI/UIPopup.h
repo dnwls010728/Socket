@@ -26,6 +26,8 @@ public:
     UIPopup(const std::wstring& name);
     virtual ~UIPopup() override = default;
 
+    static void ShowPopup(std::wstring caption, PopupOption option, std::function<bool(std::wstring, PopupOption)> callback);
+
     void SetPopup(const std::wstring& caption, PopupOption option);
     void SetCallback(std::function<void(std::wstring input_text, PopupOption)> callback);
 

@@ -7,6 +7,7 @@
 #include "UI/Element/UIText.h"
 #include "UI/Element/UIButton.h"
 #include "UI/Element/UIEditableText.h"
+#include "UI/UIState.h"
 #include "Windows/DX/UISprite.h"
 
 UIPopup::UIPopup(const std::wstring& name)
@@ -31,8 +32,42 @@ UIPopup::UIPopup(const std::wstring& name)
     message_text_->SetIgnoreRayCast(true);
 
     SetSize({150.f,200.f});
-    //SetPopup(L"",PopupOption::OK);
 }
+
+void UIPopup::ShowPopup(std::wstring caption, PopupOption option, std::function<bool(std::wstring, PopupOption)> callback)
+{
+    UIState* state = UI::Get()->GetState();
+    if (state == nullptr)
+        return;
+    
+    UIPopup *popup = state->AddElement<UIPopup>(UIPopup::StaticClass(), L"Popup");
+    popup->SetPopup(caption, option);
+    popup->SetCallback([callback, popup](std::wstring input_text, PopupOption option)
+    {
+        if (callback && callback(input_text, option))
+        {
+            UIState* state=UI::Get()->GetState();
+            state->PostTask([state, popup]() {
+                popup->SetActive(false);
+                state->RemoveElement(popup);
+            });
+        }
+    });
+    Math::Vector2 pos{
+        static_cast<float>(EngineSettings::Get()->GetScreenWidth()) / 2 - popup->GetSize().x / 2,
+        static_cast<float>(EngineSettings::Get()->GetScreenHeight()) / 2 - popup->GetSize().y / 2,
+    };
+    pos = {std::round(pos.x), std::round(pos.y)};
+    
+    popup->SetAbsolutePosition(pos);
+    popup->SetActive(true);
+    
+    if ((option & PopupOption::Edit)  == PopupOption::Edit)
+        popup->SetFoucsInputText();
+    else
+       UI::Get()->SetFocus(popup);
+}
+
 
 void UIPopup::SetPopup(const std::wstring& caption, PopupOption option)
 {

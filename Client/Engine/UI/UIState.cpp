@@ -65,6 +65,11 @@ bool UIState::IsEditingText() const
     return false;
 }
 
+void UIState::PostTask(std::function<void()> task)
+{
+    pending_tasks_.push(std::move(task));
+}
+
 void UIState::Init()
 {
     for ( uint32_t i = 0; i < elements_.size(); ++i )
@@ -87,6 +92,12 @@ void UIState::Uninit()
 
 void UIState::Tick(float delta_time)
 {
+    while (!pending_tasks_.empty())
+    {
+        pending_tasks_.front()();
+        pending_tasks_.pop();
+    }
+    
     for ( uint32_t i = 0; i < elements_.size(); ++i )
     {
         UIElement* element = elements_[i].get();

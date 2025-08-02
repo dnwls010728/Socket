@@ -27,6 +27,7 @@ public:
     bool IsFocused() const;
     bool IsEditingText() const;
 
+    void PostTask(std::function<void()> task);
 protected:
     friend class UI;
 
@@ -58,6 +59,8 @@ private:
     bool has_begun_drag_;
 
     UIElement* dragging_element_;
+
+    std::queue<std::function<void()>> pending_tasks_;
 };
 
 template <std::derived_from<UIElement> T>
