@@ -3,6 +3,7 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
+class UIButton;
 class UIColorPicker;
 class UIEditableText;
 class UIImage;
@@ -15,21 +16,34 @@ public:
     UICharacterCreate(const std::wstring& name);
     virtual ~UICharacterCreate() override = default;
 
+    void OnCheckResult(bool is_available) const;
+
 protected:
     virtual void Init() override;
-    virtual void Render() override;
+    virtual void Tick(float delta_time) override;
 
 private:
-    void OnColorChanged(Math::Color color);
-    void OnCodeChanged(const std::wstring& code);
+    void OnColorChanged(Math::Color color) const;
+    void OnClick() const;
+    void OnConfirm() const;
+    void OnCancel();
     
     UIImage* background_;
     UIImage* character_;
-    UIImage* color_background_;
+    UIImage* name_background_;
 
     UIText* title_text_;
+    UIText* color_text_;
 
     UIColorPicker* color_picker_;
 
-    UIEditableText* color_input_;
+    UIEditableText* name_input_;
+    
+    UIButton* check_name_button_;
+    UIButton* confirm_button_;
+    UIButton* cancel_button_;
+
+    float timer_;
+
+    int32_t frame_index_;
 };

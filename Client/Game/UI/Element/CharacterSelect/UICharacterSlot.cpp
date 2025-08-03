@@ -11,7 +11,9 @@ UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     UIContainer(name),
     character_select_(nullptr),
     slot_id_(0),
-    character_id_(0)
+    character_id_(0),
+    timer_(0.f),
+    frame_index_(0)
 {
     SetSize({ 200.f, 228.f });
     
@@ -91,6 +93,23 @@ void UICharacterSlot::Init()
     empty_text_->SetSize(GetSize());
     
     UIContainer::Init();
+}
+
+void UICharacterSlot::Tick(float delta_time)
+{
+    UIContainer::Tick(delta_time);
+    if (slot_id_ == 0 || character_id_ == 0) return;
+
+    timer_ += delta_time;
+    if (timer_ >= 1.f / 10.f)
+    {
+        UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
+
+        frame_index_ = (frame_index_ + 1) % 7;
+        character_->SetSprite(character_sprite, L"UIPlayerSheet_" + std::to_wstring(frame_index_));
+        
+        timer_ = 0.f;
+    }
 }
 
 UI::MouseEventResult UICharacterSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)

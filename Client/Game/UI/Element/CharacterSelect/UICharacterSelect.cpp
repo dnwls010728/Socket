@@ -35,7 +35,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     }
 
     delete_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"DeleteButton");
-    delete_button_->SetRelativePosition({10.f, 488.f});
+    delete_button_->SetRelativePosition({10.f, 537.f});
     delete_button_->SetSize({200.f, 53.f});
     delete_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     delete_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
@@ -47,7 +47,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     delete_button_->SetDisabled(true);
 
     new_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"NewButton");
-    new_button_->SetRelativePosition({ 210.f, 488.f });
+    new_button_->SetRelativePosition({ 210.f, 537.f });
     new_button_->SetSize({ 200.f, 53.f });
     new_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     new_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
@@ -59,7 +59,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     new_button_->OnClick(this, &UICharacterSelect::OnCreateCharacter);
 
     select_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"SelectButton");
-    select_button_->SetRelativePosition({ 410.f, 488.f });
+    select_button_->SetRelativePosition({ 410.f, 537.f });
     select_button_->SetSize({ 200.f, 53.f });
     select_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     select_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");

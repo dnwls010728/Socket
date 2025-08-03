@@ -52,6 +52,7 @@ UIChatBar::UIChatBar(const std::wstring& name) :
     input_text_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"InputText");
     input_text_->SetRelativePosition({ 84.f, 50.f });
     input_text_->SetSize({ 212.f, 25.f });
+    input_text_->SetCharacterLimit(128);
     input_text_->OnReturn(this, &UIChatBar::OnReturn);
 }
 

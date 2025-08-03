@@ -29,8 +29,8 @@ private:
     void OnColorChanged(Math::Color color);
     void OnHueChanged(float value) const;
 
-    UIPalette* palette_;
     UIHueSlider* hue_slider_;
+    UIPalette* palette_;
 
     Function<void(Math::Color)> value_changed_event_;
     

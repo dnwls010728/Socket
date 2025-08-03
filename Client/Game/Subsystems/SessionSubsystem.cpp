@@ -7,6 +7,7 @@
 #include "GameInstance.h"
 #include "NetworkManager.h"
 #include "PacketHandlers/ChatMessageHandler.h"
+#include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/DropItemHandler.h"
@@ -54,6 +55,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         LoginResponse::StaticPacketID,
         std::make_unique<LoginHandler>()
+    );
+
+    handlers_.emplace(
+        CheckNameResponse::StaticPacketID,
+        std::make_unique<CheckNameHandler>()
     );
     
     handlers_.emplace(

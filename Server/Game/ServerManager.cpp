@@ -164,42 +164,6 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
         }
         break;
 
-    case RegisterRequest::StaticPacketID:
-        {
-            RegisterRequest* request = static_cast<RegisterRequest*>(packet.get());
-            MySQLManager* mysql_manager = MySQLManager::Get();
-            
-            bool is_found = false;
-            mysql_manager->ExecuteQuery(L"SELECT * FROM account_info WHERE id = '" + request->id + L"'", [&](const sql::ResultSet* result)
-            {
-                is_found = true;
-
-                RegisterResponse response;
-                response.is_success = false;
-                response.message = L"ID already exists.";
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
-            });
-
-            if (!is_found)
-            {
-                int result = mysql_manager->ExecuteUpdate(L"INSERT INTO account_info (id, password) VALUES ('" + request->id + L"', '" + request->password + L"')");
-                if (result == 0)
-                {
-                    RegisterResponse response;
-                    response.is_success = false;
-                    response.message = L"Registration failed.";
-                    server_socket_.SendPacketToClient(state.uniqueKey, response);
-                    break;
-                }
-                
-                RegisterResponse response;
-                response.is_success = true;
-                response.message = L"Registration successful.";
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
-            }
-        }
-        break;
-
     case LoginRequest::StaticPacketID:
         {
             LoginRequest* request = static_cast<LoginRequest*>(packet.get());
@@ -274,6 +238,46 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     response.message = L"아이디 또는 비밀번호가 잘못되었습니다.";
                     server_socket_.SendPacketToClient(state.uniqueKey, response);
                 }
+            }
+            catch (sql::SQLException& e)
+            {
+                std::cerr << "SQLException: " << e.what() << std::endl;
+                std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+            }
+            catch (std::exception& e)
+            {
+                std::cerr << "Exception: " << e.what() << std::endl;
+            }
+            catch (...)
+            {
+                std::cerr << "Unknown Exception" << std::endl;
+            }
+        }
+        break;
+
+    case CheckNameRequest::StaticPacketID:
+        {
+            CheckNameRequest* request = static_cast<CheckNameRequest*>(packet.get());
+            
+            sql::Connection* connection = MySQLManager::Get()->GetConnection();
+            if (!connection) break;
+
+            std::string name = StringHelper::UTF16ToUTF8(request->name);
+
+            try
+            {
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE name = ?"));
+                statement->setString(1, name);
+
+                std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+                
+                CheckNameResponse response;
+                
+                if (result->next()) response.is_available = false;
+                else response.is_available = true;
+                
+                server_socket_.SendPacketToClient(state.uniqueKey, response);
             }
             catch (sql::SQLException& e)
             {

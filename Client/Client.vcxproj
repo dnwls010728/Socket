@@ -278,6 +278,7 @@
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\GameMap.h" />
     <ClInclude Include="Game\PacketHandlers\ChatMessageHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\CheckNameHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DestroyObjectHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DestroyPlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DropItemHandler.h" />
@@ -756,6 +757,7 @@
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\GameMap.cpp" />
     <ClCompile Include="Game\PacketHandlers\ChatMessageHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\CheckNameHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DestroyObjectHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DestroyPlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DropItemHandler.cpp" />

@@ -62,6 +62,24 @@ struct LoginResponse : public Net::IPacket
     REGISTER_PACKET(LoginResponse, 203)
 };
 
+// 닉네임 중복 확인 요청
+struct CheckNameRequest : public Net::IPacket
+{
+    std::wstring name;
+    
+    SERIALIZABLE_FIELDS(name)
+    REGISTER_PACKET(CheckNameRequest, 204)
+};
+
+// 닉네임 중복 확인 응답
+struct CheckNameResponse : public Net::IPacket
+{
+    bool is_available;
+
+    SERIALIZABLE_FIELDS(is_available)
+    REGISTER_PACKET(CheckNameResponse, 205)
+};
+
 // 캐릭터 생성 요청
 // 캐릭터 생성 응답
 

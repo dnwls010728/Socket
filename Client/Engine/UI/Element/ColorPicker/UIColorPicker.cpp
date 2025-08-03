@@ -9,12 +9,12 @@ UIColorPicker::UIColorPicker(const std::wstring& name) :
 {
     SetSize({240.f, 200.f});
 
-    palette_ = AddChild<UIPalette>(UIPalette::StaticClass(), L"Palette");
-    palette_->OnValueChanged(this, &UIColorPicker::OnColorChanged);
-    
     hue_slider_ = AddChild<UIHueSlider>(UIHueSlider::StaticClass(), L"HueSlider");
     hue_slider_->SetRelativePosition({210.f, 0.f});
     hue_slider_->OnValueChanged(this, &UIColorPicker::OnHueChanged);
+    
+    palette_ = AddChild<UIPalette>(UIPalette::StaticClass(), L"Palette");
+    palette_->OnValueChanged(this, &UIColorPicker::OnColorChanged);
 }
 
 const Math::Color& UIColorPicker::GetColor() const
