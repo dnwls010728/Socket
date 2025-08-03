@@ -10,10 +10,13 @@
 UIEditableText::UIEditableText(const std::wstring& name) :
     UIMask(name),
     cursor_position_(0),
+    character_limit_(0),
     timer_(0.f),
     cursor_advance_(0.f),
     text_offset_(0.f),
     cursor_visible_(false),
+    text_buffer_(L""),
+    content_type_(ContentType::kStandard),
     value_changed_event_([](const std::wstring& value){}),
     return_event_([](){})
 {
@@ -29,7 +32,15 @@ UIEditableText::UIEditableText(const std::wstring& name) :
 void UIEditableText::SetText(const std::wstring& text)
 {
     cursor_position_ = text.size();
-    text_->SetText(text);
+    text_buffer_ = text;
+    UpdateDisplayedText();
+    PostTextChange(false);
+}
+
+void UIEditableText::SetContentType(ContentType type)
+{
+    content_type_ = type;
+    UpdateDisplayedText();
     PostTextChange(false);
 }
 
@@ -102,7 +113,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 
     case VK_RIGHT:
         {
-            if (cursor_position_ < text_->GetText().size())
+            if (cursor_position_ < text_buffer_.size())
             {
                 ++cursor_position_;
                 PostCursorMove();
@@ -119,12 +130,11 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 
     case VK_BACK:
         {
-            if (!text_->GetText().empty() && cursor_position_ > 0)
+            if (!text_buffer_.empty() && cursor_position_ > 0)
             {
-                std::wstring current_text = text_->GetText();
-                current_text.erase(--cursor_position_, 1);
-                
-                text_->SetText(current_text);
+                text_buffer_.erase(--cursor_position_, 1);
+
+                UpdateDisplayedText();
                 PostTextChange(true);
             }
         }
@@ -139,19 +149,18 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 
     case VK_END:
         {
-            cursor_position_ = text_->GetText().size();
+            cursor_position_ = text_buffer_.size();
             PostCursorMove();
         }
         break;
 
     case VK_DELETE:
         {
-            if (!text_->GetText().empty() && cursor_position_ < text_->GetText().size())
+            if (!text_buffer_.empty() && cursor_position_ < text_buffer_.size())
             {
-                std::wstring current_text = text_->GetText();
-                current_text.erase(cursor_position_, 1);
+                text_buffer_.erase(cursor_position_, 1);
                 
-                text_->SetText(current_text);
+                UpdateDisplayedText();
                 PostTextChange(true);
             }
         }
@@ -167,10 +176,10 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 
 bool UIEditableText::OnChar(wchar_t character)
 {
-    std::wstring current_text = text_->GetText();
-    current_text.insert(cursor_position_++, 1, character);
-    
-    text_->SetText(current_text);
+    if (character_limit_ > 0 && text_buffer_.size() >= character_limit_) return false;
+    text_buffer_.insert(cursor_position_++, 1, character);
+
+    UpdateDisplayedText();
     PostTextChange(true);
     return true;
 }
@@ -189,9 +198,20 @@ void UIEditableText::PostCursorMove()
     ResetCursor();
 }
 
+void UIEditableText::UpdateDisplayedText() const
+{
+    if (content_type_ == ContentType::kPassword)
+    {
+        text_->SetText(std::wstring(text_buffer_.size(), L'*'));
+        return;
+    }
+    
+    text_->SetText(text_buffer_);
+}
+
 void UIEditableText::PostTextChange(bool is_reset)
 {
-    value_changed_event_(text_->GetText());
+    value_changed_event_(text_buffer_);
     text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
 
     UpdatePlaceholder();
@@ -202,7 +222,7 @@ void UIEditableText::PostTextChange(bool is_reset)
 
 void UIEditableText::UpdatePlaceholder() const
 {
-    const bool is_empty = text_->GetText().empty();
+    const bool is_empty = text_buffer_.empty();
     placeholder_text_->SetActive(is_empty);
 }
 

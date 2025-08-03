@@ -45,6 +45,7 @@ UILogin::UILogin(const std::wstring& name) :
     input_password_->SetRelativePosition({40.f, 88.f});
     input_password_->SetSize({258.f, 24.f});
     input_password_->SetPlaceholderText(L"비밀번호");
+    input_password_->SetContentType(UIEditableText::ContentType::kPassword);
 
     login_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"LoginButton");
     login_button_->SetRelativePosition({30.f, 134.f});
