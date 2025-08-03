@@ -12,6 +12,9 @@ public:
     enum class ContentType : uint8_t
     {
         kStandard,
+        kIntegerNumber,
+        kDecimalNumber,
+        kAlphanumeric,
         kPassword
     };
     
@@ -47,6 +50,9 @@ public:
 
     FORCEINLINE void SetPlaceholderText(const std::wstring& text) const { placeholder_text_->SetText(text); }
     FORCEINLINE const std::wstring& GetPlaceholderText() const { return placeholder_text_->GetText(); }
+
+    FORCEINLINE void SetCharacterLimit(int32_t limit) { character_limit_ = limit; }
+    FORCEINLINE int32_t GetCharacterLimit() const { return character_limit_; }
 
     FORCEINLINE ContentType GetContentType() const { return content_type_; }
 

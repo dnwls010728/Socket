@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIEditableText.h"
 
+#include <cwctype>
 #include <numeric>
 
 #include "UIMask.h"
@@ -177,6 +178,20 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
 bool UIEditableText::OnChar(wchar_t character)
 {
     if (character_limit_ > 0 && text_buffer_.size() >= character_limit_) return false;
+    if (content_type_ == ContentType::kIntegerNumber)
+    {
+        if (!std::iswdigit(character) && character != L'-' && character != L'+') return false;
+        if (text_buffer_.empty() && (character == L'-' || character == L'+')) return false;
+    }
+    else if (content_type_ == ContentType::kDecimalNumber)
+    {
+        if (!std::iswdigit(character) && character != L'.' && character != L'-' && character != L'+') return false;
+        if (text_buffer_.empty() && (character == L'-' || character == L'+')) return false;
+        if (character == L'.' && text_buffer_.find(L'.') != std::wstring::npos) return false;
+    }
+    else if (content_type_ == ContentType::kAlphanumeric)
+        if (!std::iswalnum(character) && character != L' ') return false;
+    
     text_buffer_.insert(cursor_position_++, 1, character);
 
     UpdateDisplayedText();

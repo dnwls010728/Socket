@@ -47,6 +47,8 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     color_input_->SetRelativePosition({222.f, 260.f});
     color_input_->SetSize({180.f, 20.f});
     color_input_->SetPlaceholderText(L"#FFFFFF");
+    color_input_->SetContentType(UIEditableText::ContentType::kAlphanumeric);
+    color_input_->SetCharacterLimit(6);
     color_input_->OnValueChanged(this, &UICharacterCreate::OnCodeChanged);
 }
 
