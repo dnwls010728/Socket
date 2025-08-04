@@ -27,12 +27,12 @@ UILoginState::UILoginState() :
 
     character_select_ = AddElement<UICharacterSelect>(UICharacterSelect::StaticClass(), L"CharacterSelect");
     character_select_->SetAbsolutePosition({373.f, 84.f});
-    character_select_->SetSize({620.f, 600.f});
+    character_select_->SetSize({620.f, 539.f});
     character_select_->SetActive(false);
 
     character_create_ = AddElement<UICharacterCreate>(UICharacterCreate::StaticClass(), L"CharacterCreate");
-    character_create_->SetAbsolutePosition({373.f, 84.f});
-    character_create_->SetSize({620.f, 600.f});
+    character_create_->SetAbsolutePosition({389.f, 84.f});
+    character_create_->SetSize({588.f, 363.f});
     character_create_->SetActive(false);
 
     UIText* version_text = AddElement<UIText>(UIText::StaticClass(), L"VersionText");

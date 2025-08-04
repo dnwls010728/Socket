@@ -10,8 +10,8 @@
 #include "UI/UIState.h"
 #include "UI/Element/UIButton.h"
 #include "UI/Element/UIEditableText.h"
-#include "UI/Element/ColorPicker/UIColorPicker.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/ColorPicker/UIColorPicker.h"
 #include "Windows/DX/UISprite.h"
 
 UICharacterCreate::UICharacterCreate(const std::wstring& name) :
@@ -24,13 +24,15 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
 
     background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetRelativePosition({234.f, 0.f});
+    background_->SetSize({354.f , 363.f});
     background_->SetSprite(panel_sprite, L"Panel_0");
     background_->SetDrawMode(UIImage::DrawMode::kSliced);
     background_->SetIgnoreRayCast(true);
 
     title_text_ = AddChild<UIText>(UIText::StaticClass(), L"TitleText");
-    title_text_->SetRelativePosition({10.f, 10.f});
-    title_text_->SetSize({200.f, 20.f});
+    title_text_->SetRelativePosition({244.f, 10.f});
+    title_text_->SetSize({334.f, 20.f});
     title_text_->SetFontSize(18);
     title_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     title_text_->SetColor(Math::Color::White);
@@ -40,14 +42,14 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     character_->SetRelativePosition({10.f, 40.f});
     character_->SetSize({224, 200.f});
     character_->SetSprite(character_sprite, L"UIPlayerSheet_0");
-
+    
     color_picker_ = AddChild<UIColorPicker>(UIColorPicker::StaticClass(), L"ColorPicker");
     color_picker_->SetRelativePosition({244.f, 40.f});
     color_picker_->OnValueChanged(this, &UICharacterCreate::OnColorChanged);
 
     color_text_ = AddChild<UIText>(UIText::StaticClass(), L"ColorText");
-    color_text_->SetRelativePosition({10.f, 260.f});
-    color_text_->SetSize({224.f, 20.f});
+    color_text_->SetRelativePosition({494.f, 134.f});
+    color_text_->SetSize({84.f, 20.f});
     color_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     color_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     color_text_->SetColor(Math::Color::White);
@@ -81,8 +83,8 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     check_name_button_->OnClick(this, &UICharacterCreate::OnClick);
 
     confirm_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"ConfirmButton");
-    confirm_button_->SetRelativePosition({105.f, 537.f});
-    confirm_button_->SetSize({200.f, 53.f});
+    confirm_button_->SetRelativePosition({244.f, 300.f});
+    confirm_button_->SetSize({162.f, 53.f});
     confirm_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     confirm_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
     confirm_button_->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
@@ -94,8 +96,8 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     confirm_button_->SetDisabled(true);
 
     cancel_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"CancelButton");
-    cancel_button_->SetRelativePosition({315.f, 537.f});
-    cancel_button_->SetSize({200.f, 53.f});
+    cancel_button_->SetRelativePosition({416.f, 300.f});
+    cancel_button_->SetSize({162.f, 53.f});
     cancel_button_->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     cancel_button_->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
     cancel_button_->SetSprite(UIButton::State::kPressed, button_sprite, L"ButtonSheet_2");
@@ -114,7 +116,7 @@ void UICharacterCreate::OnCheckResult(bool is_available) const
 
 void UICharacterCreate::Init()
 {
-    background_->SetSize(GetSize());
+    // background_->SetSize(GetSize());
     
     UIContainer::Init();
 }
@@ -135,7 +137,20 @@ void UICharacterCreate::Tick(float delta_time)
     }
 }
 
-void UICharacterCreate::OnColorChanged(Math::Color color) const
+void UICharacterCreate::Render()
+{
+    Renderer* renderer = Renderer::Get();
+    UIContainer::Render();
+
+    Math::Vector2 position = GetAbsolutePosition();
+    renderer->DrawSolidBox(
+        position + Math::Vector2(494, 40),
+        {84.f, 84.f},
+        color_picker_->GetColor()
+    );
+}
+
+void UICharacterCreate::OnColorChanged(const Math::Color& color) const
 {
     character_->SetColor(color);
     

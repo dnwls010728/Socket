@@ -10,16 +10,16 @@ public:
     UIPalette(const std::wstring& name);
     virtual ~UIPalette() override = default;
     
-    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Math::Color)>, std::decay_t<F>>>>
+    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(const Math::Color&)>, std::decay_t<F>>>>
     void OnValueChanged(F&& func);
 
     template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnValueChanged(M* target, void(M::*func)(Math::Color));
+    void OnValueChanged(M* target, void(M::*func)(const Math::Color&));
 
     template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnValueChanged(M* target, void(M::*func)(Math::Color) const);
+    void OnValueChanged(M* target, void(M::*func)(const Math::Color&) const);
 
-    void OnValueChanged(void(*func)(Math::Color));
+    void OnValueChanged(void(*func)(const Math::Color&));
 
     void SetHue(float hue);
 
@@ -42,7 +42,7 @@ private:
     
     Math::Color color_;
 
-    Function<void(Math::Color)> value_changed_event_;
+    Function<void(const Math::Color&)> value_changed_event_;
     
 };
 
@@ -53,13 +53,13 @@ void UIPalette::OnValueChanged(F&& func)
 }
 
 template <typename M, typename>
-void UIPalette::OnValueChanged(M* target, void(M::* func)(Math::Color))
+void UIPalette::OnValueChanged(M* target, void(M::* func)(const Math::Color&))
 {
     value_changed_event_ = {target, func};
 }
 
 template <typename M, typename>
-void UIPalette::OnValueChanged(M* target, void(M::* func)(Math::Color) const)
+void UIPalette::OnValueChanged(M* target, void(M::* func)(const Math::Color&) const)
 {
     value_changed_event_ = {target, func};
 }

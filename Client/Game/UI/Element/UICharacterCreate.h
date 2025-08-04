@@ -3,8 +3,8 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
-class UIButton;
 class UIColorPicker;
+class UIButton;
 class UIEditableText;
 class UIImage;
 
@@ -21,9 +21,10 @@ public:
 protected:
     virtual void Init() override;
     virtual void Tick(float delta_time) override;
+    virtual void Render() override;
 
 private:
-    void OnColorChanged(Math::Color color) const;
+    void OnColorChanged(const Math::Color& color) const;
     void OnClick() const;
     void OnConfirm() const;
     void OnCancel();

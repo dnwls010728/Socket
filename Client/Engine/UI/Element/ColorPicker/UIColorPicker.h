@@ -14,25 +14,25 @@ public:
 
     const Math::Color& GetColor() const;
     
-    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(Math::Color)>, std::decay_t<F>>>>
+    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(const Math::Color&)>, std::decay_t<F>>>>
     void OnValueChanged(F&& func);
 
     template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnValueChanged(M* target, void(M::*func)(Math::Color));
+    void OnValueChanged(M* target, void(M::*func)(const Math::Color&));
 
     template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnValueChanged(M* target, void(M::*func)(Math::Color) const);
+    void OnValueChanged(M* target, void(M::*func)(const Math::Color&) const);
 
-    void OnValueChanged(void(*func)(Math::Color));
+    void OnValueChanged(void(*func)(const Math::Color&));
 
 private:
-    void OnColorChanged(Math::Color color);
+    void OnColorChanged(const Math::Color& color);
     void OnHueChanged(float value) const;
 
     UIHueSlider* hue_slider_;
     UIPalette* palette_;
 
-    Function<void(Math::Color)> value_changed_event_;
+    Function<void(const Math::Color&)> value_changed_event_;
     
 };
 
@@ -43,13 +43,13 @@ void UIColorPicker::OnValueChanged(F&& func)
 }
 
 template <typename M, typename>
-void UIColorPicker::OnValueChanged(M* target, void(M::* func)(Math::Color))
+void UIColorPicker::OnValueChanged(M* target, void(M::* func)(const Math::Color&))
 {
     value_changed_event_ = {target, func};
 }
 
 template <typename M, typename>
-void UIColorPicker::OnValueChanged(M* target, void(M::* func)(Math::Color) const)
+void UIColorPicker::OnValueChanged(M* target, void(M::* func)(const Math::Color&) const)
 {
     value_changed_event_ = {target, func};
 }
