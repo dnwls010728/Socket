@@ -65,7 +65,7 @@ bool UIState::IsEditingText() const
     return false;
 }
 
-void UIState::PostTask(std::function<void()> task)
+void UIState::PostTask(Function<void()> task)
 {
     pending_tasks_.push(std::move(task));
 }

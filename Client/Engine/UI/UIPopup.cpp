@@ -16,7 +16,8 @@ UIPopup::UIPopup(const std::wstring& name)
       message_text_(nullptr),
       input_text_(nullptr),
       input_background_(nullptr),
-      current_option_(PopupOption::None)
+      current_option_(PopupOption::None),
+      result_callback_([](std::wstring, PopupOption){})
 {
     auto* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
 
@@ -34,7 +35,7 @@ UIPopup::UIPopup(const std::wstring& name)
     SetSize({150.f,200.f});
 }
 
-void UIPopup::ShowPopup(std::wstring caption, PopupOption option, std::function<bool(std::wstring, PopupOption)> callback)
+void UIPopup::ShowPopup(std::wstring_view caption, PopupOption option,Function<bool(std::wstring, PopupOption)> callback)
 {
     UIState* state = UI::Get()->GetState();
     if (state == nullptr)
@@ -44,7 +45,7 @@ void UIPopup::ShowPopup(std::wstring caption, PopupOption option, std::function<
     popup->SetPopup(caption, option);
     popup->SetCallback([callback, popup](std::wstring input_text, PopupOption option)
     {
-        if (callback && callback(input_text, option))
+        if (callback(input_text, option))
         {
             UIState* state=UI::Get()->GetState();
             state->PostTask([state, popup]() {
@@ -69,16 +70,16 @@ void UIPopup::ShowPopup(std::wstring caption, PopupOption option, std::function<
 }
 
 
-void UIPopup::SetPopup(const std::wstring& caption, PopupOption option)
+void UIPopup::SetPopup(std::wstring_view caption, PopupOption option)
 {
     SetMessage(caption);
     SetOptions(option);
     UpdateLayout();
 }
 
-void UIPopup::SetMessage(const std::wstring& text)
+void UIPopup::SetMessage(std::wstring_view text)
 {
-    message_text_->SetText(text);
+    message_text_->SetText(text.data());
 }
 
 void UIPopup::SetOptions(PopupOption option)
@@ -141,13 +142,13 @@ void UIPopup::SetOptions(PopupOption option)
     }
 }
 
-UIButton* UIPopup::CreateButton(const std::wstring& label, PopupOption opt)
+UIButton* UIPopup::CreateButton(std::wstring_view label, PopupOption opt)
 {
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
     
-    UIButton* btn = AddChild<UIButton>(UIButton::StaticClass(), label);
+    UIButton* btn = AddChild<UIButton>(UIButton::StaticClass(), label.data());
     btn->SetSize({kButtonWidth, kButtonHeight});
-    btn->SetText(label);
+    btn->SetText(label.data());
     btn->SetTextColor(Math::Color::White);
     btn->SetSprite(UIButton::State::kNormal, button_sprite, L"ButtonSheet_0");
     btn->SetSprite(UIButton::State::kHover, button_sprite, L"ButtonSheet_1");
@@ -156,13 +157,13 @@ UIButton* UIPopup::CreateButton(const std::wstring& label, PopupOption opt)
     btn->SetDrawMode(UIImage::DrawMode::kSliced);
     btn->OnClick([this, opt]()
     {
-        if (result_callback_) result_callback_(GetInputText(), opt);
+        result_callback_(GetInputText(), opt);
     });
     btn->SetActive(true);
     return btn;
 };
 
-void UIPopup::SetCallback(std::function<void(std::wstring input_text, PopupOption)> callback)
+void UIPopup::SetCallback(Function<void(std::wstring input_text, PopupOption)> callback)
 {
     result_callback_ = std::move(callback);
 }
@@ -288,8 +289,7 @@ bool UIPopup::OnKey(uint16_t key_code, bool is_pressed)
                 {
                     if ((current_option_ & button) != PopupOption::None)
                     {
-                        if (result_callback_)
-                            result_callback_(GetInputText(), PopupOption::OK);
+                        result_callback_(GetInputText(), PopupOption::OK);
                         break;
                     }
                 }

@@ -26,10 +26,10 @@ public:
     UIPopup(const std::wstring& name);
     virtual ~UIPopup() override = default;
 
-    static void ShowPopup(std::wstring caption, PopupOption option, std::function<bool(std::wstring, PopupOption)> callback);
+    static void ShowPopup(std::wstring_view caption, PopupOption option,Function<bool(std::wstring, PopupOption)> callback);
 
-    void SetPopup(const std::wstring& caption, PopupOption option);
-    void SetCallback(std::function<void(std::wstring input_text, PopupOption)> callback);
+    void SetPopup(std::wstring_view caption, PopupOption option);
+    void SetCallback(Function<void(std::wstring input_text, PopupOption)> callback);
 
     void SetFoucsInputText();
     std::wstring GetInputText() const;
@@ -41,9 +41,9 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position) override;
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
 
-    virtual void SetMessage(const std::wstring& text);
+    virtual void SetMessage(std::wstring_view text);
     virtual void SetOptions(PopupOption option);
-    UIButton* CreateButton(const std::wstring& label, PopupOption opt);
+    UIButton* CreateButton(std::wstring_view label, PopupOption opt);
 
 private:
     void UpdateLayout();
@@ -55,7 +55,7 @@ private:
     UIEditableText* input_text_;
     UIImage* input_background_;
 
-    std::function<void(std::wstring input_text, PopupOption)> result_callback_;
+   Function<void(std::wstring input_text, PopupOption)> result_callback_;
     PopupOption current_option_;
 
 
