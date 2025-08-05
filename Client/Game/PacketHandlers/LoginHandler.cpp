@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
@@ -17,18 +18,23 @@ bool LoginHandler::Handle(Net::IPacket* packet)
     if (!received_packet) return false;
 
     UILoginState* state = dynamic_cast<UILoginState*>(UI::Get()->GetState());
-    if (state) state->GetLogin()->SetLoginDisabled(false);
+    if (state)
+    {
+        if (auto* element = state->FindElement<UILogin>(L"Login"))
+            element->SetLoginDisabled(false);
+    }
     
     if (received_packet->is_success)
     {
         SessionSubsystem::Get()->SetState(SessionState::kLoggedIn);
+        PlayerSubsystem::Get()->profiles_ = received_packet->profiles;
         
         if (state)
         {
-            state->GetLogin()->SetActive(false);
-            state->GetCharacterSelect()->SetActive(true);
+            if (auto* element = state->FindElement<UILogin>(L"Login"))
+                state->RemoveElement(element);
             
-            state->InitModel(received_packet->characters);
+            state->AddElement<UICharacterSelect>(UICharacterSelect::StaticClass(), L"CharacterSelect");
         }
     }
     else

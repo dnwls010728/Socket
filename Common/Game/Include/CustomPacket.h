@@ -56,9 +56,9 @@ struct LoginResponse : public Net::IPacket
 {
     bool is_success;
     std::wstring message;
-    std::vector<CharacterProfile> characters;
+    std::vector<CharacterProfile> profiles;
     
-    SERIALIZABLE_FIELDS(is_success, message, characters)
+    SERIALIZABLE_FIELDS(is_success, message, profiles)
     REGISTER_PACKET(LoginResponse, 203)
 };
 

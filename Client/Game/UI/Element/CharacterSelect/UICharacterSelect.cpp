@@ -5,6 +5,7 @@
 
 #include "UICharacterSlot.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIState.h"
 #include "UI/Element/UIButton.h"
@@ -16,6 +17,9 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     slots_(),
     selected_slot_id_(0)
 {
+    SetAbsolutePosition({373.f, 84.f});
+    SetSize({620.f, 539.f});
+    
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
 
@@ -72,19 +76,19 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     select_button_->SetDisabled(true);
 }
 
-void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profiles)
+void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profile)
 {
-    for (int32_t i = 0; i < profiles.size(); ++i)
+    for (int32_t i = 0; i < profile.size(); ++i)
     {
-        slots_[i]->InitSlot(this, i + 1, profiles[i]);
+        slots_[i]->InitSlot(this, i + 1, profile[i]);
     }
 }
 
 void UICharacterSelect::Init()
 {
     background_->SetSize(GetSize());
-    
     UIContainer::Init();
+    InitSlots(PlayerSubsystem::Get()->GetProfiles());
 }
 
 void UICharacterSelect::Render()
@@ -100,12 +104,10 @@ void UICharacterSelect::Render()
 
 void UICharacterSelect::OnCreateCharacter()
 {
-    SetActive(false);
-    
     if (auto* state = UI::Get()->GetState())
     {
-        if (auto* element = state->FindElement<UICharacterCreate>(L"CharacterCreate"))
-            element->SetActive(true);
+        state->RemoveElement(this);
+        state->AddElement<UICharacterCreate>(UICharacterCreate::StaticClass(), L"CharacterCreate");
     }
 }
 

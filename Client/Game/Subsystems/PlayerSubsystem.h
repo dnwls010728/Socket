@@ -23,12 +23,15 @@ public:
     FORCEINLINE int32_t GetExp() const { return exp_; }
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
+
+    FORCEINLINE const std::vector<CharacterProfile>& GetProfiles() const { return profiles_; }
     
     FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
 
     static PlayerSubsystem* Get();
 
 private:
+    friend class LoginHandler;
     friend class SelectCharacterHandler;
     friend class MapLoadHandler;
     friend class GameMap;
@@ -46,6 +49,8 @@ private:
 
     std::wstring name_;
     std::wstring character_color_;
+
+    std::vector<CharacterProfile> profiles_;
     
     std::unique_ptr<Inventory> inventory_;
     

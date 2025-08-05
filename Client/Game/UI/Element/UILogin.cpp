@@ -14,6 +14,9 @@
 UILogin::UILogin(const std::wstring& name) :
     UIContainer(name)
 {
+    SetAbsolutePosition({514.f, 265.f});
+    SetSize({338.f, 238.f});
+    
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
 

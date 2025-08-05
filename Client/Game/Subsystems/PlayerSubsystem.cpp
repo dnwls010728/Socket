@@ -14,6 +14,7 @@ PlayerSubsystem::PlayerSubsystem() :
     exp_(0),
     name_(L"Unknown"),
     character_color_(L"FFFFFF"),
+    profiles_(),
     inventory_(nullptr)
 {
 }

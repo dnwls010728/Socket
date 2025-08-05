@@ -1,6 +1,6 @@
 ﻿#pragma once
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "UI/UIContainer.h"
-#include "UI/Model/CharacterSelectModel.h"
 
 class UICharacterSelect;
 class UIText;

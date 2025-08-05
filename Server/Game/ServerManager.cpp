@@ -226,7 +226,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     LoginResponse response;
                     response.is_success = true;
                     response.message = L"";
-                    response.characters = profiles;
+                    response.profiles = profiles;
                     server_socket_.SendPacketToClient(state.uniqueKey, response);
 
                     session->SetState(Session::State::kLoggedIn);

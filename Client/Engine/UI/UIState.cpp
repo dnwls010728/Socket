@@ -108,7 +108,7 @@ void UIState::Render()
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[i].get();
-        if (element && element->IsActive())
+        if (element && element->is_initialized_ && element->IsActive())
             element->Render();
     }
 }

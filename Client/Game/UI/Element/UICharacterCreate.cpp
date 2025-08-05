@@ -19,6 +19,9 @@ UICharacterCreate::UICharacterCreate(const std::wstring& name) :
     timer_(0.f),
     frame_index_(0)
 {
+    SetAbsolutePosition({389.f, 84.f});
+    SetSize({588.f, 363.f});
+    
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
     UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
@@ -187,12 +190,10 @@ void UICharacterCreate::OnConfirm() const
 
 void UICharacterCreate::OnCancel()
 {
-    SetActive(false);
-    
     if (auto* state = UI::Get()->GetState())
     {
-        if (auto* element = state->FindElement<UICharacterSelect>(L"CharacterSelect"))
-            element->SetActive(true);
+        state->RemoveElement(this);
+        state->AddElement<UICharacterSelect>(UICharacterSelect::StaticClass(), L"CharacterSelect");
     }
 }
 

@@ -315,7 +315,6 @@
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
-    <ClInclude Include="Game\UI\Model\CharacterSelectModel.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
     <ClInclude Include="Game\Utils\TimedBool.h" />
@@ -718,7 +717,6 @@
     <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
-    <ClCompile Include="Game\UI\Model\CharacterSelectModel.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
     <ClCompile Include="Game\Utils\TimedBool.cpp" />

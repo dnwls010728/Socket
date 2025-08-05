@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIImage.h"
-#include "UI/Model/CharacterSelectModel.h"
 
 class UIButton;
 class UICharacterSlot;
@@ -14,7 +14,7 @@ public:
     UICharacterSelect(const std::wstring& name);
     virtual ~UICharacterSelect() override = default;
 
-    void InitSlots(const std::vector<CharacterProfile>& profiles);
+    void InitSlots(const std::vector<CharacterProfile>& profile);
 
 protected:
     virtual void Init() override;
