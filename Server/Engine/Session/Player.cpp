@@ -61,14 +61,17 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 std::cerr << "SQLException: " << e.what() << std::endl;
                 std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+                break;
             }
             catch (std::exception& e)
             {
                 std::cerr << "Exception: " << e.what() << std::endl;
+                break;
             }
             catch (...)
             {
                 std::cerr << "Unknown Exception" << std::endl;
+                break;
             }
         }
         break;
@@ -84,6 +87,8 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             sql::Connection* connection = MySQLManager::Get()->GetConnection();
             if (!connection) break;
+
+            uint32_t character_id = 0;
             
             try
             {
@@ -100,21 +105,50 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 statement->setDouble(10, new_character->position_.y);
                 statement->setInt(11, new_character->color_);
                 statement->executeUpdate();
+
+                statement.reset(connection->prepareStatement("SELECT LAST_INSERT_ID()"));
+                std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+                if (result->next())
+                {
+                    character_id = result->getUInt(1);
+                    new_character->SetObjectID(character_id);
+                }
             }
             catch (sql::SQLException& e)
             {
                 std::cerr << "SQLException: " << e.what() << std::endl;
                 std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+                break;
             }
             catch (std::exception& e)
             {
                 std::cerr << "Exception: " << e.what() << std::endl;
+                break;
             }
             catch (...)
             {
                 std::cerr << "Unknown Exception" << std::endl;
+                break;
             }
+
+            if (!new_character->GetInventory()->UpdateDatabase()) break;
+
+            CreateCharacterResponse response;
+            response.profile.character_id = new_character->GetObjectID();
+            response.profile.map_id = new_character->GetMapID();
+            response.profile.name = new_character->GetName();
+                        
+            response.profile.position.x = new_character->GetPosition().x;
+            response.profile.position.y = new_character->GetPosition().y;
+
+            response.profile.body_color = new_character->GetBodyColor();
+
+            response.profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = new_character->hp_;
+            response.profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = new_character->max_hp_;
+            response.profile.stats[static_cast<uint8_t>(PlayerStat::kExp)] = new_character->exp_;
+            response.profile.stats[static_cast<uint8_t>(PlayerStat::kLv)] = new_character->lv_;
+            SendPacket(response);
         }
         break;
         

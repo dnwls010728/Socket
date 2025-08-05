@@ -70,6 +70,11 @@ void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
     Logger::Print(L"PlayerSubsystem::UpdateStat: Updated stat %d to value %u", static_cast<int>(stat), value);
 }
 
+void PlayerSubsystem::AddProfile(const CharacterProfile& profile)
+{
+    profiles_.push_back(profile);
+}
+
 PlayerSubsystem* PlayerSubsystem::Get()
 {
     return GameInstance::Get()->GetSubsystem<PlayerSubsystem>();

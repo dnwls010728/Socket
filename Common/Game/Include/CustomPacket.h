@@ -21,26 +21,6 @@ struct DisconnectPacket : public Net::IPacket
     REGISTER_PACKET(DisconnectPacket, 101)
 };
 
-// 회원가입 요청
-struct RegisterRequest : public Net::IPacket
-{
-    std::wstring id;
-    std::wstring password;
-    
-    SERIALIZABLE_FIELDS(id, password)
-    REGISTER_PACKET(RegisterRequest, 200)
-};
-
-// 회원가입 응답
-struct RegisterResponse : public Net::IPacket
-{
-    bool is_success;
-    std::wstring message;
-    
-    SERIALIZABLE_FIELDS(is_success, message)
-    REGISTER_PACKET(RegisterResponse, 201)
-};
-
 // 로그인 요청
 struct LoginRequest : public Net::IPacket
 {
@@ -91,6 +71,13 @@ struct CreateCharacterRequest : public Net::IPacket
 };
 
 // 캐릭터 생성 응답
+struct CreateCharacterResponse : public Net::IPacket
+{
+    CharacterProfile profile;
+
+    SERIALIZABLE_FIELDS(profile);
+    REGISTER_PACKET(CreateCharacterResponse, 207)
+};
 
 // 캐릭터 선택 요청
 struct SelectCharacterRequest : public Net::IPacket

@@ -39,7 +39,7 @@ public:
     void Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot);
     void Remove(Type type, uint32_t slot_index);
     
-    void Update();
+    bool UpdateDatabase() const;
 
     inline const std::unordered_map<Type, std::map<uint32_t, Slot>>& GetInventories() const { return inventories_; }
 

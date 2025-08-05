@@ -109,10 +109,10 @@ void Inventory::Remove(Type type, uint32_t slot_index)
     Remove_Internal(type, slot_index);
 }
 
-void Inventory::Update()
+bool Inventory::UpdateDatabase() const
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
-    if (!connection) return;
+    if (!connection) return false;
     
     if (auto player_character = player_character_.lock())
     {
@@ -147,16 +147,23 @@ void Inventory::Update()
             std::cerr << "SQLException: " << e.what() << std::endl;
             std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
             std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+            return false;
         }
         catch (std::exception& e)
         {
             std::cerr << "Exception: " << e.what() << std::endl;
+            return false;
         }
         catch (...)
         {
             std::cerr << "Unknown Exception" << std::endl;
+            return false;
         }
+
+        return true;
     }
+
+    return false;
 }
 
 void Inventory::Remove_Internal(Type type, uint32_t slot_index)

@@ -336,7 +336,7 @@ void PlayerCharacter::ExitMap()
 
 void PlayerCharacter::UpdateCharacter()
 {
-    if (inventory_) inventory_->Update();
+    if (inventory_) inventory_->UpdateDatabase();
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
