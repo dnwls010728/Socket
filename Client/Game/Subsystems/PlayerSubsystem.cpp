@@ -75,6 +75,18 @@ void PlayerSubsystem::AddProfile(const CharacterProfile& profile)
     profiles_.push_back(profile);
 }
 
+void PlayerSubsystem::DeleteProfile(uint32_t character_id)
+{
+    for (auto it = profiles_.begin(); it != profiles_.end(); ++it)
+    {
+        if (it->character_id == character_id)
+        {
+            profiles_.erase(it);
+            return;
+        }
+    }
+}
+
 PlayerSubsystem* PlayerSubsystem::Get()
 {
     return GameInstance::Get()->GetSubsystem<PlayerSubsystem>();

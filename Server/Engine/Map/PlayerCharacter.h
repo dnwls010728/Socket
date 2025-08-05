@@ -18,6 +18,8 @@ public:
 
     static std::shared_ptr<PlayerCharacter> LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player);
     static std::shared_ptr<PlayerCharacter> CreateCharacter(const std::shared_ptr<Player>& player);
+
+    static bool DeleteCharacter(uint32_t character_id);
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);

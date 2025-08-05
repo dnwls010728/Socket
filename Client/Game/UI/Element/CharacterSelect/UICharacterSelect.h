@@ -24,6 +24,7 @@ private:
     friend class UICharacterSlot;
 
     void OnCreateCharacter();
+    void OnDeleteCharacter() const;
     void OnSlotSelected(uint32_t slot_id);
     void OnCharacterSelected() const;
     

@@ -79,13 +79,31 @@ struct CreateCharacterResponse : public Net::IPacket
     REGISTER_PACKET(CreateCharacterResponse, 207)
 };
 
+// 캐릭터 삭제 요청
+struct DeleteCharacterRequest : public Net::IPacket
+{
+    uint32_t character_id;
+    
+    SERIALIZABLE_FIELDS(character_id)
+    REGISTER_PACKET(DeleteCharacterRequest, 208)
+};
+
+// 캐릭터 삭제 응답
+struct DeleteCharacterResponse : public Net::IPacket
+{
+    uint32_t character_id;
+    
+    SERIALIZABLE_FIELDS(character_id)
+    REGISTER_PACKET(DeleteCharacterResponse, 209)
+};
+
 // 캐릭터 선택 요청
 struct SelectCharacterRequest : public Net::IPacket
 {
     uint32_t character_id;
     
     SERIALIZABLE_FIELDS(character_id)
-    REGISTER_PACKET(SelectCharacterRequest, 208)
+    REGISTER_PACKET(SelectCharacterRequest, 210)
 };
 
 // 캐릭터 선택 응답
@@ -111,7 +129,7 @@ struct SelectCharacterResponse : public Net::IPacket
     std::vector<ItemInfo> inventory;
     
     SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
-    REGISTER_PACKET(SelectCharacterResponse, 209)
+    REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 
 struct ChangeMapPacket : public Net::IPacket
@@ -119,7 +137,7 @@ struct ChangeMapPacket : public Net::IPacket
     uint32_t map_id;
     
     SERIALIZABLE_FIELDS(map_id)
-    REGISTER_PACKET(ChangeMapPacket, 210)
+    REGISTER_PACKET(ChangeMapPacket, 212)
 };
 
 struct MapLoadPacket : public Net::IPacket
@@ -133,13 +151,13 @@ struct MapLoadPacket : public Net::IPacket
     } spawn_position;
     
     SERIALIZABLE_FIELDS(map_id, spawn_position)
-    REGISTER_PACKET(MapLoadPacket, 211)
+    REGISTER_PACKET(MapLoadPacket, 213)
 };
 
 struct MapLoadCompletePacket : public Net::IPacket
 {
     SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(MapLoadCompletePacket, 212)
+    REGISTER_PACKET(MapLoadCompletePacket, 214)
 };
 
 // 플레이어 스폰 패킷
@@ -153,7 +171,7 @@ struct SpawnPlayerPacket : public Net::IPacket
     float position_y;
     
     SERIALIZABLE_FIELDS(character_id, name, position_x, position_y)
-    REGISTER_PACKET(SpawnPlayerPacket, 213)
+    REGISTER_PACKET(SpawnPlayerPacket, 215)
 };
 
 // 플레이어 파괴 패킷
@@ -162,7 +180,7 @@ struct DestroyPlayerPacket : public Net::IPacket
     uint32_t unique_id;
     
     SERIALIZABLE_FIELDS(unique_id)
-    REGISTER_PACKET(DestroyPlayerPacket, 214)
+    REGISTER_PACKET(DestroyPlayerPacket, 216)
 };
 
 struct MovePlayerPacket : public Net::IPacket
@@ -176,7 +194,7 @@ struct MovePlayerPacket : public Net::IPacket
     bool time_update;
     
     SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 215)
+    REGISTER_PACKET(MovePlayerPacket, 217)
 };
 
 struct PlayerAnimationPacket : public Net::IPacket
@@ -187,7 +205,7 @@ struct PlayerAnimationPacket : public Net::IPacket
     float server_time;
     
     SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 216)
+    REGISTER_PACKET(PlayerAnimationPacket, 218)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -196,7 +214,7 @@ struct ChatMessagePacket : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_FIELDS(unique_id, message)
-    REGISTER_PACKET(ChatMessagePacket, 217)
+    REGISTER_PACKET(ChatMessagePacket, 219)
 };
 
 struct SpawnObjectPacket : public Net::IPacket

@@ -280,6 +280,7 @@
     <ClInclude Include="Game\PacketHandlers\ChatMessageHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CheckNameHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CreateCharacterHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\DeleteCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DestroyObjectHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DestroyPlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DropItemHandler.h" />
@@ -683,6 +684,7 @@
     <ClCompile Include="Game\PacketHandlers\ChatMessageHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CheckNameHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CreateCharacterHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DeleteCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DestroyObjectHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DestroyPlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DropItemHandler.cpp" />

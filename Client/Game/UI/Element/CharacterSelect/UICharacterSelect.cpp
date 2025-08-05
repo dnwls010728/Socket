@@ -48,6 +48,7 @@ UICharacterSelect::UICharacterSelect(const std::wstring& name) :
     delete_button_->SetDrawMode(UIImage::DrawMode::kSliced);
     delete_button_->SetTextColor(Math::Color::White);
     delete_button_->SetText(L"캐릭터 삭제");
+    delete_button_->OnClick(this, &UICharacterSelect::OnDeleteCharacter);
     delete_button_->SetDisabled(true);
 
     new_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"NewButton");
@@ -109,6 +110,18 @@ void UICharacterSelect::OnCreateCharacter()
         state->RemoveElement(this);
         state->AddElement<UICharacterCreate>(UICharacterCreate::StaticClass(), L"CharacterCreate");
     }
+}
+
+void UICharacterSelect::OnDeleteCharacter() const
+{
+    UICharacterSlot* selected_slot = slots_[selected_slot_id_ - 1];
+    if (selected_slot->GetCharacterID() == 0) return;
+    
+    DeleteCharacterRequest request;
+    request.character_id = selected_slot->GetCharacterID();
+    SessionSubsystem::Get()->SendPacket(request);
+
+    delete_button_->SetDisabled(true);
 }
 
 void UICharacterSelect::OnSlotSelected(uint32_t slot_id)

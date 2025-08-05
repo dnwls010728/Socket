@@ -151,6 +151,17 @@ void Player::ReceivePacket(Net::IPacket* packet)
             SendPacket(response);
         }
         break;
+
+    case DeleteCharacterRequest::StaticPacketID:
+        {
+            DeleteCharacterRequest* request = static_cast<DeleteCharacterRequest*>(packet);
+            if (!PlayerCharacter::DeleteCharacter(request->character_id)) return;
+
+            DeleteCharacterResponse response;
+            response.character_id = request->character_id;
+            SendPacket(response);
+        }
+        break;
         
     case SelectCharacterRequest::StaticPacketID:
         {

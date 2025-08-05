@@ -9,6 +9,7 @@
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/CreateCharacterHandler.h"
+#include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/DropItemHandler.h"
@@ -66,6 +67,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         CreateCharacterResponse::StaticPacketID,
         std::make_unique<CreateCharacterHandler>()
+    );
+
+    handlers_.emplace(
+        DeleteCharacterResponse::StaticPacketID,
+        std::make_unique<DeleteCharacterHandler>()
     );
     
     handlers_.emplace(

@@ -123,6 +123,42 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::sha
     return character;
 }
 
+bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
+{
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return false;
+
+    try
+    {
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
+        statement->setUInt(1, character_id);
+        statement->executeUpdate();
+        
+        statement.reset(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+        statement->setUInt(1, character_id);
+        statement->executeUpdate();
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        return false;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+        return false;
+    }
+    
+    return true;
+}
+
 void PlayerCharacter::SendPacket(const Net::IPacket& packet) const
 {
     if (auto player = player_.lock())
