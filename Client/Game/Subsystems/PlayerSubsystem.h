@@ -48,7 +48,7 @@ private:
     Math::Vector2 spawn_position;
 
     std::wstring name_;
-    std::wstring character_color_;
+    std::wstring body_color_;
 
     std::vector<CharacterProfile> profiles_;
     

@@ -17,10 +17,11 @@ PlayerCharacter::PlayerCharacter() :
     player_(),
     account_id_(0),
     name_(L"Unknown"),
-    character_color_(L"FFFFFF"),
-    lv_(0),
-    hp_(0),
-    max_hp_(0),
+    body_color_(L"FFFFFF"),
+    map_id_(0),
+    lv_(1),
+    hp_(350),
+    max_hp_(350),
     exp_(0),
     color_(0),
     inventory_(nullptr),
@@ -42,8 +43,6 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return nullptr;
-
-    uint32_t map_id = 0;
     
     try
     {
@@ -56,16 +55,15 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             {
                 character->account_id_ = result->getInt("account_id");
                 character->name_ = StringHelper::UTF8ToUTF16(result->getString("name"));
-                character->character_color_ = StringHelper::UTF8ToUTF16(result->getString("character_color"));
+                character->body_color_ = StringHelper::UTF8ToUTF16(result->getString("body_color"));
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
                 character->max_hp_ = result->getInt("max_hp");
+                character->exp_.store(result->getInt("exp"));
+                character->map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
-                character->exp_.store(result->getInt("exp"));
                 character->color_.store(result->getInt("color"));
-                
-                map_id = result->getInt("map_id");
             }
         }
 
@@ -90,7 +88,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
-        character->map_ = World::Get()->GetMap(map_id);
+        character->map_ = World::Get()->GetMap(character->map_id_);
     }
     catch (sql::SQLException& e)
     {
@@ -111,6 +109,17 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         return nullptr;
     }
 
+    return character;
+}
+
+std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::shared_ptr<Player>& player)
+{
+    std::shared_ptr<PlayerCharacter> character = std::make_shared<PlayerCharacter>();
+
+    character->player_ = player;
+    character->account_id_ = player->GetAccountID();
+    character->inventory_ = std::make_unique<Inventory>(character);
+    
     return character;
 }
 
@@ -311,7 +320,7 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     PlayerInfo& info = packet.object_info.info.player;
     wcscpy_s(info.name, name_.c_str());
-    wcscpy_s(info.character_color, character_color_.c_str());
+    wcscpy_s(info.body_color, body_color_.c_str());
 
     player->SendPacket(packet);
 }

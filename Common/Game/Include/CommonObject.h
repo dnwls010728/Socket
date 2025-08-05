@@ -15,7 +15,7 @@ struct CharacterProfile
         float y;
     } position;
 
-    std::wstring character_color;
+    std::wstring body_color;
 
     std::array<int32_t, 4> stats = {-1};
 };
@@ -47,7 +47,7 @@ enum class ObjectType : uint8_t
 struct PlayerInfo
 {
     wchar_t name[256];
-    wchar_t character_color[256];
+    wchar_t body_color[256];
 };
 
 struct MobInfo

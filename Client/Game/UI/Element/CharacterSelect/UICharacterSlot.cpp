@@ -78,13 +78,13 @@ void UICharacterSlot::InitSlot(UICharacterSelect* character_select, uint32_t slo
 
     UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
     character_->SetSprite(character_sprite, L"UIPlayerSheet_0");
-    character_->SetColor(Math::Color::HexToColor(profile.character_color));
+    character_->SetColor(Math::Color::HexToColor(profile.body_color));
 
     int32_t lv = profile.stats[static_cast<uint8_t>(PlayerStat::kLv)];
     lv_text_->SetText(L"레벨 " + std::to_wstring(lv));
     
     name_text_->SetText(profile.name);
-    color_code_text_->SetText(L"색상코드 #" + profile.character_color);
+    color_code_text_->SetText(L"색상코드 #" + profile.body_color);
 }
 
 void UICharacterSlot::Init()

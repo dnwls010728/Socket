@@ -13,7 +13,7 @@ PlayerSubsystem::PlayerSubsystem() :
     max_hp_(0),
     exp_(0),
     name_(L"Unknown"),
-    character_color_(L"FFFFFF"),
+    body_color_(L"FFFFFF"),
     profiles_(),
     inventory_(nullptr)
 {

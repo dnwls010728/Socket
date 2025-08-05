@@ -60,7 +60,9 @@ void Map::AddPlayers()
         uint32_t object_id = player->GetObjectID();
         players_.emplace(object_id, pending_player_weak);
     
+        player->SetMapID(map_id_);
         player->SetMap(this);
+        
         {
             for (const auto& player_weak : players_ | std::views::values)
             {

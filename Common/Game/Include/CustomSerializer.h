@@ -27,7 +27,7 @@ namespace Net
 		v.name,
 		v.position.x,
 		v.position.y,
-		v.character_color,
+		v.body_color,
 		v.stats
 		)
 

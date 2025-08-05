@@ -1,26 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="8">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="81">
  <properties>
-  <property name="name" value="Unknown Area 2"/>
+  <property name="name" value="Unknown Area 1"/>
   <property name="ppu" type="float" value="32"/>
   <property name="unique_id" type="int" value="0"/>
  </properties>
  <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Tilesets/TemplateTileset.png" width="224" height="256"/>
  </tileset>
- <layer id="3" name="Tile Layer 1" width="25" height="30">
+ <layer id="3" name="Tile Layer 1" width="25" height="19">
   <data encoding="csv">
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
@@ -42,7 +31,7 @@
 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7
 </data>
  </layer>
- <layer id="4" name="Tile Layer 2" width="25" height="30">
+ <layer id="4" name="Tile Layer 2" width="25" height="19">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -55,59 +44,272 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,18,18,18,18,18,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,32,32,32,32,32,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,18,18,18,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
-18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,32,32,32,0,0,0,0,0,0,
+0,0,0,10,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,10,1,1,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
 </data>
  </layer>
  <objectgroup id="2" name="Foothold">
-  <properties>
-   <property name="name" value="Unknown"/>
-   <property name="ppu" type="float" value="32"/>
-   <property name="unique_id" type="int" value="1"/>
-  </properties>
-  <object id="5" x="0" y="544">
+  <object id="18" x="288" y="352">
    <properties>
-    <property name="ID" type="int" value="1"/>
-    <property name="Next" type="int" value="0"/>
-    <property name="Previous" type="int" value="0"/>
-    <property name="Type" type="int" value="0"/>
-   </properties>
-   <polyline points="0,0 800,0"/>
-  </object>
-  <object id="6" x="288" y="352">
-   <properties>
-    <property name="ID" type="int" value="3"/>
+    <property name="ID" type="int" value="7"/>
     <property name="Next" type="int" value="0"/>
     <property name="Previous" type="int" value="0"/>
     <property name="Type" type="int" value="1"/>
    </properties>
    <polyline points="0,0 160,0"/>
   </object>
-  <object id="7" x="480" y="448">
+  <object id="19" x="480" y="448">
    <properties>
-    <property name="ID" type="int" value="2"/>
+    <property name="ID" type="int" value="6"/>
     <property name="Next" type="int" value="0"/>
     <property name="Previous" type="int" value="0"/>
     <property name="Type" type="int" value="1"/>
    </properties>
    <polyline points="0,0 128,0"/>
+  </object>
+  <object id="28" x="0" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+    <property name="Next" type="int" value="2"/>
+    <property name="Previous" type="int" value="0"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object id="29" x="64" y="544">
+   <properties>
+    <property name="ID" type="int" value="2"/>
+    <property name="Next" type="int" value="3"/>
+    <property name="Previous" type="int" value="1"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,-64"/>
+  </object>
+  <object id="30" x="128" y="480">
+   <properties>
+    <property name="ID" type="int" value="3"/>
+    <property name="Next" type="int" value="4"/>
+    <property name="Previous" type="int" value="2"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object id="33" x="192" y="480">
+   <properties>
+    <property name="ID" type="int" value="4"/>
+    <property name="Next" type="int" value="5"/>
+    <property name="Previous" type="int" value="3"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 64,64"/>
+  </object>
+  <object id="34" x="256" y="544">
+   <properties>
+    <property name="ID" type="int" value="5"/>
+    <property name="Next" type="int" value="0"/>
+    <property name="Previous" type="int" value="4"/>
+    <property name="Type" type="int" value="0"/>
+   </properties>
+   <polyline points="0,0 544,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="SpawnPoint">
+  <object id="20" name="SpawnPoint" x="32" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="51" name="SpawnPoint" x="64" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="52" name="SpawnPoint" x="96" y="512">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="53" name="SpawnPoint" x="128" y="480">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="54" name="SpawnPoint" x="160" y="480">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="55" name="SpawnPoint" x="192" y="480">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="56" name="SpawnPoint" x="224" y="512">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="57" name="SpawnPoint" x="256" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="58" name="SpawnPoint" x="288" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="59" name="SpawnPoint" x="320" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="60" name="SpawnPoint" x="352" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="61" name="SpawnPoint" x="384" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="62" name="SpawnPoint" x="414" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="63" name="SpawnPoint" x="448" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="64" name="SpawnPoint" x="480" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="65" name="SpawnPoint" x="512" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="66" name="SpawnPoint" x="544" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="67" name="SpawnPoint" x="576" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="68" name="SpawnPoint" x="608" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="69" name="SpawnPoint" x="640" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="70" name="SpawnPoint" x="672" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="74" name="SpawnPoint" x="320" y="352">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="78" name="SpawnPoint" x="512" y="448">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="71" name="SpawnPoint" x="704" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="75" name="SpawnPoint" x="352" y="352">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="79" name="SpawnPoint" x="544" y="448">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="72" name="SpawnPoint" x="736" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="76" name="SpawnPoint" x="384" y="352">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="80" name="SpawnPoint" x="576" y="448">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="73" name="SpawnPoint" x="768" y="544">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="77" name="SpawnPoint" x="416" y="352">
+   <properties>
+    <property name="ID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="Spawn">
+  <object id="12" name="NPC" type="NPC" x="304" y="352">
+   <point/>
   </object>
  </objectgroup>
 </map>

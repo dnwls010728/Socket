@@ -17,6 +17,7 @@ public:
     virtual ~PlayerCharacter() override;
 
     static std::shared_ptr<PlayerCharacter> LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player);
+    static std::shared_ptr<PlayerCharacter> CreateCharacter(const std::shared_ptr<Player>& player);
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
@@ -30,8 +31,14 @@ public:
 
     inline uint32_t GetAccountID() const { return account_id_; }
 
+    inline void SetName(const std::wstring& name) { name_ = name; }
     inline const std::wstring& GetName() const { return name_; }
-    inline const std::wstring& GetCharacterColor() const { return character_color_; }
+
+    inline void SetBodyColor(const std::wstring& color) { body_color_ = color; }
+    inline const std::wstring& GetBodyColor() const { return body_color_; }
+    
+    inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
+    inline int32_t GetMapID() const { return map_id_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
@@ -52,8 +59,9 @@ protected:
     uint32_t account_id_;
 
     std::wstring name_;
-    std::wstring character_color_;
+    std::wstring body_color_;
 
+    int32_t map_id_;
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;

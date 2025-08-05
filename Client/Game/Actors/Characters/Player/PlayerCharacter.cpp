@@ -99,11 +99,11 @@ void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, fl
     invincible_time_ = server_time + 2.f;
 }
 
-void PlayerCharacter::Init(const std::wstring& name, const std::wstring& character_color, const Math::Vector2& position)
+void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position)
 {
     character_name_ = name;
 
-    color_ = Math::Color::HexToColor(character_color);
+    color_ = Math::Color::HexToColor(body_color);
     renderer_->SetColor(color_);
     
     GetTransform()->SetPosition(position);
@@ -198,12 +198,12 @@ void PlayerCharacter::Tick(float delta_time)
 
             if (keyboard->GetKeyDown('1'))
             {
-                NetworkSubsystem::Get()->ChangeMap(0);
+                NetworkSubsystem::Get()->ChangeMap(1);
             }
 
             if (keyboard->GetKeyDown('2'))
             {
-                NetworkSubsystem::Get()->ChangeMap(1);
+                NetworkSubsystem::Get()->ChangeMap(2);
             }
 
             // 아이템 줍기

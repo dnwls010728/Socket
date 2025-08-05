@@ -84,9 +84,9 @@ struct CheckNameResponse : public Net::IPacket
 struct CreateCharacterRequest : public Net::IPacket
 {
     std::wstring name;
-    std::wstring character_color;
+    std::wstring body_color;
     
-    SERIALIZABLE_FIELDS(name, character_color)
+    SERIALIZABLE_FIELDS(name, body_color)
     REGISTER_PACKET(CreateCharacterRequest, 206)
 };
 
@@ -105,7 +105,7 @@ struct SelectCharacterRequest : public Net::IPacket
 struct SelectCharacterResponse : public Net::IPacket
 {
     std::wstring name;
-    std::wstring character_color;
+    std::wstring body_color;
 
     uint32_t character_id;
     uint32_t lv;
@@ -123,7 +123,7 @@ struct SelectCharacterResponse : public Net::IPacket
 
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(name, character_color, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 209)
 };
 

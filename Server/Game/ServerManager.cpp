@@ -213,7 +213,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         profile.position.x = character->GetPosition().x;
                         profile.position.y = character->GetPosition().y;
 
-                        profile.character_color = character->GetCharacterColor();
+                        profile.body_color = character->GetBodyColor();
 
                         profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = character->hp_;
                         profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = character->max_hp_;
@@ -238,46 +238,6 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                     response.message = L"아이디 또는 비밀번호가 잘못되었습니다.";
                     server_socket_.SendPacketToClient(state.uniqueKey, response);
                 }
-            }
-            catch (sql::SQLException& e)
-            {
-                std::cerr << "SQLException: " << e.what() << std::endl;
-                std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
-                std::cerr << "SQL State: " << e.getSQLState() << std::endl;
-            }
-            catch (std::exception& e)
-            {
-                std::cerr << "Exception: " << e.what() << std::endl;
-            }
-            catch (...)
-            {
-                std::cerr << "Unknown Exception" << std::endl;
-            }
-        }
-        break;
-
-    case CheckNameRequest::StaticPacketID:
-        {
-            CheckNameRequest* request = static_cast<CheckNameRequest*>(packet.get());
-            
-            sql::Connection* connection = MySQLManager::Get()->GetConnection();
-            if (!connection) break;
-
-            std::string name = StringHelper::UTF16ToUTF8(request->name);
-
-            try
-            {
-                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE name = ?"));
-                statement->setString(1, name);
-
-                std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
-                
-                CheckNameResponse response;
-                
-                if (result->next()) response.is_available = false;
-                else response.is_available = true;
-                
-                server_socket_.SendPacketToClient(state.uniqueKey, response);
             }
             catch (sql::SQLException& e)
             {

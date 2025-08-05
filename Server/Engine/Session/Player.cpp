@@ -33,6 +33,91 @@ void Player::ReceivePacket(Net::IPacket* packet)
 {
     switch (packet->GetPacketID())
     {
+    case CheckNameRequest::StaticPacketID:
+        {
+            CheckNameRequest* request = static_cast<CheckNameRequest*>(packet);
+            
+            sql::Connection* connection = MySQLManager::Get()->GetConnection();
+            if (!connection) break;
+
+            std::string name = StringHelper::UTF16ToUTF8(request->name);
+
+            try
+            {
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE name = ?"));
+                statement->setString(1, name);
+
+                std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+                
+                CheckNameResponse response;
+                
+                if (result->next()) response.is_available = false;
+                else response.is_available = true;
+                
+                SendPacket(response);
+            }
+            catch (sql::SQLException& e)
+            {
+                std::cerr << "SQLException: " << e.what() << std::endl;
+                std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+            }
+            catch (std::exception& e)
+            {
+                std::cerr << "Exception: " << e.what() << std::endl;
+            }
+            catch (...)
+            {
+                std::cerr << "Unknown Exception" << std::endl;
+            }
+        }
+        break;
+
+    case CreateCharacterRequest::StaticPacketID:
+        {
+            CreateCharacterRequest* request = static_cast<CreateCharacterRequest*>(packet);
+
+            std::shared_ptr<PlayerCharacter> new_character = PlayerCharacter::CreateCharacter(shared_from_this());
+            new_character->SetName(request->name);
+            new_character->SetBodyColor(request->body_color);
+            new_character->SetMapID(1);
+            
+            sql::Connection* connection = MySQLManager::Get()->GetConnection();
+            if (!connection) break;
+            
+            try
+            {
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO character_info (account_id, name, body_color, lv, hp, max_hp, exp, map_id, last_position_x, last_position_y, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                statement->setUInt(1, account_id_);
+                statement->setString(2, StringHelper::UTF16ToUTF8(new_character->GetName()));
+                statement->setString(3, StringHelper::UTF16ToUTF8(new_character->GetBodyColor()));
+                statement->setInt(4, new_character->lv_);
+                statement->setInt(5, new_character->hp_);
+                statement->setInt(6, new_character->max_hp_);
+                statement->setInt(7, new_character->exp_);
+                statement->setInt(8, new_character->map_id_);
+                statement->setDouble(9, new_character->position_.x);
+                statement->setDouble(10, new_character->position_.y);
+                statement->setInt(11, new_character->color_);
+                statement->executeUpdate();
+            }
+            catch (sql::SQLException& e)
+            {
+                std::cerr << "SQLException: " << e.what() << std::endl;
+                std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+            }
+            catch (std::exception& e)
+            {
+                std::cerr << "Exception: " << e.what() << std::endl;
+            }
+            catch (...)
+            {
+                std::cerr << "Unknown Exception" << std::endl;
+            }
+        }
+        break;
+        
     case SelectCharacterRequest::StaticPacketID:
         {
             SelectCharacterRequest* request = static_cast<SelectCharacterRequest*>(packet);
@@ -40,7 +125,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             SelectCharacterResponse response;
             response.name = player_character_->name_;
-            response.character_color = player_character_->character_color_;
+            response.body_color = player_character_->body_color_;
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
             response.hp = player_character_->hp_;
