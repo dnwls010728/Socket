@@ -54,7 +54,7 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
 
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
-    has_initialized_(false),
+    is_initialized_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),
@@ -67,7 +67,7 @@ UIElement::UIElement(const std::wstring& name) :
 
 void UIElement::Init()
 {
-    has_initialized_ = true;
+    is_initialized_ = true;
 }
 
 UIElement* UIElement::RayCast(const Math::Vector2& position)

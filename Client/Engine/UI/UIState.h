@@ -45,16 +45,18 @@ protected:
 
 private:
     friend class UIElement;
-    
+
+    void ProcessPending();
     void UpdateFocus(UIElement* element);
     
     template <std::derived_from<UIElement> T>
     T* FindElement_Internal(UIElement* element, const std::wstring& name);
     
     std::vector<std::unique_ptr<UIElement>> elements_;
+    std::vector<UIElement*> pending_elements_;
     std::vector<UIElement*> focus_path_;
 
-    bool has_initialized_;
+    bool is_initialized_;
     bool is_dragging_;
     bool has_begun_drag_;
 
@@ -72,9 +74,8 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
-        if (has_initialized_) element->Init();
-        
         elements_.emplace_back(std::unique_ptr<UIElement>(element));
+        pending_elements_.push_back(element);
 
         return dynamic_cast<T*>(element);
     }

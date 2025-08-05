@@ -7,7 +7,7 @@
 UIState::UIState() :
     elements_(),
     focus_path_(),
-    has_initialized_(false),
+    is_initialized_(false),
     is_dragging_(false),
     has_begun_drag_(false),
     dragging_element_(nullptr)
@@ -20,7 +20,7 @@ void UIState::RemoveElement(UIElement* element)
     {
         if (it->get() == element)
         {
-            if (has_initialized_) element->Uninit();
+            if (is_initialized_) element->Uninit();
             if (element->IsFocused()) SetFocus(nullptr);
             if (dragging_element_ && dragging_element_->IsDescendantOf(element))
                 dragging_element_ = nullptr;
@@ -72,13 +72,8 @@ void UIState::PostTask(Function<void()> task)
 
 void UIState::Init()
 {
-    for ( uint32_t i = 0; i < elements_.size(); ++i )
-    {
-        UIElement* element = elements_[i].get();
-        if (element) element->Init();
-    }
-
-    has_initialized_ = true;
+    ProcessPending();
+    is_initialized_ = true;
 }
 
 void UIState::Uninit()
@@ -92,6 +87,8 @@ void UIState::Uninit()
 
 void UIState::Tick(float delta_time)
 {
+    ProcessPending();
+    
     while (!pending_tasks_.empty())
     {
         pending_tasks_.front()();
@@ -101,7 +98,7 @@ void UIState::Tick(float delta_time)
     for ( uint32_t i = 0; i < elements_.size(); ++i )
     {
         UIElement* element = elements_[i].get();
-        if (element && element->IsActive())
+        if (element && element->is_initialized_ && element->IsActive())
             element->Tick(delta_time);
     }
 }
@@ -243,6 +240,17 @@ bool UIState::OnChar(wchar_t character)
     }
 
     return false;
+}
+
+void UIState::ProcessPending()
+{
+    for (auto* element : pending_elements_)
+    {
+        if (!element || element->is_initialized_) continue;
+        element->Init();
+    }
+    
+    pending_elements_.clear();
 }
 
 void UIState::UpdateFocus(UIElement* element)

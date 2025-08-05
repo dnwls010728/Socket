@@ -177,6 +177,12 @@ void UICharacterCreate::OnClick() const
 
 void UICharacterCreate::OnConfirm() const
 {
+    CreateCharacterRequest request;
+    request.name = name_input_->GetText();
+    request.character_color = Math::Color::ColorToHex(color_picker_->GetColor());
+    SessionSubsystem::Get()->SendPacket(request);
+
+    confirm_button_->SetDisabled(true);
 }
 
 void UICharacterCreate::OnCancel()

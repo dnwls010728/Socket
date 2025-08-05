@@ -7,7 +7,7 @@ void UIContainer::RemoveChild(UIElement* child)
     {
         if (it->get() == child)
         {
-            if (has_initialized_) child->Uninit();
+            if (is_initialized_) child->Uninit();
             children_.erase(it);
             return;
         }
@@ -169,7 +169,7 @@ UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wst
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
-        if (has_initialized_) child->Init();
+        if (is_initialized_) child->Init();
         
         children_.push_back(std::unique_ptr<UIElement>(child));
         return child;

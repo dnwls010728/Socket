@@ -69,7 +69,7 @@ protected:
     std::wstring name_;
 
     bool is_dirty_;
-    bool has_initialized_;
+    bool is_initialized_;
     bool is_active_;
     bool is_focused_;
     bool is_ignore_raycast;
