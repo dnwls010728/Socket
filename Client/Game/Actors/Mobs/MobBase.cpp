@@ -46,7 +46,7 @@ void MobBase::OnDeath()
 
 void MobBase::Init(uint32_t mob_id) const
 {
-    const MobData* mob_data = DataSubsystem::Get()->GetMobData(mob_id);
+    const MobData* mob_data = DataSubsystem::Get()->GetMob(mob_id);
     if (!mob_data) return;
     
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(mob_data->animation_pack);

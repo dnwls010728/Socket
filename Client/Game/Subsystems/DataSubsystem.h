@@ -110,7 +110,8 @@ public:
 
     virtual void Init() override;
 
-    const MobData* GetMobData(uint32_t id) const;
+    const MobData* GetMob(uint32_t id) const;
+    const ItemData* GetItem(uint32_t id) const;
     
     int32_t GetExp(int32_t level) const;
 

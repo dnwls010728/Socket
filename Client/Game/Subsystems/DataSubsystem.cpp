@@ -46,10 +46,17 @@ void DataSubsystem::Init()
     
 }
 
-const MobData* DataSubsystem::GetMobData(uint32_t id) const
+const MobData* DataSubsystem::GetMob(uint32_t id) const
 {
     auto it = mob_map_.find(id);
     if (it == mob_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const ItemData* DataSubsystem::GetItem(uint32_t id) const
+{
+    auto it = item_map_.find(id);
+    if (it == item_map_.end()) return nullptr;
     return &it->second;
 }
 

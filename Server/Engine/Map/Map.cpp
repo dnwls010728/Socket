@@ -472,7 +472,7 @@ void Map::Respawn()
 
     for (const auto& spawn_point : spawn_points_)
     {
-        if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
+        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point.mob_id))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
             mob->SetPosition(spawn_point.position);

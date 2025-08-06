@@ -45,7 +45,7 @@ void DataManager::Init()
     }
 }
 
-const MobData* DataManager::GetMobData(uint32_t id) const
+const MobData* DataManager::GetMob(uint32_t id) const
 {
     auto it = mob_map_.find(id);
     if (it == mob_map_.end()) return nullptr;

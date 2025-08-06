@@ -2,6 +2,7 @@
 #include "UIItemTooltip.h"
 
 #include "Asset/AssetManager.h"
+#include "Subsystems/DataSubsystem.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
 
@@ -29,19 +30,29 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
     item_name_->SetSize({ 100.f, 30.f });
     item_name_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     item_name_->SetColor(Math::Color::White);
-    item_name_->SetText(L"아이템 이름");
     
     item_description_ = AddChild<UIText>(UIText::StaticClass(), L"ItemDescription");
     item_description_->SetRelativePosition({ 102.f, 30.f });
     item_description_->SetSize({ 210.f, 92.f });
     item_description_->SetColor(Math::Color::White);
-    item_description_->SetText(L"아이템 설명");
 }
 
 void UIItemTooltip::Set(uint32_t item_id)
 {
     UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
     if (ui_sprite) item_icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
+
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (item_data)
+    {
+        item_name_->SetText(item_data->name);
+        item_description_->SetText(item_data->desc);
+    }
+    else
+    {
+        item_name_->SetText(L"아이템 없음");
+        item_description_->SetText(L"아이템 정보를 불러올 수 없습니다.");
+    }
 }
 
 void UIItemTooltip::Init()
