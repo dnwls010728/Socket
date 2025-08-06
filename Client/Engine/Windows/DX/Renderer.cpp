@@ -5,7 +5,6 @@
 #include "UISprite.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
-#include "Math/Rect.h"
 #include "Math/Vector2.h"
 #include "Windows/WindowsWindow.h"
 
