@@ -35,7 +35,7 @@ public:
 private:
     struct Slot
     {
-        uint32_t unique_id;
+        uint32_t id;
         uint32_t item_id;
         
         int32_t count;

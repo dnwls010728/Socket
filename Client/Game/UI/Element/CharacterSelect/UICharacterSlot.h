@@ -15,6 +15,7 @@ public:
     virtual ~UICharacterSlot() override = default;
 
     void InitSlot(UICharacterSelect* character_select, uint32_t slot_id, const CharacterProfile& profile);
+    void ClearSlot();
 
     FORCEINLINE uint32_t GetSlotID() const { return slot_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }

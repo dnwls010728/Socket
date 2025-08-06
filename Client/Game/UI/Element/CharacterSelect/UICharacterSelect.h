@@ -15,6 +15,7 @@ public:
     virtual ~UICharacterSelect() override = default;
 
     void InitSlots(const std::vector<CharacterProfile>& profile);
+    void RefreshSlots(const std::vector<CharacterProfile>& profile);
 
 protected:
     virtual void Init() override;

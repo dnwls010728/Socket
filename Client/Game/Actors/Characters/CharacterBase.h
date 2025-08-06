@@ -5,12 +5,6 @@ class UIChatBalloon;
 class UINameTag;
 class AnimatorComponent;
 
-namespace UI_OLD
-{
-    class NameTag_OLD;
-    class ChatBalloon;
-}
-
 class Controller2DComponent;
 class StateMachineComponent;
 

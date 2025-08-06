@@ -85,6 +85,17 @@ void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profile)
     }
 }
 
+void UICharacterSelect::RefreshSlots(const std::vector<CharacterProfile>& profile)
+{
+    for (int32_t i = 0; i < slots_.size(); ++i)
+    {
+        if (i < profile.size()) slots_[i]->InitSlot(this, i + 1, profile[i]);
+        else slots_[i]->ClearSlot();
+    }
+
+    selected_slot_id_ = 0;
+}
+
 void UICharacterSelect::Init()
 {
     background_->SetSize(GetSize());
@@ -122,6 +133,7 @@ void UICharacterSelect::OnDeleteCharacter() const
     SessionSubsystem::Get()->SendPacket(request);
 
     delete_button_->SetDisabled(true);
+    select_button_->SetDisabled(true);
 }
 
 void UICharacterSelect::OnSlotSelected(uint32_t slot_id)

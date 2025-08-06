@@ -370,7 +370,7 @@ void PlayerCharacter::ExitMap()
     }
 }
 
-void PlayerCharacter::UpdateCharacter()
+void PlayerCharacter::UpdateDatabase()
 {
     if (inventory_) inventory_->UpdateDatabase();
     

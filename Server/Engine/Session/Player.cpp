@@ -87,8 +87,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             sql::Connection* connection = MySQLManager::Get()->GetConnection();
             if (!connection) break;
-
-            uint32_t character_id = 0;
             
             try
             {
@@ -110,7 +108,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
                 if (result->next())
                 {
-                    character_id = result->getUInt(1);
+                    uint32_t character_id = result->getUInt(1);
                     new_character->SetObjectID(character_id);
                 }
             }
@@ -211,7 +209,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
 
 void Player::Update()
 {
-    if (player_character_) player_character_->UpdateCharacter();
+    if (player_character_) player_character_->UpdateDatabase();
 }
 
 void Player::ExitMap()

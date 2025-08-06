@@ -87,6 +87,22 @@ void UICharacterSlot::InitSlot(UICharacterSelect* character_select, uint32_t slo
     color_code_text_->SetText(L"색상코드 #" + profile.body_color);
 }
 
+void UICharacterSlot::ClearSlot()
+{
+    character_->SetSprite(nullptr, L"");
+    lv_text_->SetText(L"");
+    name_text_->SetText(L"");
+    color_code_text_->SetText(L"");
+
+    character_->SetActive(false);
+    empty_text_->SetActive(true);
+    lv_text_->SetActive(false);
+    name_text_->SetActive(false);
+    color_code_text_->SetActive(false);
+
+    character_id_ = 0;
+}
+
 void UICharacterSlot::Init()
 {
     background_->SetSize(GetSize());
