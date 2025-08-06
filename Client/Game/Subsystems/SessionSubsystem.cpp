@@ -37,8 +37,8 @@ void SessionSubsystem::Init()
 {
     GameInstanceSubsystem::Init();
 
-    bool result = Connect({"127.0.0.1", 9000});
-    // bool result = Connect({"58.79.118.105", 9100});
+    bool result = Connect({"127.0.0.1", 9101});
+    // bool result = Connect({"58.79.118.105", 9101});
     // bool result = Connect({"175.198.74.36", 9000});
     // bool result = Connect({"222.108.73.155", 9000});
     if (!result)

@@ -56,6 +56,7 @@ bool ServerManager::Execute()
     DataManager::Get()->Init();
     
     MySQLManager* mysql_manager = MySQLManager::Get();
+    // if (!mysql_manager->Connect("localhost", "y_eternal", "@eternal12345"))
     if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
     // if (!mysql_manager->Connect("localhost", "root", "12345"))
     {
@@ -64,7 +65,7 @@ bool ServerManager::Execute()
 
     Net::WSAInit();
 
-    Net::NetAddress server_address("0.0.0.0", 9000);
+    Net::NetAddress server_address("0.0.0.0", 9101);
     if (server_socket_.Start(server_address, 0) == false)
     {
         return false;
