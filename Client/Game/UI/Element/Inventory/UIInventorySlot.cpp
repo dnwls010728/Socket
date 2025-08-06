@@ -176,7 +176,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     if (!element)
     {
         uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
-        
+                    
         DropItemRequest request;
         request.inventory_type = inventory_type;
         request.slot_id = slot_id_;

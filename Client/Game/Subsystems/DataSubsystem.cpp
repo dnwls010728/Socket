@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 
 DataSubsystem::DataSubsystem() :
-    mob_data_map_(),
+    mob_map_(),
     exp_table_()
 {
 }
@@ -20,7 +20,7 @@ void DataSubsystem::Init()
         {
             MobData data = mob.second.as<MobData>();
             data.mob_id = mob.first.as<uint32_t>();
-            mob_data_map_[data.mob_id] = data;
+            mob_map_[data.mob_id] = data;
         }
         
         YAML::Node exp_data = YAML::LoadFile("Content\\Data\\ExpData.data");
@@ -29,6 +29,14 @@ void DataSubsystem::Init()
             int32_t level = exp.first.as<int32_t>();
             int32_t exp_value = exp.second.as<int32_t>();
             exp_table_[level] = exp_value;
+        }
+
+        YAML::Node item_data = YAML::LoadFile("Content\\Data\\ItemData.data");
+        for (const auto& item : item_data["items"])
+        {
+            ItemData data = item.second.as<ItemData>();
+            data.item_id = item.first.as<uint32_t>();
+            item_map_[data.item_id] = data;
         }
     }
     catch (const YAML::BadFile& e)
@@ -40,8 +48,8 @@ void DataSubsystem::Init()
 
 const MobData* DataSubsystem::GetMobData(uint32_t id) const
 {
-    auto it = mob_data_map_.find(id);
-    if (it == mob_data_map_.end()) return nullptr;
+    auto it = mob_map_.find(id);
+    if (it == mob_map_.end()) return nullptr;
     return &it->second;
 }
 

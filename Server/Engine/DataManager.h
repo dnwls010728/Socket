@@ -26,6 +26,21 @@ struct MobData
     std::wstring animation_pack;
 };
 
+struct ItemData
+{
+    uint32_t item_id;
+
+    std::wstring name;
+    std::wstring desc;
+
+    int32_t price;
+    int32_t max_count;
+
+    union
+    {
+    } temp;
+};
+
 namespace YAML
 {
     template<>
@@ -67,6 +82,21 @@ namespace YAML
             return true;
         }
     };
+    
+    template<>
+    struct convert<ItemData>
+    {
+        static bool decode(const Node& node, ItemData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.item_id = node["id"].as<uint32_t>(0);
+            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
+            data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.price = node["price"].as<int32_t>(0);
+            data.max_count = node["max_count"].as<int32_t>(0);
+            return true;
+        }
+    };
 }
 
 class DataManager : public Singleton<DataManager>
@@ -82,7 +112,8 @@ public:
     int32_t GetExp(uint32_t level) const;
 
 private:
-    std::unordered_map<uint32_t, MobData> mob_data_map_;
+    std::unordered_map<uint32_t, MobData> mob_map_;
+    std::unordered_map<uint32_t, ItemData> item_map_;
 
     std::array<uint32_t, 51> exp_table_;
     
