@@ -83,6 +83,9 @@ void UICharacterSelect::InitSlots(const std::vector<CharacterProfile>& profile)
     {
         slots_[i]->InitSlot(this, i + 1, profile[i]);
     }
+
+    if (profile.size() >= slots_.size()) new_button_->SetDisabled(true);
+    else new_button_->SetDisabled(false);
 }
 
 void UICharacterSelect::RefreshSlots(const std::vector<CharacterProfile>& profile)
@@ -92,6 +95,9 @@ void UICharacterSelect::RefreshSlots(const std::vector<CharacterProfile>& profil
         if (i < profile.size()) slots_[i]->InitSlot(this, i + 1, profile[i]);
         else slots_[i]->ClearSlot();
     }
+    
+    if (profile.size() >= slots_.size()) new_button_->SetDisabled(true);
+    else new_button_->SetDisabled(false);
 
     selected_slot_id_ = 0;
 }
