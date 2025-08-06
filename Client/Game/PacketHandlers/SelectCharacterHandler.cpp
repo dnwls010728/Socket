@@ -30,13 +30,17 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->inventory_ = std::make_unique<Inventory>();
     Inventory* inventory = player_subsystem->inventory_.get();
 
+    inventory->SetSlotCapacity(Inventory::Type::kEquip, response->equip_slot_capacity);
+    inventory->SetSlotCapacity(Inventory::Type::kUse, response->use_slot_capacity);
+    inventory->SetSlotCapacity(Inventory::Type::kEtc, response->etc_slot_capacity);
+
     for (const auto& item : response->inventory)
     {
         Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
         inventory->AddSlot(type, item.slot_index, item.item_id, item.count);
     }
     
-    player_subsystem->inventory_->SetColor(response->color);
+    inventory->SetColor(response->color);
     
     SessionSubsystem::Get()->SetState(SessionState::kInGame);
     World::Get()->OpenLevel(L"Game");

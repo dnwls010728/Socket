@@ -68,23 +68,27 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         }
 
         character->inventory_ = std::make_unique<Inventory>(character);
+        Inventory* inventory = character->inventory_.get();
+
+        inventory->SetSlotCapacity(Inventory::Type::kEquip, 128);
+        inventory->SetSlotCapacity(Inventory::Type::kUse, 128);
+        inventory->SetSlotCapacity(Inventory::Type::kEtc, 128);
 
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
-            statement->setInt(1, character->object_id_);
+            statement->setUInt(1, character->object_id_);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
-                uint8_t inventory_type = result->getInt("inventory_type");
-                
+                uint32_t inventory_type = result->getUInt("inventory_type");
                 uint32_t item_id = result->getInt("item_id");
                 uint32_t slot_index = result->getInt("slot_index");
                 
                 int32_t count = result->getInt("count");
 
                 Inventory::Type type = static_cast<Inventory::Type>(inventory_type);
-                character->inventory_->AddSlot(type, slot_index, item_id, count);
+                inventory->AddSlot(type, slot_index, item_id, count);
             }
         }
 

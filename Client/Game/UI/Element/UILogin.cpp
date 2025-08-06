@@ -127,10 +127,10 @@ void UILogin::OnLogin()
     }
 
     LoginRequest request;
-    // request.id = input_id_->GetText();
-    // request.password = input_password_->GetText();
-    request.id = L"master001";
-    request.password = L"12345";
+    request.id = input_id_->GetText();
+    request.password = input_password_->GetText();
+    // request.id = L"master001";
+    // request.password = L"12345";
     SessionSubsystem::Get()->SendPacket(request);
     
     login_button_->SetDisabled(true);

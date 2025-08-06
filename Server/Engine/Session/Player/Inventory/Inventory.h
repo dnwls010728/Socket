@@ -2,7 +2,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
-#include <unordered_map>
+#include <array>
 
 class PlayerCharacter;
 
@@ -14,7 +14,8 @@ public:
         kNone = 0,
         kEquip,
         kUse,
-        kEtc
+        kEtc,
+        kCount
     };
     
     struct Slot
@@ -41,14 +42,18 @@ public:
     
     bool UpdateDatabase() const;
 
-    inline const std::unordered_map<Type, std::map<uint32_t, Slot>>& GetInventories() const { return inventories_; }
+    inline void SetSlotCapacity(Type type, uint32_t capacity) { slot_capacity_[static_cast<uint8_t>(type)] = capacity; }
+    inline uint32_t GetSlotCapacity(Type type) const { return slot_capacity_[static_cast<uint8_t>(type)]; }
+
+    inline const std::array<std::map<uint32_t, Slot>, static_cast<uint8_t>(Type::kCount)>& GetInventories() const { return inventories_; }
 
 private:
     void Remove_Internal(Type type, uint32_t slot_index);
     
     std::weak_ptr<PlayerCharacter> player_character_;
     
-    std::unordered_map<Type, std::map<uint32_t, Slot>> inventories_;
+    std::array<std::map<uint32_t, Slot>, static_cast<uint8_t>(Type::kCount)> inventories_;
+    std::array<uint32_t, static_cast<uint8_t>(Type::kCount)> slot_capacity_;
 
     std::mutex mutex_;
     

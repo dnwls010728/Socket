@@ -26,7 +26,8 @@ struct ItemInfo
     
     uint32_t item_id;
     uint32_t slot_index;
-    uint32_t count;
+    
+    int32_t count;
 };
 
 enum class ItemMoveType : uint8_t
