@@ -272,7 +272,7 @@ void PlayerCharacter::Tick(float delta_time)
             move_axis_ = Math::Vector2::Zero();
         }
 
-        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        if (mouse->GetMouseButtonDown(MouseButton::kRight))
         {
             Math::Vector2 position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
             

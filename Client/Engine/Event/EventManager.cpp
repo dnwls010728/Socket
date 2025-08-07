@@ -90,21 +90,50 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         bool is_pressed = false;
         MouseButton mouse_button = MouseButton::kLeft;
         uint32_t type = 0;
-        
-        if ((wParam & MK_LBUTTON))
+
+        switch (message)
         {
-            is_pressed = true;
-            mouse_button = MouseButton::kLeft;
-        }
-        else if ((wParam & MK_RBUTTON))
-        {
-            is_pressed = true;
-            mouse_button = MouseButton::kRight;
-        }
-        else if ((wParam & MK_MBUTTON))
-        {
-            is_pressed = true;
-            mouse_button = MouseButton::kMiddle;
+        case WM_LBUTTONDOWN:
+            {
+                is_pressed = true;
+                mouse_button = MouseButton::kLeft;
+            }
+            break;
+
+        case WM_LBUTTONUP:
+            {
+                is_pressed = false;
+                mouse_button = MouseButton::kLeft;
+            }
+            break;
+
+        case WM_RBUTTONDOWN:
+            {
+                is_pressed = true;
+                mouse_button = MouseButton::kRight;
+            }
+            break;
+
+        case WM_RBUTTONUP:
+            {
+                is_pressed = false;
+                mouse_button = MouseButton::kRight;
+            }
+            break;
+
+        case WM_MBUTTONDOWN:
+            {
+                is_pressed = true;
+                mouse_button = MouseButton::kMiddle;
+            }
+            break;
+
+        case WM_MBUTTONUP:
+            {
+                is_pressed = false;
+                mouse_button = MouseButton::kMiddle;
+            }
+            break;
         }
 
         if (is_pressed) type = static_cast<uint32_t>(EventType::kMousePressed);
