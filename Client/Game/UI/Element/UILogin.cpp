@@ -43,12 +43,14 @@ UILogin::UILogin(const std::wstring& name) :
     input_id_->SetRelativePosition({40.f, 42.f});
     input_id_->SetSize({258.f, 24.f});
     input_id_->SetPlaceholderText(L"아이디");
+    input_id_->OnReturn(this, &UILogin::OnLogin);
 
     input_password_ = AddChild<UIEditableText>(UIEditableText::StaticClass(), L"InputPassword");
     input_password_->SetRelativePosition({40.f, 88.f});
     input_password_->SetSize({258.f, 24.f});
     input_password_->SetPlaceholderText(L"비밀번호");
     input_password_->SetContentType(UIEditableText::ContentType::kPassword);
+    input_password_->OnReturn(this, &UILogin::OnLogin);
 
     login_button_ = AddChild<UIButton>(UIButton::StaticClass(), L"LoginButton");
     login_button_->SetRelativePosition({30.f, 134.f});
@@ -112,6 +114,7 @@ void UILogin::OnLogin()
     {
         UIPopup::ShowPopup(L"아이디를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
         {
+            UI::Get()->SetFocus(input_id_);
             return true;
         });
         return;
@@ -121,6 +124,7 @@ void UILogin::OnLogin()
     {
         UIPopup::ShowPopup(L"비밀번호를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
         {
+            UI::Get()->SetFocus(input_password_);
             return true;
         });
         return;
