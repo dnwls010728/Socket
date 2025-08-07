@@ -21,6 +21,10 @@ public:
 
     void SetSprite(UISprite* ui_sprite, const std::wstring& frame_name);
 
+    FORCEINLINE UISprite* GetSprite() const { return ui_sprite_; }
+
+    FORCEINLINE const std::wstring& GetCurrentFrame() const { return current_frame_; }
+
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
     FORCEINLINE DrawMode GetDrawMode() const { return draw_mode_; }
 

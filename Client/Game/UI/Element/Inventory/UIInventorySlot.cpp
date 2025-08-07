@@ -65,8 +65,8 @@ void UIInventorySlot::ResetSlot()
 {
     item_id_ = 0;
     
-    icon_->SetRelativePosition(Math::Vector2::Zero());
-    count_text_->SetRelativePosition(Math::Vector2::Zero());
+    // icon_->SetRelativePosition(Math::Vector2::Zero());
+    // count_text_->SetRelativePosition(Math::Vector2::Zero());
     
     icon_->SetSprite(nullptr, L"");
     count_text_->SetText(L"");
@@ -152,6 +152,10 @@ bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
         tooltip_->SetActive(false);
         tooltip_ = nullptr;
     }
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetActive(true);
+    dragging_item->SetSprite(icon_->GetSprite(), icon_->GetCurrentFrame());
     
     return true;
 }
@@ -159,9 +163,16 @@ bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
     if (item_id_ == 0) return false;
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetAbsolutePosition(position - (dragging_item->GetSize() * .5f));
+
+    Math::Color color = icon_->GetColor();
+    color.a = 128;
+    icon_->SetColor(color);
     
-    icon_->SetAbsolutePosition(position - (icon_->GetSize() * .5f));
-    count_text_->SetAbsolutePosition(position - (count_text_->GetSize() * .5f));
+    // icon_->SetAbsolutePosition(position - (icon_->GetSize() * .5f));
+    // count_text_->SetAbsolutePosition(position - (count_text_->GetSize() * .5f));
     return true;
 }
 
@@ -169,8 +180,16 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
     
-    icon_->SetRelativePosition(Math::Vector2::Zero());
-    count_text_->SetRelativePosition(Math::Vector2::Zero());
+    Math::Color color = icon_->GetColor();
+    color.a = 255;
+    icon_->SetColor(color);
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetSprite(nullptr, L"");
+    dragging_item->SetActive(false);
+    
+    // icon_->SetRelativePosition(Math::Vector2::Zero());
+    // count_text_->SetRelativePosition(Math::Vector2::Zero());
 
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)

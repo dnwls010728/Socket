@@ -39,6 +39,7 @@ private:
     std::vector<UIInventorySlot*> slots_;
 
     UIImage* background_;
+    UIImage* dragging_item_;
 
     UIScrollBox* scroll_box_;
 
