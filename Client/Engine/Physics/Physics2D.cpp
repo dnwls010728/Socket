@@ -18,6 +18,18 @@ struct MultiOverlapContext
     std::vector<Actor*>& actors;
 };
 
+struct SinglePointOverlapContext
+{
+    Math::Vector2 point;
+    Actor** actor;
+};
+
+struct MultiPointOverlapContext
+{
+    Math::Vector2 point;
+    std::vector<Actor*>& actors;
+};
+
 struct SingleRayCastContext
 {
     Math::Vector2 start;
@@ -55,6 +67,38 @@ bool MultiOverlapCallback(b2ShapeId shapeId, void* context)
     if (!actor) return true;
 
     overlap_context->actors.push_back(actor);
+    return true;
+}
+
+bool SinglePointOverlapCallback(b2ShapeId shapeId, void* context)
+{
+    SinglePointOverlapContext* overlap_context = static_cast<SinglePointOverlapContext*>(context);
+    
+    b2BodyId body_id = b2Shape_GetBody(shapeId);
+    Actor* actor = static_cast<Actor*>(b2Body_GetUserData(body_id));
+    if (!actor) return true;
+
+    bool overlap = b2Shape_TestPoint(shapeId, {overlap_context->point.x, overlap_context->point.y});
+    if (overlap)
+    {
+        *overlap_context->actor = actor;
+        return false;
+    }
+
+    return true;
+}
+
+bool MultiPointOverlapCallback(b2ShapeId shapeId, void* context)
+{
+    MultiPointOverlapContext* overlap_context = static_cast<MultiPointOverlapContext*>(context);
+    
+    b2BodyId body_id = b2Shape_GetBody(shapeId);
+    Actor* actor = static_cast<Actor*>(b2Body_GetUserData(body_id));
+    if (!actor) return true;
+
+    bool overlap = b2Shape_TestPoint(shapeId, {overlap_context->point.x, overlap_context->point.y});
+    if (overlap) overlap_context->actors.push_back(actor);
+
     return true;
 }
 
@@ -176,6 +220,40 @@ bool Physics2D::OverlapCircleAll(const Math::Vector2& kCenter, float radius, std
     
     MultiOverlapContext context = {out_actors};
     b2World_OverlapShape(World::Get()->world_id_, &proxy, filter, MultiOverlapCallback, &context);
+    if (!out_actors.empty()) return true;
+
+    return false;
+}
+
+bool Physics2D::OverlapPoint(const Math::Vector2& kPoint, Actor** out_actor, uint16_t layer)
+{
+    b2AABB box;
+    box.lowerBound = {kPoint.x - .001f, kPoint.y - .001f};
+    box.upperBound = {kPoint.x + .001f, kPoint.y + .001f};
+    
+    b2QueryFilter filter = b2DefaultQueryFilter();
+    filter.categoryBits = 65535;
+    filter.maskBits = layer;
+
+    SinglePointOverlapContext context = {kPoint, out_actor};
+    b2World_OverlapAABB(World::Get()->world_id_, box, filter, SinglePointOverlapCallback, &context);
+    if (*out_actor) return true;
+
+    return false;
+}
+
+bool Physics2D::OverlapPointAll(const Math::Vector2& kPoint, std::vector<Actor*>& out_actors, uint16_t layer)
+{
+    b2AABB box;
+    box.lowerBound = {kPoint.x - .001f, kPoint.y - .001f};
+    box.upperBound = {kPoint.x + .001f, kPoint.y + .001f};
+    
+    b2QueryFilter filter = b2DefaultQueryFilter();
+    filter.categoryBits = 65535;
+    filter.maskBits = layer;
+
+    MultiPointOverlapContext context = {kPoint, out_actors};
+    b2World_OverlapAABB(World::Get()->world_id_, box, filter, MultiPointOverlapCallback, &context);
     if (!out_actors.empty()) return true;
 
     return false;

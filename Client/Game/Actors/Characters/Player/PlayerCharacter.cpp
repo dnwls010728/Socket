@@ -17,9 +17,11 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
+#include "DirectXTK/Mouse.h"
 #include "FSM/Condition.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
 #include "State/PlayerFallState.h"
@@ -185,6 +187,7 @@ void PlayerCharacter::Tick(float delta_time)
     if (IsMine())
     {
         Keyboard* keyboard = Keyboard::Get();
+        Mouse* mouse = Mouse::Get();
 
         if (!UI::Get()->IsEditingText())
         {
@@ -267,6 +270,18 @@ void PlayerCharacter::Tick(float delta_time)
         else
         {
             move_axis_ = Math::Vector2::Zero();
+        }
+
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            Math::Vector2 position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+            
+            Actor* out_actor = nullptr;
+            bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
+            if (is_hit)
+            {
+                Logger::Print(L"PlayerCharacter::Tick - Hit Player: %s", out_actor->GetName().c_str());
+            }
         }
 
         // 공격 범위 확인용
