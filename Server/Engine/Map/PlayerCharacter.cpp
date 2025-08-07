@@ -275,8 +275,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
             uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
-            uint32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
-            uint32_t remaining_count = 0;
+            
+            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
+            int32_t remaining_count = 0;
             
             if (request->count >= count) inventory_->Remove(inventory_type, request->slot_id);
             else

@@ -15,6 +15,7 @@ public:
         kEquip,
         kUse,
         kEtc,
+        kEquipped,
         kCount
     };
     

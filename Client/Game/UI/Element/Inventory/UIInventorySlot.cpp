@@ -194,13 +194,34 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+        Inventory::Type type = ui_inventory_->tab_;
+        int32_t count = ui_inventory_->inventory_->GetItemCount(type, slot_id_);
+
+        if (count == 1)
+        {
+            DropItemRequest request;
+            request.inventory_type = static_cast<uint8_t>(type);
+            request.slot_id = slot_id_;
+            request.count = 1;
+            SessionSubsystem::Get()->SendPacket(request);
+        }
+        else
+        {
+            UIPopup::ShowPopup(L"몇 개나 버리시겠습니까?", PopupOption::OK | PopupOption::Cancel | PopupOption::Edit, [&](std::wstring input_text, PopupOption option)->bool
+            {
+                if (option == PopupOption::OK)
+                {
+                    DropItemRequest request;
+                    request.inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+                    request.slot_id = slot_id_;
+                    request.count = std::stoi(input_text);
+                    SessionSubsystem::Get()->SendPacket(request);
                     
-        DropItemRequest request;
-        request.inventory_type = inventory_type;
-        request.slot_id = slot_id_;
-        request.count = ui_inventory_->inventory_->GetItemCount(ui_inventory_->tab_, slot_id_);
-        SessionSubsystem::Get()->SendPacket(request);
+                    return true;
+                }
+                return true;
+            });
+        }
     }
     
     return true;
