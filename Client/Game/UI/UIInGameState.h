@@ -1,6 +1,8 @@
 ﻿#pragma once
+#include "UI/UIPopup.h"
 #include "UI/UIState.h"
 
+class UIChatBar;
 class UIItemTooltip;
 class UIInventory;
 
@@ -16,12 +18,10 @@ public:
 
 protected:
     virtual void Init() override;
-
     virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
 
 private:
+    UIChatBar* char_bar_;
     UIInventory* inventory_;
-
     UIItemTooltip* item_tooltip_;
-    
 };

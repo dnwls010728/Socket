@@ -12,13 +12,18 @@ public:
     UIText(const std::wstring& name);
     virtual ~UIText() override = default;
 
-    FORCEINLINE void SetText(const std::wstring& text) { text_ = text; }
+    virtual void SetSize(const Math::Vector2& size) override;
+
+    void SetText(const std::wstring& text);
+    void SetFontName(const std::wstring& font_name);
+    void SetFontSize(float font_size);
+
+    float GetFontHeight() const;
+    
     FORCEINLINE const std::wstring& GetText() const { return text_; }
     
-    FORCEINLINE void SetFontName(const std::wstring& font_name) { font_name_ = font_name; }
     FORCEINLINE const std::wstring& GetFontName() const { return font_name_; }
     
-    FORCEINLINE void SetFontSize(float font_size) { font_size_ = font_size; }
     FORCEINLINE float GetFontSize() const { return font_size_; }
     
     FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
@@ -30,10 +35,18 @@ public:
     FORCEINLINE void SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT alignment) { paragraph_alignment_ = alignment; }
     FORCEINLINE DWRITE_PARAGRAPH_ALIGNMENT GetParagraphAlignment() const { return paragraph_alignment_; }
 
+    FORCEINLINE const std::vector<float>& GetAdvances() const { return advances_; }
+    FORCEINLINE const std::vector<float>& GetLineHeights() const { return line_heights_; }
+    
+    FORCEINLINE float GetTotalAdvance() const { return total_advance_; }
+    FORCEINLINE float GetTotalLineHeight() const { return total_line_height_; }
+
 protected:
     virtual void Render() override;
 
 private:
+    void UpdateAdvances();
+    
     std::wstring text_;
     std::wstring font_name_;
     
@@ -43,5 +56,11 @@ private:
     
     DWRITE_TEXT_ALIGNMENT text_alignment_;
     DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment_;
+
+    std::vector<float> advances_;
+    std::vector<float> line_heights_;
+    
+    float total_advance_;
+    float total_line_height_;
     
 };

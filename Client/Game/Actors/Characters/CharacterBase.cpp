@@ -9,9 +9,9 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Components/Controller2DComponent.h"
-#include "UI/ChatBalloon.h"
-#include "UI/NameTag.h"
-#include "UI/UIManager.h"
+#include "UI/UIInGameState.h"
+#include "UI/Element/UIChatBalloon.h"
+#include "UI/Element/UINameTag.h"
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
@@ -51,18 +51,12 @@ void CharacterBase::Speak(const std::wstring& message, float duration)
 
     chat_balloon_->SetText(message);
     
-    if (chat_balloon_->IsInViewport())
+    if (chat_balloon_->IsActive())
     {
         if (chat_balloon_timer_handle_.IsValid())
             timer_manager->ClearTimer(chat_balloon_timer_handle_);
     }
-    else
-    {
-        Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
-        chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
-        
-        chat_balloon_->AddToViewport();
-    }
+    else chat_balloon_->SetActive(true);
 
     timer_manager->SetTimer(chat_balloon_timer_handle_, this, &CharacterBase::OnSpeakEnd, duration, false);
 }
@@ -71,13 +65,14 @@ void CharacterBase::BeginPlay()
 {
     NetworkActor::BeginPlay();
 
-    name_tag_ = UI_OLD::NameTag::Create(L"NameTag");
-    name_tag_->SetText(character_name_);
-    
-    chat_balloon_ = UI_OLD::ChatBalloon::Create(L"ChatBalloon");
-    chat_balloon_->SetSize({8.f, 8.f});
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    {
+        name_tag_ = state->AddElement<UINameTag>(UINameTag::StaticClass(), L"NameTag");
+        name_tag_->SetText(character_name_);
 
-    name_tag_->AddToViewport();
+        chat_balloon_ = state->AddElement<UIChatBalloon>(UIChatBalloon::StaticClass(), L"ChatBalloon");
+        chat_balloon_->SetActive(false);
+    }
 }
 
 void CharacterBase::PhysicsTick(float delta_time)
@@ -86,26 +81,29 @@ void CharacterBase::PhysicsTick(float delta_time)
     
     Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
 
-    if (name_tag_->IsInViewport())
-        name_tag_->SetPosition(screen_position + Math::Vector2::Up() * 50.f);
-    
-    if (chat_balloon_->IsInViewport())
-        chat_balloon_->SetPosition(screen_position + Math::Vector2::Down() * 40.f);
+    Math::Vector2 name_tag_offset = { -name_tag_->GetSize().x * .5f, 4.f };
+    name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);
+
+    Math::Vector2 chat_balloon_offset = { -chat_balloon_->GetSize().x * .5f, -chat_balloon_->GetSize().y - 64.f };
+    chat_balloon_->SetAbsolutePosition(screen_position + chat_balloon_offset);
 }
 
 void CharacterBase::EndPlay(EndPlayReason type)
 {
     NetworkActor::EndPlay(type);
+
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    {
+        state->RemoveElement(name_tag_);
+        state->RemoveElement(chat_balloon_);
+    }
     
     TimerManager::Get()->ClearTimer(chat_balloon_timer_handle_);
-    
-    chat_balloon_->RemoveFromViewport();
-    name_tag_->RemoveFromViewport();
 }
 
 void CharacterBase::OnSpeakEnd()
 {
-    chat_balloon_->RemoveFromViewport();
+    chat_balloon_->SetActive(false);
 }
 
 RTTR_REGISTRATION

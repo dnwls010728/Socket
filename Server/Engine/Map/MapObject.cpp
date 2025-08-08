@@ -2,6 +2,7 @@
 #include "MapObject.h"
 
 #include "Map.h"
+#include "World.h"
 
 MapObject::MapObject() :
     object_id_(0),

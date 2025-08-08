@@ -29,9 +29,9 @@ void Session::ReceivePacket(Net::IPacket* packet) const
     if (player_) player_->ReceivePacket(packet);
 }
 
-void Session::Update()
+void Session::UpdateDatabase()
 {
-    if (player_) player_->Update();
+    if (player_) player_->UpdateDatabase();
 }
 
 bool Session::Disconnect()
@@ -47,7 +47,7 @@ std::shared_ptr<Player> Session::CreatePlayer(uint32_t account_id)
     return player_;
 }
 
-uint32_t Session::GetAccountUniqueID() const
+uint32_t Session::GetAccountID() const
 {
     if (player_) return player_->GetAccountID();
     return 0;

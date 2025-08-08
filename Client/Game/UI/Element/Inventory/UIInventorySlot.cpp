@@ -17,25 +17,32 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
     ui_inventory_(nullptr),
     tooltip_(nullptr),
-    i_icon_(nullptr),
-    t_count_(nullptr),
+    icon_(nullptr),
+    count_text_(nullptr),
     slot_id_(0),
     item_id_(0),
     last_time_(0.f)
 {
-    size_ = { 32.f, 32.f };
+    SetSize({ 32.f, 32.f });
+
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     
-    i_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    i_icon_->SetSize(size_);
-    i_icon_->SetIgnoreRayCast(true);
+    background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetSprite(panel_sprite, L"Panel_0");
+    background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    background_->SetIgnoreRayCast(true);
     
-    t_count_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
-    t_count_->SetSize(size_);
-    t_count_->SetColor(Math::Color::White);
-    t_count_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
-    t_count_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
-    t_count_->SetIgnoreRayCast(true);
-    t_count_->SetActive(false);
+    icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
+    icon_->SetSize(GetSize());
+    icon_->SetIgnoreRayCast(true);
+    
+    count_text_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
+    count_text_->SetSize(GetSize());
+    count_text_->SetColor(Math::Color::White);
+    count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+    count_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+    count_text_->SetIgnoreRayCast(true);
+    count_text_->SetActive(false);
 }
 
 void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
@@ -44,31 +51,32 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     if (item_id > 0)
     {
         UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (ui_sprite) i_icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
+        if (ui_sprite) icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
 
-        t_count_->SetText(std::to_wstring(count));
+        count_text_->SetText(std::to_wstring(count));
+        count_text_->SetActive(true);
+        return;
     }
+
+    count_text_->SetActive(false);
 }
 
 void UIInventorySlot::ResetSlot()
 {
     item_id_ = 0;
     
-    i_icon_->SetRelativePosition(Math::Vector2::Zero());
-    t_count_->SetRelativePosition(Math::Vector2::Zero());
+    // icon_->SetRelativePosition(Math::Vector2::Zero());
+    // count_text_->SetRelativePosition(Math::Vector2::Zero());
     
-    i_icon_->SetSprite(nullptr, L"");
-    t_count_->SetText(L"");
+    icon_->SetSprite(nullptr, L"");
+    count_text_->SetText(L"");
 }
 
-void UIInventorySlot::Render()
+void UIInventorySlot::Init()
 {
-    Renderer* renderer = Renderer::Get();
+    background_->SetSize(GetSize());
     
-    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, {0, 0, 0, 128});
-    renderer->DrawRoundBox(GetAbsolutePosition(), size_, {255, 255, 255, 255});
-    
-    UIContainer::Render();
+    UIContainer::Init();
 }
 
 UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
@@ -91,14 +99,12 @@ UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& positio
 
 UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    UI::MouseEventResult result = { false, UI::CursorState::kIdle };
-    
     if (!tooltip_) return { false, UI::CursorState::kIdle };
 
     EngineSettings* settings = EngineSettings::Get();
     
     Math::Vector2 tooltip_size = tooltip_->GetSize();
-    Math::Vector2 tooltip_position = position;
+    Math::Vector2 tooltip_position = position + Math::Vector2::Up() * 32.f;
 
     int32_t screen_width = settings->GetScreenWidth();
     int32_t screen_height = settings->GetScreenHeight();
@@ -110,6 +116,8 @@ UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& positio
     if (overflow_height > 0) tooltip_position.y -= overflow_height;
 
     tooltip_->SetAbsolutePosition(tooltip_position);
+    tooltip_->Set(item_id_);
+    
     return { true, UI::CursorState::kIdle };
 }
 
@@ -144,6 +152,10 @@ bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
         tooltip_->SetActive(false);
         tooltip_ = nullptr;
     }
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetActive(true);
+    dragging_item->SetSprite(icon_->GetSprite(), icon_->GetFrameIndex());
     
     return true;
 }
@@ -151,9 +163,16 @@ bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 bool UIInventorySlot::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
     if (item_id_ == 0) return false;
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetAbsolutePosition(position - (dragging_item->GetSize() * .5f));
+
+    Math::Color color = icon_->GetColor();
+    color.a = 128;
+    icon_->SetColor(color);
     
-    i_icon_->SetAbsolutePosition(position - (i_icon_->GetSize() * .5f));
-    t_count_->SetAbsolutePosition(position - (t_count_->GetSize() * .5f));
+    // icon_->SetAbsolutePosition(position - (icon_->GetSize() * .5f));
+    // count_text_->SetAbsolutePosition(position - (count_text_->GetSize() * .5f));
     return true;
 }
 
@@ -161,19 +180,48 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
     
-    i_icon_->SetRelativePosition(Math::Vector2::Zero());
-    t_count_->SetRelativePosition(Math::Vector2::Zero());
+    Math::Color color = icon_->GetColor();
+    color.a = 255;
+    icon_->SetColor(color);
+
+    UIImage* dragging_item = ui_inventory_->dragging_item_;
+    dragging_item->SetSprite(nullptr, L"");
+    dragging_item->SetActive(false);
+    
+    // icon_->SetRelativePosition(Math::Vector2::Zero());
+    // count_text_->SetRelativePosition(Math::Vector2::Zero());
 
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        uint8_t inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
-        
-        DropItemRequest request;
-        request.inventory_type = inventory_type;
-        request.slot_id = slot_id_;
-        request.count = ui_inventory_->inventory_->GetItemCount(ui_inventory_->tab_, slot_id_);
-        SessionSubsystem::Get()->SendPacket(request);
+        Inventory::Type type = ui_inventory_->tab_;
+        int32_t count = ui_inventory_->inventory_->GetItemCount(type, slot_id_);
+
+        if (count == 1)
+        {
+            DropItemRequest request;
+            request.inventory_type = static_cast<uint8_t>(type);
+            request.slot_id = slot_id_;
+            request.count = 1;
+            SessionSubsystem::Get()->SendPacket(request);
+        }
+        else
+        {
+            UIPopup::ShowPopup(L"몇 개나 버리시겠습니까?", PopupOption::OK | PopupOption::Cancel | PopupOption::Edit, [&](std::wstring input_text, PopupOption option)->bool
+            {
+                if (option == PopupOption::OK)
+                {
+                    DropItemRequest request;
+                    request.inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+                    request.slot_id = slot_id_;
+                    request.count = std::stoi(input_text);
+                    SessionSubsystem::Get()->SendPacket(request);
+                    
+                    return true;
+                }
+                return true;
+            });
+        }
     }
     
     return true;

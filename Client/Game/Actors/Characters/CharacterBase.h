@@ -1,13 +1,9 @@
 ﻿#pragma once
 #include "Actors/NetworkActor.h"
 
+class UIChatBalloon;
+class UINameTag;
 class AnimatorComponent;
-
-namespace UI_OLD
-{
-    class NameTag;
-    class ChatBalloon;
-}
 
 class Controller2DComponent;
 class StateMachineComponent;
@@ -60,8 +56,8 @@ protected:
     float gravity_;
     
 #pragma region UI
-    std::shared_ptr<UI_OLD::NameTag> name_tag_;
-    std::shared_ptr<UI_OLD::ChatBalloon> chat_balloon_;
+    UINameTag* name_tag_;
+    UIChatBalloon* chat_balloon_;
 #pragma endregion
 
     TimerHandle chat_balloon_timer_handle_;

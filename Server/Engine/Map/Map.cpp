@@ -60,7 +60,9 @@ void Map::AddPlayers()
         uint32_t object_id = player->GetObjectID();
         players_.emplace(object_id, pending_player_weak);
     
+        player->SetMapID(map_id_);
         player->SetMap(this);
+        
         {
             for (const auto& player_weak : players_ | std::views::values)
             {
@@ -410,7 +412,7 @@ Foothold* Map::FindFoothold(const Math::Vector2& position) const
         if (position.x < foothold->GetX1() || position.x > foothold->GetX2()) continue;
         
         float y = foothold->GetYAt(position.x);
-        if (best_y <= y && position.y >= y)
+        if (y <= position.y && y > best_y)
         {
             best_y = y;
             best = foothold;
@@ -470,7 +472,7 @@ void Map::Respawn()
 
     for (const auto& spawn_point : spawn_points_)
     {
-        if (const MobData* mob_data = DataManager::Get()->GetMobData(spawn_point.mob_id))
+        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point.mob_id))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
             mob->SetPosition(spawn_point.position);

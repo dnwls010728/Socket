@@ -10,7 +10,6 @@
 #include "Asset/AssetManager.h"
 #include "Time/Time.h"
 #include "UI/UI.h"
-#include "UI/UIManager.h"
 #include "Windows/WindowDefinition.h"
 #include "Windows/WindowsWindow.h"
 #include "Windows/DX/Renderer.h"
@@ -149,7 +148,6 @@ void Core::MainThread()
 
                 Keyboard::Get()->OnEvent(event);
                 Mouse::Get()->OnEvent(event);
-                UI_OLD::Manager::Get()->OnEvent(event);
                 UI::Get()->OnEvent(event);
             }
             

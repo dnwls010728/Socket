@@ -12,6 +12,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void PhysicsTick(float delta_time) override;
     virtual void EndPlay(EndPlayReason type) override;
     virtual void OnSpeakEnd() override;
 
@@ -22,5 +23,7 @@ private:
     bool is_showing_;
 
     TimerHandle timer_handle_;
+
+    UINameTag* sub_name_tag_;
     
 };

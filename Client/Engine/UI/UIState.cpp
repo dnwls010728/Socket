@@ -1,16 +1,38 @@
 ﻿#include "pch.h"
 #include "UIState.h"
 
+#include "Element/UIEditableText.h"
 #include "UI/UIContainer.h"
 
 UIState::UIState() :
     elements_(),
     focus_path_(),
-    has_initialized_(false),
+    is_initialized_(false),
     is_dragging_(false),
     has_begun_drag_(false),
     dragging_element_(nullptr)
 {
+}
+
+void UIState::RemoveElement(UIElement* element)
+{
+    for (auto it = elements_.begin(); it != elements_.end(); ++it)
+    {
+        if (it->get() == element)
+        {
+            if (is_initialized_) element->Uninit();
+            if (element->IsFocused()) SetFocus(nullptr);
+            if (dragging_element_ && dragging_element_->IsDescendantOf(element))
+                dragging_element_ = nullptr;
+            elements_.erase(it);
+            break;
+        }
+    }
+}
+
+void UIState::SetFocus(UIElement* element)
+{
+    UpdateFocus(element);
 }
 
 UIElement* UIState::RayCast(const Math::Vector2& position) const
@@ -25,15 +47,33 @@ UIElement* UIState::RayCast(const Math::Vector2& position) const
     return nullptr;
 }
 
-void UIState::Init()
+bool UIState::IsFocused() const
 {
-    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    return !focus_path_.empty();
+}
+
+bool UIState::IsEditingText() const
+{
+    for (const auto& element : focus_path_)
     {
-        UIElement* element = elements_[i].get();
-        if (element) element->Init();
+        rttr::type element_type = rttr::type::get(*element);
+        if (element_type == UIEditableText::StaticClass() ||
+           element_type.is_derived_from(UIEditableText::StaticClass()))
+            return true;
     }
 
-    has_initialized_ = true;
+    return false;
+}
+
+void UIState::PostTask(Function<void()> task)
+{
+    pending_tasks_.push(std::move(task));
+}
+
+void UIState::Init()
+{
+    ProcessPending();
+    is_initialized_ = true;
 }
 
 void UIState::Uninit()
@@ -47,10 +87,18 @@ void UIState::Uninit()
 
 void UIState::Tick(float delta_time)
 {
+    ProcessPending();
+    
+    while (!pending_tasks_.empty())
+    {
+        pending_tasks_.front()();
+        pending_tasks_.pop();
+    }
+    
     for ( uint32_t i = 0; i < elements_.size(); ++i )
     {
         UIElement* element = elements_[i].get();
-        if (element && element->IsActive())
+        if (element && element->is_initialized_ && element->IsActive())
             element->Tick(delta_time);
     }
 }
@@ -60,7 +108,7 @@ void UIState::Render()
     for (uint32_t i = 0; i < elements_.size(); ++i)
     {
         UIElement* element = elements_[i].get();
-        if (element && element->IsActive())
+        if (element && element->is_initialized_ && element->IsActive())
             element->Render();
     }
 }
@@ -192,6 +240,17 @@ bool UIState::OnChar(wchar_t character)
     }
 
     return false;
+}
+
+void UIState::ProcessPending()
+{
+    for (auto* element : pending_elements_)
+    {
+        if (!element || element->is_initialized_) continue;
+        element->Init();
+    }
+    
+    pending_elements_.clear();
 }
 
 void UIState::UpdateFocus(UIElement* element)

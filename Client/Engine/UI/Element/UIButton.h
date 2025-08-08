@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "UIImage.h"
 #include "Math/Color.h"
 #include "UI/UIContainer.h"
 
@@ -22,8 +23,11 @@ public:
     UIButton(const std::wstring& name);
     virtual ~UIButton() override = default;
 
+    virtual  void SetSize(const Math::Vector2& size) override;
+
     void SetDisabled(bool is_disabled);
     void SetSprite(State state, UISprite* sprite, const std::wstring& frame_name);
+    void SetDrawMode(UIImage::DrawMode draw_mode) const;
 
     template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
     void OnClick(F&& func);
@@ -38,6 +42,8 @@ public:
     
     void SetText(const std::wstring& text) const;
     void SetTextColor(const Math::Color& color) const;
+
+    FORCEINLINE bool IsDisabled() const { return current_state_ == State::kDisabled; }
 
 protected:
     void ChangeState(State state);

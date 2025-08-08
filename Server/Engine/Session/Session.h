@@ -26,13 +26,13 @@ public:
 
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet) const;
-    void Update();
+    void UpdateDatabase();
 
     bool Disconnect();
 
     std::shared_ptr<Player> CreatePlayer(uint32_t account_id);
 
-    uint32_t GetAccountUniqueID() const;
+    uint32_t GetAccountID() const;
 
     inline int GetClientID() const { return client_id_; }
 

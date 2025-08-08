@@ -32,7 +32,7 @@ public:
     template <std::derived_from<ActorComponent> T>
     std::shared_ptr<T> AddComponent(const std::wstring& kName);
 
-    void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components);
+    void GetComponents(const rttr::type& type, std::vector<ActorComponent*>& components) const;
 
     template <std::derived_from<ActorComponent> T>
     std::shared_ptr<T> GetComponent(const rttr::type& type);

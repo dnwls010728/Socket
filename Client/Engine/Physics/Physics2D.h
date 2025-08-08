@@ -63,6 +63,24 @@ public:
     static bool OverlapCircleAll(const Math::Vector2& kCenter, float radius, std::vector<Actor*>& out_actors, uint16_t layer = 0xFFFF);
 
     /**
+     * 점에 겹치는 액터를 찾습니다.
+     * @param kPoint 점의 위치
+     * @param out_actor 겹치는 액터
+     * @param layer 충돌 레이어
+     * @return 겹치는 액터가 있으면 true, 없으면 false
+     */
+    static bool OverlapPoint(const Math::Vector2& kPoint, Actor** out_actor, uint16_t layer = 0xFFFF);
+
+    /**
+     * 점에 겹치는 모든 액터를 찾습니다.
+     * @param kPoint 점의 위치
+     * @param out_actors 겹치는 액터들
+     * @param layer 충돌 레이어
+     * @return 겹쳐진 액터들이 있으면 true, 없으면 false
+     */
+    static bool OverlapPointAll(const Math::Vector2& kPoint, std::vector<Actor*>& out_actors, uint16_t layer = 0xFFFF);
+
+    /**
      * 광선을 쏴서 충돌하는 액터를 찾습니다.
      * @param hit_result 충돌 결과
      * @param kOrigin 광선의 시작 위치

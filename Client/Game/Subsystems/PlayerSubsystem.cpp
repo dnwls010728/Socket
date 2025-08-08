@@ -7,15 +7,19 @@
 PlayerSubsystem::PlayerSubsystem() :
     account_id_(0),
     character_id_(0),
+    map_id_(0),
+    lv_(0),
     hp_(0),
     max_hp_(0),
     exp_(0),
-    name_(L""),
+    name_(L"Unknown"),
+    body_color_(L"FFFFFF"),
+    profiles_(),
     inventory_(nullptr)
 {
 }
 
-void PlayerSubsystem::UpdateStat(PlayerStat stat, uint32_t value)
+void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
 {
     switch (stat)
     {
@@ -64,6 +68,23 @@ void PlayerSubsystem::UpdateStat(PlayerStat stat, uint32_t value)
     }
 
     Logger::Print(L"PlayerSubsystem::UpdateStat: Updated stat %d to value %u", static_cast<int>(stat), value);
+}
+
+void PlayerSubsystem::AddProfile(const CharacterProfile& profile)
+{
+    profiles_.push_back(profile);
+}
+
+void PlayerSubsystem::DeleteProfile(uint32_t character_id)
+{
+    for (auto it = profiles_.begin(); it != profiles_.end(); ++it)
+    {
+        if (it->character_id == character_id)
+        {
+            profiles_.erase(it);
+            return;
+        }
+    }
 }
 
 PlayerSubsystem* PlayerSubsystem::Get()

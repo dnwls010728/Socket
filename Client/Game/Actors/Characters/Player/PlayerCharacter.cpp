@@ -17,9 +17,11 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
+#include "DirectXTK/Mouse.h"
 #include "FSM/Condition.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
 #include "State/PlayerFallState.h"
@@ -28,7 +30,7 @@
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
-#include "UI/UIManager.h"
+#include "UI/UI.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -40,7 +42,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_position_(Math::Vector2::Zero()),
     last_flip_(false),
     invincible_time_(0.f),
-    prev_animation{0,}
+    prev_animation{0,},
+    color_(Math::Color::White)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -98,11 +101,15 @@ void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, fl
     invincible_time_ = server_time + 2.f;
 }
 
-void PlayerCharacter::Init(const std::wstring& name, const Math::Vector2& position)
+void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position)
 {
     character_name_ = name;
-    last_position_ = position;
+
+    color_ = Math::Color::HexToColor(body_color);
+    renderer_->SetColor(color_);
+    
     GetTransform()->SetPosition(position);
+    last_position_ = position;
 }
 
 void PlayerCharacter::UpdateFlip() const
@@ -168,89 +175,112 @@ void PlayerCharacter::Tick(float delta_time)
         float phase = alpha * 10 * Math::PI(); // 10회
         float value = .9f - .5f * std::abs(std::sin(phase)); // 0.4 ~ 0.9 사이의 값
         
-        uint8_t lum = static_cast<uint8_t>(value * 255);
-        renderer_->SetColor(Math::Color(lum, lum, lum, 255));
+        uint8_t r = static_cast<uint8_t>(value * color_.r);
+        uint8_t g = static_cast<uint8_t>(value * color_.g);
+        uint8_t b = static_cast<uint8_t>(value * color_.b);
+        renderer_->SetColor(Math::Color(r, g, b, color_.a));
     }
-    else renderer_->SetColor(Math::Color::White);
+    else renderer_->SetColor(color_);
 
     SyncCharacterMovement(delta_time);
     
     if (IsMine())
     {
         Keyboard* keyboard = Keyboard::Get();
-        
-        move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-        move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+        Mouse* mouse = Mouse::Get();
 
-        if (keyboard->GetKey('C'))
+        if (!UI::Get()->IsEditingText())
         {
-            is_jump_pressed_ = true;
-        }
+            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
+            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
 
-        if (keyboard->GetKeyDown('1'))
-        {
-            NetworkSubsystem::Get()->ChangeMap(0);
-        }
-
-        if (keyboard->GetKeyDown('2'))
-        {
-            NetworkSubsystem::Get()->ChangeMap(1);
-        }
-
-        // 아이템 줍기
-        if (keyboard->GetKeyDown('Z'))
-        {
-            Math::Vector2 center = GetTransform()->GetPosition();
-            Math::Vector2 size = { 1.f, 1.f };
-            
-            Actor* out_actor = nullptr;
-            bool is_hit = Physics2D::OverlapBox(
-                center,
-                size,
-                &out_actor,
-                static_cast<uint16_t>(ActorLayer::kDroppedItem)
-            );
-
-            if (is_hit)
+            if (keyboard->GetKey('C'))
             {
-                DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
-                if (IsValid(dropped_item))
+                is_jump_pressed_ = true;
+            }
+
+            if (keyboard->GetKeyDown('1'))
+            {
+                NetworkSubsystem::Get()->ChangeMap(1);
+            }
+
+            if (keyboard->GetKeyDown('2'))
+            {
+                NetworkSubsystem::Get()->ChangeMap(2);
+            }
+
+            // 아이템 줍기
+            if (keyboard->GetKeyDown('Z'))
+            {
+                Math::Vector2 center = GetTransform()->GetPosition();
+                Math::Vector2 size = {1.f, 1.f};
+
+                Actor* out_actor = nullptr;
+                bool is_hit = Physics2D::OverlapBox(
+                    center,
+                    size,
+                    &out_actor,
+                    static_cast<uint16_t>(ActorLayer::kDroppedItem)
+                );
+
+                if (is_hit)
                 {
-                    PickupItemRequest request;
-                    request.object_id = dropped_item->GetObjectID();
-                    SendPacket(request);
+                    DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
+                    if (IsValid(dropped_item))
+                    {
+                        PickupItemRequest request;
+                        request.object_id = dropped_item->GetObjectID();
+                        SendPacket(request);
+                    }
+                }
+            }
+
+            // 공격 테스트
+            if (keyboard->GetKeyDown('X'))
+            {
+                std::vector<Actor*> hit_actors;
+                bool is_hit = Physics2D::OverlapBoxAll(
+                    GetTransform()->GetPosition(),
+                    {3.f, 2.f},
+                    hit_actors,
+                    static_cast<uint16_t>(ActorLayer::kMob)
+                );
+
+                if (is_hit)
+                {
+                    for (const auto& actor : hit_actors)
+                    {
+                        MobBase* mob = static_cast<MobBase*>(actor);
+                        if (!IsValid(mob) || mob->IsDead()) continue;
+
+                        AttackRequest request;
+                        request.object_id = mob->GetObjectID();
+                        SendPacket(request);
+
+                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
+                        if (IsValid(damage))
+                        {
+                            damage->GetTransform()->SetPosition(
+                                mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
+                        }
+                    }
                 }
             }
         }
-
-        // 공격 테스트
-        if (keyboard->GetKeyDown('X'))
+        else
         {
-            std::vector<Actor*> hit_actors;
-            bool is_hit = Physics2D::OverlapBoxAll(
-                GetTransform()->GetPosition(),
-                { 3.f, 2.f },
-                hit_actors,
-                static_cast<uint16_t>(ActorLayer::kMob)
-            );
+            move_axis_ = Math::Vector2::Zero();
+        }
 
+        if (mouse->GetMouseButtonDown(MouseButton::kRight))
+        {
+            Math::Vector2 position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+            
+            Actor* out_actor = nullptr;
+            bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
             if (is_hit)
             {
-                for (const auto& actor : hit_actors)
-                {
-                    MobBase* mob = static_cast<MobBase*>(actor);
-                    if (!IsValid(mob) || mob->IsDead()) continue;
-
-                    AttackRequest request;
-                    request.object_id = mob->GetObjectID();
-                    SendPacket(request);
-                        
-                    std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
-                    if (IsValid(damage))
-                    {
-                        damage->GetTransform()->SetPosition(mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
-                    }
-                }
+                Logger::Print(L"PlayerCharacter::Tick - Hit Player: %s", out_actor->GetName().c_str());
             }
         }
 

@@ -16,6 +16,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UIInGameState.h"
+#include "UI/Element/UIMiniMap.h"
 
 GameMap::GameMap(const std::wstring& kName) :
     Level(kName)
@@ -48,6 +49,12 @@ void GameMap::Load()
 
             Bounds bounds = tilemap->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
+
+            if (auto* state = UI::Get()->GetState())
+            {
+                if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
+                    element->SetTilemap(tilemap);
+            }
         }
     }
 #pragma endregion
@@ -57,7 +64,7 @@ void GameMap::Load()
     if (IsValid(player_character))
     {
         player_character->SetObjectID(player_subsystem->GetCharacterID());
-        player_character->Init(player_subsystem->name_, player_subsystem->spawn_position);
+        player_character->Init(player_subsystem->name_, player_subsystem->body_color_, player_subsystem->spawn_position);
 
         camera_manager->SetTarget(player_character);
         NetworkSubsystem::Get()->SetPlayerCharacter(player_character);

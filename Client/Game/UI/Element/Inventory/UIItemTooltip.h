@@ -12,6 +12,8 @@ public:
     UIItemTooltip(const std::wstring& name);
     virtual ~UIItemTooltip() override = default;
 
+    void Set(uint32_t item_id);
+
 protected:
     virtual void Init() override;
     

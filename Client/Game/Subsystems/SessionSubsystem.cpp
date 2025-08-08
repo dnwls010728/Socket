@@ -7,9 +7,13 @@
 #include "GameInstance.h"
 #include "NetworkManager.h"
 #include "PacketHandlers/ChatMessageHandler.h"
+#include "PacketHandlers/CheckNameHandler.h"
+#include "PacketHandlers/CreateCharacterHandler.h"
+#include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/DestroyObjectHandler.h"
 #include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/DropItemHandler.h"
+#include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
 #include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
@@ -21,7 +25,6 @@
 #include "PacketHandlers/SpawnObjectHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "UI/UILoginState.h"
-#include "UI/Widget/Button.h"
 #include "Windows/WindowsApplication.h"
 
 SessionSubsystem::SessionSubsystem() :
@@ -33,10 +36,14 @@ SessionSubsystem::SessionSubsystem() :
 void SessionSubsystem::Init()
 {
     GameInstanceSubsystem::Init();
-
-    bool result = Connect({"127.0.0.1", 9000});
+    
     // bool result = Connect({"175.198.74.36", 9000});
     // bool result = Connect({"222.108.73.155", 9000});
+#ifdef _DEBUG
+    bool result = Connect({"127.0.0.1", 9101});
+#else
+    bool result = Connect({"58.79.118.105", 9101});
+#endif
     if (!result)
     {
         MessageBox(nullptr, L"서버와 연결할 수 없습니다.", EngineSettings::Get()->GetWindowTitle().c_str(), MB_OK);
@@ -51,6 +58,26 @@ void SessionSubsystem::Init()
     });
 
 #pragma region 핸들러 등록
+    handlers_.emplace(
+        LoginResponse::StaticPacketID,
+        std::make_unique<LoginHandler>()
+    );
+
+    handlers_.emplace(
+        CheckNameResponse::StaticPacketID,
+        std::make_unique<CheckNameHandler>()
+    );
+
+    handlers_.emplace(
+        CreateCharacterResponse::StaticPacketID,
+        std::make_unique<CreateCharacterHandler>()
+    );
+
+    handlers_.emplace(
+        DeleteCharacterResponse::StaticPacketID,
+        std::make_unique<DeleteCharacterHandler>()
+    );
+    
     handlers_.emplace(
         SelectCharacterResponse::StaticPacketID,
         std::make_unique<SelectCharacterHandler>()
@@ -171,9 +198,6 @@ bool SessionSubsystem::Connect(const Net::NetAddress& address)
 
 void SessionSubsystem::Disconnect()
 {
-    DisconnectPacket disconnect_packet;
-    client_socket_.SendPacket(disconnect_packet);
-    
     client_socket_.Stop();
     Net::WSAUninit();
 }

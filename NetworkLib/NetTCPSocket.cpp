@@ -154,6 +154,15 @@ bool NetTCPSocket::Recv(char* data, int data_length, int& received_length)
 	return true;
 }
 
+bool NetTCPSocket::Shutdown(int how)
+{
+	if (internal_socket_ == INVALID_SOCKET)
+		return false;
+
+	int result = ::shutdown(internal_socket_, how);
+	return result != SOCKET_ERROR;
+}
+
 /*
 bool NetTCPSocket::RecvIOCP(int data_length)
 {

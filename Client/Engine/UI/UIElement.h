@@ -13,15 +13,18 @@ public:
     
     bool IsInRange(const Math::Vector2& position) const;
 
-    void SetAbsolutePosition(const Math::Vector2& position);
-    Math::Vector2 GetAbsolutePosition() const;
+    virtual void SetAbsolutePosition(const Math::Vector2& position);
+    const Math::Vector2& GetAbsolutePosition();
+
+    virtual void SetRelativePosition(const Math::Vector2& position);
+
+    bool IsDescendantOf(UIElement* ancestor) const;
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
-    FORCEINLINE void SetRelativePosition(const Math::Vector2& position) { position_ = position; }
-    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return position_; }
+    FORCEINLINE const Math::Vector2& GetRelativePosition() const { return relative_position_; }
 
-    FORCEINLINE void SetSize(const Math::Vector2& size) { size_ = size; }
+    FORCEINLINE virtual void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }
@@ -30,7 +33,6 @@ public:
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     FORCEINLINE void SetIgnoreRayCast(bool ignore) { is_ignore_raycast = ignore; }
-
 protected:
     friend class UIState;
     friend class UIContainer;
@@ -39,8 +41,8 @@ protected:
 
     FORCEINLINE virtual void Uninit() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render() {}
-
+    
+    virtual void Render();
     virtual void Init();
     
     virtual UIElement* RayCast(const Math::Vector2& position);
@@ -60,16 +62,23 @@ protected:
     
     virtual void OnFocus(bool is_focused);
 
+    void UpdateAbsolutePosition();
+
+    FORCEINLINE virtual void MakeDirty() { is_dirty_ = true; }
+
     std::wstring name_;
 
-    Math::Vector2 position_;
-    Math::Vector2 size_;
-
-    bool has_initialized_;
+    bool is_dirty_;
+    bool is_initialized_;
     bool is_active_;
     bool is_focused_;
     bool is_ignore_raycast;
 
     UIContainer* parent_;
+
+private:
+    Math::Vector2 relative_position_;
+    Math::Vector2 absolute_position_;
+    Math::Vector2 size_;
     
 };

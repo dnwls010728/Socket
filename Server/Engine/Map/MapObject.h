@@ -15,7 +15,7 @@ public:
 
     inline void SetObjectID(uint32_t id) { object_id_ = id; }
     inline uint32_t GetObjectID() const { return object_id_; }
-
+    
     inline void SetMap(Map* map) { map_ = map; }
     inline Map* GetMap() const { return map_; }
 
@@ -32,7 +32,7 @@ protected:
     inline virtual void Tick(float delta_time) {}
     
     uint32_t object_id_;
-
+    
     Map* map_;
 
     Math::Vector2 position_;

@@ -130,6 +130,22 @@ namespace Net::TCP {
         bool Recv(char* data, int data_length, int& received_length);
 
         /**
+         * @brief 소켓의 송수신을 종료합니다. (recv(), send()를 unblock 하기 위함)
+         *
+         * 이 함수는 소켓의 송수신 방향을 종료하는 shutdown()을 호출합니다.
+         * recv()가 block 상태일 경우, shutdown(SD_BOTH)를 통해 즉시 종료시킬 수 있습니다.
+         * 
+         * @param how 종료할 방향 (SD_RECEIVE, SD_SEND, SD_BOTH 중 하나)
+         * @return 성공 시 true, 실패 시 false (SOCKET_ERROR 반환 시 false)
+         *
+         * 참고:
+         *  - SD_RECEIVE: 수신 종료. 이후 recv()는 0 반환.
+         *  - SD_SEND   : 송신 종료. 이후 send()는 실패.
+         *  - SD_BOTH   : 수신 및 송신 모두 종료.
+         */
+        bool Shutdown(int how = SD_BOTH);
+        
+        /**
          * @brief IOCP 방식으로 데이터를 수신합니다.
          *
          * RegisterIOCPHandle()로 IOCP 핸들을 등록한 후, GetTCPIOStatus()로 결과를 확인해야 합니다.

@@ -19,8 +19,7 @@ bool Tilemap::Load(const std::wstring& kPath)
 {
     Asset::Load(kPath);
     
-    const std::string kFinalPath(kPath.begin(), kPath.end());
-    if (!map_.load(kFinalPath)) return false;
+    if (!map_.load(StringHelper::UTF16ToUTF8(kPath))) return false;
 
     const auto& properties = map_.getProperties();
     if (properties.size() < 3) return false;

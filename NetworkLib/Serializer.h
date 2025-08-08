@@ -252,4 +252,35 @@ namespace Net {
         return s;
     }
 
+    // std::pair<T1, T2>
+    template<typename T1, typename T2>
+    Serializer& operator<<(Serializer& s, const std::pair<T1, T2>& p) {
+        s << p.first;
+        s << p.second;
+        return s;
+    }
+
+    template<typename T1, typename T2>
+    Serializer& operator>>(Serializer& s, std::pair<T1, T2>& p) {
+        s >> p.first;
+        s >> p.second;
+        return s;
+    }
+
+    // std::array<T, N>
+    template<typename T, size_t N>
+    Serializer& operator<<(Serializer& s, const std::array<T, N>& arr) {
+        for (size_t i = 0; i < N; ++i)
+            s << arr[i];
+        return s;
+    }
+
+    template<typename T, size_t N>
+    Serializer& operator>>(Serializer& s, std::array<T, N>& arr) {
+        for (size_t i = 0; i < N; ++i)
+            s >> arr[i];
+        return s;
+    }
+
+
 } // namespace Net

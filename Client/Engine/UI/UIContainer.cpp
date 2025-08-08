@@ -1,13 +1,26 @@
 ﻿#include "pch.h"
 #include "UIContainer.h"
 
+void UIContainer::RemoveChild(UIElement* child)
+{
+    for (auto it = children_.begin(); it != children_.end(); ++it)
+    {
+        if (it->get() == child)
+        {
+            if (is_initialized_) child->Uninit();
+            children_.erase(it);
+            return;
+        }
+    }
+}
+
 void UIContainer::SetActive(bool active)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
-    {
-        UIElement* child = children_[children_.size() - i - 1].get();
-        if (child) child->SetActive(active);
-    }
+    // for (uint32_t i = 0; i < children_.size(); ++i)
+    // {
+    //     UIElement* child = children_[children_.size() - i - 1].get();
+    //     if (child) child->SetActive(active);
+    // }
     
     UIElement::SetActive(active);
 }
@@ -137,6 +150,32 @@ bool UIContainer::OnKey(uint16_t key_code, bool is_pressed)
 bool UIContainer::OnChar(wchar_t character)
 {
     return UIElement::OnChar(character);
+}
+
+void UIContainer::MakeDirty()
+{
+    UIElement::MakeDirty();
+
+    for (auto& child : children_)
+    {
+        if (child) child->MakeDirty();
+    }
+}
+
+UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wstring& name)
+{
+    rttr::variant var = type.create({ name });
+    if (var.is_valid())
+    {
+        UIElement* child = var.get_value<UIElement*>();
+        child->parent_ = this;
+        if (is_initialized_) child->Init();
+        
+        children_.push_back(std::unique_ptr<UIElement>(child));
+        return child;
+    }
+    
+    return nullptr;
 }
 
 RTTR_REGISTRATION

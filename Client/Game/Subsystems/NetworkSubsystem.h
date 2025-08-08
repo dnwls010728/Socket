@@ -22,7 +22,7 @@ public:
     virtual void Tick(float delta_time) override;
 
     void SendPacket(Net::IPacket& packet);
-    void ChangeMap(uint32_t map_id);
+    void ChangeMap(int32_t map_id);
     void RegisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
     void UnregisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
     

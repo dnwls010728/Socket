@@ -18,9 +18,16 @@ public:
 
     template <std::derived_from<UIElement> T>
     T* FindElement(const std::wstring& name);
+
+    void RemoveElement(UIElement* element);
+    void SetFocus(UIElement* element);
     
     UIElement* RayCast(const Math::Vector2& position) const;
 
+    bool IsFocused() const;
+    bool IsEditingText() const;
+
+    void PostTask(Function<void()> task);
 protected:
     friend class UI;
 
@@ -38,20 +45,24 @@ protected:
 
 private:
     friend class UIElement;
-    
+
+    void ProcessPending();
     void UpdateFocus(UIElement* element);
     
     template <std::derived_from<UIElement> T>
     T* FindElement_Internal(UIElement* element, const std::wstring& name);
     
     std::vector<std::unique_ptr<UIElement>> elements_;
+    std::vector<UIElement*> pending_elements_;
     std::vector<UIElement*> focus_path_;
 
-    bool has_initialized_;
+    bool is_initialized_;
     bool is_dragging_;
     bool has_begun_drag_;
 
     UIElement* dragging_element_;
+
+    std::queue<Function<void()>> pending_tasks_;
 };
 
 template <std::derived_from<UIElement> T>
@@ -63,9 +74,8 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
-        if (has_initialized_) element->Init();
-        
         elements_.emplace_back(std::unique_ptr<UIElement>(element));
+        pending_elements_.push_back(element);
 
         return dynamic_cast<T*>(element);
     }

@@ -5,20 +5,30 @@
 #include "Asset/AssetManager.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
+#include "Math/Math.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/Element/UIButton.h"
+#include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UISprite.h"
 
 UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
     slots_(),
-    t_color_(nullptr),
+    color_text_(nullptr),
     inventory_(nullptr),
     tab_(Inventory::Type::kEquip)
 {
-    size_ = { 158.f, 246.f };
+    SetSize({164.f, 246.f});
+    
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
+
+    background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
+    background_->SetSprite(panel_sprite, L"Panel_0");
+    background_->SetDrawMode(UIImage::DrawMode::kSliced);
+    background_->SetIgnoreRayCast(true);
     
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
@@ -28,8 +38,6 @@ UIInventory::UIInventory(const std::wstring& name) :
     t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     t_title->SetText(L"인벤토리");
     t_title->SetIgnoreRayCast(true);
-
-    UISprite* button_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\ButtonSheet.png");
 
     UIButton* equip_button = AddChild<UIButton>(UIButton::StaticClass(), L"EquipButton");
     equip_button->SetRelativePosition({ 8.f, 20.f });
@@ -48,7 +56,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kEquip;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 128; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -71,7 +79,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kUse;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 128; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -94,7 +102,7 @@ UIInventory::UIInventory(const std::wstring& name) :
         tab_ = Inventory::Type::kEtc;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
-        for (uint32_t i = 0; i < 20; ++i)
+        for (uint32_t i = 0; i < 128; ++i)
         {
             UpdateSlot(i + 1);
         }
@@ -104,12 +112,20 @@ UIInventory::UIInventory(const std::wstring& name) :
     tab_buttons_[static_cast<uint8_t>(Inventory::Type::kUse)] = use_button;
     tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEtc)] = etc_button;
 
-    for (uint32_t i = 0; i < 5; ++i)
+    scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
+    scroll_box_->SetRelativePosition({ 8.f, 48.f });
+    scroll_box_->SetSize({ 150.f, 180.f });
+    scroll_box_->SetScrollStep(36.f);
+
+    UIContainer* content = scroll_box_->AddItem<UIContainer>(UIContainer::StaticClass(), L"Content");
+    content->SetSize({ 144.f, 1152.f });
+
+    for (uint32_t i = 0; i < 32; ++i)
     {
         for (uint32_t j = 0; j < 4; ++j)
         {
-            UIInventorySlot* slot = AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
-            slot->SetRelativePosition({ 8.f + j * 36.f, 48.f + i * 36.f });
+            UIInventorySlot* slot = content->AddChild<UIInventorySlot>(UIInventorySlot::StaticClass(), L"Slot");
+            slot->SetRelativePosition({ j * 36.f, i * 36.f });
 
             slot->SetUIInventory(this);
             slot->SetSlotID(i * 4 + j + 1);
@@ -117,18 +133,23 @@ UIInventory::UIInventory(const std::wstring& name) :
         }
     }
     
-    t_color_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
-    t_color_->SetRelativePosition({ 8.f, 224.f });
-    t_color_->SetSize({ 142.f, 20.f });
-    t_color_->SetColor(Math::Color::White);
-    t_color_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-    t_color_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    t_color_->SetText(L"0Color");
-    t_color_->SetIgnoreRayCast(true);
+    color_text_ = AddChild<UIText>(UIText::StaticClass(), L"Color");
+    color_text_->SetRelativePosition({ 8.f, 224.f });
+    color_text_->SetSize({ 142.f, 20.f });
+    color_text_->SetColor(Math::Color::White);
+    color_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+    color_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    color_text_->SetText(L"0Color");
+    color_text_->SetIgnoreRayCast(true);
+    
+    dragging_item_ = AddChild<UIImage>(UIImage::StaticClass(), L"DraggingItem");
+    dragging_item_->SetSize({32.f, 32.f});
+    dragging_item_->SetActive(false);
+    dragging_item_->SetIgnoreRayCast(true);
 
 }
 
-void UIInventory::UpdateSlot(uint32_t slot_index)
+void UIInventory::UpdateSlot(uint32_t slot_index) const
 {
     if (!inventory_) return;
     if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
@@ -147,11 +168,13 @@ void UIInventory::UpdateColor(uint32_t color)
         color_str.insert(i - 3, L",");
     }
     
-    t_color_->SetText(color_str + L" 컬러");
+    color_text_->SetText(color_str + L" 컬러");
 }
 
 void UIInventory::Init()
 {
+    background_->SetSize(GetSize());
+    
     UIContainer::Init();
 
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
@@ -159,7 +182,7 @@ void UIInventory::Init()
     PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
 
     inventory_ = PlayerSubsystem::Get()->GetInventory();
-    for (uint32_t i = 0; i < 20; ++i)
+    for (uint32_t i = 0; i < 128; ++i)
     {
         UpdateSlot(i + 1);
     }
@@ -178,15 +201,6 @@ void UIInventory::Uninit()
     PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
 }
 
-void UIInventory::Render()
-{
-    Renderer* renderer = Renderer::Get();
-    renderer->DrawSolidRoundBox(GetAbsolutePosition(), size_, { 0, 0, 0, 128 });
-    renderer->DrawRoundBox(GetAbsolutePosition(), size_, { 255, 255, 255, 255 });
-    
-    UIContainer::Render();
-}
-
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
 {
     return true;
@@ -194,7 +208,8 @@ bool UIInventory::OnDragBegin(const Math::Vector2& position)
 
 bool UIInventory::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    position_ += delta;
+    Math::Vector2 new_position = GetRelativePosition() + delta;
+    SetRelativePosition(new_position);
     return true;
 }
 
@@ -215,7 +230,7 @@ bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
     
     tab_ = static_cast<Inventory::Type>(current_tab);
     
-    for (uint32_t i = 0; i < 20; ++i)
+    for (uint32_t i = 0; i < 128; ++i)
     {
         UpdateSlot(i + 1);
     }

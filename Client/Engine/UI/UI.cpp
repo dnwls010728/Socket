@@ -32,6 +32,24 @@ void UI::ChangeState(const rttr::type& type)
     }
 }
 
+void UI::SetFocus(UIElement* element)
+{
+    if (!state_) return;
+    state_->SetFocus(element);
+}
+
+bool UI::IsFocused() const
+{
+    if (!state_) return false;
+    return state_->IsFocused();
+}
+
+bool UI::IsEditingText() const
+{
+    if (!state_) return false;
+    return state_->IsEditingText();
+}
+
 void UI::Init()
 {
     cursor_sprites_[CursorState::kIdle] = AssetManager::Get()->Load<UISprite>(L"UI\\Cursor\\pointer_a.png");
@@ -61,7 +79,7 @@ void UI::Render()
             static_cast<float>(cursor_sprite->GetHeight())
         };
         
-        renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
+        // renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
     }
 }
 

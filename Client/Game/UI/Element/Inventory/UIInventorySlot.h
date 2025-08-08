@@ -27,8 +27,8 @@ public:
     FORCEINLINE uint32_t GetItemID() const { return item_id_; }
 
 protected:
-    virtual void Render() override;
-
+    virtual void Init() override;
+    
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
     virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
 
@@ -42,9 +42,10 @@ protected:
 private:
     UIInventory* ui_inventory_;
     UIItemTooltip* tooltip_;
-    
-    UIImage* i_icon_;
-    UIText* t_count_;
+
+    UIImage* background_;
+    UIImage* icon_;
+    UIText* count_text_;
     
     uint32_t slot_id_;
     uint32_t item_id_;

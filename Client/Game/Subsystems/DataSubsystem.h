@@ -27,10 +27,19 @@ struct MobData
     std::wstring animation_pack;
 };
 
-struct ItemString
+struct ItemData
 {
+    uint32_t item_id;
+
     std::wstring name;
-    std::wstring description;
+    std::wstring desc;
+
+    int32_t price;
+    int32_t max_count;
+
+    union
+    {
+    } temp;
 };
 
 namespace YAML
@@ -76,13 +85,16 @@ namespace YAML
     };
 
     template<>
-    struct convert<ItemString>
+    struct convert<ItemData>
     {
-        static bool decode(const Node& node, ItemString& data)
+        static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
+            data.item_id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
-            data.description = StringHelper::UTF8ToUTF16(node["description"].as<std::string>(""));
+            data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.price = node["price"].as<int32_t>(0);
+            data.max_count = node["max_count"].as<int32_t>(0);
             return true;
         }
     };
@@ -98,15 +110,17 @@ public:
 
     virtual void Init() override;
 
-    const MobData* GetMobData(uint32_t id) const;
+    const MobData* GetMob(uint32_t id) const;
+    const ItemData* GetItem(uint32_t id) const;
     
-    uint32_t GetExp(uint32_t level) const;
+    int32_t GetExp(int32_t level) const;
 
     static DataSubsystem* Get();
 
 private:
-    std::unordered_map<uint32_t, MobData> mob_data_map_;
+    std::unordered_map<uint32_t, MobData> mob_map_;
+    std::unordered_map<uint32_t, ItemData> item_map_;
     
-    std::array<uint32_t, 51> exp_table_;
+    std::array<int32_t, 51> exp_table_;
     
 };
