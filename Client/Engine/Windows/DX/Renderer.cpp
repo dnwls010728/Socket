@@ -761,7 +761,7 @@ void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vec
     if (FAILED(hr)) return;
 }
 
-void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
+void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
@@ -772,15 +772,8 @@ void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& f
     
     D2D1_MATRIX_3X2_F transform;
     device_context->GetTransform(&transform);
-    
-    auto it = ui_sprite->frame_indexes_.find(frame_name);
-    if (it == ui_sprite->frame_indexes_.end())
-    {
-        device_context->SetTransform(transform);
-        return;
-    }
 
-    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
+    const UISpriteFrame& frame = ui_sprite->frames_[frame_index];
 
     Microsoft::WRL::ComPtr<ID2D1Effect> effect;
     hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);
@@ -834,7 +827,7 @@ void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& f
     device_context->SetTransform(transform);
 }
 
-void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
+void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
     if (!d2d_viewport) return;
@@ -845,15 +838,8 @@ void Renderer::DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& f
     
     D2D1_MATRIX_3X2_F transform;
     device_context->GetTransform(&transform);
-    
-    auto it = ui_sprite->frame_indexes_.find(frame_name);
-    if (it == ui_sprite->frame_indexes_.end())
-    {
-        device_context->SetTransform(transform);
-        return;
-    }
 
-    const UISpriteFrame& frame = ui_sprite->frames_[it->second];
+    const UISpriteFrame& frame = ui_sprite->frames_[frame_index];
     
     Microsoft::WRL::ComPtr<ID2D1Effect> effect;
     hr = device_context->CreateEffect(CLSID_D2D1ColorMatrix, &effect);

@@ -8,7 +8,7 @@
 UIImage::UIImage(const std::wstring& name) :
     UIElement(name),
     ui_sprite_(nullptr),
-    current_frame_(L""),
+    frame_index_(0),
     draw_mode_(DrawMode::kSimple),
     color_(Math::Color::White)
 {
@@ -16,8 +16,22 @@ UIImage::UIImage(const std::wstring& name) :
 
 void UIImage::SetSprite(UISprite* ui_sprite, const std::wstring& frame_name)
 {
+    if (!ui_sprite) return;
     ui_sprite_ = ui_sprite;
-    current_frame_ = frame_name;
+
+    const auto& frame_indexes = ui_sprite_->GetFrameIndexes();
+    
+    auto it = frame_indexes.find(frame_name);
+    if (it != frame_indexes.end())
+        frame_index_ = it->second;
+    else frame_index_ = 0;
+}
+
+void UIImage::SetSprite(UISprite* ui_sprite, uint64_t frame_index)
+{
+    if (!ui_sprite) return;
+    ui_sprite_ = ui_sprite;
+    frame_index_ = frame_index;
 }
 
 void UIImage::Render()
@@ -25,8 +39,8 @@ void UIImage::Render()
     UIElement::Render();
     if (!ui_sprite_) return;
     
-    if (draw_mode_ == DrawMode::kSimple) Renderer::Get()->DrawSimpleSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), GetSize(), color_);
-    else if (draw_mode_ == DrawMode::kSliced) Renderer::Get()->DrawSlicedSprite(ui_sprite_, current_frame_, GetAbsolutePosition(), GetSize(), color_);
+    if (draw_mode_ == DrawMode::kSimple) Renderer::Get()->DrawSimpleSprite(ui_sprite_, frame_index_, GetAbsolutePosition(), GetSize(), color_);
+    else if (draw_mode_ == DrawMode::kSliced) Renderer::Get()->DrawSlicedSprite(ui_sprite_, frame_index_, GetAbsolutePosition(), GetSize(), color_);
 }
 
 RTTR_REGISTRATION

@@ -1,0 +1,13 @@
+filter_mode: 1
+frames:
+  - name: 000002_0
+    rect:
+      x: 0
+      y: 0
+      width: 800
+      height: 960
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0

@@ -155,7 +155,7 @@ bool UIInventorySlot::OnDragBegin(const Math::Vector2& position)
 
     UIImage* dragging_item = ui_inventory_->dragging_item_;
     dragging_item->SetActive(true);
-    dragging_item->SetSprite(icon_->GetSprite(), icon_->GetCurrentFrame());
+    dragging_item->SetSprite(icon_->GetSprite(), icon_->GetFrameIndex());
     
     return true;
 }

@@ -111,8 +111,8 @@ public:
     // 테스트
     void DrawStringWithOutline(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& outline_color = Math::Color::Black, const Math::Color& fill_color = Math::Color::White, float stroke = 1.f, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     
-    void DrawSimpleSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
-    void DrawSlicedSprite(const UISprite* ui_sprite, const std::wstring& frame_name, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
+    void DrawSimpleSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
+    void DrawSlicedSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::White);
     
     bool LoadBitmap(const std::shared_ptr<WindowsWindow>& kWindow, const std::wstring& kFileName, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap);
 

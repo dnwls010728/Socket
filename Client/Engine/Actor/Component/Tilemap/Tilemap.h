@@ -22,7 +22,7 @@ public:
     FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
     FORCEINLINE const std::wstring& GetName() const { return name_; }
     FORCEINLINE float GetPPU() const { return ppu_; }
-    FORCEINLINE const UISprite* GetUISprite() const { return ui_sprite_.get(); }
+    FORCEINLINE UISprite* GetUISprite() const { return ui_sprite_.get(); }
 
 private:
     tmx::Map map_;

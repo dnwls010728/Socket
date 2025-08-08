@@ -20,10 +20,11 @@ public:
     virtual ~UIImage() override = default;
 
     void SetSprite(UISprite* ui_sprite, const std::wstring& frame_name);
+    void SetSprite(UISprite* ui_sprite, uint64_t frame_index = 0);
 
     FORCEINLINE UISprite* GetSprite() const { return ui_sprite_; }
 
-    FORCEINLINE const std::wstring& GetCurrentFrame() const { return current_frame_; }
+    FORCEINLINE uint64_t GetFrameIndex() const { return frame_index_; }
 
     FORCEINLINE void SetDrawMode(DrawMode draw_mode) { draw_mode_ = draw_mode; }
     FORCEINLINE DrawMode GetDrawMode() const { return draw_mode_; }
@@ -36,7 +37,7 @@ protected:
 
     UISprite* ui_sprite_;
 
-    std::wstring current_frame_;
+    uint64_t frame_index_;
 
     DrawMode draw_mode_;
 

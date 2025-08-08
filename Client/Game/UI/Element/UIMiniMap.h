@@ -13,7 +13,7 @@ public:
     UIMiniMap(const std::wstring& name);
     virtual ~UIMiniMap() override = default;
 
-    void Init(Tilemap* tilemap);
+    void SetTilemap(const Tilemap* tilemap);
 
 protected:
     virtual void Init() override;

@@ -49,6 +49,12 @@ void GameMap::Load()
 
             Bounds bounds = tilemap->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
+
+            if (auto* state = UI::Get()->GetState())
+            {
+                if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
+                    element->SetTilemap(tilemap);
+            }
         }
     }
 #pragma endregion
