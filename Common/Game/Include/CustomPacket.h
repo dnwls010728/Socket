@@ -15,12 +15,6 @@ struct MessagePacket : public Net::IPacket
     REGISTER_PACKET(MessagePacket, 100)
 };
 
-struct DisconnectPacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(DisconnectPacket, 101)
-};
-
 // 로그인 요청
 struct LoginRequest : public Net::IPacket
 {

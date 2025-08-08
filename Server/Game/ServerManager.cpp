@@ -187,13 +187,6 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
         }
         break;
 
-    case DisconnectPacket::StaticPacketID:
-        {
-            DisconnectPacket* disconnect_packet = static_cast<DisconnectPacket*>(packet.get());
-            
-        }
-        break;
-
     case LoginRequest::StaticPacketID:
         {
             LoginRequest* request = static_cast<LoginRequest*>(packet.get());
