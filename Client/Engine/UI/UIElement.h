@@ -41,8 +41,8 @@ protected:
 
     FORCEINLINE virtual void Uninit() {}
     FORCEINLINE virtual void Tick(float delta_time) {}
-    FORCEINLINE virtual void Render() {}
-
+    
+    virtual void Render();
     virtual void Init();
     
     virtual UIElement* RayCast(const Math::Vector2& position);

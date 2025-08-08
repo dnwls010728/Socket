@@ -7,8 +7,7 @@
 #include "Windows/DX/UISprite.h"
 
 UIMiniMap::UIMiniMap(const std::wstring& name) :
-    UIContainer(name),
-    markers_()
+    UIContainer(name)
 {
     SetSize({ 200.f, 200.f });
     
@@ -30,9 +29,9 @@ UIMiniMap::UIMiniMap(const std::wstring& name) :
 
 void UIMiniMap::Init()
 {
-    UIContainer::Init();
-
     frame_->SetSize(GetSize());
+    
+    UIContainer::Init();
 }
 
 void UIMiniMap::Render()

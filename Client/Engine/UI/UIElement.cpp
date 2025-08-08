@@ -4,6 +4,7 @@
 #include "UIContainer.h"
 #include "UIState.h"
 #include "Math/Rect.h"
+#include "Windows/DX/Renderer.h"
 
 bool UIElement::IsInRange(const Math::Vector2& position) const
 {
@@ -63,6 +64,13 @@ UIElement::UIElement(const std::wstring& name) :
     absolute_position_(Math::Vector2::Zero()),
     size_(Math::Vector2::Zero())
 {
+}
+
+void UIElement::Render()
+{
+#ifdef _DEBUG // 디버그 모드에서 UIElement의 경계 박스를 그립니다.
+    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+#endif
 }
 
 void UIElement::Init()

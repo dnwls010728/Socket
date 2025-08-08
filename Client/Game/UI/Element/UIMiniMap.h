@@ -9,23 +9,8 @@ class UIMiniMap : public UIContainer
     GENERATED_BODY(UIMiniMap, UIContainer)
     
 public:
-    enum class MarkerType : uint8_t
-    {
-        kNone = 0,
-        kPlayer,
-        kOtherPlayer
-    };
-    
-    struct Marker
-    {
-        MarkerType type;
-        Math::Vector2 position;
-    };
-    
     UIMiniMap(const std::wstring& name);
     virtual ~UIMiniMap() override = default;
-
-    FORCEINLINE void SetMarkers(const std::vector<Marker>& markers) { markers_ = markers; }
 
 protected:
     virtual void Init() override;
@@ -36,7 +21,5 @@ private:
     UIImage* map_;
 
     UIText* map_name_text_;
-
-    std::vector<Marker> markers_;
     
 };
