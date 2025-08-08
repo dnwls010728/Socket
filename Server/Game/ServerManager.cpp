@@ -139,7 +139,32 @@ void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
     SessionManager* session_manager = SessionManager::Get();
     
     Session* session = session_manager->FindSessionByClientID(state.uniqueKey);
-    session->Update();
+    session->UpdateDatabase();
+
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (connection)
+    {
+        try
+        {
+            sql::PreparedStatement* statement = connection->prepareStatement("UPDATE account_info SET logged_in = 0 WHERE account_id = ?");
+            statement->setUInt(1, session->GetAccountID());
+            statement->executeUpdate();
+        }
+        catch (sql::SQLException& e)
+        {
+            std::cerr << "SQLException: " << e.what() << std::endl;
+            std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+            std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+        catch (...)
+        {
+            std::cerr << "Unknown Exception" << std::endl;
+        }
+    }
     
     session_manager->RemoveSession(state.uniqueKey);
 }
@@ -204,6 +229,10 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         server_socket_.SendPacketToClient(state.uniqueKey, response);
                         break;
                     }
+                    
+                    statement.reset(connection->prepareStatement("UPDATE account_info SET logged_in = 1, last_login = NOW() WHERE account_id = ?"));
+                    statement->setInt(1, account_id);
+                    statement->executeUpdate();
                     
                     session->CreatePlayer(account_id);
 

@@ -27,6 +27,10 @@ UIMiniMap::UIMiniMap(const std::wstring& name) :
     map_name_text_->SetText(L"알 수 없는 곳");
 }
 
+void UIMiniMap::Init(Tilemap* tilemap)
+{
+}
+
 void UIMiniMap::Init()
 {
     frame_->SetSize(GetSize());

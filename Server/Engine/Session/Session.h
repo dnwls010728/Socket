@@ -26,7 +26,7 @@ public:
 
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet) const;
-    void Update();
+    void UpdateDatabase();
 
     bool Disconnect();
 

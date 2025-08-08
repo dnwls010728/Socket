@@ -211,7 +211,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
     if (player_character_) player_character_->ReceivePacket(packet);
 }
 
-void Player::Update()
+void Player::UpdateDatabase()
 {
     if (player_character_) player_character_->UpdateDatabase();
 }

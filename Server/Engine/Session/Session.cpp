@@ -29,9 +29,9 @@ void Session::ReceivePacket(Net::IPacket* packet) const
     if (player_) player_->ReceivePacket(packet);
 }
 
-void Session::Update()
+void Session::UpdateDatabase()
 {
-    if (player_) player_->Update();
+    if (player_) player_->UpdateDatabase();
 }
 
 bool Session::Disconnect()

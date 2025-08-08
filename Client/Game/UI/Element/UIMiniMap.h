@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
 
+class Tilemap;
 class UIText;
 class UIImage;
 
@@ -11,6 +12,8 @@ class UIMiniMap : public UIContainer
 public:
     UIMiniMap(const std::wstring& name);
     virtual ~UIMiniMap() override = default;
+
+    void Init(Tilemap* tilemap);
 
 protected:
     virtual void Init() override;

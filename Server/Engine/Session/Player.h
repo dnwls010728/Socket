@@ -24,7 +24,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     
-    void Update();
+    void UpdateDatabase();
 
     void ExitMap();
 
