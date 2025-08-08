@@ -53,7 +53,7 @@ Math::Vector2 Tilemap::GetTileSize() const
     };
 }
 
-Bounds Tilemap::GetWorldBounds()
+Bounds Tilemap::GetWorldBounds() const
 {
     Math::Vector2 map_size = GetMapSize();
     Math::Vector2 tile_size = GetTileSize();

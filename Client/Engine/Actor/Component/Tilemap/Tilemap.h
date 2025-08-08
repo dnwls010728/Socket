@@ -16,7 +16,7 @@ public:
     Math::Vector2 GetMapSize() const;
     Math::Vector2 GetTileSize() const;
 
-    Bounds GetWorldBounds();
+    Bounds GetWorldBounds() const;
 
     FORCEINLINE const tmx::Map& GetMap() const { return map_; }
     FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }

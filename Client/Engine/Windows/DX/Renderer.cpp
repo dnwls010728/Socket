@@ -494,36 +494,6 @@ Math::Vector2 Renderer::ConvertWorldToScreen(const Math::Vector2& kWorldPosition
     return { x, y };
 }
 
-void Renderer::DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke)
-{
-    D2DViewport* d2d_viewport = FindD2DViewport(window);
-    if (!d2d_viewport) return;
-
-    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
-    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
-        brush.GetAddressOf());
-    if (FAILED(hr)) return;
-
-    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
-    d2d_viewport->d2d_render_target->DrawEllipse(ellipse, brush.Get(), stroke);
-}
-
-void Renderer::DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color)
-{
-    D2DViewport* d2d_viewport = FindD2DViewport(window);
-    if (!d2d_viewport) return;
-
-    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
-    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
-        brush.GetAddressOf());
-    if (FAILED(hr)) return;
-
-    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
-    d2d_viewport->d2d_render_target->FillEllipse(ellipse, brush.Get());
-}
-
 void Renderer::DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, float stroke)
 {
     D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
@@ -672,6 +642,36 @@ void Renderer::DrawSolidRoundBox(const Math::Vector2& position, const Math::Vect
 
     d2d_viewport->d2d_render_target->FillRoundedRectangle(D2D1::RoundedRect(rect, radius, radius), brush.Get());
     d2d_viewport->d2d_render_target->SetTransform(transform);
+}
+
+void Renderer::DrawCircle(const Math::Vector2& position, float radius, const Math::Color& color, float stroke)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
+    d2d_viewport->d2d_render_target->DrawEllipse(ellipse, brush.Get(), stroke);
+}
+
+void Renderer::DrawSolidCircle(const Math::Vector2& position, float radius, const Math::Color& color)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
+    d2d_viewport->d2d_render_target->FillEllipse(ellipse, brush.Get());
 }
 
 void Renderer::DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
