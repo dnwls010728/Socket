@@ -207,9 +207,12 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
         }
         else
         {
-            UIPopup::ShowPopup(L"몇 개나 버리시겠습니까?", PopupOption::OK | PopupOption::Cancel | PopupOption::Edit, [&](std::wstring input_text, PopupOption option)->bool
+            UIPopup::PopupParam param;
+            param.caption = L"몇 개나 버리시겠습니까?";
+            param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
+            param.callback = [&](const std::wstring& input_text, UIPopup::PopupOption option)
             {
-                if (option == PopupOption::OK)
+                if (option == UIPopup::PopupOption::OK)
                 {
                     DropItemRequest request;
                     request.inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
@@ -220,7 +223,8 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                     return true;
                 }
                 return true;
-            });
+            };
+            UIPopup::ShowPopup(param);
         }
     }
     
