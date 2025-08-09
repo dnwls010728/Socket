@@ -33,6 +33,7 @@ class UIPopup : public UIContainer
         std::wstring default_input_text;
         UIEditableText::ContentType content_type;
         std::wstring placeholder;
+        int input_limit;
         Function<bool(const std::wstring& input_text, PopupOption)> callback;
     };
 public:

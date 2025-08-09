@@ -46,31 +46,6 @@ bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)
             inventory_->SetActive(!inventory_->IsActive());
             is_handled = true;
         }
-
-        // TEST
-        if (key_code == 'F' && !IsEditingText())
-        {
-            UIPopup::PopupParam param;
-            param.caption = L"테스트 입니다. 아무말이나 입력하세요";
-            param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
-            param.content_type = UIEditableText::ContentType::kPassword;
-            param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option)
-            {
-                if (option == UIPopup::PopupOption::OK)
-                {
-                    
-                    UIPopup::PopupParam param;
-                    param.caption = text;
-                    param.placeholder = text;
-                    param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::No | UIPopup::PopupOption::Yes;
-                    param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option) { return true;};
-                    UIPopup::ShowPopup(param);
-                    return false;
-                }
-                return true;
-            };
-            UIPopup::ShowPopup(param);
-        }
         
         if (key_code == VK_RETURN && !IsEditingText())
         {
