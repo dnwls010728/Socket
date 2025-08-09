@@ -212,12 +212,32 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
             param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
             param.default_input_text = std::to_wstring(count);
             param.content_type = UIEditableText::ContentType::kIntegerNumber;
+            param.input_limit = 10;
             param.callback = [&](const std::wstring& input_text, UIPopup::PopupOption option)
             {
                 if (option == UIPopup::PopupOption::OK)
                 {
+                    UIPopup::PopupParam temp_param;
+                    temp_param.option = UIPopup::PopupOption::OK;
+                    
+                    if (input_text == L"" || std::stoll(input_text) <= 0)
+                    {
+                        temp_param.caption = L"1 이상의 숫자만 가능합니다.";
+                        UIPopup::ShowPopup(temp_param);
+                        return false;
+                    }
+                    
+                    Inventory::Type temp_type = ui_inventory_->tab_;
+                    int32_t temp_count = ui_inventory_->inventory_->GetItemCount(temp_type, slot_id_);
+                    if (std::stoll(input_text) > temp_count)
+                    {
+                        temp_param.caption = std::to_wstring(temp_count) + L" 이하의 숫자만 가능합니다.";
+                        UIPopup::ShowPopup(temp_param);
+                        return false;
+                    }
+                    
                     DropItemRequest request;
-                    request.inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
+                    request.inventory_type = static_cast<uint8_t>(temp_type);
                     request.slot_id = slot_id_;
                     request.count = std::stoi(input_text);
                     SessionSubsystem::Get()->SendPacket(request);
