@@ -160,7 +160,7 @@ void UIInventory::UpdateSlot(uint32_t slot_index) const
     else slots_[slot_index - 1]->ResetSlot();
 }
 
-void UIInventory::UpdateColor(uint32_t color)
+void UIInventory::UpdateColor(uint32_t color) const
 {
     std::wstring color_str = std::to_wstring(color);
     for (uint32_t i = color_str.size(); i > 3; i -= 3)
@@ -225,7 +225,7 @@ bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
     uint8_t current_tab = static_cast<uint8_t>(tab_);
     tab_buttons_[current_tab]->SetTextColor(Math::Color::White);
     
-    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 1)) + 1;
+    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 2)) + 1;
     tab_buttons_[current_tab]->SetTextColor(Math::Color::Yellow);
     
     tab_ = static_cast<Inventory::Type>(current_tab);

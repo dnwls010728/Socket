@@ -274,7 +274,7 @@ void PlayerCharacter::Tick(float delta_time)
 
         if (mouse->GetMouseButtonDown(MouseButton::kRight))
         {
-            Math::Vector2 position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+            Math::Vector2 position = Renderer::Get()->ScreenToWorld(mouse->GetMousePosition());
             
             Actor* out_actor = nullptr;
             bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));

@@ -54,7 +54,7 @@ void NPC::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
        
-    Math::Vector2 screen_position = Renderer::Get()->ConvertWorldToScreen(GetTransform()->GetPosition());
+    Math::Vector2 screen_position = Renderer::Get()->WorldToScreen(GetTransform()->GetPosition());
 
     Math::Vector2 name_tag_offset = { -sub_name_tag_->GetSize().x * .5f, 28.f };
     sub_name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);

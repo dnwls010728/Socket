@@ -54,7 +54,7 @@ void UIText::Render()
     UIElement::Render();
 
     Renderer::Get()->DrawString(text_, GetAbsolutePosition(), GetSize(), color_, font_name_, font_size_, text_alignment_, paragraph_alignment_);
-    // Renderer::Get()->DrawStringWithOutline(text_, GetAbsolutePosition(), size_, Math::Color::Black, color_, 1.f, font_name_, font_size_, text_alignment_, paragraph_alignment_);
+    // Renderer::Get()->DrawStringWithOutline(text_, GetAbsolutePosition(), GetSize(), Math::Color::Black, color_, 1.f, font_name_, font_size_, text_alignment_, paragraph_alignment_);
 }
 
 void UIText::UpdateAdvances()

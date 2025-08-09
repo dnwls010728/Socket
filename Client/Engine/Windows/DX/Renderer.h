@@ -93,8 +93,8 @@ public:
     void EndLayer();
     void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
     
-    Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition);
-    Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition);
+    Math::Vector2 ScreenToWorld(const Math::Vector2& screen_position);
+    Math::Vector2 WorldToScreen(const Math::Vector2& world_position);
 
     // Direct2D
     void DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float stroke = 1.f);

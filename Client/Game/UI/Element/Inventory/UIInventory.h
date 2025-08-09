@@ -18,7 +18,7 @@ public:
     virtual ~UIInventory() override = default;
 
     void UpdateSlot(uint32_t slot_index) const;
-    void UpdateColor(uint32_t color);
+    void UpdateColor(uint32_t color) const;
 
 protected:
     virtual void Init() override;

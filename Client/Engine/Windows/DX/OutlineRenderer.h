@@ -8,7 +8,7 @@ class OutlineRenderer : public IDWriteTextRenderer
 {
 public:
     OutlineRenderer(const Microsoft::WRL::ComPtr<ID2D1Brush>& outline_brush, const Microsoft::WRL::ComPtr<ID2D1Brush>& fill_brush, float stroke);
-    ~OutlineRenderer() = default;
+    virtual ~OutlineRenderer() = default;
     
     virtual HRESULT QueryInterface(const IID& riid, void** ppvObject) override;
     virtual ULONG AddRef() override;

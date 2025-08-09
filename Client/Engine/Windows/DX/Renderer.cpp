@@ -456,13 +456,13 @@ void Renderer::ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t 
     viewport->dxgi_swap_chain->ResizeTarget(&mode_desc);
 }
 
-Math::Vector2 Renderer::ConvertScreenToWorld(const Math::Vector2& kScreenPosition)
+Math::Vector2 Renderer::ScreenToWorld(const Math::Vector2& screen_position)
 {
     Viewport* viewport = FindViewport(World::Get()->GetWindow());
     if (!viewport) return Math::Vector2::Zero();
 
-    float x = (kScreenPosition.x / viewport->d3d_viewport.Width) * 2.f - 1.f;
-    float y = 1.f - (kScreenPosition.y / viewport->d3d_viewport.Height) * 2.f;
+    float x = (screen_position.x / viewport->d3d_viewport.Width) * 2.f - 1.f;
+    float y = 1.f - (screen_position.y / viewport->d3d_viewport.Height) * 2.f;
 
     DirectX::XMFLOAT3 clip = { x, y, 0.f };
     
@@ -475,12 +475,12 @@ Math::Vector2 Renderer::ConvertScreenToWorld(const Math::Vector2& kScreenPositio
     return { world.x, world.y };
 }
 
-Math::Vector2 Renderer::ConvertWorldToScreen(const Math::Vector2& kWorldPosition)
+Math::Vector2 Renderer::WorldToScreen(const Math::Vector2& world_position)
 {
     Viewport* viewport = FindViewport(World::Get()->GetWindow());
     if (!viewport) return Math::Vector2::Zero();
     
-    DirectX::XMFLOAT3 world = { kWorldPosition.x, kWorldPosition.y, 0.f };
+    DirectX::XMFLOAT3 world = { world_position.x, world_position.y, 0.f };
     
     DirectX::XMFLOAT3 screen;
     DirectX::XMStoreFloat3(&screen, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&world), viewport->view_matrix));
@@ -757,8 +757,7 @@ void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vec
     if (FAILED(hr)) return;
     
     OutlineRenderer renderer(outline_brush, fill_brush, stroke);
-    hr = text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
-    if (FAILED(hr)) return;
+    text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
 }
 
 void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)
