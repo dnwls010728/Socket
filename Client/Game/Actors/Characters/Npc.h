@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include "CharacterBase.h"
 
-class NPC : public CharacterBase
+class Npc : public CharacterBase
 {
-    SHADER_CLASS_HELPER(NPC)
-    GENERATED_BODY(NPC, CharacterBase)
+    SHADER_CLASS_HELPER(Npc)
+    GENERATED_BODY(Npc, CharacterBase)
     
 public:
-    NPC(const std::wstring& name);
-    virtual ~NPC() override = default;
+    Npc(const std::wstring& name);
+    virtual ~Npc() override = default;
 
 protected:
     virtual void BeginPlay() override;

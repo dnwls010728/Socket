@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "NPC.h"
+#include "Npc.h"
 
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -9,7 +9,7 @@
 #include "UI/Element/UINameTag.h"
 #include "Windows/DX/Sprite.h"
 
-NPC::NPC(const std::wstring& name) :
+Npc::Npc(const std::wstring& name) :
     CharacterBase(name),
     hide_duration_(5.f),
     show_duration_(5.f),
@@ -23,7 +23,7 @@ NPC::NPC(const std::wstring& name) :
     collider_->SetSize({1.f, 1.f});
 }
 
-void NPC::BeginPlay()
+void Npc::BeginPlay()
 {
     CharacterBase::BeginPlay();
 
@@ -50,7 +50,7 @@ void NPC::BeginPlay()
     }, hide_duration_, false);
 }
 
-void NPC::PhysicsTick(float delta_time)
+void Npc::PhysicsTick(float delta_time)
 {
     CharacterBase::PhysicsTick(delta_time);
        
@@ -60,7 +60,7 @@ void NPC::PhysicsTick(float delta_time)
     sub_name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);
 }
 
-void NPC::EndPlay(EndPlayReason type)
+void Npc::EndPlay(EndPlayReason type)
 {
     CharacterBase::EndPlay(type);
 
@@ -72,7 +72,7 @@ void NPC::EndPlay(EndPlayReason type)
     }
 }
 
-void NPC::OnSpeakEnd()
+void Npc::OnSpeakEnd()
 {
     CharacterBase::OnSpeakEnd();
     
@@ -86,7 +86,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<NPC>("NPC")
+    registration::class_<Npc>("Npc")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_std_shared_ptr

@@ -230,7 +230,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Characters\NPC.h" />
+    <ClInclude Include="Game\Actors\Characters\Npc.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerFallState.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerIdleState.h" />
@@ -242,7 +242,6 @@
     <ClInclude Include="Game\Actors\Interfaces\IDamageable.h" />
     <ClInclude Include="Game\Actors\DroppedItem.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
-    <ClInclude Include="Game\Actors\Ladder.h" />
     <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
     <ClInclude Include="Game\Actors\ServerActor.h" />
@@ -637,7 +636,7 @@
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
+    <ClCompile Include="Game\Actors\Characters\Npc.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerFallState.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerIdleState.cpp" />
@@ -648,7 +647,6 @@
     <ClCompile Include="Game\Actors\Damage.cpp" />
     <ClCompile Include="Game\Actors\DroppedItem.cpp" />
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
-    <ClCompile Include="Game\Actors\Ladder.cpp" />
     <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
     <ClCompile Include="Game\Actors\ServerActor.cpp" />

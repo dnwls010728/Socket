@@ -125,10 +125,10 @@ bool UIInventorySlot::OnMouseEnter()
 {
     if (item_id_ == 0) return false;
 
-    auto game_state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
-    if (!game_state) return false;
+    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+    if (!state) return false;
 
-    tooltip_ = game_state->GetItemTooltip();
+    tooltip_ = state->GetItemTooltip();
     tooltip_->SetActive(true);
     
     return true;
