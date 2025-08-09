@@ -30,6 +30,14 @@ UIEditableText::UIEditableText(const std::wstring& name) :
     placeholder_text_->SetColor(Math::Color::Gray);
 }
 
+void UIEditableText::SetSize(const Math::Vector2& size)
+{
+    UIMask::SetSize(size);
+    
+    text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
+    ScrollToCursor();
+}
+
 void UIEditableText::SetText(const std::wstring& text)
 {
     cursor_position_ = text.size();

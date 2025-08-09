@@ -71,7 +71,6 @@ void UIPopup::PopupSetting(const PopupParam &param)
     caption_control_->SetText(param.caption);
     
     UpdateControl(param.option);
-    UpdateLayout();
     if ((param.option & PopupOption::Edit) == PopupOption::Edit && input_control_ )
     {
         input_control_->SetPlaceholderText(param.placeholder);
@@ -79,6 +78,7 @@ void UIPopup::PopupSetting(const PopupParam &param)
         input_control_->SetContentType(param.content_type);
         input_control_->SetCharacterLimit(param.input_limit);
     }
+    UpdateLayout();
 
     result_callback_ = [this, callback = param.callback](const std::wstring& input_text, PopupOption option)
     {

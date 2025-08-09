@@ -21,6 +21,8 @@ public:
     UIEditableText(const std::wstring& name);
     virtual ~UIEditableText() override = default;
 
+    virtual void SetSize(const Math::Vector2& size) override;
+
     void SetText(const std::wstring& text);
     void SetContentType(ContentType type);
     

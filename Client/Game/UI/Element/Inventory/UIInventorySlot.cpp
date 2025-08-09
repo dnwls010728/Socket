@@ -210,6 +210,8 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
             UIPopup::PopupParam param;
             param.caption = L"몇 개나 버리시겠습니까?";
             param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
+            param.default_input_text = std::to_wstring(count);
+            param.content_type = UIEditableText::ContentType::kIntegerNumber;
             param.callback = [&](const std::wstring& input_text, UIPopup::PopupOption option)
             {
                 if (option == UIPopup::PopupOption::OK)
