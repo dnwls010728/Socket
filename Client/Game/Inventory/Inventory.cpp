@@ -85,7 +85,7 @@ void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
     ItemCountChangedEventData event_data;
     event_data.slot = slot_index;
     event_data.count = count;
-        
+    
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemCountChanged, event_data);
 }
 

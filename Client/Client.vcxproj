@@ -276,6 +276,8 @@
     <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\GameMap.h" />
+    <ClInclude Include="Game\PacketHandlers\AddItemHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ChangeItemCountHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ChatMessageHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CheckNameHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CreateCharacterHandler.h" />
@@ -680,6 +682,8 @@
     <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\GameMap.cpp" />
+    <ClCompile Include="Game\PacketHandlers\AddItemHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ChangeItemCountHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ChatMessageHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CheckNameHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CreateCharacterHandler.cpp" />

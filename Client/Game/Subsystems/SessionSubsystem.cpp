@@ -6,6 +6,8 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "PacketHandlers/AddItemHandler.h"
+#include "PacketHandlers/ChangeItemCountHandler.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/CreateCharacterHandler.h"
@@ -87,6 +89,16 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MapLoadPacket::StaticPacketID,
         std::make_unique<MapLoadHandler>()
+    );
+
+    handlers_.emplace(
+        AddItemPacket::StaticPacketID,
+        std::make_unique<AddItemHandler>()
+    );
+
+    handlers_.emplace(
+        ChangeItemCountPacket::StaticPacketID,
+        std::make_unique<ChangeItemCountHandler>()
     );
 
     handlers_.emplace(
