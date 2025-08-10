@@ -269,6 +269,30 @@ struct MoveItemRequest : public Net::IPacket
     REGISTER_PACKET(MoveItemRequest, 300)
 };
 
+struct AddItemPacket : public Net::IPacket
+{
+    uint8_t inventory_type;
+
+    uint32_t slot_index;
+    uint32_t item_id;
+    
+    int32_t count;
+    
+    SERIALIZABLE_FIELDS(inventory_type, slot_index, item_id, count)
+    REGISTER_PACKET(AddItemPacket, 301)
+};
+
+struct ChangeItemCountPacket : public Net::IPacket
+{
+    uint8_t inventory_type;
+    
+    uint32_t slot_index;
+    int32_t count;
+    
+    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
+    REGISTER_PACKET(ChangeItemCountPacket, 302)
+};
+
 struct MoveItemResponse : public Net::IPacket
 {
     uint8_t inventory_type;
@@ -277,29 +301,29 @@ struct MoveItemResponse : public Net::IPacket
     uint32_t second_slot;
     
     SERIALIZABLE_FIELDS(inventory_type, first_slot, second_slot)
-    REGISTER_PACKET(MoveItemResponse, 301)
+    REGISTER_PACKET(MoveItemResponse, 303)
 };
 
 struct DropItemRequest : public Net::IPacket
 {
     uint8_t inventory_type;
     
-    uint32_t slot_id;
+    uint32_t slot_index;
     uint32_t count;
     
-    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
-    REGISTER_PACKET(DropItemRequest, 302)
+    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
+    REGISTER_PACKET(DropItemRequest, 304)
 };
 
 struct DropItemResponse : public Net::IPacket
 {
     uint8_t inventory_type;
     
-    uint32_t slot_id;
+    uint32_t slot_index;
     uint32_t count;
     
-    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
-    REGISTER_PACKET(DropItemResponse, 303)
+    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
+    REGISTER_PACKET(DropItemResponse, 305)
 };
 
 struct PickupItemRequest : public Net::IPacket
@@ -307,7 +331,16 @@ struct PickupItemRequest : public Net::IPacket
     uint32_t object_id;
     
     SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(PickupItemRequest, 304)
+    REGISTER_PACKET(PickupItemRequest, 306)
+};
+
+struct PickupItemResponse : public Net::IPacket
+{
+    uint32_t object_id;
+    uint32_t picked_up_by_id;
+    
+    SERIALIZABLE_FIELDS(object_id, picked_up_by_id)
+    REGISTER_PACKET(PickupItemResponse, 307)
 };
 
 struct AttackRequest : public Net::IPacket

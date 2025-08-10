@@ -25,7 +25,8 @@ PlayerCharacter::PlayerCharacter() :
     exp_(0),
     color_(0),
     inventory_(nullptr),
-    is_invincible_()
+    is_invincible_(),
+    dropped_item_mutex_()
 {
 }
 
@@ -274,21 +275,21 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
-            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
+            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_index);
             
-            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
+            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_index);
             int32_t remaining_count = 0;
             
-            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_id);
+            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_index);
             else
             {
                 remaining_count = count - request->count;
-                inventory_->ChangeCount(inventory_type, request->slot_id, remaining_count);
+                inventory_->ChangeCount(inventory_type, request->slot_index, remaining_count);
             }
 
             DropItemResponse response;
             response.inventory_type = request->inventory_type;
-            response.slot_id = request->slot_id;
+            response.slot_index = request->slot_index;
             response.count = remaining_count;
             SendPacket(response);
             
@@ -306,6 +307,25 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
             {
+                std::lock_guard<std::mutex> lock(dropped_item_mutex_);
+
+                uint32_t item_id = dropped_item->GetItemID();
+                int32_t count = dropped_item->GetCount();
+
+                // 해당 아이템을 인벤토리에 추가할 공간이 있는지 확인
+                if (inventory_->HasSpace(item_id, count))
+                {
+                    if (inventory_->AddItem(item_id, count))
+                    {
+                    }
+                    
+                    PickupItemResponse response;
+                    response.object_id = dropped_item->GetObjectID();
+                    response.picked_up_by_id = object_id_;
+                    map_->SendPacket(response);
+
+                    map_->DestroyObject(dropped_item->GetObjectID());
+                }
             }
         }
         break;

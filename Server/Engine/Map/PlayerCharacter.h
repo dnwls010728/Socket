@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <mutex>
+
 #include "MapObject.h"
 #include "Utils/TimedBool.h"
 
@@ -74,4 +76,6 @@ protected:
     std::unique_ptr<Inventory> inventory_;
     
     TimedBool is_invincible_;
+
+    std::mutex dropped_item_mutex_;
 };

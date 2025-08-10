@@ -52,6 +52,13 @@ const MobData* DataManager::GetMob(uint32_t id) const
     return &it->second;
 }
 
+const ItemData* DataManager::GetItem(uint32_t id) const
+{
+    auto it = item_map_.find(id);
+    if (it == item_map_.end()) return nullptr;
+    return &it->second;
+}
+
 int32_t DataManager::GetExp(uint32_t level) const
 {
     if (level >= exp_table_.size()) return 0;

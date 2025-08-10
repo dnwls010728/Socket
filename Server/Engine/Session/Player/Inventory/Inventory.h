@@ -3,6 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <array>
+#include <vector>
 
 class PlayerCharacter;
 
@@ -21,7 +22,9 @@ public:
     
     struct Slot
     {
+        uint32_t slot_index;
         uint32_t item_id;
+        
         int32_t count;
     };
     
@@ -41,7 +44,13 @@ public:
     void Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot);
     void Remove(Type type, uint32_t slot_index);
     
+    bool IsFull(Type type);
+    bool IsFull(Type type, uint32_t margin);
+    bool HasSpace(uint32_t item_id, int32_t count);
+    bool AddItem(uint32_t item_id, int32_t count);
     bool UpdateDatabase() const;
+    
+    std::vector<Slot*> GetSlotsWithItem(Type type, uint32_t item_id);
 
     inline void SetSlotCapacity(Type type, uint32_t capacity) { slot_capacity_[static_cast<uint8_t>(type)] = capacity; }
     inline uint32_t GetSlotCapacity(Type type) const { return slot_capacity_[static_cast<uint8_t>(type)]; }

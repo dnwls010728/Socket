@@ -20,6 +20,7 @@
 #include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
+#include "PacketHandlers/PickupItemHandler.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/SpawnObjectHandler.h"
@@ -146,6 +147,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         DropItemResponse::StaticPacketID,
         std::make_unique<DropItemHandler>()
+    );
+
+    handlers_.emplace(
+        PickupItemResponse::StaticPacketID,
+        std::make_unique<PickupItemHandler>()
     );
 #pragma endregion
 

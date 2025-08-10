@@ -201,7 +201,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
         {
             DropItemRequest request;
             request.inventory_type = static_cast<uint8_t>(type);
-            request.slot_id = slot_id_;
+            request.slot_index = slot_id_;
             request.count = 1;
             SessionSubsystem::Get()->SendPacket(request);
         }
@@ -238,7 +238,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                     
                     DropItemRequest request;
                     request.inventory_type = static_cast<uint8_t>(temp_type);
-                    request.slot_id = slot_id_;
+                    request.slot_index = slot_id_;
                     request.count = std::stoi(input_text);
                     SessionSubsystem::Get()->SendPacket(request);
                     

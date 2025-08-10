@@ -289,6 +289,7 @@
     <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PickupItemHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
@@ -692,6 +693,7 @@
     <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PickupItemHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />

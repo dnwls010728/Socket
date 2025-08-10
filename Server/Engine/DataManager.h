@@ -108,6 +108,7 @@ public:
     void Init();
 
     const MobData* GetMob(uint32_t id) const;
+    const ItemData* GetItem(uint32_t id) const;
     
     int32_t GetExp(uint32_t level) const;
 
