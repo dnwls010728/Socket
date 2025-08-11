@@ -294,7 +294,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             SendPacket(response);
             
             Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
-            map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            map_->SpawnDropItem(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 

@@ -309,7 +309,7 @@ struct DropItemRequest : public Net::IPacket
     uint8_t inventory_type;
     
     uint32_t slot_index;
-    uint32_t count;
+    int32_t count;
     
     SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
     REGISTER_PACKET(DropItemRequest, 304)
@@ -320,7 +320,7 @@ struct DropItemResponse : public Net::IPacket
     uint8_t inventory_type;
     
     uint32_t slot_index;
-    uint32_t count;
+    int32_t count;
     
     SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
     REGISTER_PACKET(DropItemResponse, 305)
