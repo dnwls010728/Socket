@@ -191,26 +191,26 @@ void PlayerCharacter::Tick(float delta_time)
 
         if (!UI::Get()->IsEditingText())
         {
-            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+            move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
+            move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
 
-            if (keyboard->GetKey('C'))
+            if (keyboard->GetKey(Scancode::kKeyC))
             {
                 is_jump_pressed_ = true;
             }
 
-            if (keyboard->GetKeyDown('1'))
+            if (keyboard->GetKeyDown(Scancode::kKey1))
             {
                 NetworkSubsystem::Get()->ChangeMap(1);
             }
 
-            if (keyboard->GetKeyDown('2'))
+            if (keyboard->GetKeyDown(Scancode::kKey2))
             {
                 NetworkSubsystem::Get()->ChangeMap(2);
             }
 
             // 아이템 줍기
-            if (keyboard->GetKeyDown('Z'))
+            if (keyboard->GetKeyDown(Scancode::kKeyZ))
             {
                 Math::Vector2 center = GetTransform()->GetPosition();
                 Math::Vector2 size = {1.f, 1.f};
@@ -236,7 +236,7 @@ void PlayerCharacter::Tick(float delta_time)
             }
 
             // 공격 테스트
-            if (keyboard->GetKeyDown('X'))
+            if (keyboard->GetKeyDown(Scancode::kKeyX))
             {
                 std::vector<Actor*> hit_actors;
                 bool is_hit = Physics2D::OverlapBoxAll(

@@ -47,7 +47,9 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         WORD key_code = LOWORD(wParam);
         WORD key_flags = HIWORD(lParam);
         
-        uint32_t scancode =  MapVirtualKey(key_code, MAPVK_VK_TO_CHAR);
+        uint32_t scancode = (HIWORD(lParam) & (KF_EXTENDED | 0xFF));
+        if (!scancode) scancode = MapVirtualKey(key_code, MAPVK_VK_TO_VSC_EX);
+        Logger::Print(L"Scancode: %d, KeyCode: %d, Flags: %d", scancode, key_code, key_flags);
 
         bool is_released = (key_flags & KF_UP) == KF_UP;
         bool is_repeat = (key_flags & KF_REPEAT) == KF_REPEAT;
@@ -58,6 +60,7 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
         Event event;
         event.type = type;
+        event.key.scancode = scancode;
         event.key.key_code = key_code;
         event.key.is_repeat = is_repeat;
         event.key.timestamp = GetEventTimestamp();

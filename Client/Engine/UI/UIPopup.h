@@ -48,7 +48,7 @@ protected:
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
-    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
     void SubmitOnEnter();
 
     virtual void UpdateControl(PopupOption option);

@@ -15,13 +15,13 @@ public:
     inline void SetItemID(uint32_t item_id) { item_id_ = item_id; }
     inline uint32_t GetItemID() const { return item_id_; }
 
-    inline void SetCount(uint32_t count) { count_ = count; }
-    inline uint32_t GetCount() const { return count_; }
+    inline void SetCount(int32_t count) { count_ = count; }
+    inline int32_t GetCount() const { return count_; }
 
 private:
     std::weak_ptr<MapObject> dropper_;
     
     uint32_t item_id_;
-    uint32_t count_;
+    int32_t count_;
     
 };

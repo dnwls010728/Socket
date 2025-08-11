@@ -5,6 +5,8 @@
 
 #include "Asset/AssetManager.h"
 #include <shellapi.h>
+
+#include "Scancode.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIPopup.h"
 #include "UI/Element/UIEditableText.h"
@@ -84,20 +86,20 @@ void UILogin::Init()
     UIContainer::Init();
 }
 
-bool UILogin::OnKey(uint16_t key_code, bool is_pressed)
+bool UILogin::OnKey(uint32_t scancode, bool is_pressed)
 {
     if (is_pressed)
     {
-        switch (key_code)
+        switch (scancode)
         {
-        case VK_TAB:
+        case static_cast<uint32_t>(Scancode::kKeyTab):
             {
                 if (input_id_->IsFocused()) UI::Get()->SetFocus(input_password_);
                 else if (input_password_->IsFocused()) UI::Get()->SetFocus(input_id_);
                 return true;
             }
 
-        case VK_RETURN:
+        case static_cast<uint32_t>(Scancode::kKeyEnter):
             {
                 OnLogin();
                 return true;

@@ -51,7 +51,7 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     if (item_id > 0)
     {
         UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (ui_sprite) icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
+        if (ui_sprite) icon_->SetSprite(ui_sprite);
 
         count_text_->SetText(std::to_wstring(count));
         count_text_->SetActive(true);

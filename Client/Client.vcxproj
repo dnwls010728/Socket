@@ -192,6 +192,7 @@
     <ClInclude Include="Engine\Asset\AssetManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
     <ClInclude Include="Engine\PhysicsDebugDrawHelper.h" />
+    <ClInclude Include="Engine\Scancode.h" />
     <ClInclude Include="Engine\Subsystem\GameInstanceSubsystem.h" />
     <ClInclude Include="Engine\Subsystem\Subsystem.h" />
     <ClInclude Include="Engine\Subsystem\Tickable.h" />

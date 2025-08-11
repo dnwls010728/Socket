@@ -131,7 +131,7 @@ bool UIElement::OnScroll(const Math::Vector2& position, const Math::Vector2& del
     return false;
 }
 
-bool UIElement::OnKey(uint16_t key_code, bool is_pressed)
+bool UIElement::OnKey(uint32_t scancode, bool is_pressed)
 {
     return false;
 }

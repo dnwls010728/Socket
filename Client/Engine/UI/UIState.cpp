@@ -218,12 +218,12 @@ bool UIState::OnScroll(const Math::Vector2& position, const Math::Vector2& delta
     return false;
 }
 
-bool UIState::OnKey(uint16_t key_code, bool is_pressed)
+bool UIState::OnKey(uint32_t scancode, bool is_pressed)
 {
     for (uint32_t i = 0; i < focus_path_.size(); ++i)
     {
         UIElement* element = focus_path_[focus_path_.size() - i - 1];
-        if (element && element->IsFocused() && element->OnKey(key_code, is_pressed))
+        if (element && element->IsFocused() && element->OnKey(scancode, is_pressed))
             return true;
     }
 

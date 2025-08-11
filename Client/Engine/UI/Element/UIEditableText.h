@@ -63,7 +63,7 @@ protected:
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
     
-    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
     virtual void OnFocus(bool is_focused) override;

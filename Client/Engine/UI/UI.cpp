@@ -124,7 +124,7 @@ void UI::OnEvent(const Event& event)
     else if (type & static_cast<uint32_t>(EventType::kKeyChanged))
     {
         const KeyboardEvent& key_event = event.key;
-        if (state_) state_->OnKey(key_event.key_code, key_event.is_repeat);
+        if (state_) state_->OnKey(key_event.scancode, key_event.is_repeat);
     }
     else if (type == static_cast<uint32_t>(EventType::kText))
     {

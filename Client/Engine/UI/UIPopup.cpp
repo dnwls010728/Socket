@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "UIPopup.h"
 
+#include "Scancode.h"
 #include "Asset/AssetManager.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
@@ -248,13 +249,13 @@ bool UIPopup::OnDrag(const Math::Vector2&, const Math::Vector2& delta)
 }
 bool UIPopup::OnDragEnd(const Math::Vector2&) { return true; }
 
-bool UIPopup::OnKey(uint16_t key_code, bool is_pressed)
+bool UIPopup::OnKey(uint32_t scancode, bool is_pressed)
 {
     if (is_pressed)
     {
-        switch (key_code)
+        switch (scancode)
         {
-        case VK_RETURN:
+        case static_cast<uint32_t>(Scancode::kKeyEnter):
             {
                 SubmitOnEnter();
                 return true;

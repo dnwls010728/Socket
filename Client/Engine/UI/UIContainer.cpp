@@ -142,9 +142,9 @@ bool UIContainer::OnScroll(const Math::Vector2& position, const Math::Vector2& d
     return UIElement::OnScroll(position, delta);
 }
 
-bool UIContainer::OnKey(uint16_t key_code, bool is_pressed)
+bool UIContainer::OnKey(uint32_t scancode, bool is_pressed)
 {
-    return UIElement::OnKey(key_code, is_pressed);
+    return UIElement::OnKey(scancode, is_pressed);
 }
 
 bool UIContainer::OnChar(wchar_t character)

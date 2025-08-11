@@ -33,6 +33,7 @@ struct WindowEvent
 struct KeyboardEvent
 {
     EventType type;
+    uint32_t scancode;
     WORD key_code;
     bool is_repeat;
     double timestamp;

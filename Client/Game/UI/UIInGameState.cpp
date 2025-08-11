@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIInGameState.h"
 
+#include "Scancode.h"
 #include "Ui/UIPopup.h"
 #include "Element/UIChatBar.h"
 #include "Element/UIMiniMap.h"
@@ -35,19 +36,19 @@ void UIInGameState::Init()
     UIState::Init();
 }
 
-bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)
+bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
 {
-    bool is_handled = UIState::OnKey(key_code, is_pressed);
+    bool is_handled = UIState::OnKey(scancode, is_pressed);
     
     if (!is_handled && is_pressed)
     {
-        if (key_code == 'I' && !IsEditingText())
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyI) && !IsEditingText())
         {
             inventory_->SetActive(!inventory_->IsActive());
             is_handled = true;
         }
         
-        if (key_code == VK_RETURN && !IsEditingText())
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter) && !IsEditingText())
         {
             char_bar_->FocusInput();
             is_handled = true;

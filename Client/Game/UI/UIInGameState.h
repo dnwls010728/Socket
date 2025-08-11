@@ -18,7 +18,7 @@ public:
 
 protected:
     virtual void Init() override;
-    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
 
 private:
     UIChatBar* char_bar_;

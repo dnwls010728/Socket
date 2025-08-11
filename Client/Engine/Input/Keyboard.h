@@ -2,6 +2,7 @@
 #include <map>
 #include <Windows.h>
 
+#include "Scancode.h"
 #include "Singleton.h"
 
 union Event;
@@ -24,9 +25,9 @@ public:
     Keyboard();
     virtual ~Keyboard() override = default;
 
-    bool GetKey(WORD key_code);
-    bool GetKeyDown(WORD key_code);
-    bool GetKeyUp(WORD key_code);
+    bool GetKey(Scancode scancode);
+    bool GetKeyDown(Scancode scancode);
+    bool GetKeyUp(Scancode scancode);
 
 private:
     friend class Core;
@@ -35,7 +36,7 @@ private:
     void UpdateKeyStates();
     void Clear();
 
-    std::map<WORD, KeyState> key_states_;
+    std::map<uint32_t, KeyState> key_states_;
     
     // 스레드로 부터 안전을 위한 뮤텍스
     std::mutex mutex_;

@@ -31,7 +31,7 @@ protected:
     virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
 
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
-    virtual bool OnKey(uint16_t key_code, bool is_pressed) override;
+    virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;
 
     virtual void MakeDirty() override;
