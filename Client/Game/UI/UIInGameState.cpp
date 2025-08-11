@@ -4,6 +4,7 @@
 #include "Scancode.h"
 #include "Ui/UIPopup.h"
 #include "Element/UIChatBar.h"
+#include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
 #include "Element/UIStatusBar.h"
 #include "Element/Inventory/UIInventory.h"
@@ -29,6 +30,9 @@ UIInGameState::UIInGameState() :
     item_tooltip_->SetSize({ 322.f, 122.f });
     item_tooltip_->SetActive(false);
     item_tooltip_->SetIgnoreRayCast(true);
+
+    menu_ = AddElement<UIMenu>(UIMenu::StaticClass(), L"Menu");
+    menu_->SetActive(false);
 }
 
 void UIInGameState::Init()
@@ -51,6 +55,12 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
         if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter) && !IsEditingText())
         {
             char_bar_->FocusInput();
+            is_handled = true;
+        }
+
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEscape) && !IsEditingText())
+        {
+            menu_->SetActive(!menu_->IsActive());
             is_handled = true;
         }
     }

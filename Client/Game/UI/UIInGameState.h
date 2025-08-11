@@ -2,6 +2,7 @@
 #include "UI/UIPopup.h"
 #include "UI/UIState.h"
 
+class UIMenu;
 class UIChatBar;
 class UIItemTooltip;
 class UIInventory;
@@ -24,4 +25,5 @@ private:
     UIChatBar* char_bar_;
     UIInventory* inventory_;
     UIItemTooltip* item_tooltip_;
+    UIMenu* menu_;
 };

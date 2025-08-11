@@ -317,6 +317,7 @@
     <ClInclude Include="Game\UI\Element\UIChatBalloon.h" />
     <ClInclude Include="Game\UI\Element\UIChatBar.h" />
     <ClInclude Include="Game\UI\Element\UILogin.h" />
+    <ClInclude Include="Game\UI\Element\UIMenu.h" />
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
@@ -723,6 +724,7 @@
     <ClCompile Include="Game\UI\Element\UIChatBalloon.cpp" />
     <ClCompile Include="Game\UI\Element\UIChatBar.cpp" />
     <ClCompile Include="Game\UI\Element\UILogin.cpp" />
+    <ClCompile Include="Game\UI\Element\UIMenu.cpp" />
     <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />

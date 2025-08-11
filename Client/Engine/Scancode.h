@@ -3,7 +3,7 @@
 /**
  * 스캔코드를 출력합니다.
  */
-static constexpr bool kDebugScancode = false;
+static constexpr bool kDebugScancode = true;
 
 enum class Scancode : uint32_t
 {
@@ -53,6 +53,7 @@ enum class Scancode : uint32_t
     kKeyZ = 44,
 
     kKeyEnter = 28,
+    kKeyEscape = 1,
     kKeyTab = 15,
     kKeyBackspace = 14,
     kKeyDelete = 339,
