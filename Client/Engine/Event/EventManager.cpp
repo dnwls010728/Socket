@@ -3,6 +3,7 @@
 
 #include <windowsx.h>
 
+#include "Scancode.h"
 #include "Input/Mouse.h"
 #include "Time/Time.h"
 
@@ -49,7 +50,9 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         
         uint32_t scancode = (HIWORD(lParam) & (KF_EXTENDED | 0xFF));
         if (!scancode) scancode = MapVirtualKey(key_code, MAPVK_VK_TO_VSC_EX);
-        Logger::Print(L"Scancode: %d, KeyCode: %d, Flags: %d", scancode, key_code, key_flags);
+
+        if (kDebugScancode)
+            Logger::Print(L"Scancode: %d, KeyCode: %d, Flags: %d", scancode, key_code, key_flags);
 
         bool is_released = (key_flags & KF_UP) == KF_UP;
         bool is_repeat = (key_flags & KF_REPEAT) == KF_REPEAT;

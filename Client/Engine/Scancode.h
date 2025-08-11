@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+/**
+ * 스캔코드를 출력합니다.
+ */
+static constexpr bool kDebugScancode = false;
+
 enum class Scancode : uint32_t
 {
     kKeyUnknown = 0,
