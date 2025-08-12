@@ -203,6 +203,7 @@
     <ClInclude Include="Engine\UI\Element\ColorPicker\UIHueSlider.h" />
     <ClInclude Include="Engine\UI\Element\ColorPicker\UIPalette.h" />
     <ClInclude Include="Engine\UI\Element\UIButton.h" />
+    <ClInclude Include="Engine\UI\Element\UIContextMenu.h" />
     <ClInclude Include="Engine\UI\Element\UIEditableText.h" />
     <ClInclude Include="Engine\UI\Element\UIImage.h" />
     <ClInclude Include="Engine\UI\Element\UIMask.h" />
@@ -617,6 +618,7 @@
     <ClCompile Include="Engine\UI\Element\ColorPicker\UIHueSlider.cpp" />
     <ClCompile Include="Engine\UI\Element\ColorPicker\UIPalette.cpp" />
     <ClCompile Include="Engine\UI\Element\UIButton.cpp" />
+    <ClCompile Include="Engine\UI\Element\UIContextMenu.cpp" />
     <ClCompile Include="Engine\UI\Element\UIEditableText.cpp" />
     <ClCompile Include="Engine\UI\Element\UIImage.cpp" />
     <ClCompile Include="Engine\UI\Element\UIMask.cpp" />
