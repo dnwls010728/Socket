@@ -3,6 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <array>
+#include <vector>
 
 class Item;
 class PlayerCharacter;
@@ -35,6 +36,7 @@ public:
     void ChangeCount(Type type, uint32_t slot_index, int32_t count);
     void Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot);
     void Remove(Type type, uint32_t slot_index);
+    void GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t item_id) const;
 
     bool AddItem(const std::shared_ptr<Item>& item);
     bool UpdateDatabase() const;

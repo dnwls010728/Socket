@@ -102,14 +102,26 @@ void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uin
     inventories_[static_cast<uint8_t>(first_type)][first_slot] = inventories_[static_cast<uint8_t>(second_type)][second_slot];
     inventories_[static_cast<uint8_t>(second_type)][second_slot] = first;
 
-    if (!inventories_[static_cast<uint8_t>(first_type)][first_slot]->GetID()) Remove_Internal(first_type, first_slot);
-    if (!inventories_[static_cast<uint8_t>(second_type)][second_slot]->GetID()) Remove_Internal(second_type, second_slot);
+    if (!inventories_[static_cast<uint8_t>(first_type)][first_slot]) Remove_Internal(first_type, first_slot);
+    if (!inventories_[static_cast<uint8_t>(second_type)][second_slot]) Remove_Internal(second_type, second_slot);
 }
 
 void Inventory::Remove(Type type, uint32_t slot_index)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     Remove_Internal(type, slot_index);
+}
+
+void Inventory::GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t item_id) const
+{
+    uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
+    Type type = static_cast<Type>(type_code - 1);
+
+    const auto& inventory = inventories_[static_cast<uint8_t>(type)];
+    for (const auto& val : inventory | std::views::values)
+    {
+        if (val->GetID() == item_id) out_items.push_back(val);
+    }
 }
 
 bool Inventory::AddItem(const std::shared_ptr<Item>& item)
@@ -119,18 +131,25 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
     
     const auto& item_data = DataManager::Get()->GetItem(item_id);
     int32_t max_count = item_data->max_count;
-    
-    Type type = Type::kNone;
 
     uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
-    type = static_cast<Type>(type_code - 1);
+    Type type = static_cast<Type>(type_code - 1);
 
     auto& inventory = inventories_[static_cast<uint8_t>(type)];
     uint32_t slot_capacity = slot_capacity_[static_cast<uint8_t>(type)];
-    
-    for (int32_t i = 1; i <= slot_capacity; ++i)
+
+    std::vector<std::shared_ptr<Item>> items;
+    GetItems(items, item_id);
+
+    if (!items.empty())
     {
-        auto slot = inventory[i];
+        auto it = items.begin();
+        while (count > 0)
+        {
+            if (it == items.end()) break;
+
+            auto& existing_item = *it++;
+        }
     }
     
     return false;

@@ -29,7 +29,7 @@ void GameMap::Load()
 
     UI::Get()->ChangeState(UIInGameState::StaticClass());
     
-    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Suspended Moments.mp3");
+    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Buff.mp3");
     bgm->SetLoop(true);
     
     AudioManager::Get()->PlaySound2D(bgm);

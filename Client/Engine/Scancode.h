@@ -22,8 +22,8 @@ enum class Scancode : uint32_t
 
     kKeyLeft = 331,
     kKeyRight = 333,
-    kKeyUp = 330,
-    kKeyDown = 332,
+    kKeyUp = 328,
+    kKeyDown = 336,
 
     kKeyA = 30,
     kKeyB = 48,
