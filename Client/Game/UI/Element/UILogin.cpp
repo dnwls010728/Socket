@@ -7,8 +7,8 @@
 #include <shellapi.h>
 
 #include "Scancode.h"
+#include "UIPopup.h"
 #include "Subsystems/SessionSubsystem.h"
-#include "UI/UIPopup.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"

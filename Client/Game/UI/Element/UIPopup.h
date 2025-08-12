@@ -1,8 +1,7 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
-#include <functional>
 
-#include "Element/UIEditableText.h"
+#include "UI/Element/UIEditableText.h"
 
 class UIImage;
 class UIText;

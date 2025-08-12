@@ -10,6 +10,7 @@
 #include "UI/UIInGameState.h"
 #include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIPopup.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UISprite.h"
 
