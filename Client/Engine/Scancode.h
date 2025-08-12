@@ -8,17 +8,17 @@ static constexpr bool kDebugScancode = true;
 enum class Scancode : uint32_t
 {
     kKeyUnknown = 0,
-
-    kKey0 = 2,
-    kKey1 = 3,
-    kKey2 = 4,
-    kKey3 = 5,
-    kKey4 = 6,
-    kKey5 = 7,
-    kKey6 = 8,
-    kKey7 = 9,
-    kKey8 = 10,
-    kKey9 = 11,
+    
+    kKey1 = 2,
+    kKey2 = 3,
+    kKey3 = 4,
+    kKey4 = 5,
+    kKey5 = 6,
+    kKey6 = 7,
+    kKey7 = 8,
+    kKey8 = 9,
+    kKey9 = 10,
+    kKey0 = 11,
 
     kKeyLeft = 331,
     kKeyRight = 333,
