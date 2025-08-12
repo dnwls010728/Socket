@@ -309,23 +309,26 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             {
                 std::lock_guard<std::mutex> lock(dropped_item_mutex_);
 
-                uint32_t item_id = dropped_item->GetItemID();
-                int32_t count = dropped_item->GetCount();
+                auto item = dropped_item->GetItem();
+                if (!inventory_->AddItem(item))
+                {
+                    // 인벤토리가 가득 찼을 경우
+                }
 
                 // 해당 아이템을 인벤토리에 추가할 공간이 있는지 확인
-                if (inventory_->HasSpace(item_id, count))
-                {
-                    if (inventory_->AddItem(item_id, count))
-                    {
-                    }
-                    
-                    PickupItemResponse response;
-                    response.object_id = dropped_item->GetObjectID();
-                    response.picked_up_by_id = object_id_;
-                    map_->SendPacket(response);
-
-                    map_->DestroyObject(dropped_item->GetObjectID());
-                }
+                // if (inventory_->HasSpace(item_id, count))
+                // {
+                //     if (inventory_->AddItem(item_id, count))
+                //     {
+                //     }
+                //     
+                //     PickupItemResponse response;
+                //     response.object_id = dropped_item->GetObjectID();
+                //     response.picked_up_by_id = object_id_;
+                //     map_->SendPacket(response);
+                //
+                //     map_->DestroyObject(dropped_item->GetObjectID());
+                // }
             }
         }
         break;
@@ -347,7 +350,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (hp_ <= 0 || is_invincible_) return;
-    hp_ = Math::Clamp(hp_ - damage_amount, 0, max_hp_);
+    hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;

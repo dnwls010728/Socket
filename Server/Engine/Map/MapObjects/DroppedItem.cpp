@@ -4,11 +4,12 @@
 #include <CustomPacket.h>
 
 #include "Map/PlayerCharacter.h"
+#include "Session/Player/Inventory/Item.h"
 
 DroppedItem::DroppedItem() :
     dropper_(),
-    item_id_(0),
-    count_(0)
+    item_(nullptr),
+    color_(0)
 {
 }
 
@@ -24,7 +25,7 @@ void DroppedItem::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     packet.object_info.position_y = position_.y;
 
     DroppedItemInfo& info = packet.object_info.info.dropped_item;
-    info.item_id = item_id_;
+    info.item_id = item_->GetID();
     info.dropper_position_x = position_.x;
     info.dropper_position_y = position_.y;
     

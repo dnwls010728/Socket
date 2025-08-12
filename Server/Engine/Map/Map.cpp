@@ -13,6 +13,7 @@
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
+#include "Session/Player/Inventory/Item.h"
 
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
@@ -271,8 +272,7 @@ void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<
     
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
-    dropped_item->SetItemID(item_id);
-    dropped_item->SetCount(count);
+    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
     dropped_item->SetPosition(drop_position);
 
     // TODO: 구조 개선 필요

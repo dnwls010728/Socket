@@ -7,7 +7,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
-#include "UI/UIPopup.h"
+#include "UI/Element/UIPopup.h"
 #include "UI/UIState.h"
 #include "UI/Element/CharacterSelect/UICharacterSelect.h"
 #include "UI/Element/UILogin.h"

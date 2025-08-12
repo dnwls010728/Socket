@@ -11,6 +11,7 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
 #include "Player/Inventory/Inventory.h"
+#include "Player/Inventory/Item.h"
 
 Player::Player(Session* session, uint32_t account_id) :
     session_(session),
@@ -191,9 +192,9 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 {
                     ItemInfo item_info;
                     item_info.inventory_type = i;
-                    item_info.item_id = slot.second.item_id;
+                    item_info.item_id = slot.second->GetID();
                     item_info.slot_index = slot.first;
-                    item_info.count = slot.second.count;
+                    item_info.count = slot.second->GetCount();
                     response.inventory.push_back(item_info);
                 }
             }
