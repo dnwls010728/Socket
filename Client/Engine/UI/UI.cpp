@@ -7,8 +7,7 @@
 #include "Windows/DX/UISprite.h"
 
 UI::UI() :
-    cursor_state_(CursorState::kIdle),
-    cursor_sprites_(),
+    cursor_sprite_(nullptr),
     last_position_(Math::Vector2::Zero()),
     cursor_position_(Math::Vector2::Zero()),
     state_(nullptr)
@@ -52,7 +51,7 @@ bool UI::IsEditingText() const
 
 void UI::Init()
 {
-    cursor_sprites_[CursorState::kIdle] = AssetManager::Get()->Load<UISprite>(L"UI\\Cursor\\pointer_a.png");
+    cursor_sprite_ = AssetManager::Get()->Load<UISprite>(L"UI\\Cursor\\pointer_a.png");
     
     ChangeState(UIState::StaticClass());
 }
@@ -68,11 +67,8 @@ void UI::Render()
 
     Renderer* renderer = Renderer::Get();
 
-    if (auto* cursor_sprite = cursor_sprites_[cursor_state_])
-    {
-        Math::Vector2 size = { static_cast<float>(cursor_sprite->GetWidth()), static_cast<float>(cursor_sprite->GetHeight()) };
-        renderer->DrawSimpleSprite(cursor_sprite, 0, cursor_position_, size);
-    }
+    Math::Vector2 size = { static_cast<float>(cursor_sprite_->GetWidth()), static_cast<float>(cursor_sprite_->GetHeight()) };
+    renderer->DrawSimpleSprite(cursor_sprite_, 0, cursor_position_, size);
 }
 
 void UI::OnEvent(const Event& event)
@@ -85,11 +81,7 @@ void UI::OnEvent(const Event& event)
         const Math::Vector2 position = {motion_event.x, motion_event.y};
         const Math::Vector2 delta = position - last_position_;
 
-        if (state_)
-        {
-            MouseEventResult result = state_->OnMouseMotion(position, delta);
-            if (result.is_handled) cursor_state_ = result.cursor_state;
-        }
+        if (state_) state_->OnMouseMotion(position, delta);
 
         cursor_position_ = position;
         last_position_ = position;
@@ -99,11 +91,7 @@ void UI::OnEvent(const Event& event)
         const MouseButtonEvent& button_event = event.button;
         const Math::Vector2 position = {button_event.x, button_event.y};
 
-        if (state_)
-        {
-            MouseEventResult result = state_->OnMouseButton(position, button_event.button, button_event.is_pressed, button_event.timestamp);
-            if (result.is_handled) cursor_state_ = result.cursor_state;
-        }
+        if (state_) state_->OnMouseButton(position, button_event.button, button_event.is_pressed, button_event.timestamp);
     }
     else if (type == static_cast<uint32_t>(EventType::kMouseWheel))
     {

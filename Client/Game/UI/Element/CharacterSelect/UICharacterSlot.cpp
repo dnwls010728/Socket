@@ -128,17 +128,18 @@ void UICharacterSlot::Tick(float delta_time)
     }
 }
 
-UI::MouseEventResult UICharacterSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UICharacterSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
     UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
-    if (slot_id_ == 0 || character_id_ == 0) return { false, UI::CursorState::kIdle };
+    if (slot_id_ == 0 || character_id_ == 0) return false;
 
     if (is_pressed && button == MouseButton::kLeft)
     {
         character_select_->OnSlotSelected(slot_id_);
+        return true;
     }
     
-    return { false, UI::CursorState::kIdle };
+    return false;
 }
 
 RTTR_REGISTRATION

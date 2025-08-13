@@ -27,9 +27,8 @@ protected:
 
     virtual UIElement* RayCast(const Math::Vector2& position) override;
     
-    virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
-
+    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
     virtual bool OnChar(wchar_t character) override;

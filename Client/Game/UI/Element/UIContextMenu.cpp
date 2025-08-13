@@ -61,14 +61,15 @@ void UIContextMenu::Hide()
     SetActive(false);
 }
 
-UI::MouseEventResult UIContextMenu::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIContextMenu::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    bool result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
     if (is_pressed && button == MouseButton::kLeft && !IsInRange(position))
     {
         Hide();
-        result.is_handled = true;
+        result = true;
     }
+    
     return result;
 }
 

@@ -80,27 +80,26 @@ void UIInventorySlot::Init()
     UIContainer::Init();
 }
 
-UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    bool result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
     if (button != MouseButton::kLeft || !is_pressed) return result;
     if (item_id_ == 0) return result;
 
-    result.is_handled = true;
     if (timestamp - last_time_ < .2f)
     {
         Logger::Print(L"Double click!");
         last_time_ = 0.f;
-        return result;
+        return true;
     }
     
     last_time_ = timestamp;
-    return result;
+    return true;
 }
 
-UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+bool UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    if (!tooltip_) return { false, UI::CursorState::kIdle };
+    if (!tooltip_) return false;
 
     EngineSettings* settings = EngineSettings::Get();
     
@@ -118,8 +117,8 @@ UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& positio
 
     tooltip_->SetAbsolutePosition(tooltip_position);
     tooltip_->Set(item_id_);
-    
-    return { true, UI::CursorState::kIdle };
+
+    return true;
 }
 
 bool UIInventorySlot::OnMouseEnter()

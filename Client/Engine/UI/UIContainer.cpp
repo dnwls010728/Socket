@@ -83,9 +83,9 @@ UIElement* UIContainer::RayCast(const Math::Vector2& position)
     return UIElement::RayCast(position);
 }
 
-UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    UI::MouseEventResult result = UIElement::OnMouseMotion(position, delta);
+    bool result = UIElement::OnMouseMotion(position, delta);
 
     for (uint32_t i = 0; i < children_.size(); ++i)
     {
@@ -95,35 +95,30 @@ UI::MouseEventResult UIContainer::OnMouseMotion(const Math::Vector2& position, c
         bool is_in_range = child->IsInRange(position);
         bool was_in_range = child->IsInRange(position - delta);
 
-        if (is_in_range && !was_in_range) result.is_handled |= child->OnMouseEnter();
+        if (is_in_range && !was_in_range) result |= child->OnMouseEnter();
         if (!is_in_range && was_in_range)
         {
-            result.is_handled |= child->OnMouseLeave();
-            if (result.is_handled) return result;
+            result |= child->OnMouseLeave();
+            if (result) return result;
         }
 
         if (is_in_range || was_in_range)
-        {
-            UI::MouseEventResult temp_result = child->OnMouseMotion(position, delta);
-            result.cursor_state = temp_result.cursor_state;
-            result.is_handled |= temp_result.is_handled;
-        }
+            result |= child->OnMouseMotion(position, delta);
 
-        if (result.is_handled) return result;
+        if (result) return result;
     }
 
     return result;
 }
 
-UI::MouseEventResult UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
     for (uint32_t i = 0; i < children_.size(); ++i)
     {
         UIElement* child = children_[children_.size() - i - 1].get();
         if (child && child->IsActive() && child->IsInRange(position))
         {
-            UI::MouseEventResult result = child->OnMouseButton(position, button, is_pressed, timestamp);
-            if (result.is_handled) return result;
+            if (child->OnMouseButton(position, button, is_pressed, timestamp)) return true;
         }
     }
 
