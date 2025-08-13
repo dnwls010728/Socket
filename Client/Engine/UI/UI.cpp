@@ -67,19 +67,11 @@ void UI::Render()
     if (state_) state_->Render();
 
     Renderer* renderer = Renderer::Get();
-    WindowsWindow* window = World::Get()->GetWindow();
 
-    UISprite* cursor_sprite = cursor_sprites_[cursor_state_];
-    if (cursor_sprite)
+    if (auto* cursor_sprite = cursor_sprites_[cursor_state_])
     {
-        Math::Rect cursor_rect = {
-            cursor_position_.x,
-            cursor_position_.y,
-            static_cast<float>(cursor_sprite->GetWidth()),
-            static_cast<float>(cursor_sprite->GetHeight())
-        };
-        
-        // renderer->DrawBitmap(window, cursor_sprite->GetSprite(), cursor_rect, Math::Vector2::Zero(), 0.f);
+        Math::Vector2 size = { static_cast<float>(cursor_sprite->GetWidth()), static_cast<float>(cursor_sprite->GetHeight()) };
+        renderer->DrawSimpleSprite(cursor_sprite, 0, cursor_position_, size);
     }
 }
 

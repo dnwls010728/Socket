@@ -90,6 +90,16 @@ void WindowsApplication::QuitApplication()
     }
 }
 
+void WindowsApplication::EnableCursor()
+{
+    ShowCursor();
+}
+
+void WindowsApplication::DisableCursor()
+{
+    HideCursor();
+}
+
 LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WindowsApplication* application;
@@ -104,6 +114,16 @@ LRESULT WindowsApplication::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam
 
     if (application) return application->ProcessMessage(hWnd, message, wParam, lParam);
     return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void WindowsApplication::ShowCursor()
+{
+    while (::ShowCursor(TRUE) < 0);
+}
+
+void WindowsApplication::HideCursor()
+{
+    while (::ShowCursor(FALSE) >= 0);
 }
 
 uint32_t WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -147,6 +167,12 @@ uint32_t WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wPar
             info->ptMinTrackSize.y = 100 + border_rect.bottom - border_rect.top;
 
             return 0;
+        }
+
+        if (message == WM_ACTIVATE)
+        {
+            if (wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE) HideCursor();
+            else ShowCursor();
         }
         
         if (message == WM_DESTROY)

@@ -30,11 +30,16 @@ public:
     void RemoveMessageHandler(IWindowsMessageHandler& message_handler);
     void PumpMessages();
     void QuitApplication();
+    void EnableCursor();
+    void DisableCursor();
 
     const std::vector<std::shared_ptr<WindowsWindow>>& GetWindows() const { return windows_; }
 
 private:
     static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+    void ShowCursor();
+    void HideCursor();
 
     uint32_t ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
