@@ -2,6 +2,7 @@
 #include "Inventory.h"
 
 #include <CustomPacket.h>
+#include <algorithm>
 #include <iostream>
 #include <ranges>
 
@@ -115,7 +116,7 @@ void Inventory::Remove(Type type, uint32_t slot_index)
 void Inventory::GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t item_id) const
 {
     uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
-    Type type = static_cast<Type>(type_code - 1);
+    Type type = static_cast<Type>(type_code);
 
     const auto& inventory = inventories_[static_cast<uint8_t>(type)];
     for (const auto& val : inventory | std::views::values)
@@ -126,16 +127,19 @@ void Inventory::GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t
 
 bool Inventory::AddItem(const std::shared_ptr<Item>& item)
 {
+    if (!item) return false;
+    
     uint32_t item_id = item->GetID();
     int32_t count = item->GetCount();
     
     const auto& item_data = DataManager::Get()->GetItem(item_id);
+    if (!item_data) return false;
+    
     int32_t max_count = item_data->max_count;
 
     uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
-    Type type = static_cast<Type>(type_code - 1);
+    Type type = static_cast<Type>(type_code);
 
-    auto& inventory = inventories_[static_cast<uint8_t>(type)];
     uint32_t slot_capacity = slot_capacity_[static_cast<uint8_t>(type)];
 
     std::vector<std::shared_ptr<Item>> items;
@@ -149,10 +153,50 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
             if (it == items.end()) break;
 
             auto& existing_item = *it++;
+            int32_t existing_count = existing_item->GetCount();
+            if (existing_count < max_count)
+            {
+                int32_t space_left = max_count - existing_count;
+                int32_t to_add = std::min(count, space_left);
+                
+                existing_item->SetCount(existing_count + to_add);
+                count -= to_add;
+
+                ChangeItemCountPacket packet;
+                packet.inventory_type = static_cast<uint8_t>(type);
+                packet.slot_index = existing_item->GetSlot();
+                packet.count = existing_item->GetCount();
+                
+                if (auto player_character = player_character_.lock())
+                    player_character->SendPacket(packet);
+            }
         }
     }
+
+    while (count > 0)
+    {
+        uint32_t slot_index = FindFreeSlot(type);
+        if (slot_index == 0 || slot_index > slot_capacity)
+        {
+            item->SetCount(count);
+            return false;
+        }
+
+        int32_t to_add = std::min(count, max_count);
+        AddSlot(type, slot_index, item_id, to_add);
+        count -= to_add;
+
+        AddItemPacket packet;
+        packet.inventory_type = static_cast<uint8_t>(type);
+        packet.slot_index = slot_index;
+        packet.item_id = item_id;
+        packet.count = to_add;
+
+        if (auto player_character = player_character_.lock())
+            player_character->SendPacket(packet);
+    }
     
-    return false;
+    return true;
 }
 
 bool Inventory::UpdateDatabase() const

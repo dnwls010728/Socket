@@ -314,21 +314,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 {
                     // 인벤토리가 가득 찼을 경우
                 }
-
-                // 해당 아이템을 인벤토리에 추가할 공간이 있는지 확인
-                // if (inventory_->HasSpace(item_id, count))
-                // {
-                //     if (inventory_->AddItem(item_id, count))
-                //     {
-                //     }
-                //     
-                //     PickupItemResponse response;
-                //     response.object_id = dropped_item->GetObjectID();
-                //     response.picked_up_by_id = object_id_;
-                //     map_->SendPacket(response);
-                //
-                //     map_->DestroyObject(dropped_item->GetObjectID());
-                // }
+                
+                PickupItemResponse response;
+                response.object_id = dropped_item->GetObjectID();
+                response.picked_up_by_id = object_id_;
+                map_->SendPacket(response);
+                
+                map_->DestroyObject(dropped_item->GetObjectID());
             }
         }
         break;
