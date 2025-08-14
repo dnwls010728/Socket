@@ -130,7 +130,7 @@ void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
 
     const auto& mob = std::dynamic_pointer_cast<Mob>(object);
 
-    SpawnObjectPacket spawn_object_packet;
+    ObjectSpawnPacket spawn_object_packet;
     spawn_object_packet.object_info.type = ObjectType::kMob;
     spawn_object_packet.object_info.object_id = object->GetObjectID();
     spawn_object_packet.object_info.position_x = object->GetPosition().x;
@@ -145,6 +145,31 @@ void Map::DestroyObject(uint32_t object_id)
 {
     std::lock_guard<std::mutex> lock(object_mutex_);
     DestroyObject_Internal(object_id);
+}
+
+void Map::DestroyDroppedItem(uint32_t object_id, uint32_t character_id)
+{
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        
+        ObjectDestroyInfo info;
+        info.type = ObjectType::kDroppedItem;
+        info.object_id = object_id;
+        info.info.dropped_item.character_id = character_id;
+    
+        ObjectDestroyPacket object_destroy_packet;
+        object_destroy_packet.object_info = info;
+        SendPacket(object_destroy_packet);
+    }
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        
+        auto it = map_objects_.find(object_id);
+        if (it == map_objects_.end()) return;
+
+        RemoveObject(object_id);
+    }
 }
 
 void Map::SendPacket(const Net::IPacket& packet)
@@ -279,7 +304,7 @@ void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
 
-    SpawnObjectPacket packet;
+    ObjectSpawnPacket packet;
     packet.object_info.type = ObjectType::kDroppedItem;
     packet.object_info.object_id = dropped_item->GetObjectID();
     packet.object_info.position_x = drop_position.x;
@@ -499,8 +524,8 @@ void Map::DestroyObject_Internal(uint32_t object_id)
     auto it = map_objects_.find(object_id);
     if (it == map_objects_.end()) return;
 
-    DestroyObjectPacket destroy_object_packet;
-    destroy_object_packet.object_id = object_id;
+    ObjectDestroyPacket destroy_object_packet;
+    destroy_object_packet.object_info.object_id = object_id;
     SendPacket(destroy_object_packet);
 
     RemoveObject(object_id);

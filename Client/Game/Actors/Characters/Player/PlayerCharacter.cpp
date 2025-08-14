@@ -228,7 +228,7 @@ void PlayerCharacter::Tick(float delta_time)
                     DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
                     if (IsValid(dropped_item))
                     {
-                        PickupItemRequest request;
+                        PickupItemPacket request;
                         request.object_id = dropped_item->GetObjectID();
                         SendPacket(request);
                     }

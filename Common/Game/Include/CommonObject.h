@@ -63,6 +63,10 @@ struct DroppedItemInfo
     float dropper_position_y;
 };
 
+struct DroppedItemDestroyInfo
+{
+};
+
 struct ObjectInfo
 {
     ObjectType type;
@@ -75,6 +79,20 @@ struct ObjectInfo
         PlayerInfo player;
         MobInfo mob;
         DroppedItemInfo dropped_item;
+    } info;
+};
+
+struct ObjectDestroyInfo
+{
+    ObjectType type;
+    uint32_t object_id;
+
+    union
+    {
+        struct
+        {
+            uint32_t character_id;
+        } dropped_item;
     } info;
 };
 

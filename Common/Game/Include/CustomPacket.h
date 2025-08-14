@@ -159,27 +159,13 @@ struct MapLoadCompletePacket : public Net::IPacket
     REGISTER_PACKET(MapLoadCompletePacket, 214)
 };
 
-// 플레이어 스폰 패킷
-struct SpawnPlayerPacket : public Net::IPacket
-{
-    uint32_t character_id;
-
-    std::wstring name;
-    
-    float position_x;
-    float position_y;
-    
-    SERIALIZABLE_FIELDS(character_id, name, position_x, position_y)
-    REGISTER_PACKET(SpawnPlayerPacket, 215)
-};
-
 // 플레이어 파괴 패킷
 struct DestroyPlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
     
     SERIALIZABLE_FIELDS(unique_id)
-    REGISTER_PACKET(DestroyPlayerPacket, 216)
+    REGISTER_PACKET(DestroyPlayerPacket, 215)
 };
 
 struct MovePlayerPacket : public Net::IPacket
@@ -193,7 +179,7 @@ struct MovePlayerPacket : public Net::IPacket
     bool time_update;
     
     SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 217)
+    REGISTER_PACKET(MovePlayerPacket, 216)
 };
 
 struct PlayerAnimationPacket : public Net::IPacket
@@ -204,7 +190,7 @@ struct PlayerAnimationPacket : public Net::IPacket
     float server_time;
     
     SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 218)
+    REGISTER_PACKET(PlayerAnimationPacket, 217)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -213,23 +199,23 @@ struct ChatMessagePacket : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_FIELDS(unique_id, message)
-    REGISTER_PACKET(ChatMessagePacket, 219)
+    REGISTER_PACKET(ChatMessagePacket, 218)
 };
 
-struct SpawnObjectPacket : public Net::IPacket
+struct ObjectSpawnPacket : public Net::IPacket
 {
     ObjectInfo object_info;
     
     SERIALIZABLE_FIELDS(object_info)
-    REGISTER_PACKET(SpawnObjectPacket, 230)
+    REGISTER_PACKET(ObjectSpawnPacket, 230)
 };
 
-struct DestroyObjectPacket : public Net::IPacket
+struct ObjectDestroyPacket : public Net::IPacket
 {
-    uint32_t object_id;
+    ObjectDestroyInfo object_info;
 
-    SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(DestroyObjectPacket, 231)
+    SERIALIZABLE_FIELDS(object_info)
+    REGISTER_PACKET(ObjectDestroyPacket, 231)
 };
 
 struct ObjectPositionPacket : public Net::IPacket
@@ -326,21 +312,12 @@ struct DropItemResponse : public Net::IPacket
     REGISTER_PACKET(DropItemResponse, 305)
 };
 
-struct PickupItemRequest : public Net::IPacket
+struct PickupItemPacket : public Net::IPacket
 {
     uint32_t object_id;
     
     SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(PickupItemRequest, 306)
-};
-
-struct PickupItemResponse : public Net::IPacket
-{
-    uint32_t object_id;
-    uint32_t picked_up_by_id;
-    
-    SERIALIZABLE_FIELDS(object_id, picked_up_by_id)
-    REGISTER_PACKET(PickupItemResponse, 307)
+    REGISTER_PACKET(PickupItemPacket, 306)
 };
 
 struct AttackRequest : public Net::IPacket

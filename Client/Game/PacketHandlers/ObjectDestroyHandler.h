@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "IPacketHandler.h"
 
-class PickupItemHandler : public IPacketHandler
+class ObjectDestroyHandler : public IPacketHandler
 {
 public:
-    virtual ~PickupItemHandler() override = default;
+    virtual ~ObjectDestroyHandler() override = default;
 
     virtual bool Handle(Net::IPacket* packet) override;
     

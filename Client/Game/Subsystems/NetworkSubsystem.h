@@ -43,7 +43,7 @@ public:
 private:
     friend class MapSetupHandler;
     friend class ChangeMapHandler;
-    friend class SpawnObjectHandler;
+    friend class ObjectSpawnHandler;
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 

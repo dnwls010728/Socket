@@ -42,6 +42,8 @@ public:
     void SpawnObject(const std::shared_ptr<MapObject>& object);
     void DestroyObject(uint32_t object_id);
 
+    void DestroyDroppedItem(uint32_t object_id, uint32_t character_id);
+
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter>& excluded_player_weak);
 

@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "SpawnObjectHandler.h"
+#include "ObjectSpawnHandler.h"
 
 #include <CustomPacket.h>
 
@@ -10,9 +10,9 @@
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
-bool SpawnObjectHandler::Handle(Net::IPacket* packet)
+bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
 {
-    SpawnObjectPacket* received_packet = dynamic_cast<SpawnObjectPacket*>(packet);
+    ObjectSpawnPacket* received_packet = dynamic_cast<ObjectSpawnPacket*>(packet);
     if (!received_packet) return false;
 
     const ObjectInfo& object_info = received_packet->object_info;
@@ -53,7 +53,7 @@ bool SpawnObjectHandler::Handle(Net::IPacket* packet)
                 DroppedItemInfo info = object_info.info.dropped_item;
                 
                 dropped_item->SetObjectID(object_info.object_id);
-                dropped_item->GetTransform()->SetPosition({ info.dropper_position_x, info.dropper_position_y });
+                dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y });
 
                 dropped_item->Init(info.item_id, { object_info.position_x, object_info.position_y });
             }

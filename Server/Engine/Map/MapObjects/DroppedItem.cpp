@@ -18,7 +18,7 @@ void DroppedItem::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     MapObject::SendSpawn(player);
     if (!player) return;
 
-    SpawnObjectPacket packet;
+    ObjectSpawnPacket packet;
     packet.object_info.type = ObjectType::kDroppedItem;
     packet.object_info.object_id = object_id_;
     packet.object_info.position_x = position_.x;

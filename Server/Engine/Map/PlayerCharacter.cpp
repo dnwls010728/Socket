@@ -298,9 +298,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case PickupItemRequest::StaticPacketID:
+    case PickupItemPacket::StaticPacketID:
         {
-            PickupItemRequest* request = static_cast<PickupItemRequest*>(packet);
+            PickupItemPacket* request = static_cast<PickupItemPacket*>(packet);
 
             std::shared_ptr<MapObject> map_object = map_->FindMapObject(request->object_id);
             if (!map_object) return;
@@ -310,17 +310,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 std::lock_guard<std::mutex> lock(dropped_item_mutex_);
 
                 auto item = dropped_item->GetItem();
-                if (!inventory_->AddItem(item))
+                if (inventory_->AddItem(item))
                 {
-                    // 인벤토리가 가득 찼을 경우
+                    map_->DestroyDroppedItem(dropped_item->GetObjectID(), object_id_);
                 }
-                
-                PickupItemResponse response;
-                response.object_id = dropped_item->GetObjectID();
-                response.picked_up_by_id = object_id_;
-                map_->SendPacket(response);
-                
-                map_->DestroyObject(dropped_item->GetObjectID());
             }
         }
         break;
@@ -368,7 +361,7 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 {
     MapObject::SendSpawn(player);
 
-    SpawnObjectPacket packet;
+    ObjectSpawnPacket packet;
     packet.object_info.type = ObjectType::kPlayer;
     packet.object_info.object_id = object_id_;
     packet.object_info.position_x = position_.x;
