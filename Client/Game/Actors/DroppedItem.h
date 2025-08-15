@@ -2,6 +2,7 @@
 #include "NetworkActor.h"
 #include "Subsystems/ObjectPool/IPoolable.h"
 
+class PlayerCharacter;
 class SpriteRendererComponent;
 class BoxColliderComponent;
 class Controller2DComponent;
@@ -14,6 +15,8 @@ class DroppedItem : public NetworkActor, public IPoolable
 public:
     DroppedItem(const std::wstring& name);
     virtual ~DroppedItem() override = default;
+
+    void Pickup(const std::shared_ptr<Actor>& character);
     
     virtual void OnActivate() override;
     virtual void OnDeactivate() override;

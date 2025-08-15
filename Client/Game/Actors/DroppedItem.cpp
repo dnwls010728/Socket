@@ -9,6 +9,7 @@
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 DroppedItem::DroppedItem(const std::wstring& name) :
@@ -24,6 +25,11 @@ DroppedItem::DroppedItem(const std::wstring& name) :
     collider_->SetSize({ 1.f, 1.f });
     collider_->SetTrigger(true);
     
+}
+
+void DroppedItem::Pickup(const std::shared_ptr<Actor>& character)
+{
+    ObjectPoolSubsystem::Get()->ReturnToPool(GetSharedThis());
 }
 
 void DroppedItem::OnActivate()
