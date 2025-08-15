@@ -16,14 +16,38 @@ UIState::UIState() :
 
 void UIState::RemoveElement(UIElement* element)
 {
+    if (!element) return;
+    
+    bool touches_focus = std::any_of(focus_path_.begin(), focus_path_.end(),
+        [&](UIElement* f){
+            return f == element || f->IsDescendantOf(element);
+        });
+    if (touches_focus) {
+        UpdateFocus(nullptr);
+    }
+    
+    if (dragging_element_ &&
+        (dragging_element_ == element || dragging_element_->IsDescendantOf(element)))
+    {
+        if (has_begun_drag_) {
+            dragging_element_->OnDragEnd({});
+            has_begun_drag_ = false;
+        }
+        is_dragging_ = false;
+        dragging_element_ = nullptr;
+    }
+    
+    if (!pending_elements_.empty()) {
+        pending_elements_.erase(
+            std::remove(pending_elements_.begin(), pending_elements_.end(), element),
+            pending_elements_.end()
+        );
+    }
     for (auto it = elements_.begin(); it != elements_.end(); ++it)
     {
         if (it->get() == element)
         {
             if (is_initialized_) element->Uninit();
-            if (element->IsFocused()) SetFocus(nullptr);
-            if (dragging_element_ && dragging_element_->IsDescendantOf(element))
-                dragging_element_ = nullptr;
             elements_.erase(it);
             break;
         }
@@ -75,6 +99,7 @@ void UIState::Init()
     ProcessPending();
     is_initialized_ = true;
 }
+
 
 void UIState::Uninit()
 {
