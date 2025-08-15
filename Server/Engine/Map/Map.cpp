@@ -141,7 +141,7 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     }
     
     ObjectInfo info;
-    info.type = ObjectType::kDroppedItem;
+    info.type = ObjectType::kMob;
     info.object_id = object->GetObjectID();
     info.position_x = object->GetPosition().x;
     info.position_y = object->GetPosition().y;
