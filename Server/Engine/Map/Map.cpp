@@ -15,6 +15,8 @@
 #include "Math/Math.h"
 #include "Session/Player/Inventory/Item.h"
 
+
+// TODO: 오브젝트도 플레이어와 동일하게 대기 후 Tick에서 패킷을 전송하도록 변경 필요
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
     map_bounds_(),
@@ -103,10 +105,13 @@ void Map::RemovePlayers()
         pending_remove_players_.pop();
 
         players_.erase(unique_key);
+
+        ObjectDestroyInfo info;
+        info.type = ObjectType::kPlayer;
+        info.object_id = unique_key;
         
-         // 맵에서 플레이어가 제거되면, 다른 플레이어에게 제거하도록 패킷을 전송
-        DestroyPlayerPacket destroy_player_packet;
-        destroy_player_packet.unique_id = unique_key;
+        ObjectDestroyPacket destroy_player_packet;
+        destroy_player_packet.object_info = info;
         SendPacket(destroy_player_packet);
         
     }
@@ -122,52 +127,108 @@ void Map::RemoveObject(uint32_t object_id)
     pending_remove_objects_.push(object_id);
 }
 
-void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
+void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
+    const auto& mob = std::dynamic_pointer_cast<Mob>(object);
+    if (!mob) return;
+    
     object->SetObjectID(next_object_id_.fetch_add(1));
     object->SetMap(this);
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(object);
+    }
+    
+    ObjectInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = object->GetObjectID();
+    info.position_x = object->GetPosition().x;
+    info.position_y = object->GetPosition().y;
+    info.info.mob.mob_id = mob->GetMobID();
 
-    const auto& mob = std::dynamic_pointer_cast<Mob>(object);
-
-    ObjectSpawnPacket spawn_object_packet;
-    spawn_object_packet.object_info.type = ObjectType::kMob;
-    spawn_object_packet.object_info.object_id = object->GetObjectID();
-    spawn_object_packet.object_info.position_x = object->GetPosition().x;
-    spawn_object_packet.object_info.position_y = object->GetPosition().y;
-    spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
-    SendPacket(spawn_object_packet);
-
-    AddObject(object);
-}
-
-void Map::DestroyObject(uint32_t object_id)
-{
-    std::lock_guard<std::mutex> lock(object_mutex_);
-    DestroyObject_Internal(object_id);
-}
-
-void Map::DestroyDroppedItem(uint32_t object_id, uint32_t character_id)
-{
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
     {
         std::lock_guard<std::mutex> lock(player_mutex_);
-        
-        ObjectDestroyInfo info;
-        info.type = ObjectType::kDroppedItem;
-        info.object_id = object_id;
-        info.info.dropped_item.character_id = character_id;
+        SendPacket(packet);
+    }
+}
+
+void Map::SpawnDroppedItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+{
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
+    dropped_item->SetPosition(drop_position);
+
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(dropped_item);
+    }
+
+    DroppedItemInfo item_info;
+    item_info.item_id = item_id;
+    item_info.dropper_position_x = dropper->GetPosition().x;
+    item_info.dropper_position_y = dropper->GetPosition().y;
+
+    ObjectInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = dropped_item->GetObjectID();
+    info.position_x = drop_position.x;
+    info.position_y = drop_position.y;
+    info.info.dropped_item = item_info;
+
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
     
-        ObjectDestroyPacket object_destroy_packet;
-        object_destroy_packet.object_info = info;
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::DestroyMob(uint32_t object_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kMob;
+    info.object_id = object_id;
+    
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
         SendPacket(object_destroy_packet);
     }
     
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
-        
-        auto it = map_objects_.find(object_id);
-        if (it == map_objects_.end()) return;
+        RemoveObject(object_id);
+    }
+}
 
+void Map::DestroyDroppedItem(uint32_t object_id, uint32_t character_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = object_id;
+    info.info.dropped_item.character_id = character_id;
+    
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(object_destroy_packet);
+    }
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
         RemoveObject(object_id);
     }
 }
@@ -291,34 +352,6 @@ void Map::Tick(float delta_time)
 
 }
 
-void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
-{
-    std::lock_guard<std::mutex> lock(object_mutex_);
-    
-    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
-    dropped_item->SetDropper(dropper);
-    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
-    dropped_item->SetPosition(drop_position);
-
-    // TODO: 구조 개선 필요
-    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
-    dropped_item->SetMap(this);
-
-    ObjectSpawnPacket packet;
-    packet.object_info.type = ObjectType::kDroppedItem;
-    packet.object_info.object_id = dropped_item->GetObjectID();
-    packet.object_info.position_x = drop_position.x;
-    packet.object_info.position_y = drop_position.y;
-
-    DroppedItemInfo& info = packet.object_info.info.dropped_item;
-    info.item_id = item_id;
-    info.dropper_position_x = dropper->GetPosition().x;
-    info.dropper_position_y = dropper->GetPosition().y;
-    SendPacket(packet);
-    
-    AddObject(dropped_item);
-}
-
 std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
@@ -330,7 +363,7 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
     return players;
 }
 
-Math::Vector2 Map::GetDropPosition(const Math::Vector2& position)
+Math::Vector2 Map::GetDropPosition(const Math::Vector2& position) const
 {
     Math::Vector2 drop_position = { position.x, position.y + 2.f };
     drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
@@ -502,7 +535,7 @@ void Map::Respawn()
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
             mob->SetPosition(spawn_point.position);
             mob->SetLastPosition(spawn_point.position);
-            SpawnObject(mob);
+            SpawnMob(mob);
         }
     }
 }
@@ -514,19 +547,21 @@ void Map::KillAllMobs()
     {
         if (const auto& mob = std::dynamic_pointer_cast<Mob>(map_object))
         {
-            DestroyObject_Internal(mob->GetObjectID());
+            uint32_t object_id = mob->GetObjectID();
+            
+            ObjectDestroyInfo info;
+            info.type = ObjectType::kMob;
+            info.object_id = object_id;
+    
+            ObjectDestroyPacket object_destroy_packet;
+            object_destroy_packet.object_info = info;
+    
+            {
+                std::lock_guard<std::mutex> player_lock(player_mutex_);
+                SendPacket(object_destroy_packet);
+            }
+            
+            RemoveObject(object_id);
         }
     }
-}
-
-void Map::DestroyObject_Internal(uint32_t object_id)
-{
-    auto it = map_objects_.find(object_id);
-    if (it == map_objects_.end()) return;
-
-    ObjectDestroyPacket destroy_object_packet;
-    destroy_object_packet.object_info.object_id = object_id;
-    SendPacket(destroy_object_packet);
-
-    RemoveObject(object_id);
 }

@@ -283,7 +283,6 @@
     <ClInclude Include="Game\PacketHandlers\CreateCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DeleteCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectDestroyHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\DestroyPlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DropItemHandler.h" />
     <ClInclude Include="Game\PacketHandlers\LoginHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MapLoadHandler.h" />
@@ -690,7 +689,6 @@
     <ClCompile Include="Game\PacketHandlers\CreateCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DeleteCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectDestroyHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\DestroyPlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DropItemHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\LoginHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MapLoadHandler.cpp" />

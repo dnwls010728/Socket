@@ -13,16 +13,30 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
     ObjectDestroyPacket* received_packet = dynamic_cast<ObjectDestroyPacket*>(packet);
     if (!received_packet) return false;
 
+    NetworkSubsystem* subsystem = NetworkSubsystem::Get();
+
     const ObjectDestroyInfo& info = received_packet->object_info;
-    auto network_actor = NetworkSubsystem::Get()->FindNetworkActor(received_packet->object_info.object_id);
+    auto network_actor = subsystem->FindNetworkActor(received_packet->object_info.object_id);
 
     switch (info.type)
     {
+    case ObjectType::kPlayer:
+        {
+            subsystem->DestroyNetworkActor(received_packet->object_info.object_id);
+        }
+        break;
+
+    case ObjectType::kMob:
+        {
+            if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
+        }
+        break;
+        
     case ObjectType::kDroppedItem:
         {
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(network_actor))
             {
-                auto player_character = NetworkSubsystem::Get()->FindNetworkActor(info.info.dropped_item.character_id);
+                auto player_character = subsystem->FindNetworkActor(info.info.dropped_item.character_id);
                 dropped_item->Pickup(player_character);
             }
         }
@@ -30,7 +44,7 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
 
     default:
         {
-            if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
+            subsystem->DestroyNetworkActor(received_packet->object_info.object_id);
         }
         break;
     }

@@ -39,9 +39,10 @@ public:
     
     void AddObject(const std::shared_ptr<MapObject>& object);
     void RemoveObject(uint32_t object_id);
-    void SpawnObject(const std::shared_ptr<MapObject>& object);
-    void DestroyObject(uint32_t object_id);
+    void SpawnMob(const std::shared_ptr<MapObject>& object);
+    void SpawnDroppedItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
 
+    void DestroyMob(uint32_t object_id);
     void DestroyDroppedItem(uint32_t object_id, uint32_t character_id);
 
     void SendPacket(const Net::IPacket& packet);
@@ -51,8 +52,6 @@ public:
 
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
-    
-    void SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
 
     bool LoadMapData();
     
@@ -66,7 +65,7 @@ public:
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
     
-    Math::Vector2 GetDropPosition(const Math::Vector2& position);
+    Math::Vector2 GetDropPosition(const Math::Vector2& position) const;
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline int32_t GetMapID() const { return map_id_; }
@@ -77,7 +76,6 @@ private:
     void RemoveObjects();
     void Respawn();
     void KillAllMobs();
-    void DestroyObject_Internal(uint32_t object_id);
 
     int32_t map_id_;
 

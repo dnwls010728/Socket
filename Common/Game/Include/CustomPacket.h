@@ -159,15 +159,6 @@ struct MapLoadCompletePacket : public Net::IPacket
     REGISTER_PACKET(MapLoadCompletePacket, 214)
 };
 
-// 플레이어 파괴 패킷
-struct DestroyPlayerPacket : public Net::IPacket
-{
-    uint32_t unique_id;
-    
-    SERIALIZABLE_FIELDS(unique_id)
-    REGISTER_PACKET(DestroyPlayerPacket, 215)
-};
-
 struct MovePlayerPacket : public Net::IPacket
 {
     uint32_t unique_id;
@@ -179,7 +170,7 @@ struct MovePlayerPacket : public Net::IPacket
     bool time_update;
     
     SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 216)
+    REGISTER_PACKET(MovePlayerPacket, 215)
 };
 
 struct PlayerAnimationPacket : public Net::IPacket
@@ -190,7 +181,7 @@ struct PlayerAnimationPacket : public Net::IPacket
     float server_time;
     
     SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 217)
+    REGISTER_PACKET(PlayerAnimationPacket, 216)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -199,7 +190,7 @@ struct ChatMessagePacket : public Net::IPacket
     std::wstring message;
     
     SERIALIZABLE_FIELDS(unique_id, message)
-    REGISTER_PACKET(ChatMessagePacket, 218)
+    REGISTER_PACKET(ChatMessagePacket, 217)
 };
 
 struct ObjectSpawnPacket : public Net::IPacket

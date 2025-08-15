@@ -195,7 +195,7 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
          SendAnimationPacket(L"Die", is_flipped_, true);
          if (player) player->GainExp(10000); // 예시로 100 경험치 추가
          hp_ = 0;
-         map_->DestroyObject(GetObjectID());
+         map_->DestroyMob(GetObjectID());
      }
      else
     {

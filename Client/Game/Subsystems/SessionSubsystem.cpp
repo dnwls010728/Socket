@@ -13,7 +13,6 @@
 #include "PacketHandlers/CreateCharacterHandler.h"
 #include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/ObjectDestroyHandler.h"
-#include "PacketHandlers/DestroyPlayerHandler.h"
 #include "PacketHandlers/DropItemHandler.h"
 #include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
@@ -103,11 +102,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         MoveItemResponse::StaticPacketID,
         std::make_unique<MoveItemHandler>()
-    );
-
-    handlers_.emplace(
-        DestroyPlayerPacket::StaticPacketID,
-        std::make_unique<DestroyPlayerHandler>()
     );
 
     handlers_.emplace(
