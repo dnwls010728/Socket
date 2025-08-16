@@ -25,6 +25,7 @@ Mob::Mob(const MobData& mob_data) :
     was_moving_(false),
     foothold_(nullptr),
     hp_(mob_data.stats.hp),
+    exp_(mob_data.drops.exp),
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false)
@@ -193,7 +194,7 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
      if (hp_ <= 0)
      {
          SendAnimationPacket(L"Die", is_flipped_, true);
-         if (player) player->GainExp(10000); // 예시로 100 경험치 추가
+         if (player) player->GainExp(exp_);
          hp_ = 0;
          map_->DestroyMob(GetObjectID());
      }

@@ -99,12 +99,21 @@ void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
 void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    std::shared_ptr<Item> first = inventories_[static_cast<uint8_t>(first_type)][first_slot];
-    inventories_[static_cast<uint8_t>(first_type)][first_slot] = inventories_[static_cast<uint8_t>(second_type)][second_slot];
-    inventories_[static_cast<uint8_t>(second_type)][second_slot] = first;
 
-    if (!inventories_[static_cast<uint8_t>(first_type)][first_slot]) Remove_Internal(first_type, first_slot);
-    if (!inventories_[static_cast<uint8_t>(second_type)][second_slot]) Remove_Internal(second_type, second_slot);
+    auto& first_inventory = inventories_[static_cast<uint8_t>(first_type)];
+    auto& second_inventory = inventories_[static_cast<uint8_t>(second_type)];
+    
+    std::shared_ptr<Item> first = first_inventory[first_slot];
+    std::shared_ptr<Item> second = second_inventory[second_slot];
+
+    if (first) first->SetSlot(second_slot);
+    if (second) second->SetSlot(first_slot);
+    
+    first_inventory[first_slot] = second;
+    second_inventory[second_slot] = first;
+
+    if (!first_inventory[first_slot]) Remove_Internal(first_type, first_slot);
+    if (!second_inventory[second_slot]) Remove_Internal(second_type, second_slot);
 }
 
 void Inventory::Remove(Type type, uint32_t slot_index)

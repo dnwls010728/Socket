@@ -3,7 +3,7 @@
 /**
  * 스캔코드를 출력합니다.
  */
-static constexpr bool kDebugScancode = true;
+static constexpr bool kDebugScancode = false;
 
 enum class Scancode : uint32_t
 {

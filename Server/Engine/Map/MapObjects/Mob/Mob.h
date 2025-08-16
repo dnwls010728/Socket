@@ -76,6 +76,8 @@ protected:
 
     std::atomic_uint32_t hp_;
 
+    int32_t exp_;
+
 #pragma region 상태
     std::shared_ptr<MobIdleState> idle_state_;
     std::shared_ptr<MobWalkState> walk_state_;

@@ -16,5 +16,7 @@ bool ChangeItemCountHandler::Handle(Net::IPacket* packet)
     Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
     inventory->ChangeCount(inventory_type, received_packet->slot_index, received_packet->count);
 
+    Logger::Print(L"ChangeItemCountHandler: Changed item count in inventory type %d, slot %d to %d", received_packet->inventory_type, received_packet->slot_index, received_packet->count);
+
     return true;
 }
