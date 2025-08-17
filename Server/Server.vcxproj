@@ -176,6 +176,8 @@
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Session\Party.cpp" />
+    <ClCompile Include="Engine\Session\PartyManager.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Item.cpp" />
@@ -218,6 +220,8 @@
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
+    <ClInclude Include="Engine\Session\Party.h" />
+    <ClInclude Include="Engine\Session\PartyManager.h" />
     <ClInclude Include="Engine\Session\Player.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Inventory.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Item.h" />

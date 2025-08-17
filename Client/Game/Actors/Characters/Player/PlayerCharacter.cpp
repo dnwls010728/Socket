@@ -31,6 +31,9 @@
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
+#include "UI/Element/UIContextMenu.h"
+#include "UI/UIInGameState.h"
+#include "UI/Element/UIPopup.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
@@ -42,7 +45,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_flip_(false),
     invincible_time_(0.f),
     prev_animation{0,},
-    color_(Math::Color::White)
+    color_(Math::Color::White),
+    party_id_(0)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -276,7 +280,49 @@ void PlayerCharacter::Tick(float delta_time)
             bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
             if (is_hit)
             {
-                Logger::Print(L"PlayerCharacter::Tick - Hit Player: %s", out_actor->GetName().c_str());
+                PlayerCharacter* player = dynamic_cast<PlayerCharacter*>(out_actor);
+                if (player && player != this)
+                {
+                    UIInGameState* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+                    if (state)
+                    {
+                        UIContextMenu* menu = state->GetContextMenu();
+                        menu->Clear();
+                        menu->AddItem(L"파티에 초대", [this, player]()
+                           {
+                                if (party_id_ == 0)
+                                {
+                                    UIPopup::PopupParam param;
+                                    param.caption = L"현재 파티에 소속되어 있지 않습니다.\n 파티를 생성하시겠습니까?";
+                                    param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
+                                    param.callback = [this](const std::wstring& text, UIPopup::PopupOption option)
+                                    {
+                                        if (option  == UIPopup::PopupOption::Yes)
+                                            StartCreateParty();
+                                        return true;
+                                    };
+                                    UIPopup::ShowPopup(param);
+                                }
+                                else
+                                {
+                                    PartyInviteRequest request;
+                                    request.invitee_id = player->GetObjectID();
+                                    SendPacket(request);    
+                                }
+                           });
+                        menu->Show(mouse->GetMousePosition());
+                    }
+                }
+            }
+        }
+
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            UIInGameState* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+            if (state)
+            {
+                UIContextMenu* menu = state->GetContextMenu();
+                menu->Hide();
             }
         }
 
@@ -287,6 +333,24 @@ void PlayerCharacter::Tick(float delta_time)
     else
     {
     }
+}
+
+void PlayerCharacter::StartCreateParty()
+{
+    UIPopup::PopupParam param;
+    param.caption = L"파티 이름을 입력하세요.";
+    param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
+    param.callback = [this](const std::wstring& text,  UIPopup::PopupOption option)
+    {
+        if (option == UIPopup::PopupOption::OK)
+        {
+            PartyCreateRequest request;
+            request.party_name = text;
+            SendPacket(request);
+        }
+        return true;
+    };
+    UIPopup::ShowPopup(param);
 }
 
 void PlayerCharacter::SyncCharacterMovement(float delta_time)

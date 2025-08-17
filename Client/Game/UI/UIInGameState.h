@@ -3,6 +3,7 @@
 #include "UI/UIState.h"
 
 class UIMenu;
+class UIContextMenu;
 class UIChatBar;
 class UIItemTooltip;
 class UIInventory;
@@ -16,6 +17,7 @@ public:
     virtual ~UIInGameState() override = default;
 
     FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
+    FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
 
 protected:
     virtual void Init() override;
@@ -26,4 +28,5 @@ private:
     UIInventory* inventory_;
     UIItemTooltip* item_tooltip_;
     UIMenu* menu_;
+    UIContextMenu* context_menu_;
 };

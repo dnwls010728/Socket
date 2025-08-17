@@ -43,6 +43,9 @@ public:
     
     inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
     inline int32_t GetMapID() const { return map_id_; }
+
+    inline void SetPartyID(int32_t party_id) { party_id_ = party_id; }
+    inline uint32_t GetPartyID() const { return party_id_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
@@ -61,6 +64,7 @@ protected:
     std::weak_ptr<Player> player_;
     
     uint32_t account_id_;
+    uint32_t party_id_;
 
     std::wstring name_;
     std::wstring body_color_;

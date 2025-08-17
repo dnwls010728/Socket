@@ -3,6 +3,7 @@
 
 #include "Scancode.h"
 #include "UI/Element/UIPopup.h"
+#include "UI/Element/UIContextMenu.h"
 #include "Element/UIChatBar.h"
 #include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
@@ -13,7 +14,8 @@
 
 UIInGameState::UIInGameState() :
     inventory_(nullptr),
-    item_tooltip_(nullptr)
+    item_tooltip_(nullptr),
+    context_menu_(nullptr)
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
@@ -33,6 +35,9 @@ UIInGameState::UIInGameState() :
 
     menu_ = AddElement<UIMenu>(UIMenu::StaticClass(), L"Menu");
     menu_->SetActive(false);
+
+    context_menu_ = AddElement<UIContextMenu>(UIContextMenu::StaticClass(), L"ContextMenu");
+    context_menu_->SetActive(false);
 }
 
 void UIInGameState::Init()

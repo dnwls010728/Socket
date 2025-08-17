@@ -42,11 +42,16 @@ public:
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
 
+    FORCEINLINE uint32_t GetPartyID() const { return party_id_; }
+    FORCEINLINE void SetPartyID(uint32_t party_id) { party_id_ = party_id; }
+
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
-
+    
+    virtual void StartCreateParty();
+    
     virtual void SyncCharacterMovement(float delta_time);
 
     Math::Vector2 move_axis_;
@@ -58,6 +63,8 @@ protected:
     bool last_flip_;
     bool was_moving_;
 
+    uint32_t party_id_;
+    
     std::deque<MovementSnapshot> movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
     AnimationSnapshot prev_animation;

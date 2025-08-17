@@ -11,11 +11,14 @@
 #include "MapObjects/DroppedItem.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
+#include "Session/PartyManager.h"
+#include "Session/Party.h"
 #include "Session/Player.h"
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
     account_id_(0),
+    party_id_(0),
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
     map_id_(0),
@@ -326,6 +329,133 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (!map_) return;
 
             map_->OnAttack(object_id_, attack_request->object_id);
+        }
+        break;
+        
+    case PartyInviteRequest::StaticPacketID:
+        {
+            PartyInviteRequest* request = static_cast<PartyInviteRequest*>(packet);
+            if (!map_) break;
+
+            auto sendPopup = [this](const std::wstring &msg)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = msg;
+                SendPacket(popup_packet);
+            };
+            
+            if (GetPartyID() == 0)
+            {
+                sendPopup(L"초대할 파티가 존재하지 않습니다.");
+                break;
+            }
+
+            const auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (party == nullptr)
+            {
+                sendPopup(L"초대할 파티가 존재하지 않습니다.");
+                break;
+            }
+            
+            auto invitee = map_->FindPlayer(request->invitee_id);
+            if (!invitee)
+            {
+                sendPopup(L"대상을 찾을 수 없습니다.");
+                break;
+            }
+
+            if (invitee->GetPartyID() == party->GetPartyID())
+            {
+                sendPopup(L"같은 파티에 포함되어 있는 플레이어 입니다.");
+                break;
+            }
+            
+            if (invitee->GetPartyID() != 0)
+            {
+                sendPopup(L"이미 가입되어 있는 파티가 존재하는 플레이어 입니다.");
+                break;
+            }
+
+            PartyInviteNotify notify;
+            notify.inviter_name = GetName();
+            notify.party_name = party->GetPartyName();
+            notify.party_id = party->GetPartyID();
+            invitee->SendPacket(notify);
+        }
+        break;
+
+    case PartyInviteNotifyResponse::StaticPacketID:
+        {
+            PartyInviteNotifyResponse* response = static_cast<PartyInviteNotifyResponse*>(packet);
+            if (!map_) break;
+
+            if (response->result == false)
+            {
+                auto inviter = map_->FindPlayer(response->inviter_id);
+                if (inviter)
+                {
+                    PopupPacket popup_packet;
+                    popup_packet.text = GetName() + L" 님이 파티 초대를 거절했습니다.";
+                    inviter->SendPacket(popup_packet);
+                }
+                break;
+            }
+
+            auto party = PartyManager::Get()->GetParty(response->party_id);
+            if (!party)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = L"존재하지 않는 파티입니다.";
+                SendPacket(popup_packet);
+                break;
+            }
+
+            if (party->GetPlayerCount() > 10)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = L"파티 인원이 꽉찼습니다.";
+                SendPacket(popup_packet);
+                break;
+            }
+            
+            PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
+            SetPartyID(party->GetPartyID());
+
+            PartyJoinPacket join_packet;
+            join_packet.party_name = party->GetPartyName();
+            join_packet.party_id = GetPartyID();
+            join_packet.host_id = party->GetHost();
+            SendPacket(join_packet);
+
+            // 임시 알림
+            PopupPacket join_msg;
+            join_msg.text = GetName() + L" 님이 파티에 합류했습니다.";
+            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, GetAccountID());
+            
+        }
+        break;
+
+    case PartyCreateRequest::StaticPacketID:
+        {
+            PartyCreateRequest* request = static_cast<PartyCreateRequest*>(packet);
+            auto party = PartyManager::Get()->CreateParty(request->party_name);
+            if (!party)
+            {
+                break;
+            }
+
+            PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
+            SetPartyID(party->GetPartyID());
+
+            PopupPacket popup_packet;
+            popup_packet.text = L"파티가 정상적으로 생성되었습니다.";
+            SendPacket(popup_packet);
+
+            PartyJoinPacket join_packet;
+            join_packet.party_id = party->GetPartyID();
+            join_packet.party_name = request->party_name;
+            join_packet.host_id = GetAccountID();
+            SendPacket(join_packet);
         }
         break;
         

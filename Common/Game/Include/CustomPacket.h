@@ -15,6 +15,13 @@ struct MessagePacket : public Net::IPacket
     REGISTER_PACKET(MessagePacket, 100)
 };
 
+struct PopupPacket : public Net::IPacket
+{
+    std::wstring text;
+    SERIALIZABLE_FIELDS(text)
+    REGISTER_PACKET(PopupPacket, 101)
+};
+
 // 로그인 요청
 struct LoginRequest : public Net::IPacket
 {
@@ -336,4 +343,51 @@ struct PlayerStatsUpdatePacket : public Net::IPacket
     
     SERIALIZABLE_FIELDS(stats)
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
+};
+
+struct PartyInviteRequest : public Net::IPacket
+{
+    uint32_t invitee_id;
+    
+    SERIALIZABLE_FIELDS(invitee_id)
+    REGISTER_PACKET(PartyInviteRequest, 600)
+};
+
+struct PartyInviteNotify : public Net::IPacket
+{
+    std::wstring inviter_name;
+    uint32_t inviter_id;
+    uint32_t party_id;
+    std::wstring party_name;
+    
+    SERIALIZABLE_FIELDS(inviter_name,inviter_id,  party_id, party_name)
+    REGISTER_PACKET(PartyInviteNotify, 602)
+};
+
+struct PartyInviteNotifyResponse : public Net::IPacket
+{
+    uint32_t party_id;
+    uint32_t inviter_id;
+    bool result;
+    
+    SERIALIZABLE_FIELDS(party_id, inviter_id, result)
+    REGISTER_PACKET(PartyInviteNotifyResponse, 603)
+};
+
+struct PartyCreateRequest : public Net::IPacket
+{
+    std::wstring party_name;
+    
+    SERIALIZABLE_FIELDS(party_name)
+    REGISTER_PACKET(PartyCreateRequest, 604)
+};
+
+struct PartyJoinPacket : public Net::IPacket
+{
+    uint32_t party_id;
+    std::wstring party_name;
+    uint32_t host_id;
+    
+    SERIALIZABLE_FIELDS(party_id, party_name, host_id)
+    REGISTER_PACKET(PartyJoinPacket, 605)
 };

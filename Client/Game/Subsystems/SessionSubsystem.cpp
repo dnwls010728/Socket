@@ -25,6 +25,9 @@
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/ObjectSpawnHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
+#include "PacketHandlers/PartyInviteNotifyHandler.h"
+#include "PacketHandlers/PartyJoinHandler.h"
+#include "PacketHandlers/PopupHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -152,6 +155,21 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         DropItemResponse::StaticPacketID,
         std::make_unique<DropItemHandler>()
+    );
+
+    handlers_.emplace(
+        PartyInviteNotify::StaticPacketID,
+        std::make_unique<PartyInviteNotifyHandler>()
+    );
+
+    handlers_.emplace(
+        PopupPacket::StaticPacketID,
+        std::make_unique<PopupHandler>()
+    );
+
+    handlers_.emplace(
+        PartyJoinPacket::StaticPacketID,
+        std::make_unique<PartyJoinHandler>()
     );
 #pragma endregion
 
