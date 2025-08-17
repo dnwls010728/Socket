@@ -363,15 +363,13 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
     return players;
 }
 
-Math::Vector2 Map::GetDropPosition(const Math::Vector2& position) const
+void Map::GetDropPosition(Math::Vector2& position) const
 {
-    Math::Vector2 drop_position = { position.x, position.y + 2.f };
-    drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
+    position.y += 2.f;
+    position.x = Math::Clamp(position.x, map_bounds_.min.x, map_bounds_.max.x);
 
-    Foothold* foothold = FindFoothold(drop_position);
-    if (foothold) drop_position.y = foothold->GetYAt(drop_position.x);
-    
-    return drop_position;
+    Foothold* foothold = FindFoothold(position);
+    if (foothold) position.y = foothold->GetYAt(position.x);
 }
 
 bool Map::LoadMapData()

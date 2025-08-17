@@ -25,7 +25,7 @@ Mob::Mob(const MobData& mob_data) :
     was_moving_(false),
     foothold_(nullptr),
     hp_(mob_data.stats.hp),
-    exp_(mob_data.drops.exp),
+    exp_(mob_data.stats.exp),
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false)
@@ -188,17 +188,38 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
 
     const auto& player = map_->FindPlayer(attacker);
     state_machine_->ChangeState(hit_state_);
-    
+
     last_animation_ = animation_;
     hp_ -= damage;
-     if (hp_ <= 0)
-     {
-         SendAnimationPacket(L"Die", is_flipped_, true);
-         if (player) player->GainExp(exp_);
-         hp_ = 0;
-         map_->DestroyMob(GetObjectID());
-     }
-     else
+    if (hp_ <= 0)
+    {
+        if (const auto* drops = DataManager::Get()->GetDrop(mob_id_))
+        {
+            int32_t d = 0;
+            for (const auto& drop : *drops)
+            {
+                int32_t count = Math::RandRange(drop.min_count, drop.max_count);
+                if (count <= 0) continue;
+                
+                int32_t step = (d + 1) / 2;
+                int32_t sign = (d % 2) ? 1 : -1;
+
+                Math::Vector2 drop_position = position_;
+                drop_position.x += static_cast<float>(sign * step) * .5f;
+                map_->GetDropPosition(drop_position);
+
+                map_->SpawnDroppedItem(drop.item_id, count, shared_from_this(), drop_position);
+                
+                ++d;
+            }
+        }
+
+        SendAnimationPacket(L"Die", is_flipped_, true);
+        if (player) player->GainExp(exp_);
+        hp_ = 0;
+        map_->DestroyMob(GetObjectID());
+    }
+    else
     {
         SendAnimationPacket(L"Hit", is_flipped_, true);
     }

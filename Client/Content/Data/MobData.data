@@ -6,7 +6,5 @@ mobs:
       dmg: 10
       def: 5
       speed: 1.0
-    drops:
       exp: 10
-      color: 3
     animation_pack: "Sprites\\Mobs\\MushroomSheet.png.apack"

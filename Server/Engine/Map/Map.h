@@ -65,7 +65,7 @@ public:
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
     
-    Math::Vector2 GetDropPosition(const Math::Vector2& position) const;
+    void GetDropPosition(Math::Vector2& position) const;
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline int32_t GetMapID() const { return map_id_; }
