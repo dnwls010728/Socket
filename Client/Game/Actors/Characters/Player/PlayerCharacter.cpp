@@ -38,7 +38,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     move_axis_(Math::Vector2::Zero()),
     movement_sync_accumulator_(0.f),
     was_moving_(false),
-    is_jump_pressed_(false),
     last_position_(Math::Vector2::Zero()),
     last_flip_(false),
     invincible_time_(0.f),
@@ -151,9 +150,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
         
-        if (is_jump_pressed_ && collisions.is_below) velocity_.y = 6.7f;
-        is_jump_pressed_ = false;
-        
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, move_axis_);
         
@@ -162,7 +158,6 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     
     CharacterBase::PhysicsTick(delta_time);
 }
-
 
 void PlayerCharacter::Tick(float delta_time)
 {
@@ -194,9 +189,10 @@ void PlayerCharacter::Tick(float delta_time)
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
 
-            if (keyboard->GetKey(Scancode::kKeyC))
+            const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
+            if (keyboard->GetKey(Scancode::kKeyC) && collisions.is_below)
             {
-                is_jump_pressed_ = true;
+                velocity_.y = 6.7f;
             }
 
             if (keyboard->GetKeyDown(Scancode::kKey1))

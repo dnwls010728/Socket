@@ -557,7 +557,7 @@ void Map::KillAllMobs()
             object_destroy_packet.object_info = info;
     
             {
-                std::lock_guard<std::mutex> player_lock(player_mutex_);
+                // std::lock_guard<std::mutex> player_lock(player_mutex_);
                 SendPacket(object_destroy_packet);
             }
             

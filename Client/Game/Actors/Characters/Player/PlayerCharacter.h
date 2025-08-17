@@ -52,10 +52,11 @@ protected:
     Math::Vector2 move_axis_;
     Math::Vector2 last_position_;
     std::wstring last_animation_;
-    bool last_flip_;
 
+    bool was_grounded_;
+    bool can_air_jump_;
+    bool last_flip_;
     bool was_moving_;
-    bool is_jump_pressed_;
 
     std::deque<MovementSnapshot> movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
