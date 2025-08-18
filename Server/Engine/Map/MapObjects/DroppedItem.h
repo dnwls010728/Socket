@@ -20,6 +20,8 @@ public:
     inline void SetColor(int32_t color) { color_ = color; }
     inline int32_t GetColor() const { return color_; }
 
+    inline bool IsColor() const { return color_ > 0; }
+
 private:
     std::weak_ptr<MapObject> dropper_;
 

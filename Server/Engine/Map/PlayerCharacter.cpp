@@ -313,8 +313,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
             {
                 std::lock_guard<std::mutex> lock(dropped_item_mutex_);
-                auto item = dropped_item->GetItem();
-                if (inventory_->AddItem(item))
+
+                bool is_handled = false;
+                if (dropped_item->IsColor())
+                {
+                    is_handled = true;
+                }
+                else
+                {
+                    auto item = dropped_item->GetItem();
+                    is_handled = inventory_->AddItem(item);
+                }
+                
+                if (is_handled)
                 {
                     map_->DestroyDroppedItem(dropped_item->GetObjectID(), object_id_);
                 }
