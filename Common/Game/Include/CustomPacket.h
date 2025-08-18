@@ -318,6 +318,14 @@ struct PickupItemPacket : public Net::IPacket
     REGISTER_PACKET(PickupItemPacket, 306)
 };
 
+struct ColorGainPacket : public Net::IPacket
+{
+    int32_t color;
+    
+    SERIALIZABLE_FIELDS(color)
+    REGISTER_PACKET(ColorGainPacket, 307)
+};
+
 struct AttackRequest : public Net::IPacket
 {
     uint32_t object_id;

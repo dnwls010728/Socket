@@ -10,6 +10,7 @@
 #include "PacketHandlers/ChangeItemCountHandler.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
+#include "PacketHandlers/ColorGainHandler.h"
 #include "PacketHandlers/CreateCharacterHandler.h"
 #include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/ObjectDestroyHandler.h"
@@ -155,6 +156,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         DropItemResponse::StaticPacketID,
         std::make_unique<DropItemHandler>()
+    );
+
+    handlers_.emplace(
+        ColorGainPacket::StaticPacketID,
+        std::make_unique<ColorGainHandler>()
     );
 
     handlers_.emplace(

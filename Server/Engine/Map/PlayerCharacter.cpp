@@ -317,6 +317,12 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 bool is_handled = false;
                 if (dropped_item->IsColor())
                 {
+                    color_.fetch_add(dropped_item->GetColor());
+
+                    ColorGainPacket color_gain_packet;
+                    color_gain_packet.color = color_;
+                    SendPacket(color_gain_packet);
+                    
                     is_handled = true;
                 }
                 else
@@ -535,15 +541,16 @@ void PlayerCharacter::UpdateDatabase()
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, last_position_x = ?, last_position_y = ?, map_id = ? WHERE character_id = ?"));
-            statement->setUInt(1, hp_);
-            statement->setUInt(2, max_hp_);
-            statement->setUInt(3, exp_);
-            statement->setUInt(4, lv_);
-            statement->setDouble(5, position_.x);
-            statement->setDouble(6, position_.y);
-            statement->setUInt(7, map_->GetMapID());
-            statement->setUInt(8, object_id_);
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
+            statement->setInt(1, hp_);
+            statement->setInt(2, max_hp_);
+            statement->setInt(3, exp_);
+            statement->setInt(4, lv_);
+            statement->setInt(5, map_->GetMapID());
+            statement->setDouble(6, position_.x);
+            statement->setDouble(7, position_.y);
+            statement->setInt(8, color_);
+            statement->setUInt(9, object_id_);
             statement->executeUpdate();
         }
     }
