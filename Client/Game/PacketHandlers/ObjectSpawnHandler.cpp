@@ -7,6 +7,9 @@
 #include "Actors/DroppedItem.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
@@ -50,6 +53,9 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             if (!ObjectPoolSubsystem::Get()->GetFromPool(DroppedItem::StaticClass(), out_actor)) return false;
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(out_actor))
             {
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\DropItem.mp3");
+                AudioManager::Get()->PlayOneShot(audio);
+                
                 DroppedItemInfo info = object_info.info.dropped_item;
 
                 Math::Vector2 offset = Math::Vector2::Up() * .5f;

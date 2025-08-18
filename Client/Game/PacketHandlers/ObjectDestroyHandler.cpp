@@ -5,6 +5,9 @@
 
 #include "Actors/DroppedItem.h"
 #include "Actors/NetworkActor.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
@@ -36,6 +39,9 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
         {
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(network_actor))
             {
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\PickUpItem.mp3");
+                AudioManager::Get()->PlayOneShot(audio);
+                
                 auto player_character = subsystem->FindNetworkActor(info.info.dropped_item.character_id);
                 dropped_item->Pickup(player_character);
             }
