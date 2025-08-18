@@ -87,6 +87,7 @@ const std::vector<MobDropData>* DataManager::GetDrop(uint32_t id)
                 drop_data.item_id = result->getUInt("item_id");
                 drop_data.min_count = result->getInt("min_count");
                 drop_data.max_count = result->getInt("max_count");
+                drop_data.chance = result->getInt("chance");
                 drops.emplace_back(drop_data);
             }
         }

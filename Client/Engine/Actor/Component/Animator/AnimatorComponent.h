@@ -46,6 +46,7 @@ public:
     void AddTransition(const std::wstring& kFrom, const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
     void AddAnyTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
     void PlayAnimation(const std::wstring& kName);
+    void StopAnimation();
 
     void SetBool(const std::wstring& kName, bool value);
     void SetFloat(const std::wstring& kName, float value);

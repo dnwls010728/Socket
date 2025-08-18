@@ -299,7 +299,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Math::Vector2 drop_position = GetPosition();
             map_->GetDropPosition(drop_position);
             
-            map_->SpawnDroppedItem(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            map_->SpawnItemDrop(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 
@@ -313,7 +313,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
             {
                 std::lock_guard<std::mutex> lock(dropped_item_mutex_);
-
                 auto item = dropped_item->GetItem();
                 if (inventory_->AddItem(item))
                 {

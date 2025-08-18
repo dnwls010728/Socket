@@ -51,11 +51,13 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(out_actor))
             {
                 DroppedItemInfo info = object_info.info.dropped_item;
+
+                Math::Vector2 offset = Math::Vector2::Up() * .5f;
                 
                 dropped_item->SetObjectID(object_info.object_id);
-                dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y });
+                dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y + offset.y });
 
-                dropped_item->Init(info.item_id, { object_info.position_x, object_info.position_y });
+                dropped_item->Init(info.item_id, info.color, { object_info.position_x, object_info.position_y + offset.y });
             }
         }
         break;

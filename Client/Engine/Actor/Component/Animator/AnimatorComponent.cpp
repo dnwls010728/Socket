@@ -48,7 +48,8 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
 {
     std::shared_ptr<StateNode> state = GetOrAddNode(kName);
 
-    if (!state || !HasBegunPlay()) return;
+    // if (!state || !HasBegunPlay()) return;
+    if (!state) return;
     if (current_state_ == state && is_playing_) return;
     
     is_playing_ = false;
@@ -69,6 +70,12 @@ void AnimatorComponent::PlayAnimation(const std::wstring& kName)
     }
     
     is_playing_ = true;
+}
+
+void AnimatorComponent::StopAnimation()
+{
+    is_playing_ = false;
+    current_state_ = nullptr;
 }
 
 void AnimatorComponent::SetBool(const std::wstring& kName, bool value)

@@ -25,9 +25,10 @@ void DroppedItem::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     packet.object_info.position_y = position_.y;
 
     DroppedItemInfo& info = packet.object_info.info.dropped_item;
-    info.item_id = item_->GetID();
+    info.item_id = item_ ? item_->GetID() : 0;
     info.dropper_position_x = position_.x;
     info.dropper_position_y = position_.y;
+    info.color = color_;
     
     player->SendPacket(packet);
 }

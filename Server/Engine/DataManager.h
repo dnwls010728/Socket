@@ -41,6 +41,7 @@ struct MobDropData
 
     int32_t min_count;
     int32_t max_count;
+    int32_t chance;
 };
 
 namespace YAML

@@ -61,6 +61,7 @@ struct DroppedItemInfo
     uint32_t item_id;
     float dropper_position_x;
     float dropper_position_y;
+    int32_t color;
 };
 
 struct DroppedItemDestroyInfo

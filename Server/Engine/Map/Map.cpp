@@ -156,7 +156,44 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     }
 }
 
-void Map::SpawnDroppedItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+{
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetColor(color);
+    dropped_item->SetPosition(drop_position);
+
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(dropped_item);
+    }
+
+    DroppedItemInfo item_info;
+    item_info.item_id = 0;
+    item_info.dropper_position_x = dropper->GetPosition().x;
+    item_info.dropper_position_y = dropper->GetPosition().y;
+    item_info.color = color;
+
+    ObjectInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = dropped_item->GetObjectID();
+    info.position_x = drop_position.x;
+    info.position_y = drop_position.y;
+    info.info.dropped_item = item_info;
+
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
@@ -175,6 +212,7 @@ void Map::SpawnDroppedItem(uint32_t item_id, uint32_t count, const std::shared_p
     item_info.item_id = item_id;
     item_info.dropper_position_x = dropper->GetPosition().x;
     item_info.dropper_position_y = dropper->GetPosition().y;
+    item_info.color = 0;
 
     ObjectInfo info;
     info.type = ObjectType::kDroppedItem;

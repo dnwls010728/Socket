@@ -6,6 +6,7 @@
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
 #include "Subsystems/NetworkSubsystem.h"
@@ -19,6 +20,11 @@ DroppedItem::DroppedItem(const std::wstring& name) :
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     renderer_->SetZOrder(std::numeric_limits<int32_t>::max());
+
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Color.png.apack");
+    if (animation_pack) animator_->SetAnimationPack(animation_pack);
 
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetOffset({ 0.f, 0.f });
@@ -39,11 +45,20 @@ void DroppedItem::OnActivate()
 
 void DroppedItem::OnDeactivate()
 {
+    animator_->StopAnimation();
     SetActive(false);
 }
 
-void DroppedItem::Init(uint32_t item_id, const Math::Vector2& drop_position) const
+void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position) const
 {
+    if (item_id == 0)
+    {
+        if (color > 999) animator_->PlayAnimation(L"Y"); // 1000원 이상
+        else if (color > 99) animator_->PlayAnimation(L"M"); // 100원 이상
+        else animator_->PlayAnimation(L"C");
+        return;
+    }
+    
     Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\" + std::to_wstring(item_id) + L".png");
     if (sprite) renderer_->SetSprite(sprite, std::to_wstring(item_id) + L"_0");
 }

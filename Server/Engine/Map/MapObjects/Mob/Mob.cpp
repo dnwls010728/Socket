@@ -198,6 +198,9 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
             int32_t d = 0;
             for (const auto& drop : *drops)
             {
+                int32_t drop_chance = Math::RandRange(0, 9999); // 0.01%
+                if (drop_chance > drop.chance) continue;
+                
                 int32_t count = Math::RandRange(drop.min_count, drop.max_count);
                 if (count <= 0) continue;
                 
@@ -208,7 +211,10 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
                 drop_position.x += static_cast<float>(sign * step) * .5f;
                 map_->GetDropPosition(drop_position);
 
-                map_->SpawnDroppedItem(drop.item_id, count, shared_from_this(), drop_position);
+                if (!drop.item_id)
+                    map_->SpawnColorDrop(count, shared_from_this(), drop_position);
+                else
+                    map_->SpawnItemDrop(drop.item_id, count, shared_from_this(), drop_position);
                 
                 ++d;
             }
