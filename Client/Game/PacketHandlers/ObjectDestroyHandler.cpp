@@ -18,10 +18,10 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
 
     NetworkSubsystem* subsystem = NetworkSubsystem::Get();
 
-    const ObjectDestroyInfo& info = received_packet->object_info;
+    const ObjectDestroyInfo& object_info = received_packet->object_info;
     auto network_actor = subsystem->FindNetworkActor(received_packet->object_info.object_id);
 
-    switch (info.type)
+    switch (object_info.type)
     {
     case ObjectType::kPlayer:
         {
@@ -39,10 +39,18 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
         {
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(network_actor))
             {
-                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\PickUpItem.mp3");
-                AudioManager::Get()->PlayOneShot(audio);
+                if (!dropped_item->IsColor())
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\itemget.mp3");
+                    AudioManager::Get()->PlayOneShot(audio);
+                }
+                else
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\moneyget.mp3");
+                    AudioManager::Get()->PlayOneShot(audio);
+                }
                 
-                auto player_character = subsystem->FindNetworkActor(info.info.dropped_item.character_id);
+                auto player_character = subsystem->FindNetworkActor(object_info.info.dropped_item.character_id);
                 dropped_item->Pickup(player_character);
             }
         }

@@ -14,7 +14,8 @@
 #include "Windows/DX/Sprite.h"
 
 DroppedItem::DroppedItem(const std::wstring& name) :
-    NetworkActor(name)
+    NetworkActor(name),
+    is_color_(false)
 {
     SetLayer(ActorLayer::kDroppedItem);
     
@@ -45,17 +46,20 @@ void DroppedItem::OnActivate()
 
 void DroppedItem::OnDeactivate()
 {
+    is_color_ = false;
     animator_->StopAnimation();
     SetActive(false);
 }
 
-void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position) const
+void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position)
 {
-    if (item_id == 0)
+    if (color)
     {
         if (color > 999) animator_->PlayAnimation(L"Y"); // 1000원 이상
         else if (color > 99) animator_->PlayAnimation(L"M"); // 100원 이상
         else animator_->PlayAnimation(L"C");
+
+        is_color_ = true;
         return;
     }
     

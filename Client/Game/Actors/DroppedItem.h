@@ -22,7 +22,9 @@ public:
     virtual void OnActivate() override;
     virtual void OnDeactivate() override;
 
-    void Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position) const;
+    void Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position);
+
+    FORCEINLINE bool IsColor() const { return is_color_; }
 
 protected:
     virtual void OnEnable() override;
@@ -31,5 +33,8 @@ protected:
     std::shared_ptr<SpriteRendererComponent> renderer_;
     std::shared_ptr<AnimatorComponent> animator_;
     std::shared_ptr<BoxColliderComponent> collider_;
+
+private:
+    bool is_color_;
     
 };

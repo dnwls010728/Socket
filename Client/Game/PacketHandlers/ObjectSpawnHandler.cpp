@@ -53,8 +53,16 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             if (!ObjectPoolSubsystem::Get()->GetFromPool(DroppedItem::StaticClass(), out_actor)) return false;
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(out_actor))
             {
-                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\DropItem.mp3");
-                AudioManager::Get()->PlayOneShot(audio);
+                if (!object_info.info.dropped_item.color)
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\itemdrop.mp3");
+                    AudioManager::Get()->PlayOneShot(audio);
+                }
+                else
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\moneydrop.mp3");
+                    AudioManager::Get()->PlayOneShot(audio);
+                }
                 
                 DroppedItemInfo info = object_info.info.dropped_item;
 
