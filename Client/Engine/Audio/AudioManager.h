@@ -14,16 +14,22 @@ public:
     AudioManager();
     virtual ~AudioManager() override;
 
-    void PlayOneShot(const Audio* audio, float volume = 1.f);
-    void PauseSound(int32_t id);
-    void ResumeSound(int32_t id);
-    void StopSound(int32_t id);
+    void PlayOneShot(const Audio* audio, float volume = 1.f) const;
+    void PauseSound(int32_t id) const;
+    void ResumeSound(int32_t id) const;
+    void StopSound(int32_t id) const;
     void StopAllSounds();
-    void SetVolume(int32_t id, int32_t volume);
-    void SetMute(int32_t id, bool is_mute);
-    void SetAllMutes(bool is_mute);
+    void SetVolume(int32_t id, int32_t volume) const;
+    void SetVolume(ChannelGroup group, int32_t volume) const;
+    void SetMasterVolume(int32_t volume) const;
+    void SetMute(int32_t id, bool is_mute) const;
+    void SetAllMutes(bool is_mute) const;
 
     int32_t PlaySound2D(const Audio* audio, ChannelGroup group = ChannelGroup::kNone);
+
+    int32_t GetVolume(int32_t id) const;
+    int32_t GetVolume(ChannelGroup group) const;
+    int32_t GetMasterVolume() const;
 
 private:
     friend class Audio;

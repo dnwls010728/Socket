@@ -50,7 +50,7 @@ void AudioManager::Tick()
     FMOD_System_Update(fmod_system_);
 }
 
-void AudioManager::PlayOneShot(const Audio* audio, float volume)
+void AudioManager::PlayOneShot(const Audio* audio, float volume) const
 {
     if (!audio) return;
     
@@ -59,19 +59,19 @@ void AudioManager::PlayOneShot(const Audio* audio, float volume)
     if (channel) FMOD_Channel_SetVolume(channel, volume);
 }
 
-void AudioManager::PauseSound(int32_t id)
+void AudioManager::PauseSound(int32_t id) const
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetPaused(channels_[id], true);
 }
 
-void AudioManager::ResumeSound(int32_t id)
+void AudioManager::ResumeSound(int32_t id) const
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetPaused(channels_[id], false);
 }
 
-void AudioManager::StopSound(int32_t id)
+void AudioManager::StopSound(int32_t id) const
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_Stop(channels_[id]);
@@ -85,7 +85,7 @@ void AudioManager::StopAllSounds()
     }
 }
 
-void AudioManager::SetVolume(int32_t id, int32_t volume)
+void AudioManager::SetVolume(int32_t id, int32_t volume) const
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     volume = Math::Clamp(volume, 0.f, 100.f);
@@ -94,13 +94,41 @@ void AudioManager::SetVolume(int32_t id, int32_t volume)
     FMOD_Channel_SetVolume(channels_[id], final_volume);
 }
 
-void AudioManager::SetMute(int32_t id, bool is_mute)
+void AudioManager::SetVolume(ChannelGroup group, int32_t volume) const
+{
+    if (group == ChannelGroup::kNone) return;
+
+    auto it = channel_groups_.find(group);
+    if (it == channel_groups_.end()) return;
+
+    FMOD_CHANNELGROUP* channel_group = it->second;
+    if (!channel_group) return;
+
+    volume = Math::Clamp(volume, 0.f, 100.f);
+    const float final_volume = volume / 100.f;
+    
+    FMOD_ChannelGroup_SetVolume(channel_group, final_volume);
+}
+
+void AudioManager::SetMasterVolume(int32_t volume) const
+{
+    FMOD_CHANNELGROUP* master_group = nullptr;
+    FMOD_RESULT result = FMOD_System_GetMasterChannelGroup(fmod_system_, &master_group);
+    if (result != FMOD_OK) return;
+
+    volume = Math::Clamp(volume, 0.f, 100.f);
+    const float final_volume = volume / 100.f;
+
+    FMOD_ChannelGroup_SetVolume(master_group, final_volume);
+}
+
+void AudioManager::SetMute(int32_t id, bool is_mute) const
 {
     if (id < 0 || id >= MAX_CHANNEL_COUNT) return;
     FMOD_Channel_SetMute(channels_[id], is_mute);
 }
 
-void AudioManager::SetAllMutes(bool is_mute)
+void AudioManager::SetAllMutes(bool is_mute) const
 {
     FMOD_CHANNELGROUP* master_group = nullptr;
     FMOD_RESULT result = FMOD_System_GetMasterChannelGroup(fmod_system_, &master_group);
@@ -132,4 +160,39 @@ int32_t AudioManager::PlaySound2D(const Audio* audio, ChannelGroup group)
     }
 
     return -1;
+}
+
+int32_t AudioManager::GetVolume(int32_t id) const
+{
+    if (id < 0 || id >= MAX_CHANNEL_COUNT) return 0.f;
+
+    float volume = 0.f;
+    FMOD_Channel_GetVolume(channels_[id], &volume);
+    return static_cast<int32_t>(volume * 100.f);
+}
+
+int32_t AudioManager::GetVolume(ChannelGroup group) const
+{
+    if (group == ChannelGroup::kNone) return 0.f;
+
+    auto it = channel_groups_.find(group);
+    if (it == channel_groups_.end()) return 0.f;
+
+    FMOD_CHANNELGROUP* channel_group = it->second;
+    if (!channel_group) return 0.f;
+
+    float volume = 0.f;
+    FMOD_ChannelGroup_GetVolume(channel_group, &volume);
+    return static_cast<int32_t>(volume * 100.f);
+}
+
+int32_t AudioManager::GetMasterVolume() const
+{
+    FMOD_CHANNELGROUP* master_group = nullptr;
+    FMOD_RESULT result = FMOD_System_GetMasterChannelGroup(fmod_system_, &master_group);
+    if (result != FMOD_OK) return 0.f;
+
+    float volume = 0.f;
+    FMOD_ChannelGroup_GetVolume(master_group, &volume);
+    return static_cast<int32_t>(volume * 100.f);
 }

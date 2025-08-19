@@ -342,7 +342,6 @@ void PlayerCharacter::Tick(float delta_time)
 
         // 공격 범위 확인용
         DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
-        
     }
     else
     {
