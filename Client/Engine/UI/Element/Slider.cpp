@@ -52,12 +52,9 @@ void Slider::Render()
 
     Math::Vector2 absolute_position = GetAbsolutePosition();
     Math::Vector2 size = GetSize();
-
-    Math::Vector2 bar_position = absolute_position + Math::Vector2(0.f, size.y * .5f - 5.f);
-    renderer->DrawSolidRoundBox(bar_position, {size.x, 10.f}, {58, 65, 74, 230}, 4.f);
     
-    float width = GetSize().x * ratio_;
-    Math::Vector2 thumb_position = absolute_position + Math::Vector2(width, size.y * .5f);
+    float fill_width = size.x * ratio_;
+    Math::Vector2 thumb_position = absolute_position + Math::Vector2(fill_width, size.y * .5f);
     renderer->DrawSolidCircle(thumb_position, size.y * .5f, {255, 211, 77, 242});
 }
 

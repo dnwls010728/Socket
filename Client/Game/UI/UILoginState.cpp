@@ -4,7 +4,6 @@
 #include "Asset/AssetManager.h"
 #include "Element/CharacterSelect/UICharacterSelect.h"
 #include "Element/UILogin.h"
-#include "UI/Element/Slider.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
 #include "Windows/WindowsApplication.h"
@@ -40,10 +39,6 @@ UILoginState::UILoginState()
     exit_button->SetTextColor(Math::Color::White);
     exit_button->SetText(L"끝내기");
     exit_button->OnClick(this, &UILoginState::OnExit);
-
-    Slider* volume_slider = AddElement<Slider>(Slider::StaticClass(), L"VolumeSlider");
-    volume_slider->SetAbsolutePosition({10.f, 10.f});
-    volume_slider->SetSize({200.f, 20.f});
 }
 
 void UILoginState::Init()
