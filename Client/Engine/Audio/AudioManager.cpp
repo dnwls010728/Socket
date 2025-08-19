@@ -3,13 +3,14 @@
 
 #include <ranges>
 
-#include "FMOD/fmod.hpp"
 #include "Math/Math.h"
 #include "Audio/Audio.h"
+#include "Misc/StringHelper.h"
 
 AudioManager::AudioManager() :
     fmod_system_(nullptr),
-    channels_()
+    channels_(),
+    channel_groups_()
 {
 }
 
@@ -25,7 +26,23 @@ bool AudioManager::Init()
     if (result != FMOD_OK) return false;
 
     result = FMOD_System_Init(fmod_system_, MAX_CHANNEL_COUNT, FMOD_INIT_NORMAL, nullptr);
-    return result == FMOD_OK;
+    if (result != FMOD_OK) return false;
+
+    for (int32_t i = 1; i < static_cast<uint8_t>(ChannelGroup::kCount); ++i)
+    {
+        ChannelGroup group = static_cast<ChannelGroup>(i);
+
+        rttr::enumeration enum_group = rttr::type::get<ChannelGroup>().get_enumeration();
+        if (!enum_group.is_valid()) return false;
+        
+        std::string group_name = enum_group.value_to_name(group).to_string();
+        if (group_name.empty()) return false;
+        
+        result = FMOD_System_CreateChannelGroup(fmod_system_, group_name.c_str(), &channel_groups_[group]);
+        if (result != FMOD_OK) return false;
+    }
+    
+    return true;
 }
 
 void AudioManager::Tick()
@@ -85,15 +102,21 @@ void AudioManager::SetMute(int32_t id, bool is_mute)
 
 void AudioManager::SetAllMutes(bool is_mute)
 {
-    for (const auto& channel : channels_)
-    {
-        FMOD_Channel_SetMute(channel, is_mute);
-    }
+    FMOD_CHANNELGROUP* master_group = nullptr;
+    FMOD_RESULT result = FMOD_System_GetMasterChannelGroup(fmod_system_, &master_group);
+    if (result != FMOD_OK) return;
+
+    FMOD_ChannelGroup_SetMute(master_group, is_mute);
 }
 
-int32_t AudioManager::PlaySound2D(const Audio* audio/*, FMOD_CHANNELGROUP* channel_group*/)
+int32_t AudioManager::PlaySound2D(const Audio* audio, ChannelGroup group)
 {
     if (!audio) return -1;
+
+    FMOD_CHANNELGROUP* channel_group = nullptr;
+    
+    auto it = channel_groups_.find(group);
+    if (it != channel_groups_.end()) channel_group = it->second;
     
     for (int32_t i = 0; i < MAX_CHANNEL_COUNT; ++i)
     {
@@ -103,8 +126,7 @@ int32_t AudioManager::PlaySound2D(const Audio* audio/*, FMOD_CHANNELGROUP* chann
         
         if (!is_playing)
         {
-            // FMOD_System_PlaySound(fmod_system_, audio->sound_, channel_group, false, &channels_[i]);
-            FMOD_System_PlaySound(fmod_system_, audio->sound_, nullptr, false, &channels_[i]);
+            FMOD_System_PlaySound(fmod_system_, audio->sound_, channel_group, false, &channels_[i]);
             return i;
         }
     }

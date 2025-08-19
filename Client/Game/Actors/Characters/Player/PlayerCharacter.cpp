@@ -17,6 +17,8 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "DirectXTK/Mouse.h"
 #include "FSM/Condition.h"
 #include "imgui/imgui.h"
@@ -39,9 +41,10 @@
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     move_axis_(Math::Vector2::Zero()),
-    movement_sync_accumulator_(0.f),
-    was_moving_(false),
     last_position_(Math::Vector2::Zero()),
+    movement_sync_accumulator_(0.f),
+    was_grounded_(false),
+    was_moving_(false),
     last_flip_(false),
     invincible_time_(0.f),
     prev_animation{0,},
@@ -153,11 +156,18 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
+        was_grounded_ = collisions.is_below;
         
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, move_axis_);
         
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
+        
+        if (!was_grounded_ && collisions.is_below)
+        {
+            Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\landing.mp3");
+            AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+        }
     }
     
     CharacterBase::PhysicsTick(delta_time);
@@ -185,6 +195,8 @@ void PlayerCharacter::Tick(float delta_time)
     
     if (IsMine())
     {
+        const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
+        
         Keyboard* keyboard = Keyboard::Get();
         Mouse* mouse = Mouse::Get();
 
@@ -193,9 +205,11 @@ void PlayerCharacter::Tick(float delta_time)
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
 
-            const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
             if (keyboard->GetKey(Scancode::kKeyC) && collisions.is_below)
             {
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
+                AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                
                 velocity_.y = 6.7f;
             }
 

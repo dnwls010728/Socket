@@ -1,14 +1,12 @@
 ﻿#pragma once
 
+#include "ChannelGroup.h"
 #include "Singleton.h"
+#include "FMOD/fmod.hpp"
 
 #define MAX_CHANNEL_COUNT 4095
 
 class Audio;
-class FMOD_SOUND;
-class FMOD_CHANNEL;
-class FMOD_CHANNELGROUP;
-class SceneComponent;
 
 class AudioManager : public Singleton<AudioManager>
 {
@@ -25,7 +23,7 @@ public:
     void SetMute(int32_t id, bool is_mute);
     void SetAllMutes(bool is_mute);
 
-    int32_t PlaySound2D(const Audio* audio/*, FMOD_CHANNELGROUP* channel_group = nullptr*/);
+    int32_t PlaySound2D(const Audio* audio, ChannelGroup group = ChannelGroup::kNone);
 
 private:
     friend class Audio;
@@ -37,5 +35,7 @@ private:
     
     class FMOD_SYSTEM* fmod_system_;
     FMOD_CHANNEL* channels_[MAX_CHANNEL_COUNT];
+
+    std::unordered_map<ChannelGroup, FMOD_CHANNELGROUP*> channel_groups_;
     
 };

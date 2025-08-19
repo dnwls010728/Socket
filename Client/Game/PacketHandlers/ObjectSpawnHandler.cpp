@@ -56,12 +56,12 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                 if (!object_info.info.dropped_item.color)
                 {
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\itemdrop.mp3");
-                    AudioManager::Get()->PlaySound2D(audio);
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
                 else
                 {
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\moneydrop.mp3");
-                    AudioManager::Get()->PlaySound2D(audio);
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
                 
                 DroppedItemInfo info = object_info.info.dropped_item;

@@ -24,7 +24,7 @@ void LoginMap::Load()
     Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dreamscape.mp3");
     bgm->SetLoop(true);
     
-    AudioManager::Get()->PlaySound2D(bgm);
+    AudioManager::Get()->PlaySound2D(bgm, ChannelGroup::kBGM);
 }
 
 RTTR_REGISTRATION

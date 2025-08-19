@@ -160,6 +160,7 @@
     <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
+    <ClInclude Include="Engine\Audio\ChannelGroup.h" />
     <ClInclude Include="Engine\Core.h" />
     <ClInclude Include="Engine\Data\CSVReader.h" />
     <ClInclude Include="Engine\Data\FileHelper.h" />
@@ -301,6 +302,7 @@
     <ClInclude Include="Game\PacketHandlers\TakeDamageHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\GameSubsystem.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
@@ -585,6 +587,7 @@
     <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
+    <ClCompile Include="Engine\Audio\ChannelGroup.cpp" />
     <ClCompile Include="Engine\Core.cpp" />
     <ClCompile Include="Engine\Data\CSVReader.cpp" />
     <ClCompile Include="Engine\Data\FileHelper.cpp" />
@@ -711,6 +714,7 @@
     <ClCompile Include="Game\PacketHandlers\TakeDamageHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\GameSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />

@@ -59,7 +59,6 @@ protected:
     std::wstring last_animation_;
 
     bool was_grounded_;
-    bool can_air_jump_;
     bool last_flip_;
     bool was_moving_;
 

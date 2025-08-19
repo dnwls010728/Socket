@@ -42,12 +42,12 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
                 if (!dropped_item->IsColor())
                 {
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\itemget.mp3");
-                    AudioManager::Get()->PlaySound2D(audio);
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
                 else
                 {
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\moneyget.mp3");
-                    AudioManager::Get()->PlaySound2D(audio);
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
                 
                 auto player_character = subsystem->FindNetworkActor(object_info.info.dropped_item.character_id);
