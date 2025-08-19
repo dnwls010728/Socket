@@ -54,6 +54,8 @@ protected:
     
     virtual void SyncCharacterMovement(float delta_time);
 
+    void OnFootstep() const;
+
     Math::Vector2 move_axis_;
     Math::Vector2 last_position_;
     std::wstring last_animation_;

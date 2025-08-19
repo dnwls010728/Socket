@@ -42,10 +42,10 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     move_axis_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
-    movement_sync_accumulator_(0.f),
     was_grounded_(false),
     was_moving_(false),
     last_flip_(false),
+    movement_sync_accumulator_(0.f),
     invincible_time_(0.f),
     prev_animation{0,},
     color_(Math::Color::White),
@@ -142,6 +142,10 @@ void PlayerCharacter::BeginPlay()
         state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
         
         state_machine_->SetState(idle_state);
+
+        const auto& node = animator_->GetOrAddNode(L"Walk");
+        node->AddCallback(4, this, &PlayerCharacter::OnFootstep);
+        node->AddCallback(7, this, &PlayerCharacter::OnFootstep);
     }
     else
     {
@@ -477,6 +481,12 @@ void PlayerCharacter::SyncCharacterMovement(float delta_time)
             }
         }
     }
+}
+
+void PlayerCharacter::OnFootstep() const
+{
+    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\move_default.mp3");
+    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
 }
 
 RTTR_REGISTRATION

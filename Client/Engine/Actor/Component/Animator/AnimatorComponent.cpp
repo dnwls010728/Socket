@@ -11,13 +11,19 @@
 AnimatorComponent::StateNode::StateNode(const std::wstring& name) :
     name_(name),
     animation_(),
-    transitions_()
+    transitions_(),
+    callbacks_()
 {
 }
 
 void AnimatorComponent::StateNode::AddTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition)
 {
     transitions_.emplace(std::make_shared<Transition>(kTo, kCondition));
+}
+
+void AnimatorComponent::StateNode::AddCallback(int32_t index, void(* func)())
+{
+    callbacks_.insert_or_assign(index, Function<void()>(func));
 }
 
 AnimatorComponent::AnimatorComponent(Actor* owner, const std::wstring& kName) :
@@ -209,6 +215,11 @@ void AnimatorComponent::TickComponent(float delta_time)
         }
 
         current_frame_ = (current_frame_ + 1) % animation.frame.size();
+
+        const auto& callbacks = current_state_->GetCallbacks();
+        
+        auto it = callbacks.find(current_frame_);
+        if (it != callbacks.end()) it->second();
 
         Sprite* sprite = AssetManager::Get()->Load<Sprite>(animation_pack_->target_);
         if (sprite) renderer->SetSprite(sprite, animation.frame[current_frame_]);

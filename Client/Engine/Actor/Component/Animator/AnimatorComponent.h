@@ -25,6 +25,17 @@ private:
         ~StateNode() = default;
         
         void AddTransition(const std::wstring& kTo, const std::shared_ptr<Condition>& kCondition);
+        
+        template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
+        void AddCallback(int32_t index, F&& func);
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void AddCallback(int32_t index, M* target, void(M::*func)(void));
+
+        template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
+        void AddCallback(int32_t index, M* target, void(M::*func)(void) const);
+
+        void AddCallback(int32_t index, void(*func)(void));
 
         FORCEINLINE const std::wstring& GetName() const { return name_; }
         
@@ -32,11 +43,13 @@ private:
         FORCEINLINE const Animation& GetAnimation() const { return animation_; }
         
         FORCEINLINE const std::unordered_set<std::shared_ptr<Transition>>& GetTransitions() const { return transitions_; }
+        FORCEINLINE const std::unordered_map<int32_t, Function<void(void)>>& GetCallbacks() const { return callbacks_; }
 
     private:
         std::wstring name_;
         Animation animation_;
         std::unordered_set<std::shared_ptr<Transition>> transitions_;
+        std::unordered_map<int32_t, Function<void(void)>> callbacks_;
     };
     
 public:
@@ -95,3 +108,21 @@ private:
     std::unordered_map<std::wstring, ParameterType> parameters_;
     
 };
+
+template <typename F, typename>
+void AnimatorComponent::StateNode::AddCallback(int32_t index, F&& func)
+{
+    callbacks_.insert_or_assign(index, Function<void()>(std::forward<F>(func)));
+}
+
+template <typename M, typename>
+void AnimatorComponent::StateNode::AddCallback(int32_t index, M* target, void(M::* func)())
+{
+    callbacks_.insert_or_assign(index, Function<void()>(target, func));
+}
+
+template <typename M, typename>
+void AnimatorComponent::StateNode::AddCallback(int32_t index, M* target, void(M::* func)() const)
+{
+    callbacks_.insert_or_assign(index, Function<void()>(target, func));
+}
