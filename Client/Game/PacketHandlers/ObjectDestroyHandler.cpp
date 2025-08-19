@@ -41,12 +41,12 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
             {
                 if (!dropped_item->IsColor())
                 {
-                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\itemget.mp3");
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\itemget.mp3");
                     AudioManager::Get()->PlaySound2D(audio);
                 }
                 else
                 {
-                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SFX\\moneyget.mp3");
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\moneyget.mp3");
                     AudioManager::Get()->PlaySound2D(audio);
                 }
                 

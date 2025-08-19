@@ -12,6 +12,7 @@ UICharacterSlot::UICharacterSlot(const std::wstring& name) :
     character_select_(nullptr),
     slot_id_(0),
     character_id_(0),
+    last_time_(0.),
     timer_(0.f),
     frame_index_(0)
 {
@@ -136,6 +137,15 @@ bool UICharacterSlot::OnMouseButton(const Math::Vector2& position, MouseButton b
     if (is_pressed && button == MouseButton::kLeft)
     {
         character_select_->OnSlotSelected(slot_id_);
+
+        if (timestamp - last_time_ < .2f)
+        {
+            character_select_->OnCharacterSelected();
+            last_time_ = 0.f;
+            return true;
+        }
+
+        last_time_ = timestamp;
         return true;
     }
     

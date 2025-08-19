@@ -40,6 +40,8 @@ private:
     uint32_t slot_id_;
     uint32_t character_id_;
 
+    double last_time_;
+    
     float timer_;
 
     int32_t frame_index_;
