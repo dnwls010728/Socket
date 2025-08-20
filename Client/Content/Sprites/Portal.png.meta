@@ -1,0 +1,67 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: Portal_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_1
+    rect:
+      x: 0.142857149
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_2
+    rect:
+      x: 0.285714298
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_3
+    rect:
+      x: 0.428571433
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_4
+    rect:
+      x: 0.571428597
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_5
+    rect:
+      x: 0.714285731
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: Portal_6
+    rect:
+      x: 0.857142866
+      y: 0
+      width: 0.142857149
+      height: 1
+    pivot:
+      x: 0.5
+      y: 0.0399999991

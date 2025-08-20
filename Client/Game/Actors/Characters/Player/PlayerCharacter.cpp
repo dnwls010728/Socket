@@ -2,9 +2,11 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <algorithm>
 #include <numbers>
 
 #include "DebugDrawHelper.h"
+#include "Actor/Portal.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -47,6 +49,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     last_flip_(false),
     movement_sync_accumulator_(0.f),
     invincible_time_(0.f),
+    portal_cooldown_(0.f),
     prev_animation{0,},
     color_(Math::Color::White),
     party_id_(0),
@@ -212,6 +215,30 @@ void PlayerCharacter::Tick(float delta_time)
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
 
+            if (keyboard->GetKey(Scancode::kKeyUp) && portal_cooldown_ <= 0.f)
+            {
+                Math::Vector2 center = GetTransform()->GetPosition();
+                Math::Vector2 size = {1.f, 1.f};
+                
+                Actor* out_actor = nullptr;
+                bool is_hit = Physics2D::OverlapBox(
+                    center,
+                    size,
+                    &out_actor,
+                    static_cast<uint16_t>(ActorLayer::kPortal)
+                );
+
+                if (is_hit)
+                {
+                    if (auto* portal = dynamic_cast<Portal*>(out_actor))
+                    {
+                        Logger::Print(L"Portal ID: %d", portal->GetID());
+                    }
+
+                    portal_cooldown_ = .8f;
+                }
+            }
+
             if (keyboard->GetKey(Scancode::kKeyC) && collisions.is_below)
             {
                 Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
@@ -357,6 +384,12 @@ void PlayerCharacter::Tick(float delta_time)
                 UIContextMenu* menu = state->GetContextMenu();
                 menu->Hide();
             }
+        }
+
+        if (portal_cooldown_ > 0.f)
+        {
+            portal_cooldown_ -= delta_time;
+            portal_cooldown_ = Math::Max(portal_cooldown_, 0.f);
         }
 
         // 공격 범위 확인용

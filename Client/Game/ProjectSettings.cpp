@@ -28,6 +28,7 @@ void ProjectSettings::Init()
     
     // 레이어 충돌 매트릭스 설정
     settings->AddCollisionLayer(ActorLayer::kDefault, ActorLayer::kDefault | ActorLayer::kPlayer | ActorLayer::kNPC | ActorLayer::kMob | ActorLayer::kDroppedItem);
+    settings->AddCollisionLayer(ActorLayer::kPortal, ActorLayer::kDefault | ActorLayer::kPortal | ActorLayer::kPlayer | ActorLayer::kNPC | ActorLayer::kMob | ActorLayer::kDroppedItem);
     settings->AddCollisionLayer(ActorLayer::kPlayer, ActorLayer::kDefault);
     settings->AddCollisionLayer(ActorLayer::kNPC, ActorLayer::kDefault | ActorLayer::kPlayer);
     settings->AddCollisionLayer(ActorLayer::kMob, ActorLayer::kDefault);

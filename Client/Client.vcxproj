@@ -158,6 +158,7 @@
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapComponent.h" />
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
     <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
+    <ClInclude Include="Engine\Actor\Portal.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Audio\ChannelGroup.h" />
@@ -246,7 +247,6 @@
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
-    <ClInclude Include="Game\Actors\Portal.h" />
     <ClInclude Include="Game\Actors\ServerActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
     <ClInclude Include="Game\Blackboard\Blackboard.h" />
@@ -587,6 +587,7 @@
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapComponent.cpp" />
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
     <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
+    <ClCompile Include="Engine\Actor\Portal.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Audio\ChannelGroup.cpp" />
@@ -662,7 +663,6 @@
     <ClCompile Include="Game\Actors\Editor\Editor.cpp" />
     <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
-    <ClCompile Include="Game\Actors\Portal.cpp" />
     <ClCompile Include="Game\Actors\ServerActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
     <ClCompile Include="Game\Blackboard\Blackboard.cpp" />

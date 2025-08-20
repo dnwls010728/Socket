@@ -25,6 +25,7 @@ PlayerCharacter::PlayerCharacter() :
     lv_(1),
     hp_(350),
     max_hp_(350),
+    map_transitioning_(false),
     exp_(0),
     color_(0),
     inventory_(nullptr),
@@ -182,6 +183,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case ChangeMapPacket::StaticPacketID:
         {
             ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet);
+            if (map_transitioning_.load()) return;
+
+            map_transitioning_.store(true);
             
             map_->RemovePlayer(GetObjectID());
             map_ = World::Get()->GetMap(change_map_packet->map_id);
@@ -200,6 +204,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MapLoadCompletePacket::StaticPacketID:
         {
             map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+            map_transitioning_.store(false);
         }
         break;
 
@@ -320,7 +325,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     color_.fetch_add(dropped_item->GetColor());
 
                     ColorGainPacket color_gain_packet;
-                    color_gain_packet.color = color_;
+                    color_gain_packet.color = color_.load();
                     SendPacket(color_gain_packet);
                     
                     is_handled = true;
@@ -544,12 +549,12 @@ void PlayerCharacter::UpdateDatabase()
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
             statement->setInt(2, max_hp_);
-            statement->setInt(3, exp_);
+            statement->setInt(3, exp_.load());
             statement->setInt(4, lv_);
             statement->setInt(5, map_->GetMapID());
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
-            statement->setInt(8, color_);
+            statement->setInt(8, color_.load());
             statement->setUInt(9, object_id_);
             statement->executeUpdate();
         }
@@ -576,10 +581,10 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     exp_.fetch_add(amount);
 
-    while (exp_ > DataManager::Get()->GetExp(lv_))
+    while (exp_.load() > DataManager::Get()->GetExp(lv_))
     {
         exp_.fetch_sub(DataManager::Get()->GetExp(lv_));
-        if (exp_ < 0) exp_.store(0);
+        if (exp_.load() < 0) exp_.store(0);
         
         ++lv_;
 
@@ -596,7 +601,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     PlayerStatsUpdatePacket packet;
     packet.stats[static_cast<uint8_t>(PlayerStat::kHP)] = hp_;
     packet.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = max_hp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_;
+    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_.load();
     packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
     SendPacket(packet);
 }

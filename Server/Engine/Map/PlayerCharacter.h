@@ -44,6 +44,8 @@ public:
     inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
     inline int32_t GetMapID() const { return map_id_; }
 
+    inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
+
     inline void SetPartyID(int32_t party_id) { party_id_ = party_id; }
     inline uint32_t GetPartyID() const { return party_id_; }
     
@@ -73,6 +75,8 @@ protected:
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;
+
+    std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
