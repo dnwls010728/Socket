@@ -25,6 +25,7 @@ Map::Map(uint32_t map_id) :
     next_object_id_(1000),
     players_(),
     footholds_(),
+    portals_(),
     map_objects_(),
     pending_players_(),
     pending_remove_players_(),
@@ -445,9 +446,9 @@ bool Map::LoadMapData()
                         const auto& object_properties = object.getProperties();
                         if (object_properties.empty()) continue;
 
-                        uint32_t id = object_properties[0].getIntValue();
-                        uint32_t next = object_properties[1].getIntValue();
-                        uint32_t previous = object_properties[2].getIntValue();
+                        int32_t id = object_properties[0].getIntValue();
+                        int32_t next = object_properties[1].getIntValue();
+                        int32_t previous = object_properties[2].getIntValue();
                         
                         const auto& points = object.getPoints();
                         Math::Vector2 point1 = {
@@ -459,8 +460,8 @@ bool Map::LoadMapData()
                             points[1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                             -1 * points[1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                         };
-
-                        footholds_[id] = std::make_unique<Foothold>(point1, point2, id, previous, next);
+                        
+                        footholds_.insert_or_assign(id, std::make_unique<Foothold>(point1, point2, id, previous, next));
                     }
                 }
             }
@@ -480,6 +481,27 @@ bool Map::LoadMapData()
                     if (properties.empty()) continue;
                     
                     spawn_points_.emplace_back(position, properties[0].getIntValue());
+                }
+            }
+            else if (layer->getName() == "Portal")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() != tmx::Object::Shape::Point) continue;
+                    
+                    Math::Vector2 position = {
+                        object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                        -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                    };
+                    
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+
+                    int32_t id = properties[0].getIntValue();
+                    int32_t to_map = properties[1].getIntValue();
+
+                    portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_map, position));
                 }
             }
         }

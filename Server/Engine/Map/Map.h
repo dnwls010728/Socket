@@ -7,6 +7,7 @@
 #include <queue>
 
 #include "Foothold.h"
+#include "Portal.h"
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
@@ -87,8 +88,9 @@ private:
 
     std::atomic_uint32_t next_object_id_;
 
-    std::unordered_map<uint32_t, std::weak_ptr<PlayerCharacter>> players_;
-    std::unordered_map<uint32_t, std::unique_ptr<Foothold>> footholds_;
+    std::unordered_map<int32_t, std::weak_ptr<PlayerCharacter>> players_;
+    std::unordered_map<int32_t, std::unique_ptr<Foothold>> footholds_;
+    std::unordered_map<int32_t, std::unique_ptr<Portal>> portals_;
 
     std::map<uint32_t, std::shared_ptr<MapObject>> map_objects_;
 
