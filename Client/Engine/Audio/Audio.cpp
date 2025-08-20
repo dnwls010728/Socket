@@ -3,8 +3,11 @@
 
 #include "AudioManager.h"
 #include "FMOD/fmod.h"
+#include "Misc/StringHelper.h"
 
-Audio::Audio()
+Audio::Audio() :
+    sound_(nullptr),
+    dB_(0)
 {
 }
 
@@ -16,14 +19,19 @@ Audio::~Audio()
 bool Audio::Load(const std::wstring& kPath)
 {
     Asset::Load(kPath);
-    
-    const std::string kFinalPath(kPath.begin(), kPath.end());
 
-    FMOD_RESULT result = FMOD_System_CreateSound(AudioManager::Get()->fmod_system_, kFinalPath.c_str(), FMOD_DEFAULT, nullptr, &sound_);
+    std::string path_str = StringHelper::UTF16ToUTF8(kPath);
+
+    if (!meta_data_.IsNull())
+    {
+        dB_ = meta_data_["dB"].as<int32_t>();
+    }
+
+    FMOD_RESULT result = FMOD_System_CreateSound(AudioManager::Get()->fmod_system_, path_str.c_str(), FMOD_DEFAULT, nullptr, &sound_);
     return result == FMOD_OK;
 }
 
-void Audio::SetLoop(bool is_loop)
+void Audio::SetLoop(bool is_loop) const
 {
     FMOD_MODE mode;
     FMOD_Sound_GetMode(sound_, &mode);

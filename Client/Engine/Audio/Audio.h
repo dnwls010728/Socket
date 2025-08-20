@@ -20,15 +20,19 @@ public:
 
     virtual bool Load(const std::wstring& kPath) override;
 
-    void SetLoop(bool is_loop);
-
+    void SetLoop(bool is_loop) const;
+    
     uint32_t GetLength() const;
 
     AudioFormat GetFormat() const;
+
+    FORCEINLINE int32_t GetDB() const { return dB_; }
 
 private:
     friend class AudioManager;
     
     FMOD_SOUND* sound_;
+
+    int32_t dB_;
     
 };

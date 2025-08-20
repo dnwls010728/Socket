@@ -155,6 +155,10 @@ int32_t AudioManager::PlaySound2D(const Audio* audio, ChannelGroup group)
         if (!is_playing)
         {
             FMOD_System_PlaySound(fmod_system_, audio->sound_, channel_group, false, &channels_[i]);
+            FMOD_Channel_SetVolumeRamp(channels_[i], true);
+
+            float gain = std::pow(10.f, audio->GetDB() / 20.f);
+            FMOD_Channel_SetVolume(channels_[i], gain);
             return i;
         }
     }
