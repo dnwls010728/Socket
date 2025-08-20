@@ -8,6 +8,8 @@ RTTR_REGISTRATION
     registration::enumeration<ChannelGroup>("ChannelGroup")
         (
             value("BGM", ChannelGroup::kBGM),
-            value("SE", ChannelGroup::kSE)
+            value("SE", ChannelGroup::kSE),
+            value("MobSE", ChannelGroup::kMobSE),
+            value("SkillSE", ChannelGroup::kSkillSE)
         );
 }
