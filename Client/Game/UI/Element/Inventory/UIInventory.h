@@ -16,6 +16,8 @@ class UIInventory : public UIContainer
 public:
     UIInventory(const std::wstring& name);
     virtual ~UIInventory() override = default;
+    
+    virtual void SetActive(bool active) override;
 
     void UpdateSlot(uint32_t slot_index) const;
     void UpdateColor(uint32_t color) const;

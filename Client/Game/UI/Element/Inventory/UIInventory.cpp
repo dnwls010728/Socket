@@ -3,10 +3,12 @@
 
 #include "Scancode.h"
 #include "UIInventorySlot.h"
+#include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
 #include "Subsystems/PlayerSubsystem.h"
+#include "UI/UIInGameState.h"
 #include "UI/Element/UIButton.h"
 #include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/Renderer.h"
@@ -146,6 +148,22 @@ UIInventory::UIInventory(const std::wstring& name) :
     dragging_item_->SetActive(false);
     dragging_item_->SetIgnoreRayCast(true);
 
+}
+
+void UIInventory::SetActive(bool active)
+{
+    UIContainer::SetActive(active);
+
+    if (!active)
+    {
+        if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+        {
+            if (auto* element = state->GetItemTooltip())
+            {
+                if (element->IsActive()) element->SetActive(false);
+            }
+        }
+    }
 }
 
 void UIInventory::UpdateSlot(uint32_t slot_index) const
