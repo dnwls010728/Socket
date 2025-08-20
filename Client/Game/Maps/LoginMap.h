@@ -27,5 +27,6 @@ public:
 
 protected:
     virtual void Load() override;
+    virtual void Unload(EndPlayReason type) override;
     
 };

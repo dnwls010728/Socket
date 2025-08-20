@@ -77,12 +77,12 @@ void AudioManager::StopSound(int32_t id) const
     FMOD_Channel_Stop(channels_[id]);
 }
 
-void AudioManager::StopAllSounds()
+void AudioManager::StopSound(ChannelGroup group) const
 {
-    for (const auto& channel : channels_)
-    {
-        FMOD_Channel_Stop(channel);
-    }
+    auto it = channel_groups_.find(group);
+    if (it == channel_groups_.end()) return;
+
+    FMOD_ChannelGroup_Stop(it->second);
 }
 
 void AudioManager::SetVolume(int32_t id, int32_t volume) const

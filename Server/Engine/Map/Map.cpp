@@ -420,7 +420,7 @@ bool Map::LoadMapData()
     const auto& properties = map_data.getProperties();
     if (properties.empty()) return false;
 
-    float ppu = properties[1].getFloatValue();
+    float ppu = properties[2].getFloatValue();
 
     tmx::FloatRect local_bounds = map_data.getBounds();
     float world_width = local_bounds.width / ppu;

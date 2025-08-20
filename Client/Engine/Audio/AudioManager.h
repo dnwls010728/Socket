@@ -18,7 +18,8 @@ public:
     void PauseSound(int32_t id) const;
     void ResumeSound(int32_t id) const;
     void StopSound(int32_t id) const;
-    void StopAllSounds();
+    void StopSound(ChannelGroup group) const;
+    void StopAllSounds() const;
     void SetVolume(int32_t id, int32_t volume) const;
     void SetVolume(ChannelGroup group, int32_t volume) const;
     void SetMasterVolume(int32_t volume) const;

@@ -20,6 +20,7 @@ public:
 
     FORCEINLINE const tmx::Map& GetMap() const { return map_; }
     FORCEINLINE uint32_t GetUniqueID() const { return unique_id_; }
+    FORCEINLINE const std::wstring& GetBGM() const { return bgm_; }
     FORCEINLINE const std::wstring& GetName() const { return name_; }
     FORCEINLINE float GetPPU() const { return ppu_; }
     FORCEINLINE UISprite* GetUISprite() const { return ui_sprite_.get(); }
@@ -27,6 +28,7 @@ public:
 private:
     tmx::Map map_;
     uint32_t unique_id_;
+    std::wstring bgm_;
     std::wstring name_;
     float ppu_;
     std::unique_ptr<UISprite> ui_sprite_;
