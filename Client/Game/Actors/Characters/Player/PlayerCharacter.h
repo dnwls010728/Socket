@@ -74,4 +74,6 @@ protected:
     float invincible_time_;
 
     Math::Color color_;
+    
+    int32_t bonus_jumps_;
 };

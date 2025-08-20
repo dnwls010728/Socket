@@ -49,7 +49,8 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     invincible_time_(0.f),
     prev_animation{0,},
     color_(Math::Color::White),
-    party_id_(0)
+    party_id_(0),
+    bonus_jumps_(1)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -171,6 +172,8 @@ void PlayerCharacter::PhysicsTick(float delta_time)
         {
             Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\landing.mp3");
             AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+
+            bonus_jumps_ = 1;
         }
     }
     
@@ -214,7 +217,19 @@ void PlayerCharacter::Tick(float delta_time)
                 Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
                 AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 
-                velocity_.y = 6.7f;
+                velocity_.y = 8.f;
+            }
+
+            if (keyboard->GetKeyDown(Scancode::kKeyC) && !collisions.is_below)
+            {
+                if (bonus_jumps_ > 0)
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                
+                    velocity_.y = 8.f;
+                    --bonus_jumps_;
+                }
             }
 
             if (keyboard->GetKeyDown(Scancode::kKey1))
