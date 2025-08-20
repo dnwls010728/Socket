@@ -213,14 +213,14 @@ void UIMenu::OnMobSE(float value)
 {
     int32_t volume = static_cast<int32_t>(value);
     mob_se_percent_text_->SetText(std::to_wstring(volume) + L"%");
-    // AudioManager::Get()->SetVolume(ChannelGroup::kMobSE, volume);
+    AudioManager::Get()->SetVolume(ChannelGroup::kMobSE, volume);
 }
 
 void UIMenu::OnSkillSE(float value)
 {
     int32_t volume = static_cast<int32_t>(value);
     skill_se_percent_text_->SetText(std::to_wstring(volume) + L"%");
-    // AudioManager::Get()->SetVolume(ChannelGroup::kSkillSE, volume);
+    AudioManager::Get()->SetVolume(ChannelGroup::kSkillSE, volume);
 }
 
 RTTR_REGISTRATION

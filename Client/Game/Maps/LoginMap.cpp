@@ -30,6 +30,8 @@ void LoginMap::Unload(EndPlayReason type)
 
     AudioManager* audio_manager = AudioManager::Get();
     audio_manager->StopSound(ChannelGroup::kSE);
+    audio_manager->StopSound(ChannelGroup::kMobSE);
+    audio_manager->StopSound(ChannelGroup::kSkillSE);
 }
 
 RTTR_REGISTRATION
