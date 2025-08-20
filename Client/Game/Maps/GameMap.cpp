@@ -32,7 +32,7 @@ void GameMap::Load()
     Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Buff.mp3");
     bgm->SetLoop(true);
     
-    // AudioManager::Get()->PlaySound2D(bgm, ChannelGroup::kBGM);
+    AudioManager::Get()->PlaySound2D(bgm, ChannelGroup::kBGM);
 
     PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
     CameraManager* camera_manager = CameraManager::Get();

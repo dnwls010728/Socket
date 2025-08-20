@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "UI/UIContainer.h"
 
-class Slider : public UIContainer
+class UISlider : public UIContainer
 {
-    GENERATED_BODY(Slider, UIContainer)
+    GENERATED_BODY(UISlider, UIContainer)
     
 public:
-    Slider(const std::wstring& name);
-    virtual ~Slider() override = default;
+    UISlider(const std::wstring& name);
+    virtual ~UISlider() override = default;
 
     float GetValue() const;
 
@@ -46,19 +46,19 @@ private:
 };
 
 template <typename F, typename>
-void Slider::OnValueChanged(F&& func)
+void UISlider::OnValueChanged(F&& func)
 {
     value_changed_event_ = std::forward<F>(func);
 }
 
 template <typename M, typename>
-void Slider::OnValueChanged(M* target, void(M::* func)(float))
+void UISlider::OnValueChanged(M* target, void(M::* func)(float))
 {
     value_changed_event_ = { target, func };
 }
 
 template <typename M, typename>
-void Slider::OnValueChanged(M* target, void(M::* func)(float) const)
+void UISlider::OnValueChanged(M* target, void(M::* func)(float) const)
 {
     value_changed_event_ = { target, func };
 }

@@ -69,7 +69,7 @@ UIElement::UIElement(const std::wstring& name) :
 void UIElement::Render()
 {
 #ifdef _DEBUG // 디버그 모드에서 UIElement의 경계 박스를 그립니다.
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+    // Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
 #endif
 }
 

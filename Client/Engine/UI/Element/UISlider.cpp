@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
-#include "Slider.h"
+#include "UISlider.h"
 
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
 
-Slider::Slider(const std::wstring& name) : 
+UISlider::UISlider(const std::wstring& name) : 
     UIContainer(name),
     ratio_(0.f),
     step_(0.f),
@@ -14,18 +14,18 @@ Slider::Slider(const std::wstring& name) :
 {
 }
 
-float Slider::GetValue() const
+float UISlider::GetValue() const
 {
     return min_ + (max_ - min_) * ratio_;
 }
 
-void Slider::SetRange(float min, float max)
+void UISlider::SetRange(float min, float max)
 {
-    min = Math::Min(min, max);
-    max = Math::Max(min, max);
+    min_ = Math::Min(min, max);
+    max_ = Math::Max(min, max);
 }
 
-void Slider::SetValue(float value)
+void UISlider::SetValue(float value)
 {
     value = Math::Clamp(value, min_, max_);
 
@@ -40,12 +40,12 @@ void Slider::SetValue(float value)
     ratio_ = (value - min_) / (max_ - min_);
 }
 
-void Slider::OnValueChanged(void(* func)(float))
+void UISlider::OnValueChanged(void(* func)(float))
 {
     value_changed_event_ = func;
 }
 
-void Slider::Render()
+void UISlider::Render()
 {
     Renderer* renderer = Renderer::Get();
     UIContainer::Render();
@@ -58,7 +58,7 @@ void Slider::Render()
     renderer->DrawSolidCircle(thumb_position, size.y * .5f, {255, 211, 77, 242});
 }
 
-bool Slider::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UISlider::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
     UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
     
@@ -77,12 +77,12 @@ bool Slider::OnMouseButton(const Math::Vector2& position, MouseButton button, bo
     return false;
 }
 
-bool Slider::OnDragBegin(const Math::Vector2& position)
+bool UISlider::OnDragBegin(const Math::Vector2& position)
 {
     return true;
 }
 
-bool Slider::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
+bool UISlider::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
 {
     Math::Vector2 absolute_position = GetAbsolutePosition();
     
@@ -95,7 +95,7 @@ bool Slider::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
     return true;
 }
 
-bool Slider::OnDragEnd(const Math::Vector2& position)
+bool UISlider::OnDragEnd(const Math::Vector2& position)
 {
     return true;
 }
@@ -104,7 +104,7 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Slider>("Slider")
+    registration::class_<UISlider>("UISlider")
         .constructor<const std::wstring&>()
         (
             policy::ctor::as_raw_ptr
