@@ -186,9 +186,12 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (map_transitioning_.load()) return;
 
             map_transitioning_.store(true);
+
+            Portal* portal = map_->FindPortal(change_map_packet->portal_id);
+            if (!portal) return;
             
             map_->RemovePlayer(GetObjectID());
-            map_ = World::Get()->GetMap(change_map_packet->map_id);
+            map_ = World::Get()->GetMap(portal->GetToMap());
 
             // 추후 포탈 이용 시 포탈 위치로 이동하도록 수정 필요
             SetPosition(Math::Vector2::Zero());

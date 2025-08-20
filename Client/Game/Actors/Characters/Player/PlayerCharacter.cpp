@@ -232,7 +232,7 @@ void PlayerCharacter::Tick(float delta_time)
                 {
                     if (auto* portal = dynamic_cast<Portal*>(out_actor))
                     {
-                        Logger::Print(L"Portal ID: %d", portal->GetID());
+                        NetworkSubsystem::Get()->ChangeMap(portal->GetID());
                     }
 
                     portal_cooldown_ = .8f;
@@ -257,16 +257,6 @@ void PlayerCharacter::Tick(float delta_time)
                     velocity_.y = 8.f;
                     --bonus_jumps_;
                 }
-            }
-
-            if (keyboard->GetKeyDown(Scancode::kKey1))
-            {
-                NetworkSubsystem::Get()->ChangeMap(1);
-            }
-
-            if (keyboard->GetKeyDown(Scancode::kKey2))
-            {
-                NetworkSubsystem::Get()->ChangeMap(2);
             }
 
             // 아이템 줍기

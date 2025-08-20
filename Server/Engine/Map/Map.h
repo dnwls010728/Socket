@@ -60,8 +60,9 @@ public:
     std::shared_ptr<MapObject> FindMapObject(uint32_t object_id);
 
     Foothold* FindFoothold(const Math::Vector2& position) const;
+    Foothold* FindFootholdByID(int32_t foothold_id);
 
-    Foothold* FindFootholdByID(uint32_t foothold_id);
+    Portal* FindPortal(int32_t portal_id);
 
     std::shared_ptr<PlayerCharacter> FindPlayer(uint32_t player_id);
 

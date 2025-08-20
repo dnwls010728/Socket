@@ -538,10 +538,17 @@ Foothold* Map::FindFoothold(const Math::Vector2& position) const
     return best;
 }
 
-Foothold* Map::FindFootholdByID(uint32_t foothold_id)
+Foothold* Map::FindFootholdByID(int32_t foothold_id)
 {
     auto it = footholds_.find(foothold_id);
     if (it == footholds_.end()) return nullptr;
+    return it->second.get();
+}
+
+Portal* Map::FindPortal(int32_t portal_id)
+{
+    auto it = portals_.find(portal_id);
+    if (it == portals_.end()) return nullptr;
     return it->second.get();
 }
 

@@ -140,9 +140,9 @@ struct SelectCharacterResponse : public Net::IPacket
 
 struct ChangeMapPacket : public Net::IPacket
 {
-    uint32_t map_id;
+    int32_t portal_id;
     
-    SERIALIZABLE_FIELDS(map_id)
+    SERIALIZABLE_FIELDS(portal_id)
     REGISTER_PACKET(ChangeMapPacket, 212)
 };
 
