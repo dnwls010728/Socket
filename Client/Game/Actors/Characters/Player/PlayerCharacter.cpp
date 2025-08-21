@@ -260,7 +260,7 @@ void PlayerCharacter::Tick(float delta_time)
             {
                 if (bonus_jumps_ > 0)
                 {
-                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\doublejump.mp3");
                     AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 
                     velocity_.y = 8.f;
