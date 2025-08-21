@@ -8,10 +8,10 @@
 
 #include "Foothold.h"
 #include "Portal.h"
-#include "SpawnPoint.h"
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
+class SpawnPoint;
 class PlayerCharacter;
 
 namespace Net
@@ -107,5 +107,5 @@ private:
     float respawn_timer_;
     float monitor_timer_;
 
-    std::vector<std::unique_ptr<SpawnPoint>> spawn_points_;
+    std::vector<std::shared_ptr<SpawnPoint>> spawn_points_;
 };

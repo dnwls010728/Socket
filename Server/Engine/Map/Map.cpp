@@ -7,9 +7,12 @@
 
 #include "tmxlite/Map.hpp"
 
+#include <random>
+
 #include "DataManager.h"
 #include "MapObject.h"
 #include "PlayerCharacter.h"
+#include "SpawnPoint.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
@@ -604,8 +607,14 @@ void Map::Respawn()
     int32_t max_spawnable_mobs = spawn_points_.size() - number_spawned_mobs_.load();
     if (max_spawnable_mobs <= 0) return;
 
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    std::vector<std::shared_ptr<SpawnPoint>> spawn_points = spawn_points_;
+    std::ranges::shuffle(spawn_points, gen);
+
     int32_t number_spawned = 0;
-    for (const auto& spawn_point : spawn_points_)
+    for (const auto& spawn_point : spawn_points)
     {
         if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point->GetMobID()))
         {

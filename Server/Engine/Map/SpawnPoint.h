@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include <cstdint>
+#include <memory>
 
 #include "Math/Vector2.h"
 
-class SpawnPoint
+class SpawnPoint : public std::enable_shared_from_this<SpawnPoint>
 {
 public:
     SpawnPoint(uint32_t mob_id, const Math::Vector2& position);
