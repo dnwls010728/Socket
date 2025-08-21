@@ -100,3 +100,12 @@ void Inventory::Remove(Type type, uint32_t slot_index)
     
     inventories_[static_cast<uint8_t>(type)].erase(it);
 }
+
+void Inventory::SetColor(int32_t color)
+{
+    color_ = color;
+
+    ColorUpdateData event_data;
+    event_data.color = color;
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kColorUpdated, event_data);
+}

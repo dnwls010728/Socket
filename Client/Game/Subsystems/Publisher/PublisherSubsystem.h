@@ -15,6 +15,13 @@ struct StatUpdateData : EventData
     virtual ~StatUpdateData() override = default;
 };
 
+struct ColorUpdateData : EventData
+{
+    int32_t color;
+    
+    virtual ~ColorUpdateData() override = default;
+};
+
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
 
 class PublisherSubsystem : public GameInstanceSubsystem
@@ -26,6 +33,7 @@ public:
     {
         kNone = 0,
         kStatUpdated,
+        kColorUpdated
     };
     
     PublisherSubsystem();

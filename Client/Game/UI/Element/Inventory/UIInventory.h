@@ -33,6 +33,8 @@ protected:
 
 private:
     friend class UIInventorySlot;
+    
+    void OnEvent(const EventData& data);
 
     std::array<UIButton*, static_cast<uint8_t>(Inventory::Type::kCount)> tab_buttons_;
     

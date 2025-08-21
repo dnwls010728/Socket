@@ -13,7 +13,5 @@ bool ColorGainHandler::Handle(Net::IPacket* packet)
     Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
     inventory->SetColor(received_packet->color);
 
-    Logger::Print(L"Color: %d", received_packet->color);
-
     return true;
 }

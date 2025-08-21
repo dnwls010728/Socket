@@ -193,6 +193,8 @@ void UIInventory::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
+    
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 
     inventory_ = PlayerSubsystem::Get()->GetInventory();
     for (uint32_t i = 0; i < 128; ++i)
@@ -208,6 +210,8 @@ void UIInventory::Init()
 void UIInventory::Uninit()
 {
     UIContainer::Uninit();
+
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
@@ -245,6 +249,14 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
     }
     
     return true;
+}
+
+void UIInventory::OnEvent(const EventData& data)
+{
+    if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
+    {
+        UpdateColor(color_update->color);
+    }
 }
 
 RTTR_REGISTRATION

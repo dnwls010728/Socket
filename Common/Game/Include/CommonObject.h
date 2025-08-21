@@ -103,7 +103,6 @@ struct ObjectDestroyInfo
     } info;
 };
 
-
 enum class PlayerStat : uint8_t
 {
     kNone = 0,
