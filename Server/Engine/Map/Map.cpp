@@ -600,7 +600,11 @@ void Map::Respawn()
         std::lock_guard<std::mutex> lock(player_mutex_);
         if (players_.empty()) return;
     }
+    
+    int32_t max_spawnable_mobs = spawn_points_.size() - number_spawned_mobs_.load();
+    if (max_spawnable_mobs <= 0) return;
 
+    int32_t number_spawned = 0;
     for (const auto& spawn_point : spawn_points_)
     {
         if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point->GetMobID()))
@@ -609,6 +613,8 @@ void Map::Respawn()
             mob->SetPosition(spawn_point->GetPosition());
             mob->SetLastPosition(spawn_point->GetPosition());
             SpawnMob(mob);
+
+            if (++number_spawned >= max_spawnable_mobs) break;
         }
     }
 }
@@ -639,7 +645,35 @@ void Map::KillAllMobs()
     }
 }
 
-void Map::OnMobDeath(uint32_t mob_id)
+void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
 {
+    if (const auto* drops = DataManager::Get()->GetDrop(mob->GetMobID()))
+    {
+        int32_t d = 0;
+        for (const auto& drop : *drops)
+        {
+            int32_t drop_chance = Math::RandRange(0, 9999); // 0.01%
+            if (drop_chance > drop.chance) continue;
+                
+            int32_t count = Math::RandRange(drop.min_count, drop.max_count);
+            if (count <= 0) continue;
+                
+            int32_t step = (d + 1) / 2;
+            int32_t sign = (d % 2) ? 1 : -1;
+
+            Math::Vector2 drop_position = mob->GetPosition();
+            drop_position.x += static_cast<float>(sign * step) * .5f;
+            GetDropPosition(drop_position);
+
+            if (!drop.item_id)
+                SpawnColorDrop(count, mob, drop_position);
+            else
+                SpawnItemDrop(drop.item_id, count, mob, drop_position);
+                
+            ++d;
+        }
+    }
+    
     number_spawned_mobs_.fetch_sub(1);
+    DestroyMob(mob->GetObjectID());
 }

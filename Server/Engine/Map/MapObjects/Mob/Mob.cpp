@@ -29,7 +29,7 @@ Mob::Mob(const MobData& mob_data) :
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false),
-    death_event_([](uint32_t mob_id){})
+    death_event_([](const std::shared_ptr<Mob>& mob){})
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     
@@ -194,39 +194,11 @@ void Mob::TakeDamage(uint32_t attacker, uint32_t damage)
     hp_ -= damage;
     if (hp_ <= 0)
     {
-        if (const auto* drops = DataManager::Get()->GetDrop(mob_id_))
-        {
-            int32_t d = 0;
-            for (const auto& drop : *drops)
-            {
-                int32_t drop_chance = Math::RandRange(0, 9999); // 0.01%
-                if (drop_chance > drop.chance) continue;
-                
-                int32_t count = Math::RandRange(drop.min_count, drop.max_count);
-                if (count <= 0) continue;
-                
-                int32_t step = (d + 1) / 2;
-                int32_t sign = (d % 2) ? 1 : -1;
-
-                Math::Vector2 drop_position = position_;
-                drop_position.x += static_cast<float>(sign * step) * .5f;
-                map_->GetDropPosition(drop_position);
-
-                if (!drop.item_id)
-                    map_->SpawnColorDrop(count, shared_from_this(), drop_position);
-                else
-                    map_->SpawnItemDrop(drop.item_id, count, shared_from_this(), drop_position);
-                
-                ++d;
-            }
-        }
-
-        death_event_(mob_id_);
+        death_event_(std::dynamic_pointer_cast<Mob>(shared_from_this()));
 
         SendAnimationPacket(L"Die", is_flipped_, true);
         if (player) player->GainExp(exp_);
         hp_ = 0;
-        map_->DestroyMob(GetObjectID());
     }
     else
     {

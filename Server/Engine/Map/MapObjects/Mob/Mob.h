@@ -13,7 +13,7 @@ class MobIdleState;
 class Mob : public MapObject
 {
 private:
-    Function<void(uint32_t)> death_event_;
+    Function<void(const std::shared_ptr<Mob>& mob)> death_event_;
     
 public:
     Mob(const MobData& mob_data);
@@ -46,7 +46,7 @@ public:
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
-    DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, uint32_t)
+    DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, const std::shared_ptr<Mob>&)
 
 protected:
     friend class Map;

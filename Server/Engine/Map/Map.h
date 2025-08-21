@@ -76,7 +76,7 @@ private:
     void Respawn();
     void KillAllMobs();
     
-    void OnMobDeath(uint32_t mob_id);
+    void OnMobDeath(const std::shared_ptr<Mob>& mob);
 
     uint32_t map_id_;
     uint32_t return_map_id_;
