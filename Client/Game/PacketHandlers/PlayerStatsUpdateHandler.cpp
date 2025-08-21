@@ -11,14 +11,19 @@ bool PlayerStatsUpdateHandler::Handle(Net::IPacket* packet)
     if (!received_packet) return false;
 
     PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
-    for (uint32_t i = 0; i < 4; ++i)
-    {
-        PlayerStat stat = static_cast<PlayerStat>(i);
-        int32_t value = received_packet->stats[i];
-        if (value < 0) continue;
-        
-        player_subsystem->UpdateStat(stat, value);
-    }
+
+    PlayerStat mask = received_packet->mask;
+    if (EnumHasAnyFlags(mask, PlayerStat::kHP))
+        player_subsystem->UpdateStat(PlayerStat::kHP, received_packet->hp);
+    
+    if (EnumHasAnyFlags(mask, PlayerStat::kMaxHP))
+        player_subsystem->UpdateStat(PlayerStat::kMaxHP, received_packet->max_hp);
+
+    if (EnumHasAnyFlags(mask, PlayerStat::kExp))
+        player_subsystem->UpdateStat(PlayerStat::kExp, received_packet->exp);
+
+    if (EnumHasAnyFlags(mask, PlayerStat::kLv))
+        player_subsystem->UpdateStat(PlayerStat::kLv, received_packet->lv);
     
     return true;
 }

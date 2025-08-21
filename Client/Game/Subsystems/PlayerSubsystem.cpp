@@ -2,6 +2,9 @@
 #include "PlayerSubsystem.h"
 
 #include "GameInstance.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Publisher/PublisherSubsystem.h"
 
 PlayerSubsystem::PlayerSubsystem() :
@@ -58,6 +61,9 @@ void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
         break;
     case PlayerStat::kLv:
         {
+            Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\levelup.mp3");
+            AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+            
             lv_ = value;
 
             LvChangedEventData event_data;

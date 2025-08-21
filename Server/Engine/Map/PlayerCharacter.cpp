@@ -606,30 +606,47 @@ void PlayerCharacter::GainExp(int32_t amount)
 {
     if (lv_ >= 50) return;
 
-    exp_.fetch_add(amount);
+    PlayerStatsUpdatePacket packet;
 
-    while (exp_.load() > DataManager::Get()->GetExp(lv_))
+    bool changed_lv = false;
+    
+    int32_t new_exp = exp_.load();
+    new_exp += amount;
+
+    while (lv_ < 50)
     {
-        exp_.fetch_sub(DataManager::Get()->GetExp(lv_));
-        if (exp_.load() < 0) exp_.store(0);
+        int32_t need = DataManager::Get()->GetExp(lv_);
         
+        if (new_exp < need) break;
+        new_exp -= need;
+
         ++lv_;
+        changed_lv = true;
 
         max_hp_ += 25;
         hp_ = max_hp_;
 
-        if (lv_ == 50)
-        {
-            exp_.store(0);
-            break;
-        }
+        if (lv_ >= 50) break;
     }
 
-    PlayerStatsUpdatePacket packet;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kHP)] = hp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = max_hp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_.load();
-    packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
+    if (new_exp != exp_.load())
+    {
+        exp_.store(new_exp);
+        packet.mask |= PlayerStat::kExp;
+    }
+
+    if (changed_lv)
+    {
+        packet.mask |= PlayerStat::kLv;
+        packet.mask |= PlayerStat::kHP;
+        packet.mask |= PlayerStat::kMaxHP;
+    }
+    
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kHP)) packet.hp = hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = max_hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kExp)) packet.exp = exp_.load();
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
+
     SendPacket(packet);
 }
 

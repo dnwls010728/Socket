@@ -143,10 +143,10 @@ void Player::ReceivePacket(Net::IPacket* packet)
 
             response.profile.body_color = new_character->GetBodyColor();
 
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = new_character->hp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = new_character->max_hp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kExp)] = new_character->exp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kLv)] = new_character->lv_;
+            response.profile.stats.hp = new_character->hp_;
+            response.profile.stats.max_hp = new_character->max_hp_;
+            response.profile.stats.exp = new_character->exp_;
+            response.profile.stats.lv = new_character->lv_;
             SendPacket(response);
         }
         break;

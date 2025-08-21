@@ -114,13 +114,13 @@ struct SelectCharacterResponse : public Net::IPacket
     std::wstring body_color;
 
     uint32_t character_id;
+    uint32_t map_id;
     
     int32_t lv;
     int32_t hp;
     int32_t max_hp;
     int32_t exp;
     int32_t color;
-    int32_t map_id;
 
     struct
     {
@@ -347,9 +347,14 @@ struct TakeDamagePacket : public Net::IPacket
 
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
-    std::array<int32_t, 4> stats = {-1}; // -1 일 경우 업데이트하지 않음
+    PlayerStat mask = PlayerStat::kNone;
+
+    int32_t hp;
+    int32_t max_hp;
+    int32_t exp;
+    int32_t lv;
     
-    SERIALIZABLE_FIELDS(stats)
+    SERIALIZABLE_FIELDS(mask, hp, max_hp, exp, lv)
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };
 

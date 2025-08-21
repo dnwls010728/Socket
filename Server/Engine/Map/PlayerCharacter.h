@@ -2,6 +2,8 @@
 #include <mutex>
 
 #include "MapObject.h"
+#include "../../../Client/Engine/Misc/EnumClassFlags.h"
+#include "Session/Player.h"
 #include "Utils/TimedBool.h"
 
 class Portal;
@@ -13,6 +15,8 @@ namespace Net
 
 class Inventory;
 class Player;
+
+ENUM_CLASS_FLAGS(PlayerStat)
 
 class PlayerCharacter : public MapObject
 {

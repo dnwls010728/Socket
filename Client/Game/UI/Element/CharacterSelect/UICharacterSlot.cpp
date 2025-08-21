@@ -81,7 +81,7 @@ void UICharacterSlot::InitSlot(UICharacterSelect* character_select, uint32_t slo
     character_->SetSprite(character_sprite, L"UIPlayerSheet_0");
     character_->SetColor(Math::Color::HexToColor(profile.body_color));
 
-    int32_t lv = profile.stats[static_cast<uint8_t>(PlayerStat::kLv)];
+    int32_t lv = profile.stats.lv;
     lv_text_->SetText(L"레벨 " + std::to_wstring(lv));
     
     name_text_->SetText(profile.name);
