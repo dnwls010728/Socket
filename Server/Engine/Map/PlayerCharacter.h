@@ -4,6 +4,8 @@
 #include "MapObject.h"
 #include "Utils/TimedBool.h"
 
+class Portal;
+
 namespace Net
 {
     struct IPacket;
@@ -57,6 +59,7 @@ protected:
     friend class Player;
     friend class Mob;
 
+    void ChangeMap(Map* to, Portal* to_portal);
     void ExitMap();
     void UpdateDatabase();
     void GainExp(int32_t amount);

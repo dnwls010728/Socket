@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="9">
  <properties>
-  <property name="bgm" value="Audio\BGM\Buff.mp3"/>
-  <property name="name" value="알 수 없는 곳 2"/>
-  <property name="ppu" type="float" value="32"/>
-  <property name="unique_id" type="int" value="0"/>
+  <property name="BGM" value="Audio\BGM\Buff.mp3"/>
+  <property name="Name" value="알 수 없는 곳 2"/>
+  <property name="PPU" type="float" value="32"/>
+  <property name="ReturnMap" type="int" value="1"/>
  </properties>
  <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Tilesets/TemplateTileset.png" width="224" height="256"/>

@@ -19,6 +19,7 @@
 // TODO: 오브젝트도 플레이어와 동일하게 대기 후 Tick에서 패킷을 전송하도록 변경 필요
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
+    return_map_id_(0),
     map_bounds_(),
     player_mutex_(),
     object_mutex_(),
@@ -422,6 +423,7 @@ bool Map::LoadMapData()
     if (properties.empty()) return false;
 
     float ppu = properties[2].getFloatValue();
+    return_map_id_ = properties[3].getIntValue();
 
     tmx::FloatRect local_bounds = map_data.getBounds();
     float world_width = local_bounds.width / ppu;

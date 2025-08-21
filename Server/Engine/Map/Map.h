@@ -80,7 +80,8 @@ private:
     void Respawn();
     void KillAllMobs();
 
-    int32_t map_id_;
+    uint32_t map_id_;
+    uint32_t return_map_id_;
 
     Bounds map_bounds_;
 

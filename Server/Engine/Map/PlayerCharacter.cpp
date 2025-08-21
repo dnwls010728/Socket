@@ -183,23 +183,16 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case ChangeMapPacket::StaticPacketID:
         {
             ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet);
-            if (map_transitioning_.load()) return;
-
-            map_transitioning_.store(true);
-            
-            map_->RemovePlayer(GetObjectID());
+            if (map_transitioning_.load()) break;
             
             Portal* portal = map_->FindPortal(change_map_packet->portal_id);
-            map_ = World::Get()->GetMap(portal->GetToMap());
+            Map* to_map = World::Get()->GetMap(portal->GetToMap());
+            if (!to_map) break;
 
-            Portal* to_portal = map_->FindPortal(portal->GetToID());
-            SetPosition(to_portal->GetPosition() + Math::Vector2::Up());
+            Portal* to_portal = to_map->FindPortal(portal->GetToID());
+            if (!to_portal) break;
 
-            MapLoadPacket map_reset_packet;
-            map_reset_packet.map_id = map_->GetMapID();
-            map_reset_packet.spawn_position.x = GetPosition().x;
-            map_reset_packet.spawn_position.y = GetPosition().y;
-            SendPacket(map_reset_packet);
+            ChangeMap(to_map, to_portal);
         }
         break;
         
@@ -527,6 +520,22 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     wcscpy_s(info.body_color, body_color_.c_str());
 
     player->SendPacket(packet);
+}
+
+void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
+{
+    map_transitioning_.store(true);
+
+    map_->RemovePlayer(GetObjectID());
+    map_ = to;
+    
+    SetPosition(to_portal->GetPosition() + Math::Vector2::Up());
+    
+    MapLoadPacket map_reset_packet;
+    map_reset_packet.map_id = map_->GetMapID();
+    map_reset_packet.spawn_position.x = GetPosition().x;
+    map_reset_packet.spawn_position.y = GetPosition().y;
+    SendPacket(map_reset_packet);
 }
 
 void PlayerCharacter::ExitMap()
