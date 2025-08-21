@@ -652,6 +652,8 @@ void Map::KillAllMobs()
             RemoveObject(object_id);
         }
     }
+
+    number_spawned_mobs_.store(0);
 }
 
 void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
