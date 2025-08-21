@@ -78,7 +78,7 @@ void GameMap::Unload(EndPlayReason type)
     Level::Unload(type);
     
     AudioManager* audio_manager = AudioManager::Get();
-    audio_manager->StopSound(ChannelGroup::kSE);
+    // audio_manager->StopSound(ChannelGroup::kSE);
     audio_manager->StopSound(ChannelGroup::kMobSE);
     audio_manager->StopSound(ChannelGroup::kSkillSE);
 }

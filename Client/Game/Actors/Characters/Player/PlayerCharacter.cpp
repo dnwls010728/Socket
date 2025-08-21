@@ -235,6 +235,9 @@ void PlayerCharacter::Tick(float delta_time)
                 {
                     if (auto* portal = dynamic_cast<Portal*>(out_actor))
                     {
+                        Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\portal.mp3");
+                        AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                        
                         NetworkSubsystem::Get()->ChangeMap(portal->GetID());
                     }
 
