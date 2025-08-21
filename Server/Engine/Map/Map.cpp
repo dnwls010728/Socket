@@ -481,8 +481,9 @@ bool Map::LoadMapData()
 
                     const auto& properties = object.getProperties();
                     if (properties.empty()) continue;
-                    
-                    spawn_points_.emplace_back(position, properties[0].getIntValue());
+
+                    uint32_t mob_id = properties[0].getIntValue();
+                    spawn_points_.emplace_back(std::make_unique<SpawnPoint>(mob_id, position));
                 }
             }
             else if (layer->getName() == "Portal")
@@ -598,11 +599,11 @@ void Map::Respawn()
 
     for (const auto& spawn_point : spawn_points_)
     {
-        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point.mob_id))
+        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point->GetMobID()))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
-            mob->SetPosition(spawn_point.position);
-            mob->SetLastPosition(spawn_point.position);
+            mob->SetPosition(spawn_point->GetPosition());
+            mob->SetLastPosition(spawn_point->GetPosition());
             SpawnMob(mob);
         }
     }

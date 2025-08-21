@@ -60,6 +60,7 @@ protected:
     friend class Mob;
 
     void ChangeMap(Map* to, Portal* to_portal);
+    void Respawn();
     void ExitMap();
     void UpdateDatabase();
     void GainExp(int32_t amount);

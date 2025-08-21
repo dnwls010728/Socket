@@ -8,6 +8,7 @@
 
 #include "Foothold.h"
 #include "Portal.h"
+#include "SpawnPoint.h"
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
@@ -17,12 +18,6 @@ namespace Net
 {
     struct IPacket;
 }
-
-struct SpawnPoint
-{
-    Math::Vector2 position;
-    uint32_t mob_id;
-};
 
 class MapObject;
 class Mob;
@@ -71,7 +66,8 @@ public:
     void GetDropPosition(Math::Vector2& position) const;
 
     inline size_t GetPlayerCount() const { return players_.size(); }
-    inline int32_t GetMapID() const { return map_id_; }
+    inline uint32_t GetMapID() const { return map_id_; }
+    inline uint32_t GetReturnMapID() const { return return_map_id_; }
     inline const Bounds& GetMapBounds() const { return map_bounds_; }
 
 private:
@@ -107,5 +103,5 @@ private:
     float respawn_timer_;
     float monitor_timer_;
 
-    std::vector<SpawnPoint> spawn_points_;
+    std::vector<std::unique_ptr<SpawnPoint>> spawn_points_;
 };

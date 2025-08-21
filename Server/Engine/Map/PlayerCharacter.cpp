@@ -484,6 +484,11 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (hp_ <= 0 || is_invincible_) return;
     hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
+    if (hp_ == 0)
+    {
+        Respawn();
+        return;
+    }
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;
@@ -536,6 +541,17 @@ void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
     map_reset_packet.spawn_position.x = GetPosition().x;
     map_reset_packet.spawn_position.y = GetPosition().y;
     SendPacket(map_reset_packet);
+}
+
+void PlayerCharacter::Respawn()
+{
+    Map* return_map = World::Get()->GetMap(map_->GetReturnMapID());
+    if (!return_map) return;
+
+    Portal* return_portal = return_map->FindPortal(0);
+    if (!return_portal) return;
+
+    ChangeMap(return_map, return_portal);
 }
 
 void PlayerCharacter::ExitMap()
