@@ -75,6 +75,8 @@ private:
     void RemoveObjects();
     void Respawn();
     void KillAllMobs();
+    
+    void OnMobDeath(uint32_t mob_id);
 
     uint32_t map_id_;
     uint32_t return_map_id_;
@@ -85,6 +87,8 @@ private:
     std::mutex object_mutex_;
 
     std::atomic_uint32_t next_object_id_;
+    
+    std::atomic_int32_t number_spawned_mobs_;
 
     std::unordered_map<int32_t, std::weak_ptr<PlayerCharacter>> players_;
     std::unordered_map<int32_t, std::unique_ptr<Foothold>> footholds_;

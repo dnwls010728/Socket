@@ -201,6 +201,7 @@
     <ClInclude Include="Engine\FSM\IState.h" />
     <ClInclude Include="Engine\FSM\StateMachine.h" />
     <ClInclude Include="Engine\FSM\Transition.h" />
+    <ClInclude Include="Engine\FunctionMacros.h" />
     <ClInclude Include="Engine\Map\Foothold.h" />
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />

@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+#include "FunctionMacros.h"
 #include "Engine/Map/MapObject.h"
 #include "FSM/StateMachine.h"
+#include "Misc/Function.h"
 
 struct MobData;
 class MobHitState;
@@ -10,6 +12,9 @@ class MobIdleState;
 
 class Mob : public MapObject
 {
+private:
+    Function<void(uint32_t)> death_event_;
+    
 public:
     Mob(const MobData& mob_data);
     virtual ~Mob() override = default;
@@ -41,6 +46,8 @@ public:
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
+    DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, uint32_t)
+
 protected:
     friend class Map;
 
@@ -50,7 +57,7 @@ protected:
 
     void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
     void SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play = false) const;
-    void OnHit(uint32_t attacker, uint32_t damage);
+    void TakeDamage(uint32_t attacker, uint32_t damage);
 
     uint32_t mob_id_;
     uint32_t damage_;

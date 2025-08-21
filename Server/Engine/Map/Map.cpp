@@ -24,6 +24,7 @@ Map::Map(uint32_t map_id) :
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
+    number_spawned_mobs_(0),
     players_(),
     footholds_(),
     portals_(),
@@ -134,19 +135,20 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     const auto& mob = std::dynamic_pointer_cast<Mob>(object);
     if (!mob) return;
     
-    object->SetObjectID(next_object_id_.fetch_add(1));
-    object->SetMap(this);
+    mob->SetObjectID(next_object_id_.fetch_add(1));
+    mob->SetMap(this);
+    mob->OnDeath(this, &Map::OnMobDeath);
     
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
-        AddObject(object);
+        AddObject(mob);
     }
     
     ObjectInfo info;
     info.type = ObjectType::kMob;
-    info.object_id = object->GetObjectID();
-    info.position_x = object->GetPosition().x;
-    info.position_y = object->GetPosition().y;
+    info.object_id = mob->GetObjectID();
+    info.position_x = mob->GetPosition().x;
+    info.position_y = mob->GetPosition().y;
     info.info.mob.mob_id = mob->GetMobID();
 
     ObjectSpawnPacket packet;
@@ -156,6 +158,8 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
         std::lock_guard<std::mutex> lock(player_mutex_);
         SendPacket(packet);
     }
+
+    number_spawned_mobs_.fetch_add(1);
 }
 
 void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
@@ -305,7 +309,7 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->OnHit(attacker, 1000);
+            mob->TakeDamage(attacker, 1000);
         }
     }
 }
@@ -633,4 +637,9 @@ void Map::KillAllMobs()
             RemoveObject(object_id);
         }
     }
+}
+
+void Map::OnMobDeath(uint32_t mob_id)
+{
+    number_spawned_mobs_.fetch_sub(1);
 }

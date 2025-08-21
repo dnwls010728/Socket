@@ -39,11 +39,6 @@ void UIButton::SetDrawMode(UIImage::DrawMode draw_mode) const
     ui_image_->SetDrawMode(draw_mode);
 }
 
-void UIButton::OnClick(void(* func)())
-{
-    click_event_ = func;
-}
-
 void UIButton::SetText(const std::wstring& text) const
 {
     ui_text_->SetText(text);

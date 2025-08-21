@@ -188,6 +188,7 @@
     <ClInclude Include="Engine\Misc\Delegate.h" />
     <ClInclude Include="Engine\Misc\EnumClassFlags.h" />
     <ClInclude Include="Engine\Misc\Function.h" />
+    <ClInclude Include="Engine\Misc\FunctionMacros.h" />
     <ClInclude Include="Engine\Misc\StringHelper.h" />
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Asset\Asset.h" />

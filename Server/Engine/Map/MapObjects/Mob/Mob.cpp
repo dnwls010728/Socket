@@ -28,7 +28,8 @@ Mob::Mob(const MobData& mob_data) :
     exp_(mob_data.stats.exp),
     animation_(L"Idle"),
     is_flipped_(false),
-    last_flipped_(false)
+    last_flipped_(false),
+    death_event_([](uint32_t mob_id){})
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     
@@ -182,7 +183,7 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::OnHit(uint32_t attacker, uint32_t damage)
+void Mob::TakeDamage(uint32_t attacker, uint32_t damage)
 {
     if (hp_ <= 0) return;
 
@@ -219,6 +220,8 @@ void Mob::OnHit(uint32_t attacker, uint32_t damage)
                 ++d;
             }
         }
+
+        death_event_(mob_id_);
 
         SendAnimationPacket(L"Die", is_flipped_, true);
         if (player) player->GainExp(exp_);

@@ -54,16 +54,6 @@ void UIEditableText::SetContentType(ContentType type)
     PostTextChange(false);
 }
 
-void UIEditableText::OnValueChanged(void(* func)(const std::wstring&))
-{
-    value_changed_event_ = func;
-}
-
-void UIEditableText::OnReturn(void(* func)())
-{
-    return_event_ = func;
-}
-
 void UIEditableText::Init()
 {
     placeholder_text_->SetSize(GetSize());

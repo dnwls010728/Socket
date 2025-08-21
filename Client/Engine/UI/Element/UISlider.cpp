@@ -40,11 +40,6 @@ void UISlider::SetValue(float value)
     ratio_ = (value - min_) / (max_ - min_);
 }
 
-void UISlider::OnValueChanged(void(* func)(float))
-{
-    value_changed_event_ = func;
-}
-
 void UISlider::Render()
 {
     Renderer* renderer = Renderer::Get();
