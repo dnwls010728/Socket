@@ -499,9 +499,10 @@ bool Map::LoadMapData()
                     if (properties.empty()) continue;
 
                     int32_t id = properties[0].getIntValue();
-                    int32_t to_map = properties[1].getIntValue();
+                    int32_t to_id = properties[1].getIntValue();
+                    int32_t to_map = properties[2].getIntValue();
 
-                    portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_map, position));
+                    portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_id, to_map, position));
                 }
             }
         }

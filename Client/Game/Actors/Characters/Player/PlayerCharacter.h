@@ -72,7 +72,6 @@ protected:
 
     float movement_sync_accumulator_;
     float invincible_time_;
-    float portal_cooldown_;
 
     Math::Color color_;
     

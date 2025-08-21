@@ -15,7 +15,8 @@ PlayerSubsystem::PlayerSubsystem() :
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
     profiles_(),
-    inventory_(nullptr)
+    inventory_(nullptr),
+    portal_cooldown_(0.f)
 {
 }
 

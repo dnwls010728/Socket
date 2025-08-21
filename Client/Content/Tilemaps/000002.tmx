@@ -47,6 +47,7 @@
   <object id="8" name="Portal" type="Portal" x="32" y="544">
    <properties>
     <property name="ID" type="int" value="0"/>
+    <property name="ToID" type="int" value="0"/>
     <property name="ToMap" type="int" value="1"/>
    </properties>
    <point/>
