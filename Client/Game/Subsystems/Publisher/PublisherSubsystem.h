@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 struct EventData
@@ -6,26 +7,12 @@ struct EventData
     virtual ~EventData() = default;
 };
 
-struct HPChangedEventData : EventData
+struct StatUpdateData : EventData
 {
-    int32_t hp;
-    int32_t max_hp;
-
-    virtual ~HPChangedEventData() override = default;
-};
-
-struct ExpChangedEventData : EventData
-{
-    int32_t exp;
-
-    virtual ~ExpChangedEventData() override = default;
-};
-
-struct LvChangedEventData : EventData
-{
-    int32_t lv;
-
-    virtual ~LvChangedEventData() override = default;
+    PlayerStat stat;
+    int32_t value;
+    
+    virtual ~StatUpdateData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -38,9 +25,7 @@ public:
     enum class EventType : uint8_t
     {
         kNone = 0,
-        kHPChanged,
-        kExpChanged,
-        kLvChanged
+        kStatUpdated,
     };
     
     PublisherSubsystem();
