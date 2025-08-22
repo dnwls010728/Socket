@@ -3,10 +3,13 @@
 
 #include <CustomPacket.h>
 
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "UI/UIState.h"
+#include "UI/Element/UIDeathFadeIn.h"
 #include "UI/Element/UIPopup.h"
 
 bool PlayerDeathHandler::Handle(Net::IPacket* packet)
@@ -17,7 +20,17 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\die.mp3");
     if (audio) AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
 
+    if (auto* state = UI::Get()->GetState())
+    {
+        if (auto* element = state->FindElement<UIDeathFadeIn>(L"DeathFadeIn"))
+        {
+            element->Reset();
+            element->SetActive(true);
+        }
+    }
+
     auto player = NetworkSubsystem::Get()->GetPlayer();
+    player->SetDead();
     
     UIPopup::PopupParam param;
     param.caption = L"캐릭터가 사망했습니다\n가까운 안전지대로 이동합니다.";
@@ -26,6 +39,12 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     {
         if (option == UIPopup::PopupOption::OK)
         {
+            if (auto* state = UI::Get()->GetState())
+            {
+                if (auto* element = state->FindElement<UIDeathFadeIn>(L"DeathFadeIn"))
+                    element->SetActive(false);
+            }
+            
             PlayerRespawnPacket respawn_packet;
             NetworkSubsystem::Get()->SendPacket(respawn_packet);
         }

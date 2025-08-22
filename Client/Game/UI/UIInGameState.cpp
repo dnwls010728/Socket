@@ -5,6 +5,7 @@
 #include "UI/Element/UIPopup.h"
 #include "UI/Element/UIContextMenu.h"
 #include "Element/UIChatBar.h"
+#include "Element/UIDeathFadeIn.h"
 #include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
 #include "Element/UIStatusBar.h"
@@ -17,6 +18,9 @@ UIInGameState::UIInGameState() :
     item_tooltip_(nullptr),
     context_menu_(nullptr)
 {
+    UIDeathFadeIn* death_fade_in = AddElement<UIDeathFadeIn>(UIDeathFadeIn::StaticClass(), L"DeathFadeIn");
+    death_fade_in->SetActive(false);
+    
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
     char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");

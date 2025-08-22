@@ -30,7 +30,7 @@ animations:
       - PlayerSheet_70
   - name: Die
     frame_rate: 10
-    loop: true
+    loop: false
     frames:
       - PlayerSheet_574
       - PlayerSheet_575

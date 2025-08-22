@@ -28,6 +28,7 @@
 #include "Input/Mouse.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
+#include "State/PlayerDeathState.h"
 #include "State/PlayerFallState.h"
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
@@ -48,6 +49,7 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     was_grounded_(false),
     was_moving_(false),
     last_flip_(false),
+    is_dead_(false),
     movement_sync_accumulator_(0.f),
     invincible_time_(0.f),
     prev_animation{0,},
@@ -130,6 +132,11 @@ void PlayerCharacter::UpdateFlip() const
     if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
 }
 
+void PlayerCharacter::SetDead()
+{
+    is_dead_ = true;
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
@@ -139,6 +146,12 @@ void PlayerCharacter::BeginPlay()
         std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis(), animator_);
         std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis(), animator_);
         std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerDeathState> death_state = std::make_shared<PlayerDeathState>(GetSharedThis(), animator_);
+
+        state_machine_->AddState(idle_state);
+        state_machine_->AddState(walk_state);
+        state_machine_->AddState(fall_state);
+        state_machine_->AddState(death_state);
 
         state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(idle_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
@@ -147,6 +160,8 @@ void PlayerCharacter::BeginPlay()
         state_machine_->AddTransition(walk_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
 
         state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
+
+        state_machine_->AddAnyTransition(death_state, [&]() { return is_dead_; });
         
         state_machine_->SetState(idle_state);
 
@@ -213,7 +228,7 @@ void PlayerCharacter::Tick(float delta_time)
         Keyboard* keyboard = Keyboard::Get();
         Mouse* mouse = Mouse::Get();
 
-        if (!UI::Get()->IsEditingText())
+        if (!is_dead_ || !UI::Get()->IsEditingText())
         {
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);

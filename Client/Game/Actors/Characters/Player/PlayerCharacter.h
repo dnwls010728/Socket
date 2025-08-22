@@ -36,6 +36,7 @@ public:
 
     void Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position);
     void UpdateFlip() const;
+    void SetDead();
 
     FORCEINLINE const Math::Vector2& GetMoveAxis() const { return move_axis_; }
 
@@ -63,6 +64,7 @@ protected:
     bool was_grounded_;
     bool last_flip_;
     bool was_moving_;
+    bool is_dead_;
 
     uint32_t party_id_;
     
