@@ -22,11 +22,6 @@ const Math::Color& UIColorPicker::GetColor() const
     return palette_->GetColor();
 }
 
-void UIColorPicker::OnValueChanged(void(* func)(const Math::Color&))
-{
-    value_changed_event_ = func;
-}
-
 void UIColorPicker::OnColorChanged(const Math::Color& color)
 {
     value_changed_event_(color);

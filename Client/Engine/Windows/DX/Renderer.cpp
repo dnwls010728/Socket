@@ -456,13 +456,13 @@ void Renderer::ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t 
     viewport->dxgi_swap_chain->ResizeTarget(&mode_desc);
 }
 
-Math::Vector2 Renderer::ConvertScreenToWorld(const Math::Vector2& kScreenPosition)
+Math::Vector2 Renderer::ScreenToWorld(const Math::Vector2& screen_position)
 {
     Viewport* viewport = FindViewport(World::Get()->GetWindow());
     if (!viewport) return Math::Vector2::Zero();
 
-    float x = (kScreenPosition.x / viewport->d3d_viewport.Width) * 2.f - 1.f;
-    float y = 1.f - (kScreenPosition.y / viewport->d3d_viewport.Height) * 2.f;
+    float x = (screen_position.x / viewport->d3d_viewport.Width) * 2.f - 1.f;
+    float y = 1.f - (screen_position.y / viewport->d3d_viewport.Height) * 2.f;
 
     DirectX::XMFLOAT3 clip = { x, y, 0.f };
     
@@ -475,12 +475,12 @@ Math::Vector2 Renderer::ConvertScreenToWorld(const Math::Vector2& kScreenPositio
     return { world.x, world.y };
 }
 
-Math::Vector2 Renderer::ConvertWorldToScreen(const Math::Vector2& kWorldPosition)
+Math::Vector2 Renderer::WorldToScreen(const Math::Vector2& world_position)
 {
     Viewport* viewport = FindViewport(World::Get()->GetWindow());
     if (!viewport) return Math::Vector2::Zero();
     
-    DirectX::XMFLOAT3 world = { kWorldPosition.x, kWorldPosition.y, 0.f };
+    DirectX::XMFLOAT3 world = { world_position.x, world_position.y, 0.f };
     
     DirectX::XMFLOAT3 screen;
     DirectX::XMStoreFloat3(&screen, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&world), viewport->view_matrix));
@@ -492,36 +492,6 @@ Math::Vector2 Renderer::ConvertWorldToScreen(const Math::Vector2& kWorldPosition
     float y = (1.f - clip.y) * 0.5f * viewport->d3d_viewport.Height;
 
     return { x, y };
-}
-
-void Renderer::DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke)
-{
-    D2DViewport* d2d_viewport = FindD2DViewport(window);
-    if (!d2d_viewport) return;
-
-    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
-    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
-        brush.GetAddressOf());
-    if (FAILED(hr)) return;
-
-    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
-    d2d_viewport->d2d_render_target->DrawEllipse(ellipse, brush.Get(), stroke);
-}
-
-void Renderer::DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color)
-{
-    D2DViewport* d2d_viewport = FindD2DViewport(window);
-    if (!d2d_viewport) return;
-
-    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
-    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
-        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
-        brush.GetAddressOf());
-    if (FAILED(hr)) return;
-
-    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
-    d2d_viewport->d2d_render_target->FillEllipse(ellipse, brush.Get());
 }
 
 void Renderer::DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, float stroke)
@@ -674,6 +644,36 @@ void Renderer::DrawSolidRoundBox(const Math::Vector2& position, const Math::Vect
     d2d_viewport->d2d_render_target->SetTransform(transform);
 }
 
+void Renderer::DrawCircle(const Math::Vector2& position, float radius, const Math::Color& color, float stroke)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
+    d2d_viewport->d2d_render_target->DrawEllipse(ellipse, brush.Get(), stroke);
+}
+
+void Renderer::DrawSolidCircle(const Math::Vector2& position, float radius, const Math::Color& color)
+{
+    D2DViewport* d2d_viewport = FindD2DViewport(World::Get()->GetWindow());
+    if (!d2d_viewport) return;
+    
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
+    HRESULT hr = d2d_viewport->d2d_render_target->CreateSolidColorBrush(
+        D2D1::ColorF(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f),
+        brush.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(position.x, position.y), radius, radius);
+    d2d_viewport->d2d_render_target->FillEllipse(ellipse, brush.Get());
+}
+
 void Renderer::DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color, const std::wstring& font_name, float font_size, DWRITE_TEXT_ALIGNMENT text_alignment, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment)
 {
     // 추후 Window 얻는 방식 변경
@@ -757,8 +757,7 @@ void Renderer::DrawStringWithOutline(const std::wstring& string, const Math::Vec
     if (FAILED(hr)) return;
     
     OutlineRenderer renderer(outline_brush, fill_brush, stroke);
-    hr = text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
-    if (FAILED(hr)) return;
+    text_layout->Draw(device_context.Get(), &renderer, position.x, position.y);
 }
 
 void Renderer::DrawSimpleSprite(const UISprite* ui_sprite, uint64_t frame_index, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color)

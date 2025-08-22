@@ -30,6 +30,9 @@ public:
     
     FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
 
+    FORCEINLINE void SetPortalCooldown(float value) { portal_cooldown_ = value; }
+    FORCEINLINE float GetPortalCooldown() const { return portal_cooldown_; }
+
     static PlayerSubsystem* Get();
 
 private:
@@ -40,8 +43,8 @@ private:
     
     uint32_t account_id_;
     uint32_t character_id_;
+    uint32_t map_id_;
     
-    int32_t map_id_;
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;
@@ -55,5 +58,7 @@ private:
     std::vector<CharacterProfile> profiles_;
     
     std::unique_ptr<Inventory> inventory_;
+
+    float portal_cooldown_;
     
 };

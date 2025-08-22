@@ -6,31 +6,37 @@
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
+#include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 #include "Windows/DX/Sprite.h"
 
 DroppedItem::DroppedItem(const std::wstring& name) :
     NetworkActor(name),
-    start_position_(Math::Vector2::Zero()),
-    drop_position_(Math::Vector2::Zero()),
-    control_(Math::Vector2::Zero()),
-    timer_(0.f)
+    is_color_(false)
 {
     SetLayer(ActorLayer::kDroppedItem);
     
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
-    renderer_->SetZOrder(1001);
+    renderer_->SetZOrder(std::numeric_limits<int32_t>::max());
+
+    animator_ = AddComponent<AnimatorComponent>(L"Animator");
+
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Color.png.apack");
+    if (animation_pack) animator_->SetAnimationPack(animation_pack);
 
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetOffset({ 0.f, 0.f });
     collider_->SetSize({ 1.f, 1.f });
     collider_->SetTrigger(true);
-
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\101.png");
-    if (sprite) renderer_->SetSprite(sprite, L"101_0");
     
+}
+
+void DroppedItem::Pickup(const std::shared_ptr<Actor>& character)
+{
+    ObjectPoolSubsystem::Get()->ReturnToPool(GetSharedThis());
 }
 
 void DroppedItem::OnActivate()
@@ -40,37 +46,25 @@ void DroppedItem::OnActivate()
 
 void DroppedItem::OnDeactivate()
 {
+    is_color_ = false;
+    animator_->StopAnimation();
     SetActive(false);
 }
 
-void DroppedItem::Init(uint32_t item_id, const Math::Vector2& drop_position)
+void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position)
 {
-    drop_position_ = drop_position;
-}
+    if (color)
+    {
+        if (color > 999) animator_->PlayAnimation(L"Y"); // 1000원 이상
+        else if (color > 99) animator_->PlayAnimation(L"M"); // 100원 이상
+        else animator_->PlayAnimation(L"C");
 
-void DroppedItem::BeginPlay()
-{
-    NetworkActor::BeginPlay();
+        is_color_ = true;
+        return;
+    }
     
-}
-
-void DroppedItem::Tick(float delta_time)
-{
-    NetworkActor::Tick(delta_time);
-
-    if (timer_ >= 1.f) return;
-
-    timer_ += delta_time / 1.f;
-    float t = Math::Clamp01(timer_);
-
-    Math::Vector2 m1 = Math::Vector2::Lerp(start_position_, control_, t);
-    Math::Vector2 m2 = Math::Vector2::Lerp(control_, drop_position_, t);
-    Math::Vector2 position = Math::Vector2::Lerp(m1, m2, t);
-    GetTransform()->SetPosition(position);
-
-    float angle = Math::Lerp(0.f, 360.f, t);
-    GetTransform()->SetAngle(angle);
-
+    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\" + std::to_wstring(item_id) + L".png");
+    if (sprite) renderer_->SetSprite(sprite, std::to_wstring(item_id) + L"_0");
 }
 
 
@@ -78,17 +72,6 @@ void DroppedItem::OnEnable()
 {
     NetworkActor::OnEnable();
     NetworkSubsystem::Get()->RegisterNetworkActor(GetSharedThis());
-
-    Math::Vector2 position = GetTransform()->GetPosition();
-    start_position_ = position;
-
-    float h = 2.f;
-    float dy = drop_position_.y - start_position_.y;
-    float p = h + std::sqrtf(h * (h - dy));
-    control_.x = (start_position_.x + drop_position_.x) * .5f;
-    control_.y = start_position_.y + p;
-
-    timer_ = 0.f;
 }
 
 void DroppedItem::OnDisable()

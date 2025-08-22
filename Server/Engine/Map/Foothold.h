@@ -16,9 +16,9 @@ public:
     inline const Math::Vector2& GetPoint1() const { return point1_; }
     inline const Math::Vector2& GetPoint2() const { return point2_; }
 
-    inline uint32_t GetID() const { return id_; }
-    inline uint32_t GetPreviousID() const { return previous_id_; }
-    inline uint32_t GetNextID() const { return next_id_; }
+    inline int32_t GetID() const { return id_; }
+    inline int32_t GetPreviousID() const { return previous_id_; }
+    inline int32_t GetNextID() const { return next_id_; }
     
     float GetYAt(float x) const;
     
@@ -28,8 +28,8 @@ private:
     Math::Vector2 point1_;
     Math::Vector2 point2_;
 
-    uint32_t id_;
-    uint32_t previous_id_;
-    uint32_t next_id_;
+    int32_t id_;
+    int32_t previous_id_;
+    int32_t next_id_;
     
 };

@@ -11,21 +11,27 @@
 #include "MapObjects/DroppedItem.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
+#include "Session/PartyManager.h"
+#include "Session/Party.h"
 #include "Session/Player.h"
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
     account_id_(0),
+    party_id_(0),
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
     map_id_(0),
     lv_(1),
     hp_(350),
     max_hp_(350),
+    is_dead_(false),
+    map_transitioning_(false),
     exp_(0),
     color_(0),
     inventory_(nullptr),
-    is_invincible_()
+    is_invincible_(),
+    dropped_item_mutex_()
 {
 }
 
@@ -178,24 +184,23 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case ChangeMapPacket::StaticPacketID:
         {
             ChangeMapPacket* change_map_packet = static_cast<ChangeMapPacket*>(packet);
+            if (map_transitioning_.load()) break;
             
-            map_->RemovePlayer(GetObjectID());
-            map_ = World::Get()->GetMap(change_map_packet->map_id);
+            Portal* portal = map_->FindPortal(change_map_packet->portal_id);
+            Map* to_map = World::Get()->GetMap(portal->GetToMap());
+            if (!to_map) break;
 
-            // 추후 포탈 이용 시 포탈 위치로 이동하도록 수정 필요
-            SetPosition(Math::Vector2::Zero());
+            Portal* to_portal = to_map->FindPortal(portal->GetToID());
+            if (!to_portal) break;
 
-            MapLoadPacket map_reset_packet;
-            map_reset_packet.map_id = map_->GetMapID();
-            map_reset_packet.spawn_position.x = GetPosition().x;
-            map_reset_packet.spawn_position.y = GetPosition().y;
-            SendPacket(map_reset_packet);
+            ChangeMap(to_map, to_portal);
         }
         break;
         
     case MapLoadCompletePacket::StaticPacketID:
         {
             map_->AddPlayer(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+            map_transitioning_.store(false);
         }
         break;
 
@@ -274,38 +279,63 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
-            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
+            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_index);
             
-            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
+            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_index);
             int32_t remaining_count = 0;
             
-            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_id);
+            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_index);
             else
             {
                 remaining_count = count - request->count;
-                inventory_->ChangeCount(inventory_type, request->slot_id, remaining_count);
+                inventory_->ChangeCount(inventory_type, request->slot_index, remaining_count);
             }
 
             DropItemResponse response;
             response.inventory_type = request->inventory_type;
-            response.slot_id = request->slot_id;
+            response.slot_index = request->slot_index;
             response.count = remaining_count;
             SendPacket(response);
             
-            Math::Vector2 drop_position = map_->GetDropPosition(GetPosition());
-            map_->SpawnDropItem(item_id, count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            Math::Vector2 drop_position = GetPosition();
+            map_->GetDropPosition(drop_position);
+            
+            map_->SpawnItemDrop(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 
-    case PickupItemRequest::StaticPacketID:
+    case PickupItemPacket::StaticPacketID:
         {
-            PickupItemRequest* request = static_cast<PickupItemRequest*>(packet);
+            PickupItemPacket* request = static_cast<PickupItemPacket*>(packet);
 
             std::shared_ptr<MapObject> map_object = map_->FindMapObject(request->object_id);
             if (!map_object) return;
             
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
             {
+                std::lock_guard<std::mutex> lock(dropped_item_mutex_);
+
+                bool is_handled = false;
+                if (dropped_item->IsColor())
+                {
+                    color_.fetch_add(dropped_item->GetColor());
+
+                    ColorGainPacket color_gain_packet;
+                    color_gain_packet.color = color_.load();
+                    SendPacket(color_gain_packet);
+                    
+                    is_handled = true;
+                }
+                else
+                {
+                    auto item = dropped_item->GetItem();
+                    is_handled = inventory_->AddItem(item);
+                }
+                
+                if (is_handled)
+                {
+                    map_->DestroyDroppedItem(dropped_item->GetObjectID(), object_id_);
+                }
             }
         }
         break;
@@ -318,6 +348,146 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             map_->OnAttack(object_id_, attack_request->object_id);
         }
         break;
+
+    case PlayerRespawnPacket::StaticPacketID:
+        {
+            hp_ = 50;
+            
+            PlayerStatsUpdatePacket stats_update_packet;
+            stats_update_packet.mask |= PlayerStat::kHP;
+            stats_update_packet.hp = hp_;
+            SendPacket(stats_update_packet);
+            
+            Respawn();
+        }
+        break;
+        
+    case PartyInviteRequest::StaticPacketID:
+        {
+            PartyInviteRequest* request = static_cast<PartyInviteRequest*>(packet);
+            if (!map_) break;
+
+            auto sendPopup = [this](const std::wstring &msg)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = msg;
+                SendPacket(popup_packet);
+            };
+            
+            if (GetPartyID() == 0)
+            {
+                sendPopup(L"초대할 파티가 존재하지 않습니다.");
+                break;
+            }
+
+            const auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (party == nullptr)
+            {
+                sendPopup(L"초대할 파티가 존재하지 않습니다.");
+                break;
+            }
+            
+            auto invitee = map_->FindPlayer(request->invitee_id);
+            if (!invitee)
+            {
+                sendPopup(L"대상을 찾을 수 없습니다.");
+                break;
+            }
+
+            if (invitee->GetPartyID() == party->GetPartyID())
+            {
+                sendPopup(L"같은 파티에 포함되어 있는 플레이어 입니다.");
+                break;
+            }
+            
+            if (invitee->GetPartyID() != 0)
+            {
+                sendPopup(L"이미 가입되어 있는 파티가 존재하는 플레이어 입니다.");
+                break;
+            }
+
+            PartyInviteNotify notify;
+            notify.inviter_name = GetName();
+            notify.party_name = party->GetPartyName();
+            notify.party_id = party->GetPartyID();
+            invitee->SendPacket(notify);
+        }
+        break;
+
+    case PartyInviteNotifyResponse::StaticPacketID:
+        {
+            PartyInviteNotifyResponse* response = static_cast<PartyInviteNotifyResponse*>(packet);
+            if (!map_) break;
+
+            if (response->result == false)
+            {
+                auto inviter = map_->FindPlayer(response->inviter_id);
+                if (inviter)
+                {
+                    PopupPacket popup_packet;
+                    popup_packet.text = GetName() + L" 님이 파티 초대를 거절했습니다.";
+                    inviter->SendPacket(popup_packet);
+                }
+                break;
+            }
+
+            auto party = PartyManager::Get()->GetParty(response->party_id);
+            if (!party)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = L"존재하지 않는 파티입니다.";
+                SendPacket(popup_packet);
+                break;
+            }
+
+            if (party->GetPlayerCount() > 10)
+            {
+                PopupPacket popup_packet;
+                popup_packet.text = L"파티 인원이 꽉찼습니다.";
+                SendPacket(popup_packet);
+                break;
+            }
+            
+            PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
+            SetPartyID(party->GetPartyID());
+
+            PartyJoinPacket join_packet;
+            join_packet.party_name = party->GetPartyName();
+            join_packet.party_id = GetPartyID();
+            join_packet.host_id = party->GetHost();
+            SendPacket(join_packet);
+
+            // 임시 알림
+            PopupPacket join_msg;
+            join_msg.text = GetName() + L" 님이 파티에 합류했습니다.";
+            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, GetAccountID());
+            
+        }
+        break;
+
+    case PartyCreateRequest::StaticPacketID:
+        {
+            PartyCreateRequest* request = static_cast<PartyCreateRequest*>(packet);
+            auto party = PartyManager::Get()->CreateParty(request->party_name);
+            if (!party)
+            {
+                break;
+            }
+
+            PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
+            SetPartyID(party->GetPartyID());
+
+            PopupPacket popup_packet;
+            popup_packet.text = L"파티가 정상적으로 생성되었습니다.";
+            SendPacket(popup_packet);
+
+            PartyJoinPacket join_packet;
+            join_packet.party_id = party->GetPartyID();
+            join_packet.party_name = request->party_name;
+            join_packet.host_id = GetAccountID();
+            SendPacket(join_packet);
+        }
+        break;
         
     default:
         break;
@@ -326,8 +496,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
-    if (hp_ <= 0 || is_invincible_) return;
-    hp_ = Math::Clamp(hp_ - damage_amount, 0, max_hp_);
+    if (is_dead_ || is_invincible_) return;
+    hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;
@@ -337,6 +507,14 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
     map_->SendPacket(packet);
 
     is_invincible_.Set(2.f);
+
+    if (hp_ <= 0)
+    {
+        is_dead_ = true;
+        
+        PlayerDeathPacket death_packet;
+        SendPacket(death_packet);
+    }
 }
 
 bool PlayerCharacter::Disconnect()
@@ -353,7 +531,7 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 {
     MapObject::SendSpawn(player);
 
-    SpawnObjectPacket packet;
+    ObjectSpawnPacket packet;
     packet.object_info.type = ObjectType::kPlayer;
     packet.object_info.object_id = object_id_;
     packet.object_info.position_x = position_.x;
@@ -364,6 +542,34 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     wcscpy_s(info.body_color, body_color_.c_str());
 
     player->SendPacket(packet);
+}
+
+void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
+{
+    map_transitioning_.store(true);
+
+    map_->RemovePlayer(GetObjectID());
+    map_ = to;
+    
+    SetPosition(to_portal->GetPosition() + Math::Vector2::Up());
+    
+    MapLoadPacket map_reset_packet;
+    map_reset_packet.map_id = map_->GetMapID();
+    map_reset_packet.spawn_position.x = GetPosition().x;
+    map_reset_packet.spawn_position.y = GetPosition().y;
+    SendPacket(map_reset_packet);
+}
+
+void PlayerCharacter::Respawn()
+{
+    Map* return_map = World::Get()->GetMap(map_->GetReturnMapID());
+    if (!return_map) return;
+
+    Portal* return_portal = return_map->FindPortal(0);
+    if (!return_portal) return;
+
+    is_dead_ = false;
+    ChangeMap(return_map, return_portal);
 }
 
 void PlayerCharacter::ExitMap()
@@ -377,6 +583,23 @@ void PlayerCharacter::ExitMap()
 
 void PlayerCharacter::UpdateDatabase()
 {
+    uint32_t map_id = 0;
+    if (map_) map_id = map_->GetMapID();
+    
+    if (is_dead_)
+    {
+        hp_ = 50;
+
+        if (Map* return_map = World::Get()->GetMap(map_->GetReturnMapID()))
+        {
+            if (Portal* return_portal = return_map->FindPortal(0))
+            {
+                map_id = return_map->GetMapID();
+                position_ = return_portal->GetPosition() + Math::Vector2::Up();
+            }
+        }
+    }
+    
     if (inventory_) inventory_->UpdateDatabase();
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
@@ -385,15 +608,16 @@ void PlayerCharacter::UpdateDatabase()
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, last_position_x = ?, last_position_y = ?, map_id = ? WHERE character_id = ?"));
-            statement->setUInt(1, hp_);
-            statement->setUInt(2, max_hp_);
-            statement->setUInt(3, exp_);
-            statement->setUInt(4, lv_);
-            statement->setDouble(5, position_.x);
-            statement->setDouble(6, position_.y);
-            statement->setUInt(7, map_->GetMapID());
-            statement->setUInt(8, object_id_);
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
+            statement->setInt(1, hp_);
+            statement->setInt(2, max_hp_);
+            statement->setInt(3, exp_.load());
+            statement->setInt(4, lv_);
+            statement->setInt(5, map_id);
+            statement->setDouble(6, position_.x);
+            statement->setDouble(7, position_.y);
+            statement->setInt(8, color_.load());
+            statement->setUInt(9, object_id_);
             statement->executeUpdate();
         }
     }
@@ -417,30 +641,47 @@ void PlayerCharacter::GainExp(int32_t amount)
 {
     if (lv_ >= 50) return;
 
-    exp_.fetch_add(amount);
+    PlayerStatsUpdatePacket packet;
 
-    while (exp_ > DataManager::Get()->GetExp(lv_))
+    bool changed_lv = false;
+    
+    int32_t new_exp = exp_.load();
+    new_exp += amount;
+
+    while (lv_ < 50)
     {
-        exp_.fetch_sub(DataManager::Get()->GetExp(lv_));
-        if (exp_ < 0) exp_.store(0);
+        int32_t need = DataManager::Get()->GetExp(lv_);
         
+        if (new_exp < need) break;
+        new_exp -= need;
+
         ++lv_;
+        changed_lv = true;
 
         max_hp_ += 25;
         hp_ = max_hp_;
 
-        if (lv_ == 50)
-        {
-            exp_.store(0);
-            break;
-        }
+        if (lv_ >= 50) break;
     }
 
-    PlayerStatsUpdatePacket packet;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kHP)] = hp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = max_hp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kExp)] = exp_;
-    packet.stats[static_cast<uint8_t>(PlayerStat::kLv)] = lv_;
+    if (new_exp != exp_.load())
+    {
+        exp_.store(new_exp);
+        packet.mask |= PlayerStat::kExp;
+    }
+
+    if (changed_lv)
+    {
+        packet.mask |= PlayerStat::kLv;
+        packet.mask |= PlayerStat::kHP;
+        packet.mask |= PlayerStat::kMaxHP;
+    }
+    
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kHP)) packet.hp = hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = max_hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kExp)) packet.exp = exp_.load();
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
+
     SendPacket(packet);
 }
 

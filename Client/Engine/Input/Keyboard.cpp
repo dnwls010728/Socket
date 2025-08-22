@@ -29,21 +29,21 @@ void Keyboard::Clear()
 	}
 }
 
-bool Keyboard::GetKey(WORD key_code)
+bool Keyboard::GetKey(Scancode scancode)
 {
-	KeyState& key_state = key_states_[key_code];
+	KeyState& key_state = key_states_[static_cast<uint32_t>(scancode)];
 	return key_state.is_down;
 }
 
-bool Keyboard::GetKeyDown(WORD key_code)
+bool Keyboard::GetKeyDown(Scancode scancode)
 {
-	KeyState& key_state = key_states_[key_code];
+	KeyState& key_state = key_states_[static_cast<uint32_t>(scancode)];
 	return key_state.is_down && !key_state.was_down;
 }
 
-bool Keyboard::GetKeyUp(WORD key_code)
+bool Keyboard::GetKeyUp(Scancode scancode)
 {
-	KeyState& key_state = key_states_[key_code];
+	KeyState& key_state = key_states_[static_cast<uint32_t>(scancode)];
 	return !key_state.is_down && key_state.was_down;
 }
 
@@ -54,9 +54,10 @@ void Keyboard::OnEvent(const Event& kEvent)
 	if (kType == static_cast<uint32_t>(EventType::kKeyPressed) && !kEvent.key.is_repeat ||
 		kType == static_cast<uint32_t>(EventType::kKeyReleased))
 	{
-		WORD key_code = kEvent.key.key_code;
+		// WORD key_code = kEvent.key.key_code;
+		uint32_t scancode = kEvent.key.scancode;
 			
-		auto it = key_states_.find(key_code);
+		auto it = key_states_.find(scancode);
 		if (it != key_states_.end())
 		{
 			KeyState& key_state = it->second;

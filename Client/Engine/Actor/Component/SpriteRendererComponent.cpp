@@ -41,7 +41,7 @@ void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFra
     if (it != frame_indexes.end()) frame_index_ = it->second;
     else frame_index_ = 0;
 
-    if (HasBegunPlay())
+    if (shape_)
     {
         shape_->SetVertices(sprite_->GetVertices());
         shape_->SetIndices(sprite_->GetIndices());

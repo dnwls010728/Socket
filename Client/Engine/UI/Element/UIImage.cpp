@@ -16,8 +16,8 @@ UIImage::UIImage(const std::wstring& name) :
 
 void UIImage::SetSprite(UISprite* ui_sprite, const std::wstring& frame_name)
 {
-    if (!ui_sprite) return;
     ui_sprite_ = ui_sprite;
+    if (!ui_sprite_) return;
 
     const auto& frame_indexes = ui_sprite_->GetFrameIndexes();
     
@@ -29,7 +29,6 @@ void UIImage::SetSprite(UISprite* ui_sprite, const std::wstring& frame_name)
 
 void UIImage::SetSprite(UISprite* ui_sprite, uint64_t frame_index)
 {
-    if (!ui_sprite) return;
     ui_sprite_ = ui_sprite;
     frame_index_ = frame_index;
 }

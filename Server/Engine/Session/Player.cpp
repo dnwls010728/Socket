@@ -11,6 +11,7 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
 #include "Player/Inventory/Inventory.h"
+#include "Player/Inventory/Item.h"
 
 Player::Player(Session* session, uint32_t account_id) :
     session_(session),
@@ -142,10 +143,10 @@ void Player::ReceivePacket(Net::IPacket* packet)
 
             response.profile.body_color = new_character->GetBodyColor();
 
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = new_character->hp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = new_character->max_hp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kExp)] = new_character->exp_;
-            response.profile.stats[static_cast<uint8_t>(PlayerStat::kLv)] = new_character->lv_;
+            response.profile.stats.hp = new_character->hp_;
+            response.profile.stats.max_hp = new_character->max_hp_;
+            response.profile.stats.exp = new_character->exp_;
+            response.profile.stats.lv = new_character->lv_;
             SendPacket(response);
         }
         break;
@@ -191,9 +192,9 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 {
                     ItemInfo item_info;
                     item_info.inventory_type = i;
-                    item_info.item_id = slot.second.item_id;
+                    item_info.item_id = slot.second->GetID();
                     item_info.slot_index = slot.first;
-                    item_info.count = slot.second.count;
+                    item_info.count = slot.second->GetCount();
                     response.inventory.push_back(item_info);
                 }
             }

@@ -24,7 +24,7 @@ protected:
     virtual void Init() override;
     virtual void Tick(float delta_time) override;
 
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
 
 private:
     UICharacterSelect* character_select_;
@@ -40,6 +40,8 @@ private:
     uint32_t slot_id_;
     uint32_t character_id_;
 
+    double last_time_;
+    
     float timer_;
 
     int32_t frame_index_;

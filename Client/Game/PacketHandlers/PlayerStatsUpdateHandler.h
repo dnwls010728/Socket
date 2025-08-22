@@ -2,6 +2,8 @@
 #include "IPacketHandler.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 
+ENUM_CLASS_FLAGS(PlayerStat)
+
 class PlayerStatsUpdateHandler : public IPacketHandler
 {
 public:

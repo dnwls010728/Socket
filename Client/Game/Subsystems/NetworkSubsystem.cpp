@@ -38,10 +38,10 @@ void NetworkSubsystem::SendPacket(Net::IPacket& packet)
     SessionSubsystem::Get()->SendPacket(packet);
 }
 
-void NetworkSubsystem::ChangeMap(int32_t map_id)
+void NetworkSubsystem::ChangeMap(int32_t portal_id)
 {
     ChangeMapPacket request;
-    request.map_id = map_id;
+    request.portal_id = portal_id;
     SendPacket(request);
 }
 

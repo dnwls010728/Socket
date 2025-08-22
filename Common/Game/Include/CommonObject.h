@@ -6,7 +6,7 @@
 struct CharacterProfile
 {
     uint32_t character_id;
-    int32_t map_id;
+    uint32_t map_id;
     std::wstring name;
 
     struct
@@ -17,7 +17,13 @@ struct CharacterProfile
 
     std::wstring body_color;
 
-    std::array<int32_t, 4> stats = {-1};
+    struct
+    {
+        int32_t hp;
+        int32_t max_hp;
+        int32_t exp;
+        int32_t lv;
+    } stats;
 };
 
 struct ItemInfo
@@ -61,6 +67,11 @@ struct DroppedItemInfo
     uint32_t item_id;
     float dropper_position_x;
     float dropper_position_y;
+    int32_t color;
+};
+
+struct DroppedItemDestroyInfo
+{
 };
 
 struct ObjectInfo
@@ -78,13 +89,27 @@ struct ObjectInfo
     } info;
 };
 
+struct ObjectDestroyInfo
+{
+    ObjectType type;
+    uint32_t object_id;
+
+    union
+    {
+        struct
+        {
+            uint32_t character_id;
+        } dropped_item;
+    } info;
+};
 
 enum class PlayerStat : uint8_t
 {
-    kHP = 0,
-    kMaxHP,
-    kExp,
-    kLv
+    kNone = 0,
+    kHP = (0x01<<0),
+    kMaxHP = (0x01<<1),
+    kExp = (0x01<<2),
+    kLv = (0x01<<3)
 };
 
 enum class MobState : uint8_t

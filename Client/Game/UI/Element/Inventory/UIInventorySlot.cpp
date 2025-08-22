@@ -10,6 +10,7 @@
 #include "UI/UIInGameState.h"
 #include "UI/UIState.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIPopup.h"
 #include "Windows/DX/Renderer.h"
 #include "Windows/DX/UISprite.h"
 
@@ -51,7 +52,7 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     if (item_id > 0)
     {
         UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (ui_sprite) icon_->SetSprite(ui_sprite, std::to_wstring(item_id) + L"_0");
+        if (ui_sprite) icon_->SetSprite(ui_sprite);
 
         count_text_->SetText(std::to_wstring(count));
         count_text_->SetActive(true);
@@ -79,27 +80,26 @@ void UIInventorySlot::Init()
     UIContainer::Init();
 }
 
-UI::MouseEventResult UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    bool result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
     if (button != MouseButton::kLeft || !is_pressed) return result;
     if (item_id_ == 0) return result;
 
-    result.is_handled = true;
     if (timestamp - last_time_ < .2f)
     {
         Logger::Print(L"Double click!");
         last_time_ = 0.f;
-        return result;
+        return true;
     }
     
     last_time_ = timestamp;
-    return result;
+    return true;
 }
 
-UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+bool UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    if (!tooltip_) return { false, UI::CursorState::kIdle };
+    if (!tooltip_) return false;
 
     EngineSettings* settings = EngineSettings::Get();
     
@@ -117,18 +117,18 @@ UI::MouseEventResult UIInventorySlot::OnMouseMotion(const Math::Vector2& positio
 
     tooltip_->SetAbsolutePosition(tooltip_position);
     tooltip_->Set(item_id_);
-    
-    return { true, UI::CursorState::kIdle };
+
+    return true;
 }
 
 bool UIInventorySlot::OnMouseEnter()
 {
     if (item_id_ == 0) return false;
 
-    auto game_state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
-    if (!game_state) return false;
+    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+    if (!state) return false;
 
-    tooltip_ = game_state->GetItemTooltip();
+    tooltip_ = state->GetItemTooltip();
     tooltip_->SetActive(true);
     
     return true;
@@ -201,26 +201,52 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
         {
             DropItemRequest request;
             request.inventory_type = static_cast<uint8_t>(type);
-            request.slot_id = slot_id_;
+            request.slot_index = slot_id_;
             request.count = 1;
             SessionSubsystem::Get()->SendPacket(request);
         }
         else
         {
-            UIPopup::ShowPopup(L"몇 개나 버리시겠습니까?", PopupOption::OK | PopupOption::Cancel | PopupOption::Edit, [&](std::wstring input_text, PopupOption option)->bool
+            UIPopup::PopupParam param;
+            param.caption = L"몇 개나 버리시겠습니까?";
+            param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
+            param.default_input_text = std::to_wstring(count);
+            param.content_type = UIEditableText::ContentType::kIntegerNumber;
+            param.input_limit = 10;
+            param.callback = [&](const std::wstring& input_text, UIPopup::PopupOption option)
             {
-                if (option == PopupOption::OK)
+                if (option == UIPopup::PopupOption::OK)
                 {
+                    UIPopup::PopupParam temp_param;
+                    temp_param.option = UIPopup::PopupOption::OK;
+                    
+                    if (input_text == L"" || std::stoll(input_text) <= 0)
+                    {
+                        temp_param.caption = L"1 이상의 숫자만 가능합니다.";
+                        UIPopup::ShowPopup(temp_param);
+                        return false;
+                    }
+                    
+                    Inventory::Type temp_type = ui_inventory_->tab_;
+                    int32_t temp_count = ui_inventory_->inventory_->GetItemCount(temp_type, slot_id_);
+                    if (std::stoll(input_text) > temp_count)
+                    {
+                        temp_param.caption = std::to_wstring(temp_count) + L" 이하의 숫자만 가능합니다.";
+                        UIPopup::ShowPopup(temp_param);
+                        return false;
+                    }
+                    
                     DropItemRequest request;
-                    request.inventory_type = static_cast<uint8_t>(ui_inventory_->tab_);
-                    request.slot_id = slot_id_;
+                    request.inventory_type = static_cast<uint8_t>(temp_type);
+                    request.slot_index = slot_id_;
                     request.count = std::stoi(input_text);
                     SessionSubsystem::Get()->SendPacket(request);
                     
                     return true;
                 }
                 return true;
-            });
+            };
+            UIPopup::ShowPopup(param);
         }
     }
     

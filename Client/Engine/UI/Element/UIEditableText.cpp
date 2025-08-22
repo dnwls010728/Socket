@@ -4,6 +4,7 @@
 #include <cwctype>
 #include <numeric>
 
+#include "Scancode.h"
 #include "UIMask.h"
 #include "Math/Math.h"
 #include "Windows/DX/Renderer.h"
@@ -30,6 +31,14 @@ UIEditableText::UIEditableText(const std::wstring& name) :
     placeholder_text_->SetColor(Math::Color::Gray);
 }
 
+void UIEditableText::SetSize(const Math::Vector2& size)
+{
+    UIMask::SetSize(size);
+    
+    text_->SetSize({ text_->GetTotalAdvance() + 1.f, GetSize().y });
+    ScrollToCursor();
+}
+
 void UIEditableText::SetText(const std::wstring& text)
 {
     cursor_position_ = text.size();
@@ -43,16 +52,6 @@ void UIEditableText::SetContentType(ContentType type)
     content_type_ = type;
     UpdateDisplayedText();
     PostTextChange(false);
-}
-
-void UIEditableText::OnValueChanged(void(* func)(const std::wstring&))
-{
-    value_changed_event_ = func;
-}
-
-void UIEditableText::OnReturn(void(* func)())
-{
-    return_event_ = func;
 }
 
 void UIEditableText::Init()
@@ -96,13 +95,13 @@ void UIEditableText::Render()
     }
 }
 
-bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
+bool UIEditableText::OnKey(uint32_t scancode, bool is_pressed)
 {
     if (!is_pressed) return false;
 
-    switch (key_code)
+    switch (scancode)
     {
-    case VK_LEFT:
+    case static_cast<uint32_t>(Scancode::kKeyLeft):
         {
             if (cursor_position_ > 0)
             {
@@ -112,7 +111,7 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
         }
         break;
 
-    case VK_RIGHT:
+    case static_cast<uint32_t>(Scancode::kKeyRight):
         {
             if (cursor_position_ < text_buffer_.size())
             {
@@ -122,14 +121,14 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
         }
         break;
 
-    case VK_RETURN:
+    case static_cast<uint32_t>(Scancode::kKeyEnter):
         {
             ResetCursor();
             return_event_();
         }
         break;
 
-    case VK_BACK:
+    case static_cast<uint32_t>(Scancode::kKeyBackspace):
         {
             if (!text_buffer_.empty() && cursor_position_ > 0)
             {
@@ -141,21 +140,21 @@ bool UIEditableText::OnKey(uint16_t key_code, bool is_pressed)
         }
         break;
 
-    case VK_HOME:
+    case static_cast<uint32_t>(Scancode::kKeyHome):
         {
             cursor_position_ = 0;
             PostCursorMove();
         }
         break;
 
-    case VK_END:
+    case static_cast<uint32_t>(Scancode::kKeyEnd):
         {
             cursor_position_ = text_buffer_.size();
             PostCursorMove();
         }
         break;
 
-    case VK_DELETE:
+    case static_cast<uint32_t>(Scancode::kKeyDelete):
         {
             if (!text_buffer_.empty() && cursor_position_ < text_buffer_.size())
             {

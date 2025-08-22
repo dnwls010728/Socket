@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 struct EventData
@@ -6,49 +7,19 @@ struct EventData
     virtual ~EventData() = default;
 };
 
-struct HPChangedEventData : EventData
+struct StatUpdateData : EventData
 {
-    int32_t hp;
-    int32_t max_hp;
-
-    virtual ~HPChangedEventData() override = default;
+    PlayerStat stat;
+    int32_t value;
+    
+    virtual ~StatUpdateData() override = default;
 };
 
-struct ExpChangedEventData : EventData
+struct ColorUpdateData : EventData
 {
-    int32_t exp;
-
-    virtual ~ExpChangedEventData() override = default;
-};
-
-struct LvChangedEventData : EventData
-{
-    int32_t lv;
-
-    virtual ~LvChangedEventData() override = default;
-};
-
-struct ItemSwappedEventData : EventData
-{
-    uint32_t first_slot;
-    uint32_t second_slot;
-
-    virtual ~ItemSwappedEventData() override = default;
-};
-
-struct ItemCountChangedEventData : EventData
-{
-    uint32_t slot;
-    uint32_t count;
-
-    virtual ~ItemCountChangedEventData() override = default;
-};
-
-struct ItemRemovedEventData : EventData
-{
-    uint32_t slot;
-
-    virtual ~ItemRemovedEventData() override = default;
+    int32_t color;
+    
+    virtual ~ColorUpdateData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -61,12 +32,8 @@ public:
     enum class EventType : uint8_t
     {
         kNone = 0,
-        kHPChanged,
-        kExpChanged,
-        kLvChanged,
-        kItemSwapped,
-        kItemCountChanged,
-        kItemRemoved
+        kStatUpdated,
+        kColorUpdated
     };
     
     PublisherSubsystem();

@@ -9,6 +9,7 @@
 Tilemap::Tilemap() :
     map_(),
     unique_id_(0),
+    bgm_(L""),
     name_(L""),
     ppu_(0.f),
     ui_sprite_(nullptr)
@@ -22,12 +23,13 @@ bool Tilemap::Load(const std::wstring& kPath)
     if (!map_.load(StringHelper::UTF16ToUTF8(kPath))) return false;
 
     const auto& properties = map_.getProperties();
-    if (properties.size() < 3) return false;
-    
-    name_ = StringHelper::UTF8ToUTF16(properties[0].getStringValue());
+    if (properties.size() < 4) return false;
 
-    ppu_ = properties[1].getFloatValue();
-    unique_id_ = properties[2].getIntValue();
+    bgm_ = StringHelper::UTF8ToUTF16(properties[0].getStringValue());
+    name_ = StringHelper::UTF8ToUTF16(properties[1].getStringValue());
+
+    ppu_ = properties[2].getFloatValue();
+    unique_id_ = properties[3].getIntValue();
 
     ui_sprite_ = std::make_unique<UISprite>();
     
@@ -53,7 +55,7 @@ Math::Vector2 Tilemap::GetTileSize() const
     };
 }
 
-Bounds Tilemap::GetWorldBounds()
+Bounds Tilemap::GetWorldBounds() const
 {
     Math::Vector2 map_size = GetMapSize();
     Math::Vector2 tile_size = GetTileSize();

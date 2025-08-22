@@ -1,6 +1,12 @@
 ﻿#pragma once
+#include <mutex>
+
 #include "MapObject.h"
+#include "../../../Client/Engine/Misc/EnumClassFlags.h"
+#include "Session/Player.h"
 #include "Utils/TimedBool.h"
+
+class Portal;
 
 namespace Net
 {
@@ -9,6 +15,8 @@ namespace Net
 
 class Inventory;
 class Player;
+
+ENUM_CLASS_FLAGS(PlayerStat)
 
 class PlayerCharacter : public MapObject
 {
@@ -41,6 +49,11 @@ public:
     
     inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
     inline int32_t GetMapID() const { return map_id_; }
+
+    inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
+
+    inline void SetPartyID(int32_t party_id) { party_id_ = party_id; }
+    inline uint32_t GetPartyID() const { return party_id_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
@@ -50,6 +63,8 @@ protected:
     friend class Player;
     friend class Mob;
 
+    void ChangeMap(Map* to, Portal* to_portal);
+    void Respawn();
     void ExitMap();
     void UpdateDatabase();
     void GainExp(int32_t amount);
@@ -59,6 +74,7 @@ protected:
     std::weak_ptr<Player> player_;
     
     uint32_t account_id_;
+    uint32_t party_id_;
 
     std::wstring name_;
     std::wstring body_color_;
@@ -67,6 +83,10 @@ protected:
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;
+
+    bool is_dead_;
+
+    std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
@@ -74,4 +94,6 @@ protected:
     std::unique_ptr<Inventory> inventory_;
     
     TimedBool is_invincible_;
+
+    std::mutex dropped_item_mutex_;
 };

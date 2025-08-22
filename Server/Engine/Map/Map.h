@@ -7,21 +7,17 @@
 #include <queue>
 
 #include "Foothold.h"
+#include "Portal.h"
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
+class SpawnPoint;
 class PlayerCharacter;
 
 namespace Net
 {
     struct IPacket;
 }
-
-struct SpawnPoint
-{
-    Math::Vector2 position;
-    uint32_t mob_id;
-};
 
 class MapObject;
 class Mob;
@@ -39,8 +35,12 @@ public:
     
     void AddObject(const std::shared_ptr<MapObject>& object);
     void RemoveObject(uint32_t object_id);
-    void SpawnObject(const std::shared_ptr<MapObject>& object);
-    void DestroyObject(uint32_t object_id);
+    void SpawnMob(const std::shared_ptr<MapObject>& object);
+    void SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
+    void SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
+
+    void DestroyMob(uint32_t object_id);
+    void DestroyDroppedItem(uint32_t object_id, uint32_t character_id);
 
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter>& excluded_player_weak);
@@ -49,25 +49,25 @@ public:
 
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
-    
-    void SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
 
     bool LoadMapData();
     
     std::shared_ptr<MapObject> FindMapObject(uint32_t object_id);
 
     Foothold* FindFoothold(const Math::Vector2& position) const;
+    Foothold* FindFootholdByID(int32_t foothold_id);
 
-    Foothold* FindFootholdByID(uint32_t foothold_id);
+    Portal* FindPortal(int32_t portal_id);
 
     std::shared_ptr<PlayerCharacter> FindPlayer(uint32_t player_id);
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
     
-    Math::Vector2 GetDropPosition(const Math::Vector2& position);
+    void GetDropPosition(Math::Vector2& position) const;
 
     inline size_t GetPlayerCount() const { return players_.size(); }
-    inline int32_t GetMapID() const { return map_id_; }
+    inline uint32_t GetMapID() const { return map_id_; }
+    inline uint32_t GetReturnMapID() const { return return_map_id_; }
     inline const Bounds& GetMapBounds() const { return map_bounds_; }
 
 private:
@@ -75,9 +75,11 @@ private:
     void RemoveObjects();
     void Respawn();
     void KillAllMobs();
-    void DestroyObject_Internal(uint32_t object_id);
+    
+    void OnMobDeath(const std::shared_ptr<Mob>& mob);
 
-    int32_t map_id_;
+    uint32_t map_id_;
+    uint32_t return_map_id_;
 
     Bounds map_bounds_;
 
@@ -85,9 +87,12 @@ private:
     std::mutex object_mutex_;
 
     std::atomic_uint32_t next_object_id_;
+    
+    std::atomic_int32_t number_spawned_mobs_;
 
-    std::unordered_map<uint32_t, std::weak_ptr<PlayerCharacter>> players_;
-    std::unordered_map<uint32_t, std::unique_ptr<Foothold>> footholds_;
+    std::unordered_map<int32_t, std::weak_ptr<PlayerCharacter>> players_;
+    std::unordered_map<int32_t, std::unique_ptr<Foothold>> footholds_;
+    std::unordered_map<int32_t, std::unique_ptr<Portal>> portals_;
 
     std::map<uint32_t, std::shared_ptr<MapObject>> map_objects_;
 
@@ -102,5 +107,5 @@ private:
     float respawn_timer_;
     float monitor_timer_;
 
-    std::vector<SpawnPoint> spawn_points_;
+    std::vector<std::shared_ptr<SpawnPoint>> spawn_points_;
 };

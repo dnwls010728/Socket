@@ -21,11 +21,6 @@ UIHueSlider::UIHueSlider(const std::wstring& name) :
     image_->SetIgnoreRayCast(true);
 }
 
-void UIHueSlider::OnValueChanged(void(* func)(float))
-{
-    value_changed_event_ = func;
-}
-
 void UIHueSlider::Render()
 {
     UIContainer::Render();

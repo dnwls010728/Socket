@@ -47,9 +47,8 @@ protected:
     
     virtual UIElement* RayCast(const Math::Vector2& position);
     
-    virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
-
+    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
     virtual bool OnMouseEnter();
     virtual bool OnMouseLeave();
     virtual bool OnDragBegin(const Math::Vector2& position);
@@ -57,7 +56,7 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position);
     virtual bool OnDrop(const Math::Vector2& position, UIElement* target);
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta);
-    virtual bool OnKey(uint16_t key_code, bool is_pressed);
+    virtual bool OnKey(uint32_t scancode, bool is_pressed);
     virtual bool OnChar(wchar_t character);
     
     virtual void OnFocus(bool is_focused);

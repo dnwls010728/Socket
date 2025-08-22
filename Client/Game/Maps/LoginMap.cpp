@@ -6,6 +6,7 @@
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
+#include "Subsystems/GameSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
@@ -20,11 +21,17 @@ void LoginMap::Load()
     Level::Load();
     
     UI::Get()->ChangeState(UILoginState::StaticClass());
+    GameSubsystem::Get()->PlayBGM(L"Audio\\BGM\\Dreamscape.mp3");
+}
 
-    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Dreamscape.mp3");
-    bgm->SetLoop(true);
-    
-    AudioManager::Get()->PlaySound2D(bgm);
+void LoginMap::Unload(EndPlayReason type)
+{
+    Level::Unload(type);
+
+    AudioManager* audio_manager = AudioManager::Get();
+    audio_manager->StopSound(ChannelGroup::kSE);
+    audio_manager->StopSound(ChannelGroup::kMobSE);
+    audio_manager->StopSound(ChannelGroup::kSkillSE);
 }
 
 RTTR_REGISTRATION

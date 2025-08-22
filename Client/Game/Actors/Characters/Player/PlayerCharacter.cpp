@@ -2,9 +2,11 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <algorithm>
 #include <numbers>
 
 #include "DebugDrawHelper.h"
+#include "Actor/Portal.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/RigidBody2DComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -17,6 +19,8 @@
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "DirectXTK/Mouse.h"
 #include "FSM/Condition.h"
 #include "imgui/imgui.h"
@@ -24,26 +28,34 @@
 #include "Input/Mouse.h"
 #include "Math/Math.h"
 #include "Physics/Physics2D.h"
+#include "State/PlayerDeathState.h"
 #include "State/PlayerFallState.h"
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Time/Time.h"
 #include "UI/UI.h"
+#include "UI/Element/UIContextMenu.h"
+#include "UI/UIInGameState.h"
+#include "UI/Element/UIPopup.h"
 #include "Windows/DX/Sprite.h"
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
     move_axis_(Math::Vector2::Zero()),
-    movement_sync_accumulator_(0.f),
-    was_moving_(false),
-    is_jump_pressed_(false),
     last_position_(Math::Vector2::Zero()),
+    was_grounded_(false),
+    was_moving_(false),
     last_flip_(false),
+    is_dead_(false),
+    movement_sync_accumulator_(0.f),
     invincible_time_(0.f),
     prev_animation{0,},
-    color_(Math::Color::White)
+    color_(Math::Color::White),
+    party_id_(0),
+    bonus_jumps_(1)
 {
     SetLayer(ActorLayer::kPlayer);
     
@@ -95,6 +107,9 @@ void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, fl
     if (damage_amount == 0) return;
     if (IsMine())
     {
+        Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\p_hit.mp3");
+        AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+        
         PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
     }
 
@@ -117,6 +132,11 @@ void PlayerCharacter::UpdateFlip() const
     if (move_axis_.x != 0.f) renderer_->SetFlipX(move_axis_.x < 0.f);
 }
 
+void PlayerCharacter::SetDead()
+{
+    is_dead_ = true;
+}
+
 void PlayerCharacter::BeginPlay()
 {
     CharacterBase::BeginPlay();
@@ -126,6 +146,12 @@ void PlayerCharacter::BeginPlay()
         std::shared_ptr<PlayerIdleState> idle_state = std::make_shared<PlayerIdleState>(GetSharedThis(), animator_);
         std::shared_ptr<PlayerWalkState> walk_state = std::make_shared<PlayerWalkState>(GetSharedThis(), animator_);
         std::shared_ptr<PlayerFallState> fall_state = std::make_shared<PlayerFallState>(GetSharedThis(), animator_);
+        std::shared_ptr<PlayerDeathState> death_state = std::make_shared<PlayerDeathState>(GetSharedThis(), animator_);
+
+        state_machine_->AddState(idle_state);
+        state_machine_->AddState(walk_state);
+        state_machine_->AddState(fall_state);
+        state_machine_->AddState(death_state);
 
         state_machine_->AddTransition(idle_state, walk_state, [&]() { return !Math::IsEqual(move_axis_.x, 0.f); });
         state_machine_->AddTransition(idle_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
@@ -134,8 +160,14 @@ void PlayerCharacter::BeginPlay()
         state_machine_->AddTransition(walk_state, fall_state, [&]() { return !controller_->GetCollisions().is_below; });
 
         state_machine_->AddTransition(fall_state, idle_state, [&]() { return controller_->GetCollisions().is_below; });
+
+        state_machine_->AddAnyTransition(death_state, [&]() { return is_dead_; });
         
         state_machine_->SetState(idle_state);
+
+        const auto& node = animator_->GetOrAddNode(L"Walk");
+        node->AddCallback(4, this, &PlayerCharacter::OnFootstep);
+        node->AddCallback(7, this, &PlayerCharacter::OnFootstep);
     }
     else
     {
@@ -150,19 +182,24 @@ void PlayerCharacter::PhysicsTick(float delta_time)
     if (IsMine())
     {
         const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
-        
-        if (is_jump_pressed_ && collisions.is_below) velocity_.y = 6.7f;
-        is_jump_pressed_ = false;
+        was_grounded_ = collisions.is_below;
         
         velocity_.y += gravity_ * delta_time;
         controller_->Move(velocity_ * delta_time, move_axis_);
         
         if (collisions.is_above || collisions.is_below) velocity_.y = 0.f;
+        
+        if (!was_grounded_ && collisions.is_below)
+        {
+            Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\landing.mp3");
+            AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+
+            bonus_jumps_ = 1;
+        }
     }
     
     CharacterBase::PhysicsTick(delta_time);
 }
-
 
 void PlayerCharacter::Tick(float delta_time)
 {
@@ -186,31 +223,68 @@ void PlayerCharacter::Tick(float delta_time)
     
     if (IsMine())
     {
+        const Controller2DComponent::CollisionInfo& collisions = controller_->GetCollisions();
+        
         Keyboard* keyboard = Keyboard::Get();
         Mouse* mouse = Mouse::Get();
 
-        if (!UI::Get()->IsEditingText())
+        if (!is_dead_ || !UI::Get()->IsEditingText())
         {
-            move_axis_.x = keyboard->GetKey(VK_RIGHT) - keyboard->GetKey(VK_LEFT);
-            move_axis_.y = keyboard->GetKey(VK_UP) - keyboard->GetKey(VK_DOWN);
+            move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
+            move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
 
-            if (keyboard->GetKey('C'))
+            PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+            float portal_cooldown = player_subsystem->GetPortalCooldown();
+
+            if (keyboard->GetKey(Scancode::kKeyUp) && portal_cooldown - Time::Seconds() <= 0.f)
             {
-                is_jump_pressed_ = true;
+                Math::Vector2 center = GetTransform()->GetPosition();
+                Math::Vector2 size = {1.f, 1.f};
+                
+                Actor* out_actor = nullptr;
+                bool is_hit = Physics2D::OverlapBox(
+                    center,
+                    size,
+                    &out_actor,
+                    static_cast<uint16_t>(ActorLayer::kPortal)
+                );
+
+                if (is_hit)
+                {
+                    if (auto* portal = dynamic_cast<Portal*>(out_actor))
+                    {
+                        Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\portal.mp3");
+                        AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                        
+                        NetworkSubsystem::Get()->ChangeMap(portal->GetID());
+                    }
+
+                    player_subsystem->SetPortalCooldown(Time::Seconds() + .8f);
+                }
             }
 
-            if (keyboard->GetKeyDown('1'))
+            if (keyboard->GetKey(Scancode::kKeyC) && collisions.is_below)
             {
-                NetworkSubsystem::Get()->ChangeMap(1);
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
+                AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                
+                velocity_.y = 8.f;
             }
 
-            if (keyboard->GetKeyDown('2'))
+            if (keyboard->GetKeyDown(Scancode::kKeyC) && !collisions.is_below)
             {
-                NetworkSubsystem::Get()->ChangeMap(2);
+                if (bonus_jumps_ > 0)
+                {
+                    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\doublejump.mp3");
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
+                
+                    velocity_.y = 8.f;
+                    --bonus_jumps_;
+                }
             }
 
             // 아이템 줍기
-            if (keyboard->GetKeyDown('Z'))
+            if (keyboard->GetKeyDown(Scancode::kKeyZ))
             {
                 Math::Vector2 center = GetTransform()->GetPosition();
                 Math::Vector2 size = {1.f, 1.f};
@@ -228,7 +302,7 @@ void PlayerCharacter::Tick(float delta_time)
                     DroppedItem* dropped_item = dynamic_cast<DroppedItem*>(out_actor);
                     if (IsValid(dropped_item))
                     {
-                        PickupItemRequest request;
+                        PickupItemPacket request;
                         request.object_id = dropped_item->GetObjectID();
                         SendPacket(request);
                     }
@@ -236,7 +310,7 @@ void PlayerCharacter::Tick(float delta_time)
             }
 
             // 공격 테스트
-            if (keyboard->GetKeyDown('X'))
+            if (keyboard->GetKeyDown(Scancode::kKeyX))
             {
                 std::vector<Actor*> hit_actors;
                 bool is_hit = Physics2D::OverlapBoxAll(
@@ -274,23 +348,82 @@ void PlayerCharacter::Tick(float delta_time)
 
         if (mouse->GetMouseButtonDown(MouseButton::kRight))
         {
-            Math::Vector2 position = Renderer::Get()->ConvertScreenToWorld(mouse->GetMousePosition());
+            Math::Vector2 position = Renderer::Get()->ScreenToWorld(mouse->GetMousePosition());
             
             Actor* out_actor = nullptr;
             bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kPlayer));
             if (is_hit)
             {
-                Logger::Print(L"PlayerCharacter::Tick - Hit Player: %s", out_actor->GetName().c_str());
+                PlayerCharacter* player = dynamic_cast<PlayerCharacter*>(out_actor);
+                if (player && player != this)
+                {
+                    UIInGameState* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+                    if (state)
+                    {
+                        UIContextMenu* menu = state->GetContextMenu();
+                        menu->Clear();
+                        menu->AddItem(L"파티에 초대", [this, player]()
+                           {
+                                if (party_id_ == 0)
+                                {
+                                    UIPopup::PopupParam param;
+                                    param.caption = L"현재 파티에 소속되어 있지 않습니다.\n 파티를 생성하시겠습니까?";
+                                    param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
+                                    param.callback = [this](const std::wstring& text, UIPopup::PopupOption option)
+                                    {
+                                        if (option  == UIPopup::PopupOption::Yes)
+                                            StartCreateParty();
+                                        return true;
+                                    };
+                                    UIPopup::ShowPopup(param);
+                                }
+                                else
+                                {
+                                    PartyInviteRequest request;
+                                    request.invitee_id = player->GetObjectID();
+                                    SendPacket(request);    
+                                }
+                           });
+                        menu->Show(mouse->GetMousePosition());
+                    }
+                }
+            }
+        }
+
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            UIInGameState* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+            if (state)
+            {
+                UIContextMenu* menu = state->GetContextMenu();
+                menu->Hide();
             }
         }
 
         // 공격 범위 확인용
         DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
-        
     }
     else
     {
     }
+}
+
+void PlayerCharacter::StartCreateParty()
+{
+    UIPopup::PopupParam param;
+    param.caption = L"파티 이름을 입력하세요.";
+    param.option = UIPopup::PopupOption::OK | UIPopup::PopupOption::Cancel | UIPopup::PopupOption::Edit;
+    param.callback = [this](const std::wstring& text,  UIPopup::PopupOption option)
+    {
+        if (option == UIPopup::PopupOption::OK)
+        {
+            PartyCreateRequest request;
+            request.party_name = text;
+            SendPacket(request);
+        }
+        return true;
+    };
+    UIPopup::ShowPopup(param);
 }
 
 void PlayerCharacter::SyncCharacterMovement(float delta_time)
@@ -404,6 +537,12 @@ void PlayerCharacter::SyncCharacterMovement(float delta_time)
             }
         }
     }
+}
+
+void PlayerCharacter::OnFootstep() const
+{
+    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\move_default.mp3");
+    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
 }
 
 RTTR_REGISTRATION

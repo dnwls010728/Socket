@@ -242,10 +242,10 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
 
                         profile.body_color = character->GetBodyColor();
 
-                        profile.stats[static_cast<uint8_t>(PlayerStat::kHP)] = character->hp_;
-                        profile.stats[static_cast<uint8_t>(PlayerStat::kMaxHP)] = character->max_hp_;
-                        profile.stats[static_cast<uint8_t>(PlayerStat::kExp)] = character->exp_;
-                        profile.stats[static_cast<uint8_t>(PlayerStat::kLv)] = character->lv_;
+                        profile.stats.hp = character->hp_;
+                        profile.stats.max_hp = character->max_hp_;
+                        profile.stats.exp = character->exp_.load();
+                        profile.stats.lv = character->lv_;
                         
                         profiles.push_back(profile);
                     }

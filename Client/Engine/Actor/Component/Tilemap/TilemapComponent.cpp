@@ -4,6 +4,7 @@
 #include "Tilemap.h"
 #include "TilemapLayer.h"
 #include "Actor/Actor.h"
+#include "Actor/Portal.h"
 #include "Actor/Component/TransformComponent.h"
 #include "box2d/box2d.h"
 #include "Level/World.h"
@@ -13,12 +14,13 @@
 
 TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ActorComponent(owner, kName),
-	tilemap_(nullptr),
 	ppu_(0.f),
+	tilemap_(nullptr),
 	map_size_(Math::Vector2::Zero()),
 	tilemap_layers_(),
 	type_map_()
 {
+	tilemap_body_id_ = b2_nullBodyId;
 }
 
 void TilemapComponent::SetTilemap(Tilemap* tilemap)
@@ -57,6 +59,7 @@ void TilemapComponent::BeginPlay()
 			
 				if (layer->getName() == "Foothold") GeneratePhysics(object);
 				else if (layer->getName() == "Spawn") GenerateSpawn(object);
+				else if (layer->getName() == "Portal") GeneratePortal(object);
 			}
 			else if (layer->getType() == tmx::Layer::Type::Tile)
 			{
@@ -106,7 +109,7 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 	
 	for (const auto& temp : objects)
 	{
-		const std::vector<tmx::Property>& properties = temp.getProperties();
+		const auto& properties = temp.getProperties();
 		
 		b2Filter filter = b2DefaultFilter();
 		filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
@@ -161,24 +164,49 @@ void TilemapComponent::GeneratePhysics(const tmx::ObjectGroup& kObject)
 	b2Body_Disable(tilemap_body_id_);
 }
 
-void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject)
+void TilemapComponent::GenerateSpawn(const tmx::ObjectGroup& kObject) const
 {
 	const auto& objects = kObject.getObjects();
 
 	for (const auto& temp : objects)
 	{
-		if (temp.getShape() == tmx::Object::Shape::Point)
+		if (temp.getShape() != tmx::Object::Shape::Point) continue;
+		
+		rttr::type type = rttr::type::get_by_name(temp.getClass());
+		if (type.is_valid())
 		{
-			rttr::type type = rttr::type::get_by_name(temp.getClass());
-			if (type.is_valid())
+			std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
+			std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, name);
+			if (IsValid(actor))
 			{
-				std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
-				std::shared_ptr<Actor> actor = World::Get()->SpawnActor<Actor>(type, name);
-				if (IsValid(actor))
-				{
-					std::shared_ptr<TransformComponent> transform = actor->GetTransform();
-					transform->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
-				}
+				actor->GetTransform()->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
+			}
+		}
+	}
+}
+
+void TilemapComponent::GeneratePortal(const tmx::ObjectGroup& kObject) const
+{
+	const auto& objects = kObject.getObjects();
+
+	for (const auto& temp : objects)
+	{
+		if (temp.getShape() != tmx::Object::Shape::Point) continue;
+
+		const auto& properties = temp.getProperties();
+		if (properties.empty()) continue;
+
+		int32_t id = properties[0].getIntValue();
+		
+		rttr::type type = rttr::type::get_by_name(temp.getClass());
+		if (type.is_valid())
+		{
+			std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
+			std::shared_ptr<Portal> portal = World::Get()->SpawnActor<Portal>(type, name);
+			if (IsValid(portal))
+			{
+				portal->GetTransform()->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
+				portal->SetID(id);
 			}
 		}
 	}

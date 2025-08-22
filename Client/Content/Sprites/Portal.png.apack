@@ -1,0 +1,13 @@
+target: Sprites\Portal.png
+animations:
+  - name: Idle
+    frame_rate: 10
+    loop: true
+    frames:
+      - Portal_0
+      - Portal_1
+      - Portal_2
+      - Portal_3
+      - Portal_4
+      - Portal_5
+      - Portal_6

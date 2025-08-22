@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Engine/Map/MapObject.h"
 
+class Item;
+
 class DroppedItem : public MapObject
 {
 public:
@@ -12,16 +14,19 @@ public:
     inline void SetDropper(const std::shared_ptr<MapObject>& dropper) { dropper_ = dropper; }
     inline std::shared_ptr<MapObject> GetDropper() const { return dropper_.lock(); }
 
-    inline void SetItemID(uint32_t item_id) { item_id_ = item_id; }
-    inline uint32_t GetItemID() const { return item_id_; }
+    inline void SetItem(const std::shared_ptr<Item>& item) { item_ = item; }
+    inline std::shared_ptr<Item> GetItem() const { return item_; }
 
-    inline void SetCount(uint32_t count) { count_ = count; }
-    inline uint32_t GetCount() const { return count_; }
+    inline void SetColor(int32_t color) { color_ = color; }
+    inline int32_t GetColor() const { return color_; }
+
+    inline bool IsColor() const { return color_ > 0; }
 
 private:
     std::weak_ptr<MapObject> dropper_;
-    
-    uint32_t item_id_;
-    uint32_t count_;
+
+    std::shared_ptr<Item> item_;
+
+    int32_t color_;
     
 };

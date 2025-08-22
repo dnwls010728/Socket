@@ -46,9 +46,7 @@ void UIStatusBar::Init()
 {
     UIContainer::Init();
 
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kHPChanged, this, &UIStatusBar::OnEvent);
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kStatUpdated, this, &UIStatusBar::OnEvent);
 
     PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
 
@@ -72,9 +70,7 @@ void UIStatusBar::Uninit()
 {
     UIContainer::Uninit();
 
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kHPChanged, this, &UIStatusBar::OnEvent);
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kExpChanged, this, &UIStatusBar::OnEvent);
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kLvChanged, this, &UIStatusBar::OnEvent);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kStatUpdated, this, &UIStatusBar::OnEvent);
 }
 
 void UIStatusBar::Tick(float delta_time)
@@ -116,28 +112,41 @@ void UIStatusBar::Render()
 
 void UIStatusBar::OnEvent(const EventData& data)
 {
-    if (const auto* lv_data = dynamic_cast<const LvChangedEventData*>(&data))
+    if (const auto* stat_update = dynamic_cast<const StatUpdateData*>(&data))
     {
-        max_exp_ = DataSubsystem::Get()->GetExp(lv_data->lv);
-        lv_text_->SetText(L"Lv. " + std::to_wstring(lv_data->lv) + L" " + PlayerSubsystem::Get()->GetName());
-    }
-    else if (const auto* exp_data = dynamic_cast<const ExpChangedEventData*>(&data))
-    {
-        exp_ = exp_data->exp;;
-
-        float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
-        if (!Math::IsValid(exp_ratio)) exp_ratio = 0.f;
-        
-        exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
-    }
-    else if (const auto* hp_data = dynamic_cast<const HPChangedEventData*>(&data))
-    {
-        hp_ = hp_data->hp;
-        max_hp_ = hp_data->max_hp;
-
-        hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
-
-        timer_ = 0.f;
+        switch (stat_update->stat)
+        {
+        case PlayerStat::kLv:
+            {
+                lv_text_->SetText(L"Lv. " + std::to_wstring(stat_update->value) + L" " + PlayerSubsystem::Get()->GetName());
+                max_exp_ = DataSubsystem::Get()->GetExp(stat_update->value);
+            }
+            break;
+        case PlayerStat::kHP:
+            {
+                hp_ = stat_update->value;
+                hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
+                timer_ = 0.f;
+            }
+            break;
+        case PlayerStat::kMaxHP:
+            {
+                max_hp_ = stat_update->value;
+                hp_text_->SetText(std::to_wstring(hp_) + L" / " + std::to_wstring(max_hp_));
+                timer_ = 0.f;
+            }
+            break;
+        case PlayerStat::kExp:
+            {
+                exp_ = stat_update->value;
+                float exp_ratio = 100.f * static_cast<float>(exp_) / static_cast<float>(max_exp_);
+                if (!Math::IsValid(exp_ratio)) exp_ratio = 0.f;
+                exp_text_->SetText(std::to_wstring(exp_) + L" [" + std::to_wstring(static_cast<int>(exp_ratio)) + L"%]");
+            }
+            break;
+        default:
+            break;
+        }
     }
 }
 

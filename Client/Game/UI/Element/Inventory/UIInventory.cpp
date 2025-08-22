@@ -1,13 +1,14 @@
 ﻿#include "pch.h"
 #include "UIInventory.h"
 
+#include "Scancode.h"
 #include "UIInventorySlot.h"
+#include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
 #include "Inventory/Inventory.h"
 #include "Math/Color.h"
-#include "Math/Math.h"
 #include "Subsystems/PlayerSubsystem.h"
-#include "Subsystems/Publisher/PublisherSubsystem.h"
+#include "UI/UIInGameState.h"
 #include "UI/Element/UIButton.h"
 #include "UI/Element/UIScrollBox.h"
 #include "Windows/DX/Renderer.h"
@@ -149,6 +150,22 @@ UIInventory::UIInventory(const std::wstring& name) :
 
 }
 
+void UIInventory::SetActive(bool active)
+{
+    UIContainer::SetActive(active);
+
+    if (!active)
+    {
+        if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+        {
+            if (auto* element = state->GetItemTooltip())
+            {
+                if (element->IsActive()) element->SetActive(false);
+            }
+        }
+    }
+}
+
 void UIInventory::UpdateSlot(uint32_t slot_index) const
 {
     if (!inventory_) return;
@@ -160,7 +177,7 @@ void UIInventory::UpdateSlot(uint32_t slot_index) const
     else slots_[slot_index - 1]->ResetSlot();
 }
 
-void UIInventory::UpdateColor(uint32_t color)
+void UIInventory::UpdateColor(uint32_t color) const
 {
     std::wstring color_str = std::to_wstring(color);
     for (uint32_t i = color_str.size(); i > 3; i -= 3)
@@ -176,10 +193,8 @@ void UIInventory::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
-
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 
     inventory_ = PlayerSubsystem::Get()->GetInventory();
     for (uint32_t i = 0; i < 128; ++i)
@@ -196,9 +211,7 @@ void UIInventory::Uninit()
 {
     UIContainer::Uninit();
 
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemSwapped, this, &UIInventory::OnEvent);
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
@@ -218,14 +231,14 @@ bool UIInventory::OnDragEnd(const Math::Vector2& position)
     return true;
 }
 
-bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
+bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
 {
-    if (key_code != VK_TAB || !is_pressed) return false;
+    if (scancode != static_cast<uint32_t>(Scancode::kKeyTab) || !is_pressed) return false;
 
     uint8_t current_tab = static_cast<uint8_t>(tab_);
     tab_buttons_[current_tab]->SetTextColor(Math::Color::White);
     
-    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 1)) + 1;
+    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 2)) + 1;
     tab_buttons_[current_tab]->SetTextColor(Math::Color::Yellow);
     
     tab_ = static_cast<Inventory::Type>(current_tab);
@@ -238,22 +251,12 @@ bool UIInventory::OnKey(uint16_t key_code, bool is_pressed)
     return true;
 }
 
-void UIInventory::OnEvent(const EventData& event_data)
+void UIInventory::OnEvent(const EventData& data)
 {
-    if (const ItemSwappedEventData* data = dynamic_cast<const ItemSwappedEventData*>(&event_data))
+    if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
     {
-        UpdateSlot(data->first_slot);
-        UpdateSlot(data->second_slot);
+        UpdateColor(color_update->color);
     }
-    else if (const ItemCountChangedEventData* data = dynamic_cast<const ItemCountChangedEventData*>(&event_data))
-    {
-        UpdateSlot(data->slot);
-    }
-    else if (const ItemRemovedEventData* data = dynamic_cast<const ItemRemovedEventData*>(&event_data))
-    {
-        UpdateSlot(data->slot);
-    }
-
 }
 
 RTTR_REGISTRATION

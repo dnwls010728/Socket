@@ -5,8 +5,10 @@
 
 #include "Asset/AssetManager.h"
 #include <shellapi.h>
+
+#include "Scancode.h"
+#include "UIPopup.h"
 #include "Subsystems/SessionSubsystem.h"
-#include "UI/UIPopup.h"
 #include "UI/Element/UIEditableText.h"
 #include "UI/Element/UIImage.h"
 #include "Windows/DX/UISprite.h"
@@ -84,20 +86,20 @@ void UILogin::Init()
     UIContainer::Init();
 }
 
-bool UILogin::OnKey(uint16_t key_code, bool is_pressed)
+bool UILogin::OnKey(uint32_t scancode, bool is_pressed)
 {
     if (is_pressed)
     {
-        switch (key_code)
+        switch (scancode)
         {
-        case VK_TAB:
+        case static_cast<uint32_t>(Scancode::kKeyTab):
             {
                 if (input_id_->IsFocused()) UI::Get()->SetFocus(input_password_);
                 else if (input_password_->IsFocused()) UI::Get()->SetFocus(input_id_);
                 return true;
             }
 
-        case VK_RETURN:
+        case static_cast<uint32_t>(Scancode::kKeyEnter):
             {
                 OnLogin();
                 return true;
@@ -112,22 +114,22 @@ void UILogin::OnLogin()
 {
     if (input_id_->GetText().empty())
     {
-        UIPopup::ShowPopup(L"아이디를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
-        {
-            UI::Get()->SetFocus(input_id_);
-            return true;
-        });
+        UIPopup::PopupParam param;
+        param.caption = L"아이디를 입력해 주세요.";
+        param.option = UIPopup::PopupOption::OK;
+        param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option){ return true;};
+        UIPopup::ShowPopup(param);
         return;
     }
 
     if (input_password_->GetText().empty())
     {
-        UIPopup::ShowPopup(L"비밀번호를 입력해 주세요.", PopupOption::OK, [&](std::wstring input_text, PopupOption option)
-        {
-            UI::Get()->SetFocus(input_password_);
-            return true;
-        });
-        return;
+        UIPopup::PopupParam param;
+        param.caption = L"비밀번호를 입력해 주세요.";
+        param.option = UIPopup::PopupOption::OK;
+        param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option){ return true;};
+        UIPopup::ShowPopup(param);
+        return; 
     }
 
     LoginRequest request;
@@ -142,7 +144,7 @@ void UILogin::OnLogin()
 
 void UILogin::OnRegister()
 {
-    ShellExecute(nullptr, nullptr, L"http://58.79.118.105:9102", nullptr, nullptr, SW_SHOW);
+    ShellExecute(nullptr, nullptr, L"http://58.79.118.105:9100", nullptr, nullptr, SW_SHOW);
 }
 
 RTTR_REGISTRATION

@@ -7,21 +7,30 @@
 
 #include "tmxlite/Map.hpp"
 
+#include <random>
+
 #include "DataManager.h"
 #include "MapObject.h"
 #include "PlayerCharacter.h"
+#include "SpawnPoint.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
+#include "Session/Player/Inventory/Item.h"
 
+
+// TODO: 오브젝트도 플레이어와 동일하게 대기 후 Tick에서 패킷을 전송하도록 변경 필요
 Map::Map(uint32_t map_id) :
     map_id_(map_id),
+    return_map_id_(0),
     map_bounds_(),
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
+    number_spawned_mobs_(0),
     players_(),
     footholds_(),
+    portals_(),
     map_objects_(),
     pending_players_(),
     pending_remove_players_(),
@@ -102,10 +111,13 @@ void Map::RemovePlayers()
         pending_remove_players_.pop();
 
         players_.erase(unique_key);
+
+        ObjectDestroyInfo info;
+        info.type = ObjectType::kPlayer;
+        info.object_id = unique_key;
         
-         // 맵에서 플레이어가 제거되면, 다른 플레이어에게 제거하도록 패킷을 전송
-        DestroyPlayerPacket destroy_player_packet;
-        destroy_player_packet.unique_id = unique_key;
+        ObjectDestroyPacket destroy_player_packet;
+        destroy_player_packet.object_info = info;
         SendPacket(destroy_player_packet);
         
     }
@@ -121,29 +133,151 @@ void Map::RemoveObject(uint32_t object_id)
     pending_remove_objects_.push(object_id);
 }
 
-void Map::SpawnObject(const std::shared_ptr<MapObject>& object)
+void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
-    object->SetObjectID(next_object_id_.fetch_add(1));
-    object->SetMap(this);
-
     const auto& mob = std::dynamic_pointer_cast<Mob>(object);
+    if (!mob) return;
+    
+    mob->SetObjectID(next_object_id_.fetch_add(1));
+    mob->SetMap(this);
+    mob->OnDeath(this, &Map::OnMobDeath);
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(mob);
+    }
+    
+    ObjectInfo info;
+    info.type = ObjectType::kMob;
+    info.object_id = mob->GetObjectID();
+    info.position_x = mob->GetPosition().x;
+    info.position_y = mob->GetPosition().y;
+    info.info.mob.mob_id = mob->GetMobID();
 
-    SpawnObjectPacket spawn_object_packet;
-    spawn_object_packet.object_info.type = ObjectType::kMob;
-    spawn_object_packet.object_info.object_id = object->GetObjectID();
-    spawn_object_packet.object_info.position_x = object->GetPosition().x;
-    spawn_object_packet.object_info.position_y = object->GetPosition().y;
-    spawn_object_packet.object_info.info.mob.mob_id = mob->GetMobID();
-    SendPacket(spawn_object_packet);
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
 
-    AddObject(object);
+    number_spawned_mobs_.fetch_add(1);
 }
 
-void Map::DestroyObject(uint32_t object_id)
+void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
-    DestroyObject_Internal(object_id);
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetColor(color);
+    dropped_item->SetPosition(drop_position);
+
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(dropped_item);
+    }
+
+    DroppedItemInfo item_info;
+    item_info.item_id = 0;
+    item_info.dropper_position_x = dropper->GetPosition().x;
+    item_info.dropper_position_y = dropper->GetPosition().y;
+    item_info.color = color;
+
+    ObjectInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = dropped_item->GetObjectID();
+    info.position_x = drop_position.x;
+    info.position_y = drop_position.y;
+    info.info.dropped_item = item_info;
+
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+{
+    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
+    dropped_item->SetDropper(dropper);
+    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
+    dropped_item->SetPosition(drop_position);
+
+    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
+    dropped_item->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(dropped_item);
+    }
+
+    DroppedItemInfo item_info;
+    item_info.item_id = item_id;
+    item_info.dropper_position_x = dropper->GetPosition().x;
+    item_info.dropper_position_y = dropper->GetPosition().y;
+    item_info.color = 0;
+
+    ObjectInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = dropped_item->GetObjectID();
+    info.position_x = drop_position.x;
+    info.position_y = drop_position.y;
+    info.info.dropped_item = item_info;
+
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::DestroyMob(uint32_t object_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kMob;
+    info.object_id = object_id;
+    
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(object_destroy_packet);
+    }
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        RemoveObject(object_id);
+    }
+}
+
+void Map::DestroyDroppedItem(uint32_t object_id, uint32_t character_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kDroppedItem;
+    info.object_id = object_id;
+    info.info.dropped_item.character_id = character_id;
+    
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(object_destroy_packet);
+    }
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        RemoveObject(object_id);
+    }
 }
 
 void Map::SendPacket(const Net::IPacket& packet)
@@ -178,7 +312,7 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->OnHit(attacker, 1000);
+            mob->TakeDamage(attacker, 1000);
         }
     }
 }
@@ -265,35 +399,6 @@ void Map::Tick(float delta_time)
 
 }
 
-void Map::SpawnDropItem(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
-{
-    std::lock_guard<std::mutex> lock(object_mutex_);
-    
-    std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
-    dropped_item->SetDropper(dropper);
-    dropped_item->SetItemID(item_id);
-    dropped_item->SetCount(count);
-    dropped_item->SetPosition(drop_position);
-
-    // TODO: 구조 개선 필요
-    dropped_item->SetObjectID(next_object_id_.fetch_add(1));
-    dropped_item->SetMap(this);
-
-    SpawnObjectPacket packet;
-    packet.object_info.type = ObjectType::kDroppedItem;
-    packet.object_info.object_id = dropped_item->GetObjectID();
-    packet.object_info.position_x = drop_position.x;
-    packet.object_info.position_y = drop_position.y;
-
-    DroppedItemInfo& info = packet.object_info.info.dropped_item;
-    info.item_id = item_id;
-    info.dropper_position_x = dropper->GetPosition().x;
-    info.dropper_position_y = dropper->GetPosition().y;
-    SendPacket(packet);
-    
-    AddObject(dropped_item);
-}
-
 std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 {
     std::lock_guard<std::mutex> lock(player_mutex_);
@@ -305,15 +410,13 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
     return players;
 }
 
-Math::Vector2 Map::GetDropPosition(const Math::Vector2& position)
+void Map::GetDropPosition(Math::Vector2& position) const
 {
-    Math::Vector2 drop_position = { position.x, position.y + 2.f };
-    drop_position.x = Math::Clamp(drop_position.x, map_bounds_.min.x, map_bounds_.max.x);
+    position.y += 2.f;
+    position.x = Math::Clamp(position.x, map_bounds_.min.x, map_bounds_.max.x);
 
-    Foothold* foothold = FindFoothold(drop_position);
-    if (foothold) drop_position.y = foothold->GetYAt(drop_position.x);
-    
-    return drop_position;
+    Foothold* foothold = FindFoothold(position);
+    if (foothold) position.y = foothold->GetYAt(position.x);
 }
 
 bool Map::LoadMapData()
@@ -326,7 +429,8 @@ bool Map::LoadMapData()
     const auto& properties = map_data.getProperties();
     if (properties.empty()) return false;
 
-    float ppu = properties[1].getFloatValue();
+    float ppu = properties[2].getFloatValue();
+    return_map_id_ = properties[3].getIntValue();
 
     tmx::FloatRect local_bounds = map_data.getBounds();
     float world_width = local_bounds.width / ppu;
@@ -351,9 +455,9 @@ bool Map::LoadMapData()
                         const auto& object_properties = object.getProperties();
                         if (object_properties.empty()) continue;
 
-                        uint32_t id = object_properties[0].getIntValue();
-                        uint32_t next = object_properties[1].getIntValue();
-                        uint32_t previous = object_properties[2].getIntValue();
+                        int32_t id = object_properties[0].getIntValue();
+                        int32_t next = object_properties[1].getIntValue();
+                        int32_t previous = object_properties[2].getIntValue();
                         
                         const auto& points = object.getPoints();
                         Math::Vector2 point1 = {
@@ -365,8 +469,8 @@ bool Map::LoadMapData()
                             points[1].x / ppu + object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
                             -1 * points[1].y / ppu - object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
                         };
-
-                        footholds_[id] = std::make_unique<Foothold>(point1, point2, id, previous, next);
+                        
+                        footholds_.insert_or_assign(id, std::make_unique<Foothold>(point1, point2, id, previous, next));
                     }
                 }
             }
@@ -384,8 +488,31 @@ bool Map::LoadMapData()
 
                     const auto& properties = object.getProperties();
                     if (properties.empty()) continue;
+
+                    uint32_t mob_id = properties[0].getIntValue();
+                    spawn_points_.emplace_back(std::make_unique<SpawnPoint>(mob_id, position));
+                }
+            }
+            else if (layer->getName() == "Portal")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() != tmx::Object::Shape::Point) continue;
                     
-                    spawn_points_.emplace_back(position, properties[0].getIntValue());
+                    Math::Vector2 position = {
+                        object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                        -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                    };
+                    
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+
+                    int32_t id = properties[0].getIntValue();
+                    int32_t to_id = properties[1].getIntValue();
+                    int32_t to_map = properties[2].getIntValue();
+
+                    portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_id, to_map, position));
                 }
             }
         }
@@ -422,10 +549,17 @@ Foothold* Map::FindFoothold(const Math::Vector2& position) const
     return best;
 }
 
-Foothold* Map::FindFootholdByID(uint32_t foothold_id)
+Foothold* Map::FindFootholdByID(int32_t foothold_id)
 {
     auto it = footholds_.find(foothold_id);
     if (it == footholds_.end()) return nullptr;
+    return it->second.get();
+}
+
+Portal* Map::FindPortal(int32_t portal_id)
+{
+    auto it = portals_.find(portal_id);
+    if (it == portals_.end()) return nullptr;
     return it->second.get();
 }
 
@@ -469,15 +603,27 @@ void Map::Respawn()
         std::lock_guard<std::mutex> lock(player_mutex_);
         if (players_.empty()) return;
     }
+    
+    int32_t max_spawnable_mobs = spawn_points_.size() - number_spawned_mobs_.load();
+    if (max_spawnable_mobs <= 0) return;
 
-    for (const auto& spawn_point : spawn_points_)
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    std::vector<std::shared_ptr<SpawnPoint>> spawn_points = spawn_points_;
+    std::ranges::shuffle(spawn_points, gen);
+
+    int32_t number_spawned = 0;
+    for (const auto& spawn_point : spawn_points)
     {
-        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point.mob_id))
+        if (const MobData* mob_data = DataManager::Get()->GetMob(spawn_point->GetMobID()))
         {
             std::shared_ptr<Mob> mob = std::make_shared<Mob>(*mob_data);
-            mob->SetPosition(spawn_point.position);
-            mob->SetLastPosition(spawn_point.position);
-            SpawnObject(mob);
+            mob->SetPosition(spawn_point->GetPosition());
+            mob->SetLastPosition(spawn_point->GetPosition());
+            SpawnMob(mob);
+
+            if (++number_spawned >= max_spawnable_mobs) break;
         }
     }
 }
@@ -489,19 +635,56 @@ void Map::KillAllMobs()
     {
         if (const auto& mob = std::dynamic_pointer_cast<Mob>(map_object))
         {
-            DestroyObject_Internal(mob->GetObjectID());
+            uint32_t object_id = mob->GetObjectID();
+            
+            ObjectDestroyInfo info;
+            info.type = ObjectType::kMob;
+            info.object_id = object_id;
+    
+            ObjectDestroyPacket object_destroy_packet;
+            object_destroy_packet.object_info = info;
+    
+            {
+                // std::lock_guard<std::mutex> player_lock(player_mutex_);
+                SendPacket(object_destroy_packet);
+            }
+            
+            RemoveObject(object_id);
         }
     }
+
+    number_spawned_mobs_.store(0);
 }
 
-void Map::DestroyObject_Internal(uint32_t object_id)
+void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
 {
-    auto it = map_objects_.find(object_id);
-    if (it == map_objects_.end()) return;
+    if (const auto* drops = DataManager::Get()->GetDrop(mob->GetMobID()))
+    {
+        int32_t d = 0;
+        for (const auto& drop : *drops)
+        {
+            int32_t drop_chance = Math::RandRange(0, 9999); // 0.01%
+            if (drop_chance > drop.chance) continue;
+                
+            int32_t count = Math::RandRange(drop.min_count, drop.max_count);
+            if (count <= 0) continue;
+                
+            int32_t step = (d + 1) / 2;
+            int32_t sign = (d % 2) ? 1 : -1;
 
-    DestroyObjectPacket destroy_object_packet;
-    destroy_object_packet.object_id = object_id;
-    SendPacket(destroy_object_packet);
+            Math::Vector2 drop_position = mob->GetPosition();
+            drop_position.x += static_cast<float>(sign * step) * .5f;
+            GetDropPosition(drop_position);
 
-    RemoveObject(object_id);
+            if (!drop.item_id)
+                SpawnColorDrop(count, mob, drop_position);
+            else
+                SpawnItemDrop(drop.item_id, count, mob, drop_position);
+                
+            ++d;
+        }
+    }
+    
+    number_spawned_mobs_.fetch_sub(1);
+    DestroyMob(mob->GetObjectID());
 }

@@ -2,6 +2,8 @@
 #include "NetworkActor.h"
 #include "Subsystems/ObjectPool/IPoolable.h"
 
+class AnimatorComponent;
+class PlayerCharacter;
 class SpriteRendererComponent;
 class BoxColliderComponent;
 class Controller2DComponent;
@@ -14,28 +16,25 @@ class DroppedItem : public NetworkActor, public IPoolable
 public:
     DroppedItem(const std::wstring& name);
     virtual ~DroppedItem() override = default;
+
+    void Pickup(const std::shared_ptr<Actor>& character);
     
     virtual void OnActivate() override;
     virtual void OnDeactivate() override;
 
-    void Init(uint32_t item_id, const Math::Vector2& drop_position);
+    void Init(uint32_t item_id, int32_t color, const Math::Vector2& drop_position);
+
+    FORCEINLINE bool IsColor() const { return is_color_; }
 
 protected:
-    virtual void BeginPlay() override;
-    virtual void Tick(float delta_time) override;
     virtual void OnEnable() override;
     virtual void OnDisable() override;
 
-    float ApproxBezierLength(const Math::Vector2& p1, const Math::Vector2& p2, const Math::Vector2& p3, int32_t steps = 100);
-
     std::shared_ptr<SpriteRendererComponent> renderer_;
+    std::shared_ptr<AnimatorComponent> animator_;
     std::shared_ptr<BoxColliderComponent> collider_;
 
-    Math::Vector2 start_position_;
-    Math::Vector2 drop_position_;
-    Math::Vector2 control_;
-
-    float timer_;
-    float duration_;
+private:
+    bool is_color_;
     
 };

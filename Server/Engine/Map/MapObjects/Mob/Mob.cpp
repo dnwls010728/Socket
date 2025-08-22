@@ -25,9 +25,11 @@ Mob::Mob(const MobData& mob_data) :
     was_moving_(false),
     foothold_(nullptr),
     hp_(mob_data.stats.hp),
+    exp_(mob_data.stats.exp),
     animation_(L"Idle"),
     is_flipped_(false),
-    last_flipped_(false)
+    last_flipped_(false),
+    death_event_([](const std::shared_ptr<Mob>& mob){})
 {
     state_machine_ = std::make_unique<FSM::StateMachine>();
     
@@ -38,7 +40,7 @@ void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     MapObject::SendSpawn(player);
     if (!player) return;
 
-    SpawnObjectPacket packet;
+    ObjectSpawnPacket packet;
     packet.object_info.type = ObjectType::kMob;
     packet.object_info.object_id = object_id_;
     packet.object_info.position_x = position_.x;
@@ -181,23 +183,24 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::OnHit(uint32_t attacker, uint32_t damage)
+void Mob::TakeDamage(uint32_t attacker, uint32_t damage)
 {
     if (hp_ <= 0) return;
 
     const auto& player = map_->FindPlayer(attacker);
     state_machine_->ChangeState(hit_state_);
-    
+
     last_animation_ = animation_;
     hp_ -= damage;
-     if (hp_ <= 0)
-     {
-         SendAnimationPacket(L"Die", is_flipped_, true);
-         if (player) player->GainExp(10000); // 예시로 100 경험치 추가
-         hp_ = 0;
-         map_->DestroyObject(GetObjectID());
-     }
-     else
+    if (hp_ <= 0)
+    {
+        death_event_(std::dynamic_pointer_cast<Mob>(shared_from_this()));
+
+        SendAnimationPacket(L"Die", is_flipped_, true);
+        if (player) player->GainExp(exp_);
+        hp_ = 0;
+    }
+    else
     {
         SendAnimationPacket(L"Hit", is_flipped_, true);
     }

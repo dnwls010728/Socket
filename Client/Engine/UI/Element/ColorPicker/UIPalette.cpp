@@ -15,11 +15,6 @@ UIPalette::UIPalette(const std::wstring& name) :
     SetSize({200.f, 200.f});
 }
 
-void UIPalette::OnValueChanged(void(* func)(const Math::Color& color))
-{
-    value_changed_event_ = func;
-}
-
 void UIPalette::SetHue(float hue)
 {
     h_ = Math::Clamp(hue, 0.f, 360.f);

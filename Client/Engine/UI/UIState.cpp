@@ -16,14 +16,38 @@ UIState::UIState() :
 
 void UIState::RemoveElement(UIElement* element)
 {
+    if (!element) return;
+    
+    bool touches_focus = std::any_of(focus_path_.begin(), focus_path_.end(),
+        [&](UIElement* f){
+            return f == element || f->IsDescendantOf(element);
+        });
+    if (touches_focus) {
+        UpdateFocus(nullptr);
+    }
+    
+    if (dragging_element_ &&
+        (dragging_element_ == element || dragging_element_->IsDescendantOf(element)))
+    {
+        if (has_begun_drag_) {
+            dragging_element_->OnDragEnd({});
+            has_begun_drag_ = false;
+        }
+        is_dragging_ = false;
+        dragging_element_ = nullptr;
+    }
+    
+    if (!pending_elements_.empty()) {
+        pending_elements_.erase(
+            std::remove(pending_elements_.begin(), pending_elements_.end(), element),
+            pending_elements_.end()
+        );
+    }
     for (auto it = elements_.begin(); it != elements_.end(); ++it)
     {
         if (it->get() == element)
         {
             if (is_initialized_) element->Uninit();
-            if (element->IsFocused()) SetFocus(nullptr);
-            if (dragging_element_ && dragging_element_->IsDescendantOf(element))
-                dragging_element_ = nullptr;
             elements_.erase(it);
             break;
         }
@@ -76,6 +100,7 @@ void UIState::Init()
     is_initialized_ = true;
 }
 
+
 void UIState::Uninit()
 {
     for ( uint32_t i = 0; i < elements_.size(); ++i )
@@ -113,22 +138,22 @@ void UIState::Render()
     }
 }
 
-UI::MouseEventResult UIState::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+bool UIState::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    UI::MouseEventResult result = { false, UI::CursorState::kIdle };
+    bool result = false;
 
     if (is_dragging_ && dragging_element_)
     {
         if (has_begun_drag_)
         {
-            result.is_handled = dragging_element_->OnDrag(position, delta);
-            if (result.is_handled) return result;
+            result = dragging_element_->OnDrag(position, delta);
+            if (result) return result;
         }
         else
         {
-            result.is_handled = dragging_element_->OnDragBegin(position);
+            result = dragging_element_->OnDragBegin(position);
             has_begun_drag_ = true;
-            if (result.is_handled) return result;
+            if (result) return result;
         }
     }
 
@@ -140,30 +165,28 @@ UI::MouseEventResult UIState::OnMouseMotion(const Math::Vector2& position, const
         bool is_in_range = element->IsInRange(position);
         bool was_in_range = element->IsInRange(position - delta);
 
-        if (is_in_range && !was_in_range) result.is_handled |= element->OnMouseEnter();
+        if (is_in_range && !was_in_range) result |= element->OnMouseEnter();
         if (!is_in_range && was_in_range)
         {
-            result.is_handled |= element->OnMouseLeave();
-            if (result.is_handled) return result;
+            result |= element->OnMouseLeave();
+            if (result) return result;
         }
 
         if (is_in_range || was_in_range)
         {
-            UI::MouseEventResult temp_result = element->OnMouseMotion(position, delta);
-            result.cursor_state = temp_result.cursor_state;
-            result.is_handled |= temp_result.is_handled;
+            result |= element->OnMouseMotion(position, delta);;
         }
 
-        if (result.is_handled) return result;
+        if (result) return result;
     }
 
     return result;
 }
 
-UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIState::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = { false, UI::CursorState::kIdle };
-
+    bool result = false;
+    
     if (is_dragging_ && button == MouseButton::kLeft && !is_pressed)
     {
         if (dragging_element_)
@@ -171,12 +194,12 @@ UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, Mouse
             UIElement* target_element = RayCast(position);
             if (target_element && target_element != dragging_element_)
             {
-                result.is_handled |= target_element->OnDrop(position, dragging_element_);
+                result |= target_element->OnDrop(position, dragging_element_);
             }
 
             if (has_begun_drag_)
             {
-                result.is_handled |= dragging_element_->OnDragEnd(position);
+                result |= dragging_element_->OnDragEnd(position);
                 has_begun_drag_ = false;
             }
         }
@@ -196,10 +219,7 @@ UI::MouseEventResult UIState::OnMouseButton(const Math::Vector2& position, Mouse
         UIElement* element = elements_[elements_.size() - i - 1].get();
         if (element && element->IsActive() && element->IsInRange(position))
         {
-            UI::MouseEventResult temp_result = element->OnMouseButton(position, button, is_pressed, timestamp);
-            result.is_handled |= temp_result.is_handled;
-            result.cursor_state = temp_result.cursor_state;
-            if (result.is_handled) return result;
+            if (element->OnMouseButton(position, button, is_pressed, timestamp)) return true;
         }
     }
     
@@ -218,12 +238,12 @@ bool UIState::OnScroll(const Math::Vector2& position, const Math::Vector2& delta
     return false;
 }
 
-bool UIState::OnKey(uint16_t key_code, bool is_pressed)
+bool UIState::OnKey(uint32_t scancode, bool is_pressed)
 {
     for (uint32_t i = 0; i < focus_path_.size(); ++i)
     {
         UIElement* element = focus_path_[focus_path_.size() - i - 1];
-        if (element && element->IsFocused() && element->OnKey(key_code, is_pressed))
+        if (element && element->IsFocused() && element->OnKey(scancode, is_pressed))
             return true;
     }
 

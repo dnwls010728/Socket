@@ -69,7 +69,7 @@ UIElement::UIElement(const std::wstring& name) :
 void UIElement::Render()
 {
 #ifdef _DEBUG // 디버그 모드에서 UIElement의 경계 박스를 그립니다.
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+    // Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
 #endif
 }
 
@@ -83,17 +83,17 @@ UIElement* UIElement::RayCast(const Math::Vector2& position)
     return IsInRange(position) ? this : nullptr;
 }
 
-UI::MouseEventResult UIElement::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+bool UIElement::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    return { false, UI::CursorState::kIdle };
+    return false;
 }
 
-UI::MouseEventResult UIElement::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIElement::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
     if (button == MouseButton::kLeft && is_pressed && !is_focused_)
         UI::Get()->GetState()->UpdateFocus(this);
     
-    return { false, UI::CursorState::kIdle };
+    return false;
 }
 
 bool UIElement::OnMouseEnter()
@@ -131,7 +131,7 @@ bool UIElement::OnScroll(const Math::Vector2& position, const Math::Vector2& del
     return false;
 }
 
-bool UIElement::OnKey(uint16_t key_code, bool is_pressed)
+bool UIElement::OnKey(uint32_t scancode, bool is_pressed)
 {
     return false;
 }

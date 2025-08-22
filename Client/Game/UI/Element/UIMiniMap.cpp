@@ -1,14 +1,19 @@
 ﻿#include "pch.h"
 #include "UIMiniMap.h"
 
+#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
+#include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/NetworkSubsystem.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
 #include "Windows/DX/UISprite.h"
 
 UIMiniMap::UIMiniMap(const std::wstring& name) :
-    UIContainer(name)
+    UIContainer(name),
+    tilemap_(nullptr),
+    marker_scale_(Math::Vector2::Zero())
 {
     SetSize({ 200.f, 200.f });
     
@@ -29,9 +34,10 @@ UIMiniMap::UIMiniMap(const std::wstring& name) :
     map_name_text_->SetText(L"알 수 없는 곳");
 }
 
-void UIMiniMap::SetTilemap(const Tilemap* tilemap)
+void UIMiniMap::SetTilemap(Tilemap* tilemap)
 {
     if (!tilemap) return;
+    tilemap_ = tilemap;
     
     map_->SetSprite(tilemap->GetUISprite());
     
@@ -48,6 +54,15 @@ void UIMiniMap::SetTilemap(const Tilemap* tilemap)
 
     map_name_text_->SetText(tilemap->GetName());
     map_name_text_->SetSize({map_name_text_->GetTotalAdvance() + 1.f, 20.f});
+
+    Math::Vector2 size = map_->GetSize();
+
+    Bounds world_bounds = tilemap->GetWorldBounds();
+    float dx = world_bounds.max.x - world_bounds.min.x;
+    float dy = world_bounds.max.y - world_bounds.min.y;
+
+    marker_scale_.x = size.x / dx;
+    marker_scale_.y = size.y / dy;
 }
 
 void UIMiniMap::Init()
@@ -59,7 +74,40 @@ void UIMiniMap::Init()
 
 void UIMiniMap::Render()
 {
+    Renderer* renderer = Renderer::Get();
     UIContainer::Render();
+    if (!tilemap_) return;
+
+    NetworkSubsystem* subsystem = NetworkSubsystem::Get();
+    Bounds world_bounds = tilemap_->GetWorldBounds();
+
+    auto player = subsystem->GetPlayer();
+    if (IsValid(player))
+    {
+        Math::Vector2 position = player->GetTransform()->GetPosition();
+        
+        Math::Vector2 marker_position;
+        marker_position.x = (position.x - world_bounds.min.x) * marker_scale_.x + 4.f;
+        marker_position.y = (world_bounds.max.y - position.y) * marker_scale_.y + 28.f;
+
+        renderer->DrawSolidCircle(marker_position, 5.f, Math::Color::Yellow);
+    }
+
+    std::vector<std::shared_ptr<PlayerCharacter>> players = {};
+    subsystem->GetOtherPlayers(players);
+
+    for (const auto& other_player : players)
+    {
+        if (!IsValid(other_player)) continue;
+
+        Math::Vector2 position = other_player->GetTransform()->GetPosition();
+        
+        Math::Vector2 marker_position;
+        marker_position.x = (position.x - world_bounds.min.x) * marker_scale_.x + 4.f;
+        marker_position.y = (world_bounds.max.y - position.y) * marker_scale_.y + 28.f;
+
+        renderer->DrawSolidCircle(marker_position, 5.f, Math::Color::Red);
+    }
 }
 
 RTTR_REGISTRATION

@@ -93,18 +93,17 @@ public:
     void EndLayer();
     void ChangeResolution(WindowsWindow* window, uint32_t width, uint32_t height, bool is_fullscreen = false);
     
-    Math::Vector2 ConvertScreenToWorld(const Math::Vector2& kScreenPosition);
-    Math::Vector2 ConvertWorldToScreen(const Math::Vector2& kWorldPosition);
+    Math::Vector2 ScreenToWorld(const Math::Vector2& screen_position);
+    Math::Vector2 WorldToScreen(const Math::Vector2& world_position);
 
     // Direct2D
-    void DrawCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color, float stroke = 1.f);
-    void DrawSolidCircle(WindowsWindow* window, Math::Vector2 position, float radius, Math::Color color);
-
     void DrawBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
     void DrawSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black);
     void DrawGradientSolidBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& start_color, const Math::Color& end_color, GradientDirection direction = GradientDirection::kHorizontal);
     void DrawRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f, float stroke = 1.f);
     void DrawSolidRoundBox(const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, float radius = 5.f);
+    void DrawCircle(const Math::Vector2& position, float radius, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
+    void DrawSolidCircle(const Math::Vector2& position, float radius, const Math::Color& color = Math::Color::Black);
     void DrawString(const std::wstring& string, const Math::Vector2& position, const Math::Vector2& size, const Math::Color& color = Math::Color::Black, const std::wstring& font_name = L"NanumBarunGothic", float font_size = 12.f, DWRITE_TEXT_ALIGNMENT text_alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT paragraph_alignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     void DrawLine(const Math::Vector2& start, const Math::Vector2& end, const Math::Color& color = Math::Color::Black, float stroke = 1.f);
 

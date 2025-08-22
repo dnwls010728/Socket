@@ -1,9 +1,13 @@
 ﻿#include "pch.h"
 #include "Inventory.h"
 
+#include <CustomPacket.h>
+#include <algorithm>
 #include <iostream>
 #include <ranges>
 
+#include "DataManager.h"
+#include "Item.h"
 #include "jdbc/cppconn/exception.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
@@ -21,7 +25,7 @@ uint32_t Inventory::GetItemID(Type type, uint32_t slot_index)
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
-        return it->second.item_id;
+        return it->second->GetID();
     
     return 0;
 }
@@ -31,7 +35,7 @@ uint32_t Inventory::FindItem(Type type, uint32_t item_id)
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& it : inventories_[static_cast<uint8_t>(type)])
     {
-        if (it.second.item_id == item_id)
+        if (it.second->GetID() == item_id)
             return it.first;
     }
     
@@ -59,7 +63,7 @@ int32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
-        return it->second.count;
+        return it->second->GetCount();
 
     return 0;
 }
@@ -70,8 +74,8 @@ int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
     int32_t total_count = 0;
     for (const auto& slot : inventories_[static_cast<uint8_t>(type)] | std::views::values)
     {
-        if (slot.item_id == item_id)
-            total_count += slot.count;
+        if (slot->GetID() == item_id)
+            total_count += slot->GetCount();
     }
 
     return total_count;
@@ -79,9 +83,9 @@ int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
 
 void Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, int32_t count)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_); // 필요 없을지도...?
     if (slot_index == 0 || item_id == 0) return;
-    inventories_[static_cast<uint8_t>(type)][slot_index] = { item_id, count };
+    inventories_[static_cast<uint8_t>(type)][slot_index] = std::make_shared<Item>(item_id, slot_index, count);
 }
 
 void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
@@ -89,24 +93,119 @@ void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
-        it->second.count = count;
+        it->second->SetCount(count);
 }
 
 void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    Slot first = inventories_[static_cast<uint8_t>(first_type)][first_slot];
-    inventories_[static_cast<uint8_t>(first_type)][first_slot] = inventories_[static_cast<uint8_t>(second_type)][second_slot];
-    inventories_[static_cast<uint8_t>(second_type)][second_slot] = first;
 
-    if (!inventories_[static_cast<uint8_t>(first_type)][first_slot].item_id) Remove_Internal(first_type, first_slot);
-    if (!inventories_[static_cast<uint8_t>(second_type)][second_slot].item_id) Remove_Internal(second_type, second_slot);
+    auto& first_inventory = inventories_[static_cast<uint8_t>(first_type)];
+    auto& second_inventory = inventories_[static_cast<uint8_t>(second_type)];
+    
+    std::shared_ptr<Item> first = first_inventory[first_slot];
+    std::shared_ptr<Item> second = second_inventory[second_slot];
+
+    if (first) first->SetSlot(second_slot);
+    if (second) second->SetSlot(first_slot);
+    
+    first_inventory[first_slot] = second;
+    second_inventory[second_slot] = first;
+
+    if (!first_inventory[first_slot]) Remove_Internal(first_type, first_slot);
+    if (!second_inventory[second_slot]) Remove_Internal(second_type, second_slot);
 }
 
 void Inventory::Remove(Type type, uint32_t slot_index)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     Remove_Internal(type, slot_index);
+}
+
+void Inventory::GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t item_id) const
+{
+    uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
+    Type type = static_cast<Type>(type_code);
+
+    const auto& inventory = inventories_[static_cast<uint8_t>(type)];
+    for (const auto& val : inventory | std::views::values)
+    {
+        if (val->GetID() == item_id) out_items.push_back(val);
+    }
+}
+
+bool Inventory::AddItem(const std::shared_ptr<Item>& item)
+{
+    if (!item) return false;
+    
+    uint32_t item_id = item->GetID();
+    int32_t count = item->GetCount();
+    
+    const auto& item_data = DataManager::Get()->GetItem(item_id);
+    if (!item_data) return false;
+    
+    int32_t max_count = item_data->max_count;
+
+    uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
+    Type type = static_cast<Type>(type_code);
+
+    uint32_t slot_capacity = slot_capacity_[static_cast<uint8_t>(type)];
+
+    std::vector<std::shared_ptr<Item>> items;
+    GetItems(items, item_id);
+
+    if (!items.empty())
+    {
+        auto it = items.begin();
+        while (count > 0)
+        {
+            if (it == items.end()) break;
+
+            auto& existing_item = *it++;
+            int32_t existing_count = existing_item->GetCount();
+            if (existing_count < max_count)
+            {
+                int32_t space_left = max_count - existing_count;
+                int32_t to_add = std::min(count, space_left);
+                
+                existing_item->SetCount(existing_count + to_add);
+                count -= to_add;
+
+                ChangeItemCountPacket packet;
+                packet.inventory_type = static_cast<uint8_t>(type);
+                packet.slot_index = existing_item->GetSlot();
+                packet.count = existing_item->GetCount();
+                
+                if (auto player_character = player_character_.lock())
+                    player_character->SendPacket(packet);
+            }
+        }
+    }
+
+    while (count > 0)
+    {
+        uint32_t slot_index = FindFreeSlot(type);
+        if (slot_index == 0 || slot_index > slot_capacity)
+        {
+            item->SetCount(count);
+            return false;
+        }
+
+        int32_t to_add = std::min(count, max_count);
+        AddSlot(type, slot_index, item_id, to_add);
+        count -= to_add;
+
+        AddItemPacket packet;
+        packet.inventory_type = static_cast<uint8_t>(type);
+        packet.slot_index = slot_index;
+        packet.item_id = item_id;
+        packet.count = to_add;
+
+        if (auto player_character = player_character_.lock())
+            player_character->SendPacket(packet);
+    }
+    
+    return true;
 }
 
 bool Inventory::UpdateDatabase() const
@@ -133,9 +232,9 @@ bool Inventory::UpdateDatabase() const
                         statement->setUInt(1, player_character->GetAccountID());
                         statement->setUInt(2, player_character->GetObjectID());
                         statement->setUInt(3, i);
-                        statement->setUInt(4, slot.second.item_id);
+                        statement->setUInt(4, slot.second->GetID());
                         statement->setUInt(5, slot.first);
-                        statement->setInt(6, slot.second.count);
+                        statement->setInt(6, slot.second->GetCount());
                         statement->executeUpdate();
                     }
                 }

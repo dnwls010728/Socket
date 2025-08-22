@@ -21,8 +21,6 @@ void Level::Load()
 
 void Level::Unload(EndPlayReason type)
 {
-    AudioManager::Get()->StopAllSounds();
-    
     for (const auto& actor : actors_)
     {
         actor->EndPlay(type);

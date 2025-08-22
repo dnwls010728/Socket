@@ -33,7 +33,8 @@ protected:
 
 private:
     void GeneratePhysics(const tmx::ObjectGroup& kObject);
-    void GenerateSpawn(const tmx::ObjectGroup& kObject);
+    void GenerateSpawn(const tmx::ObjectGroup& kObject) const;
+    void GeneratePortal(const tmx::ObjectGroup& kObject) const;
     
     float ppu_;
 

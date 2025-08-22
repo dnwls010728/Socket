@@ -81,12 +81,6 @@ void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
 
     it->second.count = count;
-
-    ItemCountChangedEventData event_data;
-    event_data.slot = slot_index;
-    event_data.count = count;
-        
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemCountChanged, event_data);
 }
 
 void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot)
@@ -97,12 +91,6 @@ void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uin
 
     if (!inventories_[static_cast<uint8_t>(first_type)][first_slot].item_id) Remove(first_type, first_slot);
     if (!inventories_[static_cast<uint8_t>(second_type)][second_slot].item_id) Remove(second_type, second_slot);
-
-    ItemSwappedEventData event_data;
-    event_data.first_slot = first_slot;
-    event_data.second_slot = second_slot;
-    
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemSwapped, event_data);
 }
 
 void Inventory::Remove(Type type, uint32_t slot_index)
@@ -111,9 +99,13 @@ void Inventory::Remove(Type type, uint32_t slot_index)
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
     
     inventories_[static_cast<uint8_t>(type)].erase(it);
+}
 
-    ItemRemovedEventData event_data;
-    event_data.slot = slot_index;
-    
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemRemoved, event_data);
+void Inventory::SetColor(int32_t color)
+{
+    color_ = color;
+
+    ColorUpdateData event_data;
+    event_data.color = color;
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kColorUpdated, event_data);
 }

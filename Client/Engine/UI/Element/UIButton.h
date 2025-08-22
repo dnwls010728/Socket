@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UIImage.h"
 #include "Math/Color.h"
+#include "Misc/FunctionMacros.h"
 #include "UI/UIContainer.h"
 
 class UIImage;
@@ -28,30 +29,20 @@ public:
     void SetDisabled(bool is_disabled);
     void SetSprite(State state, UISprite* sprite, const std::wstring& frame_name);
     void SetDrawMode(UIImage::DrawMode draw_mode) const;
-
-    template<typename F, typename = std::enable_if_t<!std::is_same_v<Function<void(void)>, std::decay_t<F>>>>
-    void OnClick(F&& func);
-
-    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnClick(M* target, void(M::*func)(void));
-
-    template<typename M, typename = std::enable_if_t<std::is_class_v<M>>>
-    void OnClick(M* target, void(M::*func)(void) const);
-
-    void OnClick(void(*func)(void));
     
     void SetText(const std::wstring& text) const;
     void SetTextColor(const Math::Color& color) const;
 
     FORCEINLINE bool IsDisabled() const { return current_state_ == State::kDisabled; }
 
+    DEFINE_BIND_OVERLOADS(click_event_, OnClick, void, void)
+
 protected:
     void ChangeState(State state);
     
     virtual void Init() override;
 
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
-
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
     virtual bool OnMouseEnter() override;
     virtual bool OnMouseLeave() override;
 
@@ -65,21 +56,3 @@ protected:
     Function<void(void)> click_event_;
     
 };
-
-template <typename F, typename>
-void UIButton::OnClick(F&& func)
-{
-    click_event_ = std::forward<F>(func);
-}
-
-template <typename M, typename>
-void UIButton::OnClick(M* target, void(M::* func)())
-{
-    click_event_ = {target, func};
-}
-
-template <typename M, typename>
-void UIButton::OnClick(M* target, void(M::* func)() const)
-{
-    click_event_ = {target, func};
-}

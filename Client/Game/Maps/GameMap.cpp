@@ -11,6 +11,7 @@
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
 #include "Level/CameraManager.h"
+#include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
@@ -28,11 +29,6 @@ void GameMap::Load()
     Level::Load();
 
     UI::Get()->ChangeState(UIInGameState::StaticClass());
-    
-    Audio* bgm = AssetManager::Get()->Load<Audio>(L"Audio\\BGM\\Suspended Moments.mp3");
-    bgm->SetLoop(true);
-    
-    AudioManager::Get()->PlaySound2D(bgm);
 
     PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
     CameraManager* camera_manager = CameraManager::Get();
@@ -55,6 +51,8 @@ void GameMap::Load()
                 if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
                     element->SetTilemap(tilemap);
             }
+
+            GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
         }
     }
 #pragma endregion
@@ -73,6 +71,16 @@ void GameMap::Load()
     
     MapLoadCompletePacket packet;
     SessionSubsystem::Get()->SendPacket(packet);
+}
+
+void GameMap::Unload(EndPlayReason type)
+{
+    Level::Unload(type);
+    
+    AudioManager* audio_manager = AudioManager::Get();
+    // audio_manager->StopSound(ChannelGroup::kSE);
+    audio_manager->StopSound(ChannelGroup::kMobSE);
+    audio_manager->StopSound(ChannelGroup::kSkillSE);
 }
 
 RTTR_REGISTRATION

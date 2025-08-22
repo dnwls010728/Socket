@@ -1,8 +1,12 @@
 ﻿#include "pch.h"
 #include "UIInGameState.h"
 
-#include "Ui/UIPopup.h"
+#include "Scancode.h"
+#include "UI/Element/UIPopup.h"
+#include "UI/Element/UIContextMenu.h"
 #include "Element/UIChatBar.h"
+#include "Element/UIDeathFadeIn.h"
+#include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
 #include "Element/UIStatusBar.h"
 #include "Element/Inventory/UIInventory.h"
@@ -11,8 +15,12 @@
 
 UIInGameState::UIInGameState() :
     inventory_(nullptr),
-    item_tooltip_(nullptr)
+    item_tooltip_(nullptr),
+    context_menu_(nullptr)
 {
+    UIDeathFadeIn* death_fade_in = AddElement<UIDeathFadeIn>(UIDeathFadeIn::StaticClass(), L"DeathFadeIn");
+    death_fade_in->SetActive(false);
+    
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
     char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
@@ -28,6 +36,12 @@ UIInGameState::UIInGameState() :
     item_tooltip_->SetSize({ 322.f, 122.f });
     item_tooltip_->SetActive(false);
     item_tooltip_->SetIgnoreRayCast(true);
+
+    menu_ = AddElement<UIMenu>(UIMenu::StaticClass(), L"Menu");
+    menu_->SetActive(false);
+
+    context_menu_ = AddElement<UIContextMenu>(UIContextMenu::StaticClass(), L"ContextMenu");
+    context_menu_->SetActive(false);
 }
 
 void UIInGameState::Init()
@@ -35,38 +49,27 @@ void UIInGameState::Init()
     UIState::Init();
 }
 
-bool UIInGameState::OnKey(uint16_t key_code, bool is_pressed)
+bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
 {
-    bool is_handled = UIState::OnKey(key_code, is_pressed);
+    bool is_handled = UIState::OnKey(scancode, is_pressed);
     
     if (!is_handled && is_pressed)
     {
-        if (key_code == 'I' && !IsEditingText())
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyI) && !IsEditingText())
         {
             inventory_->SetActive(!inventory_->IsActive());
             is_handled = true;
         }
-
-        // TEST
-        if (key_code == 'F' && !IsEditingText())
-        {
-            UIPopup::ShowPopup(L"테스트 입니다. 아무말이나 입력하세요", PopupOption::OK | PopupOption::Cancel | PopupOption::Edit, [&](std::wstring input_text, PopupOption option)->bool
-            {
-                if (option == PopupOption::OK)
-                {
-                    UIPopup::ShowPopup(input_text.c_str(), PopupOption::No | PopupOption::OK | PopupOption::Cancel| PopupOption::Yes, [&](std::wstring input_text, PopupOption option)->bool
-                    {
-                        return true;
-                    });
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        if (key_code == VK_RETURN && !IsEditingText())
+        
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter) && !IsEditingText())
         {
             char_bar_->FocusInput();
+            is_handled = true;
+        }
+
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEscape) && !IsEditingText())
+        {
+            menu_->SetActive(!menu_->IsActive());
             is_handled = true;
         }
     }

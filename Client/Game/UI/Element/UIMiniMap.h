@@ -13,7 +13,7 @@ public:
     UIMiniMap(const std::wstring& name);
     virtual ~UIMiniMap() override = default;
 
-    void SetTilemap(const Tilemap* tilemap);
+    void SetTilemap(Tilemap* tilemap);
 
 protected:
     virtual void Init() override;
@@ -24,5 +24,9 @@ private:
     UIImage* map_;
 
     UIText* map_name_text_;
+
+    Tilemap* tilemap_;
+
+    Math::Vector2 marker_scale_;
     
 };

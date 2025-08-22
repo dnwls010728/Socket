@@ -39,11 +39,6 @@ void UIButton::SetDrawMode(UIImage::DrawMode draw_mode) const
     ui_image_->SetDrawMode(draw_mode);
 }
 
-void UIButton::OnClick(void(* func)())
-{
-    click_event_ = func;
-}
-
 void UIButton::SetText(const std::wstring& text) const
 {
     ui_text_->SetText(text);
@@ -73,22 +68,22 @@ void UIButton::Init()
     ui_image_->SetSprite(sprite.first, sprite.second);
 }
 
-UI::MouseEventResult UIButton::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+bool UIButton::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    UI::MouseEventResult result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
+    bool result = UIContainer::OnMouseButton(position, button, is_pressed, timestamp);
     if (current_state_ == State::kDisabled) return result;
 
     if (button == MouseButton::kLeft && is_pressed)
     {
         ChangeState(State::kPressed);
-        result.is_handled = true;
+        result = true;
         
         click_event_();
     }
     else if (button == MouseButton::kLeft && !is_pressed)
     {
         ChangeState(State::kNormal);
-        result.is_handled = true;
+        result = true;
     }
 
     return result;

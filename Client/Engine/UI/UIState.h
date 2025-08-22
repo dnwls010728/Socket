@@ -36,11 +36,10 @@ protected:
     virtual void Tick(float delta_time);
     virtual void Render();
 
-    virtual UI::MouseEventResult OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
-    virtual UI::MouseEventResult OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
-
+    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta);
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp);
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta);
-    virtual bool OnKey(uint16_t key_code, bool is_pressed);
+    virtual bool OnKey(uint32_t scancode, bool is_pressed);
     virtual bool OnChar(wchar_t character);
 
 private:

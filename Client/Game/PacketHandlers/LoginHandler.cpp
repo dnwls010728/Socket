@@ -7,7 +7,7 @@
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
 #include "UI/UILoginState.h"
-#include "UI/UIPopup.h"
+#include "UI/Element/UIPopup.h"
 #include "UI/UIState.h"
 #include "UI/Element/CharacterSelect/UICharacterSelect.h"
 #include "UI/Element/UILogin.h"
@@ -39,10 +39,11 @@ bool LoginHandler::Handle(Net::IPacket* packet)
     }
     else
     {
-        UIPopup::ShowPopup(received_packet->message, PopupOption::OK, [&](std::wstring input_text, PopupOption option)
-        {
-            return true;
-        });
+        UIPopup::PopupParam param;
+        param.caption = received_packet->message;
+        param.option = UIPopup::PopupOption::OK;
+        param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option){ return true;};
+        UIPopup::ShowPopup(param);
     }
 
     return true;

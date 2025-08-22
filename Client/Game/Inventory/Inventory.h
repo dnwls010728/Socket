@@ -29,11 +29,11 @@ public:
     void ChangeCount(Type type, uint32_t slot_index, int32_t count);
     void Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot);
     void Remove(Type type, uint32_t slot_index);
+    void SetColor(int32_t color);
 
     FORCEINLINE void SetSlotCapacity(Type type, uint32_t capacity) { slot_capacity_[static_cast<uint8_t>(type)] = capacity; }
     FORCEINLINE uint32_t GetSlotCapacity(Type type) const { return slot_capacity_[static_cast<uint8_t>(type)]; }
 
-    FORCEINLINE void SetColor(int32_t color) { color_ = color; }
     FORCEINLINE int32_t GetColor() const { return color_; }
 
 private:

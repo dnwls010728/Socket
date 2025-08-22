@@ -7,17 +7,6 @@ class UIState;
 class UI : public Singleton<UI>
 {
 public:
-    enum class CursorState : uint8_t
-    {
-        kIdle = 0
-    };
-
-    struct MouseEventResult
-    {
-        bool is_handled;
-        CursorState cursor_state;
-    };
-    
     UI();
     virtual ~UI() override = default;
 
@@ -38,9 +27,7 @@ private:
     void Render();
     void OnEvent(const Event& event);
 
-    CursorState cursor_state_;
-    
-    std::unordered_map<CursorState, UISprite*> cursor_sprites_;
+    UISprite* cursor_sprite_;
 
     Math::Vector2 last_position_;
     Math::Vector2 cursor_position_;

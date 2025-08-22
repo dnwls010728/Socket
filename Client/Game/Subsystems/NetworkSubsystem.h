@@ -22,7 +22,7 @@ public:
     virtual void Tick(float delta_time) override;
 
     void SendPacket(Net::IPacket& packet);
-    void ChangeMap(int32_t map_id);
+    void ChangeMap(int32_t portal_id);
     void RegisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
     void UnregisterNetworkActor(const std::shared_ptr<NetworkActor>& actor);
     
@@ -43,7 +43,7 @@ public:
 private:
     friend class MapSetupHandler;
     friend class ChangeMapHandler;
-    friend class SpawnObjectHandler;
+    friend class ObjectSpawnHandler;
 
     std::unordered_map<uint32_t, std::shared_ptr<NetworkActor>> network_actors_;
 
