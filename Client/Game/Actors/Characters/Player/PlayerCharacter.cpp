@@ -113,7 +113,7 @@ void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, fl
         PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
     }
 
-    invincible_time_ = server_time + 2.f;
+    invincible_time_ = server_time + 1.f;
 }
 
 void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position)

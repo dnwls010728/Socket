@@ -506,7 +506,7 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
     packet.server_time = Net::GetClientTime();
     map_->SendPacket(packet);
 
-    is_invincible_.Set(2.f);
+    is_invincible_.Set(1.f);
 
     if (hp_ <= 0)
     {
