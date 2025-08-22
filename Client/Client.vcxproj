@@ -298,6 +298,7 @@
     <ClInclude Include="Game\PacketHandlers\PartyInviteNotifyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyJoinHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PopupHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
@@ -712,6 +713,7 @@
     <ClCompile Include="Game\PacketHandlers\PartyInviteNotifyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyJoinHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />

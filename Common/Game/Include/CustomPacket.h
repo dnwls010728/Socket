@@ -345,6 +345,18 @@ struct TakeDamagePacket : public Net::IPacket
     REGISTER_PACKET(TakeDamagePacket, 401)
 };
 
+struct PlayerDeathPacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(PlayerDeathPacket, 402)
+};
+
+struct PlayerRespawnPacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(PlayerRespawnPacket, 403)
+};
+
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
     PlayerStat mask = PlayerStat::kNone;

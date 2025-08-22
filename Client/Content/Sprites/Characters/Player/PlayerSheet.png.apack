@@ -28,3 +28,16 @@ animations:
     loop: true
     frames:
       - PlayerSheet_70
+  - name: Die
+    frame_rate: 10
+    loop: true
+    frames:
+      - PlayerSheet_574
+      - PlayerSheet_575
+      - PlayerSheet_576
+      - PlayerSheet_577
+      - PlayerSheet_578
+      - PlayerSheet_579
+      - PlayerSheet_580
+      - PlayerSheet_581
+      - PlayerSheet_582

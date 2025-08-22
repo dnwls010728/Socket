@@ -84,6 +84,8 @@ protected:
     int32_t hp_;
     int32_t max_hp_;
 
+    bool is_dead_;
+
     std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;

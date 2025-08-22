@@ -28,6 +28,7 @@
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "PacketHandlers/PartyInviteNotifyHandler.h"
 #include "PacketHandlers/PartyJoinHandler.h"
+#include "PacketHandlers/PlayerDeathHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
@@ -151,6 +152,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         TakeDamagePacket::StaticPacketID,
         std::make_unique<TakeDamageHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerDeathPacket::StaticPacketID,
+        std::make_unique<PlayerDeathHandler>()
     );
 
     handlers_.emplace(

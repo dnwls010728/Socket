@@ -25,6 +25,7 @@ PlayerCharacter::PlayerCharacter() :
     lv_(1),
     hp_(350),
     max_hp_(350),
+    is_dead_(false),
     map_transitioning_(false),
     exp_(0),
     color_(0),
@@ -347,6 +348,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             map_->OnAttack(object_id_, attack_request->object_id);
         }
         break;
+
+    case PlayerRespawnPacket::StaticPacketID:
+        {
+            hp_ = 50;
+            
+            PlayerStatsUpdatePacket stats_update_packet;
+            stats_update_packet.mask |= PlayerStat::kHP;
+            stats_update_packet.hp = hp_;
+            SendPacket(stats_update_packet);
+            
+            Respawn();
+        }
+        break;
         
     case PartyInviteRequest::StaticPacketID:
         {
@@ -482,13 +496,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
-    if (hp_ <= 0 || is_invincible_) return;
+    if (is_dead_ || is_invincible_) return;
     hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
-    if (hp_ == 0)
-    {
-        Respawn();
-        return;
-    }
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;
@@ -498,6 +507,14 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
     map_->SendPacket(packet);
 
     is_invincible_.Set(2.f);
+
+    if (hp_ <= 0)
+    {
+        is_dead_ = true;
+        
+        PlayerDeathPacket death_packet;
+        SendPacket(death_packet);
+    }
 }
 
 bool PlayerCharacter::Disconnect()
@@ -551,6 +568,7 @@ void PlayerCharacter::Respawn()
     Portal* return_portal = return_map->FindPortal(0);
     if (!return_portal) return;
 
+    is_dead_ = false;
     ChangeMap(return_map, return_portal);
 }
 
@@ -565,6 +583,23 @@ void PlayerCharacter::ExitMap()
 
 void PlayerCharacter::UpdateDatabase()
 {
+    uint32_t map_id = 0;
+    if (map_) map_id = map_->GetMapID();
+    
+    if (is_dead_)
+    {
+        hp_ = 50;
+
+        if (Map* return_map = World::Get()->GetMap(map_->GetReturnMapID()))
+        {
+            if (Portal* return_portal = return_map->FindPortal(0))
+            {
+                map_id = return_map->GetMapID();
+                position_ = return_portal->GetPosition() + Math::Vector2::Up();
+            }
+        }
+    }
+    
     if (inventory_) inventory_->UpdateDatabase();
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
@@ -578,7 +613,7 @@ void PlayerCharacter::UpdateDatabase()
             statement->setInt(2, max_hp_);
             statement->setInt(3, exp_.load());
             statement->setInt(4, lv_);
-            statement->setInt(5, map_->GetMapID());
+            statement->setInt(5, map_id);
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
             statement->setInt(8, color_.load());
