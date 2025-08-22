@@ -57,6 +57,10 @@ public:
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
 
+    inline int32_t GetLv() const { return lv_; }
+    inline int32_t GetHP() const { return hp_; }
+    inline int32_t GetMaxHP() const { return max_hp_; }
+
 protected:
     friend class ServerManager;
     friend class Map;

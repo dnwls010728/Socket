@@ -34,6 +34,7 @@ public:
     
     inline Session* GetSession() const { return session_; }
     inline uint32_t GetAccountID() const { return account_id_; }
+    inline std::shared_ptr<PlayerCharacter> GetPlayerCharacter() const { return player_character_; }
 
 private:
     Session* session_;

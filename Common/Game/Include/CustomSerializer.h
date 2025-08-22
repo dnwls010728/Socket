@@ -38,4 +38,12 @@ namespace Net
 		v.count
 		)
 
+    SERIALIZER_EXTEND(PartyMemberInfo,
+        v.player_id,
+        v.name,
+        v.lv,
+        v.hp,
+        v.max_hp
+        )
+
 } // namespace Net

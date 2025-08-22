@@ -450,14 +450,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             
             PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
             SetPartyID(party->GetPartyID());
-
-            PartyJoinPacket join_packet;
-            join_packet.party_name = party->GetPartyName();
-            join_packet.party_id = GetPartyID();
-            join_packet.host_id = party->GetHost();
-            SendPacket(join_packet);
-
-            // 임시 알림
+            
             PopupPacket join_msg;
             join_msg.text = GetName() + L" 님이 파티에 합류했습니다.";
             PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, GetAccountID());
@@ -480,12 +473,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PopupPacket popup_packet;
             popup_packet.text = L"파티가 정상적으로 생성되었습니다.";
             SendPacket(popup_packet);
-
-            PartyJoinPacket join_packet;
-            join_packet.party_id = party->GetPartyID();
-            join_packet.party_name = request->party_name;
-            join_packet.host_id = GetAccountID();
-            SendPacket(join_packet);
         }
         break;
         
@@ -515,6 +502,16 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         PlayerDeathPacket death_packet;
         SendPacket(death_packet);
     }
+    if (party_id_ != 0)
+    {
+        PartyMemberStatChangedPacket stat_packet;
+        stat_packet.member_id = account_id_;
+        stat_packet.stat = PartyStatType::kHP;
+        stat_packet.value = std::to_wstring(hp_);
+        PartyManager::Get()->SendPacket(party_id_, stat_packet);
+    }
+
+    is_invincible_.Set(2.f);
 }
 
 bool PlayerCharacter::Disconnect()
@@ -683,6 +680,24 @@ void PlayerCharacter::GainExp(int32_t amount)
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
 
     SendPacket(packet);
+
+    if (party_id_ != 0)
+    {
+        PartyMemberStatChangedPacket stat_packet;
+        stat_packet.member_id = account_id_;
+
+        stat_packet.stat = PartyStatType::kLv;
+        stat_packet.value = std::to_wstring(lv_);
+        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
+
+        stat_packet.stat = PartyStatType::kHP;
+        stat_packet.value = std::to_wstring(hp_);
+        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
+
+        stat_packet.stat = PartyStatType::kMaxHP;
+        stat_packet.value = std::to_wstring(max_hp_);
+        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
+    }
 }
 
 void PlayerCharacter::Tick(float delta_time)

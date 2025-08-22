@@ -298,6 +298,9 @@
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyInviteNotifyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyJoinHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
@@ -316,6 +319,7 @@
     <ClInclude Include="Game\Subsystems\Publisher\PublisherSubsystem.h" />
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\PartySubsystem.h" />
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSelect.h" />
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSlot.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
@@ -330,6 +334,8 @@
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIPopup.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
     <ClInclude Include="Game\UI\UILoginState.h" />
@@ -714,6 +720,9 @@
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyInviteNotifyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyJoinHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
@@ -732,6 +741,7 @@
     <ClCompile Include="Game\Subsystems\Publisher\PublisherSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\PartySubsystem.cpp" />
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSelect.cpp" />
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
@@ -747,6 +757,8 @@
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIPopup.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />
     <ClCompile Include="Game\UI\UILoginState.cpp" />
     <ClCompile Include="Game\Utils\TimedBool.cpp" />

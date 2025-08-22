@@ -234,6 +234,12 @@
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
+    <ClCompile Include="Game\Subsystems\PartySubsystem.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -819,6 +825,12 @@
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
+    <ClInclude Include="Game\Subsystems\PartySubsystem.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">

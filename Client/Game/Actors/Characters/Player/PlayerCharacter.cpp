@@ -33,6 +33,7 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Time/Time.h"
@@ -54,7 +55,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     invincible_time_(0.f),
     prev_animation{0,},
     color_(Math::Color::White),
-    party_id_(0),
     bonus_jumps_(1)
 {
     SetLayer(ActorLayer::kPlayer);
@@ -364,7 +364,7 @@ void PlayerCharacter::Tick(float delta_time)
                         menu->Clear();
                         menu->AddItem(L"파티에 초대", [this, player]()
                            {
-                                if (party_id_ == 0)
+                                if (PartySubsystem::Get()->IsJoinedParty() == false)
                                 {
                                     UIPopup::PopupParam param;
                                     param.caption = L"현재 파티에 소속되어 있지 않습니다.\n 파티를 생성하시겠습니까?";

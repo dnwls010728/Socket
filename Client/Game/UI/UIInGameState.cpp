@@ -7,6 +7,7 @@
 #include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
 #include "Element/UIStatusBar.h"
+#include "Element/UIPartyPanel.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
 #include "Subsystems/PlayerSubsystem.h"
@@ -14,7 +15,8 @@
 UIInGameState::UIInGameState() :
     inventory_(nullptr),
     item_tooltip_(nullptr),
-    context_menu_(nullptr)
+    context_menu_(nullptr),
+    party_panel_(nullptr)
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
@@ -25,6 +27,8 @@ UIInGameState::UIInGameState() :
     inventory_->SetActive(false);
     
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
+    
+    party_panel_ = AddElement<UIPartyPanel>(UIPartyPanel::StaticClass(), L"PartyPanel");
 
     item_tooltip_ = AddElement<UIItemTooltip>(UIItemTooltip::StaticClass(), L"ItemTooltip");
     item_tooltip_->SetAbsolutePosition({ 100.f, 100.f });

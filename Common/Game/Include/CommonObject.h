@@ -119,3 +119,26 @@ enum class MobState : uint8_t
     kHit,
     kDie
 };
+
+struct PartyMemberInfo
+{
+    uint32_t player_id;
+    std::wstring name;
+    int32_t lv;
+    int32_t hp;
+    int32_t max_hp;
+};
+
+enum class PartyMemberChangeType : uint8_t
+{
+    kJoin = 0,
+    kLeave,
+    kUpdate
+};
+
+enum class PartyStatType : uint8_t
+{
+    kHP = 0,
+    kMaxHP,
+    kLv
+};

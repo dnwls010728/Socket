@@ -412,7 +412,33 @@ struct PartyJoinPacket : public Net::IPacket
     uint32_t party_id;
     std::wstring party_name;
     uint32_t host_id;
+    std::vector<PartyMemberInfo> members;
     
-    SERIALIZABLE_FIELDS(party_id, party_name, host_id)
+    SERIALIZABLE_FIELDS(party_id, party_name, host_id, members)
     REGISTER_PACKET(PartyJoinPacket, 605)
+};
+
+struct PartyMemberChangedPacket : public Net::IPacket
+{
+    PartyMemberChangeType change;
+    PartyMemberInfo member;
+
+    SERIALIZABLE_FIELDS(change, member)
+    REGISTER_PACKET(PartyMemberChangedPacket, 606)
+};
+
+struct PartyLeavePacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(PartyLeavePacket, 607)
+};
+
+struct PartyMemberStatChangedPacket : public Net::IPacket
+{
+    uint32_t member_id;
+    PartyStatType stat;
+    std::wstring value;
+
+    SERIALIZABLE_FIELDS(member_id, stat, value)
+    REGISTER_PACKET(PartyMemberStatChangedPacket, 608)
 };
