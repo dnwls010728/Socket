@@ -103,23 +103,31 @@ void Map::AddPlayers()
 
 void Map::RemovePlayers()
 {
-    std::lock_guard<std::mutex> lock(player_mutex_);
+    std::vector<uint32_t> removed_players;
 
-    while (!pending_remove_players_.empty())
     {
-        uint32_t unique_key = pending_remove_players_.front();
-        pending_remove_players_.pop();
+        std::lock_guard<std::mutex> lock(player_mutex_);
 
-        players_.erase(unique_key);
+        while (!pending_remove_players_.empty())
+        {
+            uint32_t unique_key = pending_remove_players_.front();
+            pending_remove_players_.pop();
 
+            players_.erase(unique_key);
+            removed_players.push_back(unique_key);
+        }
+    }
+
+    for (uint32_t unique_key : removed_players)
+    {
         ObjectDestroyInfo info;
         info.type = ObjectType::kPlayer;
         info.object_id = unique_key;
-        
+
         ObjectDestroyPacket destroy_player_packet;
         destroy_player_packet.object_info = info;
+
         SendPacket(destroy_player_packet);
-        
     }
 }
 
