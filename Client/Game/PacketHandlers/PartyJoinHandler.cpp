@@ -12,7 +12,8 @@ bool PartyJoinHandler::Handle(Net::IPacket* packet)
     PartyJoinPacket* join_packet = dynamic_cast<PartyJoinPacket*>(packet);
 
     auto subsystem = PartySubsystem::Get();
-    subsystem->SetPartyID(join_packet->party_id);
+    subsystem->Join(join_packet->party_id, join_packet->party_name);
+    subsystem->SetHostMemberID(join_packet->host_id);
 
     for (auto member : join_packet->members)
     {

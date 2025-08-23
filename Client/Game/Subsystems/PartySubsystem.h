@@ -15,11 +15,13 @@ public:
     void DeleteMember(uint32_t id);
     void UpdateMemberStat(uint32_t id, PartyStatType stat, const std::wstring& value);
     void Clear();
+
+    void Join(uint32_t id, const std::wstring& party_name);
+    void Leave();
     
     FORCEINLINE bool IsJoinedParty() const { return party_id_ != 0; }
     
     FORCEINLINE uint32_t GetPartyID() const { return party_id_; }
-    FORCEINLINE void SetPartyID(uint32_t party_id) { party_id_ = party_id; }
 
     FORCEINLINE std::wstring GetPartyName() const { return party_name_; }
     FORCEINLINE void SetPartyName(const std::wstring& name) { party_name_ = name; }
@@ -35,6 +37,8 @@ public:
 private:
     void UpdateUIAddOrUpdate(const PartyMemberInfo& info);
     void UpdateUIRemove(uint32_t id);
+
+    FORCEINLINE void SetPartyID(uint32_t party_id) { party_id_ = party_id; }
 
     std::unordered_map<uint32_t, PartyMemberInfo> members_;
     uint32_t party_id_;

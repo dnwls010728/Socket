@@ -13,11 +13,16 @@ public:
 
     void Update(const PartyMemberInfo& info);
 
+    
+    
 protected:
     virtual void Render() override;
-
+    virtual void Tick(float delta_time) override;
 private:
     UIText* name_text_;
     UIText* hp_text_;
     PartyMemberInfo info_;
+
+    float timer_;
+    float hp_effect_ratio_;
 };

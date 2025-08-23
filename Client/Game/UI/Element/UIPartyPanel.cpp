@@ -2,11 +2,13 @@
 #include "UIPartyPanel.h"
 
 #include "UIPartyMemberRow.h"
+#include "Asset/AssetManager.h"
+#include "UI/Element/UIImage.h"
+#include "Windows/DX/UISprite.h"
 
 UIPartyPanel::UIPartyPanel(const std::wstring& name)
-    : UIContainer(name), rows_()
+    : UIContainer(name), rows_() 
 {
-    SetAbsolutePosition({ 0.f, 100.f });
     SetSize({ 200.f, 0.f });
 }
 

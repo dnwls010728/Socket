@@ -6,6 +6,6 @@
 
 bool PartyLeaveHandler::Handle(Net::IPacket* packet)
 {
-    PartySubsystem::Get()->Clear();
+    PartySubsystem::Get()->Leave();
     return true;
 }

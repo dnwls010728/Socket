@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 class UIPartyMemberRow;
+class UIImage;
 
 class UIPartyPanel : public UIContainer
 {
@@ -21,4 +22,5 @@ private:
     void RefreshLayout();
 
     std::unordered_map<uint32_t, UIPartyMemberRow*> rows_;
+    UIImage* background_;
 };

@@ -375,6 +375,15 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             stats_update_packet.mask |= PlayerStat::kHP;
             stats_update_packet.hp = hp_;
             SendPacket(stats_update_packet);
+
+            if (party_id_ != 0)
+            {
+                PartyMemberStatChangedPacket party_member_stat_changed_packet;
+                party_member_stat_changed_packet.member_id = object_id_;
+                party_member_stat_changed_packet.stat = PartyStatType::kHP;
+                party_member_stat_changed_packet.value = std::to_wstring(hp_);
+                PartyManager::Get()->SendPacket(party_id_, party_member_stat_changed_packet);
+            }
             
             Respawn();
         }

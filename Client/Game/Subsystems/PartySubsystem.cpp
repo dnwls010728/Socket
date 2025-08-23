@@ -52,12 +52,37 @@ void PartySubsystem::Clear()
     members_.clear();
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
-        if (auto* panel = state->FindElement<UIPartyPanel>(L"PartyPanel"))
-            panel->Clear();
+        state->GetPartyPanel()->Clear();
     }
     SetPartyID(0);
     SetHostMemberID(0);
     SetPartyName(L"");
+}
+
+void PartySubsystem::Join(uint32_t id, const std::wstring& party_name)
+{
+    if (party_id_ == id) return;
+
+    Clear();
+    SetPartyID(id);
+    SetPartyName(party_name);
+
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    {
+        state->GetPartyPanel()->SetActive(true);
+    }
+}
+
+void PartySubsystem::Leave()
+{
+    if (party_id_ == 0) return;
+
+    Clear();
+
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    {
+        state->GetPartyPanel()->SetActive(false);
+    }
 }
 
 PartySubsystem* PartySubsystem::Get()
@@ -69,8 +94,7 @@ void PartySubsystem::UpdateUIAddOrUpdate(const PartyMemberInfo& info)
 {
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
-        if (auto* panel = state->FindElement<UIPartyPanel>(L"PartyPanel"))
-            panel->AddOrUpdateMember(info);
+        state->GetPartyPanel()->AddOrUpdateMember(info);
     }
 }
 
@@ -78,8 +102,7 @@ void PartySubsystem::UpdateUIRemove(uint32_t id)
 {
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
-        if (auto* panel = state->FindElement<UIPartyPanel>(L"PartyPanel"))
-            panel->RemoveMember(id);
+        state->GetPartyPanel()->RemoveMember(id);
     }
 }
 

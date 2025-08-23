@@ -29,6 +29,8 @@ UIInGameState::UIInGameState() :
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
     
     party_panel_ = AddElement<UIPartyPanel>(UIPartyPanel::StaticClass(), L"PartyPanel");
+    party_panel_->SetAbsolutePosition({EngineSettings::Get()->GetScreenWidth() - party_panel_->GetSize().x - 25, 25});
+    party_panel_->SetActive(false);
 
     item_tooltip_ = AddElement<UIItemTooltip>(UIItemTooltip::StaticClass(), L"ItemTooltip");
     item_tooltip_->SetAbsolutePosition({ 100.f, 100.f });
