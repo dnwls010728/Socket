@@ -162,6 +162,11 @@ void PostProcessShader::SetGamma(float gamma)
     constant_buffer_.GetBufferData().gamma = gamma;
 }
 
+void PostProcessShader::UseGrayscale(BOOL use)
+{
+    constant_buffer_.GetBufferData().use_grayscale = use;
+}
+
 void PostProcessShader::UpdateParameters()
 {
     PixelShader::UpdateParameters();

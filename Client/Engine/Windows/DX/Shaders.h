@@ -109,6 +109,7 @@ public:
     void SetBlurRadius(float radius);
     void SetVignette(float strength);
     void SetGamma(float gamma);
+    void UseGrayscale(BOOL use);
 
 protected:
     virtual void UpdateParameters() override;
@@ -120,7 +121,8 @@ private:
         float blur_radius = 1.0f;
         float vignette_strength = 0.0f;
         float gamma = 1.0f;
-        float padding[3];
+        BOOL use_grayscale = FALSE;
+        BOOL padding[2];
     };
 
     ConstantBuffer<Constants> constant_buffer_;

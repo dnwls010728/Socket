@@ -81,7 +81,7 @@ public:
 
     void BeginRTT();
     void EndRTT();
-    void DrawPostProcess(float blur_radius, float vignette_strength, float gamma);
+    void DrawPostProcess(float blur_radius = 0.f, float vignette_strength = 0.f, float gamma = 1.f, bool use_grayscale = false);
 
     FORCEINLINE const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
 

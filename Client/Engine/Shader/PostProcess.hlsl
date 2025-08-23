@@ -1,41 +1,60 @@
 Texture2D sceneTex : register(t0);
 SamplerState samLinear : register(s0);
 
-cbuffer PostCB : register(b0)
+cbuffer constant : register(b0)
 {
-	float2 resolution;
-	float   blurRadius;        // 0.5~1.5
-	float   vignetteStrength;  // 0~1
-	float   gamma;             // <1 for dimming
+    float2 resolution; // (width, height)
+    float blurRadius; // 0.5 ~ 2.0 (픽셀 단위)
+    float vignetteStrength; // 0 ~ 1
+    float gamma; // >1 = 어둡게, <1 = 밝게
+
+    bool use_grayscale; // 흑백
+    bool padding[2]; // 16바이트 정렬
+}
+
+static const float3 LUMA = float3(0.2126, 0.7152, 0.0722);
+
+float3 SampleColor(float2 uv)
+{
+    return sceneTex.Sample(samLinear, uv).rgb; // sRGB 리소스면 자동 선형화
+}
+
+struct PS_INPUT
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+    float2 texcoord : TEXCOORD;
 };
 
-float4 main(float4 pos : SV_POSITION, float2 uv : TEXCOORD) : SV_Target
+float4 main(PS_INPUT input) : SV_Target
 {
-	// 1) Rec.709 그레이스케일
-	float3 col = sceneTex.Sample(samLinear, uv).rgb;
-	float gray = dot(col, float3(0.2126, 0.7152, 0.0722));
-	col = float3(gray, gray, gray);
+    float2 texel = rcp(resolution);
+    float2 step = texel * blurRadius;
+    float2 uv = input.texcoord;
 
-	// 2) 비네팅
-	float2 centered = uv * 2.0 - 1.0;
-	float vignette = saturate(1.0 - dot(centered, centered) * vignetteStrength);
-	col *= vignette;
+    // 3x3 가우시안 유사 커널: [1 2 1; 2 5 2; 1 2 1] / 17
+    float3 acc = SampleColor(uv) * 5.0;
+    acc += SampleColor(uv + float2(step.x, 0.0)) * 2.0;
+    acc += SampleColor(uv + float2(-step.x, 0.0)) * 2.0;
+    acc += SampleColor(uv + float2(0.0, step.y)) * 2.0;
+    acc += SampleColor(uv + float2(0.0, -step.y)) * 2.0;
+    acc += SampleColor(uv + float2(step.x, step.y)) * 1.0;
+    acc += SampleColor(uv + float2(-step.x, step.y)) * 1.0;
+    acc += SampleColor(uv + float2(step.x, -step.y)) * 1.0;
+    acc += SampleColor(uv + float2(-step.x, -step.y)) * 1.0;
+    float3 col = acc * (1.0 / 17.0);
 
-	// 3) 간단한 가우시안 블러 (9-tap)
-	float2 texel = 1.0 / resolution;
-	float3 blur = col * 0.2941176;                  // center weight
-	blur += sceneTex.Sample(samLinear, uv + texel * float2( 1, 0)).rgb * 0.117647;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2(-1, 0)).rgb * 0.117647;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2( 0, 1)).rgb * 0.117647;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2( 0,-1)).rgb * 0.117647;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2( 1, 1)).rgb * 0.0588235;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2(-1, 1)).rgb * 0.0588235;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2( 1,-1)).rgb * 0.0588235;
-	blur += sceneTex.Sample(samLinear, uv + texel * float2(-1,-1)).rgb * 0.0588235;
-	col = blur;
+    // 비네트 (블러 후 적용 권장)
+    float2 p = uv * 2.0 - 1.0; // [-1,1]^2
+    float v = saturate(1.0 - dot(p, p) * vignetteStrength);
+    col *= v;
 
-	// 4) 감마 낮춰서 디밍
-	col = pow(col, gamma);      // gamma < 1.0 → 어두워짐
+    float gray = dot(col, LUMA);
+    float t = use_grayscale ? 1.0 : 0.0;
+    col = lerp(col, gray.xxx, t);
 
-	return float4(col, 1.0);
+    // 감마/노출: 선형 공간에서 마지막에
+    col = pow(saturate(col), gamma); // gamma>1이면 어두워짐
+
+    return float4(col, 1.0);
 }
