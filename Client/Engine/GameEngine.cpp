@@ -2,6 +2,7 @@
 #include "GameEngine.h"
 
 #include "GameInstance.h"
+#include "PostProcessingSettings.h"
 #include "Level/World.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
@@ -121,7 +122,16 @@ void GameEngine::Render(float alpha)
     Renderer::Get()->EndRTT();
     
     Renderer::Get()->BeginRender(game_window_);
-    Renderer::Get()->DrawPostProcess();
+
+    PostProcessingSettings* settings = PostProcessingSettings::Get();
+    
+    float blur_radius = settings->GetBlurRadius();
+    float vignette_strength = settings->GetVignetteStrength();
+    float gamma = settings->GetGamma();
+    
+    bool use_grayscale = settings->UseGrayscale();
+    
+    Renderer::Get()->DrawPostProcess(blur_radius, vignette_strength, gamma, use_grayscale);
     Renderer::Get()->BeginRenderD2D(game_window_);
     UI::Get()->Render();
     Renderer::Get()->EndRenderD2D();

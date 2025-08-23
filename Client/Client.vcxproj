@@ -193,6 +193,7 @@
     <ClInclude Include="Engine\Physics\Physics2D.h" />
     <ClInclude Include="Engine\Asset\Asset.h" />
     <ClInclude Include="Engine\Asset\AssetManager.h" />
+    <ClInclude Include="Engine\PostProcessingSettings.h" />
     <ClInclude Include="Engine\Singleton.h" />
     <ClInclude Include="Engine\PhysicsDebugDrawHelper.h" />
     <ClInclude Include="Engine\Scancode.h" />
@@ -622,6 +623,7 @@
     <ClCompile Include="Engine\Asset\Asset.cpp" />
     <ClCompile Include="Engine\Asset\AssetManager.cpp" />
     <ClCompile Include="Engine\PhysicsDebugDrawHelper.cpp" />
+    <ClCompile Include="Engine\PostProcessingSettings.cpp" />
     <ClCompile Include="Engine\Subsystem\GameInstanceSubsystem.cpp" />
     <ClCompile Include="Engine\Subsystem\Subsystem.cpp" />
     <ClCompile Include="Engine\Subsystem\Tickable.cpp" />

@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "PostProcessingSettings.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
@@ -14,6 +15,8 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
 {
     PlayerDeathPacket* received_packet = dynamic_cast<PlayerDeathPacket*>(packet);
     if (!received_packet) return false;
+
+    PostProcessingSettings::Get()->SetUseGrayscale(true);
 
     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\die.mp3");
     if (audio) AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
@@ -28,6 +31,8 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     {
         if (option == UIPopup::PopupOption::OK)
         {
+            PostProcessingSettings::Get()->SetUseGrayscale(false);
+            
             PlayerRespawnPacket respawn_packet;
             NetworkSubsystem::Get()->SendPacket(respawn_packet);
         }

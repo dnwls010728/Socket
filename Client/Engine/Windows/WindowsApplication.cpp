@@ -171,8 +171,8 @@ uint32_t WindowsApplication::ProcessMessage(HWND hWnd, UINT message, WPARAM wPar
 
         if (message == WM_ACTIVATE)
         {
-            // if (wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE) HideCursor();
-            // else ShowCursor();
+            if (wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE) HideCursor();
+            else ShowCursor();
         }
         
         if (message == WM_DESTROY)
