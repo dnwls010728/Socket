@@ -380,7 +380,7 @@ bool Renderer::CreatePostProcessResources()
     if (FAILED(hr)) return false;
 
     post_vertex_shader_ = std::make_shared<DefaultVertexShader>();
-    post_pixel_shader_ = std::make_shared<DefaultPixelShader>();
+    post_pixel_shader_ = std::make_shared<PostProcessShader>();
 
     return post_vertex_shader_ && post_pixel_shader_;
 }
@@ -414,11 +414,10 @@ void Renderer::DrawPostProcess(float blur_radius, float vignette_strength, float
     post_vertex_shader_->BindParameters();
 
     post_pixel_shader_->BindShader();
-    // post_pixel_shader_->SetResolution({static_cast<float>(rtt_width_), static_cast<float>(rtt_height_)});
-    // post_pixel_shader_->SetBlurRadius(blur_radius);
-    // post_pixel_shader_->SetVignette(vignette_strength);
-    // post_pixel_shader_->SetGamma(gamma);
-    post_pixel_shader_->SetColor(Math::Color::White);
+    post_pixel_shader_->SetResolution({static_cast<float>(rtt_width_), static_cast<float>(rtt_height_)});
+    post_pixel_shader_->SetBlurRadius(blur_radius);
+    post_pixel_shader_->SetVignette(vignette_strength);
+    post_pixel_shader_->SetGamma(gamma);
     post_pixel_shader_->BindParameters();
 
     d3d_device_context_->PSSetSamplers(0, 1, post_sampler_state_.GetAddressOf());

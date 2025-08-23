@@ -158,7 +158,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11SamplerState> post_sampler_state_;
     
     std::shared_ptr<DefaultVertexShader> post_vertex_shader_;
-    std::shared_ptr<DefaultPixelShader> post_pixel_shader_;
+    std::shared_ptr<PostProcessShader> post_pixel_shader_;
     
     uint32_t rtt_width_ = 0;
     uint32_t rtt_height_ = 0;
