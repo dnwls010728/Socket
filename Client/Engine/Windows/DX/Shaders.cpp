@@ -134,3 +134,38 @@ void DefaultPixelShader::UpdateParameters()
     Renderer::Get()->GetDeviceContext()->PSSetConstantBuffers(0, 1, constant_buffer_.GetResourceAddress());
     constant_buffer_.UpdateBuffer();
 }
+
+PostProcessShader::PostProcessShader()
+{
+    CHECK(constant_buffer_.Create());
+    bool r = Create(L".\\Content\\Shaders\\PostProcess.cso");
+    CHECK(r);
+}
+
+void PostProcessShader::SetResolution(const DirectX::XMFLOAT2& res)
+{
+    constant_buffer_.GetBufferData().resolution = res;
+}
+
+void PostProcessShader::SetBlurRadius(float radius)
+{
+    constant_buffer_.GetBufferData().blur_radius = radius;
+}
+
+void PostProcessShader::SetVignette(float strength)
+{
+    constant_buffer_.GetBufferData().vignette_strength = strength;
+}
+
+void PostProcessShader::SetGamma(float gamma)
+{
+    constant_buffer_.GetBufferData().gamma = gamma;
+}
+
+void PostProcessShader::UpdateParameters()
+{
+    PixelShader::UpdateParameters();
+
+    Renderer::Get()->GetDeviceContext()->PSSetConstantBuffers(0, 1, constant_buffer_.GetResourceAddress());
+    constant_buffer_.UpdateBuffer();
+}
