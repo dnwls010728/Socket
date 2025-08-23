@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 #include "OutlineRenderer.h"
+#include "Shaders.h"
 #include "UISprite.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
@@ -19,6 +20,7 @@ Renderer::Renderer() :
     d2d_viewports_(),
     current_viewport_(nullptr),
     current_d2d_viewport_(nullptr),
+    
     font_set_builder_(nullptr),
     text_formats_()
 {
@@ -37,7 +39,8 @@ bool Renderer::Init()
     if (FAILED(hr)) return false;
 
     // TEST
-    // if (!CreateRenderToTexture()) return false;
+    if (!CreateRenderToTexture()) return false;
+    if (!CreatePostProcessResources()) return false;
 
     return true;
 }
@@ -294,8 +297,10 @@ bool Renderer::CreateRenderToTexture()
     D3D11_TEXTURE2D_DESC texture_desc;
     ZeroMemory(&texture_desc, sizeof(D3D11_TEXTURE2D_DESC));
 
-    texture_desc.Width = 640;
-    texture_desc.Height = 480;
+    rtt_width_ = 1366;
+    rtt_height_ = 768;
+    texture_desc.Width = rtt_width_;
+    texture_desc.Height = rtt_height_;
     texture_desc.MipLevels = 1;
     texture_desc.ArraySize = 1;
     texture_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -330,6 +335,56 @@ bool Renderer::CreateRenderToTexture()
     return SUCCEEDED(hr);
 }
 
+bool Renderer::CreatePostProcessResources()
+{
+    // Vertex buffer
+    D3D11_BUFFER_DESC vb_desc;
+    ZeroMemory(&vb_desc, sizeof(vb_desc));
+    vb_desc.ByteWidth = sizeof(DefaultVertex) * 4;
+    vb_desc.Usage = D3D11_USAGE_DEFAULT;
+    vb_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    HRESULT hr = d3d_device_->CreateBuffer(&vb_desc, nullptr, post_vertex_buffer_.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    DefaultVertex vertices[4] = {
+        {DirectX::XMFLOAT3(-1.f,  1.f, 0.f), DirectX::XMFLOAT4(1.f,1.f,1.f,1.f), DirectX::XMFLOAT2(0.f,0.f)},
+        {DirectX::XMFLOAT3( 1.f,  1.f, 0.f), DirectX::XMFLOAT4(1.f,1.f,1.f,1.f), DirectX::XMFLOAT2(1.f,0.f)},
+        {DirectX::XMFLOAT3( 1.f, -1.f, 0.f), DirectX::XMFLOAT4(1.f,1.f,1.f,1.f), DirectX::XMFLOAT2(1.f,1.f)},
+        {DirectX::XMFLOAT3(-1.f, -1.f, 0.f), DirectX::XMFLOAT4(1.f,1.f,1.f,1.f), DirectX::XMFLOAT2(0.f,1.f)}
+    };
+    d3d_device_context_->UpdateSubresource(post_vertex_buffer_.Get(), 0, nullptr, vertices, 0, 0);
+
+    // Index buffer
+    D3D11_BUFFER_DESC ib_desc;
+    ZeroMemory(&ib_desc, sizeof(ib_desc));
+    ib_desc.ByteWidth = sizeof(uint32_t) * 6;
+    ib_desc.Usage = D3D11_USAGE_DEFAULT;
+    ib_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    hr = d3d_device_->CreateBuffer(&ib_desc, nullptr, post_index_buffer_.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    uint32_t indices[6] = {0,1,2,0,2,3};
+    d3d_device_context_->UpdateSubresource(post_index_buffer_.Get(), 0, nullptr, indices, 0, 0);
+
+    // Sampler
+    D3D11_SAMPLER_DESC samp_desc;
+    ZeroMemory(&samp_desc, sizeof(samp_desc));
+    samp_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samp_desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samp_desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samp_desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samp_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samp_desc.MinLOD = 0;
+    samp_desc.MaxLOD = D3D11_FLOAT32_MAX;
+    hr = d3d_device_->CreateSamplerState(&samp_desc, post_sampler_state_.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    post_vertex_shader_ = std::make_shared<DefaultVertexShader>();
+    post_pixel_shader_ = std::make_shared<DefaultPixelShader>();
+
+    return post_vertex_shader_ && post_pixel_shader_;
+}
+
 void Renderer::BeginRTT()
 {
     constexpr float kClearColor[4] = {
@@ -346,6 +401,41 @@ void Renderer::BeginRTT()
 void Renderer::EndRTT()
 {
     d3d_device_context_->OMSetRenderTargets(0, nullptr, nullptr);
+}
+
+void Renderer::DrawPostProcess(float blur_radius, float vignette_strength, float gamma)
+{
+    if (!post_vertex_shader_ || !post_pixel_shader_) return;
+
+    post_vertex_shader_->BindShader();
+    post_vertex_shader_->SetWorldMatrix(DirectX::XMMatrixIdentity());
+    post_vertex_shader_->SetUVOffset({0.f,0.f});
+    post_vertex_shader_->SetUVScale({1.f,1.f});
+    post_vertex_shader_->BindParameters();
+
+    post_pixel_shader_->BindShader();
+    // post_pixel_shader_->SetResolution({static_cast<float>(rtt_width_), static_cast<float>(rtt_height_)});
+    // post_pixel_shader_->SetBlurRadius(blur_radius);
+    // post_pixel_shader_->SetVignette(vignette_strength);
+    // post_pixel_shader_->SetGamma(gamma);
+    post_pixel_shader_->SetColor(Math::Color::White);
+    post_pixel_shader_->BindParameters();
+
+    d3d_device_context_->PSSetSamplers(0, 1, post_sampler_state_.GetAddressOf());
+    ID3D11ShaderResourceView* srv = srv_.Get();
+    d3d_device_context_->PSSetShaderResources(0, 1, &srv);
+
+    UINT stride = sizeof(DefaultVertex);
+    UINT offset = 0;
+    ID3D11Buffer* vb = post_vertex_buffer_.Get();
+    d3d_device_context_->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    d3d_device_context_->IASetIndexBuffer(post_index_buffer_.Get(), DXGI_FORMAT_R32_UINT, 0);
+    d3d_device_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    d3d_device_context_->DrawIndexed(6, 0, 0);
+
+    ID3D11ShaderResourceView* null_srv[1] = { nullptr };
+    d3d_device_context_->PSSetShaderResources(0, 1, null_srv);
 }
 
 Viewport* Renderer::FindViewport(WindowsWindow* window)

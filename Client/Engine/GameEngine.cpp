@@ -115,10 +115,13 @@ void GameEngine::Tick(float delta_time)
 void GameEngine::Render(float alpha)
 {
     ImGui::Render();
+
+    Renderer::Get()->BeginRTT();
+    World::Get()->Render(alpha);
+    Renderer::Get()->EndRTT();
     
     Renderer::Get()->BeginRender(game_window_);
-    World::Get()->Render(alpha);
-    
+    Renderer::Get()->DrawPostProcess(0.f, 0.f, 1.f);
     Renderer::Get()->BeginRenderD2D(game_window_);
     UI::Get()->Render();
     Renderer::Get()->EndRenderD2D();

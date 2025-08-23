@@ -101,6 +101,7 @@ private:
 
 class PostProcessShader : public PixelShader
 {
+public:
     PostProcessShader();
     virtual ~PostProcessShader() override = default;
 
