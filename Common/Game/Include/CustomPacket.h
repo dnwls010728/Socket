@@ -253,30 +253,6 @@ struct MoveItemRequest : public Net::IPacket
     REGISTER_PACKET(MoveItemRequest, 300)
 };
 
-struct AddItemPacket : public Net::IPacket
-{
-    uint8_t inventory_type;
-
-    uint32_t slot_index;
-    uint32_t item_id;
-    
-    int32_t count;
-    
-    SERIALIZABLE_FIELDS(inventory_type, slot_index, item_id, count)
-    REGISTER_PACKET(AddItemPacket, 301)
-};
-
-struct ChangeItemCountPacket : public Net::IPacket
-{
-    uint8_t inventory_type;
-    
-    uint32_t slot_index;
-    int32_t count;
-    
-    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
-    REGISTER_PACKET(ChangeItemCountPacket, 302)
-};
-
 struct MoveItemResponse : public Net::IPacket
 {
     uint8_t inventory_type;
@@ -285,10 +261,10 @@ struct MoveItemResponse : public Net::IPacket
     uint32_t second_slot;
     
     SERIALIZABLE_FIELDS(inventory_type, first_slot, second_slot)
-    REGISTER_PACKET(MoveItemResponse, 303)
+    REGISTER_PACKET(MoveItemResponse, 301)
 };
 
-struct DropItemRequest : public Net::IPacket
+struct DropItemPacket : public Net::IPacket
 {
     uint8_t inventory_type;
     
@@ -296,18 +272,15 @@ struct DropItemRequest : public Net::IPacket
     int32_t count;
     
     SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
-    REGISTER_PACKET(DropItemRequest, 304)
+    REGISTER_PACKET(DropItemPacket, 302)
 };
 
-struct DropItemResponse : public Net::IPacket
+struct InventoryUpdatePacket: public Net::IPacket
 {
-    uint8_t inventory_type;
+    std::vector<InventoryChange> changes;
     
-    uint32_t slot_index;
-    int32_t count;
-    
-    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
-    REGISTER_PACKET(DropItemResponse, 305)
+    SERIALIZABLE_FIELDS(changes)
+    REGISTER_PACKET(InventoryUpdatePacket, 303)
 };
 
 struct PickupItemPacket : public Net::IPacket

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Inventory/Inventory.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
@@ -13,6 +14,43 @@ struct StatUpdateData : EventData
     int32_t value;
     
     virtual ~StatUpdateData() override = default;
+};
+
+struct ItemAddedData : EventData
+{
+    Inventory::Type inventory_type;
+    uint32_t slot_index;
+    uint32_t item_id;
+    int32_t count;
+    
+    virtual ~ItemAddedData() override = default;
+};
+
+struct ItemCountChangedData : EventData
+{
+    Inventory::Type inventory_type;
+    uint32_t slot_index;
+    int32_t count;
+    
+    virtual ~ItemCountChangedData() override = default;
+};
+
+struct ItemMovedData : EventData
+{
+    Inventory::Type first_inventory_type;
+    uint32_t first_slot_index;
+    Inventory::Type second_inventory_type;
+    uint32_t second_slot_index;
+    
+    virtual ~ItemMovedData() override = default;
+};
+
+struct ItemRemovedData : EventData
+{
+    Inventory::Type inventory_type;
+    uint32_t slot_index;
+    
+    virtual ~ItemRemovedData() override = default;
 };
 
 struct ColorUpdateData : EventData
@@ -33,6 +71,10 @@ public:
     {
         kNone = 0,
         kStatUpdated,
+        kItemAdded,
+        kItemCountChanged,
+        kItemMoved,
+        kItemRemoved,
         kColorUpdated
     };
     

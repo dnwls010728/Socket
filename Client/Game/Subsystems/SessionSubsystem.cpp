@@ -6,18 +6,15 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
-#include "PacketHandlers/AddItemHandler.h"
-#include "PacketHandlers/ChangeItemCountHandler.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/ColorGainHandler.h"
 #include "PacketHandlers/CreateCharacterHandler.h"
 #include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/ObjectDestroyHandler.h"
-#include "PacketHandlers/DropItemHandler.h"
+#include "PacketHandlers/InventoryUpdateHandler.h"
 #include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
-#include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
 #include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
@@ -98,18 +95,8 @@ void SessionSubsystem::Init()
     );
 
     handlers_.emplace(
-        AddItemPacket::StaticPacketID,
-        std::make_unique<AddItemHandler>()
-    );
-
-    handlers_.emplace(
-        ChangeItemCountPacket::StaticPacketID,
-        std::make_unique<ChangeItemCountHandler>()
-    );
-
-    handlers_.emplace(
-        MoveItemResponse::StaticPacketID,
-        std::make_unique<MoveItemHandler>()
+        InventoryUpdatePacket::StaticPacketID,
+        std::make_unique<InventoryUpdateHandler>()
     );
 
     handlers_.emplace(
@@ -160,11 +147,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PlayerDeathPacket::StaticPacketID,
         std::make_unique<PlayerDeathHandler>()
-    );
-
-    handlers_.emplace(
-        DropItemResponse::StaticPacketID,
-        std::make_unique<DropItemHandler>()
     );
 
     handlers_.emplace(

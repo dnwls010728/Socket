@@ -199,7 +199,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 
         if (count == 1)
         {
-            DropItemRequest request;
+            DropItemPacket request;
             request.inventory_type = static_cast<uint8_t>(type);
             request.slot_index = slot_id_;
             request.count = 1;
@@ -236,7 +236,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                         return false;
                     }
                     
-                    DropItemRequest request;
+                    DropItemPacket request;
                     request.inventory_type = static_cast<uint8_t>(temp_type);
                     request.slot_index = slot_id_;
                     request.count = std::stoi(input_text);

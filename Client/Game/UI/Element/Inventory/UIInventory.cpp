@@ -193,8 +193,13 @@ void UIInventory::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
-    
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 
     inventory_ = PlayerSubsystem::Get()->GetInventory();
     for (uint32_t i = 0; i < 128; ++i)
@@ -210,8 +215,13 @@ void UIInventory::Init()
 void UIInventory::Uninit()
 {
     UIContainer::Uninit();
-
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+    
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
@@ -253,7 +263,30 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
 
 void UIInventory::OnEvent(const EventData& data)
 {
-    if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
+    if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
+    {
+        if (item_added->inventory_type != tab_) return;
+        UpdateSlot(item_added->slot_index);
+    }
+    else if (const auto* count_changed = dynamic_cast<const ItemCountChangedData*>(&data))
+    {
+        if (count_changed->inventory_type != tab_) return;
+        UpdateSlot(count_changed->slot_index);
+    }
+    else if (const auto* item_moved = dynamic_cast<const ItemMovedData*>(&data))
+    {
+        if (item_moved->first_inventory_type == tab_)
+            UpdateSlot(item_moved->first_slot_index);
+        
+        if (item_moved->second_inventory_type == tab_)
+            UpdateSlot(item_moved->second_slot_index);
+    }
+    else if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
+    {
+        if (item_removed->inventory_type != tab_) return;
+        UpdateSlot(item_removed->slot_index);
+    }
+    else if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
     {
         UpdateColor(color_update->color);
     }

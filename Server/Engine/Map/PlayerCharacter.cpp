@@ -265,17 +265,21 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
             inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
 
-            MoveItemResponse response;
-            response.inventory_type = request->inventory_type;
-            response.first_slot = request->first_slot;
-            response.second_slot = request->second_slot;
-            SendPacket(response);
+            InventoryChange change;
+            change.inventory_type = request->inventory_type;
+            change.action = InventoryAction::kMove;
+            change.info.move.first_slot = request->first_slot;
+            change.info.move.second_slot = request->second_slot;
+
+            InventoryUpdatePacket update_packet;
+            update_packet.changes.push_back(change);
+            SendPacket(update_packet);
         }
         break;
 
-    case DropItemRequest::StaticPacketID:
+    case DropItemPacket::StaticPacketID:
         {
-            DropItemRequest* request = static_cast<DropItemRequest*>(packet);
+            DropItemPacket* request = static_cast<DropItemPacket*>(packet);
 
             Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
@@ -283,19 +287,33 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             
             int32_t count = inventory_->GetItemCount(inventory_type, request->slot_index);
             int32_t remaining_count = 0;
+
+            InventoryUpdatePacket update_packet;
             
-            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_index);
+            if (request->count >= count)
+            {
+                inventory_->Remove(inventory_type, request->slot_index);
+
+                InventoryChange change;
+                change.inventory_type = request->inventory_type;
+                change.action = InventoryAction::kRemove;
+                change.info.remove.slot_id = request->slot_index;
+                update_packet.changes.push_back(change);
+            }
             else
             {
                 remaining_count = count - request->count;
                 inventory_->ChangeCount(inventory_type, request->slot_index, remaining_count);
+
+                InventoryChange change;
+                change.inventory_type = request->inventory_type;
+                change.action = InventoryAction::kChangeCount;
+                change.info.change_count.slot_id = request->slot_index;
+                change.info.change_count.count = remaining_count;
+                update_packet.changes.push_back(change);
             }
 
-            DropItemResponse response;
-            response.inventory_type = request->inventory_type;
-            response.slot_index = request->slot_index;
-            response.count = remaining_count;
-            SendPacket(response);
+            SendPacket(update_packet);
             
             Math::Vector2 drop_position = GetPosition();
             map_->GetDropPosition(drop_position);

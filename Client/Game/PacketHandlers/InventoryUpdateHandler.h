@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "IPacketHandler.h"
 
-class AddItemHandler : public IPacketHandler
+class InventoryUpdateHandler : public IPacketHandler
 {
 public:
-    virtual ~AddItemHandler() override = default;
+    virtual ~InventoryUpdateHandler() override = default;
 
     virtual bool Handle(Net::IPacket* packet) override;
     

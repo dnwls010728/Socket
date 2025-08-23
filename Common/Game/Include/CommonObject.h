@@ -120,6 +120,48 @@ enum class MobState : uint8_t
     kDie
 };
 
+enum class InventoryAction : uint8_t
+{
+    kNone = 0,
+    kAdd,
+    kChangeCount,
+    kMove,
+    kRemove
+};
+
+struct InventoryChange
+{
+    uint8_t inventory_type;
+    InventoryAction action;
+
+    union
+    {
+        struct
+        {
+            uint32_t slot_id;
+            uint32_t item_id;
+            int32_t count;
+        } add;
+
+        struct
+        {
+            uint32_t slot_id;
+            int32_t count;
+        } change_count;
+
+        struct
+        {
+            uint32_t first_slot;
+            uint32_t second_slot;
+        } move;
+
+        struct
+        {
+            uint32_t slot_id;
+        } remove;
+    } info;
+};
+
 struct PartyMemberInfo
 {
     uint32_t player_id;

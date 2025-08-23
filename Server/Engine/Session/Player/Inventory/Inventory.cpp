@@ -154,6 +154,8 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
     std::vector<std::shared_ptr<Item>> items;
     GetItems(items, item_id);
 
+    InventoryUpdatePacket packet;
+
     if (!items.empty())
     {
         auto it = items.begin();
@@ -171,10 +173,12 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
                 existing_item->SetCount(existing_count + to_add);
                 count -= to_add;
 
-                ChangeItemCountPacket packet;
-                packet.inventory_type = static_cast<uint8_t>(type);
-                packet.slot_index = existing_item->GetSlot();
-                packet.count = existing_item->GetCount();
+                InventoryChange change;
+                change.inventory_type = static_cast<uint8_t>(type);
+                change.action = InventoryAction::kChangeCount;
+                change.info.change_count.slot_id = existing_item->GetSlot();
+                change.info.change_count.count = existing_item->GetCount();
+                packet.changes.push_back(change);
                 
                 if (auto player_character = player_character_.lock())
                     player_character->SendPacket(packet);
@@ -195,11 +199,13 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
         AddSlot(type, slot_index, item_id, to_add);
         count -= to_add;
 
-        AddItemPacket packet;
-        packet.inventory_type = static_cast<uint8_t>(type);
-        packet.slot_index = slot_index;
-        packet.item_id = item_id;
-        packet.count = to_add;
+        InventoryChange change;
+        change.inventory_type = static_cast<uint8_t>(type);
+        change.action = InventoryAction::kAdd;
+        change.info.add.slot_id = slot_index;
+        change.info.add.item_id = item_id;
+        change.info.add.count = to_add;
+        packet.changes.push_back(change);
 
         if (auto player_character = player_character_.lock())
             player_character->SendPacket(packet);
