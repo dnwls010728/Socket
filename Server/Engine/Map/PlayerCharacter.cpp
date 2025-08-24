@@ -140,11 +140,11 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
 
     try
     {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
         
-        statement.reset(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+        statement.reset(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
     }
