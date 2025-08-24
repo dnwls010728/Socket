@@ -175,7 +175,7 @@ void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
             auto character = player->GetPlayerCharacter();
             if (character && character->GetPartyID() != 0)
             {
-                PartyManager::Get()->RemovePlayerFromParty(character->GetPartyID(), player->GetAccountID());
+                PartyManager::Get()->RemovePlayerFromParty(character->GetPartyID(), character->GetObjectID());
             }
         }
 

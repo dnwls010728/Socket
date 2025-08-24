@@ -15,11 +15,11 @@ UIPartyPanel::UIPartyPanel(const std::wstring& name)
 void UIPartyPanel::AddOrUpdateMember(const PartyMemberInfo& info)
 {
     UIPartyMemberRow* row = nullptr;
-    auto it = rows_.find(info.player_id);
+    auto it = rows_.find(info.character_id);
     if (it == rows_.end())
     {
-        row = AddChild<UIPartyMemberRow>(UIPartyMemberRow::StaticClass(), L"Row" + std::to_wstring(info.player_id));
-        rows_[info.player_id] = row;
+        row = AddChild<UIPartyMemberRow>(UIPartyMemberRow::StaticClass(), L"Row" + std::to_wstring(info.character_id));
+        rows_[info.character_id] = row;
     }
     else
     {

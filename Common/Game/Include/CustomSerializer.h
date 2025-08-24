@@ -39,11 +39,12 @@ namespace Net
 		)
 
     SERIALIZER_EXTEND(PartyMemberInfo,
-        v.player_id,
+        v.character_id,
         v.name,
         v.lv,
         v.hp,
-        v.max_hp
+        v.max_hp,
+        v.is_online
         )
 
 } // namespace Net

@@ -15,8 +15,8 @@ PartySubsystem::PartySubsystem() :
 
 void PartySubsystem::AddOrUpdateMember(const PartyMemberInfo& info)
 {
-    members_[info.player_id] = info;
-    UpdateUIAddOrUpdate(members_[info.player_id]);
+    members_[info.character_id] = info;
+    UpdateUIAddOrUpdate(members_[info.character_id]);
 }
 
 void PartySubsystem::DeleteMember(uint32_t id)

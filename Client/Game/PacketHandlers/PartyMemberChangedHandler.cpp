@@ -17,7 +17,7 @@ bool PartyMemberChangedHandler::Handle(Net::IPacket* packet)
         subsystem->AddOrUpdateMember(received_packet->member);
         break;
     case PartyMemberChangeType::kLeave:
-        subsystem->DeleteMember(received_packet->member.player_id);
+        subsystem->DeleteMember(received_packet->member.character_id);
         break;
     }
     return true;

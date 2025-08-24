@@ -40,6 +40,34 @@ PlayerCharacter::~PlayerCharacter()
     if (map_) map_->RemovePlayer(object_id_);
 }
 
+void PlayerCharacter::SetPartyID(int32_t party_id)
+{
+    party_id_ = party_id;
+
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return;
+
+    try
+    {
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET party_id = ? WHERE character_id = ?"));
+        statement->setInt(1, party_id_);
+        statement->setUInt(2, object_id_);
+        statement->executeUpdate();
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+    }
+}
+
 std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player)
 {
     std::shared_ptr<PlayerCharacter> character = std::make_shared<PlayerCharacter>();
@@ -70,6 +98,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->color_.store(result->getInt("color"));
+                character->party_id_ = result->getUInt("party_id");
             }
         }
 
@@ -376,14 +405,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             stats_update_packet.hp = hp_;
             SendPacket(stats_update_packet);
 
-            if (party_id_ != 0)
-            {
-                PartyMemberStatChangedPacket party_member_stat_changed_packet;
-                party_member_stat_changed_packet.member_id = object_id_;
-                party_member_stat_changed_packet.stat = PartyStatType::kHP;
-                party_member_stat_changed_packet.value = std::to_wstring(hp_);
-                PartyManager::Get()->SendPacket(party_id_, party_member_stat_changed_packet);
-            }
+            NotifyPartyStatChange(PartyStatType::kHP, hp_);
             
             Respawn();
         }
@@ -477,10 +499,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             
             PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
             SetPartyID(party->GetPartyID());
-            
+
             PopupPacket join_msg;
             join_msg.text = GetName() + L" 님이 파티에 합류했습니다.";
-            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, GetAccountID());
+            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, object_id_);
             
         }
         break;
@@ -529,14 +551,7 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         PlayerDeathPacket death_packet;
         SendPacket(death_packet);
     }
-    if (party_id_ != 0)
-    {
-        PartyMemberStatChangedPacket stat_packet;
-        stat_packet.member_id = account_id_;
-        stat_packet.stat = PartyStatType::kHP;
-        stat_packet.value = std::to_wstring(hp_);
-        PartyManager::Get()->SendPacket(party_id_, stat_packet);
-    }
+    NotifyPartyStatChange(PartyStatType::kHP, hp_);
 }
 
 bool PlayerCharacter::Disconnect()
@@ -630,7 +645,7 @@ void PlayerCharacter::UpdateDatabase()
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ?, party_id = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
             statement->setInt(2, max_hp_);
             statement->setInt(3, exp_.load());
@@ -639,7 +654,8 @@ void PlayerCharacter::UpdateDatabase()
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
             statement->setInt(8, color_.load());
-            statement->setUInt(9, object_id_);
+            statement->setInt(9, party_id_);
+            statement->setUInt(10, object_id_);
             statement->executeUpdate();
         }
     }
@@ -706,23 +722,28 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     SendPacket(packet);
 
-    if (party_id_ != 0)
+    if (changed_lv)
     {
-        PartyMemberStatChangedPacket stat_packet;
-        stat_packet.member_id = account_id_;
-
-        stat_packet.stat = PartyStatType::kLv;
-        stat_packet.value = std::to_wstring(lv_);
-        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
-
-        stat_packet.stat = PartyStatType::kHP;
-        stat_packet.value = std::to_wstring(hp_);
-        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
-
-        stat_packet.stat = PartyStatType::kMaxHP;
-        stat_packet.value = std::to_wstring(max_hp_);
-        PartyManager::Get()->SendPacket(party_id_, stat_packet, account_id_);
+        NotifyPartyStatChange(PartyStatType::kLv, lv_);
+        NotifyPartyStatChange(PartyStatType::kHP, hp_);
+        NotifyPartyStatChange(PartyStatType::kMaxHP, max_hp_);
     }
+}
+
+void PlayerCharacter::NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self)
+{
+    if (party_id_ == 0)
+        return;
+
+    PartyMemberStatChangedPacket stat_packet;
+    stat_packet.member_id = object_id_;
+    stat_packet.stat = stat;
+    stat_packet.value = std::to_wstring(value);
+
+    if (exclude_self)
+        PartyManager::Get()->SendPacket(party_id_, stat_packet, object_id_);
+    else
+        PartyManager::Get()->SendPacket(party_id_, stat_packet);
 }
 
 void PlayerCharacter::Tick(float delta_time)

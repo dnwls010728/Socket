@@ -24,16 +24,17 @@ public:
     
     std::shared_ptr<Party> CreateParty( const std::wstring& party_name = L"");
     void DestroyParty(std::uint32_t party_id);
-    
+
     std::shared_ptr<Party> GetParty(std::uint32_t party_id) const;
     std::vector<std::shared_ptr<Party>> GetParties() const;
     std::vector<std::uint32_t> GetPartyIds() const;
     int GetPartyCount() const;
-    
+
+    std::shared_ptr<Party> GetOrCreatePartyFromDB(std::uint32_t party_id);
     void AddPlayerToParty(std::uint32_t party_id, const std::shared_ptr<Player>& player);
-    void RemovePlayerFromParty(std::uint32_t party_id, std::uint32_t player_id);
-    
-    void SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_player = 0);
+    void RemovePlayerFromParty(std::uint32_t party_id, std::uint32_t character_id);
+
+    void SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_member = 0);
 
 private:
     uint32_t AllocatePatyID();

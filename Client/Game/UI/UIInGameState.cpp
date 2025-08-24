@@ -10,6 +10,7 @@
 #include "Element/UIPartyPanel.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
+#include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 
 UIInGameState::UIInGameState() :
@@ -48,6 +49,17 @@ UIInGameState::UIInGameState() :
 void UIInGameState::Init()
 {
     UIState::Init();
+
+    auto* party_subsystem = PartySubsystem::Get();
+    if (party_subsystem->IsJoinedParty())
+    {
+        party_panel_->Clear();
+        for (const auto& member : party_subsystem->GetMembers())
+        {
+            party_panel_->AddOrUpdateMember(member.second);
+        }
+        party_panel_->SetActive(true);
+    }
 }
 
 bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)

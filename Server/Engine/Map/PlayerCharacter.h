@@ -15,6 +15,7 @@ namespace Net
 
 class Inventory;
 class Player;
+enum class PartyStatType : uint8_t;
 
 ENUM_CLASS_FLAGS(PlayerStat)
 
@@ -52,7 +53,7 @@ public:
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
 
-    inline void SetPartyID(int32_t party_id) { party_id_ = party_id; }
+    void SetPartyID(int32_t party_id);
     inline uint32_t GetPartyID() const { return party_id_; }
     
     inline Inventory* GetInventory() const { return inventory_.get(); }
@@ -72,6 +73,7 @@ protected:
     void ExitMap();
     void UpdateDatabase();
     void GainExp(int32_t amount);
+    void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
 
     virtual void Tick(float delta_time) override;
     
