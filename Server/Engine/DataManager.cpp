@@ -39,6 +39,13 @@ void DataManager::Init()
         {
             ItemData data = item.second.as<ItemData>();
             data.item_id = item.first.as<uint32_t>();
+
+            uint32_t type = data.item_id / 100000;
+            if (type == 1)
+                data.stat = item.second["stat"].as<ItemStatData>();
+            else if (type == 2)
+                data.effect = item.second["effect"].as<ItemEffectData>();
+            
             item_map_[data.item_id] = data;
         }
     }

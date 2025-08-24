@@ -20,6 +20,15 @@ struct MobData
     std::wstring animation_pack;
 };
 
+struct ItemStatData
+{
+};
+
+struct ItemEffectData
+{
+    int32_t hp;
+};
+
 struct ItemData
 {
     uint32_t item_id;
@@ -32,7 +41,9 @@ struct ItemData
 
     union
     {
-    } temp;
+        ItemStatData stat;
+        ItemEffectData effect;
+    };
 };
 
 struct MobDropData
@@ -70,6 +81,27 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.stats = node["stats"].as<MobStats>();
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<ItemStatData>
+    {
+        static bool decode(const Node& node, ItemStatData& data)
+        {
+            if (!node.IsMap()) return false;
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<ItemEffectData>
+    {
+        static bool decode(const Node& node, ItemEffectData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.hp = node["hp"].as<int32_t>(0);
             return true;
         }
     };
