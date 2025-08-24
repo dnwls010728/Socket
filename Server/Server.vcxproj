@@ -172,6 +172,7 @@
     <ClCompile Include="Engine\Map\PlayerCharacter.cpp" />
     <ClCompile Include="Engine\Map\Portal.cpp" />
     <ClCompile Include="Engine\Map\SpawnPoint.cpp" />
+    <ClCompile Include="Engine\Map\StatEffect.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
     <ClCompile Include="Engine\Math\Color.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Engine\Session\Player\Inventory\Item.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Engine\StatEffectManager.cpp" />
     <ClCompile Include="Engine\Utils\TimedBool.cpp" />
     <ClCompile Include="Game\ServerManager.cpp" />
     <ClCompile Include="Helper\StringHelper.cpp" />
@@ -215,6 +217,7 @@
     <ClInclude Include="Engine\Map\PlayerCharacter.h" />
     <ClInclude Include="Engine\Map\Portal.h" />
     <ClInclude Include="Engine\Map\SpawnPoint.h" />
+    <ClInclude Include="Engine\Map\StatEffect.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Engine\StatEffectManager.h" />
     <ClInclude Include="Engine\Utils\TimedBool.h" />
     <ClInclude Include="Game\ServerManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
