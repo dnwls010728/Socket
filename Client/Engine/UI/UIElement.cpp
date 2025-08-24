@@ -55,6 +55,7 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
 
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
+    is_dirty_(true),
     is_initialized_(false),
     is_active_(true),
     is_focused_(false),
