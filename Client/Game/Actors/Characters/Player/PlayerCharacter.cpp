@@ -228,7 +228,7 @@ void PlayerCharacter::Tick(float delta_time)
         Keyboard* keyboard = Keyboard::Get();
         Mouse* mouse = Mouse::Get();
 
-        if (!is_dead_ || !UI::Get()->IsEditingText())
+        if (!is_dead_ && !UI::Get()->IsEditingText())
         {
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);

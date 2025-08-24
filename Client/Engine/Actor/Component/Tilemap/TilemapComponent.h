@@ -35,16 +35,19 @@ private:
     void GeneratePhysics(const tmx::ObjectGroup& kObject);
     void GenerateSpawn(const tmx::ObjectGroup& kObject) const;
     void GeneratePortal(const tmx::ObjectGroup& kObject) const;
+    void GenerateBounds();
     
     float ppu_;
 
     Tilemap* tilemap_;
 
     Math::Vector2 map_size_;
+    Math::Vector2 tile_size_;
 
     std::vector<std::unique_ptr<TilemapLayer>> tilemap_layers_;
 
     b2BodyId tilemap_body_id_;
+    b2BodyId bounds_body_id_;
 
     std::unordered_map<uint64_t, int32_t> type_map_;
     
