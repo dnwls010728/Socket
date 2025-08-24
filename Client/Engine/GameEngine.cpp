@@ -128,10 +128,9 @@ void GameEngine::Render(float alpha)
     float blur_radius = settings->GetBlurRadius();
     float vignette_strength = settings->GetVignetteStrength();
     float gamma = settings->GetGamma();
+    float grayscale = settings->GetGrayscale();
     
-    bool use_grayscale = settings->UseGrayscale();
-    
-    Renderer::Get()->DrawPostProcess(blur_radius, vignette_strength, gamma, use_grayscale);
+    Renderer::Get()->DrawPostProcess(blur_radius, vignette_strength, gamma, grayscale);
     Renderer::Get()->BeginRenderD2D(game_window_);
     UI::Get()->Render();
     Renderer::Get()->EndRenderD2D();

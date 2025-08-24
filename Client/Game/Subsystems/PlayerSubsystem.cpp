@@ -2,9 +2,11 @@
 #include "PlayerSubsystem.h"
 
 #include "GameInstance.h"
+#include "PostProcessingSettings.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
+#include "Math/Math.h"
 #include "Publisher/PublisherSubsystem.h"
 
 PlayerSubsystem::PlayerSubsystem() :

@@ -403,7 +403,7 @@ void Renderer::EndRTT()
     d3d_device_context_->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
-void Renderer::DrawPostProcess(float blur_radius, float vignette_strength, float gamma, bool use_grayscale)
+void Renderer::DrawPostProcess(float blur_radius, float vignette_strength, float gamma, float grayscale)
 {
     if (!post_vertex_shader_ || !post_pixel_shader_) return;
 
@@ -418,7 +418,7 @@ void Renderer::DrawPostProcess(float blur_radius, float vignette_strength, float
     post_pixel_shader_->SetBlurRadius(blur_radius);
     post_pixel_shader_->SetVignette(vignette_strength);
     post_pixel_shader_->SetGamma(gamma);
-    post_pixel_shader_->UseGrayscale(use_grayscale ? TRUE : FALSE);
+    post_pixel_shader_->SetGrayscale(grayscale);
     post_pixel_shader_->BindParameters();
 
     d3d_device_context_->PSSetSamplers(0, 1, post_sampler_state_.GetAddressOf());

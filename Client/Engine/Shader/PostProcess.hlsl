@@ -8,8 +8,8 @@ cbuffer constant : register(b0)
     float vignetteStrength; // 0 ~ 1
     float gamma; // >1 = 어둡게, <1 = 밝게
 
-    bool use_grayscale; // 흑백
-    bool padding[2]; // 16바이트 정렬
+    float grayscale;
+    float2 padding;
 }
 
 static const float3 LUMA = float3(0.2126, 0.7152, 0.0722);
@@ -50,8 +50,7 @@ float4 main(PS_INPUT input) : SV_Target
     col *= v;
 
     float gray = dot(col, LUMA);
-    float t = use_grayscale ? 1.0 : 0.0;
-    col = lerp(col, gray.xxx, t);
+    col = lerp(col, gray.xxx, grayscale);
 
     // 감마/노출: 선형 공간에서 마지막에
     col = pow(saturate(col), gamma); // gamma>1이면 어두워짐

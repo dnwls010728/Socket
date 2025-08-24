@@ -537,8 +537,6 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         stat_packet.value = std::to_wstring(hp_);
         PartyManager::Get()->SendPacket(party_id_, stat_packet);
     }
-
-    is_invincible_.Set(2.f);
 }
 
 bool PlayerCharacter::Disconnect()

@@ -19,7 +19,7 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     PostProcessingSettings::Get()->SetBlurRadius(1.f);
     PostProcessingSettings::Get()->SetVignetteStrength(.5f);
     PostProcessingSettings::Get()->SetGamma(.9f);
-    PostProcessingSettings::Get()->SetUseGrayscale(true);
+    PostProcessingSettings::Get()->SetGrayscale(1.f);
 
     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\die.mp3");
     if (audio) AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
@@ -37,7 +37,7 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
             PostProcessingSettings::Get()->SetBlurRadius(0.f);
             PostProcessingSettings::Get()->SetVignetteStrength(0.f);
             PostProcessingSettings::Get()->SetGamma(1.f);
-            PostProcessingSettings::Get()->SetUseGrayscale(false);
+            PostProcessingSettings::Get()->SetGrayscale(0.f);
             
             PlayerRespawnPacket respawn_packet;
             NetworkSubsystem::Get()->SendPacket(respawn_packet);

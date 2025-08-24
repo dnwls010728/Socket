@@ -15,14 +15,13 @@ public:
     FORCEINLINE float GetGamma() const { return gamma_; }
     FORCEINLINE void SetGamma(float gamma) { gamma_ = gamma; }
 
-    FORCEINLINE bool UseGrayscale() const { return use_grayscale_; }
-    FORCEINLINE void SetUseGrayscale(bool use) { use_grayscale_ = use; }
+    FORCEINLINE float GetGrayscale() const { return grayscale_; }
+    FORCEINLINE void SetGrayscale(float grayscale) { grayscale_ = grayscale; }
 
 private:
     float blur_radius_;
     float vignette_strength_;
     float gamma_;
-
-    bool use_grayscale_;
+    float grayscale_;
     
 };
