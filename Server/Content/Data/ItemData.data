@@ -7,3 +7,14 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     # 위 속성이 공통 속성입니다.
     effect:
       hp: 50
+      # hp_percent: 0
+
+  299999:
+    name: "미지의 포션"
+    desc: "무언가 좋은 일이 일어날 것 같은 포션입니다."
+    price: 5000
+    max_count: 1
+    effect:
+      duration: 10 # 초 단위
+      cooldown: 5 # 초 단위
+      atk: 100 # 10초 동안 공격력 100 증가

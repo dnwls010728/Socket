@@ -6,6 +6,8 @@
 #include "UIInventory.h"
 #include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIInGameState.h"
 #include "UI/UIState.h"
@@ -91,6 +93,9 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
         Inventory::Type type = ui_inventory_->tab_;
         if (type == Inventory::Type::kUse)
         {
+            Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
+            if (audio) AudioManager::Get()->PlaySound2D(audio);
+            
             UseItemPacket packet;
             packet.slot_id = slot_id_;
             SessionSubsystem::Get()->SendPacket(packet);
