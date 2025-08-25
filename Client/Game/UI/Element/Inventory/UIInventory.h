@@ -19,7 +19,7 @@ public:
     
     virtual void SetActive(bool active) override;
 
-    void UpdateSlot(uint32_t slot_index) const;
+    void UpdateSlot(uint32_t slot_id) const;
     void UpdateColor(uint32_t color) const;
 
 protected:

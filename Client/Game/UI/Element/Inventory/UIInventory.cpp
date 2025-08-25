@@ -166,15 +166,15 @@ void UIInventory::SetActive(bool active)
     }
 }
 
-void UIInventory::UpdateSlot(uint32_t slot_index) const
+void UIInventory::UpdateSlot(uint32_t slot_id) const
 {
     if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
+    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_id))
     {
-        uint32_t count = inventory_->GetItemCount(tab_, slot_index);
-        slots_[slot_index - 1]->UpdateSlot(item_id, count);
+        uint32_t count = inventory_->GetItemCount(tab_, slot_id);
+        slots_[slot_id - 1]->UpdateSlot(item_id, count);
     }
-    else slots_[slot_index - 1]->ResetSlot();
+    else slots_[slot_id - 1]->ResetSlot();
 }
 
 void UIInventory::UpdateColor(uint32_t color) const
@@ -266,12 +266,12 @@ void UIInventory::OnEvent(const EventData& data)
     if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
     {
         if (item_added->inventory_type != tab_) return;
-        UpdateSlot(item_added->slot_index);
+        UpdateSlot(item_added->slot_id);
     }
     else if (const auto* count_changed = dynamic_cast<const ItemCountChangedData*>(&data))
     {
         if (count_changed->inventory_type != tab_) return;
-        UpdateSlot(count_changed->slot_index);
+        UpdateSlot(count_changed->slot_id);
     }
     else if (const auto* item_moved = dynamic_cast<const ItemMovedData*>(&data))
     {
@@ -284,7 +284,7 @@ void UIInventory::OnEvent(const EventData& data)
     else if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
     {
         if (item_removed->inventory_type != tab_) return;
-        UpdateSlot(item_removed->slot_index);
+        UpdateSlot(item_removed->slot_id);
     }
     else if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
     {

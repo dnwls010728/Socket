@@ -13,22 +13,11 @@ Inventory::Inventory() :
 {
 }
 
-uint32_t Inventory::GetItemID(Type type, uint32_t slot_index)
+uint32_t Inventory::GetItemID(Type type, uint32_t slot_id)
 {
-    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
+    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
         return it->second.item_id;
-    
-    return 0;
-}
-
-uint32_t Inventory::FindItem(Type type, uint32_t item_id)
-{
-    for (const auto& it : inventories_[static_cast<uint8_t>(type)])
-    {
-        if (it.second.item_id == item_id)
-            return it.first;
-    }
     
     return 0;
 }
@@ -48,9 +37,9 @@ uint32_t Inventory::FindFreeSlot(Type type) const
     return (counter <= slot_capacity_[static_cast<uint8_t>(type)]) ? counter : 0;
 }
 
-int32_t Inventory::GetItemCount(Type type, uint32_t slot_index)
+int32_t Inventory::GetItemCount(Type type, uint32_t slot_id)
 {
-    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
+    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
         return it->second.count;
 
@@ -69,13 +58,13 @@ int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
     return total_count;
 }
 
-uint32_t Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, int32_t count)
+uint32_t Inventory::AddSlot(Type type, uint32_t slot_id, uint32_t item_id, int32_t count)
 {
-    inventories_[static_cast<uint8_t>(type)][slot_index] = { ++next_id_, item_id, count };
+    inventories_[static_cast<uint8_t>(type)][slot_id] = { ++next_id_, item_id, count };
 
     ItemAddedData event_data;
     event_data.inventory_type = type;
-    event_data.slot_index = slot_index;
+    event_data.slot_id = slot_id;
     event_data.item_id = item_id;
     event_data.count = count;
     
@@ -83,16 +72,16 @@ uint32_t Inventory::AddSlot(Type type, uint32_t slot_index, uint32_t item_id, in
     return next_id_;
 }
 
-void Inventory::ChangeCount(Type type, uint32_t slot_index, int32_t count)
+void Inventory::ChangeCount(Type type, uint32_t slot_id, int32_t count)
 {
-    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
+    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
 
     it->second.count = count;
 
     ItemCountChangedData event_data;
     event_data.inventory_type = type;
-    event_data.slot_index = slot_index;
+    event_data.slot_id = slot_id;
     event_data.count = count;
 
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemCountChanged, event_data);
@@ -116,16 +105,16 @@ void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uin
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemMoved, event_data);
 }
 
-void Inventory::Remove(Type type, uint32_t slot_index)
+void Inventory::Remove(Type type, uint32_t slot_id)
 {
-    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_index);
+    auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
     
     inventories_[static_cast<uint8_t>(type)].erase(it);
 
     ItemRemovedData event_data;
     event_data.inventory_type = type;
-    event_data.slot_index = slot_index;
+    event_data.slot_id = slot_id;
 
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemRemoved, event_data);
 }

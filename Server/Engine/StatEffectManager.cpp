@@ -17,6 +17,6 @@ std::shared_ptr<StatEffect> StatEffectManager::FindItemEffect(uint32_t item_id)
     const auto* item_data = DataManager::Get()->GetItem(item_id);
     if (!item_data) return nullptr;
 
-    std::shared_ptr<StatEffect> effect = std::make_shared<StatEffect>();
+    std::shared_ptr<StatEffect> effect = std::make_shared<StatEffect>(item_id, item_data);
     return effect;
 }

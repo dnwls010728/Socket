@@ -37,7 +37,7 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     for (const auto& item : response->inventory)
     {
         Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
-        inventory->AddSlot(type, item.slot_index, item.item_id, item.count);
+        inventory->AddSlot(type, item.slot_id, item.item_id, item.count);
     }
     
     inventory->SetColor(response->color);

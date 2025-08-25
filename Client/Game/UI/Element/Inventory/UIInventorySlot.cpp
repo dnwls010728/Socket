@@ -88,7 +88,10 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
 
     if (timestamp - last_time_ < .2f)
     {
-        Logger::Print(L"Double click!");
+        UseItemPacket packet;
+        packet.slot_id = slot_id_;
+        SessionSubsystem::Get()->SendPacket(packet);
+        
         last_time_ = 0.f;
         return true;
     }
@@ -201,7 +204,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
         {
             DropItemPacket request;
             request.inventory_type = static_cast<uint8_t>(type);
-            request.slot_index = slot_id_;
+            request.slot_id = slot_id_;
             request.count = 1;
             SessionSubsystem::Get()->SendPacket(request);
         }
@@ -238,7 +241,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                     
                     DropItemPacket request;
                     request.inventory_type = static_cast<uint8_t>(temp_type);
-                    request.slot_index = slot_id_;
+                    request.slot_id = slot_id_;
                     request.count = std::stoi(input_text);
                     SessionSubsystem::Get()->SendPacket(request);
                     

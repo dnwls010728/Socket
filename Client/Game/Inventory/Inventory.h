@@ -16,19 +16,18 @@ public:
     Inventory();
     ~Inventory() = default;
     
-    uint32_t GetItemID(Type type, uint32_t slot_index);
+    uint32_t GetItemID(Type type, uint32_t slot_id);
 
-    uint32_t FindItem(Type type, uint32_t item_id);
     uint32_t FindFreeSlot(Type type) const;
     
-    int32_t GetItemCount(Type type, uint32_t slot_index);
+    int32_t GetItemCount(Type type, uint32_t slot_id);
     int32_t GetTotalItemCount(Type type, uint32_t item_id);
     
-    uint32_t AddSlot(Type type, uint32_t slot_index, uint32_t item_id, int32_t count);
+    uint32_t AddSlot(Type type, uint32_t slot_id, uint32_t item_id, int32_t count);
     
-    void ChangeCount(Type type, uint32_t slot_index, int32_t count);
+    void ChangeCount(Type type, uint32_t slot_id, int32_t count);
     void Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot);
-    void Remove(Type type, uint32_t slot_index);
+    void Remove(Type type, uint32_t slot_id);
     void SetColor(int32_t color);
 
     FORCEINLINE void SetSlotCapacity(Type type, uint32_t capacity) { slot_capacity_[static_cast<uint8_t>(type)] = capacity; }

@@ -268,10 +268,10 @@ struct DropItemPacket : public Net::IPacket
 {
     uint8_t inventory_type;
     
-    uint32_t slot_index;
+    uint32_t slot_id;
     int32_t count;
     
-    SERIALIZABLE_FIELDS(inventory_type, slot_index, count)
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
     REGISTER_PACKET(DropItemPacket, 302)
 };
 
@@ -283,12 +283,20 @@ struct InventoryUpdatePacket: public Net::IPacket
     REGISTER_PACKET(InventoryUpdatePacket, 303)
 };
 
+struct UseItemPacket : public Net::IPacket
+{
+    uint32_t slot_id;
+    
+    SERIALIZABLE_FIELDS(slot_id)
+    REGISTER_PACKET(UseItemPacket, 304)
+};
+
 struct PickupItemPacket : public Net::IPacket
 {
     uint32_t object_id;
     
     SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(PickupItemPacket, 306)
+    REGISTER_PACKET(PickupItemPacket, 305)
 };
 
 struct ColorGainPacket : public Net::IPacket
@@ -296,7 +304,7 @@ struct ColorGainPacket : public Net::IPacket
     int32_t color;
     
     SERIALIZABLE_FIELDS(color)
-    REGISTER_PACKET(ColorGainPacket, 307)
+    REGISTER_PACKET(ColorGainPacket, 306)
 };
 
 struct AttackRequest : public Net::IPacket

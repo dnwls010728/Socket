@@ -5,6 +5,8 @@
 
 #include "DataManager.h"
 #include "NetDef.h"
+#include "StatEffect.h"
+#include "StatEffectManager.h"
 #include "World.h"
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
@@ -14,6 +16,7 @@
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
 #include "Session/Player.h"
+#include "Session/Player/Inventory/Item.h"
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
@@ -82,7 +85,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
     {
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE character_id = ?"));
-            statement->setInt(1, character->object_id_);
+            statement->setUInt(1, character->object_id_);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
@@ -118,12 +121,12 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             {
                 uint32_t inventory_type = result->getUInt("inventory_type");
                 uint32_t item_id = result->getInt("item_id");
-                uint32_t slot_index = result->getInt("slot_index");
+                uint32_t slot_id = result->getInt("slot_id");
                 
                 int32_t count = result->getInt("count");
 
                 Inventory::Type type = static_cast<Inventory::Type>(inventory_type);
-                inventory->AddSlot(type, slot_index, item_id, count);
+                inventory->AddSlot(type, slot_id, item_id, count);
             }
         }
 
@@ -312,32 +315,32 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
             
-            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_index);
+            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
             
-            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_index);
+            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
             int32_t remaining_count = 0;
 
             InventoryUpdatePacket update_packet;
             
             if (request->count >= count)
             {
-                inventory_->Remove(inventory_type, request->slot_index);
+                inventory_->Remove(inventory_type, request->slot_id);
 
                 InventoryChange change;
                 change.inventory_type = request->inventory_type;
                 change.action = InventoryAction::kRemove;
-                change.info.remove.slot_id = request->slot_index;
+                change.info.remove.slot_id = request->slot_id;
                 update_packet.changes.push_back(change);
             }
             else
             {
                 remaining_count = count - request->count;
-                inventory_->ChangeCount(inventory_type, request->slot_index, remaining_count);
+                inventory_->ChangeCount(inventory_type, request->slot_id, remaining_count);
 
                 InventoryChange change;
                 change.inventory_type = request->inventory_type;
                 change.action = InventoryAction::kChangeCount;
-                change.info.change_count.slot_id = request->slot_index;
+                change.info.change_count.slot_id = request->slot_id;
                 change.info.change_count.count = remaining_count;
                 update_packet.changes.push_back(change);
             }
@@ -348,6 +351,18 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             map_->GetDropPosition(drop_position);
             
             map_->SpawnItemDrop(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+        }
+        break;
+
+    case UseItemPacket::StaticPacketID:
+        {
+            UseItemPacket* use_item_packet = static_cast<UseItemPacket*>(packet);
+
+            auto item = inventory_->FindItem(Inventory::Type::kUse, use_item_packet->slot_id);
+            if (!item && item->GetCount() <= 0) break;
+
+            if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
+                effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
         }
         break;
 
@@ -552,6 +567,17 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         SendPacket(death_packet);
     }
     NotifyPartyStatChange(PartyStatType::kHP, hp_);
+}
+
+void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
+{
+    int32_t next_hp = hp_ + hp_delta;
+    hp_ = std::clamp(next_hp, 1, max_hp_);
+
+    PlayerStatsUpdatePacket packet;
+    packet.mask |= PlayerStat::kHP;
+    packet.hp = hp_;
+    SendPacket(packet);
 }
 
 bool PlayerCharacter::Disconnect()

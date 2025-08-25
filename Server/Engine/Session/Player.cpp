@@ -195,7 +195,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                     ItemInfo item_info;
                     item_info.inventory_type = i;
                     item_info.item_id = slot.second->GetID();
-                    item_info.slot_index = slot.first;
+                    item_info.slot_id = slot.first;
                     item_info.count = slot.second->GetCount();
                     response.inventory.push_back(item_info);
                 }

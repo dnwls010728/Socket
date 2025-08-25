@@ -27,6 +27,7 @@ struct ItemStatData
 struct ItemEffectData
 {
     int32_t hp;
+    int32_t hp_percent;
 };
 
 struct ItemData
@@ -102,6 +103,7 @@ namespace YAML
         {
             if (!node.IsMap()) return false;
             data.hp = node["hp"].as<int32_t>(0);
+            data.hp_percent = node["hp_percent"].as<int32_t>(0);
             return true;
         }
     };

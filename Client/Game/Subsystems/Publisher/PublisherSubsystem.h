@@ -19,7 +19,7 @@ struct StatUpdateData : EventData
 struct ItemAddedData : EventData
 {
     Inventory::Type inventory_type;
-    uint32_t slot_index;
+    uint32_t slot_id;
     uint32_t item_id;
     int32_t count;
     
@@ -29,7 +29,7 @@ struct ItemAddedData : EventData
 struct ItemCountChangedData : EventData
 {
     Inventory::Type inventory_type;
-    uint32_t slot_index;
+    uint32_t slot_id;
     int32_t count;
     
     virtual ~ItemCountChangedData() override = default;
@@ -48,7 +48,7 @@ struct ItemMovedData : EventData
 struct ItemRemovedData : EventData
 {
     Inventory::Type inventory_type;
-    uint32_t slot_index;
+    uint32_t slot_id;
     
     virtual ~ItemRemovedData() override = default;
 };

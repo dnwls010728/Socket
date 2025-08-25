@@ -33,6 +33,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(int32_t damage_amount);
+    void ApplyHPDelta(int32_t hp_delta);
 
     bool Disconnect();
 
