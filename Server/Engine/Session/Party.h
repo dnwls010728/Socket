@@ -45,9 +45,6 @@ public:
 
 private:
     void AddPlayer(const std::shared_ptr<Player>& player);
-    void AddOfflineMember(const PartyMemberInfo& info);
-    void RemovePlayer(uint32_t character_id);
-    void RemovePlayer(const std::shared_ptr<Player>& player);
 private:
     mutable std::mutex mtx_;
     

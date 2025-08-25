@@ -170,7 +170,6 @@ struct PartyMemberInfo
     int32_t lv;
     int32_t hp;
     int32_t max_hp;
-    bool is_online;
 };
 
 enum class PartyMemberChangeType : uint8_t

@@ -33,36 +33,25 @@ void UIPartyMemberRow::Update(const PartyMemberInfo& info)
     }
     info_ = info;
     name_text_->SetText(info_.name + L" Lv." + std::to_wstring(info_.lv));
-    if (info_.is_online)
-    {
-        name_text_->SetColor(Math::Color::White);
-        hp_text_->SetColor(Math::Color::White);
-        hp_text_->SetText(std::to_wstring(info_.hp) + L" / " + std::to_wstring(info_.max_hp));
-    }
-    else
-    {
-        name_text_->SetColor(Math::Color::Gray);
-        hp_text_->SetText(L"Offline");
-    }
+    name_text_->SetColor(Math::Color::White);
+    hp_text_->SetColor(Math::Color::White);
+    hp_text_->SetText(std::to_wstring(info_.hp) + L" / " + std::to_wstring(info_.max_hp));
+
 }
 
 void UIPartyMemberRow::Render()
 {
     Renderer* renderer = Renderer::Get();
+
+    float ratio = 0.f;
+    if (info_.max_hp > 0)
+        ratio = static_cast<float>(info_.hp) / static_cast<float>(info_.max_hp);
     
     Math::Vector2 pos = GetAbsolutePosition();
     renderer->DrawSolidRoundBox(pos + Math::Vector2{0.f, 20.f}, { GetSize().x, 18.f }, Math::Color::Gray);
-
-    if (info_.is_online)
-    {
-        float ratio = 0.f;
-        if (info_.max_hp > 0)
-            ratio = static_cast<float>(info_.hp) / static_cast<float>(info_.max_hp);
-        
-        renderer->DrawSolidRoundBox(pos + Math::Vector2{0.f, 20.f}, { GetSize().x * hp_effect_ratio_, 18.f }, Math::Color::White);
-        renderer->DrawSolidRoundBox(pos + Math::Vector2{0.f, 20.f}, { GetSize().x * ratio, 18.f }, Math::Color::Red);
-    }
-
+    renderer->DrawSolidRoundBox(pos + Math::Vector2{0.f, 20.f}, { GetSize().x * hp_effect_ratio_, 18.f }, Math::Color::White);
+    renderer->DrawSolidRoundBox(pos + Math::Vector2{0.f, 20.f}, { GetSize().x * ratio, 18.f }, Math::Color::Red);
+    
     UIContainer::Render();
 }
 

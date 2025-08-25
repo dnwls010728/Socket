@@ -46,29 +46,6 @@ PlayerCharacter::~PlayerCharacter()
 void PlayerCharacter::SetPartyID(int32_t party_id)
 {
     party_id_ = party_id;
-
-    sql::Connection* connection = MySQLManager::Get()->GetConnection();
-    if (!connection) return;
-
-    try
-    {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET party_id = ? WHERE character_id = ?"));
-        statement->setInt(1, party_id_);
-        statement->setUInt(2, object_id_);
-        statement->executeUpdate();
-    }
-    catch (sql::SQLException& e)
-    {
-        std::cerr << "SQLException: " << e.what() << std::endl;
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-    catch (...)
-    {
-        std::cerr << "Unknown Exception" << std::endl;
-    }
 }
 
 std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player)
@@ -101,7 +78,6 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->color_.store(result->getInt("color"));
-                character->party_id_ = result->getUInt("party_id");
             }
         }
 
@@ -741,7 +717,7 @@ void PlayerCharacter::UpdateDatabase()
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ?, party_id = ? WHERE character_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
             statement->setInt(2, max_hp_);
             statement->setInt(3, exp_.load());
@@ -750,8 +726,7 @@ void PlayerCharacter::UpdateDatabase()
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
             statement->setInt(8, color_.load());
-            statement->setInt(9, party_id_);
-            statement->setUInt(10, object_id_);
+            statement->setUInt(9, object_id_);
             statement->executeUpdate();
         }
     }

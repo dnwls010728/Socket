@@ -30,9 +30,7 @@ public:
     std::vector<std::uint32_t> GetPartyIds() const;
     int GetPartyCount() const;
 
-    std::shared_ptr<Party> GetOrCreatePartyFromDB(std::uint32_t party_id);
     void AddPlayerToParty(std::uint32_t party_id, const std::shared_ptr<Player>& player);
-    void RemovePlayerFromParty(std::uint32_t party_id, std::uint32_t character_id);
     void DeletePlayerFromParty(std::uint32_t party_id, std::uint32_t character_id);
 
     void SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_member = 0);

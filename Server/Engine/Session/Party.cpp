@@ -45,12 +45,6 @@ bool Party::Contains(const std::shared_ptr<Player>& player) const
     return Contains(character->GetObjectID());
 }
 
-void Party::AddOfflineMember(const PartyMemberInfo& info)
-{
-    std::lock_guard<std::mutex> lock(mtx_);
-    members_[info.character_id] = { info, nullptr };
-}
-
 void Party::AddPlayer(const std::shared_ptr<Player>& player)
 {
     if (!player) return;
@@ -68,7 +62,6 @@ void Party::AddPlayer(const std::shared_ptr<Player>& player)
     new_info.lv = new_char->GetLv();
     new_info.hp = new_char->GetHP();
     new_info.max_hp = new_char->GetMaxHP();
-    new_info.is_online = true;
 
     bool already_member = false;
     {
@@ -95,33 +88,6 @@ void Party::AddPlayer(const std::shared_ptr<Player>& player)
     SendPacket(change_pkt, new_info.character_id);
 }
 
-void Party::RemovePlayer(uint32_t character_id)
-{
-    PartyMemberInfo info;
-    {
-        std::lock_guard<std::mutex> lock(mtx_);
-        auto it = members_.find(character_id);
-        if (it == members_.end())
-            return;
-
-        it->second.player.reset();
-        it->second.info.is_online = false;
-        info = it->second.info;
-    }
-
-    PartyMemberChangedPacket update_packet;
-    update_packet.change = PartyMemberChangeType::kUpdate;
-    update_packet.member = info;
-    SendPacket(update_packet, character_id);
-}
-
-void Party::RemovePlayer(const std::shared_ptr<Player>& player)
-{
-    if (!player) return;
-    auto pc = player->GetPlayerCharacter();
-    if (!pc) return;
-    RemovePlayer(pc->GetObjectID());
-}
 
 int Party::GetPlayerCount() const
 {

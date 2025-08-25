@@ -92,7 +92,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             
             try
             {
-                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO character_info (account_id, name, body_color, lv, hp, max_hp, exp, map_id, last_position_x, last_position_y, color, party_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO character_info (account_id, name, body_color, lv, hp, max_hp, exp, map_id, last_position_x, last_position_y, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
                 statement->setUInt(1, account_id_);
                 statement->setString(2, StringHelper::UTF16ToUTF8(new_character->GetName()));
                 statement->setString(3, StringHelper::UTF16ToUTF8(new_character->GetBodyColor()));
@@ -104,7 +104,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 statement->setDouble(9, new_character->position_.x);
                 statement->setDouble(10, new_character->position_.y);
                 statement->setInt(11, new_character->color_);
-                statement->setInt(12, 0);
                 statement->executeUpdate();
 
                 statement.reset(connection->prepareStatement("SELECT LAST_INSERT_ID()"));

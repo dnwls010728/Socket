@@ -44,8 +44,7 @@ namespace Net
         v.body_color,
         v.lv,
         v.hp,
-        v.max_hp,
-        v.is_online
+        v.max_hp
         )
 
 } // namespace Net
