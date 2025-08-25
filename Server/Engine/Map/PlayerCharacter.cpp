@@ -361,6 +361,30 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             auto item = inventory_->FindItem(Inventory::Type::kUse, use_item_packet->slot_id);
             if (!item && item->GetCount() <= 0) break;
 
+            inventory_->RemoveItem(Inventory::Type::kUse, use_item_packet->slot_id, 1);
+
+            InventoryUpdatePacket pakcet;
+            
+            if (item->GetCount() <= 0)
+            {
+                InventoryChange change;
+                change.inventory_type = static_cast<uint8_t>(Inventory::Type::kUse);
+                change.action = InventoryAction::kRemove;
+                change.info.remove.slot_id = use_item_packet->slot_id;
+                pakcet.changes.push_back(change);
+            }
+            else
+            {
+                InventoryChange change;
+                change.inventory_type = static_cast<uint8_t>(Inventory::Type::kUse);
+                change.action = InventoryAction::kChangeCount;
+                change.info.change_count.slot_id = use_item_packet->slot_id;
+                change.info.change_count.count = item->GetCount();
+                pakcet.changes.push_back(change);
+            }
+            
+            SendPacket(pakcet);
+
             if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
                 effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
         }

@@ -120,6 +120,15 @@ void Inventory::Remove(Type type, uint32_t slot_id)
     Remove_Internal(type, slot_id);
 }
 
+void Inventory::RemoveItem(Type type, uint32_t slot_id, int32_t count)
+{
+    auto item = FindItem(type, slot_id);
+    if (!item) return;
+
+    int32_t new_count = std::max(item->GetCount() - count, 0);
+    item->SetCount(new_count);
+}
+
 void Inventory::GetItems(std::vector<std::shared_ptr<Item>>& out_items, uint32_t item_id) const
 {
     uint32_t type_code = item_id / 100000; // 장비 100000, 소비 200000, 기타 300000
