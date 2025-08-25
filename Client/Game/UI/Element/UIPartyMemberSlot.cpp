@@ -13,8 +13,21 @@
 #include "Subsystems/SessionSubsystem.h"
 #include <CustomPacket.h>
 
+#include "UI/UIInGameState.h"
+
 UIPartyMemberSlot::UIPartyMemberSlot(const std::wstring& name)
-    : UIContainer(name)
+    : UIContainer(name),
+    card_bg_(nullptr),
+    portrait_(nullptr),
+    level_text_(nullptr),
+    name_text_(nullptr),
+    hp_value_text_(nullptr),
+    is_self_(false),
+    am_party_host_(false),
+    is_slot_host_(false),
+    is_empty_(true),
+    timer_(0.f),
+    hp_effect_ratio_(0.f)
 {
     SetSize({150.f, 200.f});
 }
@@ -45,9 +58,6 @@ void UIPartyMemberSlot::Init()
     name_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     name_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     name_text_->SetColor(Math::Color::White);
-
-    context_menu_ = AddChild<UIContextMenu>(UIContextMenu::StaticClass(), L"Context");
-    context_menu_->SetActive(false);
 
     Math::Vector2 sz = GetSize();
     float inner_w    = sz.x - 2.f * kPadding;
@@ -106,7 +116,6 @@ void UIPartyMemberSlot::Update(const PartyMemberInfo& info, bool is_host, bool i
     hp_value_text_->SetColor(Math::Color::White);
 
     portrait_->SetColor(Math::Color::HexToColor(info.body_color));
-    if (context_menu_) context_menu_->SetActive(false);
     SetEmpty(false);
 }
 
@@ -158,11 +167,14 @@ bool UIPartyMemberSlot::OnMouseButton(const Math::Vector2& pos, MouseButton butt
 
     if (is_pressed && button == MouseButton::kRight && IsInRange(pos) && am_party_host_ && !is_self_)
     {
-        context_menu_->Clear();
-        context_menu_->AddItem(L"방장 위임", [this]() { OnClickDelegate(); });
-        context_menu_->AddItem(L"강퇴",      [this]() { OnClickKick(); });
-        context_menu_->Show(pos);
-        return true;
+        if (UIInGameState* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+        {
+            UIContextMenu* menu = state->GetContextMenu();
+            menu->Clear();
+            menu->AddItem(L"방장 위임", [this]() { OnClickDelegate(); });
+            menu->AddItem(L"강퇴",      [this]() { OnClickKick(); });
+            menu->Show(pos);
+        }
     }
     return handled;
 }

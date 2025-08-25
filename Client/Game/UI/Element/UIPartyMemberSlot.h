@@ -4,7 +4,6 @@
 
 class UIImage;
 class UIText;
-class UIContextMenu;
 
 class UIPartyMemberSlot : public UIContainer
 {
@@ -34,21 +33,20 @@ private:
     void OnClickDelegate();
 
 private:
-    UIImage* card_bg_ = nullptr;
-    UIImage* portrait_ = nullptr;
-    UIText* level_text_ = nullptr;
-    UIText* name_text_ = nullptr;
-    UIText* hp_value_text_ = nullptr;
-    UIContextMenu* context_menu_ = nullptr;
+    UIImage* card_bg_;
+    UIImage* portrait_;
+    UIText* level_text_;
+    UIText* name_text_;
+    UIText* hp_value_text_;
 
-    PartyMemberInfo info_{};
-    bool is_self_ = false;
-    bool is_slot_host_ = false;
-    bool am_party_host_ = false;
-    bool is_empty_ = true;
+    PartyMemberInfo info_;
+    bool is_self_;
+    bool is_slot_host_;
+    bool am_party_host_;
+    bool is_empty_ ;
 
-    Math::Vector2 bar_pos_{};
-    Math::Vector2 bar_size_{};
-    float timer_ = 0.f;
-    float hp_effect_ratio_ = 0.f;
+    Math::Vector2 bar_pos_;
+    Math::Vector2 bar_size_;
+    float timer_;
+    float hp_effect_ratio_;
 };
