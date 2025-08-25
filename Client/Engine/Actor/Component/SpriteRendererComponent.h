@@ -16,6 +16,7 @@ public:
 
     void SetZOrder(int32_t z_order);
     void SetSprite(Sprite* sprite, const std::wstring& kFrame);
+    void SetSprite(Sprite* sprite, uint64_t frame_index = 0);
 
     Bounds GetBounds() const;
 

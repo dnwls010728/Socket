@@ -31,15 +31,28 @@ void SpriteRendererComponent::SetZOrder(int32_t z_order)
 
 void SpriteRendererComponent::SetSprite(Sprite* sprite, const std::wstring& kFrame)
 {
-    if (!sprite) return;
     sprite_ = sprite;
+    if (!sprite) return;
     
     const auto& frame_indexes = sprite->GetFrameIndexes();
-    if (frame_indexes.empty()) return;
 
     auto it = frame_indexes.find(kFrame);
-    if (it != frame_indexes.end()) frame_index_ = it->second;
+    if (it != frame_indexes.end())
+        frame_index_ = it->second;
     else frame_index_ = 0;
+
+    if (shape_)
+    {
+        shape_->SetVertices(sprite_->GetVertices());
+        shape_->SetIndices(sprite_->GetIndices());
+        shape_->SetTexture(sprite_);
+    }
+}
+
+void SpriteRendererComponent::SetSprite(Sprite* sprite, uint64_t frame_index)
+{
+    sprite_ = sprite;
+    frame_index_ = frame_index;
 
     if (shape_)
     {

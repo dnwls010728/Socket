@@ -64,7 +64,13 @@ void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& dro
     }
     
     Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\" + std::to_wstring(item_id) + L".png");
-    if (sprite) renderer_->SetSprite(sprite, std::to_wstring(item_id) + L"_0");
+    if (!sprite)
+    {
+        static Sprite* kMissing = AssetManager::Get()->Load<Sprite>(L"Sprites\\Missing.png");
+        sprite = kMissing;
+    }
+    
+    if (sprite) renderer_->SetSprite(sprite);
 }
 
 
