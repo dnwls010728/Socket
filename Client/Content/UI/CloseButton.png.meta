@@ -1,0 +1,13 @@
+filter_mode: 0
+frames:
+  - name: CloseButton_0
+    rect:
+      x: 0
+      y: 0
+      width: 20
+      height: 20
+    border:
+      left: 10
+      top: 10
+      right: 10
+      bottom: 10

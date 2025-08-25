@@ -5,6 +5,7 @@
 #include "UI/UI.h"
 #include "UI/UIInGameState.h"
 #include "UI/Element/UIPartyPanel.h"
+#include "UI/Element/UIPartyWindow.h"
 
 PartySubsystem::PartySubsystem() :
     members_(),
@@ -53,6 +54,7 @@ void PartySubsystem::Clear()
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->GetPartyPanel()->Clear();
+        state->GetPartyWindow()->Clear();
     }
     SetPartyID(0);
     SetHostMemberID(0);
@@ -70,6 +72,8 @@ void PartySubsystem::Join(uint32_t id, const std::wstring& party_name)
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->GetPartyPanel()->SetActive(true);
+        state->GetPartyWindow()->Clear();
+        state->GetPartyWindow()->SetActive(false);
     }
 }
 
@@ -82,6 +86,7 @@ void PartySubsystem::Leave()
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->GetPartyPanel()->SetActive(false);
+        state->GetPartyWindow()->SetActive(false);
     }
 }
 
@@ -95,6 +100,7 @@ void PartySubsystem::UpdateUIAddOrUpdate(const PartyMemberInfo& info)
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->GetPartyPanel()->AddOrUpdateMember(info);
+        state->GetPartyWindow()->AddOrUpdateMember(info);
     }
 }
 
@@ -103,6 +109,48 @@ void PartySubsystem::UpdateUIRemove(uint32_t id)
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         state->GetPartyPanel()->RemoveMember(id);
+        state->GetPartyWindow()->RemoveMember(id);
+    }
+}
+
+void PartySubsystem::SetHostMemberID(uint32_t host_member_id)
+{
+    host_member_id_ = host_member_id;
+    if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
+    {
+        state->GetPartyWindow()->SetHost(host_member_id_);
+    }
+}
+
+void PartySubsystem::RedrawUI()
+{
+    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+    if (!state) return;
+    
+    if (IsJoinedParty())
+    {
+        auto* party_panel = state->GetPartyWindow();
+        if (party_panel)
+        {
+            party_panel->Clear();
+            party_panel->SetHost(GetHostMemberID());
+            for (const auto& member : GetMembers())
+            {
+                party_panel->AddOrUpdateMember(member.second);
+            }
+            party_panel->SetActive(true);
+        }
+
+        auto* party_window = state->GetPartyWindow();
+        if (party_window)
+        {
+            party_window->Clear();
+            party_window->SetHost(GetHostMemberID());
+            for (const auto& member : GetMembers())
+            {
+                party_window->AddOrUpdateMember(member.second);
+            }
+        }
     }
 }
 

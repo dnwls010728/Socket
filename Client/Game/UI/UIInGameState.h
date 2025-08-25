@@ -8,6 +8,7 @@ class UIChatBar;
 class UIItemTooltip;
 class UIInventory;
 class UIPartyPanel;
+class UIPartyWindow;
 
 class UIInGameState : public UIState
 {
@@ -20,6 +21,7 @@ public:
     FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
     FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
+    FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
 
 protected:
     virtual void Init() override;
@@ -32,4 +34,5 @@ private:
     UIMenu* menu_;
     UIContextMenu* context_menu_;
     UIPartyPanel* party_panel_;
+    UIPartyWindow* party_window_;
 };

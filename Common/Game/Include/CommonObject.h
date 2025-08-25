@@ -166,6 +166,7 @@ struct PartyMemberInfo
 {
     uint32_t character_id;
     std::wstring name;
+    std::wstring body_color;
     int32_t lv;
     int32_t hp;
     int32_t max_hp;
@@ -184,4 +185,10 @@ enum class PartyStatType : uint8_t
     kHP = 0,
     kMaxHP,
     kLv
+};
+
+enum class PartyInfoType : uint8_t
+{
+    kHostID = 0,
+    kPartyName
 };

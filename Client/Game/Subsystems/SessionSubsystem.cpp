@@ -29,6 +29,7 @@
 #include "PacketHandlers/PartyLeaveHandler.h"
 #include "PacketHandlers/PartyMemberStatChangedHandler.h"
 #include "PacketHandlers/PlayerDeathHandler.h"
+#include "PacketHandlers/PartyInfoChangedHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
@@ -182,6 +183,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PartyMemberStatChangedPacket::StaticPacketID,
         std::make_unique<PartyMemberStatChangedHandler>()
+    );
+
+    handlers_.emplace(
+        PartyInfoChangedPacket::StaticPacketID,
+        std::make_unique<PartyInfoChangedHandler>()
     );
 #pragma endregion
 

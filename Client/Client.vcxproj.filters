@@ -219,6 +219,8 @@
     <ClCompile Include="Game\Subsystems\PartySubsystem.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyWindow.cpp" />
+    <ClCompile Include="Game\UI\Element\UIPartyMemberSlot.cpp" />
     <ClCompile Include="Engine\Actor\Portal.cpp" />
     <ClCompile Include="Engine\Audio\ChannelGroup.cpp" />
     <ClCompile Include="Engine\UI\Element\ColorPicker\UIColorPicker.cpp" />
@@ -847,6 +849,8 @@
     <ClInclude Include="Game\Subsystems\PartySubsystem.h" />
     <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
     <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyWindow.h" />
+    <ClInclude Include="Game\UI\Element\UIPartyMemberSlot.h" />
     <ClInclude Include="Engine\Actor\Portal.h" />
     <ClInclude Include="Engine\Audio\ChannelGroup.h" />
     <ClInclude Include="Engine\Misc\FunctionMacros.h" />

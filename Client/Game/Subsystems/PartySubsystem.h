@@ -27,8 +27,9 @@ public:
     FORCEINLINE void SetPartyName(const std::wstring& name) { party_name_ = name; }
 
     FORCEINLINE uint32_t GetHostMemberID() const { return host_member_id_; }
-    FORCEINLINE void SetHostMemberID(uint32_t host_member_id) {  host_member_id_ = host_member_id; }
-    
+    void SetHostMemberID(uint32_t host_member_id);
+
+    void RedrawUI();
     
     const std::unordered_map<uint32_t, PartyMemberInfo>& GetMembers() const { return members_; }
 

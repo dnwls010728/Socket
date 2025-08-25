@@ -110,6 +110,24 @@ void PartyManager::RemovePlayerFromParty(std::uint32_t party_id, std::uint32_t c
         party->RemovePlayer(character_id);
 }
 
+void PartyManager::DeletePlayerFromParty(std::uint32_t party_id, std::uint32_t character_id)
+{
+    std::shared_ptr<Party> party;
+    {
+        std::lock_guard<std::mutex> lock(mtx_);
+        auto it = parties_.find(party_id);
+        if (it == parties_.end())
+            return;
+        party = it->second;
+    }
+    if (party)
+    {
+        party->DeleteMember(character_id);
+        if (party->GetPlayerCount() == 0)
+            DestroyParty(party_id);
+    }
+}
+
 void PartyManager::SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_member)
 {
     std::shared_ptr<Party> party;
@@ -139,7 +157,7 @@ std::shared_ptr<Party> PartyManager::GetOrCreatePartyFromDB(std::uint32_t party_
     {
         try
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT character_id, name, lv, hp, max_hp FROM character_info WHERE party_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT character_id, name, body_color, lv, hp, max_hp FROM character_info WHERE party_id = ?"));
             statement->setUInt(1, party_id);
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
@@ -147,6 +165,7 @@ std::shared_ptr<Party> PartyManager::GetOrCreatePartyFromDB(std::uint32_t party_
                 PartyMemberInfo info;
                 info.character_id = result->getUInt("character_id");
                 info.name = StringHelper::UTF8ToUTF16(result->getString("name"));
+                info.body_color = StringHelper::UTF8ToUTF16(result->getString("body_color"));
                 info.lv = result->getInt("lv");
                 info.hp = result->getInt("hp");
                 info.max_hp = result->getInt("max_hp");

@@ -563,7 +563,41 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             SendPacket(popup_packet);
         }
         break;
-        
+
+    case PartyKickRequest::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            auto* req = static_cast<PartyKickRequest*>(packet);
+            auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (!party) break;
+            if (party->GetHost() != object_id_) break;
+            if (req->member_id == object_id_) break;
+            PartyManager::Get()->DeletePlayerFromParty(party->GetPartyID(), req->member_id);
+
+            PopupPacket popup_packet;
+            popup_packet.text = GetName() + L"파티에서 강퇴 되었습니다.";
+            SendPacket(popup_packet);
+        }
+        break;
+
+    case PartyDelegateRequest::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            auto* req = static_cast<PartyDelegateRequest*>(packet);
+            auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (!party) break;
+            if (party->GetHost() != object_id_) break;
+            party->DelegateHost(req->member_id);
+        }
+        break;
+
+    case PartyLeavePacket::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            PartyManager::Get()->DeletePlayerFromParty(GetPartyID(), object_id_);
+        }
+        break;
+
     default:
         break;
     }

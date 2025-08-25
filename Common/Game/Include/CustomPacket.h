@@ -422,3 +422,28 @@ struct PartyMemberStatChangedPacket : public Net::IPacket
     SERIALIZABLE_FIELDS(member_id, stat, value)
     REGISTER_PACKET(PartyMemberStatChangedPacket, 608)
 };
+
+struct PartyKickRequest : public Net::IPacket
+{
+    uint32_t member_id;
+
+    SERIALIZABLE_FIELDS(member_id)
+    REGISTER_PACKET(PartyKickRequest, 609)
+};
+
+struct PartyDelegateRequest : public Net::IPacket
+{
+    uint32_t member_id;
+
+    SERIALIZABLE_FIELDS(member_id)
+    REGISTER_PACKET(PartyDelegateRequest, 610)
+};
+
+struct PartyInfoChangedPacket :  public Net::IPacket
+{
+    PartyInfoType type;
+    std::wstring value;
+    
+    SERIALIZABLE_FIELDS(type, value)
+    REGISTER_PACKET(PartyInfoChangedPacket, 611)
+};

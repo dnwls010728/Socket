@@ -41,6 +41,7 @@ namespace Net
     SERIALIZER_EXTEND(PartyMemberInfo,
         v.character_id,
         v.name,
+        v.body_color,
         v.lv,
         v.hp,
         v.max_hp,

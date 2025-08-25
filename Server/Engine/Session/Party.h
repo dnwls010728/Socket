@@ -40,6 +40,9 @@ public:
     int GetPlayerCount() const;
     std::vector<std::shared_ptr<Player>> GetPlayers() const;
 
+    void DelegateHost(uint32_t new_host_id);
+    void DeleteMember(uint32_t character_id);
+
 private:
     void AddPlayer(const std::shared_ptr<Player>& player);
     void AddOfflineMember(const PartyMemberInfo& info);
