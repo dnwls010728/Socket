@@ -318,11 +318,10 @@ struct AttackRequest : public Net::IPacket
 struct TakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;
-    uint32_t updated_hp;
-    uint32_t damage_amount;
+    int32_t damage_amount;
     float server_time;
     
-    SERIALIZABLE_FIELDS(object_id, updated_hp, damage_amount, server_time)
+    SERIALIZABLE_FIELDS(object_id, damage_amount, server_time)
     REGISTER_PACKET(TakeDamagePacket, 401)
 };
 

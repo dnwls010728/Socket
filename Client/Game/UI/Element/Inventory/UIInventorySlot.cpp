@@ -88,9 +88,13 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
 
     if (timestamp - last_time_ < .2f)
     {
-        UseItemPacket packet;
-        packet.slot_id = slot_id_;
-        SessionSubsystem::Get()->SendPacket(packet);
+        Inventory::Type type = ui_inventory_->tab_;
+        if (type == Inventory::Type::kUse)
+        {
+            UseItemPacket packet;
+            packet.slot_id = slot_id_;
+            SessionSubsystem::Get()->SendPacket(packet);
+        }
         
         last_time_ = 0.f;
         return true;

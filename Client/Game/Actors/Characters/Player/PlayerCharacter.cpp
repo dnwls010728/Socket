@@ -102,15 +102,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time)
+void PlayerCharacter::TakeDamage(int32_t damage_amount, float server_time)
 {
     if (damage_amount == 0) return;
     if (IsMine())
     {
         Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\p_hit.mp3");
         AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
-        
-        PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
     }
 
     invincible_time_ = server_time + 1.f;

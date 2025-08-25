@@ -574,9 +574,13 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
     if (is_dead_ || is_invincible_) return;
     hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
 
+    PlayerStatsUpdatePacket stats_update_packet;
+    stats_update_packet.mask |= PlayerStat::kHP;
+    stats_update_packet.hp = hp_;
+    SendPacket(stats_update_packet);
+
     TakeDamagePacket packet;
     packet.object_id = object_id_;
-    packet.updated_hp = hp_;
     packet.damage_amount = damage_amount;
     packet.server_time = Net::GetClientTime();
     map_->SendPacket(packet);
@@ -590,6 +594,7 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         PlayerDeathPacket death_packet;
         SendPacket(death_packet);
     }
+    
     NotifyPartyStatChange(PartyStatType::kHP, hp_);
 }
 
@@ -602,6 +607,8 @@ void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
     packet.mask |= PlayerStat::kHP;
     packet.hp = hp_;
     SendPacket(packet);
+    
+    NotifyPartyStatChange(PartyStatType::kHP, hp_);
 }
 
 bool PlayerCharacter::Disconnect()
