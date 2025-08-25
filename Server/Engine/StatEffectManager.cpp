@@ -2,13 +2,14 @@
 #include "StatEffectManager.h"
 
 #include "DataManager.h"
+#include "Map/StatEffect.h"
 
 StatEffectManager::StatEffectManager() :
     item_effects_()
 {
 }
 
-std::shared_ptr<StatEffect> StatEffectManager::GetItemEffect(uint32_t item_id)
+std::shared_ptr<StatEffect> StatEffectManager::FindItemEffect(uint32_t item_id)
 {
     auto it = item_effects_.find(item_id);
     if (it != item_effects_.end()) return it->second;
