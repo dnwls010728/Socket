@@ -34,7 +34,11 @@ PlayerCharacter::PlayerCharacter() :
     color_(0),
     inventory_(nullptr),
     is_invincible_(),
-    dropped_item_mutex_()
+    dropped_item_mutex_(),
+    effect_mutex_(),
+    buff_effects_(),
+    buff_expires_(),
+    effects_()
 {
 }
 
@@ -643,6 +647,18 @@ void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
     SendPacket(packet);
     
     NotifyPartyStatChange(PartyStatType::kHP, hp_);
+}
+
+void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time)
+{
+    std::lock_guard<std::mutex> lock(effect_mutex_);
+
+    std::unordered_map<BuffStat, BuffStatValue> current_stats;
+
+    const auto& stat_changes = effect->GetStatChanges();
+    for (const auto stat_change : stat_changes)
+    {
+    }
 }
 
 bool PlayerCharacter::Disconnect()

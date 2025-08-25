@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include <mutex>
+#include <unordered_map>
 
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
 #include "Utils/TimedBool.h"
 
+class StatEffect;
 class Portal;
 
 namespace Net
@@ -22,6 +24,14 @@ ENUM_CLASS_FLAGS(PlayerStat)
 class PlayerCharacter : public MapObject
 {
 public:
+    struct BuffStatValue
+    {
+        std::shared_ptr<StatEffect> effect;
+        float start_time;
+        int32_t value;
+        bool best_applied;
+    };
+    
     PlayerCharacter();
     virtual ~PlayerCharacter() override;
 
@@ -34,6 +44,7 @@ public:
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(int32_t damage_amount);
     void ApplyHPDelta(int32_t hp_delta);
+    void RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time);
 
     bool Disconnect();
 
@@ -103,4 +114,9 @@ protected:
     TimedBool is_invincible_;
 
     std::mutex dropped_item_mutex_;
+    std::mutex effect_mutex_;
+
+    std::unordered_map<uint32_t, BuffStatValue> buff_effects_; // 적용된 효과
+    std::unordered_map<uint32_t, float> buff_expires_; // 적용된 효과의 만료 시간
+    std::unordered_map<BuffStat, BuffStatValue> effects_; // 현재 적용된 버프 스탯
 };

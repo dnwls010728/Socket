@@ -187,6 +187,11 @@ enum class PartyStatType : uint8_t
     kLv
 };
 
+enum class BuffStat : uint8_t
+{
+    kAtk = 0
+};
+
 enum class PartyInfoType : uint8_t
 {
     kHostID = 0,
