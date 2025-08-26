@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "StatEffect.h"
 
+#include <CustomPacket.h>
+
 #include "NetDef.h"
 #include "PlayerCharacter.h"
 
@@ -32,10 +34,18 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
 
     if (!stat_changes.empty())
     {
-        float start_time = Net::GetClientTime();
+        float now = Net::GetClientTime();
+        float duration = static_cast<float>(duration_);
+        
+        PlayerBuffPacket packet;
+        packet.id = id_;
+        packet.duration = duration;
+        packet.server_time = now;
+        target->SendPacket(packet);
+        
         target->RegisterEffect(
             std::dynamic_pointer_cast<StatEffect>(shared_from_this()),
-            start_time, start_time + duration_
+            now, now + duration
         );
     }
 }

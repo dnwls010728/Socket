@@ -2,6 +2,8 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <optional>
+#include <ranges>
 #include <unordered_set>
 
 #include "DataManager.h"
@@ -850,39 +852,55 @@ void PlayerCharacter::CheckBuffExpire()
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
-    float now = Net::GetClientTime();
+    const float now = Net::GetClientTime();
 
-    std::vector<uint32_t> expired_ids;
+    std::unordered_set<BuffStat> dirty;
 
-#pragma region 만료된 ID 수집
-    auto it = buff_expires_.begin();
-    while (it != buff_expires_.end())
+    auto buff_expire_it = buff_expires_.begin();
+    while (buff_expire_it != buff_expires_.end())
     {
-        if (it->second < now)
+        if (buff_expire_it->second > now)
         {
-            expired_ids.push_back(it->first);
-            it = buff_expires_.erase(it);
+            ++buff_expire_it;
             continue;
         }
+        
+        const uint32_t effect_id = buff_expire_it->first;
+        buff_expire_it = buff_expires_.erase(buff_expire_it);
 
-        ++it;
+        auto buff_effect_it = buff_effects_.find(effect_id);
+        if (buff_effect_it == buff_effects_.end()) continue;
+
+        for (const auto& key : buff_effect_it->second | std::views::keys)
+        {
+            auto effect_it = effects_.find(key);
+            if (effect_it != effects_.end() && effect_it->second.effect->GetID() == effect_id)
+            {
+                effects_.erase(effect_it);
+                dirty.insert(key);
+            }
+        }
+
+        buff_effects_.erase(buff_effect_it);
     }
-#pragma endregion
 
-    if (expired_ids.empty()) return;
+    if (dirty.empty()) return;
 
-    std::unordered_set<uint32_t> expired_set (expired_ids.begin(), expired_ids.end());
-
-    std::erase_if(effects_, [&](auto& kv)
+    for (BuffStat stat : dirty)
     {
-        const uint32_t id = kv.second.effect->GetID();
-        return expired_set.contains(id);
-    });
+        const BuffStatValue* best = nullptr;
 
-    std::erase_if(buff_effects_, [&](auto& kv)
-    {
-        return expired_set.contains(kv.first);
-    });
+        for (const auto& val : buff_effects_ | std::views::values)
+        {
+            auto it = val.find(stat);
+            if (it == val.end()) continue;
+
+            if (!best || IsBuffStronger(it->second, *best))
+                best = &it->second;
+        }
+
+        if (best) effects_.insert_or_assign(stat, *best);
+    }
 }
 
 bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const

@@ -30,6 +30,7 @@
 #include "PacketHandlers/PartyMemberStatChangedHandler.h"
 #include "PacketHandlers/PlayerDeathHandler.h"
 #include "PacketHandlers/PartyInfoChangedHandler.h"
+#include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
@@ -138,6 +139,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PlayerStatsUpdatePacket::StaticPacketID,
         std::make_unique<PlayerStatsUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerBuffPacket::StaticPacketID,
+        std::make_unique<PlayerBuffHandler>()
     );
 
     handlers_.emplace(

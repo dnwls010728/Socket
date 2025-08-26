@@ -350,6 +350,16 @@ struct PlayerStatsUpdatePacket : public Net::IPacket
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };
 
+struct PlayerBuffPacket : public Net::IPacket
+{
+    uint32_t id;
+    float duration;
+    float server_time;
+    
+    SERIALIZABLE_FIELDS(duration, server_time)
+    REGISTER_PACKET(PlayerBuffPacket, 501)
+};
+
 struct PartyInviteRequest : public Net::IPacket
 {
     uint32_t invitee_id;

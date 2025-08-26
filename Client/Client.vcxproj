@@ -301,6 +301,7 @@
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PopupHandler.h" />
@@ -724,6 +725,7 @@
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
