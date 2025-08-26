@@ -30,11 +30,14 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
     target->ApplyHPDelta(hp_delta);
 #pragma endregion
 
-    float start_time = Net::GetClientTime();
-    target->RegisterEffect(
-        std::dynamic_pointer_cast<StatEffect>(shared_from_this()),
-        start_time, start_time + duration_
-    );
+    if (!stat_changes.empty())
+    {
+        float start_time = Net::GetClientTime();
+        target->RegisterEffect(
+            std::dynamic_pointer_cast<StatEffect>(shared_from_this()),
+            start_time, start_time + duration_
+        );
+    }
 }
 
 void StatEffect::AddStat(BuffStat stat, int32_t value)

@@ -24,6 +24,13 @@ ENUM_CLASS_FLAGS(PlayerStat)
 class PlayerCharacter : public MapObject
 {
 public:
+    struct BuffStatValue
+    {
+        std::shared_ptr<StatEffect> effect;
+        float start_time;
+        int32_t value;
+    };
+    
     PlayerCharacter();
     virtual ~PlayerCharacter() override;
 
@@ -39,6 +46,8 @@ public:
     void RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time);
 
     bool Disconnect();
+
+    int32_t GetBuffedValue(BuffStat stat) const;
 
     virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
@@ -78,6 +87,9 @@ protected:
     void UpdateDatabase();
     void GainExp(int32_t amount);
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
+    void CheckBuffExpire();
+    
+    bool IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const;
 
     virtual void Tick(float delta_time) override;
     
@@ -107,4 +119,10 @@ protected:
 
     std::mutex dropped_item_mutex_;
     std::mutex effect_mutex_;
+
+    std::unordered_map<uint32_t, std::unordered_map<BuffStat, BuffStatValue>> buff_effects_;
+    std::unordered_map<uint32_t, float> buff_expires_;
+    std::unordered_map<BuffStat, BuffStatValue> effects_;
+
+    float buff_timer_;
 };

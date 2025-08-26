@@ -314,13 +314,24 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
 
+    int32_t value = 0;
+    
+    {
+        auto it = players_.find(attacker);
+        if (it != players_.end())
+        {
+            auto player = it->second.lock();
+            if (player) value = player->GetBuffedValue(BuffStat::kAtk);
+        }
+    }
+
     auto it = map_objects_.find(defender);
     if (it != map_objects_.end())
     {
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->TakeDamage(attacker, 1000);
+            mob->TakeDamage(attacker, 1000 + value);
         }
     }
 }

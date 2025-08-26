@@ -2,6 +2,7 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <unordered_set>
 
 #include "DataManager.h"
 #include "NetDef.h"
@@ -34,7 +35,11 @@ PlayerCharacter::PlayerCharacter() :
     inventory_(nullptr),
     is_invincible_(),
     dropped_item_mutex_(),
-    effect_mutex_()
+    effect_mutex_(),
+    buff_effects_(),
+    buff_expires_(),
+    effects_(),
+    buff_timer_(0.f)
 {
 }
 
@@ -624,6 +629,21 @@ void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
 void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time)
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
+
+    uint32_t effect_id = effect->GetID();
+    const auto& changes = effect->GetStatChanges();
+
+    buff_expires_[effect_id] = expire_time;
+
+    for (const auto& change : changes)
+    {
+        BuffStatValue candidate = { effect, start_time, change.second };
+        buff_effects_[effect_id][change.first] = candidate;
+
+        auto it = effects_.find(change.first);
+        if (it == effects_.end() || IsBuffStronger(candidate, it->second))
+            effects_[change.first] = std::move(candidate);
+    }
 }
 
 bool PlayerCharacter::Disconnect()
@@ -634,6 +654,15 @@ bool PlayerCharacter::Disconnect()
     }
     
     return false;
+}
+
+int32_t PlayerCharacter::GetBuffedValue(BuffStat stat) const
+{
+    auto it = effects_.find(stat);
+    if (it != effects_.end())
+        return it->second.value;
+    
+    return 0;
 }
 
 void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
@@ -817,10 +846,66 @@ void PlayerCharacter::NotifyPartyStatChange(PartyStatType stat, int32_t value, b
         PartyManager::Get()->SendPacket(party_id_, stat_packet);
 }
 
+void PlayerCharacter::CheckBuffExpire()
+{
+    std::lock_guard<std::mutex> lock(effect_mutex_);
+
+    float now = Net::GetClientTime();
+
+    std::vector<uint32_t> expired_ids;
+
+#pragma region 만료된 ID 수집
+    auto it = buff_expires_.begin();
+    while (it != buff_expires_.end())
+    {
+        if (it->second < now)
+        {
+            expired_ids.push_back(it->first);
+            it = buff_expires_.erase(it);
+            continue;
+        }
+
+        ++it;
+    }
+#pragma endregion
+
+    if (expired_ids.empty()) return;
+
+    std::unordered_set<uint32_t> expired_set (expired_ids.begin(), expired_ids.end());
+
+    std::erase_if(effects_, [&](auto& kv)
+    {
+        const uint32_t id = kv.second.effect->GetID();
+        return expired_set.contains(id);
+    });
+
+    for (uint32_t expired_id : expired_ids)
+    {
+        buff_effects_.erase(expired_id);
+    }
+}
+
+bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const
+{
+    if (new_effect.value != existing_effect.value)
+        return new_effect.value > existing_effect.value;
+
+    uint64_t existing_size = existing_effect.effect->GetStatChanges().size();
+    uint64_t new_size = new_effect.effect->GetStatChanges().size();
+    return new_size > existing_size;
+}
+
 void PlayerCharacter::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
 
     is_invincible_.Tick(delta_time);
+
+    buff_timer_ += delta_time;
+    if (buff_timer_ > 1.5f)
+    {
+        CheckBuffExpire();
+        buff_timer_ = 0.f;
+    }
     
 }
