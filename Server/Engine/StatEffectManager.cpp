@@ -18,5 +18,6 @@ std::shared_ptr<StatEffect> StatEffectManager::FindItemEffect(uint32_t item_id)
     if (!item_data) return nullptr;
 
     std::shared_ptr<StatEffect> effect = std::make_shared<StatEffect>(item_id, item_data);
+    item_effects_.emplace(item_id, effect);
     return effect;
 }
