@@ -879,10 +879,10 @@ void PlayerCharacter::CheckBuffExpire()
         return expired_set.contains(id);
     });
 
-    for (uint32_t expired_id : expired_ids)
+    std::erase_if(buff_effects_, [&](auto& kv)
     {
-        buff_effects_.erase(expired_id);
-    }
+        return expired_set.contains(kv.first);
+    });
 }
 
 bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const

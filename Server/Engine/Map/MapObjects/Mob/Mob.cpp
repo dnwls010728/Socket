@@ -183,7 +183,7 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::TakeDamage(uint32_t attacker, uint32_t damage)
+void Mob::TakeDamage(uint32_t attacker, int32_t damage)
 {
     if (hp_ <= 0) return;
 
