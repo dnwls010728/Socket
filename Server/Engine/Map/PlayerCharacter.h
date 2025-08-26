@@ -120,8 +120,8 @@ protected:
     std::mutex dropped_item_mutex_;
     std::mutex effect_mutex_;
 
-    std::unordered_map<uint32_t, std::unordered_map<BuffStat, BuffStatValue>> buff_effects_;
-    std::unordered_map<uint32_t, float> buff_expires_;
+    std::unordered_map<int32_t, std::unordered_map<BuffStat, BuffStatValue>> buff_effects_;
+    std::unordered_map<int32_t, float> buff_expires_;
     std::unordered_map<BuffStat, BuffStatValue> effects_;
 
     float buff_timer_;

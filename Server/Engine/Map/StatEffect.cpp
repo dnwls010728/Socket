@@ -6,7 +6,7 @@
 #include "NetDef.h"
 #include "PlayerCharacter.h"
 
-StatEffect::StatEffect(uint32_t item_id, const ItemData* item_data) :
+StatEffect::StatEffect(int32_t item_id, const ItemData* item_data) :
     id_(item_id)
 {
     const auto& effect = item_data->effect;
@@ -15,6 +15,8 @@ StatEffect::StatEffect(uint32_t item_id, const ItemData* item_data) :
     atk_ = effect.atk;
     duration_ = effect.duration;
     cooldown_ = effect.cooldown;
+
+    is_skill_= false;
 
     if (duration_ > 0)
     {
@@ -38,7 +40,7 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
         float duration = static_cast<float>(duration_);
         
         PlayerBuffPacket packet;
-        packet.effect_id = id_;
+        packet.effect_id = GetBuffID();
         packet.duration = duration;
         packet.server_time = now;
         target->SendPacket(packet);
@@ -48,6 +50,11 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
             now, now + duration
         );
     }
+}
+
+int32_t StatEffect::GetBuffID() const
+{
+    return is_skill_ ? id_ : -id_;
 }
 
 void StatEffect::AddStat(BuffStat stat, int32_t value)

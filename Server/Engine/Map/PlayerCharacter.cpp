@@ -632,7 +632,7 @@ void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, 
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
-    uint32_t effect_id = effect->GetID();
+    int32_t effect_id = effect->GetBuffID();
     const auto& changes = effect->GetStatChanges();
 
     buff_expires_[effect_id] = expire_time;
@@ -865,7 +865,7 @@ void PlayerCharacter::CheckBuffExpire()
             continue;
         }
         
-        const uint32_t effect_id = buff_expire_it->first;
+        const int32_t effect_id = buff_expire_it->first;
         buff_expire_it = buff_expires_.erase(buff_expire_it);
 
         auto buff_effect_it = buff_effects_.find(effect_id);

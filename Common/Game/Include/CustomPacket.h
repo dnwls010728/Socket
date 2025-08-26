@@ -352,7 +352,7 @@ struct PlayerStatsUpdatePacket : public Net::IPacket
 
 struct PlayerBuffPacket : public Net::IPacket
 {
-    uint32_t effect_id;
+    int32_t effect_id;
     float duration;
     float server_time;
     
