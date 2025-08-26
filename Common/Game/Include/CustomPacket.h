@@ -352,11 +352,11 @@ struct PlayerStatsUpdatePacket : public Net::IPacket
 
 struct PlayerBuffPacket : public Net::IPacket
 {
-    uint32_t id;
+    uint32_t effect_id;
     float duration;
     float server_time;
     
-    SERIALIZABLE_FIELDS(duration, server_time)
+    SERIALIZABLE_FIELDS(effect_id, duration, server_time)
     REGISTER_PACKET(PlayerBuffPacket, 501)
 };
 

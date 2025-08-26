@@ -42,6 +42,9 @@ public:
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
 
+    // 테스트
+    std::unordered_map<uint32_t, float> buff_effects_;
+
 protected:
     virtual void BeginPlay() override;
     virtual void PhysicsTick(float delta_time) override;

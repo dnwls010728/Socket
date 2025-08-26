@@ -38,7 +38,7 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
         float duration = static_cast<float>(duration_);
         
         PlayerBuffPacket packet;
-        packet.id = id_;
+        packet.effect_id = id_;
         packet.duration = duration;
         packet.server_time = now;
         target->SendPacket(packet);

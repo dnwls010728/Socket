@@ -881,6 +881,7 @@ void PlayerCharacter::CheckBuffExpire()
             }
         }
 
+        std::wcout << L"Expire Buff: " << effect_id << L" on " << name_ << std::endl;
         buff_effects_.erase(buff_effect_it);
     }
 

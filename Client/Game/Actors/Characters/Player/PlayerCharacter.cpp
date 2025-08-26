@@ -45,6 +45,7 @@
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
+    buff_effects_(),
     move_axis_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     was_grounded_(false),
@@ -396,6 +397,21 @@ void PlayerCharacter::Tick(float delta_time)
                 UIContextMenu* menu = state->GetContextMenu();
                 menu->Hide();
             }
+        }
+
+        float now = SessionSubsystem::Get()->GetServerTime();
+        
+        auto it = buff_effects_.begin();
+        while (it != buff_effects_.end())
+        {
+            if (it->second > now)
+            {
+                ++it;
+                continue;
+            }
+
+            Logger::Print(L"Expired Buff: %d", it->first);
+            it = buff_effects_.erase(it);
         }
 
         // 공격 범위 확인용
