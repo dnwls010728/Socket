@@ -48,7 +48,8 @@ enum class ObjectType : uint8_t
     kNone = 0,
     kPlayer,
     kMob,
-    kDroppedItem
+    kDroppedItem,
+    kBlock
 };
 
 struct PlayerInfo
@@ -70,6 +71,11 @@ struct DroppedItemInfo
     int32_t color;
 };
 
+struct BlockInfo
+{
+    wchar_t color[256];
+};
+
 struct DroppedItemDestroyInfo
 {
 };
@@ -86,6 +92,7 @@ struct ObjectInfo
         PlayerInfo player;
         MobInfo mob;
         DroppedItemInfo dropped_item;
+        BlockInfo block;
     } info;
 };
 

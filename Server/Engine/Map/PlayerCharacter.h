@@ -61,8 +61,8 @@ public:
     inline void SetBodyColor(const std::wstring& color) { body_color_ = color; }
     inline const std::wstring& GetBodyColor() const { return body_color_; }
     
-    inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
-    inline int32_t GetMapID() const { return map_id_; }
+    inline void SetMapID(uint32_t map_id) { map_id_ = map_id; }
+    inline uint32_t GetMapID() const { return map_id_; }
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
 
@@ -101,7 +101,8 @@ protected:
     std::wstring name_;
     std::wstring body_color_;
 
-    int32_t map_id_;
+    uint32_t map_id_;
+    
     int32_t lv_;
     int32_t hp_;
     int32_t max_hp_;

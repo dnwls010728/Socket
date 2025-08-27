@@ -13,9 +13,12 @@
 #include "MapObject.h"
 #include "PlayerCharacter.h"
 #include "SpawnPoint.h"
+#include "jdbc/cppconn/prepared_statement.h"
+#include "MapObjects/Block.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
+#include "MySQL/MySQLManager.h"
 #include "Session/Player/Inventory/Item.h"
 
 
@@ -178,10 +181,10 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetColor(color);
-    dropped_item->SetPosition(drop_position);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
+    dropped_item->SetPosition(drop_position);
 
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
@@ -215,10 +218,10 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
-    dropped_item->SetPosition(drop_position);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
+    dropped_item->SetPosition(drop_position);
 
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
@@ -238,6 +241,37 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
     info.position_y = drop_position.y;
     info.info.dropped_item = item_info;
 
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::SpawnBlock(const std::wstring& color, int32_t hp, const Math::Vector2& position)
+{
+    std::shared_ptr<Block> block = std::make_shared<Block>(color, hp);
+    block->SetObjectID(next_object_id_.fetch_add(1));
+    block->SetMap(this);
+    block->SetPosition(position);
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(block);
+    }
+
+    BlockInfo block_info;
+    wcscpy_s(block_info.color, color.c_str());
+    
+    ObjectInfo info;
+    info.type = ObjectType::kBlock;
+    info.object_id = block->GetObjectID();
+    info.position_x = position.x;
+    info.position_y = position.y;
+    info.info.block = block_info;
+    
     ObjectSpawnPacket packet;
     packet.object_info = info;
     
@@ -535,6 +569,43 @@ bool Map::LoadMapData()
                 }
             }
         }
+    }
+
+    // 맵에 배치된 블럭 정보 조회
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return false;
+
+    try
+    {
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM block_info WHERE map_id = ?"));
+        statement->setUInt(1, map_id_);
+
+        std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+        while (result->next())
+        {
+            std::wstring color = StringHelper::UTF8ToUTF16(result->getString("color"));
+            int32_t hp = result->getInt("hp");
+            
+            Math::Vector2 position;
+            position.x = static_cast<float>(result->getDouble("position_x"));
+            position.y = static_cast<float>(result->getDouble("position_y"));
+            
+            SpawnBlock(color, hp, position);
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
     }
 
     return true;
