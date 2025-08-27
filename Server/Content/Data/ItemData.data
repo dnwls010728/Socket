@@ -8,6 +8,150 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     effect:
       hp: 50
       # hp_percent: 0
+      # duration: 0
+      # atk: 0
+      # def: 0
+      # dig: 0
+
+  200001:
+    name: "초급 물약"
+    desc: "초급 물약입니다. HP를 약 20% 회복시킨다."
+    price: 1000
+    max_count: 99
+    effect:
+      hp_percent: 20
+
+  200002:
+    name: "중급 물약"
+    desc: "중급 물약입니다. HP를 약 40% 회복시킨다."
+    price: 2000
+    max_count: 49
+    effect:
+      hp_percent: 40
+
+  200003:
+    name: "고급 물약"
+    desc: "고급 물약입니다. HP를 약 60% 회복시킨다."
+    price: 3000
+    max_count: 99
+    effect:
+      hp_percent: 60
+
+  200004:
+    name: "장인의 물약"
+    desc: "장인의 물약입니다. HP를 약 80% 회복시킨다."
+    price: 4000
+    max_count: 99
+    effect:
+      hp_percent: 80
+
+  200005:
+    name: "순수의 물약"
+    desc: "순수의 물약입니다. HP를 약 100% 회복시킨다."
+    price: 5000
+    max_count: 99
+    effect:
+      hp_percent: 100
+
+  200011:
+    name: "낡은 붕대"
+    desc: "체력을 100만큼 회복합니다"
+    price: 100
+    max_count: 99
+    effect:
+      hp: 100
+
+  200012:
+    name: "괜찮은 붕대"
+    desc: "체력을 300만큼 회복합니다"
+    price: 300
+    max_count: 99
+    effect:
+      hp: 300
+
+  200013:
+    name: "좋은 붕대"
+    desc: "체력을 1000만큼 회복합니다"
+    price: 1000
+    max_count: 99
+    effect:
+      hp: 1000
+
+  200301:
+    name: "칼날풀"
+    desc: "뾰족한 털이 가득한 식물입니다. 섭취시 공격력이 소폭 증가합니다."
+    price: 500
+    max_count: 1
+    effect:
+      duration: 60
+      atk: 100
+
+  200302:
+    name: "칼날물약"
+    desc: "칼날풀을 가공하여 제작한 물약입니다. 사용시 공격력이 증가합니다."
+    price: 2500
+    max_count: 1
+    effect:
+      duration: 120
+      atk: 250
+
+  200311:
+    name: "갑옷과일"
+    desc: "껍질이 아주 단단한 과일입니다. 섭취시 방어력이 소폭 증가합니다."
+    price: 500
+    max_count: 1
+    effect:
+      duration: 60
+      def: 100
+
+  200312:
+    name: "갑옷물약"
+    desc: "갑옷과일을 가공하여 제작한 물약입니다. 사용시 방어력이 증가합니다."
+    price: 2500
+    max_count: 1
+    effect:
+      duration: 120
+      def: 250
+
+  200321:
+    name: "창나무"
+    desc: "끝이 아주 뾰족한 나무입니다. 섭취시 방어관통력이 소폭 증가합니다."
+    price: 1000
+    max_count: 1
+    effect:
+      duration: 60
+      dig: 50
+
+  200322:
+    name: "창물약"
+    desc: "창나무를 가공하여 제작한 물약입니다. 사용시 방어관통력이 증가합니다."
+    price: 5000
+    max_count: 1
+    effect:
+      duration: 120
+      dig: 100
+
+  200501:
+    name: "무지개 조각"
+    desc: "여러가지 색이 번갈아가며 빛나는 조각입니다. 섭취시 무슨 일이 일어날까요...?"
+    price: 10000
+    max_count: 1
+    effect:
+      duration: 300
+      atk: 100
+      def: 100
+      dig: 50
+
+  200502:
+    name: "무지개 물약"
+    desc: "무지개 조각을 가공하여 제작한 물약입니다. 고작 이런 일에 이 물약을 마시겠다고요?"
+    price: 50000
+    max_count: 1
+    effect:
+      duration: 300
+      atk: 500
+      def: 500
+      dig: 250
 
   299999:
     name: "미지의 포션"
@@ -16,5 +160,4 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     effect:
       duration: 10 # 초 단위
-      cooldown: 5 # 초 단위
       atk: 100 # 10초 동안 공격력 100 증가
