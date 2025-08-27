@@ -115,5 +115,9 @@ void UI::OnEvent(const Event& event)
 
 void UI::EndFrame() const
 {
-    if (state_) state_->EndFrame();
+    if (state_)
+    {
+        state_->AddElements();
+        state_->RemoveElements();
+    }
 }

@@ -114,6 +114,8 @@ void UIState::Tick(float delta_time)
         if (element && element->is_initialized_ && element->IsActive())
             element->Tick(delta_time);
     }
+
+    RemoveElements();
 }
 
 void UIState::Render()
@@ -250,12 +252,12 @@ bool UIState::OnChar(wchar_t character)
     return false;
 }
 
-void UIState::EndFrame()
+void UIState::AddElements()
 {
     for (const auto& element : elements_)
     {
         if (auto* container = dynamic_cast<UIContainer*>(element.get()))
-            container->EndFrame();
+            container->AddChildren();
     }
     
     while (!pending_add_elements_.empty())
@@ -265,7 +267,16 @@ void UIState::EndFrame()
         elements_.push_back(std::move(element));
         pending_add_elements_.pop();
     }
+}
 
+void UIState::RemoveElements()
+{
+    for (const auto& element : elements_)
+    {
+        if (auto* container = dynamic_cast<UIContainer*>(element.get()))
+            container->RemoveChildren();
+    }
+    
     while (!pending_remove_elements_.empty())
     {
         auto* element = pending_remove_elements_.front();

@@ -1,9 +1,14 @@
 ﻿#pragma once
-#include "UI.h"
 #include "UIElement.h"
 #include "Input/Mouse.h"
 #include "Misc/EngineMacros.h"
 #include "UIContainer.h"
+
+struct UIElementActivation
+{
+    UIElement* actor;
+    bool is_active;
+};
 
 class UIState
 {
@@ -49,7 +54,8 @@ private:
     friend class UI;
     friend class UIElement;
 
-    void EndFrame();
+    void AddElements();
+    void RemoveElements();
     void UpdateFocus(UIElement* element);
     
     template <std::derived_from<UIElement> T>

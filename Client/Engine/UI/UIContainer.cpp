@@ -57,6 +57,8 @@ void UIContainer::Tick(float delta_time)
     {
         if (child && child->IsActive()) child->Tick(delta_time);
     }
+
+    RemoveChildren();
 }
 
 void UIContainer::Render()
@@ -170,12 +172,12 @@ UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wst
     return nullptr;
 }
 
-void UIContainer::EndFrame()
+void UIContainer::AddChildren()
 {
     for (const auto& child : children_)
     {
         if (auto* container = dynamic_cast<UIContainer*>(child.get()))
-            container->EndFrame();
+            container->AddChildren();
     }
     
     while (!pending_add_children_.empty())
@@ -186,7 +188,16 @@ void UIContainer::EndFrame()
         children_.push_back(std::move(child));
         pending_add_children_.pop();
     }
+}
 
+void UIContainer::RemoveChildren()
+{
+    for (const auto& child : children_)
+    {
+        if (auto* container = dynamic_cast<UIContainer*>(child.get()))
+            container->RemoveChildren();
+    }
+    
     while (!pending_remove_children_.empty())
     {
         auto* child = pending_remove_children_.front();

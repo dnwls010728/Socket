@@ -44,8 +44,9 @@ protected:
 
 private:
     friend class UIState;
-    
-    void EndFrame();
+
+    void AddChildren();
+    void RemoveChildren();
     
 };
 
