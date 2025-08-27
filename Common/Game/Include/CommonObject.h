@@ -188,7 +188,9 @@ enum class PartyStatType : uint8_t
 
 enum class BuffStat : uint8_t
 {
-    kAtk = 0
+    kAtk = 0,
+    kDef,
+    kDig
 };
 
 enum class PartyInfoType : uint8_t

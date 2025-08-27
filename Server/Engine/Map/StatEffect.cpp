@@ -13,6 +13,8 @@ StatEffect::StatEffect(int32_t item_id, const ItemData* item_data) :
     hp_ = effect.hp;
     hp_percent_ = effect.hp_percent;
     atk_ = effect.atk;
+    def_ = effect.def;
+    dig_ = effect.dig;
     duration_ = effect.duration;
     cooldown_ = effect.cooldown;
 
@@ -21,6 +23,8 @@ StatEffect::StatEffect(int32_t item_id, const ItemData* item_data) :
     if (duration_ > 0)
     {
         AddStat(BuffStat::kAtk, atk_);
+        AddStat(BuffStat::kDef, def_);
+        AddStat(BuffStat::kDig, dig_);
     }
 }
 

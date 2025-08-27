@@ -28,6 +28,8 @@ private:
     int32_t hp_;
     int32_t hp_percent_;
     int32_t atk_;
+    int32_t def_;
+    int32_t dig_;
     int32_t duration_;
     int32_t cooldown_;
 

@@ -29,6 +29,8 @@ struct ItemEffectData
     int32_t hp;
     int32_t hp_percent;
     int32_t atk;
+    int32_t def;
+    int32_t dig;
     int32_t duration;
     int32_t cooldown;
 };
@@ -108,6 +110,8 @@ namespace YAML
             data.hp = node["hp"].as<int32_t>(0);
             data.hp_percent = node["hp_percent"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.dig = node["dig"].as<int32_t>(0);
             data.duration = node["duration"].as<int32_t>(0);
             data.cooldown = node["cooldown"].as<int32_t>(0);
             return true;
