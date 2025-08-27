@@ -47,6 +47,7 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
         packet.effect_id = GetBuffID();
         packet.duration = duration;
         packet.server_time = now;
+        packet.stat_changes = stat_changes;
         target->SendPacket(packet);
         
         target->RegisterEffect(

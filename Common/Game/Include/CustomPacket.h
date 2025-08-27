@@ -355,8 +355,9 @@ struct PlayerBuffPacket : public Net::IPacket
     int32_t effect_id;
     float duration;
     float server_time;
+    std::vector<std::pair<BuffStat, int32_t>> stat_changes;
     
-    SERIALIZABLE_FIELDS(effect_id, duration, server_time)
+    SERIALIZABLE_FIELDS(effect_id, duration, server_time, stat_changes)
     REGISTER_PACKET(PlayerBuffPacket, 501)
 };
 
