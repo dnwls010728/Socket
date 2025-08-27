@@ -10,53 +10,44 @@ UIState::UIState() :
     is_initialized_(false),
     is_dragging_(false),
     has_begun_drag_(false),
-    dragging_element_(nullptr)
+    dragging_element_(nullptr),
+    pending_add_elements_(),
+    pending_remove_elements_()
 {
 }
 
 void UIState::RemoveElement(UIElement* element)
 {
     if (!element) return;
-    
-    bool touches_focus = std::any_of(focus_path_.begin(), focus_path_.end(),
-        [&](UIElement* f){
-            return f == element || f->IsDescendantOf(element);
-        });
-    if (touches_focus) {
-        UpdateFocus(nullptr);
-    }
-    
-    if (dragging_element_ &&
-        (dragging_element_ == element || dragging_element_->IsDescendantOf(element)))
-    {
-        if (has_begun_drag_) {
-            dragging_element_->OnDragEnd({});
-            has_begun_drag_ = false;
-        }
-        is_dragging_ = false;
-        dragging_element_ = nullptr;
-    }
-    
-    if (!pending_elements_.empty()) {
-        pending_elements_.erase(
-            std::remove(pending_elements_.begin(), pending_elements_.end(), element),
-            pending_elements_.end()
-        );
-    }
-    for (auto it = elements_.begin(); it != elements_.end(); ++it)
-    {
-        if (it->get() == element)
-        {
-            if (is_initialized_) element->Uninit();
-            elements_.erase(it);
-            break;
-        }
-    }
+
+    pending_remove_elements_.push(element);
 }
 
 void UIState::SetFocus(UIElement* element)
 {
     UpdateFocus(element);
+}
+
+void UIState::ClearFocus(UIElement* element)
+{
+    UIElement* focused = focus_path_.empty() ? nullptr : focus_path_.back();
+    bool touches_focus = focused && (focused == element || focused->IsDescendantOf(element));
+    if (touches_focus) UpdateFocus(nullptr);
+}
+
+void UIState::ClearDrag(UIElement* element)
+{
+    UIElement* dragging = dragging_element_;
+    if (dragging && (dragging == element || dragging->IsDescendantOf(element)))
+    {
+        if (has_begun_drag_) {
+            dragging->OnDragEnd(Math::Vector2::Zero());
+            has_begun_drag_ = false;
+        }
+
+        is_dragging_ = false;
+        dragging_element_ = nullptr;
+    }
 }
 
 UIElement* UIState::RayCast(const Math::Vector2& position) const
@@ -96,7 +87,6 @@ void UIState::PostTask(Function<void()> task)
 
 void UIState::Init()
 {
-    ProcessPending();
     is_initialized_ = true;
 }
 
@@ -112,8 +102,6 @@ void UIState::Uninit()
 
 void UIState::Tick(float delta_time)
 {
-    ProcessPending();
-    
     while (!pending_tasks_.empty())
     {
         pending_tasks_.front()();
@@ -262,15 +250,35 @@ bool UIState::OnChar(wchar_t character)
     return false;
 }
 
-void UIState::ProcessPending()
+void UIState::EndFrame()
 {
-    for (auto* element : pending_elements_)
+    for (const auto& element : elements_)
     {
-        if (!element || element->is_initialized_) continue;
-        element->Init();
+        if (auto* container = dynamic_cast<UIContainer*>(element.get()))
+            container->EndFrame();
     }
     
-    pending_elements_.clear();
+    while (!pending_add_elements_.empty())
+    {
+        auto& element = pending_add_elements_.front();
+        element->Init();
+        elements_.push_back(std::move(element));
+        pending_add_elements_.pop();
+    }
+
+    while (!pending_remove_elements_.empty())
+    {
+        auto* element = pending_remove_elements_.front();
+        pending_remove_elements_.pop();
+
+        ClearFocus(element);
+        ClearDrag(element);
+
+        auto it = std::ranges::find_if(elements_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == element; });
+        if (it == elements_.end()) continue;
+
+        elements_.erase(it);
+    }
 }
 
 void UIState::UpdateFocus(UIElement* element)

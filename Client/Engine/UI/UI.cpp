@@ -112,3 +112,8 @@ void UI::OnEvent(const Event& event)
         if (state_) state_->OnChar(text_event.character);
     }
 }
+
+void UI::EndFrame() const
+{
+    if (state_) state_->EndFrame();
+}

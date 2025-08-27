@@ -1,17 +1,13 @@
 ﻿#include "pch.h"
 #include "UIContainer.h"
 
+#include "UIState.h"
+
 void UIContainer::RemoveChild(UIElement* child)
 {
-    for (auto it = children_.begin(); it != children_.end(); ++it)
-    {
-        if (it->get() == child)
-        {
-            if (is_initialized_) child->Uninit();
-            children_.erase(it);
-            return;
-        }
-    }
+    if (!child) return;
+
+    pending_remove_children_.push(child);
 }
 
 void UIContainer::SetActive(bool active)
@@ -27,7 +23,9 @@ void UIContainer::SetActive(bool active)
 
 UIContainer::UIContainer(const std::wstring& name) :
     UIElement(name),
-    children_()
+    children_(),
+    pending_add_children_(),
+    pending_remove_children_()
 {
 }
 
@@ -164,13 +162,47 @@ UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wst
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
-        if (is_initialized_) child->Init();
         
-        children_.push_back(std::unique_ptr<UIElement>(child));
+        pending_add_children_.push(std::unique_ptr<UIElement>(child));
         return child;
     }
     
     return nullptr;
+}
+
+void UIContainer::EndFrame()
+{
+    for (const auto& child : children_)
+    {
+        if (auto* container = dynamic_cast<UIContainer*>(child.get()))
+            container->EndFrame();
+    }
+    
+    while (!pending_add_children_.empty())
+    {
+        auto& child = pending_add_children_.front();
+        child->Init();
+        
+        children_.push_back(std::move(child));
+        pending_add_children_.pop();
+    }
+
+    while (!pending_remove_children_.empty())
+    {
+        auto* child = pending_remove_children_.front();
+        pending_remove_children_.pop();
+
+        if (auto* state = UI::Get()->GetState())
+        {
+            state->ClearFocus(child);
+            state->ClearDrag(child);
+        }
+
+        auto it = std::ranges::find_if(children_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == child; });
+        if (it == children_.end()) continue;
+
+        children_.erase(it);
+    }
 }
 
 RTTR_REGISTRATION

@@ -22,6 +22,9 @@ public:
     void RemoveElement(UIElement* element);
     void SetFocus(UIElement* element);
     
+    void ClearFocus(UIElement* element);
+    void ClearDrag(UIElement* element);
+    
     UIElement* RayCast(const Math::Vector2& position) const;
 
     bool IsFocused() const;
@@ -43,16 +46,16 @@ protected:
     virtual bool OnChar(wchar_t character);
 
 private:
+    friend class UI;
     friend class UIElement;
 
-    void ProcessPending();
+    void EndFrame();
     void UpdateFocus(UIElement* element);
     
     template <std::derived_from<UIElement> T>
     T* FindElement_Internal(UIElement* element, const std::wstring& name);
     
     std::vector<std::unique_ptr<UIElement>> elements_;
-    std::vector<UIElement*> pending_elements_;
     std::vector<UIElement*> focus_path_;
 
     bool is_initialized_;
@@ -61,6 +64,8 @@ private:
 
     UIElement* dragging_element_;
 
+    std::queue<std::unique_ptr<UIElement>> pending_add_elements_;
+    std::queue<UIElement*> pending_remove_elements_;
     std::queue<Function<void()>> pending_tasks_;
 };
 
@@ -73,8 +78,7 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
-        elements_.emplace_back(std::unique_ptr<UIElement>(element));
-        pending_elements_.push_back(element);
+        pending_add_elements_.push(std::unique_ptr<UIElement>(element));
 
         return dynamic_cast<T*>(element);
     }

@@ -39,6 +39,14 @@ protected:
 
     std::vector<std::unique_ptr<UIElement>> children_;
     
+    std::queue<std::unique_ptr<UIElement>> pending_add_children_;
+    std::queue<UIElement*> pending_remove_children_;
+
+private:
+    friend class UIState;
+    
+    void EndFrame();
+    
 };
 
 template <std::derived_from<UIElement> T>

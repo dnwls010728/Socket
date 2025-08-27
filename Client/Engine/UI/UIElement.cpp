@@ -55,7 +55,7 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
 
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
-    is_dirty_(true),
+    is_dirty_(false),
     is_initialized_(false),
     is_active_(true),
     is_focused_(false),
@@ -70,13 +70,14 @@ UIElement::UIElement(const std::wstring& name) :
 void UIElement::Render()
 {
 #ifdef _DEBUG // 디버그 모드에서 UIElement의 경계 박스를 그립니다.
-    // Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
 #endif
 }
 
 void UIElement::Init()
 {
     is_initialized_ = true;
+    MakeDirty();
 }
 
 UIElement* UIElement::RayCast(const Math::Vector2& position)
