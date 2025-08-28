@@ -444,6 +444,13 @@ void World::UpdateCameraBounds(const Bounds& kBounds)
     debug_draw_.drawingBounds = bounds;
 }
 
+void World::EndFrame()
+{
+    SpawnActors();
+    ProcessActorActivation();
+    DestroyActors();
+}
+
 void DrawPolygon(const b2Vec2* vertices, int32_t vertexCount, b2HexColor color, void* context)
 {
     static_cast<World*>(context)->debug_draw_helper_.AddPolygon(vertices, vertexCount, color);

@@ -90,6 +90,7 @@ private:
     void ActivateActor(Actor* actor, bool is_active);
     void SortZOrder();
     void UpdateCameraBounds(const Bounds& kBounds);
+    void EndFrame();
 
     std::shared_ptr<WindowsWindow> window_;
     
