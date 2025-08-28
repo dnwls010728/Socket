@@ -6,6 +6,7 @@
 
 UIState::UIState() :
     elements_(),
+    active_elements_(),
     focus_path_(),
     is_initialized_(false),
     is_dragging_(false),
@@ -52,9 +53,9 @@ void UIState::ClearDrag(UIElement* element)
 
 UIElement* UIState::RayCast(const Math::Vector2& position) const
 {
-    for (uint32_t i = 0; i < elements_.size(); ++i)
+    for (uint32_t i = 0; i < active_elements_.size(); ++i)
     {
-        UIElement* element = elements_[elements_.size() - i - 1].get();
+        UIElement* element = active_elements_[active_elements_.size() - i - 1];
         if (element && element->IsActive() && element->IsInRange(position))
             return element->RayCast(position);
     }
@@ -90,12 +91,11 @@ void UIState::Init()
     is_initialized_ = true;
 }
 
-
 void UIState::Uninit()
 {
-    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    for ( uint32_t i = 0; i < active_elements_.size(); ++i )
     {
-        UIElement* element = elements_[i].get();
+        UIElement* element = active_elements_[i];
         if (element) element->Uninit();
     }
 }
@@ -108,9 +108,9 @@ void UIState::Tick(float delta_time)
         pending_tasks_.pop();
     }
     
-    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    for ( uint32_t i = 0; i < active_elements_.size(); ++i )
     {
-        UIElement* element = elements_[i].get();
+        UIElement* element = active_elements_[i];
         if (element && element->is_initialized_ && element->IsActive())
             element->Tick(delta_time);
     }
@@ -121,9 +121,9 @@ void UIState::Tick(float delta_time)
 
 void UIState::Render()
 {
-    for (uint32_t i = 0; i < elements_.size(); ++i)
+    for (uint32_t i = 0; i < active_elements_.size(); ++i)
     {
-        UIElement* element = elements_[i].get();
+        UIElement* element = active_elements_[i];
         if (element && element->is_initialized_ && element->IsActive())
             element->Render();
     }
@@ -148,9 +148,9 @@ bool UIState::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& 
         }
     }
 
-    for (uint32_t i = 0; i < elements_.size(); ++i)
+    for (uint32_t i = 0; i < active_elements_.size(); ++i)
     {
-        UIElement* element = elements_[elements_.size() - i - 1].get();
+        UIElement* element = active_elements_[active_elements_.size() - i - 1];
         if (!element || !element->IsActive()) continue;
 
         bool is_in_range = element->IsInRange(position);
@@ -205,9 +205,9 @@ bool UIState::OnMouseButton(const Math::Vector2& position, MouseButton button, b
         if (!is_dragging_) UpdateFocus(nullptr);
     }
 
-    for (uint32_t i = 0; i < elements_.size(); ++i)
+    for (uint32_t i = 0; i < active_elements_.size(); ++i)
     {
-        UIElement* element = elements_[elements_.size() - i - 1].get();
+        UIElement* element = active_elements_[active_elements_.size() - i - 1];
         if (element && element->IsActive() && element->IsInRange(position))
         {
             if (element->OnMouseButton(position, button, is_pressed, timestamp)) return true;
@@ -219,9 +219,9 @@ bool UIState::OnMouseButton(const Math::Vector2& position, MouseButton button, b
 
 bool UIState::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    for ( uint32_t i = 0; i < elements_.size(); ++i )
+    for ( uint32_t i = 0; i < active_elements_.size(); ++i )
     {
-        UIElement* element = elements_[elements_.size() - i - 1].get();
+        UIElement* element = active_elements_[active_elements_.size() - i - 1];
         if (element && element->IsActive() && element->IsInRange(position) && element->OnScroll(position, delta))
             return true;
     }
@@ -272,7 +272,7 @@ void UIState::AddElements()
     {
         auto& element = pending_add_elements_.front();
         element->Init();
-        elements_.push_back(std::move(element));
+        active_elements_.push_back(element);
         pending_add_elements_.pop();
     }
 }
@@ -293,10 +293,15 @@ void UIState::RemoveElements()
         ClearFocus(element);
         ClearDrag(element);
 
-        auto it = std::ranges::find_if(elements_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == element; });
-        if (it == elements_.end()) continue;
+        {
+            auto it = std::ranges::find(active_elements_, element);
+            if (it != active_elements_.end()) active_elements_.erase(it);
+        }
 
-        elements_.erase(it);
+        {
+            auto it = std::ranges::find_if(elements_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == element; });
+            if (it != elements_.end()) elements_.erase(it);
+        }
     }
 }
 

@@ -46,8 +46,11 @@ void GameMap::Load()
             Bounds bounds = tilemap->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
 
-            if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
-                state->GetMiniMap()->SetTilemap(tilemap);
+            if (auto* state = UI::Get()->GetState())
+            {
+                if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
+                    element->SetTilemap(tilemap);
+            }
 
             GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
         }

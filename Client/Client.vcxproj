@@ -321,6 +321,8 @@
     <ClInclude Include="Game\Subsystems\SessionSubsystem.h" />
     <ClInclude Include="Game\Subsystems\NetworkSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PartySubsystem.h" />
+    <ClInclude Include="Game\UI\Element\Buff\UIBuffIcon.h" />
+    <ClInclude Include="Game\UI\Element\Buff\UIBuffList.h" />
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSelect.h" />
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSlot.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
@@ -746,6 +748,8 @@
     <ClCompile Include="Game\Subsystems\SessionSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\NetworkSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PartySubsystem.cpp" />
+    <ClCompile Include="Game\UI\Element\Buff\UIBuffIcon.cpp" />
+    <ClCompile Include="Game\UI\Element\Buff\UIBuffList.cpp" />
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSelect.cpp" />
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />

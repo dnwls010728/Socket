@@ -10,50 +10,20 @@ void UIContainer::RemoveChild(UIElement* child)
     pending_remove_children_.push(child);
 }
 
-void UIContainer::SetActive(bool active)
-{
-    // for (uint32_t i = 0; i < children_.size(); ++i)
-    // {
-    //     UIElement* child = children_[children_.size() - i - 1].get();
-    //     if (child) child->SetActive(active);
-    // }
-    
-    UIElement::SetActive(active);
-}
-
 UIContainer::UIContainer(const std::wstring& name) :
     UIElement(name),
     children_(),
+    active_children_(),
     pending_add_children_(),
     pending_remove_children_()
 {
-}
-
-void UIContainer::Init()
-{
-    for (auto& child : children_)
-    {
-        if (child) child->Init();
-    }
-    
-    UIElement::Init();
-}
-
-void UIContainer::Uninit()
-{
-    for (auto& child : children_)
-    {
-        if (child) child->Uninit();
-    }
-    
-    UIElement::Uninit();
 }
 
 void UIContainer::Tick(float delta_time)
 {
     UIElement::Tick(delta_time);
 
-    for (auto& child : children_)
+    for (auto& child : active_children_)
     {
         if (child && child->IsActive()) child->Tick(delta_time);
     }
@@ -65,7 +35,7 @@ void UIContainer::Render()
 {
     UIElement::Render();
 
-    for (const auto& child : children_)
+    for (const auto& child : active_children_)
     {
         if (child && child->IsActive()) child->Render();
     }
@@ -73,9 +43,9 @@ void UIContainer::Render()
 
 UIElement* UIContainer::RayCast(const Math::Vector2& position)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position))
             return child->RayCast(position);
     }
@@ -87,9 +57,9 @@ bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vecto
 {
     bool result = UIElement::OnMouseMotion(position, delta);
 
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (!child || !child->IsActive()) continue;
         
         bool is_in_range = child->IsInRange(position);
@@ -113,9 +83,9 @@ bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vecto
 
 bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position))
         {
             if (child->OnMouseButton(position, button, is_pressed, timestamp)) return true;
@@ -127,9 +97,9 @@ bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton butto
 
 bool UIContainer::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position) && child->OnScroll(position, delta))
             return true;
     }
@@ -164,8 +134,9 @@ UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wst
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
-        
-        pending_add_children_.push(std::unique_ptr<UIElement>(child));
+
+        children_.push_back(std::unique_ptr<UIElement>(child));
+        pending_add_children_.push(child);
         return child;
     }
     
@@ -185,7 +156,7 @@ void UIContainer::AddChildren()
         auto& child = pending_add_children_.front();
         child->Init();
         
-        children_.push_back(std::move(child));
+        active_children_.push_back(child);
         pending_add_children_.pop();
     }
 }
@@ -209,10 +180,15 @@ void UIContainer::RemoveChildren()
             state->ClearDrag(child);
         }
 
-        auto it = std::ranges::find_if(children_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == child; });
-        if (it == children_.end()) continue;
+        {
+            auto it = std::ranges::find(active_children_, child);
+            if (it != active_children_.end()) active_children_.erase(it);
+        }
 
-        children_.erase(it);
+        {
+            auto it = std::ranges::find_if(children_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == child; });
+            if (it != children_.end()) children_.erase(it);
+        }
     }
 }
 

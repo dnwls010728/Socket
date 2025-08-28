@@ -68,6 +68,18 @@ void UIElement::SetActive(bool is_active)
     }
 }
 
+void UIElement::RemoveFromParent()
+{
+    if (parent_)
+    {
+        parent_->RemoveChild(this);
+        return;
+    }
+
+    if (auto* state = UI::Get()->GetState())
+        state->RemoveElement(this);
+}
+
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
     is_dirty_(false),

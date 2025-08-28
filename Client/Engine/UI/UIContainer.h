@@ -13,15 +13,11 @@ public:
 
     virtual void RemoveChild(UIElement* child);
 
-    virtual void SetActive(bool active) override;
-
     FORCEINLINE const std::vector<std::unique_ptr<UIElement>>& GetChildren() const { return children_; }
 
 protected:
     UIContainer(const std::wstring& name);
-
-    virtual void Init() override;
-    virtual void Uninit() override;
+    
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
 
@@ -38,8 +34,9 @@ protected:
     virtual UIElement* AddChild_Internal(const rttr::type& type, const std::wstring& name);
 
     std::vector<std::unique_ptr<UIElement>> children_;
+    std::vector<UIElement*> active_children_;
     
-    std::queue<std::unique_ptr<UIElement>> pending_add_children_;
+    std::queue<UIElement*> pending_add_children_;
     std::queue<UIElement*> pending_remove_children_;
 
 private:

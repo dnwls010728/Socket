@@ -64,6 +64,7 @@ private:
     T* FindElement_Internal(UIElement* element, const std::wstring& name);
     
     std::vector<std::unique_ptr<UIElement>> elements_;
+    std::vector<UIElement*> active_elements_;
     std::vector<UIElement*> focus_path_;
 
     bool is_initialized_;
@@ -72,7 +73,7 @@ private:
 
     UIElement* dragging_element_;
 
-    std::queue<std::unique_ptr<UIElement>> pending_add_elements_;
+    std::queue<UIElement*> pending_add_elements_;
     std::queue<UIElement*> pending_remove_elements_;
     std::queue<UIElementActivation> pending_activations_;
     std::queue<Function<void()>> pending_tasks_;
@@ -87,7 +88,8 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
     if (var.is_valid())
     {
         UIElement* element = var.get_value<UIElement*>();
-        pending_add_elements_.push(std::unique_ptr<UIElement>(element));
+        elements_.push_back(std::unique_ptr<UIElement>(element));
+        pending_add_elements_.push(element);
 
         return dynamic_cast<T*>(element);
     }

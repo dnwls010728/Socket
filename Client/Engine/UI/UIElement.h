@@ -21,6 +21,8 @@ public:
     bool IsDescendantOf(UIElement* ancestor) const;
 
     virtual void SetActive(bool is_active);
+
+    void RemoveFromParent();
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
@@ -30,7 +32,6 @@ public:
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }
-
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
     FORCEINLINE void SetIgnoreRayCast(bool ignore) { is_ignore_raycast = ignore; }

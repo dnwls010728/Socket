@@ -9,6 +9,7 @@
 #include "Element/UIStatusBar.h"
 #include "Element/UIPartyPanel.h"
 #include "Element/UIPartyWindow.h"
+#include "Element/Buff/UIBuffList.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
 #include "Subsystems/PartySubsystem.h"
@@ -48,6 +49,8 @@ UIInGameState::UIInGameState() :
 
     context_menu_ = AddElement<UIContextMenu>(UIContextMenu::StaticClass(), L"ContextMenu");
     context_menu_->SetActive(false);
+
+    AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
 }
 
 void UIInGameState::Init()
