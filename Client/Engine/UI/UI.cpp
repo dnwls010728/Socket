@@ -118,6 +118,7 @@ void UI::EndFrame() const
     if (state_)
     {
         state_->AddElements();
+        state_->ActivateElements();
         state_->RemoveElements();
     }
 }

@@ -53,6 +53,21 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
     return false;
 }
 
+void UIElement::SetActive(bool is_active)
+{
+    if (!is_initialized_)
+    {
+        is_active_ = is_active;
+        return;
+    }
+    
+    if (auto* state = UI::Get()->GetState())
+    {
+        if (is_active_ != is_active)
+            state->ActivateElement(this, is_active);
+    }
+}
+
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
     is_dirty_(false),
@@ -70,7 +85,7 @@ UIElement::UIElement(const std::wstring& name) :
 void UIElement::Render()
 {
 #ifdef _DEBUG // 디버그 모드에서 UIElement의 경계 박스를 그립니다.
-    Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
+    // Renderer::Get()->DrawBox(GetAbsolutePosition(), GetSize(), Math::Color::Red);
 #endif
 }
 

@@ -6,7 +6,7 @@
 
 struct UIElementActivation
 {
-    UIElement* actor;
+    UIElement* element;
     bool is_active;
 };
 
@@ -54,8 +54,10 @@ private:
     friend class UI;
     friend class UIElement;
 
+    void ActivateElement(UIElement* element, bool is_active);
     void AddElements();
     void RemoveElements();
+    void ActivateElements();
     void UpdateFocus(UIElement* element);
     
     template <std::derived_from<UIElement> T>
@@ -72,6 +74,7 @@ private:
 
     std::queue<std::unique_ptr<UIElement>> pending_add_elements_;
     std::queue<UIElement*> pending_remove_elements_;
+    std::queue<UIElementActivation> pending_activations_;
     std::queue<Function<void()>> pending_tasks_;
 };
 

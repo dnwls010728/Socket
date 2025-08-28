@@ -114,7 +114,8 @@ void UIState::Tick(float delta_time)
         if (element && element->is_initialized_ && element->IsActive())
             element->Tick(delta_time);
     }
-
+    
+    ActivateElements();
     RemoveElements();
 }
 
@@ -252,6 +253,13 @@ bool UIState::OnChar(wchar_t character)
     return false;
 }
 
+void UIState::ActivateElement(UIElement* element, bool is_active)
+{
+    if (!element) return;
+
+    pending_activations_.push({ element, is_active });
+}
+
 void UIState::AddElements()
 {
     for (const auto& element : elements_)
@@ -289,6 +297,20 @@ void UIState::RemoveElements()
         if (it == elements_.end()) continue;
 
         elements_.erase(it);
+    }
+}
+
+void UIState::ActivateElements()
+{
+    while (!pending_activations_.empty())
+    {
+        const auto& activation = pending_activations_.front();
+        pending_activations_.pop();
+        
+        UIElement* element = activation.element;
+        if (!element) continue;
+
+        element->is_active_ = activation.is_active;
     }
 }
 

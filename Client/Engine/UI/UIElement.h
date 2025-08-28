@@ -19,6 +19,8 @@ public:
     virtual void SetRelativePosition(const Math::Vector2& position);
 
     bool IsDescendantOf(UIElement* ancestor) const;
+
+    virtual void SetActive(bool is_active);
     
     FORCEINLINE const std::wstring& GetName() const { return name_; }
 
@@ -28,7 +30,6 @@ public:
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
     
     FORCEINLINE bool IsActive() const { return is_active_; }
-    FORCEINLINE virtual void SetActive(bool active) { is_active_ = active; }
 
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 

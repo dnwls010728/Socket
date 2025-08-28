@@ -15,13 +15,11 @@
 #include "Subsystems/PlayerSubsystem.h"
 
 UIInGameState::UIInGameState() :
-    inventory_(nullptr),
-    item_tooltip_(nullptr),
     context_menu_(nullptr),
     party_panel_(nullptr),
     party_window_(nullptr)
 {
-    AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
+    mini_map_ = AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
     char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
     char_bar_->SetAbsolutePosition({0.f, 684.f});
