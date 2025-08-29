@@ -11,20 +11,26 @@ UIBuffList::UIBuffList(const std::wstring& name) :
 
 UIBuffIcon* UIBuffList::AddBuff(int32_t id, float expire_time)
 {
+    auto it = buff_icons.find(id);
+    if (it != buff_icons.end()) RemoveChild(it->second);
+    
     auto* buff_icon = AddChild<UIBuffIcon>(UIBuffIcon::StaticClass(), L"BuffIcon");
     buff_icon->Init(id, expire_time);
     UpdateLayout();
+    buff_icons.insert({id, buff_icon});
     return buff_icon;
 }
 
 void UIBuffList::UpdateLayout()
 {
+    std::vector<UIElement*> children;
+    GetChildren(children);
+    
     float width = 0.f;
-    for (int32_t i = 0; i < children_.size(); ++i)
+    for (int32_t i = 0; i < children.size(); ++i)
     {
-        auto* child = children_[i].get();
+        auto* child = children[i];
         child->SetRelativePosition({ i * 32.f , 0.f });
-        
         width += child->GetSize().x;
     }
 

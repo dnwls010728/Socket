@@ -273,7 +273,7 @@ void UIState::AddElements()
     
     while (!pending_add_elements_.empty())
     {
-        auto& element = pending_add_elements_.front();
+        auto* element = pending_add_elements_.front();
         element->Init();
         active_elements_.push_back(element);
         pending_add_elements_.pop();

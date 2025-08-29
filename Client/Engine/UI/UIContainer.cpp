@@ -165,7 +165,7 @@ void UIContainer::AddChildren()
     
     while (!pending_add_children_.empty())
     {
-        auto& child = pending_add_children_.front();
+        auto* child = pending_add_children_.front();
         child->Init();
         
         active_children_.push_back(child);
