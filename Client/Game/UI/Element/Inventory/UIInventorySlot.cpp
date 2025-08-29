@@ -134,7 +134,6 @@ bool UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::V
     if (overflow_height > 0) tooltip_position.y -= overflow_height;
 
     tooltip_->SetAbsolutePosition(tooltip_position);
-    tooltip_->Set(item_id_);
 
     return true;
 }
@@ -147,6 +146,7 @@ bool UIInventorySlot::OnMouseEnter()
     if (!state) return false;
 
     tooltip_ = state->GetItemTooltip();
+    tooltip_->Set(item_id_);
     tooltip_->SetActive(true);
     
     return true;

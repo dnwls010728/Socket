@@ -14,12 +14,37 @@ UIBuffIcon* UIBuffList::AddBuff(int32_t id, float expire_time)
     auto [it, inserted] = buff_icons.try_emplace(id, nullptr);
     if (!inserted) RemoveChild(it->second);
 
-    auto* icon = AddChild<UIBuffIcon>(UIBuffIcon::StaticClass(), L"BuffIcon");
+    auto* icon = AddChild<UIBuffIcon>(UIBuffIcon::StaticClass(), L"BuffIcon_" + std::to_wstring(id));
     icon->Init(id, expire_time);
 
     it->second = icon;
     UpdateLayout();
     return icon;
+}
+
+void UIBuffList::Init()
+{
+    UIContainer::Init();
+    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kBuffExpired, this, &UIBuffList::OnEvent);
+}
+
+void UIBuffList::Uninit()
+{
+    UIContainer::Uninit();
+    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kBuffExpired, this, &UIBuffList::OnEvent);
+}
+
+void UIBuffList::OnEvent(const EventData& data)
+{
+    if (auto* buff_data = dynamic_cast<const BuffExpiredData*>(&data))
+    {
+        auto it = buff_icons.find(buff_data->buff_id);
+        if (it != buff_icons.end())
+        {
+            buff_icons.erase(it);
+            UpdateLayout();
+        }
+    }
 }
 
 void UIBuffList::UpdateLayout()

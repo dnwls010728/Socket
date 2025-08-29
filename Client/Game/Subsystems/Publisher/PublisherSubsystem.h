@@ -60,6 +60,13 @@ struct ColorUpdateData : EventData
     virtual ~ColorUpdateData() override = default;
 };
 
+struct BuffExpiredData : EventData
+{
+    int32_t buff_id;
+    
+    virtual ~BuffExpiredData() override = default;
+};
+
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
 
 class PublisherSubsystem : public GameInstanceSubsystem
@@ -75,7 +82,8 @@ public:
         kItemCountChanged,
         kItemMoved,
         kItemRemoved,
-        kColorUpdated
+        kColorUpdated,
+        kBuffExpired
     };
     
     PublisherSubsystem();

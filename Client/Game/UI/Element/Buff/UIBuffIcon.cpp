@@ -4,11 +4,16 @@
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/Publisher/PublisherSubsystem.h"
+#include "UI/UIInGameState.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/Inventory/UIItemTooltip.h"
 #include "Windows/DX/UISprite.h"
 
 UIBuffIcon::UIBuffIcon(const std::wstring& name) :
     UIContainer(name),
+    tooltip_(nullptr),
+    id_(0),
     expire_time_(0.f)
 {
     SetSize({ 32.f, 32.f });
@@ -22,12 +27,14 @@ UIBuffIcon::UIBuffIcon(const std::wstring& name) :
 
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     icon_->SetSize(GetSize());
+    icon_->SetIgnoreRayCast(true);
     
     text_ = AddChild<UIText>(UIText::StaticClass(), L"Text");
     text_->SetSize(GetSize());
     text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    text_->SetColor(Math::Color::Red);
+    text_->SetColor({255, 211, 77, 242});
+    text_->SetIgnoreRayCast(true);
 }
 
 void UIBuffIcon::Init(int32_t id, float expire_time)
@@ -47,7 +54,8 @@ void UIBuffIcon::Init(int32_t id, float expire_time)
     else if (id > 0) // 스킬 버프
     {
     }
-    
+
+    id_ = id;
     expire_time_ = expire_time;
 }
 
@@ -56,9 +64,50 @@ void UIBuffIcon::Tick(float delta_time)
     UIContainer::Tick(delta_time);
     
     if (expire_time_ > 0.f && Math::IsEqual(GetRemainingTime(), 0.f))
+    {
         RemoveFromParent();
+        
+        BuffExpiredData event_data;
+        event_data.buff_id = id_;
+
+        PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kBuffExpired, event_data);
+    }
 
     text_->SetText(std::to_wstring(static_cast<int32_t>(GetRemainingTime()) + 1));
+}
+
+bool UIBuffIcon::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    
+    return true;
+}
+
+bool UIBuffIcon::OnMouseEnter()
+{
+    if (id_ == 0) return false;
+    
+    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
+    if (!state) return false;
+
+    tooltip_ = state->GetItemTooltip();
+    tooltip_->Set(std::abs(id_));
+    tooltip_->SetActive(true);
+
+    Logger::Print(L"%s is entered.", GetName().c_str());
+
+    return true;
+}
+
+bool UIBuffIcon::OnMouseLeave()
+{
+    if (id_ == 0 || !tooltip_) return false;
+    
+    tooltip_->SetActive(false);
+    tooltip_ = nullptr;
+
+    Logger::Print(L"%s is left.", GetName().c_str());
+    
+    return true;
 }
 
 float UIBuffIcon::GetRemainingTime() const

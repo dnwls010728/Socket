@@ -68,6 +68,7 @@ UIElement* UIContainer::RayCast(const Math::Vector2& position)
 bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     bool result = UIElement::OnMouseMotion(position, delta);
+    bool leave = false;
 
     for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
@@ -77,20 +78,15 @@ bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vecto
         bool is_in_range = child->IsInRange(position);
         bool was_in_range = child->IsInRange(position - delta);
 
+        if (!is_in_range && was_in_range) leave |= child->OnMouseLeave();
         if (is_in_range && !was_in_range) result |= child->OnMouseEnter();
-        if (!is_in_range && was_in_range)
-        {
-            result |= child->OnMouseLeave();
-            if (result) return result;
-        }
 
         if (is_in_range || was_in_range)
             result |= child->OnMouseMotion(position, delta);
-
-        if (result) return result;
     }
 
-    return result;
+    if (result) return true;
+    return leave;
 }
 
 bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)

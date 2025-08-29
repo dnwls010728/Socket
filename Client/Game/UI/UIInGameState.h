@@ -19,7 +19,6 @@ public:
     UIInGameState();
     virtual ~UIInGameState() override = default;
 
-    FORCEINLINE UIMiniMap* GetMiniMap() const { return mini_map_; }
     FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
     FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
@@ -30,7 +29,6 @@ protected:
     virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
 
 private:
-    UIMiniMap* mini_map_;
     UIChatBar* char_bar_;
     UIInventory* inventory_;
     UIItemTooltip* item_tooltip_;

@@ -135,6 +135,7 @@ void UIState::Render()
 bool UIState::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     bool result = false;
+    bool leave = false;
 
     if (is_dragging_ && dragging_element_)
     {
@@ -159,22 +160,15 @@ bool UIState::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& 
         bool is_in_range = element->IsInRange(position);
         bool was_in_range = element->IsInRange(position - delta);
 
+        if (!is_in_range && was_in_range) leave |= element->OnMouseLeave();
         if (is_in_range && !was_in_range) result |= element->OnMouseEnter();
-        if (!is_in_range && was_in_range)
-        {
-            result |= element->OnMouseLeave();
-            if (result) return result;
-        }
 
         if (is_in_range || was_in_range)
-        {
-            result |= element->OnMouseMotion(position, delta);;
-        }
-
-        if (result) return result;
+            result |= element->OnMouseMotion(position, delta);
     }
 
-    return result;
+    if (result) return true;
+    return leave;
 }
 
 bool UIState::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)

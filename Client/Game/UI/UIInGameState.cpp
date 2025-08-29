@@ -20,7 +20,7 @@ UIInGameState::UIInGameState() :
     party_panel_(nullptr),
     party_window_(nullptr)
 {
-    mini_map_ = AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
+    AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
     char_bar_ = AddElement<UIChatBar>(UIChatBar::StaticClass(), L"ChatBar");
     char_bar_->SetAbsolutePosition({0.f, 684.f});
