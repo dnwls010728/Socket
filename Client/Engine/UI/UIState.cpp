@@ -11,6 +11,7 @@ UIState::UIState() :
     is_initialized_(false),
     is_dragging_(false),
     has_begun_drag_(false),
+    element_count_(0),
     dragging_element_(nullptr),
     pending_add_elements_(),
     pending_remove_elements_()
@@ -21,7 +22,9 @@ void UIState::RemoveElement(UIElement* element)
 {
     if (!element) return;
 
+    element->is_pending_removal_ = true;
     pending_remove_elements_.push(element);
+    --element_count_;
 }
 
 void UIState::SetFocus(UIElement* element)
@@ -111,7 +114,7 @@ void UIState::Tick(float delta_time)
     for ( uint32_t i = 0; i < active_elements_.size(); ++i )
     {
         UIElement* element = active_elements_[i];
-        if (element && element->is_initialized_ && element->IsActive())
+        if (element && element->IsInitialized() && element->IsActive())
             element->Tick(delta_time);
     }
     
@@ -124,7 +127,7 @@ void UIState::Render()
     for (uint32_t i = 0; i < active_elements_.size(); ++i)
     {
         UIElement* element = active_elements_[i];
-        if (element && element->is_initialized_ && element->IsActive())
+        if (element && element->IsInitialized() && element->IsActive())
             element->Render();
     }
 }
@@ -274,6 +277,7 @@ void UIState::AddElements()
         element->Init();
         active_elements_.push_back(element);
         pending_add_elements_.pop();
+        ++element_count_;
     }
 }
 

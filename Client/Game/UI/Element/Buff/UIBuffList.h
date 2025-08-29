@@ -12,5 +12,10 @@ public:
     virtual ~UIBuffList() override = default;
 
     UIBuffIcon* AddBuff(int32_t id, float expire_time);
+
+private:
+    void UpdateLayout();
+
+    std::unordered_map<int32_t, UIBuffIcon*> buff_icons;
     
 };

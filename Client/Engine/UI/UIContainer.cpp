@@ -7,7 +7,18 @@ void UIContainer::RemoveChild(UIElement* child)
 {
     if (!child) return;
 
+    child->is_pending_removal_ = true;
     pending_remove_children_.push(child);
+    --child_count_;
+}
+
+void UIContainer::GetChildren(std::vector<UIElement*>& children) const
+{
+    for (const auto& child : children_)
+    {
+        auto* element = child.get();
+        if (IsValid(element)) children.push_back(element);
+    }
 }
 
 UIContainer::UIContainer(const std::wstring& name) :
@@ -15,7 +26,8 @@ UIContainer::UIContainer(const std::wstring& name) :
     children_(),
     active_children_(),
     pending_add_children_(),
-    pending_remove_children_()
+    pending_remove_children_(),
+    child_count_(0)
 {
 }
 
@@ -158,6 +170,8 @@ void UIContainer::AddChildren()
         
         active_children_.push_back(child);
         pending_add_children_.pop();
+
+        ++child_count_;
     }
 }
 

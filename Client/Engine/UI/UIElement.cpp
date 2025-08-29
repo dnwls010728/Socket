@@ -84,6 +84,7 @@ UIElement::UIElement(const std::wstring& name) :
     name_(name),
     is_dirty_(false),
     is_initialized_(false),
+    is_pending_removal_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),

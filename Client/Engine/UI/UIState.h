@@ -71,6 +71,8 @@ private:
     bool is_dragging_;
     bool has_begun_drag_;
 
+    uint64_t element_count_;
+
     UIElement* dragging_element_;
 
     std::queue<UIElement*> pending_add_elements_;
@@ -120,10 +122,12 @@ T* UIState::FindElement_Internal(UIElement* element, const std::wstring& name)
     UIContainer* container = dynamic_cast<UIContainer*>(element);
     if (container)
     {
-        const std::vector<std::unique_ptr<UIElement>>& children = container->GetChildren();
+        std::vector<UIElement*> children;
+        container->GetChildren(children);
+        
         for (uint32_t i = 0; i < children.size(); ++i)
         {
-            UIElement* child = children[children.size() - i - 1].get();
+            UIElement* child = children[children.size() - i - 1];
             if (child)
             {
                 T* found_element = FindElement_Internal<T>(child, name);

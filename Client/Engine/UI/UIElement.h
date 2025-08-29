@@ -30,7 +30,9 @@ public:
 
     FORCEINLINE virtual void SetSize(const Math::Vector2& size) { size_ = size; }
     FORCEINLINE const Math::Vector2& GetSize() const { return size_; }
-    
+
+    FORCEINLINE bool IsInitialized() const { return is_initialized_; }
+    FORCEINLINE bool IsPendingRemoval() const { return is_pending_removal_; }
     FORCEINLINE bool IsActive() const { return is_active_; }
     FORCEINLINE bool IsFocused() const { return is_focused_; }
 
@@ -71,6 +73,7 @@ protected:
 
     bool is_dirty_;
     bool is_initialized_;
+    bool is_pending_removal_;
     bool is_active_;
     bool is_focused_;
     bool is_ignore_raycast;
@@ -83,3 +86,8 @@ private:
     Math::Vector2 size_;
     
 };
+
+FORCEINLINE bool IsValid(const UIElement* element)
+{
+    return element && !element->IsPendingRemoval();
+}

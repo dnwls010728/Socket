@@ -13,7 +13,9 @@ public:
 
     virtual void RemoveChild(UIElement* child);
 
-    FORCEINLINE const std::vector<std::unique_ptr<UIElement>>& GetChildren() const { return children_; }
+    void GetChildren(std::vector<UIElement*>& children) const;
+
+    FORCEINLINE uint64_t GetChildCount() const { return child_count_; }
 
 protected:
     UIContainer(const std::wstring& name);
@@ -44,6 +46,8 @@ private:
 
     void AddChildren();
     void RemoveChildren();
+    
+    uint64_t child_count_;
     
 };
 
