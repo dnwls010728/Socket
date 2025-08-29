@@ -34,6 +34,15 @@ void UIBuffIcon::Init(int32_t id, float expire_time)
 {
     if (id < 0) // 아이템 버프
     {
+        int32_t item_id = std::abs(id);
+        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+        }
+        
+        icon_->SetSprite(ui_sprite);
     }
     else if (id > 0) // 스킬 버프
     {

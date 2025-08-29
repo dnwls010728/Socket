@@ -11,14 +11,15 @@ UIBuffList::UIBuffList(const std::wstring& name) :
 
 UIBuffIcon* UIBuffList::AddBuff(int32_t id, float expire_time)
 {
-    auto it = buff_icons.find(id);
-    if (it != buff_icons.end()) RemoveChild(it->second);
-    
-    auto* buff_icon = AddChild<UIBuffIcon>(UIBuffIcon::StaticClass(), L"BuffIcon");
-    buff_icon->Init(id, expire_time);
+    auto [it, inserted] = buff_icons.try_emplace(id, nullptr);
+    if (!inserted) RemoveChild(it->second);
+
+    auto* icon = AddChild<UIBuffIcon>(UIBuffIcon::StaticClass(), L"BuffIcon");
+    icon->Init(id, expire_time);
+
+    it->second = icon;
     UpdateLayout();
-    buff_icons.insert({id, buff_icon});
-    return buff_icon;
+    return icon;
 }
 
 void UIBuffList::UpdateLayout()
