@@ -12,7 +12,6 @@
 
 UIBuffIcon::UIBuffIcon(const std::wstring& name) :
     UIContainer(name),
-    tooltip_(nullptr),
     id_(0),
     expire_time_(0.f)
 {
@@ -74,40 +73,6 @@ void UIBuffIcon::Tick(float delta_time)
     }
 
     text_->SetText(std::to_wstring(static_cast<int32_t>(GetRemainingTime()) + 1));
-}
-
-bool UIBuffIcon::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
-{
-    
-    return true;
-}
-
-bool UIBuffIcon::OnMouseEnter()
-{
-    if (id_ == 0) return false;
-    
-    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
-    if (!state) return false;
-
-    tooltip_ = state->GetItemTooltip();
-    tooltip_->Set(std::abs(id_));
-    tooltip_->SetActive(true);
-
-    Logger::Print(L"%s is entered.", GetName().c_str());
-
-    return true;
-}
-
-bool UIBuffIcon::OnMouseLeave()
-{
-    if (id_ == 0 || !tooltip_) return false;
-    
-    tooltip_->SetActive(false);
-    tooltip_ = nullptr;
-
-    Logger::Print(L"%s is left.", GetName().c_str());
-    
-    return true;
 }
 
 float UIBuffIcon::GetRemainingTime() const

@@ -17,16 +17,9 @@ public:
 
 protected:
     virtual void Tick(float delta_time) override;
-    
-    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
-    
-    virtual bool OnMouseEnter() override;
-    virtual bool OnMouseLeave() override;
 
 private:
     float GetRemainingTime() const;
-    
-    UIItemTooltip* tooltip_;
 
     UIImage* background_;
     UIImage* icon_;
