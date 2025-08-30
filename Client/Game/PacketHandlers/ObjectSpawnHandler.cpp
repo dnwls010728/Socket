@@ -44,6 +44,8 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                 mob->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y });
                 
                 mob->Init(object_info.info.mob.mob_id);
+                mob->SetFlip((object_info.info.mob.is_fliped));
+                mob->PlayAnimation(object_info.info.mob.animation_name);
             }
         }
         break;

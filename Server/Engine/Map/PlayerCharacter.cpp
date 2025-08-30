@@ -41,7 +41,9 @@ PlayerCharacter::PlayerCharacter() :
     buff_effects_(),
     buff_expires_(),
     effects_(),
-    buff_timer_(0.f)
+    buff_timer_(0.f),
+    current_animation_(L"Idle"),
+    is_flipped_(false)
 {
 }
 
@@ -247,6 +249,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet);
             if (map_)
             {
+                current_animation_ = player_animation_packet->animation;
+                is_flipped_ = player_animation_packet->is_flipped;
+                
                 PlayerAnimationPacket player_animation_broadcast_packet;
                 player_animation_broadcast_packet.unique_id = object_id_;
                 player_animation_broadcast_packet.server_time = Net::GetClientTime();
@@ -685,6 +690,13 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     wcscpy_s(info.body_color, body_color_.c_str());
 
     player->SendPacket(packet);
+
+    PlayerAnimationPacket animation_packet;
+    animation_packet.unique_id = object_id_;
+    animation_packet.animation =  current_animation_;
+    animation_packet.is_flipped = is_flipped_;
+    animation_packet.server_time = Net::GetClientTime();
+    player->SendPacket(animation_packet);
 }
 
 void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)

@@ -61,6 +61,8 @@ struct PlayerInfo
 struct MobInfo
 {
     uint32_t mob_id;
+    wchar_t animation_name[256];
+    bool is_fliped;
 };
 
 struct DroppedItemInfo

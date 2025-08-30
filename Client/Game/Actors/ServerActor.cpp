@@ -23,6 +23,22 @@ ServerActor::ServerActor(const std::wstring& name) :
     animator_ = AddComponent<AnimatorComponent>(L"Animator");
 }
 
+void ServerActor::SetFlip(bool is_fliped)
+{
+    renderer_->SetFlipX(is_fliped);
+}
+
+void ServerActor::PlayAnimation(const std::wstring& animation)
+{
+    animation_snapshots_.clear();
+    
+    AnimationSnapshot snapshot;
+    snapshot.animation = animation;
+    snapshot.is_flipped = renderer_->IsFlipX();
+    snapshot.server_time = Net::GetClientTime();
+    animation_snapshots_.push_back(snapshot);
+}
+
 void ServerActor::PhysicsTick(float delta_time)
 {
     float server_now = SessionSubsystem::Get()->GetServerTime();

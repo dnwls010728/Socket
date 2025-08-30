@@ -48,6 +48,8 @@ void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     MobInfo& info = packet.object_info.info.mob;
     info.mob_id = mob_id_;
+    info.is_fliped = is_flipped_;
+    wcscpy_s(info.animation_name, animation_.c_str());
     
     player->SendPacket(packet);
 }

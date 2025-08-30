@@ -108,7 +108,9 @@ protected:
     int32_t max_hp_;
 
     bool is_dead_;
-
+    std::wstring current_animation_;
+    bool is_flipped_;
+    
     std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;

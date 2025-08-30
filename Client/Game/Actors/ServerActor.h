@@ -27,6 +27,9 @@ public:
     ServerActor(const std::wstring& name);
     virtual ~ServerActor() override = default;
 
+    void SetFlip(bool is_fliped);
+    void PlayAnimation(const std::wstring& animation);
+    
 protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;

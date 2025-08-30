@@ -11,6 +11,7 @@
 
 #include "DataManager.h"
 #include "MapObject.h"
+#include "NetDef.h"
 #include "PlayerCharacter.h"
 #include "SpawnPoint.h"
 #include "jdbc/cppconn/prepared_statement.h"
@@ -164,6 +165,8 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     info.position_x = mob->GetPosition().x;
     info.position_y = mob->GetPosition().y;
     info.info.mob.mob_id = mob->GetMobID();
+    info.info.mob.is_fliped = mob->IsFlipped();
+    wcscpy_s(info.info.mob.animation_name, mob->GetAnimation().c_str());
 
     ObjectSpawnPacket packet;
     packet.object_info = info;
