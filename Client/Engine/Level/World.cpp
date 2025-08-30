@@ -395,11 +395,12 @@ void World::SpawnActors()
 {
     while (!pending_actors_.empty())
     {
-        std::shared_ptr<Actor> actor = pending_actors_.front();
-        current_level_->actors_.push_back(actor);
+        auto* actor = pending_actors_.front();
+        
         actor->BeginPlay();
         if (actor->IsActive()) actor->OnEnable();
         
+        current_level_->active_actors_.push_back(actor);
         pending_actors_.pop();
     }
 }
@@ -408,19 +409,29 @@ void World::DestroyActor(Actor* actor)
 {
     actor->is_pending_destroy_ = true;
     
-    std::shared_ptr<Actor> shared_actor = actor->GetSharedThis();
-    pending_destroy_actors_.push(shared_actor);
+    pending_destroy_actors_.push(actor);
 }
 
 void World::DestroyActors()
 {
     while (!pending_destroy_actors_.empty())
     {
-        std::shared_ptr<Actor> actor = pending_destroy_actors_.front();
+        auto* actor = pending_destroy_actors_.front();
+        pending_destroy_actors_.pop();
+        
         actor->EndPlay(EndPlayReason::kDestroyed);
         
-        std::erase(current_level_->actors_, actor);
-        pending_destroy_actors_.pop();
+        {
+            auto& active_actor = current_level_->active_actors_;
+            auto it = std::ranges::find(active_actor, actor);
+            if (it != active_actor.end()) active_actor.erase(it);
+        }
+
+        {
+            auto& actors = current_level_->actors_;
+            auto it = std::ranges::find_if(actors, [&](const std::shared_ptr<Actor>& e) { return e.get() == actor; });
+            if (it != actors.end()) actors.erase(it);
+        }
     }
 }
 

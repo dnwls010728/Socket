@@ -18,6 +18,8 @@ StatEffect::StatEffect(int32_t item_id, const ItemData* item_data) :
     duration_ = effect.duration;
     cooldown_ = effect.cooldown;
 
+    block_color_ = effect.block_color;
+
     is_skill_= false;
 
     if (duration_ > 0)
@@ -37,6 +39,10 @@ void StatEffect::Apply(const std::shared_ptr<PlayerCharacter>& target)
 
     target->ApplyHPDelta(hp_delta);
 #pragma endregion
+
+    if (!block_color_.empty())
+    {
+    }
 
     if (!stat_changes.empty())
     {

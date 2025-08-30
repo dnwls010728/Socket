@@ -33,6 +33,8 @@ private:
     int32_t duration_;
     int32_t cooldown_;
 
+    std::wstring block_color_;
+
     bool is_skill_;
 
     std::vector<std::pair<BuffStat, int32_t>> stat_changes;

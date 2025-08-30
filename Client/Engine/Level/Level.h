@@ -44,6 +44,7 @@ private:
     std::wstring name_;
 
     std::vector<std::shared_ptr<Actor>> actors_;
+    std::vector<Actor*> active_actors_;
 
     bool has_begun_play_;
 };
@@ -56,6 +57,7 @@ std::shared_ptr<T> Level::AddActor(const rttr::type& kType, const std::wstring& 
     {
         std::shared_ptr<T> actor = var.get_value<std::shared_ptr<T>>();
         actors_.push_back(actor);
+        active_actors_.push_back(actor.get());
 
         return actor;
     }

@@ -33,6 +33,8 @@ struct ItemEffectData
     int32_t dig;
     int32_t duration;
     int32_t cooldown;
+
+    wchar_t block_color[7]; // 6 characters + null terminator
 };
 
 struct ItemData
@@ -114,6 +116,9 @@ namespace YAML
             data.dig = node["dig"].as<int32_t>(0);
             data.duration = node["duration"].as<int32_t>(0);
             data.cooldown = node["cooldown"].as<int32_t>(0);
+
+            std::wstring block_color = StringHelper::UTF8ToUTF16(node["block_color"].as<std::string>(""));
+            wcscpy_s(data.block_color, block_color.c_str());
             return true;
         }
     };
