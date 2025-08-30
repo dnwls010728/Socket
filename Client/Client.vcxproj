@@ -183,6 +183,7 @@
     <ClInclude Include="Engine\Math\Math.h" />
     <ClInclude Include="Engine\Math\Rect.h" />
     <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector2i.h" />
     <ClInclude Include="Engine\Misc\DelegateMacros.h" />
     <ClInclude Include="Engine\Misc\EngineMacros.h" />
     <ClInclude Include="Engine\Misc\Delegate.h" />
@@ -625,6 +626,7 @@
     <ClCompile Include="Engine\Math\Math.cpp" />
     <ClCompile Include="Engine\Math\Rect.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Math\Vector2i.cpp" />
     <ClCompile Include="Engine\Misc\StringHelper.cpp" />
     <ClCompile Include="Engine\Physics\Physics2D.cpp" />
     <ClCompile Include="Engine\Asset\Asset.cpp" />

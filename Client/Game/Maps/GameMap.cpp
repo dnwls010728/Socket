@@ -3,14 +3,14 @@
 
 #include <CustomPacket.h>
 
-#include "Actor/Component/TransformComponent.h"
+#include "DebugDrawHelper.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
-#include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
 #include "Level/CameraManager.h"
+#include "Math/Math.h"
 #include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
@@ -34,25 +34,25 @@ void GameMap::Load()
     CameraManager* camera_manager = CameraManager::Get();
 
 #pragma region 타일맵
-    std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    auto tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
     if (IsValid(tilemap_loader))
     {
         std::wstring wide_str = std::format(L"{:06}", player_subsystem->map_id_);
-        Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
-        if (tilemap)
+        tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
+        if (tilemap_)
         {
-            tilemap_loader->SetTilemap(tilemap);
+            tilemap_loader->SetTilemap(tilemap_);
 
-            Bounds bounds = tilemap->GetWorldBounds();
+            Bounds bounds = tilemap_->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
 
             if (auto* state = UI::Get()->GetState())
             {
                 if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
-                    element->SetTilemap(tilemap);
+                    element->SetTilemap(tilemap_);
             }
 
-            GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
+            GameSubsystem::Get()->PlayBGM(tilemap_->GetBGM());
         }
     }
 #pragma endregion
@@ -81,6 +81,33 @@ void GameMap::Unload(EndPlayReason type)
     // audio_manager->StopSound(ChannelGroup::kSE);
     audio_manager->StopSound(ChannelGroup::kMobSE);
     audio_manager->StopSound(ChannelGroup::kSkillSE);
+}
+
+void GameMap::Tick(float deltaTime)
+{
+    Level::Tick(deltaTime);
+
+    Mouse* mouse = Mouse::Get();
+    Math::Vector2 mouse_position = mouse->GetMousePosition();
+    Math::Vector2 world_position = Renderer::Get()->ScreenToWorld(mouse_position);
+
+    const Bounds& world_bounds = tilemap_->GetWorldBounds();
+
+    float dx = world_position.x - world_bounds.min.x;
+    float dy = world_bounds.max.y - world_position.y;
+
+    int32_t tile_x = static_cast<int32_t>(std::floor(dx));
+    int32_t tile_y = static_cast<int32_t>(std::floor(dy));
+
+    tile_x = std::clamp(tile_x, 0, 24);
+    tile_y = std::clamp(tile_y, 0, 18);
+
+    Logger::Print(L"Tile Position: %d, %d", tile_x, tile_y);
+
+    float cx = world_bounds.min.x + (tile_x + .5f);
+    float cy = world_bounds.max.y - (tile_y + .5f);
+
+    DebugDrawHelper::Get()->DrawBox({cx, cy}, {1.f, 1.f}, Math::Color::Red);
 }
 
 RTTR_REGISTRATION

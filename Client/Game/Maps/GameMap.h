@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Level/Level.h"
 
+class TilemapLoader;
+
 class GameMap : public Level
 {
     SHADER_CLASS_HELPER(GameMap)
@@ -13,5 +15,10 @@ public:
 protected:
     virtual void Load() override;
     virtual void Unload(EndPlayReason type) override;
+
+    virtual void Tick(float deltaTime) override;
+
+private:
+    class Tilemap* tilemap_;
     
 };
