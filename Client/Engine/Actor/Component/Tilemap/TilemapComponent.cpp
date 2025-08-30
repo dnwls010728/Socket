@@ -39,6 +39,29 @@ int32_t TilemapComponent::GetType(const b2ShapeId shape_id)
 	return -1;
 }
 
+Math::Vector2i TilemapComponent::WorldToCell(const Math::Vector2& position) const
+{
+	const auto& bounds = tilemap_->GetWorldBounds();
+
+	float dx = position.x - bounds.min.x;
+	float dy = bounds.max.y - position.y;
+
+	int32_t tile_x = static_cast<int32_t>(std::floor(dx));
+	int32_t tile_y = static_cast<int32_t>(std::floor(dy));
+
+	tile_x = std::clamp(tile_x, 0, static_cast<int32_t>(map_size_.x) - 1);
+	tile_y = std::clamp(tile_y, 0, static_cast<int32_t>(map_size_.y) - 1);
+	return {tile_x, tile_y};
+}
+
+Math::Vector2 TilemapComponent::GetCellCenter(const Math::Vector2i& position) const
+{
+	const auto& bounds = tilemap_->GetWorldBounds();
+	float x = bounds.min.x + (position.x + .5f);
+	float y = bounds.max.y - (position.y + .5f);
+	return {x, y};
+}
+
 void TilemapComponent::BeginPlay()
 {
 	ActorComponent::BeginPlay();

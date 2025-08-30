@@ -3,6 +3,7 @@
 #include "Actor/Component/ActorComponent.h"
 #include "box2d/id.h"
 #include "Math/Vector2.h"
+#include "Math/Vector2i.h"
 #include "tmxlite/Map.hpp"
 
 class Tilemap;
@@ -25,6 +26,10 @@ public:
     void SetTilemap(Tilemap* tilemap);
 
     int32_t GetType(b2ShapeId shape_id);
+
+    Math::Vector2i WorldToCell(const Math::Vector2& position) const;
+
+    Math::Vector2 GetCellCenter(const Math::Vector2i& position) const;
 
 protected:
     virtual void BeginPlay() override;

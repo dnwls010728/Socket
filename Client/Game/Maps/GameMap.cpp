@@ -5,6 +5,7 @@
 
 #include "DebugDrawHelper.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
+#include "Actor/Component/Tilemap/TilemapComponent.h"
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
@@ -34,25 +35,25 @@ void GameMap::Load()
     CameraManager* camera_manager = CameraManager::Get();
 
 #pragma region 타일맵
-    auto tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
-    if (IsValid(tilemap_loader))
+    tilemap_loader_ = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    if (IsValid(tilemap_loader_))
     {
         std::wstring wide_str = std::format(L"{:06}", player_subsystem->map_id_);
-        tilemap_ = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
-        if (tilemap_)
+        Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
+        if (tilemap)
         {
-            tilemap_loader->SetTilemap(tilemap_);
+            tilemap_loader_->SetTilemap(tilemap);
 
-            Bounds bounds = tilemap_->GetWorldBounds();
+            Bounds bounds = tilemap->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
 
             if (auto* state = UI::Get()->GetState())
             {
                 if (auto* element = state->FindElement<UIMiniMap>(L"MiniMap"))
-                    element->SetTilemap(tilemap_);
+                    element->SetTilemap(tilemap);
             }
 
-            GameSubsystem::Get()->PlayBGM(tilemap_->GetBGM());
+            GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
         }
     }
 #pragma endregion
@@ -91,23 +92,16 @@ void GameMap::Tick(float deltaTime)
     Math::Vector2 mouse_position = mouse->GetMousePosition();
     Math::Vector2 world_position = Renderer::Get()->ScreenToWorld(mouse_position);
 
-    const Bounds& world_bounds = tilemap_->GetWorldBounds();
-
-    float dx = world_position.x - world_bounds.min.x;
-    float dy = world_bounds.max.y - world_position.y;
-
-    int32_t tile_x = static_cast<int32_t>(std::floor(dx));
-    int32_t tile_y = static_cast<int32_t>(std::floor(dy));
-
-    tile_x = std::clamp(tile_x, 0, 24);
-    tile_y = std::clamp(tile_y, 0, 18);
-
-    Logger::Print(L"Tile Position: %d, %d", tile_x, tile_y);
-
-    float cx = world_bounds.min.x + (tile_x + .5f);
-    float cy = world_bounds.max.y - (tile_y + .5f);
-
-    DebugDrawHelper::Get()->DrawBox({cx, cy}, {1.f, 1.f}, Math::Color::Red);
+    if (IsValid(tilemap_loader_))
+    {
+        const auto& tilemap_component = tilemap_loader_->GetTilemapComponent();
+        if (tilemap_component)
+        {
+            Math::Vector2i cell = tilemap_component->WorldToCell(world_position);
+            Math::Vector2 cell_center = tilemap_component->GetCellCenter(cell);
+            DebugDrawHelper::Get()->DrawBox(cell_center, Math::Vector2::One(), Math::Color::Red);
+        }
+    }
 }
 
 RTTR_REGISTRATION

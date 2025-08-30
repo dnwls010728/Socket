@@ -19,6 +19,6 @@ protected:
     virtual void Tick(float deltaTime) override;
 
 private:
-    class Tilemap* tilemap_;
+    std::shared_ptr<TilemapLoader> tilemap_loader_;
     
 };

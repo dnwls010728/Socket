@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
 
+class TilemapComponent;
+
 class TilemapLoader : public Actor
 {
     SHADER_CLASS_HELPER(TilemapLoader)
@@ -12,9 +14,11 @@ public:
 
     void SetTilemap(class Tilemap* tilemap);
 
+    FORCEINLINE const std::shared_ptr<TilemapComponent>& GetTilemapComponent() const { return tilemap_; }
+
 protected:
 #pragma region 컴포넌트
-    std::shared_ptr<class TilemapComponent> tilemap_;
+    std::shared_ptr<TilemapComponent> tilemap_;
 #pragma endregion
     
 };
