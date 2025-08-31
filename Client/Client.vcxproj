@@ -276,6 +276,7 @@
     <ClInclude Include="Game\BT\Decorators\TimeOut.h" />
     <ClInclude Include="Game\BT\Node.h" />
     <ClInclude Include="Game\Components\DamageRendererComponent.h" />
+    <ClInclude Include="Game\Components\GridRendererComponent.h" />
     <ClInclude Include="Game\FSM\Condition.h" />
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
@@ -705,6 +706,7 @@
     <ClCompile Include="Game\BT\Decorators\TimeOut.cpp" />
     <ClCompile Include="Game\BT\Node.cpp" />
     <ClCompile Include="Game\Components\DamageRendererComponent.cpp" />
+    <ClCompile Include="Game\Components\GridRendererComponent.cpp" />
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
