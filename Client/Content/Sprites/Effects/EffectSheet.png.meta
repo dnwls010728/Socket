@@ -1,0 +1,112 @@
+wrap_mode: 0
+filter_mode: 0
+ppu: 32
+frames:
+  - name: EffectSheet_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.400000006
+      y: 0.300000012
+  - name: EffectSheet_1
+    rect:
+      x: 0.0833333358
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.360000014
+      y: 0.349999994
+  - name: EffectSheet_2
+    rect:
+      x: 0.166666672
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.370000005
+      y: 0.360000014
+  - name: EffectSheet_3
+    rect:
+      x: 0.25
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.370000005
+      y: 0.360000014
+  - name: EffectSheet_4
+    rect:
+      x: 0.333333343
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.670000017
+      y: 0.300000012
+  - name: EffectSheet_5
+    rect:
+      x: 0.416666657
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.709999979
+      y: 0.319999993
+  - name: EffectSheet_6
+    rect:
+      x: 0.5
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.370000005
+  - name: EffectSheet_7
+    rect:
+      x: 0.583333313
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.379999995
+  - name: EffectSheet_8
+    rect:
+      x: 0.666666687
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.379999995
+  - name: EffectSheet_9
+    rect:
+      x: 0.75
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.379999995
+  - name: EffectSheet_10
+    rect:
+      x: 0.833333313
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.375
+  - name: EffectSheet_11
+    rect:
+      x: 0.916666687
+      y: 0
+      width: 0.0833333358
+      height: 1
+    pivot:
+      x: 0.699999988
+      y: 0.375
