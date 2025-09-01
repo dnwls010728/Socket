@@ -15,7 +15,7 @@
 #include "States/MobWalkState.h"
 
 Mob::Mob(const MobData& mob_data) :
-    mob_id_(mob_data.mob_id),
+    mob_id_(mob_data.id),
     damage_(mob_data.stats.dmg),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),

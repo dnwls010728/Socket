@@ -4,7 +4,7 @@
 struct Bounds
 {
     Bounds() = default;
-    Bounds(Math::Vector2 center, Math::Vector2 size);
+    Bounds(const Math::Vector2& center, const Math::Vector2& size);
 
     void Expand(float amount);
     
@@ -14,7 +14,7 @@ struct Bounds
      * \param b 두번째 바운드
      * \return Bounds
      */
-    static Bounds Intersect(Bounds a, Bounds b);
+    static Bounds Intersect(const Bounds& a, const Bounds& b);
 
     /**
      * \brief 첫번째 바운드가 두번째 바운드를 포함하는지 확인합니다.
@@ -22,7 +22,7 @@ struct Bounds
      * \param b 두번째 바운드
      * \return bool
      */
-    static bool Contains(Bounds a, Bounds b);
+    static bool Contains(const Bounds& a, const Bounds& b);
     
     Math::Vector2 center;
     Math::Vector2 size;

@@ -769,10 +769,10 @@ void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
             drop_position.x += static_cast<float>(sign * step) * .5f;
             GetDropPosition(drop_position);
 
-            if (!drop.item_id)
+            if (!drop.id)
                 SpawnColorDrop(count, mob, drop_position);
             else
-                SpawnItemDrop(drop.item_id, count, mob, drop_position);
+                SpawnItemDrop(drop.id, count, mob, drop_position);
                 
             ++d;
         }

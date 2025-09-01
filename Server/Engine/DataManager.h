@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Singleton.h"
 #include "Helper/StringHelper.h"
+#include "Math/Bounds.h"
 #include "yaml-cpp/node/convert.h"
 
 struct MobStats
@@ -15,7 +16,7 @@ struct MobStats
 
 struct MobData
 {
-    uint32_t mob_id;
+    uint32_t id;
     MobStats stats;
     std::wstring animation_pack;
 };
@@ -39,7 +40,7 @@ struct ItemEffectData
 
 struct ItemData
 {
-    uint32_t item_id;
+    uint32_t id;
 
     std::wstring name;
     std::wstring desc;
@@ -54,9 +55,36 @@ struct ItemData
     };
 };
 
+struct HitFrame
+{
+    Bounds hitbox;
+    
+    int32_t damage;
+    int32_t hit_count;
+    int32_t max_targets;
+    
+    float time_offset;
+};
+
+struct SkillData
+{
+    uint32_t id;
+    
+    std::wstring name;
+    std::wstring desc;
+
+    int32_t atk;
+    int32_t def;
+    int32_t dig;
+    int32_t duration;
+    int32_t cooldown;
+
+    std::vector<HitFrame> hit_frames;
+};
+
 struct MobDropData
 {
-    uint32_t item_id;
+    uint32_t id;
 
     int32_t min_count;
     int32_t max_count;
@@ -129,11 +157,73 @@ namespace YAML
         static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
-            data.item_id = node["id"].as<uint32_t>(0);
+            data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.price = node["price"].as<int32_t>(0);
             data.max_count = node["max_count"].as<int32_t>(0);
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<Math::Vector2>
+    {
+        static bool decode(const Node& node, Math::Vector2& data)
+        {
+            if (!node.IsSequence() || node.size() != 2) return false;
+            data.x = node[0].as<float>(0.f);
+            data.y = node[1].as<float>(0.f);
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<Bounds>
+    {
+        static bool decode(const Node& node, Bounds& data)
+        {
+            if (!node.IsMap()) return false;
+            Math::Vector2 center = node["center"].as<Math::Vector2>();
+            Math::Vector2 size = node["size"].as<Math::Vector2>();
+            data = {center, size};
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<HitFrame>
+    {
+        static bool decode(const Node& node, HitFrame& data)
+        {
+            if (!node.IsMap()) return false;
+            data.hitbox = node["hitbox"].as<Bounds>();
+            data.damage = node["damage"].as<int32_t>(0);
+            data.hit_count = node["hit_count"].as<int32_t>(0);
+            data.max_targets = node["max_targets"].as<int32_t>(0);
+            data.time_offset = node["time_offset"].as<float>(0.f);
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<SkillData>
+    {
+        static bool decode(const Node& node, SkillData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.id = node["id"].as<uint32_t>(0);
+            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
+            data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.dig = node["dig"].as<int32_t>(0);
+            data.duration = node["duration"].as<int32_t>(0);
+            data.cooldown = node["cooldown"].as<int32_t>(0);
+            
+            for (const auto& frame : node["hit_frames"])
+                data.hit_frames.push_back(frame.as<HitFrame>());
+            
             return true;
         }
     };
@@ -149,6 +239,7 @@ public:
 
     const MobData* GetMob(uint32_t id) const;
     const ItemData* GetItem(uint32_t id) const;
+    const SkillData* GetSkill(uint32_t id) const;
     
     const std::vector<MobDropData>* GetDrop(uint32_t id);
     
@@ -158,6 +249,7 @@ private:
     // YAML
     std::unordered_map<uint32_t, MobData> mob_map_;
     std::unordered_map<uint32_t, ItemData> item_map_;
+    std::unordered_map<uint32_t, SkillData> skill_map_;
 
     // Database
     std::unordered_map<uint32_t, std::vector<MobDropData>> mob_drop_map_;

@@ -5,6 +5,8 @@
 
 DataSubsystem::DataSubsystem() :
     mob_map_(),
+    item_map_(),
+    skill_map_(),
     exp_table_()
 {
 }
@@ -19,8 +21,31 @@ void DataSubsystem::Init()
         for (const auto& mob : mob_data["mobs"])
         {
             MobData data = mob.second.as<MobData>();
-            data.mob_id = mob.first.as<uint32_t>();
-            mob_map_[data.mob_id] = data;
+            data.id = mob.first.as<uint32_t>();
+            mob_map_[data.id] = data;
+        }
+
+        YAML::Node item_data = YAML::LoadFile("Content\\Data\\ItemData.data");
+        for (const auto& item : item_data["items"])
+        {
+            ItemData data = item.second.as<ItemData>();
+            data.id = item.first.as<uint32_t>();
+            
+            uint32_t type = data.id / 100000;
+            if (type == 1)
+                data.stat = item.second["stat"].as<ItemStatData>();
+            else if (type == 2)
+                data.effect = item.second["effect"].as<ItemEffectData>();
+            
+            item_map_[data.id] = data;
+        }
+        
+        YAML::Node skill_data = YAML::LoadFile("Content\\Data\\SkillData.data");
+        for (const auto& skill : skill_data["skills"])
+        {
+            SkillData data = skill.second.as<SkillData>();
+            data.id = skill.first.as<uint32_t>();
+            skill_map_[data.id] = data;
         }
         
         YAML::Node exp_data = YAML::LoadFile("Content\\Data\\ExpData.data");
@@ -29,21 +54,6 @@ void DataSubsystem::Init()
             int32_t level = exp.first.as<int32_t>();
             int32_t exp_value = exp.second.as<int32_t>();
             exp_table_[level] = exp_value;
-        }
-
-        YAML::Node item_data = YAML::LoadFile("Content\\Data\\ItemData.data");
-        for (const auto& item : item_data["items"])
-        {
-            ItemData data = item.second.as<ItemData>();
-            data.item_id = item.first.as<uint32_t>();
-            
-            uint32_t type = data.item_id / 100000;
-            if (type == 1)
-                data.stat = item.second["stat"].as<ItemStatData>();
-            else if (type == 2)
-                data.effect = item.second["effect"].as<ItemEffectData>();
-            
-            item_map_[data.item_id] = data;
         }
     }
     catch (const YAML::BadFile& e)
@@ -64,6 +74,13 @@ const ItemData* DataSubsystem::GetItem(uint32_t id) const
 {
     auto it = item_map_.find(id);
     if (it == item_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const SkillData* DataSubsystem::GetSkill(uint32_t id) const
+{
+    auto it = skill_map_.find(id);
+    if (it == skill_map_.end()) return nullptr;
     return &it->second;
 }
 

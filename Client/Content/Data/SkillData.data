@@ -1,0 +1,17 @@
+skills:
+  100000:
+    name: ""
+    desc: ""
+    # atk: 0
+    # def: 0
+    # dig: 0
+    # duration: 0
+    cooldown: 5
+    hit_frames:
+      - hitbox:
+          center: [0.0, 0.0]
+          size: [1.0, 1.0]
+        damage: 100
+        hit_count: 1
+        max_targets: 1
+        time_offset: 0
