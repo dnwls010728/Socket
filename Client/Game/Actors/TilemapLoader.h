@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
 
-class GridRendererComponent;
 class TilemapComponent;
 
 class TilemapLoader : public Actor
@@ -20,7 +19,6 @@ public:
 protected:
 #pragma region 컴포넌트
     std::shared_ptr<TilemapComponent> tilemap_;
-    std::shared_ptr<GridRendererComponent> grid_renderer_;
 #pragma endregion
     
 };
