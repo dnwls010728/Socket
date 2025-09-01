@@ -14,4 +14,4 @@ skills:
         damage: 100
         hit_count: 1
         max_targets: 1
-        time_offset: 0
+        time_offset: 0.6666666667
