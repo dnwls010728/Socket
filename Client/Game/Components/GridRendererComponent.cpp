@@ -41,9 +41,6 @@ void GridRendererComponent::InitializeComponent()
 
     shape_ = std::make_shared<Shape>();
 
-    const auto& transform = GetOwner()->GetTransform();
-    shape_->SetPosition(transform->GetPosition());
-    shape_->SetAngle(transform->GetAngle());
     shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     shape_->SetColor(color_);
     shape_->SetZOrder(std::numeric_limits<int32_t>::max());
@@ -59,6 +56,10 @@ void GridRendererComponent::UninitializeComponent()
 void GridRendererComponent::OnEnable()
 {
     ActorComponent::OnEnable();
+    
+    const auto& transform = GetOwner()->GetTransform();
+    shape_->SetPosition(transform->GetPosition());
+    shape_->SetAngle(transform->GetAngle());
 
     World::Get()->AddShape(shape_);
 }

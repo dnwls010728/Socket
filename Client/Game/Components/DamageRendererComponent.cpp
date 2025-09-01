@@ -39,14 +39,8 @@ void DamageRendererComponent::InitializeComponent()
     ActorComponent::InitializeComponent();
 
     shape_ = std::make_shared<Shape>();
-    
-    const auto& transform = GetOwner()->GetTransform();
-    shape_->SetPosition(transform->GetPosition());
-    shape_->SetAngle(transform->GetAngle());
     shape_->SetColor(color_);
     shape_->SetZOrder(std::numeric_limits<int32_t>::max());
-
-    World::Get()->AddShape(shape_);
 }
 
 void DamageRendererComponent::UninitializeComponent()
@@ -106,6 +100,10 @@ void DamageRendererComponent::Render(float alpha)
 void DamageRendererComponent::OnEnable()
 {
     ActorComponent::OnEnable();
+    
+    const auto& transform = GetOwner()->GetTransform();
+    shape_->SetPosition(transform->GetPosition());
+    shape_->SetAngle(transform->GetAngle());
 
     World::Get()->AddShape(shape_);
 }

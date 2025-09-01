@@ -88,10 +88,6 @@ void SpriteRendererComponent::InitializeComponent()
 
     shape_ = std::make_shared<Shape>();
     
-    const auto& transform = GetOwner()->GetTransform();
-    shape_->SetPosition(transform->GetPosition());
-    shape_->SetAngle(transform->GetAngle());
-    
     if (sprite_)
     {
         shape_->SetVertices(sprite_->GetVertices());
@@ -108,8 +104,6 @@ void SpriteRendererComponent::InitializeComponent()
         shape_->SetUVOffset(frame.uv_offset);
         shape_->SetUVScale(frame.uv_scale);
     }
-    
-    World::Get()->AddShape(shape_);
 }
 
 void SpriteRendererComponent::UninitializeComponent()
@@ -149,6 +143,10 @@ void SpriteRendererComponent::Render(float alpha)
 void SpriteRendererComponent::OnEnable()
 {
     ActorComponent::OnEnable();
+    
+    const auto& transform = GetOwner()->GetTransform();
+    shape_->SetPosition(transform->GetPosition());
+    shape_->SetAngle(transform->GetAngle());
 
     World::Get()->AddShape(shape_);
 }
