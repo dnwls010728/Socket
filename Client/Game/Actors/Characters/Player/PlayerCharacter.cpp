@@ -15,6 +15,7 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Damage.h"
 #include "Actors/DroppedItem.h"
+#include "Actors/Effect.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
@@ -305,6 +306,16 @@ void PlayerCharacter::Tick(float delta_time)
                         request.object_id = dropped_item->GetObjectID();
                         SendPacket(request);
                     }
+                }
+            }
+
+            if (keyboard->GetKeyDown(Scancode::kKeyA))
+            {
+                auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+                if (IsValid(effect))
+                {
+                    effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+                    effect->SetFlipX(renderer_->IsFlipX());
                 }
             }
 

@@ -1,7 +1,7 @@
 target: Sprites\Effects\EffectSheet.png
 animations:
   - name: Idle
-    frame_rate: 8
+    frame_rate: 10
     loop: false
     frames:
       - EffectSheet_0
