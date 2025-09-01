@@ -15,7 +15,7 @@ void ProjectSettings::Init()
     if (!settings) return;
 
     // 윈도우 설정
-    settings->SetWindowTitle(L"Untitled");
+    settings->SetWindowTitle(L"RpGB");
     settings->SetScreenSize(1366, 768);
     settings->UseVSync(false);
 

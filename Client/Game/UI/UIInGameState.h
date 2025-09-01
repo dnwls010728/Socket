@@ -25,6 +25,8 @@ public:
     FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
 
 protected:
+    virtual void Tick(float delta_time) override;
+    
     virtual void Init() override;
     virtual bool OnKey(uint32_t scancode, bool is_pressed) override;
 
@@ -36,4 +38,6 @@ private:
     UIContextMenu* context_menu_;
     UIPartyPanel* party_panel_;
     UIPartyWindow* party_window_;
+
+    bool show_post_process_;
 };

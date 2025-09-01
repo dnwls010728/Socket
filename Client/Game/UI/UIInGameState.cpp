@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "UIInGameState.h"
 
+#include "PostProcessingSettings.h"
 #include "Scancode.h"
 #include "UI/Element/UIContextMenu.h"
 #include "Element/UIChatBar.h"
@@ -12,13 +13,16 @@
 #include "Element/Buff/UIBuffList.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
+#include "imgui/imgui.h"
+#include "Input/Keyboard.h"
 #include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 
 UIInGameState::UIInGameState() :
     context_menu_(nullptr),
     party_panel_(nullptr),
-    party_window_(nullptr)
+    party_window_(nullptr),
+    show_post_process_(false)
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
     
@@ -51,6 +55,44 @@ UIInGameState::UIInGameState() :
     context_menu_->SetActive(false);
 
     AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
+}
+
+void UIInGameState::Tick(float delta_time)
+{
+    UIState::Tick(delta_time);
+
+    if (Keyboard::Get()->GetKeyDown(Scancode::kKeyR))
+        show_post_process_ = !show_post_process_;
+
+    if (show_post_process_)
+    {
+        if (!ImGui::Begin("Post Process", &show_post_process_))
+        {
+            ImGui::End();
+            return;
+        }
+
+        PostProcessingSettings* settings = PostProcessingSettings::Get();
+
+        static float blur_radius = settings->GetBlurRadius();
+        static float vignette_strength = settings->GetVignetteStrength();
+        static float gamma = settings->GetGamma();
+        static float grayscale = settings->GetGrayscale();
+
+        if (ImGui::SliderFloat("Blur Radius", &blur_radius, 0.f, 20.f))
+            settings->SetBlurRadius(blur_radius);
+
+        if (ImGui::SliderFloat("Vignette Strength", &vignette_strength, 0.f, 1.f))
+            settings->SetVignetteStrength(vignette_strength);
+
+        if (ImGui::SliderFloat("Gamma", &gamma, 0.1f, 5.f))
+            settings->SetGamma(gamma);
+
+        if (ImGui::SliderFloat("Grayscale", &grayscale, 0.f, 1.f))
+            settings->SetGrayscale(grayscale);
+
+        ImGui::End();
+    }
 }
 
 void UIInGameState::Init()

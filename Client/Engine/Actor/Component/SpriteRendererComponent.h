@@ -1,7 +1,10 @@
 ﻿#pragma once
+#include <optional>
+
 #include "ActorComponent.h"
 #include "Math/Bounds.h"
 #include "Math/Color.h"
+#include "Windows/DX/Sprite.h"
 
 class Sprite;
 
@@ -14,6 +17,7 @@ public:
     SpriteRendererComponent(Actor* owner, const std::wstring& kName = L"");
     virtual ~SpriteRendererComponent() override = default;
 
+    void SetColor(const Math::Color& color);
     void SetZOrder(int32_t z_order);
     void SetSprite(Sprite* sprite, const std::wstring& kFrame);
     void SetSprite(Sprite* sprite, uint64_t frame_index = 0);
@@ -28,7 +32,6 @@ public:
     FORCEINLINE void SetFlipY(bool flip_y) { flip_y_ = flip_y; }
     FORCEINLINE bool IsFlipY() const { return flip_y_; }
 
-    FORCEINLINE void SetColor(const Math::Color& color) { color_ = color; }
     FORCEINLINE Math::Color GetColor() const { return color_; }
 
     FORCEINLINE int32_t GetZOrder() const { return z_order_; }
@@ -41,11 +44,18 @@ protected:
     virtual void OnDisable() override;
 
 private:
+    void UpdateFrame();
+    
     std::shared_ptr<class Shape> shape_;
     
     Sprite* sprite_;
 
     uint64_t frame_index_;
+
+    std::optional<SpriteFrame> frame_;
+
+    float frame_width_;
+    float frame_height_;
 
     bool flip_x_;
     bool flip_y_;

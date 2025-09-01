@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "GridRendererComponent.h"
 
+#include "Actor/Component/TransformComponent.h"
 #include "Windows/DX/Shape.h"
 
 GridRendererComponent::GridRendererComponent(Actor* owner, const std::wstring& name) :
@@ -10,8 +11,28 @@ GridRendererComponent::GridRendererComponent(Actor* owner, const std::wstring& n
     shape_(nullptr),
     color_(Math::Color::White),
     rows_(0),
-    cols_(0)
+    cols_(0),
+    is_dirty_(false)
 {
+}
+
+void GridRendererComponent::SetRows(uint32_t rows)
+{
+    rows_ = rows;
+    is_dirty_ = true;
+}
+
+void GridRendererComponent::SetCols(uint32_t cols)
+{
+    cols_ = cols;
+    is_dirty_ = true;
+}
+
+void GridRendererComponent::SetColor(const Math::Color& color)
+{
+    color_ = color;
+    if (HasBegunPlay())
+        shape_->SetColor(color_);
 }
 
 void GridRendererComponent::InitializeComponent()
@@ -19,11 +40,13 @@ void GridRendererComponent::InitializeComponent()
     ActorComponent::InitializeComponent();
 
     shape_ = std::make_shared<Shape>();
+
+    const auto& transform = GetOwner()->GetTransform();
+    shape_->SetPosition(transform->GetPosition());
+    shape_->SetAngle(transform->GetAngle());
     shape_->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     shape_->SetColor(color_);
     shape_->SetZOrder(std::numeric_limits<int32_t>::max());
-    
-    Refresh();
 }
 
 void GridRendererComponent::UninitializeComponent()
@@ -47,7 +70,38 @@ void GridRendererComponent::OnDisable()
     World::Get()->RemoveShape(shape_);
 }
 
-void GridRendererComponent::Refresh()
+void GridRendererComponent::TickComponent(float delta_time)
+{
+    ActorComponent::TickComponent(delta_time);
+
+    if (is_dirty_)
+    {
+        RebuildGridGeometry();
+        shape_->SetVertices(vertices_);
+        shape_->SetIndices(indices_);
+        is_dirty_ = false;
+    }
+}
+
+void GridRendererComponent::Render(float alpha)
+{
+    ActorComponent::Render(alpha);
+    
+    const auto& transform = GetOwner()->GetTransform();
+    if (!transform) return;
+
+    Bounds bounds = shape_->GetBounds();
+    
+    float pivot_x = bounds.size.x * .5f;
+    float pivot_y = bounds.size.y * .5f;
+
+    shape_->SetPosition(transform->GetPosition());
+    shape_->SetAngle(transform->GetAngle());
+    shape_->SetScale(transform->GetScale());
+    shape_->SetPivot({pivot_x, pivot_y});
+}
+
+void GridRendererComponent::RebuildGridGeometry()
 {
     vertices_.clear();
     indices_.clear();
@@ -92,12 +146,6 @@ void GridRendererComponent::Refresh()
         
         indices_.push_back(base);
         indices_.push_back(base + 1);
-    }
-
-    if (shape_)
-    {
-        shape_->SetVertices(vertices_);
-        shape_->SetIndices(indices_);
     }
 }
 
