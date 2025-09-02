@@ -15,10 +15,5 @@ public:
 protected:
     virtual void Load() override;
     virtual void Unload(EndPlayReason type) override;
-
-    virtual void Tick(float deltaTime) override;
-
-private:
-    std::shared_ptr<TilemapLoader> tilemap_loader_;
     
 };

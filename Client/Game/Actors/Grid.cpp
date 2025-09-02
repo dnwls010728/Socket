@@ -9,6 +9,16 @@ Grid::Grid(const std::wstring& name) :
     grid_renderer_ = AddComponent<GridRendererComponent>(L"GridRenderer");
 }
 
+void Grid::SetRows(uint32_t rows) const
+{
+    grid_renderer_->SetRows(rows);
+}
+
+void Grid::SetCols(uint32_t columns) const
+{
+    grid_renderer_->SetCols(columns);
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

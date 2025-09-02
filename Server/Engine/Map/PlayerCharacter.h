@@ -110,6 +110,7 @@ protected:
     bool is_dead_;
     std::wstring current_animation_;
     bool is_flipped_;
+    bool is_placing_;
     
     std::atomic_bool map_transitioning_;
     

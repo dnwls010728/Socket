@@ -11,9 +11,9 @@
 #include "Asset/AssetManager.h"
 #include "Audio/AudioManager.h"
 #include "Level/CameraManager.h"
-#include "Math/Math.h"
 #include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PlacementSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
@@ -35,14 +35,14 @@ void GameMap::Load()
     CameraManager* camera_manager = CameraManager::Get();
 
 #pragma region 타일맵
-    tilemap_loader_ = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
-    if (IsValid(tilemap_loader_))
+    std::shared_ptr<TilemapLoader> tilemap_loader = AddActor<TilemapLoader>(TilemapLoader::StaticClass(), L"TilemapLoader");
+    if (IsValid(tilemap_loader))
     {
         std::wstring wide_str = std::format(L"{:06}", player_subsystem->map_id_);
         Tilemap* tilemap = AssetManager::Get()->Load<Tilemap>(L"Tilemaps\\" + wide_str + L".tmx");
         if (tilemap)
         {
-            tilemap_loader_->SetTilemap(tilemap);
+            tilemap_loader->SetTilemap(tilemap);
 
             Bounds bounds = tilemap->GetWorldBounds();
             camera_manager->SetLimit(bounds.size.x, bounds.size.y);
@@ -54,6 +54,7 @@ void GameMap::Load()
             }
 
             GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
+            PlacementSubsystem::Get()->SetTilemapComponent(tilemap_loader->GetTilemapComponent());
         }
     }
 #pragma endregion
@@ -82,26 +83,6 @@ void GameMap::Unload(EndPlayReason type)
     // audio_manager->StopSound(ChannelGroup::kSE);
     audio_manager->StopSound(ChannelGroup::kMobSE);
     audio_manager->StopSound(ChannelGroup::kSkillSE);
-}
-
-void GameMap::Tick(float deltaTime)
-{
-    Level::Tick(deltaTime);
-
-    Mouse* mouse = Mouse::Get();
-    Math::Vector2 mouse_position = mouse->GetMousePosition();
-    Math::Vector2 world_position = Renderer::Get()->ScreenToWorld(mouse_position);
-
-    if (IsValid(tilemap_loader_))
-    {
-        const auto& tilemap_component = tilemap_loader_->GetTilemapComponent();
-        if (tilemap_component)
-        {
-            Math::Vector2i cell = tilemap_component->WorldToCell(world_position);
-            Math::Vector2 cell_center = tilemap_component->GetCellCenter(cell);
-            DebugDrawHelper::Get()->DrawBox(cell_center, Math::Vector2::One(), Math::Color::Red);
-        }
-    }
 }
 
 RTTR_REGISTRATION

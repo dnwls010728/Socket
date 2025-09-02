@@ -31,6 +31,8 @@ public:
 
     Math::Vector2 GetCellCenter(const Math::Vector2i& position) const;
 
+    FORCEINLINE const Math::Vector2& GetMapSize() const { return map_size_; }
+
 protected:
     virtual void UninitializeComponent() override;
     virtual void BeginPlay() override;

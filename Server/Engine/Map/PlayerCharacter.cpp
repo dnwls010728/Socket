@@ -31,6 +31,7 @@ PlayerCharacter::PlayerCharacter() :
     hp_(350),
     max_hp_(350),
     is_dead_(false),
+    is_placing_(false),
     map_transitioning_(false),
     exp_(0),
     color_(0),
@@ -210,6 +211,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Portal* to_portal = to_map->FindPortal(portal->GetToID());
             if (!to_portal) break;
 
+            is_placing_ = false;
+
             ChangeMap(to_map, to_portal);
         }
         break;
@@ -349,7 +352,15 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             auto item = inventory_->FindItem(Inventory::Type::kUse, use_item_packet->slot_id);
             if (!item && item->GetCount() <= 0) break;
 
-            if (item->GetID() != 290000)
+            if (item->GetID() == 290000)
+            {
+                if (is_placing_) break;
+                is_placing_ = true;
+                
+                PlacementStartPacket placement_start_packet;
+                SendPacket(placement_start_packet);
+            }
+            else
             {
                 inventory_->RemoveItem(Inventory::Type::kUse, use_item_packet->slot_id, 1);
 
@@ -374,10 +385,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 }
             
                 SendPacket(pakcet);
+                
+                if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
+                    effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
             }
-
-            if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
-                effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
         }
         break;
 
@@ -586,6 +597,15 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             if (GetPartyID() == 0) break;
             PartyManager::Get()->DeletePlayerFromParty(GetPartyID(), object_id_);
+        }
+        break;
+
+    case PlacementStopRequest::StaticPacketID:
+        {
+            is_placing_ = false;
+
+            PlacementStopResponse response;
+            SendPacket(response);
         }
         break;
 
