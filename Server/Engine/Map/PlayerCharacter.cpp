@@ -92,7 +92,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
-        character->inventory_ = std::make_unique<Inventory>(character);
+        character->inventory_ = std::make_unique<Inventory>(character.get());
         Inventory* inventory = character->inventory_.get();
 
         inventory->SetSlotCapacity(Inventory::Type::kEquip, 128);
@@ -147,7 +147,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::sha
 
     character->player_ = player;
     character->account_id_ = player->GetAccountID();
-    character->inventory_ = std::make_unique<Inventory>(character);
+    character->inventory_ = std::make_unique<Inventory>(character.get());
     
     return character;
 }

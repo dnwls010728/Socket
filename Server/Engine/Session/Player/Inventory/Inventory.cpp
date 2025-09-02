@@ -13,11 +13,12 @@
 #include "Map/PlayerCharacter.h"
 #include "MySQL/MySQLManager.h"
 
-Inventory::Inventory(const std::shared_ptr<PlayerCharacter>& player) :
-    player_character_(player),
+Inventory::Inventory(PlayerCharacter* owner) :
+    owner_(owner),
     inventories_(),
     slot_capacity_()
 {
+    slot_capacity_[static_cast<uint8_t>(Type::kEquipped)] = static_cast<uint8_t>(EquipSlot::kCount);
 }
 
 uint32_t Inventory::GetItemID(Type type, uint32_t slot_id)
@@ -187,8 +188,7 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
                 change.info.change_count.count = existing_item->GetCount();
                 packet.changes.push_back(change);
                 
-                if (auto player_character = player_character_.lock())
-                    player_character->SendPacket(packet);
+                owner_->SendPacket(packet);
             }
         }
     }
@@ -214,8 +214,7 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
         change.info.add.count = to_add;
         packet.changes.push_back(change);
 
-        if (auto player_character = player_character_.lock())
-            player_character->SendPacket(packet);
+        owner_->SendPacket(packet);
     }
     
     return true;
@@ -225,56 +224,51 @@ bool Inventory::UpdateDatabase() const
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return false;
-    
-    if (auto player_character = player_character_.lock())
-    {
-        try
-        {
-            {
-                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
-                statement->setUInt(1, player_character->GetObjectID());
-                statement->executeUpdate();
-            }
 
+    try
+    {
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+            statement->setUInt(1, owner_->GetObjectID());
+            statement->executeUpdate();
+        }
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, inventory_type, item_id, slot_id, count) VALUES (?, ?, ?, ?, ?, ?)"));
+            for (int32_t i = 0; i < static_cast<int32_t>(Type::kCount); ++i)
             {
-                std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, inventory_type, item_id, slot_id, count) VALUES (?, ?, ?, ?, ?, ?)"));
-                for (int32_t i = 0; i < static_cast<int32_t>(Type::kCount); ++i)
+                for (const auto& slot : inventories_[i])
                 {
-                    for (const auto& slot : inventories_[i])
-                    {
-                        statement->setUInt(1, player_character->GetAccountID());
-                        statement->setUInt(2, player_character->GetObjectID());
-                        statement->setUInt(3, i);
-                        statement->setUInt(4, slot.second->GetID());
-                        statement->setUInt(5, slot.first);
-                        statement->setInt(6, slot.second->GetCount());
-                        statement->executeUpdate();
-                    }
+                    statement->setUInt(1, owner_->GetAccountID());
+                    statement->setUInt(2, owner_->GetObjectID());
+                    statement->setUInt(3, i);
+                    statement->setUInt(4, slot.second->GetID());
+                    statement->setUInt(5, slot.first);
+                    statement->setInt(6, slot.second->GetCount());
+                    statement->executeUpdate();
                 }
             }
         }
-        catch (sql::SQLException& e)
-        {
-            std::cerr << "SQLException: " << e.what() << std::endl;
-            std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
-            std::cerr << "SQL State: " << e.getSQLState() << std::endl;
-            return false;
-        }
-        catch (std::exception& e)
-        {
-            std::cerr << "Exception: " << e.what() << std::endl;
-            return false;
-        }
-        catch (...)
-        {
-            std::cerr << "Unknown Exception" << std::endl;
-            return false;
-        }
-
-        return true;
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+        return false;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 void Inventory::Remove_Internal(Type type, uint32_t slot_id)

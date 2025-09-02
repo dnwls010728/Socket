@@ -21,7 +21,7 @@ public:
         kCount
     };
     
-    Inventory(const std::shared_ptr<PlayerCharacter>& owner);
+    Inventory(PlayerCharacter* owner);
     ~Inventory() = default;
     
     uint32_t GetItemID(Type type, uint32_t slot_id);
@@ -50,8 +50,8 @@ public:
 
 private:
     void Remove_Internal(Type type, uint32_t slot_id);
-    
-    std::weak_ptr<PlayerCharacter> player_character_;
+
+    PlayerCharacter* owner_;
     
     std::array<std::map<uint32_t, std::shared_ptr<Item>>, static_cast<uint8_t>(Type::kCount)> inventories_;
     std::array<uint32_t, static_cast<uint8_t>(Type::kCount)> slot_capacity_;
