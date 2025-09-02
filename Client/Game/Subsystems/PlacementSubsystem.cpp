@@ -58,11 +58,23 @@ void PlacementSubsystem::Tick(float delta_time)
     Math::Vector2 mouse_position = mouse->GetMousePosition();
     Math::Vector2 world_position = Renderer::Get()->ScreenToWorld(mouse_position);
 
-    if (is_placing_ && IsValid(block_preview_))
+    if (is_placing_)
     {
         Math::Vector2i cell_position = tilemap_component_->WorldToCell(world_position);
         Math::Vector2 cell_center = tilemap_component_->GetCellCenter(cell_position);
-        block_preview_->GetTransform()->SetPosition(cell_center);
+        
+        if (IsValid(block_preview_))
+        {
+            block_preview_->GetTransform()->SetPosition(cell_center);
+        }
+
+        if (mouse->GetMouseButtonDown(MouseButton::kLeft))
+        {
+            PlacementBlockPacket packet;
+            packet.position.x = cell_center.x;
+            packet.position.y = cell_center.y;
+            SessionSubsystem::Get()->SendPacket(packet);
+        }
     }
 }
 

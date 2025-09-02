@@ -14,6 +14,7 @@
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
+#include "Math/Color.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
@@ -364,7 +365,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             {
                 inventory_->RemoveItem(Inventory::Type::kUse, use_item_packet->slot_id, 1);
 
-                InventoryUpdatePacket pakcet;
+                InventoryUpdatePacket inventory_update_packet;
             
                 if (item->GetCount() <= 0)
                 {
@@ -372,7 +373,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     change.inventory_type = static_cast<uint8_t>(Inventory::Type::kUse);
                     change.action = InventoryAction::kRemove;
                     change.info.remove.slot_id = use_item_packet->slot_id;
-                    pakcet.changes.push_back(change);
+                    inventory_update_packet.changes.push_back(change);
                 }
                 else
                 {
@@ -381,10 +382,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     change.action = InventoryAction::kChangeCount;
                     change.info.change_count.slot_id = use_item_packet->slot_id;
                     change.info.change_count.count = item->GetCount();
-                    pakcet.changes.push_back(change);
+                    inventory_update_packet.changes.push_back(change);
                 }
             
-                SendPacket(pakcet);
+                SendPacket(inventory_update_packet);
                 
                 if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
                     effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
@@ -606,6 +607,52 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             PlacementStopResponse response;
             SendPacket(response);
+        }
+        break;
+
+    case PlacementBlockPacket::StaticPacketID:
+        {
+            PlacementBlockPacket* placement_start_packet = static_cast<PlacementBlockPacket*>(packet);
+            
+            std::vector<std::shared_ptr<Item>> items;
+            inventory_->GetItems(items, 290000);
+            if (items.empty()) break;
+
+            Math::Vector2 position;
+            position.x = placement_start_packet->position.x;
+            position.y = placement_start_packet->position.y;
+            
+            map_->SpawnBlock(L"FFFFFF", 0, position);
+
+            auto item = items.front();
+            inventory_->RemoveItem(Inventory::Type::kUse, item->GetSlot(), 1);
+
+            InventoryUpdatePacket inventory_update_packet;
+            
+            if (item->GetCount() <= 0)
+            {
+                InventoryChange change;
+                change.inventory_type = static_cast<uint8_t>(Inventory::Type::kUse);
+                change.action = InventoryAction::kRemove;
+                change.info.remove.slot_id = item->GetSlot();
+                inventory_update_packet.changes.push_back(change);
+                
+                is_placing_ = false;
+
+                PlacementStopResponse placement_stop_response;
+                SendPacket(placement_stop_response);
+            }
+            else
+            {
+                InventoryChange change;
+                change.inventory_type = static_cast<uint8_t>(Inventory::Type::kUse);
+                change.action = InventoryAction::kChangeCount;
+                change.info.change_count.slot_id = item->GetSlot();
+                change.info.change_count.count = item->GetCount();
+                inventory_update_packet.changes.push_back(change);
+            }
+
+            SendPacket(inventory_update_packet);
         }
         break;
 

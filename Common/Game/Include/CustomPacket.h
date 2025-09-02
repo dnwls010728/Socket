@@ -476,3 +476,15 @@ struct PlacementStopResponse : public Net::IPacket
     SERIALIZABLE_FIELDS()
     REGISTER_PACKET(PlacementStopResponse, 902)
 };
+
+struct PlacementBlockPacket : public Net::IPacket
+{
+    struct
+    {
+        float x;
+        float y;
+    } position;
+
+    SERIALIZABLE_FIELDS(position)
+    REGISTER_PACKET(PlacementBlockPacket, 903)
+};
