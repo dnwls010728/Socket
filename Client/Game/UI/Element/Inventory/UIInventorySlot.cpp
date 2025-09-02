@@ -97,7 +97,13 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
     if (timestamp - last_time_ < .2f)
     {
         Inventory::Type type = ui_inventory_->tab_;
-        if (type == Inventory::Type::kUse)
+        if (type == Inventory::Type::kEquip)
+        {
+            EquipItemPacket packet;
+            packet.slot_id = slot_id_;
+            SessionSubsystem::Get()->SendPacket(packet);
+        }
+        else if (type == Inventory::Type::kUse)
         {
             Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
             if (audio) AudioManager::Get()->PlaySound2D(audio);

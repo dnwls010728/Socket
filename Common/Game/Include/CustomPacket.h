@@ -307,6 +307,22 @@ struct ColorGainPacket : public Net::IPacket
     REGISTER_PACKET(ColorGainPacket, 306)
 };
 
+struct EquipItemPacket : public Net::IPacket
+{
+    uint32_t slot_id;
+    
+    SERIALIZABLE_FIELDS(slot_id)
+    REGISTER_PACKET(EquipItemPacket, 307)
+};
+
+struct UnequipItemPacket : public Net::IPacket
+{
+    uint32_t slot_id;
+    
+    SERIALIZABLE_FIELDS(slot_id)
+    REGISTER_PACKET(UnequipItemPacket, 308)
+};
+
 struct AttackRequest : public Net::IPacket
 {
     uint32_t object_id;

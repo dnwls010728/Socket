@@ -429,6 +429,18 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
+    case EquipItemPacket::StaticPacketID:
+        {
+            EquipItemPacket* equip_item_packet = static_cast<EquipItemPacket*>(packet);
+        }
+        break;
+
+    case UnequipItemPacket::StaticPacketID:
+        {
+            UnequipItemPacket* equip_item_packet = static_cast<UnequipItemPacket*>(packet);
+        }
+        break;
+
     case AttackRequest::StaticPacketID:
         {
             AttackRequest* attack_request = static_cast<AttackRequest*>(packet);
