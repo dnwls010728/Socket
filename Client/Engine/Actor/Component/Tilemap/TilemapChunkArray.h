@@ -20,6 +20,9 @@ public:
 
     void SetShape(const std::vector<DefaultVertex>& kVertices, const std::vector<uint32_t>& kIndices);
 
+    void AddShape() const;
+    void RemoveShape() const;
+
     Math::Vector2 GetTextureSize();
     
     FORCEINLINE const Math::Vector2& GetTilesetSize() const { return tileset_size_; }

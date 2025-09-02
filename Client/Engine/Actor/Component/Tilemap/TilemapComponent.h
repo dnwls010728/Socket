@@ -32,9 +32,12 @@ public:
     Math::Vector2 GetCellCenter(const Math::Vector2i& position) const;
 
 protected:
+    virtual void UninitializeComponent() override;
     virtual void BeginPlay() override;
     virtual void EndPlay(EndPlayReason type) override;
     virtual void Render(float alpha) override;
+    virtual void OnEnable() override;
+    virtual void OnDisable() override;
 
 private:
     void GeneratePhysics(const tmx::ObjectGroup& kObject);

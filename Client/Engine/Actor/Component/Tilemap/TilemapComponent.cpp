@@ -62,6 +62,16 @@ Math::Vector2 TilemapComponent::GetCellCenter(const Math::Vector2i& position) co
 	return {x, y};
 }
 
+void TilemapComponent::UninitializeComponent()
+{
+	ActorComponent::UninitializeComponent();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->RemoveShapes();
+	}
+}
+
 void TilemapComponent::BeginPlay()
 {
 	ActorComponent::BeginPlay();
@@ -125,6 +135,26 @@ void TilemapComponent::Render(float alpha)
 			{ 1.f / ppu_, 1.f / ppu_ },
 			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
 		);
+	}
+}
+
+void TilemapComponent::OnEnable()
+{
+	ActorComponent::OnEnable();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->AddShapes();
+	}
+}
+
+void TilemapComponent::OnDisable()
+{
+	ActorComponent::OnDisable();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->RemoveShapes();
 	}
 }
 

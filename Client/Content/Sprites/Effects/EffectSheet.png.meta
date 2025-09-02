@@ -1,5 +1,5 @@
 wrap_mode: 0
-filter_mode: 0
+filter_mode: 1
 ppu: 32
 frames:
   - name: EffectSheet_0
