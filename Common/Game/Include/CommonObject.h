@@ -138,6 +138,15 @@ enum class InventoryAction : uint8_t
     kRemove
 };
 
+enum class EquipSlot : uint8_t
+{
+    kNone = 0,
+    kHat,
+    kTop,
+    kWeapon,
+    kCount
+};
+
 struct InventoryChange
 {
     uint8_t inventory_type;

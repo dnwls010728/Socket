@@ -23,6 +23,8 @@ struct MobData
 
 struct ItemStatData
 {
+    int32_t max_hp;
+    int32_t atk;
 };
 
 struct ItemEffectData
@@ -118,6 +120,8 @@ namespace YAML
         static bool decode(const Node& node, ItemStatData& data)
         {
             if (!node.IsMap()) return false;
+            data.max_hp = node["max_hp"].as<int32_t>(0);
+            data.atk = node["atk"].as<int32_t>(0);
             return true;
         }
     };

@@ -1,4 +1,25 @@
 items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
+  119999:
+    name: "Eternal 모자"
+    desc: ""
+    price: 0
+    max_count: 1
+    stat:
+      max_hp: 1000
+  129999:
+    name: "Eternal 갑옷"
+    desc: ""
+    price: 0
+    max_count: 1
+    stat:
+      max_hp: 1000
+  131999:
+    name: "Eternal 검"
+    desc: ""
+    price: 0
+    max_count: 1
+    stat:
+      atk: 1000
   200000: # 아이템 고유 ID
     name: "먹다 남은 빵"
     desc: "먹다 남은 빵입니다. 먹어도 별로 맛이 없습니다.\nHP를 약 50 회복시킨다."
