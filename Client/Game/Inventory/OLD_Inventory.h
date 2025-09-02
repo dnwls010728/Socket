@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class Inventory
+class OLD_Inventory
 {
 public:
     enum class Type : uint8_t
@@ -13,8 +13,8 @@ public:
         kCount
     };
     
-    Inventory();
-    ~Inventory() = default;
+    OLD_Inventory();
+    ~OLD_Inventory() = default;
     
     uint32_t GetItemID(Type type, uint32_t slot_id);
 

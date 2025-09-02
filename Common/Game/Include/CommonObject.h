@@ -129,6 +129,16 @@ enum class MobState : uint8_t
     kDie
 };
 
+enum class InventoryType : uint8_t
+{
+    kNone = 0,
+    kEquip,
+    kUse,
+    kEtc,
+    kEquipped,
+    kCount
+};
+
 enum class InventoryAction : uint8_t
 {
     kNone = 0,

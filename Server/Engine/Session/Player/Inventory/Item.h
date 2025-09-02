@@ -4,7 +4,7 @@
 class Item : public std::enable_shared_from_this<Item>
 {
 public:
-    Item(uint32_t id, uint32_t slot, int32_t count);
+    Item(uint32_t id, int32_t count);
     virtual ~Item() = default;
 
     inline uint32_t GetID() const { return id_; }
@@ -14,6 +14,8 @@ public:
 
     inline void SetCount(int32_t count) { count_ = count; }
     inline int32_t GetCount() const { return count_; }
+
+    static std::shared_ptr<Item> Create(uint32_t id, int32_t count);
 
 private:
     uint32_t id_;

@@ -27,16 +27,16 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->spawn_position.x = response->spawn_position.x;
     player_subsystem->spawn_position.y = response->spawn_position.y;
 
-    player_subsystem->inventory_ = std::make_unique<Inventory>();
-    Inventory* inventory = player_subsystem->inventory_.get();
+    player_subsystem->inventory_ = std::make_unique<OLD_Inventory>();
+    OLD_Inventory* inventory = player_subsystem->inventory_.get();
 
-    inventory->SetSlotCapacity(Inventory::Type::kEquip, response->equip_slot_capacity);
-    inventory->SetSlotCapacity(Inventory::Type::kUse, response->use_slot_capacity);
-    inventory->SetSlotCapacity(Inventory::Type::kEtc, response->etc_slot_capacity);
+    inventory->SetSlotCapacity(OLD_Inventory::Type::kEquip, response->equip_slot_capacity);
+    inventory->SetSlotCapacity(OLD_Inventory::Type::kUse, response->use_slot_capacity);
+    inventory->SetSlotCapacity(OLD_Inventory::Type::kEtc, response->etc_slot_capacity);
 
     for (const auto& item : response->inventory)
     {
-        Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
+        OLD_Inventory::Type type = static_cast<OLD_Inventory::Type>(item.inventory_type);
         inventory->AddSlot(type, item.slot_id, item.item_id, item.count);
     }
     

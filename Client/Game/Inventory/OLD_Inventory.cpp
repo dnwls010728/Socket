@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
-#include "Inventory.h"
+#include "OLD_Inventory.h"
 
 #include <ranges>
 
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 
-Inventory::Inventory() :
+OLD_Inventory::OLD_Inventory() :
     inventories_(),
     slot_capacity_(),
     color_(0),
@@ -13,7 +13,7 @@ Inventory::Inventory() :
 {
 }
 
-uint32_t Inventory::GetItemID(Type type, uint32_t slot_id)
+uint32_t OLD_Inventory::GetItemID(Type type, uint32_t slot_id)
 {
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
@@ -22,7 +22,7 @@ uint32_t Inventory::GetItemID(Type type, uint32_t slot_id)
     return 0;
 }
 
-uint32_t Inventory::FindFreeSlot(Type type) const
+uint32_t OLD_Inventory::FindFreeSlot(Type type) const
 {
     uint32_t counter = 1;
 
@@ -37,7 +37,7 @@ uint32_t Inventory::FindFreeSlot(Type type) const
     return (counter <= slot_capacity_[static_cast<uint8_t>(type)]) ? counter : 0;
 }
 
-int32_t Inventory::GetItemCount(Type type, uint32_t slot_id)
+int32_t OLD_Inventory::GetItemCount(Type type, uint32_t slot_id)
 {
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it != inventories_[static_cast<uint8_t>(type)].end())
@@ -46,7 +46,7 @@ int32_t Inventory::GetItemCount(Type type, uint32_t slot_id)
     return 0;
 }
 
-int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
+int32_t OLD_Inventory::GetTotalItemCount(Type type, uint32_t item_id)
 {
     int32_t total_count = 0;
     for (const auto& slot : inventories_[static_cast<uint8_t>(type)] | std::views::values)
@@ -58,7 +58,7 @@ int32_t Inventory::GetTotalItemCount(Type type, uint32_t item_id)
     return total_count;
 }
 
-uint32_t Inventory::AddSlot(Type type, uint32_t slot_id, uint32_t item_id, int32_t count)
+uint32_t OLD_Inventory::AddSlot(Type type, uint32_t slot_id, uint32_t item_id, int32_t count)
 {
     inventories_[static_cast<uint8_t>(type)][slot_id] = { ++next_id_, item_id, count };
 
@@ -72,7 +72,7 @@ uint32_t Inventory::AddSlot(Type type, uint32_t slot_id, uint32_t item_id, int32
     return next_id_;
 }
 
-void Inventory::ChangeCount(Type type, uint32_t slot_id, int32_t count)
+void OLD_Inventory::ChangeCount(Type type, uint32_t slot_id, int32_t count)
 {
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
@@ -87,7 +87,7 @@ void Inventory::ChangeCount(Type type, uint32_t slot_id, int32_t count)
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemCountChanged, event_data);
 }
 
-void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot)
+void OLD_Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uint32_t second_slot)
 {
     Slot first = inventories_[static_cast<uint8_t>(first_type)][first_slot];
     inventories_[static_cast<uint8_t>(first_type)][first_slot] = std::move(inventories_[static_cast<uint8_t>(second_type)][second_slot]);
@@ -105,7 +105,7 @@ void Inventory::Swap(Type first_type, uint32_t first_slot, Type second_type, uin
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemMoved, event_data);
 }
 
-void Inventory::Remove(Type type, uint32_t slot_id)
+void OLD_Inventory::Remove(Type type, uint32_t slot_id)
 {
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);
     if (it == inventories_[static_cast<uint8_t>(type)].end()) return;
@@ -119,7 +119,7 @@ void Inventory::Remove(Type type, uint32_t slot_id)
     PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kItemRemoved, event_data);
 }
 
-void Inventory::SetColor(int32_t color)
+void OLD_Inventory::SetColor(int32_t color)
 {
     color_ = color;
 

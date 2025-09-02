@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Inventory/Inventory.h"
+#include "Inventory/OLD_Inventory.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIImage.h"
@@ -36,7 +36,7 @@ private:
     
     void OnEvent(const EventData& data);
 
-    std::array<UIButton*, static_cast<uint8_t>(Inventory::Type::kCount)> tab_buttons_;
+    std::array<UIButton*, static_cast<uint8_t>(OLD_Inventory::Type::kCount)> tab_buttons_;
     
     std::vector<UIInventorySlot*> slots_;
 
@@ -47,8 +47,8 @@ private:
 
     UIText* color_text_;
 
-    Inventory* inventory_;
+    OLD_Inventory* inventory_;
 
-    Inventory::Type tab_;
+    OLD_Inventory::Type tab_;
     
 };

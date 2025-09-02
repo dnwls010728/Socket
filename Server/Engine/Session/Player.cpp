@@ -11,7 +11,7 @@
 #include "PartyManager.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
-#include "Player/Inventory/Inventory.h"
+#include "Player/Inventory/OLD_Inventory.h"
 #include "Player/Inventory/Item.h"
 
 Player::Player(Session* session, uint32_t account_id) :
@@ -181,13 +181,13 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
 
-            Inventory* inventory = player_character_->GetInventory();
-            response.equip_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kEquip);
-            response.use_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kUse);
-            response.etc_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kEtc);
+            OLD_Inventory* inventory = player_character_->GetInventory();
+            response.equip_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kEquip);
+            response.use_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kUse);
+            response.etc_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kEtc);
 
             const auto& inventories = inventory->GetInventories();
-            for (int32_t i = 0; i < static_cast<uint8_t>(Inventory::Type::kCount); ++i)
+            for (int32_t i = 0; i < static_cast<uint8_t>(OLD_Inventory::Type::kCount); ++i)
             {
                 for (const auto& slot : inventories[i])
                 {

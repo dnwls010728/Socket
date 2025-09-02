@@ -284,7 +284,7 @@
     <ClInclude Include="Game\FSM\IState.h" />
     <ClInclude Include="Game\FSM\StateMachine.h" />
     <ClInclude Include="Game\FSM\Transition.h" />
-    <ClInclude Include="Game\Inventory\Inventory.h" />
+    <ClInclude Include="Game\Inventory\OLD_Inventory.h" />
     <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\Maps\LoginMap.h" />
     <ClInclude Include="Game\Maps\GameMap.h" />
@@ -719,7 +719,7 @@
     <ClCompile Include="Game\FSM\Condition.cpp" />
     <ClCompile Include="Game\FSM\StateMachine.cpp" />
     <ClCompile Include="Game\FSM\Transition.cpp" />
-    <ClCompile Include="Game\Inventory\Inventory.cpp" />
+    <ClCompile Include="Game\Inventory\OLD_Inventory.cpp" />
     <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\Maps\LoginMap.cpp" />
     <ClCompile Include="Game\Maps\GameMap.cpp" />

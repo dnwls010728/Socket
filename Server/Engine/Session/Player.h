@@ -6,7 +6,7 @@
 #include "Math/Vector2.h"
 
 class PlayerCharacter;
-class Inventory;
+class OLD_Inventory;
 
 namespace Net
 {

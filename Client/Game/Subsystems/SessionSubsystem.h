@@ -6,7 +6,7 @@
 #include "TCPClientSocket.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
-class Inventory;
+class OLD_Inventory;
 
 enum class SessionState
 {

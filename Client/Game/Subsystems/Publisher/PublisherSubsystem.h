@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Inventory/Inventory.h"
+#include "Inventory/OLD_Inventory.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
@@ -18,7 +18,7 @@ struct StatUpdateData : EventData
 
 struct ItemAddedData : EventData
 {
-    Inventory::Type inventory_type;
+    OLD_Inventory::Type inventory_type;
     uint32_t slot_id;
     uint32_t item_id;
     int32_t count;
@@ -28,7 +28,7 @@ struct ItemAddedData : EventData
 
 struct ItemCountChangedData : EventData
 {
-    Inventory::Type inventory_type;
+    OLD_Inventory::Type inventory_type;
     uint32_t slot_id;
     int32_t count;
     
@@ -37,9 +37,9 @@ struct ItemCountChangedData : EventData
 
 struct ItemMovedData : EventData
 {
-    Inventory::Type first_inventory_type;
+    OLD_Inventory::Type first_inventory_type;
     uint32_t first_slot_index;
-    Inventory::Type second_inventory_type;
+    OLD_Inventory::Type second_inventory_type;
     uint32_t second_slot_index;
     
     virtual ~ItemMovedData() override = default;
@@ -47,7 +47,7 @@ struct ItemMovedData : EventData
 
 struct ItemRemovedData : EventData
 {
-    Inventory::Type inventory_type;
+    OLD_Inventory::Type inventory_type;
     uint32_t slot_id;
     
     virtual ~ItemRemovedData() override = default;

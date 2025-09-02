@@ -5,7 +5,7 @@
 #include "UIInventorySlot.h"
 #include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
-#include "Inventory/Inventory.h"
+#include "Inventory/OLD_Inventory.h"
 #include "Math/Color.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "UI/UIInGameState.h"
@@ -19,7 +19,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     slots_(),
     color_text_(nullptr),
     inventory_(nullptr),
-    tab_(Inventory::Type::kEquip)
+    tab_(OLD_Inventory::Type::kEquip)
 {
     SetSize({164.f, 246.f});
     
@@ -51,10 +51,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     equip_button->SetText(L"장비");
     equip_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kEquip) return;
+        if (tab_ == OLD_Inventory::Type::kEquip) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kEquip;
+        tab_ = OLD_Inventory::Type::kEquip;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -74,10 +74,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     use_button->SetText(L"소비");
     use_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kUse) return;
+        if (tab_ == OLD_Inventory::Type::kUse) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kUse;
+        tab_ = OLD_Inventory::Type::kUse;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -97,10 +97,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     etc_button->SetText(L"기타");
     etc_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kEtc) return;
+        if (tab_ == OLD_Inventory::Type::kEtc) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kEtc;
+        tab_ = OLD_Inventory::Type::kEtc;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -109,9 +109,9 @@ UIInventory::UIInventory(const std::wstring& name) :
         }
     });
 
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEquip)] = equip_button;
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kUse)] = use_button;
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEtc)] = etc_button;
+    tab_buttons_[static_cast<uint8_t>(OLD_Inventory::Type::kEquip)] = equip_button;
+    tab_buttons_[static_cast<uint8_t>(OLD_Inventory::Type::kUse)] = use_button;
+    tab_buttons_[static_cast<uint8_t>(OLD_Inventory::Type::kEtc)] = etc_button;
 
     scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
     scroll_box_->SetRelativePosition({ 8.f, 48.f });
@@ -248,10 +248,10 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
     uint8_t current_tab = static_cast<uint8_t>(tab_);
     tab_buttons_[current_tab]->SetTextColor(Math::Color::White);
     
-    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 2)) + 1;
+    current_tab = (current_tab % (static_cast<uint8_t>(OLD_Inventory::Type::kCount) - 2)) + 1;
     tab_buttons_[current_tab]->SetTextColor(Math::Color::Yellow);
     
-    tab_ = static_cast<Inventory::Type>(current_tab);
+    tab_ = static_cast<OLD_Inventory::Type>(current_tab);
     
     for (uint32_t i = 0; i < 128; ++i)
     {

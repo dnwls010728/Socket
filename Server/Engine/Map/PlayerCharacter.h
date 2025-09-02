@@ -5,6 +5,7 @@
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
+#include "Session/Player/Inventory/Inventory.h"
 #include "Utils/TimedBool.h"
 
 class StatEffect;
@@ -15,7 +16,7 @@ namespace Net
     struct IPacket;
 }
 
-class Inventory;
+class OLD_Inventory;
 class Player;
 enum class PartyStatType : uint8_t;
 
@@ -65,11 +66,11 @@ public:
     inline uint32_t GetMapID() const { return map_id_; }
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
+    
+    inline Inventory* GetInventory(InventoryType type) const { return inventories_[static_cast<uint8_t>(type)].get(); }
 
     void SetPartyID(int32_t party_id);
     inline uint32_t GetPartyID() const { return party_id_; }
-    
-    inline Inventory* GetInventory() const { return inventory_.get(); }
 
     inline int32_t GetLv() const { return lv_; }
     inline int32_t GetHP() const { return hp_; }
@@ -117,7 +118,7 @@ protected:
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
 
-    std::unique_ptr<Inventory> inventory_;
+    std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
     
     TimedBool is_invincible_;
 

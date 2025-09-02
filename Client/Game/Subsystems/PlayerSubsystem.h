@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Subsystem/GameInstanceSubsystem.h"
 
-#include "Inventory/Inventory.h"
+#include "Inventory/OLD_Inventory.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 
 class PlayerSubsystem : public GameInstanceSubsystem
@@ -28,7 +28,7 @@ public:
 
     FORCEINLINE const std::vector<CharacterProfile>& GetProfiles() const { return profiles_; }
     
-    FORCEINLINE Inventory* GetInventory() const { return inventory_.get(); }
+    FORCEINLINE OLD_Inventory* GetInventory() const { return inventory_.get(); }
 
     FORCEINLINE void SetPortalCooldown(float value) { portal_cooldown_ = value; }
     FORCEINLINE float GetPortalCooldown() const { return portal_cooldown_; }
@@ -57,7 +57,7 @@ private:
 
     std::vector<CharacterProfile> profiles_;
     
-    std::unique_ptr<Inventory> inventory_;
+    std::unique_ptr<OLD_Inventory> inventory_;
 
     float portal_cooldown_;
     
