@@ -95,7 +95,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         auto& inventories = character->inventories_;
         for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
         {
-            inventories[i] = std::make_unique<Inventory>(character.get());
+            inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
             inventories[i]->SetCapacity(128);
         }
 
@@ -150,7 +150,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::sha
     auto& inventories = character->inventories_;
     for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
     {
-        inventories[i] = std::make_unique<Inventory>(character.get());
+        inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
         inventories[i]->SetCapacity(128);
     }
     
@@ -288,10 +288,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
 
-            // OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(request->inventory_type);
-            //
-            // if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
-            // inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
+            auto& inventory = inventories_[request->inventory_type];
+            inventory->Move(request->first_slot, request->second_slot);
 
             InventoryChange change;
             change.inventory_type = request->inventory_type;
@@ -318,7 +316,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             if (!item) break;
             
             int32_t count = item->GetCount();
-            int32_t remaining_count = 0;
 
             InventoryUpdatePacket update_packet;
             
@@ -334,7 +331,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             }
             else
             {
-                remaining_count = count - request->count;
+                int32_t remaining_count = count - request->count;
                 item->SetCount(remaining_count);
 
                 InventoryChange change;
@@ -850,20 +847,38 @@ void PlayerCharacter::UpdateDatabase()
         }
     }
     
-    // if (inventory_) inventory_->UpdateDatabase();
-    
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
     
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, inventory_type, item_id, slot_id, count) VALUES (?, ?, ?, ?, ?, ?)"));
+            for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
+            {
+                auto& inventory = inventories_[i];
+                for (const auto& slot : inventory->GetItems())
+                {
+                    statement->setUInt(1, account_id_);
+                    statement->setUInt(2, object_id_);
+                    statement->setUInt(3, i);
+                    statement->setUInt(4, slot.second->GetID());
+                    statement->setUInt(5, slot.first);
+                    statement->setInt(6, slot.second->GetCount());
+                    statement->executeUpdate();
+                }
+            }
+            
+            statement.reset(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
             statement->setInt(2, max_hp_);
             statement->setInt(3, exp_.load());
             statement->setInt(4, lv_);
-            statement->setInt(5, map_id);
+            statement->setUInt(5, map_id);
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
             statement->setInt(8, color_.load());

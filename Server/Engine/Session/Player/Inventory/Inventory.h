@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <CommonObject.h>
 #include <map>
 #include <mutex>
 #include <vector>
@@ -9,12 +10,13 @@ class PlayerCharacter;
 class Inventory
 {
 public:
-    Inventory(PlayerCharacter* owner);
+    Inventory(PlayerCharacter* owner, InventoryType type);
     ~Inventory() = default;
 
     void SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
     void EraseItem(uint32_t slot_id);
-    void Swap(const std::shared_ptr<Item>& first, const std::shared_ptr<Item>& second);
+    void Move(uint32_t first_slot, uint32_t second_slot);
+    void Swap(std::shared_ptr<Item>& first, std::shared_ptr<Item>& second);
 
     std::shared_ptr<Item> FindItem(uint32_t slot_id);
 
@@ -32,6 +34,7 @@ public:
 
 private:
     PlayerCharacter* owner_;
+    InventoryType type_;
     std::map<uint32_t, std::shared_ptr<Item>> items_;
     uint32_t capacity_;
     std::mutex mutex_;

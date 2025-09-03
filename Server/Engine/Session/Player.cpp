@@ -180,25 +180,6 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
 
-            // OLD_Inventory* inventory = player_character_->GetInventory();
-            // response.equip_slot_capacity = inventory->GetSlotCapacity(InventoryType::kEquip);
-            // response.use_slot_capacity = inventory->GetSlotCapacity(InventoryType::kUse);
-            // response.etc_slot_capacity = inventory->GetSlotCapacity(InventoryType::kEtc);
-            //
-            // const auto& inventories = inventory->GetInventories();
-            // for (int32_t i = 0; i < static_cast<uint8_t>(InventoryType::kCount); ++i)
-            // {
-            //     for (const auto& slot : inventories[i])
-            //     {
-            //         ItemInfo item_info;
-            //         item_info.inventory_type = i;
-            //         item_info.item_id = slot.second->GetID();
-            //         item_info.slot_id = slot.first;
-            //         item_info.count = slot.second->GetCount();
-            //         response.inventory.push_back(item_info);
-            //     }
-            // }
-
             auto* equip = player_character_->GetInventory(InventoryType::kEquip);
             auto* use = player_character_->GetInventory(InventoryType::kUse);
             auto* etc = player_character_->GetInventory(InventoryType::kEtc);

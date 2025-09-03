@@ -8,8 +8,9 @@
 #include "Item.h"
 #include "Map/PlayerCharacter.h"
 
-Inventory::Inventory(PlayerCharacter* owner) :
+Inventory::Inventory(PlayerCharacter* owner, InventoryType type) :
     owner_(owner),
+    type_(type),
     items_(),
     capacity_(0),
     mutex_()
@@ -31,9 +32,12 @@ void Inventory::EraseItem(uint32_t slot_id)
     items_.erase(slot_id);
 }
 
-void Inventory::Swap(const std::shared_ptr<Item>& first, const std::shared_ptr<Item>& second)
+void Inventory::Move(uint32_t first_slot, uint32_t second_slot)
 {
-    // std::lock_guard<std::mutex> lock(mutex_);
+}
+
+void Inventory::Swap(std::shared_ptr<Item>& first, std::shared_ptr<Item>& second)
+{
 }
 
 std::shared_ptr<Item> Inventory::FindItem(uint32_t slot_id)
@@ -93,13 +97,11 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
                 count -= to_add;
 
                 InventoryChange change;
-                change.inventory_type = static_cast<uint8_t>(item_id / 100000);
+                change.inventory_type = static_cast<uint8_t>(type_);
                 change.action = InventoryAction::kChangeCount;
                 change.info.change_count.slot_id = existing_item->GetSlot();
                 change.info.change_count.count = existing_item->GetCount();
                 packet.changes.push_back(change);
-                
-                owner_->SendPacket(packet);
             }
 
             ++it;
@@ -120,16 +122,15 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
         count -= to_add;
 
         InventoryChange change;
-        change.inventory_type = static_cast<uint8_t>(item_id / 100000);
+        change.inventory_type = static_cast<uint8_t>(type_);
         change.action = InventoryAction::kAdd;
         change.info.add.slot_id = free_slot;
         change.info.add.item_id = item_id;
         change.info.add.count = to_add;
         packet.changes.push_back(change);
-        
-        owner_->SendPacket(packet);
     }
 
+    owner_->SendPacket(packet);
     return true;
 }
 
