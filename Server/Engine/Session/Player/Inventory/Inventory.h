@@ -11,7 +11,10 @@ public:
     Inventory(PlayerCharacter* owner);
     ~Inventory() = default;
 
-    void AddItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
+    void SetItemAt(uint32_t slot_id, const std::shared_ptr<Item>& item);
+    void Swap(const std::shared_ptr<Item>& first, const std::shared_ptr<Item>& second);
+
+    int32_t GetCount(uint32_t slot_id);
 
     bool IsFull();
 

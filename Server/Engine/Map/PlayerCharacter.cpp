@@ -93,7 +93,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         }
 
         auto& inventories = character->inventories_;
-        for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount) - 1; ++i)
+        for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
         {
             inventories[i] = std::make_unique<Inventory>(character.get());
             inventories[i]->SetCapacity(128);
@@ -112,7 +112,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 
                 int32_t count = result->getInt("count");
                 
-                inventories[type_index]->AddItem(slot_id, Item::Create(item_id, count));
+                inventories[type_index]->SetItemAt(slot_id, Item::Create(item_id, count));
             }
         }
 
@@ -146,7 +146,13 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::sha
 
     character->player_ = player;
     character->account_id_ = player->GetAccountID();
-    character->inventory_ = std::make_unique<Inventory>(character.get());
+    
+    auto& inventories = character->inventories_;
+    for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
+    {
+        inventories[i] = std::make_unique<Inventory>(character.get());
+        inventories[i]->SetCapacity(128);
+    }
     
     return character;
 }
@@ -281,7 +287,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MoveItemRequest::StaticPacketID:
         {
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
-            if (!inventory_) return;
 
             OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(request->inventory_type);
             
@@ -304,11 +309,11 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             DropItemPacket* request = static_cast<DropItemPacket*>(packet);
 
-            OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(request->inventory_type);
+            uint32_t slot_id = request->slot_id;
+
+            const auto& inventory = inventories_[request->inventory_type];
             
-            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_id);
-            
-            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_id);
+            int32_t count = inventory->GetCount(slot_id);
             int32_t remaining_count = 0;
 
             InventoryUpdatePacket update_packet;
