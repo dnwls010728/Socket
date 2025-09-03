@@ -69,6 +69,8 @@ public:
     
     inline Inventory* GetInventory(InventoryType type) const { return inventories_[static_cast<uint8_t>(type)].get(); }
 
+    inline const std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)>& GetInventories() const { return inventories_; }
+
     void SetPartyID(int32_t party_id);
     inline uint32_t GetPartyID() const { return party_id_; }
 

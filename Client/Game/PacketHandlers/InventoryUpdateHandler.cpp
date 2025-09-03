@@ -10,12 +10,12 @@ bool InventoryUpdateHandler::Handle(Net::IPacket* packet)
     InventoryUpdatePacket* received_packet = static_cast<InventoryUpdatePacket*>(packet);
     if (!received_packet) return false;
     
-    OLD_Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
+    Inventory* inventory = PlayerSubsystem::Get()->GetInventory();
 
     const auto& changes = received_packet->changes;
     for (const auto& change : changes)
     {
-        OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(change.inventory_type);
+        InventoryType inventory_type = static_cast<InventoryType>(change.inventory_type);
         
         switch (change.action)
         {

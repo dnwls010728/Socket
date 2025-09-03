@@ -11,7 +11,6 @@
 #include "PartyManager.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
-#include "Player/Inventory/OLD_Inventory.h"
 #include "Player/Inventory/Item.h"
 
 Player::Player(Session* session, uint32_t account_id) :
@@ -132,7 +131,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 break;
             }
 
-            if (!new_character->GetInventory()->UpdateDatabase()) break;
+            // if (!new_character->GetInventory()->UpdateDatabase()) break;
 
             CreateCharacterResponse response;
             response.profile.character_id = new_character->GetObjectID();
@@ -181,23 +180,67 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
 
-            OLD_Inventory* inventory = player_character_->GetInventory();
-            response.equip_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kEquip);
-            response.use_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kUse);
-            response.etc_slot_capacity = inventory->GetSlotCapacity(OLD_Inventory::Type::kEtc);
+            // OLD_Inventory* inventory = player_character_->GetInventory();
+            // response.equip_slot_capacity = inventory->GetSlotCapacity(InventoryType::kEquip);
+            // response.use_slot_capacity = inventory->GetSlotCapacity(InventoryType::kUse);
+            // response.etc_slot_capacity = inventory->GetSlotCapacity(InventoryType::kEtc);
+            //
+            // const auto& inventories = inventory->GetInventories();
+            // for (int32_t i = 0; i < static_cast<uint8_t>(InventoryType::kCount); ++i)
+            // {
+            //     for (const auto& slot : inventories[i])
+            //     {
+            //         ItemInfo item_info;
+            //         item_info.inventory_type = i;
+            //         item_info.item_id = slot.second->GetID();
+            //         item_info.slot_id = slot.first;
+            //         item_info.count = slot.second->GetCount();
+            //         response.inventory.push_back(item_info);
+            //     }
+            // }
 
-            const auto& inventories = inventory->GetInventories();
-            for (int32_t i = 0; i < static_cast<uint8_t>(OLD_Inventory::Type::kCount); ++i)
+            auto* equip = player_character_->GetInventory(InventoryType::kEquip);
+            auto* use = player_character_->GetInventory(InventoryType::kUse);
+            auto* etc = player_character_->GetInventory(InventoryType::kEtc);
+
+            response.equip_slot_capacity = equip->GetCapacity();
+            response.use_slot_capacity = use->GetCapacity();
+            response.etc_slot_capacity = etc->GetCapacity();
+
+            for (const auto& slot : equip->GetItems())
             {
-                for (const auto& slot : inventories[i])
-                {
-                    ItemInfo item_info;
-                    item_info.inventory_type = i;
-                    item_info.item_id = slot.second->GetID();
-                    item_info.slot_id = slot.first;
-                    item_info.count = slot.second->GetCount();
-                    response.inventory.push_back(item_info);
-                }
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : use->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : etc->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEtc);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
             }
 
             SendPacket(response);

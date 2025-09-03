@@ -96,14 +96,14 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
 
     if (timestamp - last_time_ < .2f)
     {
-        OLD_Inventory::Type type = ui_inventory_->tab_;
-        if (type == OLD_Inventory::Type::kEquip)
+        InventoryType type = ui_inventory_->tab_;
+        if (type == InventoryType::kEquip)
         {
             EquipItemPacket packet;
             packet.slot_id = slot_id_;
             SessionSubsystem::Get()->SendPacket(packet);
         }
-        else if (type == OLD_Inventory::Type::kUse)
+        else if (type == InventoryType::kUse)
         {
             Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
             if (audio) AudioManager::Get()->PlaySound2D(audio);
@@ -218,7 +218,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        OLD_Inventory::Type type = ui_inventory_->tab_;
+        InventoryType type = ui_inventory_->tab_;
         int32_t count = ui_inventory_->inventory_->GetItemCount(type, slot_id_);
 
         if (count == 1)
@@ -251,7 +251,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                         return false;
                     }
                     
-                    OLD_Inventory::Type temp_type = ui_inventory_->tab_;
+                    InventoryType temp_type = ui_inventory_->tab_;
                     int32_t temp_count = ui_inventory_->inventory_->GetItemCount(temp_type, slot_id_);
                     if (std::stoll(input_text) > temp_count)
                     {

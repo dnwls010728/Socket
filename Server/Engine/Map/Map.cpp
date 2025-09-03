@@ -220,7 +220,7 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
-    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
+    dropped_item->SetItem(Item::Create(item_id, count));
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);

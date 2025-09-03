@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "Inventory/OLD_Inventory.h"
+#include "Inventory/Inventory.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
 class UIItemTooltip;
 class UIInventory;
-class OLD_Inventory;
+class Inventory;
 class UIImage;
 
 class UIInventorySlot : public UIContainer

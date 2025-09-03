@@ -112,7 +112,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 
                 int32_t count = result->getInt("count");
                 
-                inventories[type_index]->SetItemAt(slot_id, Item::Create(item_id, count));
+                inventories[type_index]->SetItem(slot_id, Item::Create(item_id, count));
             }
         }
 
@@ -288,10 +288,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
 
-            OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(request->inventory_type);
-            
-            if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
-            inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
+            // OLD_Inventory::Type inventory_type = static_cast<OLD_Inventory::Type>(request->inventory_type);
+            //
+            // if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
+            // inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
 
             InventoryChange change;
             change.inventory_type = request->inventory_type;
@@ -309,34 +309,38 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             DropItemPacket* request = static_cast<DropItemPacket*>(packet);
 
+            uint8_t type_index = request->inventory_type;
             uint32_t slot_id = request->slot_id;
 
-            const auto& inventory = inventories_[request->inventory_type];
+            const auto& inventory = inventories_[type_index];
+
+            auto item = inventory->FindItem(slot_id);
+            if (!item) break;
             
-            int32_t count = inventory->GetCount(slot_id);
+            int32_t count = item->GetCount();
             int32_t remaining_count = 0;
 
             InventoryUpdatePacket update_packet;
             
             if (request->count >= count)
             {
-                inventory_->Remove(inventory_type, request->slot_id);
+                inventory->EraseItem(slot_id);
 
                 InventoryChange change;
-                change.inventory_type = request->inventory_type;
+                change.inventory_type = type_index;
                 change.action = InventoryAction::kRemove;
-                change.info.remove.slot_id = request->slot_id;
+                change.info.remove.slot_id = slot_id;
                 update_packet.changes.push_back(change);
             }
             else
             {
                 remaining_count = count - request->count;
-                inventory_->ChangeCount(inventory_type, request->slot_id, remaining_count);
+                item->SetCount(remaining_count);
 
                 InventoryChange change;
-                change.inventory_type = request->inventory_type;
+                change.inventory_type = type_index;
                 change.action = InventoryAction::kChangeCount;
-                change.info.change_count.slot_id = request->slot_id;
+                change.info.change_count.slot_id = slot_id;
                 change.info.change_count.count = remaining_count;
                 update_packet.changes.push_back(change);
             }
@@ -346,7 +350,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Math::Vector2 drop_position = GetPosition();
             map_->GetDropPosition(drop_position);
             
-            map_->SpawnItemDrop(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            map_->SpawnItemDrop(item->GetID(), request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 
@@ -354,7 +358,11 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             UseItemPacket* use_item_packet = static_cast<UseItemPacket*>(packet);
 
-            auto item = inventory_->FindItem(OLD_Inventory::Type::kUse, use_item_packet->slot_id);
+            uint32_t slot_id = use_item_packet->slot_id;
+
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
+
+            auto item = inventory->FindItem(slot_id);
             if (!item && item->GetCount() <= 0) break;
 
             if (item->GetID() == 290000)
@@ -367,24 +375,24 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             }
             else
             {
-                inventory_->RemoveItem(OLD_Inventory::Type::kUse, use_item_packet->slot_id, 1);
+                item->SetCount(item->GetCount() - 1);
 
                 InventoryUpdatePacket inventory_update_packet;
             
                 if (item->GetCount() <= 0)
                 {
                     InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(OLD_Inventory::Type::kUse);
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                     change.action = InventoryAction::kRemove;
-                    change.info.remove.slot_id = use_item_packet->slot_id;
+                    change.info.remove.slot_id = slot_id;
                     inventory_update_packet.changes.push_back(change);
                 }
                 else
                 {
                     InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(OLD_Inventory::Type::kUse);
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                     change.action = InventoryAction::kChangeCount;
-                    change.info.change_count.slot_id = use_item_packet->slot_id;
+                    change.info.change_count.slot_id = slot_id;
                     change.info.change_count.count = item->GetCount();
                     inventory_update_packet.changes.push_back(change);
                 }
@@ -422,7 +430,11 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 else
                 {
                     auto item = dropped_item->GetItem();
-                    is_handled = inventory_->AddItem(item);
+                    
+                    uint32_t type_index = item->GetID() / 100000;
+                    auto& inventory = inventories_[type_index];
+                    
+                    is_handled = inventory->AddItem(item);
                 }
                 
                 if (is_handled)
@@ -629,9 +641,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case PlacementBlockPacket::StaticPacketID:
         {
             PlacementBlockPacket* placement_start_packet = static_cast<PlacementBlockPacket*>(packet);
-            
-            std::vector<std::shared_ptr<Item>> items;
-            inventory_->GetItems(items, 290000);
+
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
+            auto items = inventory->FindItems(290000);
             if (items.empty()) break;
 
             Math::Vector2 position;
@@ -641,14 +653,14 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             map_->SpawnBlock(L"FFFFFF", 0, position);
 
             auto item = items.front();
-            inventory_->RemoveItem(OLD_Inventory::Type::kUse, item->GetSlot(), 1);
+            item->SetCount(item->GetCount() - 1);
 
             InventoryUpdatePacket inventory_update_packet;
             
             if (item->GetCount() <= 0)
             {
                 InventoryChange change;
-                change.inventory_type = static_cast<uint8_t>(OLD_Inventory::Type::kUse);
+                change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                 change.action = InventoryAction::kRemove;
                 change.info.remove.slot_id = item->GetSlot();
                 inventory_update_packet.changes.push_back(change);
@@ -661,7 +673,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             else
             {
                 InventoryChange change;
-                change.inventory_type = static_cast<uint8_t>(OLD_Inventory::Type::kUse);
+                change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                 change.action = InventoryAction::kChangeCount;
                 change.info.change_count.slot_id = item->GetSlot();
                 change.info.change_count.count = item->GetCount();
@@ -838,7 +850,7 @@ void PlayerCharacter::UpdateDatabase()
         }
     }
     
-    if (inventory_) inventory_->UpdateDatabase();
+    // if (inventory_) inventory_->UpdateDatabase();
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;

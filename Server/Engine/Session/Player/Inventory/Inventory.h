@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <map>
 #include <mutex>
+#include <vector>
 
 class Item;
 class PlayerCharacter;
@@ -11,12 +12,20 @@ public:
     Inventory(PlayerCharacter* owner);
     ~Inventory() = default;
 
-    void SetItemAt(uint32_t slot_id, const std::shared_ptr<Item>& item);
+    void SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
+    void EraseItem(uint32_t slot_id);
     void Swap(const std::shared_ptr<Item>& first, const std::shared_ptr<Item>& second);
 
-    int32_t GetCount(uint32_t slot_id);
+    std::shared_ptr<Item> FindItem(uint32_t slot_id);
 
+    std::vector<std::shared_ptr<Item>> FindItems(uint32_t item_id);
+
+    bool AddItem(const std::shared_ptr<Item>& item);
     bool IsFull();
+
+    uint32_t FindFreeSlot();
+
+    inline const std::map<uint32_t, std::shared_ptr<Item>>& GetItems() const { return items_; }
 
     inline void SetCapacity(uint32_t capacity) { capacity_ = capacity; }
     inline uint32_t GetCapacity() const { return capacity_; }

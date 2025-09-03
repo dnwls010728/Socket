@@ -184,7 +184,6 @@
     <ClCompile Include="Engine\Session\PartyManager.cpp" />
     <ClCompile Include="Engine\Session\Player.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Inventory.cpp" />
-    <ClCompile Include="Engine\Session\Player\Inventory\OLD_Inventory.cpp" />
     <ClCompile Include="Engine\Session\Player\Inventory\Item.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
@@ -235,7 +234,6 @@
     <ClInclude Include="Engine\Session\PartyManager.h" />
     <ClInclude Include="Engine\Session\Player.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Inventory.h" />
-    <ClInclude Include="Engine\Session\Player\Inventory\OLD_Inventory.h" />
     <ClInclude Include="Engine\Session\Player\Inventory\Item.h" />
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
