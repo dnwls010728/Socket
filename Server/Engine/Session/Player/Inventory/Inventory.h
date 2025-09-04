@@ -15,8 +15,7 @@ public:
 
     void SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
     void EraseItem(uint32_t slot_id);
-    void Move(uint32_t first_slot, uint32_t second_slot);
-    void Swap(uint32_t first_slot, uint32_t second_slot);
+    void MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot);
 
     std::shared_ptr<Item> FindItem(uint32_t slot_id);
 
@@ -33,6 +32,8 @@ public:
     inline uint32_t GetCapacity() const { return capacity_; }
 
 private:
+    void SwapSlots(uint32_t first_slot, uint32_t second_slot);
+    
     bool IsFull_Internal() const;
     
     uint32_t FindFreeSlot_Internal() const;

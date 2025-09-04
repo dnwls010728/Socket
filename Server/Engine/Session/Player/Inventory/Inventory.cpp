@@ -32,7 +32,7 @@ void Inventory::EraseItem(uint32_t slot_id)
     items_.erase(slot_id);
 }
 
-void Inventory::Move(uint32_t first_slot, uint32_t second_slot)
+void Inventory::MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -68,7 +68,7 @@ void Inventory::Move(uint32_t first_slot, uint32_t second_slot)
 
     if (type_ == InventoryType::kEquip || second_item->GetID() != first_item->GetID())
     {
-        Swap(first_slot, second_slot);
+        SwapSlots(first_slot, second_slot);
         
         InventoryUpdatePacket packet;
         {
@@ -139,19 +139,6 @@ void Inventory::Move(uint32_t first_slot, uint32_t second_slot)
         
         owner_->SendPacket(packet);
     }
-}
-
-void Inventory::Swap(uint32_t first_slot, uint32_t second_slot)
-{
-    if (first_slot == second_slot) return;
-    
-    auto first_it = items_.find(first_slot);
-    auto second_it = items_.find(second_slot);
-    if (first_it == items_.end() || second_it == items_.end()) return;
-
-    std::swap(first_it->second, second_it->second);
-    first_it->second->SetSlot(first_slot);
-    second_it->second->SetSlot(second_slot);
 }
 
 std::shared_ptr<Item> Inventory::FindItem(uint32_t slot_id)
@@ -259,6 +246,19 @@ uint32_t Inventory::FindFreeSlot()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return FindFreeSlot_Internal();
+}
+
+void Inventory::SwapSlots(uint32_t first_slot, uint32_t second_slot)
+{
+    if (first_slot == second_slot) return;
+    
+    auto first_it = items_.find(first_slot);
+    auto second_it = items_.find(second_slot);
+    if (first_it == items_.end() || second_it == items_.end()) return;
+
+    std::swap(first_it->second, second_it->second);
+    first_it->second->SetSlot(first_slot);
+    second_it->second->SetSlot(second_slot);
 }
 
 bool Inventory::IsFull_Internal() const

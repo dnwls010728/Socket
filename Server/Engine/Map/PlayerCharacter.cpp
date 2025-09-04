@@ -289,7 +289,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
 
             auto& inventory = inventories_[request->inventory_type];
-            inventory->Move(request->first_slot, request->second_slot);
+            inventory->MoveOrStackSlots(request->first_slot, request->second_slot);
         }
         break;
 
@@ -435,12 +435,16 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case EquipItemPacket::StaticPacketID:
         {
             EquipItemPacket* equip_item_packet = static_cast<EquipItemPacket*>(packet);
+
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
         }
         break;
 
     case UnequipItemPacket::StaticPacketID:
         {
             UnequipItemPacket* equip_item_packet = static_cast<UnequipItemPacket*>(packet);
+            
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
         }
         break;
 
