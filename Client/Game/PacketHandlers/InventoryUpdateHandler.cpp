@@ -21,25 +21,25 @@ bool InventoryUpdateHandler::Handle(Net::IPacket* packet)
         {
         case InventoryAction::kAdd:
             {
-                inventory->AddSlot(inventory_type, change.info.add.slot_id, change.info.add.item_id, change.info.add.count);
+                inventory->AddSlot(inventory_type, change.add.slot_id, change.add.item_id, change.add.count);
             }
             break;
 
         case InventoryAction::kChangeCount:
             {
-                inventory->ChangeCount(inventory_type, change.info.change_count.slot_id, change.info.change_count.count);
+                inventory->ChangeCount(inventory_type, change.change_count.slot_id, change.change_count.count);
             }
             break;
 
         case InventoryAction::kMove:
             {
-                inventory->Swap(inventory_type, change.info.move.first_slot, inventory_type, change.info.move.second_slot);
+                inventory->Swap(inventory_type, change.move.first_slot, inventory_type, change.move.second_slot);
             }
             break;
 
         case InventoryAction::kRemove:
             {
-                inventory->Remove(inventory_type, change.info.remove.slot_id);
+                inventory->Remove(inventory_type, change.remove.slot_id);
             }
             break;
         }

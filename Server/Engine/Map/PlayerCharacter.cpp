@@ -290,16 +290,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             auto& inventory = inventories_[request->inventory_type];
             inventory->Move(request->first_slot, request->second_slot);
-
-            InventoryChange change;
-            change.inventory_type = request->inventory_type;
-            change.action = InventoryAction::kMove;
-            change.info.move.first_slot = request->first_slot;
-            change.info.move.second_slot = request->second_slot;
-
-            InventoryUpdatePacket update_packet;
-            update_packet.changes.push_back(change);
-            SendPacket(update_packet);
         }
         break;
 
@@ -326,7 +316,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 InventoryChange change;
                 change.inventory_type = type_index;
                 change.action = InventoryAction::kRemove;
-                change.info.remove.slot_id = slot_id;
+                change.remove.slot_id = slot_id;
                 update_packet.changes.push_back(change);
             }
             else
@@ -337,8 +327,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 InventoryChange change;
                 change.inventory_type = type_index;
                 change.action = InventoryAction::kChangeCount;
-                change.info.change_count.slot_id = slot_id;
-                change.info.change_count.count = remaining_count;
+                change.change_count.slot_id = slot_id;
+                change.change_count.count = remaining_count;
                 update_packet.changes.push_back(change);
             }
 
@@ -381,7 +371,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     InventoryChange change;
                     change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                     change.action = InventoryAction::kRemove;
-                    change.info.remove.slot_id = slot_id;
+                    change.remove.slot_id = slot_id;
                     inventory_update_packet.changes.push_back(change);
                 }
                 else
@@ -389,8 +379,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     InventoryChange change;
                     change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                     change.action = InventoryAction::kChangeCount;
-                    change.info.change_count.slot_id = slot_id;
-                    change.info.change_count.count = item->GetCount();
+                    change.change_count.slot_id = slot_id;
+                    change.change_count.count = item->GetCount();
                     inventory_update_packet.changes.push_back(change);
                 }
             
@@ -659,7 +649,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 InventoryChange change;
                 change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                 change.action = InventoryAction::kRemove;
-                change.info.remove.slot_id = item->GetSlot();
+                change.remove.slot_id = item->GetSlot();
                 inventory_update_packet.changes.push_back(change);
                 
                 is_placing_ = false;
@@ -672,8 +662,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 InventoryChange change;
                 change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                 change.action = InventoryAction::kChangeCount;
-                change.info.change_count.slot_id = item->GetSlot();
-                change.info.change_count.count = item->GetCount();
+                change.change_count.slot_id = item->GetSlot();
+                change.change_count.count = item->GetCount();
                 inventory_update_packet.changes.push_back(change);
             }
 

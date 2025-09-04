@@ -187,7 +187,7 @@ struct InventoryChange
         {
             uint32_t slot_id;
         } remove;
-    } info;
+    };
 };
 
 struct PartyMemberInfo

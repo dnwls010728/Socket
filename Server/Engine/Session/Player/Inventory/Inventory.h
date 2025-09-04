@@ -16,7 +16,7 @@ public:
     void SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
     void EraseItem(uint32_t slot_id);
     void Move(uint32_t first_slot, uint32_t second_slot);
-    void Swap(std::shared_ptr<Item>& first, std::shared_ptr<Item>& second);
+    void Swap(uint32_t first_slot, uint32_t second_slot);
 
     std::shared_ptr<Item> FindItem(uint32_t slot_id);
 
@@ -33,6 +33,10 @@ public:
     inline uint32_t GetCapacity() const { return capacity_; }
 
 private:
+    bool IsFull_Internal() const;
+    
+    uint32_t FindFreeSlot_Internal() const;
+    
     PlayerCharacter* owner_;
     InventoryType type_;
     std::map<uint32_t, std::shared_ptr<Item>> items_;
