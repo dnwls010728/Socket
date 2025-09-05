@@ -22,21 +22,19 @@ public:
     std::vector<std::shared_ptr<Item>> FindItems(uint32_t item_id);
 
     bool AddItem(const std::shared_ptr<Item>& item);
-    bool IsFull();
+    bool IsFull() const;
 
-    uint32_t FindFreeSlot();
+    uint32_t FindFreeSlot() const;
 
     inline const std::map<uint32_t, std::shared_ptr<Item>>& GetItems() const { return items_; }
 
     inline void SetCapacity(uint32_t capacity) { capacity_ = capacity; }
     inline uint32_t GetCapacity() const { return capacity_; }
 
+    inline std::unique_lock<std::mutex> Lock() { return std::unique_lock<std::mutex>(mutex_); }
+
 private:
     void SwapSlots(uint32_t first_slot, uint32_t second_slot);
-    
-    bool IsFull_Internal() const;
-    
-    uint32_t FindFreeSlot_Internal() const;
     
     PlayerCharacter* owner_;
     InventoryType type_;

@@ -19,7 +19,6 @@ Inventory::Inventory(PlayerCharacter* owner, InventoryType type) :
 
 void Inventory::SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (slot_id > capacity_) return;
 
     item->SetSlot(slot_id);
@@ -28,7 +27,6 @@ void Inventory::SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item)
 
 void Inventory::EraseItem(uint32_t slot_id)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     items_.erase(slot_id);
 }
 
@@ -143,8 +141,6 @@ void Inventory::MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot)
 
 std::shared_ptr<Item> Inventory::FindItem(uint32_t slot_id)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    
     auto it = items_.find(slot_id);
     if (it != items_.end())
         return it->second;
@@ -154,8 +150,6 @@ std::shared_ptr<Item> Inventory::FindItem(uint32_t slot_id)
 
 std::vector<std::shared_ptr<Item>> Inventory::FindItems(uint32_t item_id)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-
     std::vector<std::shared_ptr<Item>> items;
     for (const auto& item : items_ | std::views::values)
     {
@@ -207,7 +201,7 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
 
         while (remaining_count > 0)
         {
-            uint32_t free_slot = FindFreeSlot_Internal();
+            uint32_t free_slot = FindFreeSlot();
             if (free_slot == 0) break;
 
             int32_t to_add = std::min(remaining_count, max_count);
@@ -236,16 +230,23 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
     return true;
 }
 
-bool Inventory::IsFull()
+bool Inventory::IsFull() const
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    return IsFull_Internal();
+    return items_.size() >= capacity_;
 }
 
-uint32_t Inventory::FindFreeSlot()
+uint32_t Inventory::FindFreeSlot() const
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    return FindFreeSlot_Internal();
+    if (items_.size() >= capacity_) return 0;
+    
+    uint32_t next = 1;
+    for (const auto& item : items_)
+    {
+        if (item.first != next) break;
+        ++next;
+    }
+
+    return next <= capacity_ ? next : 0;
 }
 
 void Inventory::SwapSlots(uint32_t first_slot, uint32_t second_slot)
@@ -259,23 +260,4 @@ void Inventory::SwapSlots(uint32_t first_slot, uint32_t second_slot)
     std::swap(first_it->second, second_it->second);
     first_it->second->SetSlot(first_slot);
     second_it->second->SetSlot(second_slot);
-}
-
-bool Inventory::IsFull_Internal() const
-{
-    return items_.size() >= capacity_;
-}
-
-uint32_t Inventory::FindFreeSlot_Internal() const
-{
-    if (items_.size() >= capacity_) return 0;
-    
-    uint32_t next = 1;
-    for (const auto& item : items_)
-    {
-        if (item.first != next) break;
-        ++next;
-    }
-
-    return next <= capacity_ ? next : 0;
 }
