@@ -450,7 +450,72 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             EquipItemPacket* equip_item_packet = static_cast<EquipItemPacket*>(packet);
 
-            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
+            uint32_t first_slot = equip_item_packet->first_slot;
+            uint32_t second_slot = equip_item_packet->second_slot;
+
+            auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
+            auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+
+            InventoryUpdatePacket inventory_update_packet;
+            {
+                auto equip_lock = equip->DeferLock();
+                auto equipped_lock = equipped->DeferLock();
+
+                std::lock(equip_lock, equipped_lock);
+
+                auto first_item = equip->EraseItem(first_slot);
+                if (!first_item) break;
+
+                // 착용한 아이템을 장비 탭에서 제거
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = first_slot;
+                    inventory_update_packet.changes.push_back(change);
+                }
+
+                auto second_item = equipped->EraseItem(second_slot);
+
+                equipped->SetItem(second_slot, first_item);
+                
+                if (second_item)
+                {
+                    equip->SetItem(first_slot, second_item);
+
+                    // 기존에 장착한 아이템을 장비창에서 제거
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                        change.action = InventoryAction::kRemove;
+                        change.remove.slot_id = second_item->GetSlot();
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                    
+                    // 기존에 장착한 아이템을 장비 탭에 추가
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                        change.action = InventoryAction::kAdd;
+                        change.add.slot_id = second_item->GetSlot();
+                        change.add.item_id = second_item->GetID();
+                        change.add.count = second_item->GetCount();
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                }
+                
+                // 장착한 아이템을 장비창에 추가
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                    change.action = InventoryAction::kAdd;
+                    change.add.slot_id = first_item->GetSlot();
+                    change.add.item_id = first_item->GetID();
+                    change.add.count = first_item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
+                }
+            }
+            SendPacket(inventory_update_packet);
         }
         break;
 
@@ -458,7 +523,15 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             UnequipItemPacket* equip_item_packet = static_cast<UnequipItemPacket*>(packet);
             
-            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+            auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
+            auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+
+            {
+                auto equip_lock = equip->DeferLock();
+                auto equipped_lock = equipped->DeferLock();
+
+                std::lock(equip_lock, equipped_lock);
+            }
         }
         break;
 

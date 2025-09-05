@@ -5,6 +5,7 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     price: 0
     max_count: 1
     stat:
+      req_lv: 1
       max_hp: 1000
   129999:
     name: "Eternal 갑옷"
@@ -12,6 +13,7 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     price: 0
     max_count: 1
     stat:
+      req_lv: 1
       max_hp: 1000
   131999:
     name: "Eternal 검"
@@ -19,6 +21,7 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     price: 0
     max_count: 1
     stat:
+      req_lv: 1
       atk: 1000
   200000: # 아이템 고유 ID
     name: "먹다 남은 빵"

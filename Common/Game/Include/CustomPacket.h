@@ -309,17 +309,19 @@ struct ColorGainPacket : public Net::IPacket
 
 struct EquipItemPacket : public Net::IPacket
 {
-    uint32_t slot_id;
+    uint32_t first_slot;
+    uint32_t second_slot;
     
-    SERIALIZABLE_FIELDS(slot_id)
+    SERIALIZABLE_FIELDS(first_slot, second_slot)
     REGISTER_PACKET(EquipItemPacket, 307)
 };
 
 struct UnequipItemPacket : public Net::IPacket
 {
-    uint32_t slot_id;
+    uint32_t first_slot;
+    uint32_t second_slot;
     
-    SERIALIZABLE_FIELDS(slot_id)
+    SERIALIZABLE_FIELDS(first_slot, second_slot)
     REGISTER_PACKET(UnequipItemPacket, 308)
 };
 

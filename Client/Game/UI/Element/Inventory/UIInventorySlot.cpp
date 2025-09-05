@@ -99,8 +99,11 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
         InventoryType type = ui_inventory_->tab_;
         if (type == InventoryType::kEquip)
         {
+            uint32_t type_index = (item_id_ / 10000) % 10; // 1 - 모자, 2 - 갑옷, 3 - 무기
+            
             EquipItemPacket packet;
-            packet.slot_id = slot_id_;
+            packet.first_slot = slot_id_;
+            packet.second_slot = type_index;
             SessionSubsystem::Get()->SendPacket(packet);
         }
         else if (type == InventoryType::kUse)

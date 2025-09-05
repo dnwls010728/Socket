@@ -23,6 +23,7 @@ struct MobData
 
 struct ItemStatData
 {
+    int32_t req_lv;
     int32_t max_hp;
     int32_t atk;
 };
@@ -120,6 +121,7 @@ namespace YAML
         static bool decode(const Node& node, ItemStatData& data)
         {
             if (!node.IsMap()) return false;
+            data.req_lv = node["req_lv"].as<int32_t>(1);
             data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
             return true;

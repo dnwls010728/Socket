@@ -25,11 +25,6 @@ void Inventory::SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item)
     items_[slot_id] = item;
 }
 
-void Inventory::EraseItem(uint32_t slot_id)
-{
-    items_.erase(slot_id);
-}
-
 void Inventory::MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -137,6 +132,13 @@ void Inventory::MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot)
         
         owner_->SendPacket(packet);
     }
+}
+
+std::shared_ptr<Item> Inventory::EraseItem(uint32_t slot_id)
+{
+    auto node = items_.extract(slot_id);
+    if (node.empty()) return nullptr;
+    return std::move(node.mapped());
 }
 
 std::shared_ptr<Item> Inventory::FindItem(uint32_t slot_id)

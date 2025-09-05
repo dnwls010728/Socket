@@ -14,9 +14,9 @@ public:
     ~Inventory() = default;
 
     void SetItem(uint32_t slot_id, const std::shared_ptr<Item>& item);
-    void EraseItem(uint32_t slot_id);
     void MoveOrStackSlots(uint32_t first_slot, uint32_t second_slot);
 
+    std::shared_ptr<Item> EraseItem(uint32_t slot_id);
     std::shared_ptr<Item> FindItem(uint32_t slot_id);
 
     std::vector<std::shared_ptr<Item>> FindItems(uint32_t item_id);
@@ -32,6 +32,7 @@ public:
     inline uint32_t GetCapacity() const { return capacity_; }
 
     inline std::unique_lock<std::mutex> Lock() { return std::unique_lock<std::mutex>(mutex_); }
+    inline std::unique_lock<std::mutex> DeferLock() { return std::unique_lock<std::mutex>(mutex_, std::defer_lock); }
 
 private:
     void SwapSlots(uint32_t first_slot, uint32_t second_slot);
