@@ -31,6 +31,9 @@ UIInGameState::UIInGameState() :
     
     inventory_ = AddElement<UIInventory>(UIInventory::StaticClass(), L"Inventory");
     inventory_->SetActive(false);
+
+    equipment_ = AddElement<UIEquipment>(UIEquipment::StaticClass(), L"Equipment");
+    equipment_->SetActive(false);
     
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
     
@@ -110,6 +113,12 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
         if (scancode == static_cast<uint32_t>(Scancode::kKeyI) && !IsEditingText())
         {
             inventory_->SetActive(!inventory_->IsActive());
+            is_handled = true;
+        }
+
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyE) && !IsEditingText())
+        {
+            equipment_->SetActive(!equipment_->IsActive());
             is_handled = true;
         }
         

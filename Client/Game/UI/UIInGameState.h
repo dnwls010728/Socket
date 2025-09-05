@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Element/Equipment/UIEquipment.h"
 #include "UI/Element/UIPopup.h"
 #include "UI/UIState.h"
 
@@ -33,6 +34,7 @@ protected:
 private:
     UIChatBar* char_bar_;
     UIInventory* inventory_;
+    UIEquipment* equipment_;
     UIItemTooltip* item_tooltip_;
     UIMenu* menu_;
     UIContextMenu* context_menu_;
