@@ -22,6 +22,7 @@
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/ObjectSpawnHandler.h"
+#include "PacketHandlers/ObjectTakeDamageHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "PacketHandlers/PartyInviteNotifyHandler.h"
 #include "PacketHandlers/PartyJoinHandler.h"
@@ -34,6 +35,7 @@
 #include "PacketHandlers/PlacementStopHandler.h"
 #include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
+#include "PacketHandlers/SkillCastHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -114,6 +116,11 @@ void SessionSubsystem::Init()
     );
 
     handlers_.emplace(
+        SkillCastPacket::StaticPacketID,
+        std::make_unique<SkillCastHandler>()
+    );
+
+    handlers_.emplace(
         ChatMessagePacket::StaticPacketID,
         std::make_unique<ChatMessageHandler>()
     );
@@ -136,6 +143,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         ObjectAnimationPacket::StaticPacketID,
         std::make_unique<ObjectAnimationHandler>()
+    );
+
+    handlers_.emplace(
+        ObjectTakeDamagePacket::StaticPacketID,
+        std::make_unique<ObjectTakeDamageHandler>()
     );
 
     handlers_.emplace(

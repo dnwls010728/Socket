@@ -21,6 +21,8 @@
 #include "Session/Player.h"
 #include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
+#include "Skill/SkillManager.h"
+
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
@@ -50,8 +52,11 @@ PlayerCharacter::PlayerCharacter() :
     effects_(),
     buff_timer_(0.f),
     current_animation_(L"Idle"),
-    is_flipped_(false)
+    is_flipped_(false),
+    skill_manager_(this)
 {
+    // 테스트
+    skill_manager_.AddSkill(100000,1);
 }
 
 PlayerCharacter::~PlayerCharacter()
@@ -808,6 +813,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
+    case SkillCastRequest::StaticPacketID:
+        {
+            SkillCastRequest* skill_request = static_cast<SkillCastRequest*>(packet);
+            skill_manager_.UseSkill(skill_request->skill_id);
+        }
+        break;
+
     default:
         break;
     }
@@ -1190,5 +1202,6 @@ void PlayerCharacter::Tick(float delta_time)
         CheckBuffExpire();
         buff_timer_ = 0.f;
     }
+    skill_manager_.Tick(delta_time); 
     
 }

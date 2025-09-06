@@ -190,6 +190,15 @@ void Mob::TakeDamage(uint32_t attacker, int32_t damage)
     if (hp_ <= 0) return;
 
     const auto& player = map_->FindPlayer(attacker);
+
+    if (player)
+    {
+        ObjectTakeDamagePacket packet;
+        packet.object_id = object_id_;
+        packet.damage_amount = damage;
+        player->SendPacket(packet);
+    }
+    
     state_machine_->ChangeState(hit_state_);
 
     last_animation_ = animation_;

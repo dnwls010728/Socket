@@ -64,8 +64,10 @@ public:
     std::shared_ptr<PlayerCharacter> FindPlayer(uint32_t player_id);
 
     std::vector<std::weak_ptr<PlayerCharacter>> GetPlayers();
-    
+
     void GetDropPosition(Math::Vector2& position) const;
+
+    void GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_ptr<MapObject>>& result);
 
     inline size_t GetPlayerCount() const { return players_.size(); }
     inline uint32_t GetMapID() const { return map_id_; }

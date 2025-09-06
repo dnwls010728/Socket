@@ -98,6 +98,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 			animation_snapshots_.push_back(snapshot);
         }
         break;
+    case SkillCastPacket::StaticPacketID:
+        {
+            SkillCastPacket* skill_packet = static_cast<SkillCastPacket*>(packet);
+            auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+            if (IsValid(effect))
+            {
+                effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+                effect->SetFlipX(renderer_->IsFlipX());
+            }
+        }
+        break;
         
     default:
         break;
@@ -307,6 +318,13 @@ void PlayerCharacter::Tick(float delta_time)
                         SendPacket(request);
                     }
                 }
+            }
+
+            if (keyboard->GetKeyDown(Scancode::kKeyQ))
+            {
+                SkillCastRequest request;
+                request.skill_id = 100000;
+                SendPacket(request);
             }
 
             if (keyboard->GetKeyDown(Scancode::kKeyA))

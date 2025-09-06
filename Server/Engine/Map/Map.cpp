@@ -351,7 +351,7 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerChara
 void Map::OnAttack(uint32_t attacker, uint32_t defender)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
-
+    
     int32_t value = 0;
     
     {
@@ -465,6 +465,21 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
         players.push_back(player_weak);
     }
     return players;
+}
+
+void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_ptr<MapObject>>& result)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+     
+    for (const auto& [id, obj] : map_objects_)
+    {
+        // 임시 사이즈
+        Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+        Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
+
+        if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
+            result.push_back(obj);
+    }
 }
 
 void Map::GetDropPosition(Math::Vector2& position) const

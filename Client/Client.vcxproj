@@ -300,6 +300,7 @@
     <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ObjectTakeDamageHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyInfoChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyInviteNotifyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyJoinHandler.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="Game\PacketHandlers\PopupHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectSpawnHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\SkillCastHandler.h" />
     <ClInclude Include="Game\PacketHandlers\TakeDamageHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
@@ -737,6 +739,7 @@
     <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ObjectTakeDamageHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyInfoChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyInviteNotifyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyJoinHandler.cpp" />
@@ -752,6 +755,7 @@
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectSpawnHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\TakeDamageHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />

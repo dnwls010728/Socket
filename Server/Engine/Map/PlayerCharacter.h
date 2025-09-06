@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include <mutex>
 #include <unordered_map>
+#include <memory>
 
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
 #include "Session/Player/Inventory/Inventory.h"
 #include "Utils/TimedBool.h"
+#include "Skill/SkillManager.h"
 
 class StatEffect;
 class Portal;
@@ -19,6 +21,7 @@ namespace Net
 class OLD_Inventory;
 class Player;
 enum class PartyStatType : uint8_t;
+class SkillManager;
 
 ENUM_CLASS_FLAGS(PlayerStat)
 
@@ -77,6 +80,7 @@ public:
     inline int32_t GetLv() const { return lv_; }
     inline int32_t GetHP() const { return hp_; }
     inline int32_t GetMaxHP() const { return base_max_hp_; }
+    inline bool IsFlipped() const { return is_flipped_; }
 
 protected:
     friend class ServerManager;
@@ -126,6 +130,7 @@ protected:
     std::atomic_int32_t color_;
 
     std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
+    SkillManager skill_manager_;
     
     TimedBool is_invincible_;
 

@@ -242,6 +242,15 @@ struct ObjectAnimationPacket : public Net::IPacket
     REGISTER_PACKET(ObjectAnimationPacket, 233)
 };
 
+struct ObjectTakeDamagePacket : public Net::IPacket
+{
+    uint32_t object_id;
+    int32_t damage_amount;
+    
+    SERIALIZABLE_FIELDS(object_id, damage_amount)
+    REGISTER_PACKET(ObjectTakeDamagePacket, 234)
+};
+
 struct MoveItemRequest : public Net::IPacket
 {
     uint8_t inventory_type;
@@ -353,6 +362,23 @@ struct PlayerRespawnPacket : public Net::IPacket
 {
     SERIALIZABLE_FIELDS()
     REGISTER_PACKET(PlayerRespawnPacket, 403)
+};
+
+struct SkillCastRequest : public Net::IPacket
+{
+    uint32_t skill_id;
+
+    SERIALIZABLE_FIELDS(skill_id)
+    REGISTER_PACKET(SkillCastRequest, 404)
+};
+
+struct SkillCastPacket : public Net::IPacket
+{
+    uint32_t owner_id;;
+    uint32_t skill_id;
+
+    SERIALIZABLE_FIELDS(owner_id, skill_id)
+    REGISTER_PACKET(SkillCastPacket, 405)
 };
 
 struct PlayerStatsUpdatePacket : public Net::IPacket
