@@ -7,6 +7,8 @@ public:
     Item(uint32_t id, int32_t count);
     virtual ~Item() = default;
 
+    Item(const Item&) = default;
+
     inline uint32_t GetID() const { return id_; }
 
     inline void SetSlot(uint32_t slot) { slot_ = slot; }
@@ -14,6 +16,8 @@ public:
 
     inline void SetCount(int32_t count) { count_ = count; }
     inline int32_t GetCount() const { return count_; }
+    
+    virtual std::shared_ptr<Item> Clone() const;
 
     static std::shared_ptr<Item> Create(uint32_t id, int32_t count);
 

@@ -19,6 +19,7 @@
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
 #include "Session/Player.h"
+#include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
 
 PlayerCharacter::PlayerCharacter() :
@@ -30,7 +31,11 @@ PlayerCharacter::PlayerCharacter() :
     map_id_(0),
     lv_(1),
     hp_(350),
-    max_hp_(350),
+    base_max_hp_(350),
+    effective_max_hp_(0),
+    effective_atk_(0),
+    effective_def_(0),
+    effective_dig_(0),
     is_dead_(false),
     is_placing_(false),
     map_transitioning_(false),
@@ -83,7 +88,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->body_color_ = StringHelper::UTF8ToUTF16(result->getString("body_color"));
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
-                character->max_hp_ = result->getInt("max_hp");
+                character->base_max_hp_ = result->getInt("max_hp");
                 character->exp_.store(result->getInt("exp"));
                 character->map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
@@ -111,8 +116,11 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 uint32_t slot_id = result->getInt("slot_id");
                 
                 int32_t count = result->getInt("count");
-                
-                inventories[type_index]->SetItem(slot_id, Item::Create(item_id, count));
+
+                if (type_index == 1 || type_index == 4)
+                    inventories[type_index]->SetItem(slot_id, EquipItem::Create(item_id));
+                else
+                    inventories[type_index]->SetItem(slot_id, Item::Create(item_id, count));
             }
         }
 
@@ -310,10 +318,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             InventoryUpdatePacket update_packet;
             {
                 inventory->Lock();
-                item = inventory->FindItem(slot_id);
-                if (!item) break;
-            
-                int32_t count = item->GetCount();
+                auto base_item = inventory->FindItem(slot_id);
+                if (!base_item) break;
+
+                int32_t count = base_item->GetCount();
+                
+                item = base_item->Clone();
+                item->SetCount(request->count);
             
                 if (request->count >= count)
                 {
@@ -328,7 +339,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 else
                 {
                     int32_t remaining_count = count - request->count;
-                    item->SetCount(remaining_count);
+                    base_item->SetCount(remaining_count);
 
                     InventoryChange change;
                     change.inventory_type = type_index;
@@ -343,7 +354,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Math::Vector2 drop_position = GetPosition();
             map_->GetDropPosition(drop_position);
             
-            map_->SpawnItemDrop(item->GetID(), request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            map_->SpawnItemDrop(item, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
         }
         break;
 
@@ -805,7 +816,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (is_dead_ || is_invincible_) return;
-    hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
+    hp_ = std::clamp(hp_ - damage_amount, 0, base_max_hp_);
 
     PlayerStatsUpdatePacket stats_update_packet;
     stats_update_packet.mask |= PlayerStat::kHP;
@@ -834,7 +845,7 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
 void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
 {
     int32_t next_hp = hp_ + hp_delta;
-    hp_ = std::clamp(next_hp, 1, max_hp_);
+    hp_ = std::clamp(next_hp, 1, base_max_hp_);
 
     PlayerStatsUpdatePacket packet;
     packet.mask |= PlayerStat::kHP;
@@ -995,7 +1006,7 @@ void PlayerCharacter::UpdateDatabase()
             
             statement.reset(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
-            statement->setInt(2, max_hp_);
+            statement->setInt(2, base_max_hp_);
             statement->setInt(3, exp_.load());
             statement->setInt(4, lv_);
             statement->setUInt(5, map_id);
@@ -1043,8 +1054,8 @@ void PlayerCharacter::GainExp(int32_t amount)
         ++lv_;
         changed_lv = true;
 
-        max_hp_ += 25;
-        hp_ = max_hp_;
+        base_max_hp_ += 25;
+        hp_ = base_max_hp_;
 
         if (lv_ >= 50) break;
     }
@@ -1063,7 +1074,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     }
     
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kHP)) packet.hp = hp_;
-    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = max_hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = base_max_hp_;
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kExp)) packet.exp = exp_.load();
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
 
@@ -1073,7 +1084,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     {
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
-        NotifyPartyStatChange(PartyStatType::kMaxHP, max_hp_);
+        NotifyPartyStatChange(PartyStatType::kMaxHP, base_max_hp_);
     }
 }
 
@@ -1147,6 +1158,14 @@ void PlayerCharacter::CheckBuffExpire()
 
         if (best) effects_.insert_or_assign(stat, *best);
     }
+}
+
+void PlayerCharacter::RecalcEquipStats()
+{
+    int32_t max_hp = 0;
+    int32_t atk = 0;
+    int32_t def = 0;
+    int32_t dig = 0;
 }
 
 bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const

@@ -20,6 +20,7 @@
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
+#include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
 
 
@@ -216,11 +217,11 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
     }
 }
 
-void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
-    dropped_item->SetItem(Item::Create(item_id, count));
+    dropped_item->SetItem(item);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
@@ -232,7 +233,7 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
     }
 
     DroppedItemInfo item_info;
-    item_info.item_id = item_id;
+    item_info.item_id = item->GetID();
     item_info.dropper_position_x = dropper->GetPosition().x;
     item_info.dropper_position_y = dropper->GetPosition().y;
     item_info.color = 0;
@@ -772,7 +773,11 @@ void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
             if (drop.id == 0)
                 SpawnColorDrop(count, mob, drop_position);
             else
-                SpawnItemDrop(drop.id, count, mob, drop_position);
+            {
+                uint32_t type_index = drop.id / 100000;
+                if (type_index == 1) SpawnItemDrop(EquipItem::Create(drop.id), mob, drop_position);
+                else SpawnItemDrop(Item::Create(drop.id, count), mob, drop_position);
+            }
                 
             ++d;
         }

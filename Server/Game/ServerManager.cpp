@@ -257,7 +257,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         profile.body_color = character->GetBodyColor();
 
                         profile.stats.hp = character->hp_;
-                        profile.stats.max_hp = character->max_hp_;
+                        profile.stats.max_hp = character->base_max_hp_;
                         profile.stats.exp = character->exp_.load();
                         profile.stats.lv = character->lv_;
                         

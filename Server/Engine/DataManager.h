@@ -26,6 +26,8 @@ struct ItemStatData
     int32_t req_lv;
     int32_t max_hp;
     int32_t atk;
+    int32_t def;
+    int32_t dig;
 };
 
 struct ItemEffectData
@@ -133,6 +135,8 @@ namespace YAML
             data.req_lv = node["req_lv"].as<int32_t>(1);
             data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.dig = node["dig"].as<int32_t>(0);
             return true;
         }
     };

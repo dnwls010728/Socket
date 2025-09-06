@@ -212,9 +212,6 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
     
-    auto inventory = PlayerSubsystem::Get()->GetInventory();
-    if (!inventory) return false;
-    
     Math::Color color = icon_->GetColor();
     color.a = 255;
     icon_->SetColor(color);
@@ -230,7 +227,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     if (!element)
     {
         InventoryType type = ui_inventory_->tab_;
-        int32_t count = inventory->GetItemCount(type, slot_id_);
+        int32_t count = PlayerSubsystem::Get()->GetInventory()->GetItemCount(type, slot_id_);
 
         if (count == 1)
         {
@@ -263,7 +260,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                     }
                     
                     InventoryType temp_type = ui_inventory_->tab_;
-                    int32_t temp_count = inventory->GetItemCount(temp_type, slot_id_);
+                    int32_t temp_count = PlayerSubsystem::Get()->GetInventory()->GetItemCount(temp_type, slot_id_);
                     if (std::stoll(input_text) > temp_count)
                     {
                         temp_param.caption = std::to_wstring(temp_count) + L" 이하의 숫자만 가능합니다.";

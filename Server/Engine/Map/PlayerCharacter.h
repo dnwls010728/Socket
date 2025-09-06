@@ -76,7 +76,7 @@ public:
 
     inline int32_t GetLv() const { return lv_; }
     inline int32_t GetHP() const { return hp_; }
-    inline int32_t GetMaxHP() const { return max_hp_; }
+    inline int32_t GetMaxHP() const { return base_max_hp_; }
 
 protected:
     friend class ServerManager;
@@ -91,6 +91,7 @@ protected:
     void GainExp(int32_t amount);
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
     void CheckBuffExpire();
+    void RecalcEquipStats();
     
     bool IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const;
 
@@ -108,7 +109,11 @@ protected:
     
     int32_t lv_;
     int32_t hp_;
-    int32_t max_hp_;
+    int32_t base_max_hp_;
+    int32_t effective_max_hp_;
+    int32_t effective_atk_;
+    int32_t effective_def_;
+    int32_t effective_dig_;
 
     bool is_dead_;
     std::wstring current_animation_;

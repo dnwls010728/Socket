@@ -34,6 +34,9 @@ public:
     inline std::unique_lock<std::mutex> Lock() { return std::unique_lock<std::mutex>(mutex_); }
     inline std::unique_lock<std::mutex> DeferLock() { return std::unique_lock<std::mutex>(mutex_, std::defer_lock); }
 
+    // auto begin() { return items_.begin(); }
+    // auto end() { return items_.end(); }
+
 private:
     void SwapSlots(uint32_t first_slot, uint32_t second_slot);
     

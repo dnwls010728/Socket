@@ -97,7 +97,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 statement->setString(3, StringHelper::UTF16ToUTF8(new_character->GetBodyColor()));
                 statement->setInt(4, new_character->lv_);
                 statement->setInt(5, new_character->hp_);
-                statement->setInt(6, new_character->max_hp_);
+                statement->setInt(6, new_character->base_max_hp_);
                 statement->setInt(7, new_character->exp_);
                 statement->setInt(8, new_character->map_id_);
                 statement->setDouble(9, new_character->position_.x);
@@ -144,7 +144,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.profile.body_color = new_character->GetBodyColor();
 
             response.profile.stats.hp = new_character->hp_;
-            response.profile.stats.max_hp = new_character->max_hp_;
+            response.profile.stats.max_hp = new_character->base_max_hp_;
             response.profile.stats.exp = new_character->exp_;
             response.profile.stats.lv = new_character->lv_;
             SendPacket(response);
@@ -173,7 +173,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
             response.hp = player_character_->hp_;
-            response.max_hp = player_character_->max_hp_;
+            response.max_hp = player_character_->base_max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
             response.map_id = player_character_->map_->GetMapID();
