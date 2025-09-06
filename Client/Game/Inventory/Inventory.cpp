@@ -90,11 +90,11 @@ void Inventory::ChangeCount(InventoryType type, uint32_t slot_id, int32_t count)
 void Inventory::Swap(InventoryType first_type, uint32_t first_slot, InventoryType second_type, uint32_t second_slot)
 {
     Slot first = inventories_[static_cast<uint8_t>(first_type)][first_slot];
-    inventories_[static_cast<uint8_t>(first_type)][first_slot] = std::move(inventories_[static_cast<uint8_t>(second_type)][second_slot]);
-    inventories_[static_cast<uint8_t>(second_type)][second_slot] = std::move(first);
+    inventories_[static_cast<uint8_t>(first_type)][first_slot] = inventories_[static_cast<uint8_t>(second_type)][second_slot];
+    inventories_[static_cast<uint8_t>(second_type)][second_slot] = first;
 
-    if (!inventories_[static_cast<uint8_t>(first_type)][first_slot].item_id) Remove(first_type, first_slot);
-    if (!inventories_[static_cast<uint8_t>(second_type)][second_slot].item_id) Remove(second_type, second_slot);
+    if (inventories_[static_cast<uint8_t>(first_type)][first_slot].item_id == 0) Remove(first_type, first_slot);
+    if (inventories_[static_cast<uint8_t>(second_type)][second_slot].item_id == 0) Remove(second_type, second_slot);
 
     ItemMovedData event_data;
     event_data.first_inventory_type = first_type;

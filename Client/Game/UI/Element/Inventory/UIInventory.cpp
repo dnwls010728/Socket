@@ -18,7 +18,6 @@ UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
     slots_(),
     color_text_(nullptr),
-    inventory_(nullptr),
     tab_(InventoryType::kEquip)
 {
     SetSize({164.f, 246.f});
@@ -168,10 +167,12 @@ void UIInventory::SetActive(bool active)
 
 void UIInventory::UpdateSlot(uint32_t slot_id) const
 {
-    if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_id))
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    if (!inventory) return;
+    
+    if (uint32_t item_id = inventory->GetItemID(tab_, slot_id))
     {
-        uint32_t count = inventory_->GetItemCount(tab_, slot_id);
+        uint32_t count = inventory->GetItemCount(tab_, slot_id);
         slots_[slot_id - 1]->UpdateSlot(item_id, count);
     }
     else slots_[slot_id - 1]->ResetSlot();
@@ -201,13 +202,14 @@ void UIInventory::Init()
     subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
     subsystem->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 
-    inventory_ = PlayerSubsystem::Get()->GetInventory();
     for (uint32_t i = 0; i < 128; ++i)
     {
         UpdateSlot(i + 1);
     }
 
-    UpdateColor(inventory_->GetColor());
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    UpdateColor(inventory->GetColor());
+    
     tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
     
 }

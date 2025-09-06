@@ -8,6 +8,7 @@
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIInGameState.h"
 #include "UI/UIState.h"
@@ -20,8 +21,6 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
     ui_inventory_(nullptr),
     tooltip_(nullptr),
-    icon_(nullptr),
-    count_text_(nullptr),
     slot_id_(0),
     item_id_(0),
     last_time_(0.f)
@@ -116,6 +115,12 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
             SessionSubsystem::Get()->SendPacket(packet);
         }
         
+        if (tooltip_)
+        {
+            tooltip_->SetActive(false);
+            tooltip_ = nullptr;
+        }
+        
         last_time_ = 0.f;
         return true;
     }
@@ -207,6 +212,9 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
 {
     if (item_id_ == 0) return false;
     
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    if (!inventory) return false;
+    
     Math::Color color = icon_->GetColor();
     color.a = 255;
     icon_->SetColor(color);
@@ -222,7 +230,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     if (!element)
     {
         InventoryType type = ui_inventory_->tab_;
-        int32_t count = ui_inventory_->inventory_->GetItemCount(type, slot_id_);
+        int32_t count = inventory->GetItemCount(type, slot_id_);
 
         if (count == 1)
         {
@@ -255,7 +263,7 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                     }
                     
                     InventoryType temp_type = ui_inventory_->tab_;
-                    int32_t temp_count = ui_inventory_->inventory_->GetItemCount(temp_type, slot_id_);
+                    int32_t temp_count = inventory->GetItemCount(temp_type, slot_id_);
                     if (std::stoll(input_text) > temp_count)
                     {
                         temp_param.caption = std::to_wstring(temp_count) + L" 이하의 숫자만 가능합니다.";

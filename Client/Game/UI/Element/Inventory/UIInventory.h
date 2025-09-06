@@ -47,8 +47,6 @@ private:
 
     UIText* color_text_;
 
-    Inventory* inventory_;
-
     InventoryType tab_;
     
 };

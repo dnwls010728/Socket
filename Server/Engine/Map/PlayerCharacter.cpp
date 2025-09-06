@@ -523,6 +523,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             UnequipItemPacket* equip_item_packet = static_cast<UnequipItemPacket*>(packet);
             
+            uint32_t first_slot = equip_item_packet->first_slot;
+            uint32_t second_slot = equip_item_packet->second_slot;
+            if (second_slot == 0) break;
+            
             auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
             auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
 
@@ -531,6 +535,33 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 auto equipped_lock = equipped->DeferLock();
 
                 std::lock(equip_lock, equipped_lock);
+
+                auto first_item = equipped->EraseItem(first_slot);
+                if (!first_item) break;
+
+                equip->SetItem(second_slot, first_item);
+
+                InventoryUpdatePacket inventory_update_packet;
+                // 장착한 아이템을 장비창에서 제거
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = first_slot;
+                    inventory_update_packet.changes.push_back(change);
+                }
+                
+                // 장착한 아이템을 장비 탭에 추가
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                    change.action = InventoryAction::kAdd;
+                    change.add.slot_id = first_item->GetSlot();
+                    change.add.item_id = first_item->GetID();
+                    change.add.count = first_item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
+                }
+                SendPacket(inventory_update_packet);
             }
         }
         break;

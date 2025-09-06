@@ -334,6 +334,7 @@
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSelect.h" />
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSlot.h" />
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipment.h" />
+    <ClInclude Include="Game\UI\Element\Equipment\UIEquipmentSlot.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
@@ -770,6 +771,7 @@
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSelect.cpp" />
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipment.cpp" />
+    <ClCompile Include="Game\UI\Element\Equipment\UIEquipmentSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />

@@ -183,6 +183,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             auto* equip = player_character_->GetInventory(InventoryType::kEquip);
             auto* use = player_character_->GetInventory(InventoryType::kUse);
             auto* etc = player_character_->GetInventory(InventoryType::kEtc);
+            auto* equipped = player_character_->GetInventory(InventoryType::kEquipped);
 
             response.equip_slot_capacity = equip->GetCapacity();
             response.use_slot_capacity = use->GetCapacity();
@@ -218,6 +219,18 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 
                 ItemInfo item_info;
                 item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEtc);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : equipped->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
                 item_info.item_id = item->GetID();
                 item_info.slot_id = slot.first;
                 item_info.count = item->GetCount();

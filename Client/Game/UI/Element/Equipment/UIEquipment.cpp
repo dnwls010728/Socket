@@ -1,13 +1,17 @@
 ﻿#include "pch.h"
 #include "UIEquipment.h"
 
+#include "UIEquipmentSlot.h"
 #include "Asset/AssetManager.h"
+#include "Inventory/Inventory.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
 #include "Windows/DX/UISprite.h"
 
 UIEquipment::UIEquipment(const std::wstring& name) :
-    UIContainer(name)
+    UIContainer(name),
+    slots_()
 {
     SetSize({164.f, 246.f});
     
@@ -26,6 +30,32 @@ UIEquipment::UIEquipment(const std::wstring& name) :
     t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     t_title->SetText(L"캐릭터");
     t_title->SetIgnoreRayCast(true);
+
+    UIEquipmentSlot* hat_slot = AddChild<UIEquipmentSlot>(UIEquipmentSlot::StaticClass(), L"HatSlot");
+    hat_slot->SetRelativePosition({ 124.f, 32.f });
+    hat_slot->SetSlotID(static_cast<uint8_t>(EquipSlot::kHat));
+    
+    UIEquipmentSlot* top_slot = AddChild<UIEquipmentSlot>(UIEquipmentSlot::StaticClass(), L"TopSlot");
+    top_slot->SetRelativePosition({ 124.f, 68.f });
+    top_slot->SetSlotID(static_cast<uint8_t>(EquipSlot::kTop));
+    
+    UIEquipmentSlot* weapon_slot = AddChild<UIEquipmentSlot>(UIEquipmentSlot::StaticClass(), L"WeaponSlot");
+    weapon_slot->SetRelativePosition({ 8.f, 32.f });
+    weapon_slot->SetSlotID(static_cast<uint8_t>(EquipSlot::kWeapon));
+
+    slots_[hat_slot->GetSlotID()] = hat_slot;
+    slots_[top_slot->GetSlotID()] = top_slot;
+    slots_[weapon_slot->GetSlotID()] = weapon_slot;
+}
+
+void UIEquipment::UpdateSlot(uint32_t slot_id) const
+{
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    if (!inventory) return;
+    
+    if (uint32_t item_id = inventory->GetItemID(InventoryType::kEquipped, slot_id))
+        slots_[slot_id]->UpdateSlot(item_id);
+    else slots_[slot_id]->ResetSlot();
 }
 
 void UIEquipment::Init()
@@ -33,6 +63,26 @@ void UIEquipment::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
+    
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIEquipment::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIEquipment::OnEvent);
+    
+    for (uint32_t i = 1; i < 4; ++i)
+    {
+        UpdateSlot(i);
+    }
+    
+}
+
+void UIEquipment::Uninit()
+{
+    UIContainer::Uninit();
+    
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIEquipment::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIEquipment::OnEvent);
+    
 }
 
 bool UIEquipment::OnDragBegin(const Math::Vector2& position)
@@ -50,6 +100,20 @@ bool UIEquipment::OnDrag(const Math::Vector2& position, const Math::Vector2& del
 bool UIEquipment::OnDragEnd(const Math::Vector2& position)
 {
     return true;
+}
+
+void UIEquipment::OnEvent(const EventData& data)
+{
+    if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
+    {
+        if (item_added->inventory_type != InventoryType::kEquipped) return;
+        UpdateSlot(item_added->slot_id);
+    }
+    else if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
+    {
+        if (item_removed->inventory_type != InventoryType::kEquipped) return;
+        UpdateSlot(item_removed->slot_id);
+    }
 }
 
 RTTR_REGISTRATION
