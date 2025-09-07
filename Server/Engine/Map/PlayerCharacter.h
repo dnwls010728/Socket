@@ -104,7 +104,7 @@ protected:
     void GainExp(int32_t amount);
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
     void CheckBuffExpire();
-    void RecalcEffectiveStats();
+    void ComputeStats();
     void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
     void RemoveEquipStats(uint32_t slot);
     

@@ -143,7 +143,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             character->AddEquipStats(it.first, item);
         }
 
-        character->RecalcEffectiveStats();
+        character->ComputeStats();
         character->hp_ = std::min(character->hp_, character->effective_max_hp_);
     }
     catch (sql::SQLException& e)
@@ -557,7 +557,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             RemoveEquipStats(second_slot);
             AddEquipStats(second_slot, first_equip);
             
-            RecalcEffectiveStats();
+            ComputeStats();
             hp_ = std::min(hp_, effective_max_hp_);
             
             PlayerStatsUpdatePacket stats_update_packet;
@@ -615,7 +615,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             SendPacket(inventory_update_packet);
 
             RemoveEquipStats(first_slot);
-            RecalcEffectiveStats();
+            ComputeStats();
             hp_ = std::min(hp_, effective_max_hp_);
             
             PlayerStatsUpdatePacket stats_update_packet;
@@ -933,7 +933,7 @@ void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, 
         }
     }
 
-    RecalcEffectiveStats();
+    ComputeStats();
 }
 
 bool PlayerCharacter::Disconnect()
@@ -1118,7 +1118,7 @@ void PlayerCharacter::GainExp(int32_t amount)
         base_max_hp_ += 25;
         hp_ = base_max_hp_;
 
-        RecalcEffectiveStats();
+        ComputeStats();
         if (lv_ >= 50) break;
     }
 
@@ -1222,10 +1222,10 @@ void PlayerCharacter::CheckBuffExpire()
         }
     }
 
-    RecalcEffectiveStats();
+    ComputeStats();
 }
 
-void PlayerCharacter::RecalcEffectiveStats()
+void PlayerCharacter::ComputeStats()
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
