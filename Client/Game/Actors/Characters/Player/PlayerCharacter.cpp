@@ -106,6 +106,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             {
                 effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
                 effect->SetFlipX(renderer_->IsFlipX());
+
+                // 임시
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\SkillUse.mp3");
+                AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
             }
         }
         break;
