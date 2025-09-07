@@ -79,7 +79,7 @@ public:
 
     inline int32_t GetLv() const { return lv_; }
     inline int32_t GetHP() const { return hp_; }
-    inline int32_t GetMaxHP() const { return base_max_hp_; }
+    inline int32_t GetMaxHP() const { return effective_max_hp_; }
     inline bool IsFlipped() const { return is_flipped_; }
 
 protected:
