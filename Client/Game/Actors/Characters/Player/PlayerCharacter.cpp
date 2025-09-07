@@ -326,48 +326,6 @@ void PlayerCharacter::Tick(float delta_time)
                 request.skill_id = 100000;
                 SendPacket(request);
             }
-
-            if (keyboard->GetKeyDown(Scancode::kKeyA))
-            {
-                auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
-                if (IsValid(effect))
-                {
-                    effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
-                    effect->SetFlipX(renderer_->IsFlipX());
-                }
-            }
-
-            // 공격 테스트
-            if (keyboard->GetKeyDown(Scancode::kKeyX))
-            {
-                std::vector<Actor*> hit_actors;
-                bool is_hit = Physics2D::OverlapBoxAll(
-                    GetTransform()->GetPosition(),
-                    {3.f, 2.f},
-                    hit_actors,
-                    static_cast<uint16_t>(ActorLayer::kMob)
-                );
-
-                if (is_hit)
-                {
-                    for (const auto& actor : hit_actors)
-                    {
-                        MobBase* mob = static_cast<MobBase*>(actor);
-                        if (!IsValid(mob) || mob->IsDead()) continue;
-
-                        AttackRequest request;
-                        request.object_id = mob->GetObjectID();
-                        SendPacket(request);
-
-                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
-                        if (IsValid(damage))
-                        {
-                            damage->GetTransform()->SetPosition(
-                                mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
-                        }
-                    }
-                }
-            }
         }
         else
         {
@@ -442,9 +400,6 @@ void PlayerCharacter::Tick(float delta_time)
             Logger::Print(L"Expired Buff: %d", it->first);
             it = buff_effects_.erase(it);
         }
-
-        // 공격 범위 확인용
-        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
     }
     else
     {
