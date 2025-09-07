@@ -95,6 +95,7 @@ protected:
     void GainExp(int32_t amount);
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
     void CheckBuffExpire();
+    void RecalcEffectiveStats();
     void RecalcEquipStats();
     
     bool IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const;
@@ -108,20 +109,28 @@ protected:
 
     std::wstring name_;
     std::wstring body_color_;
+    std::wstring current_animation_;
 
     uint32_t map_id_;
     
     int32_t lv_;
+    
     int32_t hp_;
     int32_t base_max_hp_;
+    
+    int32_t equip_max_hp_;
+    int32_t equip_atk_;
+    int32_t equip_def_;
+    int32_t equip_dig_;
+    
     int32_t effective_max_hp_;
     int32_t effective_atk_;
     int32_t effective_def_;
     int32_t effective_dig_;
 
     bool is_dead_;
-    std::wstring current_animation_;
     bool is_flipped_;
+    bool is_equipment_dirty_;
     bool is_placing_;
     
     std::atomic_bool map_transitioning_;

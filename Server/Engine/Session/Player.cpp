@@ -173,7 +173,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
             response.hp = player_character_->hp_;
-            response.max_hp = player_character_->base_max_hp_;
+            response.max_hp = player_character_->effective_max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
             response.map_id = player_character_->map_->GetMapID();

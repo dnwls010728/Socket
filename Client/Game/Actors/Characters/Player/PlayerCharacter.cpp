@@ -400,6 +400,10 @@ void PlayerCharacter::Tick(float delta_time)
             Logger::Print(L"Expired Buff: %d", it->first);
             it = buff_effects_.erase(it);
         }
+
+        // 공격 범위 확인용
+        int32_t direction = renderer_->IsFlipX() ? -1 : 1;
+        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition() + Math::Vector2::Right() * direction * 3.f, { 6.f, 2.f }, Math::Color::Red);
     }
     else
     {

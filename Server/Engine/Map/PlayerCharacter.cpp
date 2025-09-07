@@ -14,7 +14,6 @@
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
-#include "Math/Color.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
@@ -30,15 +29,22 @@ PlayerCharacter::PlayerCharacter() :
     party_id_(0),
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
+    current_animation_(L"Idle"),
     map_id_(0),
     lv_(1),
     hp_(350),
     base_max_hp_(350),
+    equip_max_hp_(0),
+    equip_atk_(0),
+    equip_def_(0),
+    equip_dig_(0),
     effective_max_hp_(0),
     effective_atk_(0),
     effective_def_(0),
     effective_dig_(0),
     is_dead_(false),
+    is_flipped_(false),
+    is_equipment_dirty_(false),
     is_placing_(false),
     map_transitioning_(false),
     exp_(0),
@@ -51,8 +57,6 @@ PlayerCharacter::PlayerCharacter() :
     buff_expires_(),
     effects_(),
     buff_timer_(0.f),
-    current_animation_(L"Idle"),
-    is_flipped_(false),
     skill_manager_(this)
 {
     // 테스트
@@ -130,6 +134,11 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         }
 
         character->map_ = World::Get()->GetMap(character->map_id_);
+
+        character->is_equipment_dirty_ = true;
+        character->RecalcEffectiveStats();
+
+        character->hp_ = std::min(character->hp_, character->effective_max_hp_);
     }
     catch (sql::SQLException& e)
     {
@@ -532,6 +541,18 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 }
             }
             SendPacket(inventory_update_packet);
+
+            is_equipment_dirty_ = true;
+            RecalcEffectiveStats();
+
+            hp_ = std::min(hp_, effective_max_hp_);
+            
+            PlayerStatsUpdatePacket stats_update_packet;
+            stats_update_packet.mask |= PlayerStat::kHP;
+            stats_update_packet.mask |= PlayerStat::kMaxHP;
+            stats_update_packet.hp = hp_;
+            stats_update_packet.max_hp = effective_max_hp_;
+            SendPacket(stats_update_packet);
         }
         break;
 
@@ -579,6 +600,18 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 }
                 SendPacket(inventory_update_packet);
             }
+            
+            is_equipment_dirty_ = true;
+            RecalcEffectiveStats();
+
+            hp_ = std::min(hp_, effective_max_hp_);
+            
+            PlayerStatsUpdatePacket stats_update_packet;
+            stats_update_packet.mask |= PlayerStat::kHP;
+            stats_update_packet.mask |= PlayerStat::kMaxHP;
+            stats_update_packet.hp = hp_;
+            stats_update_packet.max_hp = effective_max_hp_;
+            SendPacket(stats_update_packet);
         }
         break;
 
@@ -828,7 +861,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (is_dead_ || is_invincible_) return;
-    hp_ = std::clamp(hp_ - damage_amount, 0, base_max_hp_);
+    hp_ = std::clamp(hp_ - damage_amount, 0, effective_max_hp_);
 
     PlayerStatsUpdatePacket stats_update_packet;
     stats_update_packet.mask |= PlayerStat::kHP;
@@ -857,7 +890,7 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
 void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
 {
     int32_t next_hp = hp_ + hp_delta;
-    hp_ = std::clamp(next_hp, 1, base_max_hp_);
+    hp_ = std::clamp(next_hp, 1, effective_max_hp_);
 
     PlayerStatsUpdatePacket packet;
     packet.mask |= PlayerStat::kHP;
@@ -1069,6 +1102,7 @@ void PlayerCharacter::GainExp(int32_t amount)
         base_max_hp_ += 25;
         hp_ = base_max_hp_;
 
+        RecalcEffectiveStats();
         if (lv_ >= 50) break;
     }
 
@@ -1086,7 +1120,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     }
     
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kHP)) packet.hp = hp_;
-    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = base_max_hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = effective_max_hp_;
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kExp)) packet.exp = exp_.load();
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
 
@@ -1096,7 +1130,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     {
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
-        NotifyPartyStatChange(PartyStatType::kMaxHP, base_max_hp_);
+        NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
     }
 }
 
@@ -1172,12 +1206,50 @@ void PlayerCharacter::CheckBuffExpire()
     }
 }
 
+void PlayerCharacter::RecalcEffectiveStats()
+{
+    std::lock_guard<std::mutex> lock(effect_mutex_);
+    
+    effective_max_hp_ = base_max_hp_;
+    effective_atk_ = 0;
+    effective_def_ = 0;
+    effective_dig_ = 0;
+    
+    RecalcEquipStats();
+    
+    effective_atk_ += GetBuffedValue(BuffStat::kAtk);
+    effective_def_ += GetBuffedValue(BuffStat::kDef);
+    effective_dig_ += GetBuffedValue(BuffStat::kDig);
+}
+
 void PlayerCharacter::RecalcEquipStats()
 {
-    int32_t max_hp = 0;
-    int32_t atk = 0;
-    int32_t def = 0;
-    int32_t dig = 0;
+    if (is_equipment_dirty_)
+    {
+        equip_max_hp_ = 0;
+        equip_atk_ = 0;
+        equip_def_ = 0;
+        equip_dig_ = 0;
+
+        auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+        for (const auto& it : inventory->GetItems())
+        {
+            auto item = std::dynamic_pointer_cast<EquipItem>(it.second);
+            if (!item) continue;
+
+            equip_max_hp_ += item->GetMaxHP();
+            equip_atk_ += item->GetATK();
+            equip_def_ += item->GetDEF();
+            equip_dig_ += item->GetDIG();
+        }
+
+        is_equipment_dirty_ = false;
+    }
+
+    effective_max_hp_ += equip_max_hp_;
+    effective_atk_ += equip_atk_;
+    effective_def_ += equip_def_;
+    effective_dig_ += equip_dig_;
 }
 
 bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const
