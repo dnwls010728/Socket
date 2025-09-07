@@ -11,9 +11,9 @@ public:
 
     inline int32_t GetReqLv() const { return req_lv_; }
     inline int32_t GetMaxHP() const { return max_hp_; }
-    inline int32_t GetATK() const { return atk_; }
-    inline int32_t GetDEF() const { return def_; }
-    inline int32_t GetDIG() const { return dig_; }
+    inline int32_t GetAtk() const { return atk_; }
+    inline int32_t GetDef() const { return def_; }
+    inline int32_t GetDig() const { return dig_; }
 
     virtual std::shared_ptr<Item> Clone() const override;
     

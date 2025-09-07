@@ -44,7 +44,6 @@ PlayerCharacter::PlayerCharacter() :
     effective_dig_(0),
     is_dead_(false),
     is_flipped_(false),
-    is_equipment_dirty_(false),
     is_placing_(false),
     map_transitioning_(false),
     exp_(0),
@@ -53,6 +52,7 @@ PlayerCharacter::PlayerCharacter() :
     is_invincible_(),
     dropped_item_mutex_(),
     effect_mutex_(),
+    equip_stats_(),
     buff_effects_(),
     buff_expires_(),
     effects_(),
@@ -135,9 +135,15 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
 
         character->map_ = World::Get()->GetMap(character->map_id_);
 
-        character->is_equipment_dirty_ = true;
-        character->RecalcEffectiveStats();
+        auto& equipped = character->inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+        for (const auto& it : equipped->GetItems())
+        {
+            auto item = std::dynamic_pointer_cast<EquipItem>(it.second);
+            if (!item) continue;
+            character->AddEquipStats(it.first, item);
+        }
 
+        character->RecalcEffectiveStats();
         character->hp_ = std::min(character->hp_, character->effective_max_hp_);
     }
     catch (sql::SQLException& e)
@@ -482,13 +488,16 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
 
             InventoryUpdatePacket inventory_update_packet;
+            std::shared_ptr<Item> first_item = nullptr;
+            std::shared_ptr<Item> second_item = nullptr;
+            
             {
                 auto equip_lock = equip->DeferLock();
                 auto equipped_lock = equipped->DeferLock();
 
                 std::lock(equip_lock, equipped_lock);
 
-                auto first_item = equip->EraseItem(first_slot);
+                first_item = equip->EraseItem(first_slot);
                 if (!first_item) break;
 
                 // 착용한 아이템을 장비 탭에서 제거
@@ -500,7 +509,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     inventory_update_packet.changes.push_back(change);
                 }
 
-                auto second_item = equipped->EraseItem(second_slot);
+                second_item = equipped->EraseItem(second_slot);
 
                 equipped->SetItem(second_slot, first_item);
                 
@@ -542,9 +551,13 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             }
             SendPacket(inventory_update_packet);
 
-            is_equipment_dirty_ = true;
-            RecalcEffectiveStats();
+            auto first_equip = std::dynamic_pointer_cast<EquipItem>(first_item);
+            if (!first_equip) break;
 
+            RemoveEquipStats(second_slot);
+            AddEquipStats(second_slot, first_equip);
+            
+            RecalcEffectiveStats();
             hp_ = std::min(hp_, effective_max_hp_);
             
             PlayerStatsUpdatePacket stats_update_packet;
@@ -567,6 +580,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
             auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
 
+            InventoryUpdatePacket inventory_update_packet;
             {
                 auto equip_lock = equip->DeferLock();
                 auto equipped_lock = equipped->DeferLock();
@@ -578,7 +592,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
                 equip->SetItem(second_slot, first_item);
 
-                InventoryUpdatePacket inventory_update_packet;
                 // 장착한 아이템을 장비창에서 제거
                 {
                     InventoryChange change;
@@ -598,12 +611,11 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     change.add.count = first_item->GetCount();
                     inventory_update_packet.changes.push_back(change);
                 }
-                SendPacket(inventory_update_packet);
             }
-            
-            is_equipment_dirty_ = true;
-            RecalcEffectiveStats();
+            SendPacket(inventory_update_packet);
 
+            RemoveEquipStats(first_slot);
+            RecalcEffectiveStats();
             hp_ = std::min(hp_, effective_max_hp_);
             
             PlayerStatsUpdatePacket stats_update_packet;
@@ -1216,47 +1228,36 @@ void PlayerCharacter::CheckBuffExpire()
 void PlayerCharacter::RecalcEffectiveStats()
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
-    
-    effective_max_hp_ = base_max_hp_;
-    effective_atk_ = 0;
-    effective_def_ = 0;
-    effective_dig_ = 0;
-    
-    RecalcEquipStats();
-    
-    effective_atk_ += GetBuffedValue(BuffStat::kAtk);
-    effective_def_ += GetBuffedValue(BuffStat::kDef);
-    effective_dig_ += GetBuffedValue(BuffStat::kDig);
+
+    effective_max_hp_ = base_max_hp_ + equip_max_hp_;
+    effective_atk_ = equip_atk_ + GetBuffedValue(BuffStat::kAtk);
+    effective_def_ = equip_def_ + GetBuffedValue(BuffStat::kDef);
+    effective_dig_ = equip_dig_ + GetBuffedValue(BuffStat::kDig);
 }
 
-void PlayerCharacter::RecalcEquipStats()
+void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item)
 {
-    if (is_equipment_dirty_)
-    {
-        equip_max_hp_ = 0;
-        equip_atk_ = 0;
-        equip_def_ = 0;
-        equip_dig_ = 0;
+    if (!item) return;
 
-        auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
-        for (const auto& it : inventory->GetItems())
-        {
-            auto item = std::dynamic_pointer_cast<EquipItem>(it.second);
-            if (!item) continue;
+    EquipStat stat = { item->GetMaxHP(), item->GetAtk(), item->GetDef(), item->GetDig() };
+    equip_stats_.insert_or_assign(slot, stat);
+    
+    equip_max_hp_ += stat.max_hp;
+    equip_atk_ += stat.atk;
+    equip_def_ += stat.def;
+    equip_dig_ += stat.dig;
+}
 
-            equip_max_hp_ += item->GetMaxHP();
-            equip_atk_ += item->GetATK();
-            equip_def_ += item->GetDEF();
-            equip_dig_ += item->GetDIG();
-        }
+void PlayerCharacter::RemoveEquipStats(uint32_t slot)
+{
+    auto it = equip_stats_.find(slot);
+    if (it == equip_stats_.end()) return;
 
-        is_equipment_dirty_ = false;
-    }
-
-    effective_max_hp_ += equip_max_hp_;
-    effective_atk_ += equip_atk_;
-    effective_def_ += equip_def_;
-    effective_dig_ += equip_dig_;
+    equip_max_hp_ -= it->second.max_hp;
+    equip_atk_ -= it->second.atk;
+    equip_def_ -= it->second.def;
+    equip_dig_ -= it->second.dig;
+    equip_stats_.erase(it);
 }
 
 bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const

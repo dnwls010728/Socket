@@ -10,6 +10,7 @@
 #include "Utils/TimedBool.h"
 #include "Skill/SkillManager.h"
 
+class EquipItem;
 class StatEffect;
 class Portal;
 
@@ -33,6 +34,14 @@ public:
         std::shared_ptr<StatEffect> effect;
         float start_time;
         int32_t value;
+    };
+
+    struct EquipStat
+    {
+        int32_t max_hp;
+        int32_t atk;
+        int32_t def;
+        int32_t dig;
     };
     
     PlayerCharacter();
@@ -96,7 +105,8 @@ protected:
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
     void CheckBuffExpire();
     void RecalcEffectiveStats();
-    void RecalcEquipStats();
+    void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
+    void RemoveEquipStats(uint32_t slot);
     
     bool IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const;
 
@@ -130,7 +140,6 @@ protected:
 
     bool is_dead_;
     bool is_flipped_;
-    bool is_equipment_dirty_;
     bool is_placing_;
     
     std::atomic_bool map_transitioning_;
@@ -146,6 +155,7 @@ protected:
     std::mutex dropped_item_mutex_;
     std::mutex effect_mutex_;
 
+    std::unordered_map<uint32_t, EquipStat> equip_stats_;
     std::unordered_map<int32_t, std::unordered_map<BuffStat, BuffStatValue>> buff_effects_;
     std::unordered_map<int32_t, float> buff_expires_;
     std::unordered_map<BuffStat, BuffStatValue> effects_;
