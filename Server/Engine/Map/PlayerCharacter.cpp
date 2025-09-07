@@ -902,22 +902,26 @@ void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
 
 void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time)
 {
-    std::lock_guard<std::mutex> lock(effect_mutex_);
-
-    int32_t effect_id = effect->GetBuffID();
-    const auto& changes = effect->GetStatChanges();
-
-    buff_expires_[effect_id] = expire_time;
-
-    for (const auto& change : changes)
     {
-        BuffStatValue candidate = { effect, start_time, change.second };
-        buff_effects_[effect_id][change.first] = candidate;
+        std::lock_guard<std::mutex> lock(effect_mutex_);
 
-        auto it = effects_.find(change.first);
-        if (it == effects_.end() || IsBuffStronger(candidate, it->second))
-            effects_[change.first] = std::move(candidate);
+        int32_t effect_id = effect->GetBuffID();
+        const auto& changes = effect->GetStatChanges();
+
+        buff_expires_[effect_id] = expire_time;
+
+        for (const auto& change : changes)
+        {
+            BuffStatValue candidate = { effect, start_time, change.second };
+            buff_effects_[effect_id][change.first] = candidate;
+
+            auto it = effects_.find(change.first);
+            if (it == effects_.end() || IsBuffStronger(candidate, it->second))
+                effects_[change.first] = std::move(candidate);
+        }
     }
+
+    RecalcEffectiveStats();
 }
 
 bool PlayerCharacter::Disconnect()
@@ -1152,58 +1156,61 @@ void PlayerCharacter::NotifyPartyStatChange(PartyStatType stat, int32_t value, b
 
 void PlayerCharacter::CheckBuffExpire()
 {
-    std::lock_guard<std::mutex> lock(effect_mutex_);
-
-    const float now = Net::GetClientTime();
-
-    std::unordered_set<BuffStat> dirty;
-
-    auto buff_expire_it = buff_expires_.begin();
-    while (buff_expire_it != buff_expires_.end())
     {
-        if (buff_expire_it->second > now)
-        {
-            ++buff_expire_it;
-            continue;
-        }
-        
-        const int32_t effect_id = buff_expire_it->first;
-        buff_expire_it = buff_expires_.erase(buff_expire_it);
+        std::lock_guard<std::mutex> lock(effect_mutex_);
 
-        auto buff_effect_it = buff_effects_.find(effect_id);
-        if (buff_effect_it == buff_effects_.end()) continue;
+        const float now = Net::GetClientTime();
 
-        for (const auto& key : buff_effect_it->second | std::views::keys)
+        std::unordered_set<BuffStat> dirty;
+
+        auto buff_expire_it = buff_expires_.begin();
+        while (buff_expire_it != buff_expires_.end())
         {
-            auto effect_it = effects_.find(key);
-            if (effect_it != effects_.end() && effect_it->second.effect->GetID() == effect_id)
+            if (buff_expire_it->second > now)
             {
-                effects_.erase(effect_it);
-                dirty.insert(key);
+                ++buff_expire_it;
+                continue;
             }
+        
+            const int32_t effect_id = buff_expire_it->first;
+            buff_expire_it = buff_expires_.erase(buff_expire_it);
+
+            auto buff_effect_it = buff_effects_.find(effect_id);
+            if (buff_effect_it == buff_effects_.end()) continue;
+
+            for (const auto& key : buff_effect_it->second | std::views::keys)
+            {
+                auto effect_it = effects_.find(key);
+                if (effect_it != effects_.end() && effect_it->second.effect->GetID() == effect_id)
+                {
+                    effects_.erase(effect_it);
+                    dirty.insert(key);
+                }
+            }
+
+            buff_effects_.erase(buff_effect_it);
         }
 
-        std::wcout << L"Expire Buff: " << effect_id << L" on " << name_ << std::endl;
-        buff_effects_.erase(buff_effect_it);
-    }
+        if (dirty.empty()) return;
 
-    if (dirty.empty()) return;
-
-    for (BuffStat stat : dirty)
-    {
-        const BuffStatValue* best = nullptr;
-
-        for (const auto& val : buff_effects_ | std::views::values)
+        for (BuffStat stat : dirty)
         {
-            auto it = val.find(stat);
-            if (it == val.end()) continue;
+            const BuffStatValue* best = nullptr;
 
-            if (!best || IsBuffStronger(it->second, *best))
-                best = &it->second;
+            for (const auto& val : buff_effects_ | std::views::values)
+            {
+                auto it = val.find(stat);
+                if (it == val.end()) continue;
+
+                if (!best || IsBuffStronger(it->second, *best))
+                    best = &it->second;
+            }
+
+            if (best) effects_.insert_or_assign(stat, *best);
         }
-
-        if (best) effects_.insert_or_assign(stat, *best);
     }
+
+    RecalcEffectiveStats();
 }
 
 void PlayerCharacter::RecalcEffectiveStats()
