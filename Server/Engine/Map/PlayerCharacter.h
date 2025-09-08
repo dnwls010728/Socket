@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 
+#include "BuffManager.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
@@ -148,6 +149,8 @@ protected:
     std::atomic_int32_t color_;
 
     std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
+
+    BuffManager buff_manager_;
     SkillManager skill_manager_;
     
     TimedBool is_invincible_;

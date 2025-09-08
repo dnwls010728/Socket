@@ -49,6 +49,8 @@ PlayerCharacter::PlayerCharacter() :
     exp_(0),
     color_(0),
     inventories_(),
+    buff_manager_(this),
+    skill_manager_(this),
     is_invincible_(),
     dropped_item_mutex_(),
     effect_mutex_(),
@@ -56,8 +58,7 @@ PlayerCharacter::PlayerCharacter() :
     buff_effects_(),
     buff_expires_(),
     effects_(),
-    buff_timer_(0.f),
-    skill_manager_(this)
+    buff_timer_(0.f)
 {
     // 테스트
     skill_manager_.AddSkill(100000,1);
@@ -1273,15 +1274,10 @@ bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const Buff
 void PlayerCharacter::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
+    
+    buff_manager_.Tick(delta_time);
+    skill_manager_.Tick(delta_time);
 
     is_invincible_.Tick(delta_time);
-
-    buff_timer_ += delta_time;
-    if (buff_timer_ > 1.5f)
-    {
-        CheckBuffExpire();
-        buff_timer_ = 0.f;
-    }
-    skill_manager_.Tick(delta_time); 
     
 }

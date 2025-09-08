@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\BuffManager.cpp" />
     <ClCompile Include="Engine\DataManager.cpp" />
     <ClCompile Include="Engine\FSM\Condition.cpp" />
     <ClCompile Include="Engine\FSM\StateMachine.cpp" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\BuffManager.h" />
     <ClInclude Include="Engine\DataManager.h" />
     <ClInclude Include="Engine\FSM\Condition.h" />
     <ClInclude Include="Engine\FSM\IState.h" />
