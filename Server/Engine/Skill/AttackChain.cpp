@@ -27,15 +27,12 @@ void AttackChain::AddChain(std::shared_ptr<AttackEffect> attack_effect)
 
 void AttackChain::AddChain(const HitFrame& hit_frame)
 {
-    for (int i = 0; i< hit_frame.hit_count; i++)
-    {
-        auto effect = std::make_shared<DamageEffect>();
-        effect->SetDamageMultiplier(hit_frame.damage / 100.f);
-        effect->SetBaseDamage(0);
-        effect->SetAttackCount(hit_frame.hit_count);
+    auto effect = std::make_shared<DamageEffect>();
+    effect->SetDamageMultiplier(hit_frame.damage / 100.f);
+    effect->SetBaseDamage(0);
+    effect->SetAttackCount(hit_frame.hit_count);
 
-        attack_chain_.push_back(effect);
-    }
+    attack_chain_.push_back(effect);
 }
 
 void AttackChain::SetChain(const HitFrame& hit_frame)
