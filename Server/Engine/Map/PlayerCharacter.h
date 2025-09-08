@@ -12,7 +12,6 @@
 #include "Skill/SkillManager.h"
 
 class EquipItem;
-class StatEffect;
 class Portal;
 
 namespace Net
@@ -30,13 +29,6 @@ ENUM_CLASS_FLAGS(PlayerStat)
 class PlayerCharacter : public MapObject
 {
 public:
-    struct BuffStatValue
-    {
-        std::shared_ptr<StatEffect> effect;
-        float start_time;
-        int32_t value;
-    };
-
     struct EquipStat
     {
         int32_t max_hp = 0;
@@ -75,11 +67,8 @@ public:
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(int32_t damage_amount);
     void ApplyHPDelta(int32_t hp_delta);
-    void RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time);
 
     bool Disconnect();
-
-    int32_t GetBuffedValue(BuffStat stat) const;
 
     virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
@@ -108,6 +97,10 @@ public:
     inline int32_t GetLv() const { return lv_; }
     inline int32_t GetHP() const { return hp_; }
     inline int32_t GetMaxHP() const { return effective_max_hp_; }
+    inline int32_t GetAtk() const { return effective_atk_; }
+    inline int32_t GetDef() const { return effective_def_; }
+    inline int32_t GetDig() const { return effective_dig_; }
+    
     inline bool IsFlipped() const { return is_flipped_; }
 
 protected:
@@ -122,12 +115,9 @@ protected:
     void UpdateDatabase();
     void GainExp(int32_t amount);
     void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
-    void CheckBuffExpire();
     void ComputeStats();
     void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
     void RemoveEquipStats(uint32_t slot);
-    
-    bool IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const;
 
     virtual void Tick(float delta_time) override;
     
@@ -174,9 +164,6 @@ protected:
     std::mutex effect_mutex_;
 
     std::unordered_map<uint32_t, EquipStat> equip_stats_;
-    std::unordered_map<int32_t, std::unordered_map<BuffStat, BuffStatValue>> buff_effects_;
-    std::unordered_map<int32_t, float> buff_expires_;
-    std::unordered_map<BuffStat, BuffStatValue> effects_;
 
     float buff_timer_;
 };

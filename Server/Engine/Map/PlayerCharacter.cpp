@@ -8,12 +8,11 @@
 
 #include "DataManager.h"
 #include "NetDef.h"
-#include "StatEffect.h"
-#include "StatEffectManager.h"
 #include "World.h"
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
+#include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
@@ -52,9 +51,6 @@ PlayerCharacter::PlayerCharacter() :
     dropped_item_mutex_(),
     effect_mutex_(),
     equip_stats_(),
-    buff_effects_(),
-    buff_expires_(),
-    effects_(),
     buff_timer_(0.f)
 {
     // 테스트
@@ -425,9 +421,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     
                     SendPacket(inventory_update_packet);
                 }
-                
-                if (auto effect = StatEffectManager::Get()->FindItemEffect(item->GetID()))
-                    effect->Apply(std::dynamic_pointer_cast<PlayerCharacter>(shared_from_this()));
+
+                bool is_update = buff_manager_.UseBuff(-static_cast<int32_t>(item->GetID()));
+                if (is_update)
+                {
+                    ComputeStats();
+                    
+                    PlayerStatsUpdatePacket stats_update_packet;
+                    stats_update_packet.mask |= PlayerStat::kMaxHP;
+                    stats_update_packet.max_hp = effective_max_hp_;
+                    SendPacket(stats_update_packet);
+                }
             }
         }
         break;
@@ -910,30 +914,6 @@ void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
     NotifyPartyStatChange(PartyStatType::kHP, hp_);
 }
 
-void PlayerCharacter::RegisterEffect(const std::shared_ptr<StatEffect>& effect, float start_time, float expire_time)
-{
-    {
-        std::lock_guard<std::mutex> lock(effect_mutex_);
-
-        int32_t effect_id = effect->GetBuffID();
-        const auto& changes = effect->GetStatChanges();
-
-        buff_expires_[effect_id] = expire_time;
-
-        for (const auto& change : changes)
-        {
-            BuffStatValue candidate = { effect, start_time, change.second };
-            buff_effects_[effect_id][change.first] = candidate;
-
-            auto it = effects_.find(change.first);
-            if (it == effects_.end() || IsBuffStronger(candidate, it->second))
-                effects_[change.first] = std::move(candidate);
-        }
-    }
-
-    ComputeStats();
-}
-
 bool PlayerCharacter::Disconnect()
 {
     if (auto player = player_.lock())
@@ -942,15 +922,6 @@ bool PlayerCharacter::Disconnect()
     }
     
     return false;
-}
-
-int32_t PlayerCharacter::GetBuffedValue(BuffStat stat) const
-{
-    auto it = effects_.find(stat);
-    if (it != effects_.end())
-        return it->second.value;
-    
-    return 0;
 }
 
 void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
@@ -1164,73 +1135,15 @@ void PlayerCharacter::NotifyPartyStatChange(PartyStatType stat, int32_t value, b
         PartyManager::Get()->SendPacket(party_id_, stat_packet);
 }
 
-void PlayerCharacter::CheckBuffExpire()
-{
-    {
-        std::lock_guard<std::mutex> lock(effect_mutex_);
-
-        const float now = Net::GetClientTime();
-
-        std::unordered_set<BuffStat> dirty;
-
-        auto buff_expire_it = buff_expires_.begin();
-        while (buff_expire_it != buff_expires_.end())
-        {
-            if (buff_expire_it->second > now)
-            {
-                ++buff_expire_it;
-                continue;
-            }
-        
-            const int32_t effect_id = buff_expire_it->first;
-            buff_expire_it = buff_expires_.erase(buff_expire_it);
-
-            auto buff_effect_it = buff_effects_.find(effect_id);
-            if (buff_effect_it == buff_effects_.end()) continue;
-
-            for (const auto& key : buff_effect_it->second | std::views::keys)
-            {
-                auto effect_it = effects_.find(key);
-                if (effect_it != effects_.end() && effect_it->second.effect->GetID() == effect_id)
-                {
-                    effects_.erase(effect_it);
-                    dirty.insert(key);
-                }
-            }
-
-            buff_effects_.erase(buff_effect_it);
-        }
-
-        if (dirty.empty()) return;
-
-        for (BuffStat stat : dirty)
-        {
-            const BuffStatValue* best = nullptr;
-
-            for (const auto& val : buff_effects_ | std::views::values)
-            {
-                auto it = val.find(stat);
-                if (it == val.end()) continue;
-
-                if (!best || IsBuffStronger(it->second, *best))
-                    best = &it->second;
-            }
-
-            if (best) effects_.insert_or_assign(stat, *best);
-        }
-    }
-
-    ComputeStats();
-}
-
 void PlayerCharacter::ComputeStats()
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
-    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp;
-    effective_atk_ = total_equip_stats_.atk + GetBuffedValue(BuffStat::kAtk);
-    effective_def_ = total_equip_stats_.def + GetBuffedValue(BuffStat::kDef);
-    effective_dig_ = total_equip_stats_.dig + GetBuffedValue(BuffStat::kDig);
+    const auto& total_buff_stats = buff_manager_.GetTotalStats();
+    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp;
+    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk;
+    effective_def_ = total_equip_stats_.def + total_buff_stats.def;
+    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig;
 }
 
 void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item)
@@ -1252,21 +1165,20 @@ void PlayerCharacter::RemoveEquipStats(uint32_t slot)
     equip_stats_.erase(it);
 }
 
-bool PlayerCharacter::IsBuffStronger(const BuffStatValue& new_effect, const BuffStatValue& existing_effect) const
-{
-    if (new_effect.value != existing_effect.value)
-        return new_effect.value > existing_effect.value;
-
-    uint64_t existing_size = existing_effect.effect->GetStatChanges().size();
-    uint64_t new_size = new_effect.effect->GetStatChanges().size();
-    return new_size > existing_size;
-}
-
 void PlayerCharacter::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
     
-    buff_manager_.Tick(delta_time);
+    if (buff_manager_.CheckBuffExpires())
+    {
+        ComputeStats();
+        
+        PlayerStatsUpdatePacket stats_update_packet;
+        stats_update_packet.mask |= PlayerStat::kMaxHP;
+        stats_update_packet.max_hp = effective_max_hp_;
+        SendPacket(stats_update_packet);
+    }
+        
     skill_manager_.Tick(delta_time);
 
     is_invincible_.Tick(delta_time);

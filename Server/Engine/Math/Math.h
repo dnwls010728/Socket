@@ -17,6 +17,11 @@ namespace Math
     float PI();
 
     int32_t Sign(int32_t a);
+    int32_t Min(int32_t a, int32_t b);
+    int32_t Max(int32_t a, int32_t b);
+    int32_t Clamp(int32_t value, int32_t min, int32_t max);
+    int32_t Clamp01(int32_t value);
+    int32_t Abs(int32_t a);
     int32_t RandRange(int32_t min, int32_t max);
     
     bool IsEqual(float a, float b);

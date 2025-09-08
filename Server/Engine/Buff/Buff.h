@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 #include <memory>
+#include <shared_mutex>
 #include <unordered_map>
 
 #include "BuffStatBlock.h"
@@ -8,11 +9,12 @@
 
 class PlayerCharacter;
 
-class Buff : public std::enable_shared_from_this<Buff>
+class Buff
 {
 public:
+    Buff(const SkillData* data);
     Buff(const ItemData* data);
-    virtual ~Buff() = default;
+    ~Buff() = default;
 
     inline int32_t GetID() const { return id_; }
     inline int32_t GetBuffID() const { return is_skill_ ? id_ : -id_; }
@@ -25,7 +27,7 @@ public:
 
     inline bool IsSkill() const { return is_skill_; }
 
-    static std::shared_ptr<Buff> GetBuff(int32_t buff_id);
+    static std::shared_ptr<const Buff> FindBuff(int32_t buff_id);
 
 private:
     int32_t id_;
@@ -41,6 +43,7 @@ private:
 
     bool is_skill_;
 
-    static std::unordered_map<int32_t, std::shared_ptr<Buff>> buffs_;
+    static std::unordered_map<int32_t, std::shared_ptr<const Buff>> cache_;
+    static std::shared_mutex cache_mutex_;
     
 };

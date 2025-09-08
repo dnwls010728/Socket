@@ -191,5 +191,5 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     price: 5000
     max_count: 1
     effect:
-      duration: 10 # 초 단위
-      atk: 100 # 10초 동안 공격력 100 증가
+      duration: 30 # 초 단위
+      max_hp: 500

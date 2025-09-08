@@ -89,6 +89,31 @@ int32_t Math::Sign(int32_t a)
     return 1;
 }
 
+int32_t Math::Min(int32_t a, int32_t b)
+{
+    return a < b ? a : b;
+}
+
+int32_t Math::Max(int32_t a, int32_t b)
+{
+    return a > b ? a : b;
+}
+
+int32_t Math::Clamp(int32_t value, int32_t min, int32_t max)
+{
+    return Max(min, Min(value, max));
+}
+
+int32_t Math::Clamp01(int32_t value)
+{
+    return Clamp(value, 0, 1);
+}
+
+int32_t Math::Abs(int32_t a)
+{
+    return a < 0 ? -a : a;
+}
+
 int32_t Math::RandRange(int32_t min, int32_t max)
 {
     if (min > max)

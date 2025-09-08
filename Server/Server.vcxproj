@@ -252,7 +252,6 @@
     <ClCompile Include="Engine\Map\PlayerCharacter.cpp" />
     <ClCompile Include="Engine\Map\Portal.cpp" />
     <ClCompile Include="Engine\Map\SpawnPoint.cpp" />
-    <ClCompile Include="Engine\Map\StatEffect.cpp" />
     <ClCompile Include="Engine\Map\World.cpp" />
     <ClCompile Include="Engine\Math\Bounds.cpp" />
     <ClCompile Include="Engine\Math\Color.cpp" />
@@ -272,7 +271,6 @@
     <ClCompile Include="Engine\Skill\AttackEffect\DamageEffect.cpp" />
     <ClCompile Include="Engine\Skill\SkillType\ActiveSkill.cpp" />
     <ClCompile Include="Engine\Skill\SkillType\PasiveSkill.cpp" />
-    <ClCompile Include="Engine\StatEffectManager.cpp" />
     <ClCompile Include="Engine\Skill\Skill.cpp" />
     <ClCompile Include="Engine\Skill\SkillManager.cpp" />
     <ClCompile Include="Engine\Utils\TimedBool.cpp" />
@@ -309,7 +307,6 @@
     <ClInclude Include="Engine\Map\PlayerCharacter.h" />
     <ClInclude Include="Engine\Map\Portal.h" />
     <ClInclude Include="Engine\Map\SpawnPoint.h" />
-    <ClInclude Include="Engine\Map\StatEffect.h" />
     <ClInclude Include="Engine\Map\World.h" />
     <ClInclude Include="Engine\Math\Bounds.h" />
     <ClInclude Include="Engine\Math\Color.h" />
@@ -334,7 +331,6 @@
     <ClInclude Include="Engine\Skill\AttackEffect\DamageEffect.h" />
     <ClInclude Include="Engine\Skill\SkillType\ActiveSkill.h" />
     <ClInclude Include="Engine\Skill\SkillType\PasiveSkill.h" />
-    <ClInclude Include="Engine\StatEffectManager.h" />
     <ClInclude Include="Engine\Skill\Skill.h" />
     <ClInclude Include="Engine\Skill\SkillManager.h" />
     <ClInclude Include="Engine\Utils\TimedBool.h" />

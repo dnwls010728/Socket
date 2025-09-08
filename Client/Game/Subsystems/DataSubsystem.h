@@ -46,7 +46,7 @@ struct ItemEffectData
 
 struct ItemData
 {
-    int32_t id;
+    uint32_t id;
 
     std::wstring name;
     std::wstring desc;
@@ -79,6 +79,7 @@ struct SkillData
     std::wstring name;
     std::wstring desc;
 
+    int32_t max_hp;
     int32_t atk;
     int32_t def;
     int32_t dig;
@@ -160,7 +161,7 @@ namespace YAML
         static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<int32_t>(0);
+            data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.price = node["price"].as<int32_t>(0);
@@ -218,6 +219,7 @@ namespace YAML
             data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
             data.def = node["def"].as<int32_t>(0);
             data.dig = node["dig"].as<int32_t>(0);

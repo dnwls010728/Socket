@@ -359,7 +359,7 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         if (it != players_.end())
         {
             auto player = it->second.lock();
-            if (player) value = player->GetBuffedValue(BuffStat::kAtk);
+            if (player) value = player->GetAtk();
         }
     }
 
