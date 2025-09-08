@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "BuffManager.h"
+#include "Buff/BuffManager.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
@@ -39,10 +39,28 @@ public:
 
     struct EquipStat
     {
-        int32_t max_hp;
-        int32_t atk;
-        int32_t def;
-        int32_t dig;
+        int32_t max_hp = 0;
+        int32_t atk = 0;
+        int32_t def = 0;
+        int32_t dig = 0;
+
+        EquipStat& operator+=(const EquipStat& rhs)
+        {
+            max_hp += rhs.max_hp;
+            atk += rhs.atk;
+            def += rhs.def;
+            dig += rhs.dig;
+            return *this;
+        }
+
+        EquipStat& operator-=(const EquipStat& rhs)
+        {
+            max_hp -= rhs.max_hp;
+            atk -= rhs.atk;
+            def -= rhs.def;
+            dig -= rhs.dig;
+            return *this;
+        }
     };
     
     PlayerCharacter();
@@ -128,11 +146,8 @@ protected:
     
     int32_t hp_;
     int32_t base_max_hp_;
-    
-    int32_t equip_max_hp_;
-    int32_t equip_atk_;
-    int32_t equip_def_;
-    int32_t equip_dig_;
+
+    EquipStat total_equip_stats_;
     
     int32_t effective_max_hp_;
     int32_t effective_atk_;

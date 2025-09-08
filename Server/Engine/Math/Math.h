@@ -15,7 +15,8 @@ namespace Math
     float Deg2Rad();
     float RandRange(float min, float max);
     float PI();
-    
+
+    int32_t Sign(int32_t a);
     int32_t RandRange(int32_t min, int32_t max);
     
     bool IsEqual(float a, float b);

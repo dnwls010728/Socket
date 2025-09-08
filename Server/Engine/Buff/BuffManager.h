@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "BuffStatBlock.h"
 
 class PlayerCharacter;
 
@@ -12,5 +13,7 @@ public:
 
 private:
     PlayerCharacter* owner_;
+
+    BuffStatBlock total_stats_;
     
 };

@@ -34,10 +34,7 @@ PlayerCharacter::PlayerCharacter() :
     lv_(1),
     hp_(350),
     base_max_hp_(350),
-    equip_max_hp_(0),
-    equip_atk_(0),
-    equip_def_(0),
-    equip_dig_(0),
+    total_equip_stats_(),
     effective_max_hp_(0),
     effective_atk_(0),
     effective_def_(0),
@@ -1230,10 +1227,10 @@ void PlayerCharacter::ComputeStats()
 {
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
-    effective_max_hp_ = base_max_hp_ + equip_max_hp_;
-    effective_atk_ = equip_atk_ + GetBuffedValue(BuffStat::kAtk);
-    effective_def_ = equip_def_ + GetBuffedValue(BuffStat::kDef);
-    effective_dig_ = equip_dig_ + GetBuffedValue(BuffStat::kDig);
+    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp;
+    effective_atk_ = total_equip_stats_.atk + GetBuffedValue(BuffStat::kAtk);
+    effective_def_ = total_equip_stats_.def + GetBuffedValue(BuffStat::kDef);
+    effective_dig_ = total_equip_stats_.dig + GetBuffedValue(BuffStat::kDig);
 }
 
 void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item)
@@ -1242,11 +1239,8 @@ void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipIt
 
     EquipStat stat = { item->GetMaxHP(), item->GetAtk(), item->GetDef(), item->GetDig() };
     equip_stats_.insert_or_assign(slot, stat);
-    
-    equip_max_hp_ += stat.max_hp;
-    equip_atk_ += stat.atk;
-    equip_def_ += stat.def;
-    equip_dig_ += stat.dig;
+
+    total_equip_stats_ += stat;
 }
 
 void PlayerCharacter::RemoveEquipStats(uint32_t slot)
@@ -1254,10 +1248,7 @@ void PlayerCharacter::RemoveEquipStats(uint32_t slot)
     auto it = equip_stats_.find(slot);
     if (it == equip_stats_.end()) return;
 
-    equip_max_hp_ -= it->second.max_hp;
-    equip_atk_ -= it->second.atk;
-    equip_def_ -= it->second.def;
-    equip_dig_ -= it->second.dig;
+    total_equip_stats_ -= it->second;
     equip_stats_.erase(it);
 }
 

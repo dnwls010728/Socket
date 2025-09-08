@@ -34,6 +34,7 @@ struct ItemEffectData
 {
     int32_t hp;
     int32_t hp_percent;
+    int32_t max_hp;
     int32_t atk;
     int32_t def;
     int32_t dig;
@@ -45,7 +46,7 @@ struct ItemEffectData
 
 struct ItemData
 {
-    uint32_t id;
+    int32_t id;
 
     std::wstring name;
     std::wstring desc;
@@ -149,6 +150,7 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.hp = node["hp"].as<int32_t>(0);
             data.hp_percent = node["hp_percent"].as<int32_t>(0);
+            data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
             data.def = node["def"].as<int32_t>(0);
             data.dig = node["dig"].as<int32_t>(0);
@@ -167,7 +169,7 @@ namespace YAML
         static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<uint32_t>(0);
+            data.id = node["id"].as<int32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.price = node["price"].as<int32_t>(0);
