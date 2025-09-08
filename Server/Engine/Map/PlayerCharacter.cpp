@@ -138,7 +138,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         }
 
         character->ComputeStats();
-        character->hp_ = std::min(character->hp_, character->effective_max_hp_);
+        character->hp_ = Math::Clamp(character->hp_, 1, character->effective_max_hp_);
     }
     catch (sql::SQLException& e)
     {
@@ -423,15 +423,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 }
 
                 bool is_update = buff_manager_.UseBuff(-static_cast<int32_t>(item->GetID()));
-                if (is_update)
-                {
-                    ComputeStats();
-                    
-                    PlayerStatsUpdatePacket stats_update_packet;
-                    stats_update_packet.mask |= PlayerStat::kMaxHP;
-                    stats_update_packet.max_hp = effective_max_hp_;
-                    SendPacket(stats_update_packet);
-                }
+                if (is_update) SendStatUpdateIfNeeded();
             }
         }
         break;
@@ -558,16 +550,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             RemoveEquipStats(second_slot);
             AddEquipStats(second_slot, first_equip);
-            
-            ComputeStats();
-            hp_ = std::min(hp_, effective_max_hp_);
-            
-            PlayerStatsUpdatePacket stats_update_packet;
-            stats_update_packet.mask |= PlayerStat::kHP;
-            stats_update_packet.mask |= PlayerStat::kMaxHP;
-            stats_update_packet.hp = hp_;
-            stats_update_packet.max_hp = effective_max_hp_;
-            SendPacket(stats_update_packet);
+
+            SendStatUpdateIfNeeded();
         }
         break;
 
@@ -617,15 +601,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             SendPacket(inventory_update_packet);
 
             RemoveEquipStats(first_slot);
-            ComputeStats();
-            hp_ = std::min(hp_, effective_max_hp_);
-            
-            PlayerStatsUpdatePacket stats_update_packet;
-            stats_update_packet.mask |= PlayerStat::kHP;
-            stats_update_packet.mask |= PlayerStat::kMaxHP;
-            stats_update_packet.hp = hp_;
-            stats_update_packet.max_hp = effective_max_hp_;
-            SendPacket(stats_update_packet);
+            SendStatUpdateIfNeeded();
         }
         break;
 
@@ -1085,9 +1061,8 @@ void PlayerCharacter::GainExp(int32_t amount)
         changed_lv = true;
 
         base_max_hp_ += 25;
-        hp_ = base_max_hp_;
-
         ComputeStats();
+        hp_ = effective_max_hp_;
         if (lv_ >= 50) break;
     }
 
@@ -1146,6 +1121,35 @@ void PlayerCharacter::ComputeStats()
     effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig;
 }
 
+void PlayerCharacter::SendStatUpdateIfNeeded()
+{
+    int32_t old_max_hp = effective_max_hp_;
+    int32_t old_atk = effective_atk_;
+    int32_t old_def = effective_def_;
+    int32_t old_dig = effective_dig_;
+
+    bool is_changed = false;
+    ComputeStats();
+
+    PlayerStatsUpdatePacket packet;
+    if (effective_max_hp_ != old_max_hp)
+    {
+        packet.mask |= PlayerStat::kMaxHP;
+        packet.mask |= PlayerStat::kHP;
+        
+        packet.max_hp = effective_max_hp_;
+
+        hp_ = Math::Clamp(hp_, 1, effective_max_hp_);
+        packet.hp = hp_;
+
+        NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
+        NotifyPartyStatChange(PartyStatType::kHP, hp_);
+        is_changed = true;
+    }
+
+    if (is_changed) SendPacket(packet);
+}
+
 void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item)
 {
     if (!item) return;
@@ -1170,14 +1174,7 @@ void PlayerCharacter::Tick(float delta_time)
     MapObject::Tick(delta_time);
     
     if (buff_manager_.CheckBuffExpires())
-    {
-        ComputeStats();
-        
-        PlayerStatsUpdatePacket stats_update_packet;
-        stats_update_packet.mask |= PlayerStat::kMaxHP;
-        stats_update_packet.max_hp = effective_max_hp_;
-        SendPacket(stats_update_packet);
-    }
+        SendStatUpdateIfNeeded();
         
     skill_manager_.Tick(delta_time);
 
