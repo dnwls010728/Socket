@@ -5,12 +5,13 @@
 DamageEffect::DamageEffect() :
     damage_multiplier_(100.0f),
     base_damage_(0),
-    can_critical_(false)
+    can_critical_(false),
+    attack_count_(1)
 {
 }
 
 void DamageEffect::Apply(const AttackContext& ctx)
 {
-    int total_damage = base_damage_ + static_cast<int>(damage_multiplier_ * ctx.attacker->GetLv() * 50); //ctx.attacker->GetDamage();
-    ctx.target->TakeDamage(ctx.attacker->GetObjectID() ,total_damage);
+    int32_t total_damage = base_damage_ + static_cast<int32_t>(damage_multiplier_ * ctx.attacker->GetAtk() );
+    ctx.target->TakeMultiDamage(ctx.attacker->GetObjectID() ,std::vector<int32_t>(attack_count_, total_damage));
 }

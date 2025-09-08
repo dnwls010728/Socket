@@ -9,8 +9,8 @@ public:
 
     void Apply(const AttackContext& ctx) override;
 
-    inline int GetBaseDamage() const { return base_damage_; }
-    inline void SetBaseDamage(int value) { base_damage_ = value; }
+    inline int32_t GetBaseDamage() const { return base_damage_; }
+    inline void SetBaseDamage(int32_t value) { base_damage_ = value; }
     
     inline float GetDamageMultiplier() const { return damage_multiplier_; }
     inline void SetDamageMultiplier(float value) { damage_multiplier_ = value; }
@@ -18,8 +18,12 @@ public:
     inline bool CanCritical() const { return can_critical_; }
     inline void SetCanCritical(bool value) { can_critical_ = value; }
 
+    inline void SetAttackCount(int32_t value) { attack_count_ = value; }
+    inline int32_t GetAttackCount() const { return attack_count_; }
+
 private:
-    int base_damage_;
+    int32_t base_damage_;
     float damage_multiplier_;
     bool can_critical_;
+    int32_t attack_count_;
 };

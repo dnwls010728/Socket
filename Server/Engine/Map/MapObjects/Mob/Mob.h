@@ -47,7 +47,8 @@ public:
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
     void TakeDamage(uint32_t attacker, int32_t damage);
-    
+    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages);
+
     DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, const std::shared_ptr<Mob>&)
 
 protected:

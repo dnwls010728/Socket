@@ -14,12 +14,20 @@ bool ObjectTakeDamageHandler::Handle(Net::IPacket* packet)
 
     auto object = NetworkSubsystem::Get()->FindNetworkActor(received_packet->object_id);
     if (!object) return true;
-    
-    std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
-    if (!IsValid(damage)) return true;
 
-    damage->SetDamage(received_packet->damage_amount);
-    damage->GetTransform()->SetPosition( object->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
-    
+    float offset_y = 0;
+    auto &damages = received_packet->damage_amount;
+    for (int32_t damage_amount : damages)
+    {
+        std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
+        if (!IsValid(damage)) continue;
+
+        damage->SetDamage(damage_amount);
+        Math::Vector2 position = object->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
+        position.y += offset_y;
+        damage->GetTransform()->SetPosition( position);
+        offset_y += 0.2f;
+    }
+
     return true;
 }

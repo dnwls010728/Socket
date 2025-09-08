@@ -245,7 +245,7 @@ struct ObjectAnimationPacket : public Net::IPacket
 struct ObjectTakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;
-    int32_t damage_amount;
+    std::vector<int32_t> damage_amount;
     
     SERIALIZABLE_FIELDS(object_id, damage_amount)
     REGISTER_PACKET(ObjectTakeDamagePacket, 234)

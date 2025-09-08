@@ -187,22 +187,30 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
 
 void Mob::TakeDamage(uint32_t attacker, int32_t damage)
 {
+    TakeMultiDamage(attacker, {damage});
+}
+
+void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
+{
     if (hp_ <= 0) return;
 
     const auto& player = map_->FindPlayer(attacker);
 
+    state_machine_->ChangeState(hit_state_);
+    last_animation_ = animation_;
+    for (int32_t damage : damages)
+    {
+        hp_ -= damage;
+    }
+    
     if (player)
     {
         ObjectTakeDamagePacket packet;
         packet.object_id = object_id_;
-        packet.damage_amount = damage;
+        packet.damage_amount = damages;
         player->SendPacket(packet);
     }
     
-    state_machine_->ChangeState(hit_state_);
-
-    last_animation_ = animation_;
-    hp_ -= damage;
     if (hp_ <= 0)
     {
         death_event_(std::dynamic_pointer_cast<Mob>(shared_from_this()));

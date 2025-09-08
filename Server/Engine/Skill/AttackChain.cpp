@@ -32,6 +32,7 @@ void AttackChain::AddChain(const HitFrame& hit_frame)
         auto effect = std::make_shared<DamageEffect>();
         effect->SetDamageMultiplier(hit_frame.damage / 100.f);
         effect->SetBaseDamage(0);
+        effect->SetAttackCount(hit_frame.hit_count);
 
         attack_chain_.push_back(effect);
     }
