@@ -15,7 +15,7 @@ UIEquipment::UIEquipment(const std::wstring& name) :
     timer_(0.f),
     frame_index_(0)
 {
-    SetSize({164.f, 246.f});
+    SetSize({164.f, 232.f});
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
@@ -39,6 +39,33 @@ UIEquipment::UIEquipment(const std::wstring& name) :
     t_title->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     t_title->SetText(L"캐릭터");
     t_title->SetIgnoreRayCast(true);
+
+    atk_text_ = AddChild<UIText>(UIText::StaticClass(), L"ATKText");
+    atk_text_->SetRelativePosition({ 8.f, 164.f });
+    atk_text_->SetSize({ 148.f, 20.f });
+    atk_text_->SetColor(Math::Color::White);
+    atk_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    atk_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    atk_text_->SetText(L"공격력: 0");
+    atk_text_->SetIgnoreRayCast(true);
+
+    def_text_ = AddChild<UIText>(UIText::StaticClass(), L"DEFText");
+    def_text_->SetRelativePosition({ 8.f, 188.f });
+    def_text_->SetSize({ 148.f, 20.f });
+    def_text_->SetColor(Math::Color::White);
+    def_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    def_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    def_text_->SetText(L"방어력: 0");
+    def_text_->SetIgnoreRayCast(true);
+
+    dig_text_ = AddChild<UIText>(UIText::StaticClass(), L"DIGText");
+    dig_text_->SetRelativePosition({ 8.f, 212.f });
+    dig_text_->SetSize({ 148.f, 20.f });
+    dig_text_->SetColor(Math::Color::White);
+    dig_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    dig_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    dig_text_->SetText(L"방어력 무시: 0%");
+    dig_text_->SetIgnoreRayCast(true);
 
     UIEquipmentSlot* hat_slot = AddChild<UIEquipmentSlot>(UIEquipmentSlot::StaticClass(), L"HatSlot");
     hat_slot->SetRelativePosition({ 124.f, 32.f });
@@ -74,6 +101,7 @@ void UIEquipment::Init()
     UIContainer::Init();
     
     PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Subscribe(PublisherSubsystem::EventType::kStatUpdated, this, &UIEquipment::OnEvent);
     subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIEquipment::OnEvent);
     subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIEquipment::OnEvent);
     
@@ -82,7 +110,13 @@ void UIEquipment::Init()
         UpdateSlot(i);
     }
 
-    Math::Color body_color = Math::Color::HexToColor(PlayerSubsystem::Get()->GetBodyColor());
+    PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+
+    atk_text_->SetText(L"공격력: " + std::to_wstring(player_subsystem->GetAtk()));
+    def_text_->SetText(L"방어력: " + std::to_wstring(player_subsystem->GetDef()));
+    dig_text_->SetText(L"방어력 무시: " + std::to_wstring(player_subsystem->GetDig()) + L"%");
+
+    Math::Color body_color = Math::Color::HexToColor(player_subsystem->GetBodyColor());
     character_->SetColor(body_color);
     
 }
@@ -92,6 +126,7 @@ void UIEquipment::Uninit()
     UIContainer::Uninit();
     
     PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kStatUpdated, this, &UIEquipment::OnEvent);
     subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIEquipment::OnEvent);
     subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIEquipment::OnEvent);
     
@@ -132,7 +167,25 @@ bool UIEquipment::OnDragEnd(const Math::Vector2& position)
 
 void UIEquipment::OnEvent(const EventData& data)
 {
-    if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
+    if (const auto* stat_updated = dynamic_cast<const StatUpdateData*>(&data))
+    {
+        PlayerSubsystem* player_subsystem = PlayerSubsystem::Get();
+        switch (stat_updated->stat)
+        {
+            case PlayerStat::kAtk:
+                atk_text_->SetText(L"공격력: " + std::to_wstring(player_subsystem->GetAtk()));
+                break;
+            case PlayerStat::kDef:
+                def_text_->SetText(L"방어력: " + std::to_wstring(player_subsystem->GetDef()));
+                break;
+            case PlayerStat::kDig:
+                dig_text_->SetText(L"방어력 무시: " + std::to_wstring(player_subsystem->GetDig()) + L"%");
+                break;
+            default:
+                break;
+        }
+    }
+    else if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
     {
         if (item_added->inventory_type != InventoryType::kEquipped) return;
         UpdateSlot(item_added->slot_id);

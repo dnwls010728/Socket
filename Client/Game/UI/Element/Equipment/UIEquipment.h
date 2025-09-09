@@ -5,6 +5,7 @@
 #include <CommonObject.h>
 
 
+class UIText;
 class Inventory;
 class UIEquipmentSlot;
 class UIImage;
@@ -35,6 +36,10 @@ private:
     
     UIImage* background_;
     UIImage* character_;
+
+    UIText* atk_text_;
+    UIText* def_text_;
+    UIText* dig_text_;
 
     float timer_;
     

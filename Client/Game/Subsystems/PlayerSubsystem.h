@@ -23,6 +23,9 @@ public:
     FORCEINLINE int32_t GetHP() const { return hp_; }
     FORCEINLINE int32_t GetMaxHP() const { return max_hp_; }
     FORCEINLINE int32_t GetExp() const { return exp_; }
+    FORCEINLINE int32_t GetAtk() const { return atk_; }
+    FORCEINLINE int32_t GetDef() const { return def_; }
+    FORCEINLINE int32_t GetDig() const { return dig_; }
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
     FORCEINLINE const std::wstring& GetBodyColor() const { return body_color_; }
