@@ -2,7 +2,6 @@
 #include "UIInGameState.h"
 
 #include "PostProcessingSettings.h"
-#include "Scancode.h"
 #include "UI/Element/UIContextMenu.h"
 #include "Element/UIChatBar.h"
 #include "Element/UIMenu.h"
@@ -17,6 +16,7 @@
 #include "Input/Keyboard.h"
 #include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
+#include "Subsystems/InputActions/InputActions.h"
 
 UIInGameState::UIInGameState() :
     context_menu_(nullptr),
@@ -139,6 +139,22 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
             party_window_->SetActive(!party_window_->IsActive());
             is_handled = true;
         }
+    }
+
+    InputActions* actions = InputActions::Get();
+    InputActions::Mapping mapping = actions->GetMapping(scancode);
+
+    PlayerSubsystem* player = PlayerSubsystem::Get();
+
+    switch (mapping.type)
+    {
+    case KeyType::kAction:
+        break;
+    case KeyType::kItem:
+        if (is_pressed) player->UseItem(mapping.action);
+        break;
+    case KeyType::kSkill:
+        break;
     }
     
     return is_handled;

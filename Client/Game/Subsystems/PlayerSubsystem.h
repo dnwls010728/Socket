@@ -15,6 +15,7 @@ public:
     void UpdateStat(PlayerStat stat, int32_t value);
     void AddProfile(const CharacterProfile& profile);
     void DeleteProfile(uint32_t character_id);
+    void UseItem(uint32_t item_id) const;
 
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }

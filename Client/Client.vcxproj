@@ -322,6 +322,9 @@
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
     <ClInclude Include="Game\Subsystems\GameSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\InputActions\InputActions.h" />
+    <ClInclude Include="Game\Subsystems\InputActions\KeyAction.h" />
+    <ClInclude Include="Game\Subsystems\InputActions\KeyType.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlacementSubsystem.h" />
@@ -762,6 +765,7 @@
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\GameSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\InputActions\InputActions.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlacementSubsystem.cpp" />

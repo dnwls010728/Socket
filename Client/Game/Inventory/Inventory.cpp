@@ -72,6 +72,17 @@ uint32_t Inventory::AddSlot(InventoryType type, uint32_t slot_id, uint32_t item_
     return next_id_;
 }
 
+uint32_t Inventory::FindItemSlotID(InventoryType type, uint32_t item_id) const
+{
+    for (const auto& it : inventories_[static_cast<uint8_t>(type)])
+    {
+        if (it.second.item_id == item_id)
+            return it.first;
+    }
+
+    return 0;
+}
+
 void Inventory::ChangeCount(InventoryType type, uint32_t slot_id, int32_t count)
 {
     auto it = inventories_[static_cast<uint8_t>(type)].find(slot_id);

@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "PostProcessingSettings.h"
+#include "SessionSubsystem.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
@@ -129,6 +130,22 @@ void PlayerSubsystem::DeleteProfile(uint32_t character_id)
             return;
         }
     }
+}
+
+void PlayerSubsystem::UseItem(uint32_t item_id) const
+{
+    InventoryType type = static_cast<InventoryType>(item_id / 100000);
+    if (type != InventoryType::kUse) return;
+
+    uint32_t slot_id = inventory_->FindItemSlotID(type, item_id);
+    if (slot_id == 0) return;
+    
+    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
+    if (audio) AudioManager::Get()->PlaySound2D(audio);
+            
+    UseItemPacket packet;
+    packet.slot_id = slot_id;
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
 PlayerSubsystem* PlayerSubsystem::Get()

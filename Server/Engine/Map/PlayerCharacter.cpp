@@ -385,7 +385,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 inventory->Lock();
                 item = inventory->FindItem(slot_id);
                 
-                if (!item && item->GetCount() <= 0) break;
+                if (!item || item->GetCount() <= 0) break;
 
                 if (item->GetID() == 290000)
                 {
