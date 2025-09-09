@@ -118,7 +118,10 @@ enum class PlayerStat : uint8_t
     kHP = (0x01<<0),
     kMaxHP = (0x01<<1),
     kExp = (0x01<<2),
-    kLv = (0x01<<3)
+    kLv = (0x01<<3),
+    kAtk = (0x01<<4),
+    kDef = (0x01<<5),
+    kDig = (0x01<<6)
 };
 
 enum class MobState : uint8_t

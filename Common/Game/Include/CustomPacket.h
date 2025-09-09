@@ -121,6 +121,9 @@ struct SelectCharacterResponse : public Net::IPacket
     int32_t max_hp;
     int32_t exp;
     int32_t color;
+    int32_t atk;
+    int32_t def;
+    int32_t dig;
 
     struct
     {
@@ -134,7 +137,7 @@ struct SelectCharacterResponse : public Net::IPacket
 
     std::vector<ItemInfo> inventory;
     
-    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory)
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory)
     REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 
@@ -389,8 +392,11 @@ struct PlayerStatsUpdatePacket : public Net::IPacket
     int32_t max_hp;
     int32_t exp;
     int32_t lv;
+    int32_t atk;
+    int32_t def;
+    int32_t dig;
     
-    SERIALIZABLE_FIELDS(mask, hp, max_hp, exp, lv)
+    SERIALIZABLE_FIELDS(mask, hp, max_hp, exp, lv, atk, def, dig)
     REGISTER_PACKET(PlayerStatsUpdatePacket, 500)
 };
 

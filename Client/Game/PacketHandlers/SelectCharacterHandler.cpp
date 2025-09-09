@@ -22,6 +22,9 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->UpdateStat(PlayerStat::kHP, response->hp);
     player_subsystem->UpdateStat(PlayerStat::kMaxHP, response->max_hp);
     player_subsystem->UpdateStat(PlayerStat::kExp, response->exp);
+    player_subsystem->UpdateStat(PlayerStat::kAtk, response->atk);
+    player_subsystem->UpdateStat(PlayerStat::kDef, response->def);
+    player_subsystem->UpdateStat(PlayerStat::kDig, response->dig);
 
     player_subsystem->map_id_ = response->map_id;
     player_subsystem->spawn_position.x = response->spawn_position.x;

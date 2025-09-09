@@ -11,16 +11,25 @@
 
 UIEquipment::UIEquipment(const std::wstring& name) :
     UIContainer(name),
-    slots_()
+    slots_(),
+    timer_(0.f),
+    frame_index_(0)
 {
     SetSize({164.f, 246.f});
     
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
     
     background_ = AddChild<UIImage>(UIImage::StaticClass(), L"Background");
     background_->SetSprite(panel_sprite, L"Panel_0");
     background_->SetDrawMode(UIImage::DrawMode::kSliced);
     background_->SetIgnoreRayCast(true);
+
+    character_ = AddChild<UIImage>(UIImage::StaticClass(), L"Character");
+    character_->SetRelativePosition({ 10.f, 32.f });
+    character_->SetSize({ 144.f, 126.f });
+    character_->SetSprite(character_sprite, L"UIPlayerSheet_0");
+    character_->SetIgnoreRayCast(true);
     
     UIText* t_title = AddChild<UIText>(UIText::StaticClass(), L"Title");
     t_title->SetRelativePosition({ 8.f, 0.f });
@@ -72,6 +81,9 @@ void UIEquipment::Init()
     {
         UpdateSlot(i);
     }
+
+    Math::Color body_color = Math::Color::HexToColor(PlayerSubsystem::Get()->GetBodyColor());
+    character_->SetColor(body_color);
     
 }
 
@@ -83,6 +95,22 @@ void UIEquipment::Uninit()
     subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIEquipment::OnEvent);
     subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIEquipment::OnEvent);
     
+}
+
+void UIEquipment::Tick(float delta_time)
+{
+    UIContainer::Tick(delta_time);
+    
+    timer_ += delta_time;
+    if (timer_ >= 1.f / 10.f)
+    {
+        UISprite* character_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
+
+        frame_index_ = (frame_index_ + 1) % 7;
+        character_->SetSprite(character_sprite, L"UIPlayerSheet_" + std::to_wstring(frame_index_));
+        
+        timer_ = 0.f;
+    }
 }
 
 bool UIEquipment::OnDragBegin(const Math::Vector2& position)

@@ -176,6 +176,9 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.max_hp = player_character_->effective_max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
+            response.atk = player_character_->effective_atk_;
+            response.def = player_character_->effective_def_;
+            response.dig = player_character_->effective_dig_;
             response.map_id = player_character_->map_->GetMapID();
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;

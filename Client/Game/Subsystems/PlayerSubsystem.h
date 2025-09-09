@@ -25,6 +25,7 @@ public:
     FORCEINLINE int32_t GetExp() const { return exp_; }
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
+    FORCEINLINE const std::wstring& GetBodyColor() const { return body_color_; }
 
     FORCEINLINE const std::vector<CharacterProfile>& GetProfiles() const { return profiles_; }
     
@@ -49,6 +50,9 @@ private:
     int32_t hp_;
     int32_t max_hp_;
     int32_t exp_;
+    int32_t atk_;
+    int32_t def_;
+    int32_t dig_;
 
     Math::Vector2 spawn_position;
 

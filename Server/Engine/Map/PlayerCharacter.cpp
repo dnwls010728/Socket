@@ -1147,6 +1147,27 @@ void PlayerCharacter::SendStatUpdateIfNeeded()
         is_changed = true;
     }
 
+    if (effective_atk_ != old_atk)
+    {
+        packet.mask |= PlayerStat::kAtk;
+        packet.atk = effective_atk_;
+        is_changed = true;
+    }
+
+    if (effective_def_ != old_def)
+    {
+        packet.mask |= PlayerStat::kDef;
+        packet.def = effective_def_;
+        is_changed = true;
+    }
+
+    if (effective_dig_ != old_dig)
+    {
+        packet.mask |= PlayerStat::kDig;
+        packet.dig = effective_dig_;
+        is_changed = true;
+    }
+
     if (is_changed) SendPacket(packet);
 }
 

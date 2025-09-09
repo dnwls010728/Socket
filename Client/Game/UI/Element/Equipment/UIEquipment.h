@@ -22,6 +22,7 @@ public:
 protected:
     virtual void Init() override;
     virtual void Uninit() override;
+    virtual void Tick(float delta_time) override;
     
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
@@ -33,5 +34,10 @@ private:
     std::array<UIEquipmentSlot*, static_cast<uint8_t>(EquipSlot::kCount)> slots_;
     
     UIImage* background_;
+    UIImage* character_;
+
+    float timer_;
+    
+    int32_t frame_index_;
     
 };

@@ -24,6 +24,15 @@ bool PlayerStatsUpdateHandler::Handle(Net::IPacket* packet)
 
     if (EnumHasAnyFlags(mask, PlayerStat::kLv))
         player_subsystem->UpdateStat(PlayerStat::kLv, received_packet->lv);
+
+    if (EnumHasAnyFlags(mask, PlayerStat::kAtk))
+        player_subsystem->UpdateStat(PlayerStat::kAtk, received_packet->atk);
+
+    if (EnumHasAnyFlags(mask, PlayerStat::kDef))
+        player_subsystem->UpdateStat(PlayerStat::kDef, received_packet->def);
+
+    if (EnumHasAnyFlags(mask, PlayerStat::kDig))
+        player_subsystem->UpdateStat(PlayerStat::kDig, received_packet->dig);
     
     return true;
 }

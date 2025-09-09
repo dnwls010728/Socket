@@ -76,6 +76,39 @@ void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
             PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
         }
         break;
+    case PlayerStat::kAtk:
+        {
+            atk_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kAtk;
+            event_data.value = atk_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
+    case PlayerStat::kDef:
+        {
+            def_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kDef;
+            event_data.value = def_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
+    case PlayerStat::kDig:
+        {
+            dig_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kDig;
+            event_data.value = dig_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
     }
 
     Logger::Print(L"PlayerSubsystem::UpdateStat: Updated stat %d to value %u", static_cast<int>(stat), value);
