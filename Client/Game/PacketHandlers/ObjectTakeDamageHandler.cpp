@@ -26,7 +26,7 @@ bool ObjectTakeDamageHandler::Handle(Net::IPacket* packet)
         Math::Vector2 position = object->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
         position.y += offset_y;
         damage->GetTransform()->SetPosition( position);
-        offset_y += 0.2f;
+        offset_y += 1.f;
     }
 
     return true;

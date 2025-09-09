@@ -6,7 +6,7 @@ skills:
     # def: 0
     # dig: 0
     # duration: 0
-    cooldown: 5
+    cooldown: 1
     hit_frames:
       - hitbox:
           center: [3.0, 0.0]
