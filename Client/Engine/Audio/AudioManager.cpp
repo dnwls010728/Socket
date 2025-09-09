@@ -41,6 +41,28 @@ bool AudioManager::Init()
         result = FMOD_System_CreateChannelGroup(fmod_system_, group_name.c_str(), &channel_groups_[group]);
         if (result != FMOD_OK) return false;
     }
+
+    // FMOD_DSP* dsp = nullptr;
+    // result = FMOD_System_CreateDSPByType(fmod_system_, FMOD_DSP_TYPE_COMPRESSOR, &dsp);
+    // if (result != FMOD_OK) return false;
+    //
+    // result = FMOD_ChannelGroup_AddDSP(channel_groups_[ChannelGroup::kSE], FMOD_CHANNELCONTROL_DSP_TAIL, dsp);
+    // if (result != FMOD_OK) return false;
+
+    // result = FMOD_DSP_SetParameterBool(dsp, FMOD_DSP_COMPRESSOR_USESIDECHAIN, false);
+    // if (result != FMOD_OK) return false;
+    
+    // result = FMOD_DSP_SetParameterFloat(dsp, FMOD_DSP_COMPRESSOR_THRESHOLD, -6.f);
+    // if (result != FMOD_OK) return false;
+    //
+    // result = FMOD_DSP_SetParameterFloat(dsp, FMOD_DSP_COMPRESSOR_RATIO, 20.f);
+    // if (result != FMOD_OK) return false;
+    //
+    // result = FMOD_DSP_SetParameterFloat(dsp, FMOD_DSP_COMPRESSOR_ATTACK, .5f);
+    // if (result != FMOD_OK) return false;
+    //
+    // result = FMOD_DSP_SetParameterFloat(dsp, FMOD_DSP_COMPRESSOR_RELEASE, 80.f);
+    // if (result != FMOD_OK) return false;
     
     return true;
 }
