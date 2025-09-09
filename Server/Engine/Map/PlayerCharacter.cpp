@@ -494,6 +494,15 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 first_item = equip->EraseItem(first_slot);
                 if (!first_item) break;
 
+                if (auto equip_item = std::dynamic_pointer_cast<EquipItem>(first_item))
+                {
+                    if (lv_ < equip_item->GetReqLv())
+                    {
+                        equip->SetItem(first_slot, first_item);
+                        break;
+                    }
+                }
+
                 // 착용한 아이템을 장비 탭에서 제거
                 {
                     InventoryChange change;
