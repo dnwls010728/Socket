@@ -148,6 +148,13 @@ void PlayerSubsystem::UseItem(uint32_t item_id) const
     SessionSubsystem::Get()->SendPacket(packet);
 }
 
+void PlayerSubsystem::UseSkill(uint32_t skill_id) const
+{
+    SkillCastRequest request;
+    request.skill_id = skill_id;
+    SessionSubsystem::Get()->SendPacket(request);
+}
+
 PlayerSubsystem* PlayerSubsystem::Get()
 {
     return GameInstance::Get()->GetSubsystem<PlayerSubsystem>();

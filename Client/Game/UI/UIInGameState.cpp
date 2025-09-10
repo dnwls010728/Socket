@@ -154,6 +154,7 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
         if (is_pressed) player->UseItem(mapping.action);
         break;
     case KeyType::kSkill:
+        if (is_pressed) player->UseSkill(mapping.action);
         break;
     }
     

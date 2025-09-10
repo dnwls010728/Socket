@@ -8,6 +8,7 @@ InputActions::InputActions() :
     key_map_()
 {
     key_map_[static_cast<uint32_t>(Scancode::kKey0)] = { KeyType::kItem, 200000 };
+    key_map_[static_cast<uint32_t>(Scancode::kKeyQ)] = { KeyType::kSkill, 100000 };
 }
 
 InputActions::Mapping InputActions::GetMapping(uint32_t scancode) const

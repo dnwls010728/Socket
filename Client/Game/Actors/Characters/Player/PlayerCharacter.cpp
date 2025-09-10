@@ -323,13 +323,6 @@ void PlayerCharacter::Tick(float delta_time)
                     }
                 }
             }
-
-            if (keyboard->GetKeyDown(Scancode::kKeyQ))
-            {
-                SkillCastRequest request;
-                request.skill_id = 100000;
-                SendPacket(request);
-            }
         }
         else
         {
