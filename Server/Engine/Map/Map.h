@@ -39,7 +39,6 @@ public:
     void SpawnMob(const std::shared_ptr<MapObject>& object);
     void SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
     void SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
-    void SpawnBlock(const std::wstring& color, int32_t hp, const Math::Vector2& position);
 
     void DestroyMob(uint32_t object_id);
     void DestroyDroppedItem(uint32_t object_id, uint32_t character_id);

@@ -40,7 +40,6 @@ PlayerCharacter::PlayerCharacter() :
     effective_dig_(0),
     is_dead_(false),
     is_flipped_(false),
-    is_placing_(false),
     map_transitioning_(false),
     exp_(0),
     color_(0),
@@ -275,8 +274,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Portal* to_portal = to_map->FindPortal(portal->GetToID());
             if (!to_portal) break;
 
-            is_placing_ = false;
-
             ChangeMap(to_map, to_portal);
         }
         break;
@@ -423,40 +420,29 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 
                 if (!item || item->GetCount() <= 0) break;
 
-                if (item->GetID() == 290000)
+                item->SetCount(item->GetCount() - 1);
+
+                InventoryUpdatePacket inventory_update_packet;
+                
+                if (item->GetCount() <= 0)
                 {
-                    if (is_placing_) break;
-                    is_placing_ = true;
-                    
-                    PlacementStartPacket placement_start_packet;
-                    SendPacket(placement_start_packet);
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = slot_id;
+                    inventory_update_packet.changes.push_back(change);
                 }
                 else
                 {
-                    item->SetCount(item->GetCount() - 1);
-
-                    InventoryUpdatePacket inventory_update_packet;
-                
-                    if (item->GetCount() <= 0)
-                    {
-                        InventoryChange change;
-                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                        change.action = InventoryAction::kRemove;
-                        change.remove.slot_id = slot_id;
-                        inventory_update_packet.changes.push_back(change);
-                    }
-                    else
-                    {
-                        InventoryChange change;
-                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                        change.action = InventoryAction::kChangeCount;
-                        change.change_count.slot_id = slot_id;
-                        change.change_count.count = item->GetCount();
-                        inventory_update_packet.changes.push_back(change);
-                    }
-                    
-                    SendPacket(inventory_update_packet);
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kChangeCount;
+                    change.change_count.slot_id = slot_id;
+                    change.change_count.count = item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
                 }
+                    
+                SendPacket(inventory_update_packet);
 
                 bool is_update = buff_manager_.UseBuff(-static_cast<int32_t>(item->GetID()));
                 if (is_update) SendStatUpdateIfNeeded();
@@ -819,65 +805,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             if (GetPartyID() == 0) break;
             PartyManager::Get()->DeletePlayerFromParty(GetPartyID(), object_id_);
-        }
-        break;
-
-    case PlacementStopRequest::StaticPacketID:
-        {
-            is_placing_ = false;
-
-            PlacementStopResponse response;
-            SendPacket(response);
-        }
-        break;
-
-    case PlacementBlockPacket::StaticPacketID:
-        {
-            PlacementBlockPacket* placement_start_packet = static_cast<PlacementBlockPacket*>(packet);
-
-            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
-            
-            {
-                inventory->Lock();
-                auto items = inventory->FindItems(290000);
-                if (items.empty()) break;
-
-                Math::Vector2 position;
-                position.x = placement_start_packet->position.x;
-                position.y = placement_start_packet->position.y;
-            
-                map_->SpawnBlock(L"FFFFFF", 0, position);
-
-                auto item = items.front();
-                item->SetCount(item->GetCount() - 1);
-
-                InventoryUpdatePacket inventory_update_packet;
-            
-                if (item->GetCount() <= 0)
-                {
-                    InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                    change.action = InventoryAction::kRemove;
-                    change.remove.slot_id = item->GetSlot();
-                    inventory_update_packet.changes.push_back(change);
-                
-                    is_placing_ = false;
-
-                    PlacementStopResponse placement_stop_response;
-                    SendPacket(placement_stop_response);
-                }
-                else
-                {
-                    InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                    change.action = InventoryAction::kChangeCount;
-                    change.change_count.slot_id = item->GetSlot();
-                    change.change_count.count = item->GetCount();
-                    inventory_update_packet.changes.push_back(change);
-                }
-
-                SendPacket(inventory_update_packet);
-            }
         }
         break;
 

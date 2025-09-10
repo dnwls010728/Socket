@@ -13,7 +13,6 @@
 #include "Level/CameraManager.h"
 #include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
-#include "Subsystems/PlacementSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
@@ -54,7 +53,6 @@ void GameMap::Load()
             }
 
             GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
-            PlacementSubsystem::Get()->SetTilemapComponent(tilemap_loader->GetTilemapComponent());
         }
     }
 #pragma endregion

@@ -31,8 +31,6 @@
 #include "PacketHandlers/PartyMemberStatChangedHandler.h"
 #include "PacketHandlers/PlayerDeathHandler.h"
 #include "PacketHandlers/PartyInfoChangedHandler.h"
-#include "PacketHandlers/PlacementStartHandler.h"
-#include "PacketHandlers/PlacementStopHandler.h"
 #include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "PacketHandlers/SkillCastHandler.h"
@@ -208,16 +206,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PartyInfoChangedPacket::StaticPacketID,
         std::make_unique<PartyInfoChangedHandler>()
-    );
-
-    handlers_.emplace(
-        PlacementStartPacket::StaticPacketID,
-        std::make_unique<PlacementStartHandler>()
-    );
-
-    handlers_.emplace(
-        PlacementStopResponse::StaticPacketID,
-        std::make_unique<PlacementStopHandler>()
     );
 #pragma endregion
 

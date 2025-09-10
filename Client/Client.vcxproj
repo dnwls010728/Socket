@@ -234,8 +234,6 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Game\Actors\Block.h" />
-    <ClInclude Include="Game\Actors\BlockPreview.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
     <ClInclude Include="Game\Actors\Characters\Npc.h" />
@@ -308,8 +306,6 @@
     <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlacementStartHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlacementStopHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
@@ -327,7 +323,6 @@
     <ClInclude Include="Game\Subsystems\InputActions\KeyType.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.h" />
-    <ClInclude Include="Game\Subsystems\PlacementSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
     <ClInclude Include="Game\Subsystems\Publisher\EventData.h" />
     <ClInclude Include="Game\Subsystems\Publisher\ISubscriber.h" />
@@ -682,8 +677,6 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Game\Actors\Block.cpp" />
-    <ClCompile Include="Game\Actors\BlockPreview.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
     <ClCompile Include="Game\Actors\Characters\Npc.cpp" />
@@ -753,8 +746,6 @@
     <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlacementStartHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlacementStopHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
@@ -770,7 +761,6 @@
     <ClCompile Include="Game\Subsystems\InputActions\InputActions.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.cpp" />
-    <ClCompile Include="Game\Subsystems\PlacementSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />

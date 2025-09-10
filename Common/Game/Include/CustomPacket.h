@@ -508,33 +508,3 @@ struct PartyInfoChangedPacket :  public Net::IPacket
     SERIALIZABLE_FIELDS(type, value)
     REGISTER_PACKET(PartyInfoChangedPacket, 611)
 };
-
-struct PlacementStartPacket : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStartPacket, 900)
-};
-
-struct PlacementStopRequest : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStopRequest, 901)
-};
-
-struct PlacementStopResponse : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStopResponse, 902)
-};
-
-struct PlacementBlockPacket : public Net::IPacket
-{
-    struct
-    {
-        float x;
-        float y;
-    } position;
-
-    SERIALIZABLE_FIELDS(position)
-    REGISTER_PACKET(PlacementBlockPacket, 903)
-};

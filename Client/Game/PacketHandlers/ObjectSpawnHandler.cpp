@@ -4,7 +4,6 @@
 #include <CustomPacket.h>
 
 #include "Actor/Component/TransformComponent.h"
-#include "Actors/Block.h"
 #include "Actors/DroppedItem.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
@@ -75,21 +74,6 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                 dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y + offset.y });
 
                 dropped_item->Init(info.item_id, info.color, { object_info.position_x, object_info.position_y + offset.y });
-            }
-        }
-        break;
-
-    case ObjectType::kBlock:
-        {
-            std::shared_ptr<Actor> out_actor = nullptr;
-            if (!ObjectPoolSubsystem::Get()->GetFromPool(Block::StaticClass(), out_actor)) return false;
-
-            if (auto block = std::dynamic_pointer_cast<Block>(out_actor))
-            {
-                BlockInfo info = object_info.info.block;
-                
-                block->SetObjectID(object_info.object_id);
-                block->Init(info.color, {object_info.position_x, object_info.position_y});
             }
         }
         break;
