@@ -1,0 +1,10 @@
+cards:
+  1:
+    name: ""
+    desc: ""
+    skill_id: 100000
+    # 영구적인 스텟 증가
+    # max_hp: 0
+    # atk: 0
+    # def: 0
+    # dig: 0

@@ -344,6 +344,8 @@
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickBar.h" />
+    <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickSlot.h" />
     <ClInclude Include="Game\UI\Element\UICharacterCreate.h" />
     <ClInclude Include="Game\UI\Element\UIChatBalloon.h" />
     <ClInclude Include="Game\UI\Element\UIChatBar.h" />
@@ -785,6 +787,8 @@
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickBar.cpp" />
+    <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickSlot.cpp" />
     <ClCompile Include="Game\UI\Element\UICharacterCreate.cpp" />
     <ClCompile Include="Game\UI\Element\UIChatBalloon.cpp" />
     <ClCompile Include="Game\UI\Element\UIChatBar.cpp" />

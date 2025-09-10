@@ -55,6 +55,14 @@ void DataSubsystem::Init()
             int32_t exp_value = exp.second.as<int32_t>();
             exp_table_[level] = exp_value;
         }
+
+        YAML::Node card_data = YAML::LoadFile("Content\\Data\\CardData.data");
+        for (const auto& card : card_data["cards"])
+        {
+            CardData data = card.second.as<CardData>();
+            data.id = card.first.as<uint32_t>();
+            card_map_[data.id] = data;
+        }
     }
     catch (const YAML::BadFile& e)
     {
@@ -81,6 +89,13 @@ const SkillData* DataSubsystem::GetSkill(uint32_t id) const
 {
     auto it = skill_map_.find(id);
     if (it == skill_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const CardData* DataSubsystem::GetCard(uint32_t id) const
+{
+    auto it = card_map_.find(id);
+    if (it == card_map_.end()) return nullptr;
     return &it->second;
 }
 

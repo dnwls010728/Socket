@@ -60,3 +60,15 @@ enum class Scancode : uint32_t
     kKeyHome = 327,
     kKeyEnd = 335,
 };
+
+std::wstring ScancodeToKeyName(Scancode scancode, bool is_extended = false);
+
+inline std::wstring ScancodeToKeyName(Scancode scancode, bool is_extended)
+{
+    LONG lParam = static_cast<LONG>(scancode) << 16;
+    if (is_extended) lParam |= (1 << 24);
+
+    wchar_t buffer[64] = { 0 };
+    int32_t n = GetKeyNameTextW(lParam, buffer, 64);
+    return (n > 0) ? std::wstring(buffer, n) : L"";
+}

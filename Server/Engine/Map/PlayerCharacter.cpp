@@ -54,8 +54,6 @@ PlayerCharacter::PlayerCharacter() :
     equip_stats_(),
     buff_timer_(0.f)
 {
-    // 테스트
-    skill_manager_.AddSkill(100000,1);
 }
 
 PlayerCharacter::~PlayerCharacter()

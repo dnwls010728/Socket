@@ -89,6 +89,18 @@ struct SkillData
     std::vector<HitFrame> hit_frames;
 };
 
+struct CardData
+{
+    uint32_t id;
+    
+    uint32_t skill_id;
+
+    int32_t max_hp;
+    int32_t atk;
+    int32_t def;
+    int32_t dig;
+};
+
 namespace YAML
 {
     template<>
@@ -161,7 +173,6 @@ namespace YAML
         static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.price = node["price"].as<int32_t>(0);
@@ -216,7 +227,6 @@ namespace YAML
         static bool decode(const Node& node, SkillData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.max_hp = node["max_hp"].as<int32_t>(0);
@@ -229,6 +239,21 @@ namespace YAML
             for (const auto& frame : node["hit_frames"])
                 data.hit_frames.push_back(frame.as<HitFrame>());
             
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<CardData>
+    {
+        static bool decode(const Node& node, CardData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.skill_id = node["skill_id"].as<uint32_t>(0);
+            data.max_hp = node["max_hp"].as<int32_t>(0);
+            data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.dig = node["dig"].as<int32_t>(0);
             return true;
         }
     };
@@ -247,6 +272,7 @@ public:
     const MobData* GetMob(uint32_t id) const;
     const ItemData* GetItem(uint32_t id) const;
     const SkillData* GetSkill(uint32_t id) const;
+    const CardData* GetCard(uint32_t id) const;
     
     int32_t GetExp(int32_t level) const;
 
@@ -256,6 +282,7 @@ private:
     std::unordered_map<uint32_t, MobData> mob_map_;
     std::unordered_map<uint32_t, ItemData> item_map_;
     std::unordered_map<uint32_t, SkillData> skill_map_;
+    std::unordered_map<uint32_t, CardData> card_map_;
     
     std::array<int32_t, 51> exp_table_;
     

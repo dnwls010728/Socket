@@ -12,6 +12,7 @@
 #include "Element/Buff/UIBuffList.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
+#include "Element/QuickSlot/UIQuickBar.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Subsystems/PartySubsystem.h"
@@ -58,6 +59,9 @@ UIInGameState::UIInGameState() :
     context_menu_->SetActive(false);
 
     AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
+
+    auto* a = AddElement<UIQuickBar>(UIQuickBar::StaticClass(), L"QuickBar");
+    a->SetAbsolutePosition({ 768.f, 600.f });
 }
 
 void UIInGameState::Tick(float delta_time)
