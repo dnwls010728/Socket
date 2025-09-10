@@ -143,6 +143,20 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM skill_info WHERE character_id = ?"));
+            statement->setUInt(1, character->object_id_);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                uint32_t skill_id = result->getUInt("skill_id");
+                int32_t skill_level = result->getInt("skill_level");
+
+                character->skill_manager_.AddSkill(skill_id, skill_level);
+            }
+        }
+
         character->map_ = World::Get()->GetMap(character->map_id_);
 
         auto& equipped = character->inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
@@ -202,7 +216,15 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
 
     try
     {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
+        statement->setUInt(1, character_id);
+        statement->executeUpdate();
+
+        statement.reset(connection->prepareStatement("DELETE FROM key_map_info WHERE character_id = ?"));
+        statement->setUInt(1, character_id);
+        statement->executeUpdate();
+        
+        statement.reset(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
         
