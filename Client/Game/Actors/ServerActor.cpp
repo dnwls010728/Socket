@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 
+#include "Damage.h"
 #include "IPacket.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -13,7 +14,9 @@
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
-    prev_animation{0,}
+    prev_animation{0,},
+    take_damage_history_(10, 0.f),
+    last_damage_spawn_time_(0.f)
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -37,6 +40,12 @@ void ServerActor::PlayAnimation(const std::wstring& animation)
     snapshot.is_flipped = renderer_->IsFlipX();
     snapshot.server_time = Net::GetClientTime();
     animation_snapshots_.push_back(snapshot);
+}
+
+void ServerActor::OnTakeDamage(int damage_amount)
+{
+    float now = Net::GetClientTime();
+    pending_damages_.push_back( damage_amount);
 }
 
 void ServerActor::PhysicsTick(float delta_time)
@@ -90,6 +99,43 @@ void ServerActor::PhysicsTick(float delta_time)
             renderer_->SetFlipX(anim.is_flipped);
             animator_->PlayAnimation(anim.animation);
             prev_animation = anim;
+        }
+    }
+}
+
+void ServerActor::Tick(float delta_time)
+{
+    NetworkActor::Tick(delta_time);
+
+    float now = Net::GetClientTime();
+
+    if (!pending_damages_.empty())
+    {
+        if (now - last_damage_spawn_time_ >= 0.1f)
+        {
+            const auto& damage_amount = pending_damages_.front();
+
+            for (size_t i = 0; i < take_damage_history_.size(); ++i)
+            {
+                if (take_damage_history_[i] <= now)
+                {
+                    std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
+                    if (IsValid(damage))
+                    {
+                        damage->SetDamage(damage_amount);
+
+                        Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
+                        position.y += static_cast<float>(i * 0.5f);
+                        damage->GetTransform()->SetPosition(position);
+
+                        take_damage_history_[i] = now + 1.5f;
+                        last_damage_spawn_time_ = now;
+                    }
+                    break;
+                }
+            }
+
+            pending_damages_.pop_front();
         }
     }
 }

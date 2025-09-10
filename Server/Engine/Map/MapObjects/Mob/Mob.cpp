@@ -202,12 +202,12 @@ void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages
     {
         hp_ -= damage;
     }
-    
-    if (player)
+
+    for (const auto& damage : damages)
     {
         ObjectTakeDamagePacket packet;
         packet.object_id = object_id_;
-        packet.damage_amount = damages;
+        packet.damage_amount = damage;
         player->SendPacket(packet);
     }
     

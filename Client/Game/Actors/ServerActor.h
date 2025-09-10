@@ -29,15 +29,21 @@ public:
 
     void SetFlip(bool is_fliped);
     void PlayAnimation(const std::wstring& animation);
+    void OnTakeDamage(int damage_amount);
     
 protected:
     virtual void PhysicsTick(float delta_time) override;
+    virtual void Tick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;
     
     std::deque<MovementSnapshot>  movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
 
     AnimationSnapshot prev_animation;
+
+    std::vector<float> take_damage_history_;
+    std::deque<float> pending_damages_;
+    float last_damage_spawn_time_;
 
 #pragma region 컴포넌트
     std::shared_ptr<class BoxColliderComponent> collider_;
