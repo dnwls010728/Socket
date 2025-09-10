@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "KeyType.h"
-#include "Scancode.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 class InputActions : public GameInstanceSubsystem

@@ -45,6 +45,7 @@ PlayerCharacter::PlayerCharacter() :
     exp_(0),
     color_(0),
     inventories_(),
+    key_map_(),
     buff_manager_(this),
     skill_manager_(this),
     is_invincible_(),
@@ -124,6 +125,21 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                     inventories[type_index]->SetItem(slot_id, EquipItem::Create(item_id));
                 else
                     inventories[type_index]->SetItem(slot_id, Item::Create(item_id, count));
+            }
+        }
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM key_map_info WHERE character_id = ?"));
+            statement->setUInt(1, character->object_id_);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                uint32_t scancode = result->getUInt("Scancode");
+                uint32_t type = result->getUInt("Type");
+                int32_t action = result->getInt("Action");
+
+                character->key_map_[scancode] = { type, action };
             }
         }
 

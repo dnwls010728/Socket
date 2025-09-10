@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 
+#include "KeyMapping.h"
 #include "Buff/BuffManager.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
@@ -155,6 +156,8 @@ protected:
     std::atomic_int32_t color_;
 
     std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
+
+    std::map<uint32_t, KeyMapping> key_map_;
 
     BuffManager buff_manager_;
     SkillManager skill_manager_;

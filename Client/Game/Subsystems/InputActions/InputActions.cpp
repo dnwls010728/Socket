@@ -2,6 +2,7 @@
 #include "InputActions.h"
 
 #include "GameInstance.h"
+#include "Scancode.h"
 
 InputActions::InputActions() :
     key_map_()
