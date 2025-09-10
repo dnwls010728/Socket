@@ -39,6 +39,33 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     count_text_->SetIgnoreRayCast(true);
 }
 
+bool UIQuickSlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    Logger::Print(L"UIQuickSlot::OnMouseMotion Position: %f, %f Delta: %f, %f", position.x, position.y, delta.x, delta.y);
+    return true;
+}
+
+bool UIQuickSlot::OnDragBegin(const Math::Vector2& position)
+{
+    return true;
+}
+
+bool UIQuickSlot::OnDrag(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    return true;
+}
+
+bool UIQuickSlot::OnDragEnd(const Math::Vector2& position)
+{
+    return true;
+}
+
+bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
+{
+    Logger::Print(L"Target Name: %s", target->GetName().c_str());
+    return UIContainer::OnDrop(position, target);
+}
+
 RTTR_REGISTRATION
 {
     using namespace rttr;

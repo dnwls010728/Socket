@@ -12,6 +12,14 @@ public:
     UIQuickSlot(const std::wstring& name);
     virtual ~UIQuickSlot() override = default;
 
+protected:
+    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
+    
+    virtual bool OnDragBegin(const Math::Vector2& position) override;
+    virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual bool OnDragEnd(const Math::Vector2& position) override;
+    virtual bool OnDrop(const Math::Vector2& position, UIElement* target) override;
+
 private:
     UIImage* background_;
     UIImage* icon_;
