@@ -238,10 +238,6 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
         statement.reset(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
-
-        statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
-        statement->setUInt(1, character_id);
-        statement->executeUpdate();
     }
     catch (sql::SQLException& e)
     {
