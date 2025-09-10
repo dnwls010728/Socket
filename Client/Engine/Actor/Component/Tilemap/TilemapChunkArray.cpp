@@ -32,8 +32,16 @@ void TilemapChunkArray::SetShape(const std::vector<DefaultVertex>& kVertices, co
     shape_->SetIndices(kIndices);
     shape_->SetTexture(texture_);
     shape_->SetZOrder(order_);
+}
 
+void TilemapChunkArray::AddShape() const
+{
     World::Get()->AddShape(shape_);
+}
+
+void TilemapChunkArray::RemoveShape() const
+{
+    World::Get()->RemoveShape(shape_);
 }
 
 Math::Vector2 TilemapChunkArray::GetTextureSize()

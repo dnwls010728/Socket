@@ -59,6 +59,22 @@ void TilemapChunk::UpdateShape(const Math::Vector2& kPosition, const Math::Vecto
     }
 }
 
+void TilemapChunk::AddShapes() const
+{
+    for (const auto& chunk_array : chunk_arrays_)
+    {
+        chunk_array->AddShape();
+    }
+}
+
+void TilemapChunk::RemoveShapes() const
+{
+    for (const auto& chunk_array : chunk_arrays_)
+    {
+        chunk_array->RemoveShape();
+    }
+}
+
 int32_t TilemapChunk::GetTileIndex(int32_t x, int32_t y) const
 {
     return y * tile_count_.x + x;

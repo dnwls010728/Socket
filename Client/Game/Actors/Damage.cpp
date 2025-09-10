@@ -23,6 +23,11 @@ Damage::Damage(const std::wstring& name) :
     
 }
 
+void Damage::SetDamage(int damage)
+{
+    damage_renderer_->SetDamage(damage);
+}
+
 void Damage::Tick(float delta_time)
 {
     Actor::Tick(delta_time);

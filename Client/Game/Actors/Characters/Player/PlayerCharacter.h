@@ -5,7 +5,6 @@
 #include "Actors/Characters/CharacterBase.h"
 #include "Actors/Interfaces/IDamageable.h"
 #include "Math/Color.h"
-#include "Utils/TimedBool.h"
 
 class PlayerCharacter : public CharacterBase, public IDamageable
 {
@@ -32,7 +31,7 @@ public:
     virtual ~PlayerCharacter() override = default;
 
     virtual void ReceivePacket(Net::IPacket* packet) override;
-    virtual void TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time) override;
+    virtual void TakeDamage(int32_t damage_amount, float server_time) override;
 
     void Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position);
     void UpdateFlip() const;
@@ -43,8 +42,8 @@ public:
     FORCEINLINE float GetMoveAxisX() const { return move_axis_.x; }
     FORCEINLINE float GetMoveAxisY() const { return move_axis_.y; }
 
-    FORCEINLINE uint32_t GetPartyID() const { return party_id_; }
-    FORCEINLINE void SetPartyID(uint32_t party_id) { party_id_ = party_id; }
+    // 테스트
+    std::unordered_map<int32_t, float> buff_effects_;
 
 protected:
     virtual void BeginPlay() override;

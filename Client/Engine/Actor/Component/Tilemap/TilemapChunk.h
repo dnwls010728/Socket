@@ -19,6 +19,8 @@ public:
     TilemapChunk(const tmx::TileLayer& kLayer, std::vector<const tmx::Tileset*> tilesets, const Math::Vector2& kPosition, const Math::Vector2& kTileCount, const Math::Vector2& kTileSize, uint64_t row_size, std::map<std::wstring, Sprite*>& tileset_textures);
 
     void UpdateShape(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot = Math::Vector2::Zero());
+    void AddShapes() const;
+    void RemoveShapes() const;
     
     int32_t GetTileIndex(int32_t x, int32_t y) const;
 

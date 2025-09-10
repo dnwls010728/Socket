@@ -2,6 +2,9 @@
 #include "PlayerCharacter.h"
 
 #include <CustomPacket.h>
+#include <optional>
+#include <ranges>
+#include <unordered_set>
 
 #include "DataManager.h"
 #include "NetDef.h"
@@ -14,6 +17,10 @@
 #include "Session/PartyManager.h"
 #include "Session/Party.h"
 #include "Session/Player.h"
+#include "Session/Player/Inventory/EquipItem.h"
+#include "Session/Player/Inventory/Item.h"
+#include "Skill/SkillManager.h"
+
 
 PlayerCharacter::PlayerCharacter() :
     player_(),
@@ -21,23 +28,44 @@ PlayerCharacter::PlayerCharacter() :
     party_id_(0),
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
+    current_animation_(L"Idle"),
     map_id_(0),
     lv_(1),
     hp_(350),
-    max_hp_(350),
+    base_max_hp_(350),
+    total_equip_stats_(),
+    effective_max_hp_(0),
+    effective_atk_(0),
+    effective_def_(0),
+    effective_dig_(0),
     is_dead_(false),
+    is_flipped_(false),
+    is_placing_(false),
     map_transitioning_(false),
     exp_(0),
     color_(0),
-    inventory_(nullptr),
+    inventories_(),
+    key_map_(),
+    buff_manager_(this),
+    skill_manager_(this),
     is_invincible_(),
-    dropped_item_mutex_()
+    dropped_item_mutex_(),
+    effect_mutex_(),
+    equip_stats_(),
+    buff_timer_(0.f)
 {
+    // 테스트
+    skill_manager_.AddSkill(100000,1);
 }
 
 PlayerCharacter::~PlayerCharacter()
 {
     if (map_) map_->RemovePlayer(object_id_);
+}
+
+void PlayerCharacter::SetPartyID(int32_t party_id)
+{
+    party_id_ = party_id;
 }
 
 std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t character_id, const std::shared_ptr<Player>& player)
@@ -54,7 +82,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
     {
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM character_info WHERE character_id = ?"));
-            statement->setInt(1, character->object_id_);
+            statement->setUInt(1, character->object_id_);
 
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
@@ -64,7 +92,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->body_color_ = StringHelper::UTF8ToUTF16(result->getString("body_color"));
                 character->lv_ = result->getInt("lv");
                 character->hp_ = result->getInt("hp");
-                character->max_hp_ = result->getInt("max_hp");
+                character->base_max_hp_ = result->getInt("max_hp");
                 character->exp_.store(result->getInt("exp"));
                 character->map_id_ = result->getInt("map_id");
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
@@ -73,12 +101,12 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             }
         }
 
-        character->inventory_ = std::make_unique<Inventory>(character);
-        Inventory* inventory = character->inventory_.get();
-
-        inventory->SetSlotCapacity(Inventory::Type::kEquip, 128);
-        inventory->SetSlotCapacity(Inventory::Type::kUse, 128);
-        inventory->SetSlotCapacity(Inventory::Type::kEtc, 128);
+        auto& inventories = character->inventories_;
+        for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
+        {
+            inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
+            inventories[i]->SetCapacity(128);
+        }
 
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
@@ -87,18 +115,46 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
-                uint32_t inventory_type = result->getUInt("inventory_type");
+                uint32_t type_index = result->getUInt("inventory_type");
                 uint32_t item_id = result->getInt("item_id");
-                uint32_t slot_index = result->getInt("slot_index");
+                uint32_t slot_id = result->getInt("slot_id");
                 
                 int32_t count = result->getInt("count");
 
-                Inventory::Type type = static_cast<Inventory::Type>(inventory_type);
-                inventory->AddSlot(type, slot_index, item_id, count);
+                if (type_index == 1 || type_index == 4)
+                    inventories[type_index]->SetItem(slot_id, EquipItem::Create(item_id));
+                else
+                    inventories[type_index]->SetItem(slot_id, Item::Create(item_id, count));
+            }
+        }
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM key_map_info WHERE character_id = ?"));
+            statement->setUInt(1, character->object_id_);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                uint32_t scancode = result->getUInt("Scancode");
+                uint32_t type = result->getUInt("Type");
+                int32_t action = result->getInt("Action");
+
+                character->key_map_[scancode] = { type, action };
             }
         }
 
         character->map_ = World::Get()->GetMap(character->map_id_);
+
+        auto& equipped = character->inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+        for (const auto& it : equipped->GetItems())
+        {
+            auto item = std::dynamic_pointer_cast<EquipItem>(it.second);
+            if (!item) continue;
+            character->AddEquipStats(it.first, item);
+        }
+
+        character->ComputeStats();
+        character->hp_ = Math::Clamp(character->hp_, 1, character->effective_max_hp_);
     }
     catch (sql::SQLException& e)
     {
@@ -128,7 +184,13 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::CreateCharacter(const std::sha
 
     character->player_ = player;
     character->account_id_ = player->GetAccountID();
-    character->inventory_ = std::make_unique<Inventory>(character);
+    
+    auto& inventories = character->inventories_;
+    for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
+    {
+        inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
+        inventories[i]->SetCapacity(128);
+    }
     
     return character;
 }
@@ -140,11 +202,11 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
 
     try
     {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
         
-        statement.reset(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+        statement.reset(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
     }
@@ -193,6 +255,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Portal* to_portal = to_map->FindPortal(portal->GetToID());
             if (!to_portal) break;
 
+            is_placing_ = false;
+
             ChangeMap(to_map, to_portal);
         }
         break;
@@ -232,6 +296,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet);
             if (map_)
             {
+                current_animation_ = player_animation_packet->animation;
+                is_flipped_ = player_animation_packet->is_flipped;
+                
                 PlayerAnimationPacket player_animation_broadcast_packet;
                 player_animation_broadcast_packet.unique_id = object_id_;
                 player_animation_broadcast_packet.server_time = Net::GetClientTime();
@@ -258,49 +325,122 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case MoveItemRequest::StaticPacketID:
         {
             MoveItemRequest* request = static_cast<MoveItemRequest*>(packet);
-            if (!inventory_) return;
 
-            Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
-            
-            if (!inventory_->GetItemID(inventory_type, request->first_slot)) break;
-            inventory_->Swap(inventory_type, request->first_slot, inventory_type, request->second_slot);
-
-            MoveItemResponse response;
-            response.inventory_type = request->inventory_type;
-            response.first_slot = request->first_slot;
-            response.second_slot = request->second_slot;
-            SendPacket(response);
+            auto& inventory = inventories_[request->inventory_type];
+            {
+                inventory->Lock();
+                inventory->MoveOrStackSlots(request->first_slot, request->second_slot);
+            }
         }
         break;
 
-    case DropItemRequest::StaticPacketID:
+    case DropItemPacket::StaticPacketID:
         {
-            DropItemRequest* request = static_cast<DropItemRequest*>(packet);
+            DropItemPacket* request = static_cast<DropItemPacket*>(packet);
 
-            Inventory::Type inventory_type = static_cast<Inventory::Type>(request->inventory_type);
-            
-            uint32_t item_id = inventory_->GetItemID(inventory_type, request->slot_index);
-            
-            int32_t count = inventory_->GetItemCount(inventory_type, request->slot_index);
-            int32_t remaining_count = 0;
-            
-            if (request->count >= count) inventory_->Remove(inventory_type, request->slot_index);
-            else
+            uint8_t type_index = request->inventory_type;
+            uint32_t slot_id = request->slot_id;
+
+            const auto& inventory = inventories_[type_index];
+
+            std::shared_ptr<Item> item = nullptr;
+
+            InventoryUpdatePacket update_packet;
             {
-                remaining_count = count - request->count;
-                inventory_->ChangeCount(inventory_type, request->slot_index, remaining_count);
-            }
+                inventory->Lock();
+                auto base_item = inventory->FindItem(slot_id);
+                if (!base_item) break;
 
-            DropItemResponse response;
-            response.inventory_type = request->inventory_type;
-            response.slot_index = request->slot_index;
-            response.count = remaining_count;
-            SendPacket(response);
+                int32_t count = base_item->GetCount();
+                
+                item = base_item->Clone();
+                item->SetCount(request->count);
+            
+                if (request->count >= count)
+                {
+                    inventory->EraseItem(slot_id);
+
+                    InventoryChange change;
+                    change.inventory_type = type_index;
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = slot_id;
+                    update_packet.changes.push_back(change);
+                }
+                else
+                {
+                    int32_t remaining_count = count - request->count;
+                    base_item->SetCount(remaining_count);
+
+                    InventoryChange change;
+                    change.inventory_type = type_index;
+                    change.action = InventoryAction::kChangeCount;
+                    change.change_count.slot_id = slot_id;
+                    change.change_count.count = remaining_count;
+                    update_packet.changes.push_back(change);
+                }
+            }
+            SendPacket(update_packet);
             
             Math::Vector2 drop_position = GetPosition();
             map_->GetDropPosition(drop_position);
             
-            map_->SpawnItemDrop(item_id, request->count, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+            map_->SpawnItemDrop(item, std::static_pointer_cast<PlayerCharacter>(shared_from_this()), drop_position);
+        }
+        break;
+
+    case UseItemPacket::StaticPacketID:
+        {
+            UseItemPacket* use_item_packet = static_cast<UseItemPacket*>(packet);
+
+            uint32_t slot_id = use_item_packet->slot_id;
+
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
+
+            std::shared_ptr<Item> item = nullptr;
+            {
+                inventory->Lock();
+                item = inventory->FindItem(slot_id);
+                
+                if (!item || item->GetCount() <= 0) break;
+
+                if (item->GetID() == 290000)
+                {
+                    if (is_placing_) break;
+                    is_placing_ = true;
+                    
+                    PlacementStartPacket placement_start_packet;
+                    SendPacket(placement_start_packet);
+                }
+                else
+                {
+                    item->SetCount(item->GetCount() - 1);
+
+                    InventoryUpdatePacket inventory_update_packet;
+                
+                    if (item->GetCount() <= 0)
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                        change.action = InventoryAction::kRemove;
+                        change.remove.slot_id = slot_id;
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                    else
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                        change.action = InventoryAction::kChangeCount;
+                        change.change_count.slot_id = slot_id;
+                        change.change_count.count = item->GetCount();
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                    
+                    SendPacket(inventory_update_packet);
+                }
+
+                bool is_update = buff_manager_.UseBuff(-static_cast<int32_t>(item->GetID()));
+                if (is_update) SendStatUpdateIfNeeded();
+            }
         }
         break;
 
@@ -309,7 +449,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PickupItemPacket* request = static_cast<PickupItemPacket*>(packet);
 
             std::shared_ptr<MapObject> map_object = map_->FindMapObject(request->object_id);
-            if (!map_object) return;
+            if (!map_object) break;
             
             if (auto dropped_item = std::dynamic_pointer_cast<DroppedItem>(map_object))
             {
@@ -329,7 +469,14 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 else
                 {
                     auto item = dropped_item->GetItem();
-                    is_handled = inventory_->AddItem(item);
+                    
+                    uint32_t type_index = item->GetID() / 100000;
+                    auto& inventory = inventories_[type_index];
+                    
+                    {
+                        inventory->Lock();
+                        is_handled = inventory->AddItem(item);
+                    }
                 }
                 
                 if (is_handled)
@@ -337,6 +484,149 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                     map_->DestroyDroppedItem(dropped_item->GetObjectID(), object_id_);
                 }
             }
+        }
+        break;
+
+    case EquipItemPacket::StaticPacketID:
+        {
+            EquipItemPacket* equip_item_packet = static_cast<EquipItemPacket*>(packet);
+
+            uint32_t first_slot = equip_item_packet->first_slot;
+            uint32_t second_slot = equip_item_packet->second_slot;
+
+            auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
+            auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+
+            InventoryUpdatePacket inventory_update_packet;
+            std::shared_ptr<Item> first_item = nullptr;
+            std::shared_ptr<Item> second_item = nullptr;
+            
+            {
+                auto equip_lock = equip->DeferLock();
+                auto equipped_lock = equipped->DeferLock();
+
+                std::lock(equip_lock, equipped_lock);
+
+                first_item = equip->EraseItem(first_slot);
+                if (!first_item) break;
+
+                if (auto equip_item = std::dynamic_pointer_cast<EquipItem>(first_item))
+                {
+                    if (lv_ < equip_item->GetReqLv())
+                    {
+                        equip->SetItem(first_slot, first_item);
+                        break;
+                    }
+                }
+
+                // 착용한 아이템을 장비 탭에서 제거
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = first_slot;
+                    inventory_update_packet.changes.push_back(change);
+                }
+
+                second_item = equipped->EraseItem(second_slot);
+
+                equipped->SetItem(second_slot, first_item);
+                
+                if (second_item)
+                {
+                    equip->SetItem(first_slot, second_item);
+
+                    // 기존에 장착한 아이템을 장비창에서 제거
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                        change.action = InventoryAction::kRemove;
+                        change.remove.slot_id = second_item->GetSlot();
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                    
+                    // 기존에 장착한 아이템을 장비 탭에 추가
+                    {
+                        InventoryChange change;
+                        change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                        change.action = InventoryAction::kAdd;
+                        change.add.slot_id = second_item->GetSlot();
+                        change.add.item_id = second_item->GetID();
+                        change.add.count = second_item->GetCount();
+                        inventory_update_packet.changes.push_back(change);
+                    }
+                }
+                
+                // 장착한 아이템을 장비창에 추가
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                    change.action = InventoryAction::kAdd;
+                    change.add.slot_id = first_item->GetSlot();
+                    change.add.item_id = first_item->GetID();
+                    change.add.count = first_item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
+                }
+            }
+            SendPacket(inventory_update_packet);
+
+            auto first_equip = std::dynamic_pointer_cast<EquipItem>(first_item);
+            if (!first_equip) break;
+
+            RemoveEquipStats(second_slot);
+            AddEquipStats(second_slot, first_equip);
+
+            SendStatUpdateIfNeeded();
+        }
+        break;
+
+    case UnequipItemPacket::StaticPacketID:
+        {
+            UnequipItemPacket* equip_item_packet = static_cast<UnequipItemPacket*>(packet);
+            
+            uint32_t first_slot = equip_item_packet->first_slot;
+            uint32_t second_slot = equip_item_packet->second_slot;
+            if (second_slot == 0) break;
+            
+            auto& equip = inventories_[static_cast<uint8_t>(InventoryType::kEquip)];
+            auto& equipped = inventories_[static_cast<uint8_t>(InventoryType::kEquipped)];
+
+            InventoryUpdatePacket inventory_update_packet;
+            {
+                auto equip_lock = equip->DeferLock();
+                auto equipped_lock = equipped->DeferLock();
+
+                std::lock(equip_lock, equipped_lock);
+
+                auto first_item = equipped->EraseItem(first_slot);
+                if (!first_item) break;
+
+                equip->SetItem(second_slot, first_item);
+
+                // 장착한 아이템을 장비창에서 제거
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = first_slot;
+                    inventory_update_packet.changes.push_back(change);
+                }
+                
+                // 장착한 아이템을 장비 탭에 추가
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                    change.action = InventoryAction::kAdd;
+                    change.add.slot_id = first_item->GetSlot();
+                    change.add.item_id = first_item->GetID();
+                    change.add.count = first_item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
+                }
+            }
+            SendPacket(inventory_update_packet);
+
+            RemoveEquipStats(first_slot);
+            SendStatUpdateIfNeeded();
         }
         break;
 
@@ -357,6 +647,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             stats_update_packet.mask |= PlayerStat::kHP;
             stats_update_packet.hp = hp_;
             SendPacket(stats_update_packet);
+
+            NotifyPartyStatChange(PartyStatType::kHP, hp_);
             
             Respawn();
         }
@@ -451,16 +743,9 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PartyManager::Get()->AddPlayerToParty(party->GetPartyID(), player_.lock());
             SetPartyID(party->GetPartyID());
 
-            PartyJoinPacket join_packet;
-            join_packet.party_name = party->GetPartyName();
-            join_packet.party_id = GetPartyID();
-            join_packet.host_id = party->GetHost();
-            SendPacket(join_packet);
-
-            // 임시 알림
             PopupPacket join_msg;
             join_msg.text = GetName() + L" 님이 파티에 합류했습니다.";
-            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, GetAccountID());
+            PartyManager::Get()->SendPacket(party->GetPartyID(), join_msg, object_id_);
             
         }
         break;
@@ -480,15 +765,109 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             PopupPacket popup_packet;
             popup_packet.text = L"파티가 정상적으로 생성되었습니다.";
             SendPacket(popup_packet);
-
-            PartyJoinPacket join_packet;
-            join_packet.party_id = party->GetPartyID();
-            join_packet.party_name = request->party_name;
-            join_packet.host_id = GetAccountID();
-            SendPacket(join_packet);
         }
         break;
-        
+
+    case PartyKickRequest::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            auto* req = static_cast<PartyKickRequest*>(packet);
+            auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (!party) break;
+            if (party->GetHost() != object_id_) break;
+            if (req->member_id == object_id_) break;
+            PartyManager::Get()->DeletePlayerFromParty(party->GetPartyID(), req->member_id);
+
+            PopupPacket popup_packet;
+            popup_packet.text = GetName() + L"파티에서 강퇴 되었습니다.";
+            SendPacket(popup_packet);
+        }
+        break;
+
+    case PartyDelegateRequest::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            auto* req = static_cast<PartyDelegateRequest*>(packet);
+            auto party = PartyManager::Get()->GetParty(GetPartyID());
+            if (!party) break;
+            if (party->GetHost() != object_id_) break;
+            party->DelegateHost(req->member_id);
+        }
+        break;
+
+    case PartyLeavePacket::StaticPacketID:
+        {
+            if (GetPartyID() == 0) break;
+            PartyManager::Get()->DeletePlayerFromParty(GetPartyID(), object_id_);
+        }
+        break;
+
+    case PlacementStopRequest::StaticPacketID:
+        {
+            is_placing_ = false;
+
+            PlacementStopResponse response;
+            SendPacket(response);
+        }
+        break;
+
+    case PlacementBlockPacket::StaticPacketID:
+        {
+            PlacementBlockPacket* placement_start_packet = static_cast<PlacementBlockPacket*>(packet);
+
+            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
+            
+            {
+                inventory->Lock();
+                auto items = inventory->FindItems(290000);
+                if (items.empty()) break;
+
+                Math::Vector2 position;
+                position.x = placement_start_packet->position.x;
+                position.y = placement_start_packet->position.y;
+            
+                map_->SpawnBlock(L"FFFFFF", 0, position);
+
+                auto item = items.front();
+                item->SetCount(item->GetCount() - 1);
+
+                InventoryUpdatePacket inventory_update_packet;
+            
+                if (item->GetCount() <= 0)
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = item->GetSlot();
+                    inventory_update_packet.changes.push_back(change);
+                
+                    is_placing_ = false;
+
+                    PlacementStopResponse placement_stop_response;
+                    SendPacket(placement_stop_response);
+                }
+                else
+                {
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kChangeCount;
+                    change.change_count.slot_id = item->GetSlot();
+                    change.change_count.count = item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
+                }
+
+                SendPacket(inventory_update_packet);
+            }
+        }
+        break;
+
+    case SkillCastRequest::StaticPacketID:
+        {
+            SkillCastRequest* skill_request = static_cast<SkillCastRequest*>(packet);
+            skill_manager_.UseSkill(skill_request->skill_id);
+        }
+        break;
+
     default:
         break;
     }
@@ -497,16 +876,20 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 void PlayerCharacter::TakeDamage(int32_t damage_amount)
 {
     if (is_dead_ || is_invincible_) return;
-    hp_ = std::clamp(hp_ - damage_amount, 0, max_hp_);
+    hp_ = std::clamp(hp_ - damage_amount, 0, effective_max_hp_);
+
+    PlayerStatsUpdatePacket stats_update_packet;
+    stats_update_packet.mask |= PlayerStat::kHP;
+    stats_update_packet.hp = hp_;
+    SendPacket(stats_update_packet);
 
     TakeDamagePacket packet;
     packet.object_id = object_id_;
-    packet.updated_hp = hp_;
     packet.damage_amount = damage_amount;
     packet.server_time = Net::GetClientTime();
     map_->SendPacket(packet);
 
-    is_invincible_.Set(2.f);
+    is_invincible_.Set(1.f);
 
     if (hp_ <= 0)
     {
@@ -515,6 +898,21 @@ void PlayerCharacter::TakeDamage(int32_t damage_amount)
         PlayerDeathPacket death_packet;
         SendPacket(death_packet);
     }
+    
+    NotifyPartyStatChange(PartyStatType::kHP, hp_);
+}
+
+void PlayerCharacter::ApplyHPDelta(int32_t hp_delta)
+{
+    int32_t next_hp = hp_ + hp_delta;
+    hp_ = std::clamp(next_hp, 1, effective_max_hp_);
+
+    PlayerStatsUpdatePacket packet;
+    packet.mask |= PlayerStat::kHP;
+    packet.hp = hp_;
+    SendPacket(packet);
+    
+    NotifyPartyStatChange(PartyStatType::kHP, hp_);
 }
 
 bool PlayerCharacter::Disconnect()
@@ -542,6 +940,13 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     wcscpy_s(info.body_color, body_color_.c_str());
 
     player->SendPacket(packet);
+
+    PlayerAnimationPacket animation_packet;
+    animation_packet.unique_id = object_id_;
+    animation_packet.animation =  current_animation_;
+    animation_packet.is_flipped = is_flipped_;
+    animation_packet.server_time = Net::GetClientTime();
+    player->SendPacket(animation_packet);
 }
 
 void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
@@ -600,20 +1005,42 @@ void PlayerCharacter::UpdateDatabase()
         }
     }
     
-    if (inventory_) inventory_->UpdateDatabase();
-    
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return;
     
     try
     {
         {
-            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO inventory_item_info (account_id, character_id, inventory_type, item_id, slot_id, count) VALUES (?, ?, ?, ?, ?, ?)"));
+            for (int32_t i = 1; i < static_cast<int32_t>(InventoryType::kCount); ++i)
+            {
+                auto& inventory = inventories_[i];
+                
+                {
+                    inventory->Lock();
+                    for (const auto& slot : inventory->GetItems())
+                    {
+                        statement->setUInt(1, account_id_);
+                        statement->setUInt(2, object_id_);
+                        statement->setUInt(3, i);
+                        statement->setUInt(4, slot.second->GetID());
+                        statement->setUInt(5, slot.first);
+                        statement->setInt(6, slot.second->GetCount());
+                        statement->executeUpdate();
+                    }
+                }
+            }
+            
+            statement.reset(connection->prepareStatement("UPDATE character_info SET hp = ?, max_hp = ?, exp = ?, lv = ?, map_id = ?, last_position_x = ?, last_position_y = ?, color = ? WHERE character_id = ?"));
             statement->setInt(1, hp_);
-            statement->setInt(2, max_hp_);
+            statement->setInt(2, base_max_hp_);
             statement->setInt(3, exp_.load());
             statement->setInt(4, lv_);
-            statement->setInt(5, map_id);
+            statement->setUInt(5, map_id);
             statement->setDouble(6, position_.x);
             statement->setDouble(7, position_.y);
             statement->setInt(8, color_.load());
@@ -658,9 +1085,9 @@ void PlayerCharacter::GainExp(int32_t amount)
         ++lv_;
         changed_lv = true;
 
-        max_hp_ += 25;
-        hp_ = max_hp_;
-
+        base_max_hp_ += 25;
+        ComputeStats();
+        hp_ = effective_max_hp_;
         if (lv_ >= 50) break;
     }
 
@@ -678,16 +1105,124 @@ void PlayerCharacter::GainExp(int32_t amount)
     }
     
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kHP)) packet.hp = hp_;
-    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = max_hp_;
+    if (EnumHasAnyFlags(packet.mask, PlayerStat::kMaxHP)) packet.max_hp = effective_max_hp_;
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kExp)) packet.exp = exp_.load();
     if (EnumHasAnyFlags(packet.mask, PlayerStat::kLv)) packet.lv = lv_;
 
     SendPacket(packet);
+
+    if (changed_lv)
+    {
+        NotifyPartyStatChange(PartyStatType::kLv, lv_);
+        NotifyPartyStatChange(PartyStatType::kHP, hp_);
+        NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
+    }
+}
+
+void PlayerCharacter::NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self)
+{
+    if (party_id_ == 0)
+        return;
+
+    PartyMemberStatChangedPacket stat_packet;
+    stat_packet.member_id = object_id_;
+    stat_packet.stat = stat;
+    stat_packet.value = std::to_wstring(value);
+
+    if (exclude_self)
+        PartyManager::Get()->SendPacket(party_id_, stat_packet, object_id_);
+    else
+        PartyManager::Get()->SendPacket(party_id_, stat_packet);
+}
+
+void PlayerCharacter::ComputeStats()
+{
+    std::lock_guard<std::mutex> lock(effect_mutex_);
+
+    const auto& total_buff_stats = buff_manager_.GetTotalStats();
+    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp;
+    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk;
+    effective_def_ = total_equip_stats_.def + total_buff_stats.def;
+    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig;
+}
+
+void PlayerCharacter::SendStatUpdateIfNeeded()
+{
+    int32_t old_max_hp = effective_max_hp_;
+    int32_t old_atk = effective_atk_;
+    int32_t old_def = effective_def_;
+    int32_t old_dig = effective_dig_;
+
+    bool is_changed = false;
+    ComputeStats();
+
+    PlayerStatsUpdatePacket packet;
+    if (effective_max_hp_ != old_max_hp)
+    {
+        packet.mask |= PlayerStat::kMaxHP;
+        packet.mask |= PlayerStat::kHP;
+        
+        packet.max_hp = effective_max_hp_;
+
+        hp_ = Math::Clamp(hp_, 1, effective_max_hp_);
+        packet.hp = hp_;
+
+        NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
+        NotifyPartyStatChange(PartyStatType::kHP, hp_);
+        is_changed = true;
+    }
+
+    if (effective_atk_ != old_atk)
+    {
+        packet.mask |= PlayerStat::kAtk;
+        packet.atk = effective_atk_;
+        is_changed = true;
+    }
+
+    if (effective_def_ != old_def)
+    {
+        packet.mask |= PlayerStat::kDef;
+        packet.def = effective_def_;
+        is_changed = true;
+    }
+
+    if (effective_dig_ != old_dig)
+    {
+        packet.mask |= PlayerStat::kDig;
+        packet.dig = effective_dig_;
+        is_changed = true;
+    }
+
+    if (is_changed) SendPacket(packet);
+}
+
+void PlayerCharacter::AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item)
+{
+    if (!item) return;
+
+    EquipStat stat = { item->GetMaxHP(), item->GetAtk(), item->GetDef(), item->GetDig() };
+    equip_stats_.insert_or_assign(slot, stat);
+
+    total_equip_stats_ += stat;
+}
+
+void PlayerCharacter::RemoveEquipStats(uint32_t slot)
+{
+    auto it = equip_stats_.find(slot);
+    if (it == equip_stats_.end()) return;
+
+    total_equip_stats_ -= it->second;
+    equip_stats_.erase(it);
 }
 
 void PlayerCharacter::Tick(float delta_time)
 {
     MapObject::Tick(delta_time);
+    
+    if (buff_manager_.CheckBuffExpires())
+        SendStatUpdateIfNeeded();
+        
+    skill_manager_.Tick(delta_time);
 
     is_invincible_.Tick(delta_time);
     

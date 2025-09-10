@@ -46,6 +46,9 @@ public:
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
+    void TakeDamage(uint32_t attacker, int32_t damage);
+    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages);
+
     DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, const std::shared_ptr<Mob>&)
 
 protected:
@@ -57,7 +60,6 @@ protected:
 
     void SendPositionPacket(const Math::Vector2& position, bool time_update = false) const;
     void SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play = false) const;
-    void TakeDamage(uint32_t attacker, uint32_t damage);
 
     uint32_t mob_id_;
     uint32_t damage_;
@@ -81,7 +83,7 @@ protected:
 
     class Foothold* foothold_;
 
-    std::atomic_uint32_t hp_;
+    std::atomic_int32_t hp_;
 
     int32_t exp_;
 

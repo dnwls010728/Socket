@@ -17,10 +17,12 @@ TilemapComponent::TilemapComponent(Actor* owner, const std::wstring& kName) :
 	ppu_(0.f),
 	tilemap_(nullptr),
 	map_size_(Math::Vector2::Zero()),
+	tile_size_(Math::Vector2::Zero()),
 	tilemap_layers_(),
 	type_map_()
 {
 	tilemap_body_id_ = b2_nullBodyId;
+	bounds_body_id_ = b2_nullBodyId;
 }
 
 void TilemapComponent::SetTilemap(Tilemap* tilemap)
@@ -37,6 +39,39 @@ int32_t TilemapComponent::GetType(const b2ShapeId shape_id)
 	return -1;
 }
 
+Math::Vector2i TilemapComponent::WorldToCell(const Math::Vector2& position) const
+{
+	const auto& bounds = tilemap_->GetWorldBounds();
+
+	float dx = position.x - bounds.min.x;
+	float dy = bounds.max.y - position.y;
+
+	int32_t tile_x = static_cast<int32_t>(std::floor(dx));
+	int32_t tile_y = static_cast<int32_t>(std::floor(dy));
+
+	tile_x = std::clamp(tile_x, 0, static_cast<int32_t>(map_size_.x) - 1);
+	tile_y = std::clamp(tile_y, 0, static_cast<int32_t>(map_size_.y) - 1);
+	return {tile_x, tile_y};
+}
+
+Math::Vector2 TilemapComponent::GetCellCenter(const Math::Vector2i& position) const
+{
+	const auto& bounds = tilemap_->GetWorldBounds();
+	float x = bounds.min.x + (position.x + .5f);
+	float y = bounds.max.y - (position.y + .5f);
+	return {x, y};
+}
+
+void TilemapComponent::UninitializeComponent()
+{
+	ActorComponent::UninitializeComponent();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->RemoveShapes();
+	}
+}
+
 void TilemapComponent::BeginPlay()
 {
 	ActorComponent::BeginPlay();
@@ -49,6 +84,9 @@ void TilemapComponent::BeginPlay()
 		
 		map_size_.x = static_cast<float>(map.getTileCount().x);
 		map_size_.y = static_cast<float>(map.getTileCount().y);
+
+		tile_size_.x = static_cast<float>(map.getTileSize().x);
+		tile_size_.y = static_cast<float>(map.getTileSize().y);
 	
 		const auto& layers = map.getLayers();
 		for (const auto& layer : layers)
@@ -69,9 +107,12 @@ void TilemapComponent::BeginPlay()
 				tilemap_layers_.emplace_back(std::make_unique<TilemapLayer>(map, tile_layer, chunk_size));
 			}
 		}
+
+		GenerateBounds();
 	}
 	
 	if (b2Body_IsValid(tilemap_body_id_)) b2Body_Enable(tilemap_body_id_);
+	if (b2Body_IsValid(bounds_body_id_)) b2Body_Enable(bounds_body_id_);
 
 }
 
@@ -80,6 +121,7 @@ void TilemapComponent::EndPlay(EndPlayReason type)
 	ActorComponent::EndPlay(type);
 	
 	if (b2Body_IsValid(tilemap_body_id_)) b2DestroyBody(tilemap_body_id_);
+	if (b2Body_IsValid(bounds_body_id_)) b2DestroyBody(bounds_body_id_);
 }
 
 void TilemapComponent::Render(float alpha)
@@ -93,6 +135,26 @@ void TilemapComponent::Render(float alpha)
 			{ 1.f / ppu_, 1.f / ppu_ },
 			{ map_size_.x / 2.f, -(map_size_.y / 2.f) }
 		);
+	}
+}
+
+void TilemapComponent::OnEnable()
+{
+	ActorComponent::OnEnable();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->AddShapes();
+	}
+}
+
+void TilemapComponent::OnDisable()
+{
+	ActorComponent::OnDisable();
+
+	for (const auto& tilemap_layer : tilemap_layers_)
+	{
+		tilemap_layer->RemoveShapes();
 	}
 }
 
@@ -210,6 +272,48 @@ void TilemapComponent::GeneratePortal(const tmx::ObjectGroup& kObject) const
 			}
 		}
 	}
+}
+
+void TilemapComponent::GenerateBounds()
+{
+	b2BodyDef body_def = b2DefaultBodyDef();
+	body_def.userData = GetOwner();
+
+	bounds_body_id_ = b2CreateBody(World::Get()->world_id_, &body_def);
+
+	float width = (map_size_.x * tile_size_.x) / ppu_;
+	float height = (map_size_.y * tile_size_.y) / ppu_;
+	float half_width = width * .5f;
+	float half_height = height * .5f;
+
+	Math::Vector2 position = GetOwner()->GetTransform()->GetPosition();
+	
+	b2Filter filter = b2DefaultFilter();
+	filter.categoryBits = static_cast<uint16_t>(GetOwner()->GetLayer());
+	filter.maskBits = static_cast<uint16_t>(EngineSettings::Get()->GetCollisionLayer(GetOwner()->GetLayer()));
+		
+	b2ShapeDef shape_def = b2DefaultShapeDef();
+	shape_def.filter = filter;
+	shape_def.userData = nullptr;
+
+	b2Segment segment;
+	segment.point1 = { position.x - half_width, position.y - half_height };
+	segment.point2 = { position.x + half_width, position.y - half_height };
+	b2CreateSegmentShape(bounds_body_id_, &shape_def, &segment);
+
+	segment.point1 = { position.x - half_width, position.y + half_height };
+	segment.point2 = { position.x + half_width, position.y + half_height };
+	b2CreateSegmentShape(bounds_body_id_, &shape_def, &segment);
+
+	segment.point1 = { position.x - half_width, position.y - half_height };
+	segment.point2 = { position.x - half_width, position.y + half_height };
+	b2CreateSegmentShape(bounds_body_id_, &shape_def, &segment);
+
+	segment.point1 = { position.x + half_width, position.y - half_height };
+	segment.point2 = { position.x + half_width, position.y + half_height };
+	b2CreateSegmentShape(bounds_body_id_, &shape_def, &segment);
+	
+	b2Body_Disable(tilemap_body_id_);
 }
 
 RTTR_REGISTRATION

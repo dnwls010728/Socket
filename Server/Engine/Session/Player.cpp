@@ -8,9 +8,9 @@
 #include "Session.h"
 #include "../Map/World.h"
 #include "../MySQL/MySQLManager.h"
+#include "PartyManager.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
-#include "Player/Inventory/Inventory.h"
 #include "Player/Inventory/Item.h"
 
 Player::Player(Session* session, uint32_t account_id) :
@@ -97,7 +97,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 statement->setString(3, StringHelper::UTF16ToUTF8(new_character->GetBodyColor()));
                 statement->setInt(4, new_character->lv_);
                 statement->setInt(5, new_character->hp_);
-                statement->setInt(6, new_character->max_hp_);
+                statement->setInt(6, new_character->base_max_hp_);
                 statement->setInt(7, new_character->exp_);
                 statement->setInt(8, new_character->map_id_);
                 statement->setDouble(9, new_character->position_.x);
@@ -131,7 +131,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 break;
             }
 
-            if (!new_character->GetInventory()->UpdateDatabase()) break;
+            // if (!new_character->GetInventory()->UpdateDatabase()) break;
 
             CreateCharacterResponse response;
             response.profile.character_id = new_character->GetObjectID();
@@ -144,7 +144,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.profile.body_color = new_character->GetBodyColor();
 
             response.profile.stats.hp = new_character->hp_;
-            response.profile.stats.max_hp = new_character->max_hp_;
+            response.profile.stats.max_hp = new_character->base_max_hp_;
             response.profile.stats.exp = new_character->exp_;
             response.profile.stats.lv = new_character->lv_;
             SendPacket(response);
@@ -173,33 +173,79 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.character_id = player_character_->object_id_;
             response.lv = player_character_->lv_;
             response.hp = player_character_->hp_;
-            response.max_hp = player_character_->max_hp_;
+            response.max_hp = player_character_->effective_max_hp_;
             response.exp = player_character_->exp_;
             response.color = player_character_->color_;
+            response.atk = player_character_->effective_atk_;
+            response.def = player_character_->effective_def_;
+            response.dig = player_character_->effective_dig_;
             response.map_id = player_character_->map_->GetMapID();
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
 
-            Inventory* inventory = player_character_->GetInventory();
-            response.equip_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kEquip);
-            response.use_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kUse);
-            response.etc_slot_capacity = inventory->GetSlotCapacity(Inventory::Type::kEtc);
+            auto* equip = player_character_->GetInventory(InventoryType::kEquip);
+            auto* use = player_character_->GetInventory(InventoryType::kUse);
+            auto* etc = player_character_->GetInventory(InventoryType::kEtc);
+            auto* equipped = player_character_->GetInventory(InventoryType::kEquipped);
 
-            const auto& inventories = inventory->GetInventories();
-            for (int32_t i = 0; i < static_cast<uint8_t>(Inventory::Type::kCount); ++i)
+            response.equip_slot_capacity = equip->GetCapacity();
+            response.use_slot_capacity = use->GetCapacity();
+            response.etc_slot_capacity = etc->GetCapacity();
+
+            for (const auto& slot : equip->GetItems())
             {
-                for (const auto& slot : inventories[i])
-                {
-                    ItemInfo item_info;
-                    item_info.inventory_type = i;
-                    item_info.item_id = slot.second->GetID();
-                    item_info.slot_index = slot.first;
-                    item_info.count = slot.second->GetCount();
-                    response.inventory.push_back(item_info);
-                }
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEquip);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : use->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : etc->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEtc);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
+            }
+
+            for (const auto& slot : equipped->GetItems())
+            {
+                const auto& item = slot.second;
+                
+                ItemInfo item_info;
+                item_info.inventory_type = static_cast<uint8_t>(InventoryType::kEquipped);
+                item_info.item_id = item->GetID();
+                item_info.slot_id = slot.first;
+                item_info.count = item->GetCount();
+                response.inventory.push_back(item_info);
             }
 
             SendPacket(response);
+
+            if (player_character_ && player_character_->GetPartyID() != 0)
+            {
+                PartyManager::Get()->AddPlayerToParty(player_character_->GetPartyID(), shared_from_this());
+            }
 
             session_->SetState(Session::State::kCharacterSelected);
         }

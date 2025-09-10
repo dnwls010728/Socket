@@ -11,11 +11,16 @@
 
 #include "DataManager.h"
 #include "MapObject.h"
+#include "NetDef.h"
 #include "PlayerCharacter.h"
 #include "SpawnPoint.h"
+#include "jdbc/cppconn/prepared_statement.h"
+#include "MapObjects/Block.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "Math/Math.h"
+#include "MySQL/MySQLManager.h"
+#include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
 
 
@@ -103,23 +108,31 @@ void Map::AddPlayers()
 
 void Map::RemovePlayers()
 {
-    std::lock_guard<std::mutex> lock(player_mutex_);
+    std::vector<uint32_t> removed_players;
 
-    while (!pending_remove_players_.empty())
     {
-        uint32_t unique_key = pending_remove_players_.front();
-        pending_remove_players_.pop();
+        std::lock_guard<std::mutex> lock(player_mutex_);
 
-        players_.erase(unique_key);
+        while (!pending_remove_players_.empty())
+        {
+            uint32_t unique_key = pending_remove_players_.front();
+            pending_remove_players_.pop();
 
+            players_.erase(unique_key);
+            removed_players.push_back(unique_key);
+        }
+    }
+
+    for (uint32_t unique_key : removed_players)
+    {
         ObjectDestroyInfo info;
         info.type = ObjectType::kPlayer;
         info.object_id = unique_key;
-        
+
         ObjectDestroyPacket destroy_player_packet;
         destroy_player_packet.object_info = info;
+
         SendPacket(destroy_player_packet);
-        
     }
 }
 
@@ -153,6 +166,8 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     info.position_x = mob->GetPosition().x;
     info.position_y = mob->GetPosition().y;
     info.info.mob.mob_id = mob->GetMobID();
+    info.info.mob.is_fliped = mob->IsFlipped();
+    wcscpy_s(info.info.mob.animation_name, mob->GetAnimation().c_str());
 
     ObjectSpawnPacket packet;
     packet.object_info = info;
@@ -170,10 +185,10 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetColor(color);
-    dropped_item->SetPosition(drop_position);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
+    dropped_item->SetPosition(drop_position);
 
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
@@ -202,15 +217,15 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
     }
 }
 
-void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
+void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
-    dropped_item->SetItem(std::make_shared<Item>(item_id, 0, count));
-    dropped_item->SetPosition(drop_position);
+    dropped_item->SetItem(item);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
+    dropped_item->SetPosition(drop_position);
 
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
@@ -218,7 +233,7 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
     }
 
     DroppedItemInfo item_info;
-    item_info.item_id = item_id;
+    item_info.item_id = item->GetID();
     item_info.dropper_position_x = dropper->GetPosition().x;
     item_info.dropper_position_y = dropper->GetPosition().y;
     item_info.color = 0;
@@ -230,6 +245,37 @@ void Map::SpawnItemDrop(uint32_t item_id, uint32_t count, const std::shared_ptr<
     info.position_y = drop_position.y;
     info.info.dropped_item = item_info;
 
+    ObjectSpawnPacket packet;
+    packet.object_info = info;
+    
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
+void Map::SpawnBlock(const std::wstring& color, int32_t hp, const Math::Vector2& position)
+{
+    std::shared_ptr<Block> block = std::make_shared<Block>(color, hp);
+    block->SetObjectID(next_object_id_.fetch_add(1));
+    block->SetMap(this);
+    block->SetPosition(position);
+    
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(block);
+    }
+
+    BlockInfo block_info;
+    wcscpy_s(block_info.color, color.c_str());
+    
+    ObjectInfo info;
+    info.type = ObjectType::kBlock;
+    info.object_id = block->GetObjectID();
+    info.position_x = position.x;
+    info.position_y = position.y;
+    info.info.block = block_info;
+    
     ObjectSpawnPacket packet;
     packet.object_info = info;
     
@@ -305,6 +351,17 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerChara
 void Map::OnAttack(uint32_t attacker, uint32_t defender)
 {
     // std::lock_guard<std::mutex> lock(object_mutex_);
+    
+    int32_t value = 0;
+    
+    {
+        auto it = players_.find(attacker);
+        if (it != players_.end())
+        {
+            auto player = it->second.lock();
+            if (player) value = player->GetAtk();
+        }
+    }
 
     auto it = map_objects_.find(defender);
     if (it != map_objects_.end())
@@ -312,7 +369,7 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->TakeDamage(attacker, 1000);
+            mob->TakeDamage(attacker, 1000 + value);
         }
     }
 }
@@ -408,6 +465,21 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
         players.push_back(player_weak);
     }
     return players;
+}
+
+void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_ptr<MapObject>>& result)
+{
+    std::lock_guard<std::mutex> lock(object_mutex_);
+     
+    for (const auto& [id, obj] : map_objects_)
+    {
+        // 임시 사이즈
+        Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+        Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
+
+        if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
+            result.push_back(obj);
+    }
 }
 
 void Map::GetDropPosition(Math::Vector2& position) const
@@ -516,6 +588,43 @@ bool Map::LoadMapData()
                 }
             }
         }
+    }
+
+    // 맵에 배치된 블럭 정보 조회
+    sql::Connection* connection = MySQLManager::Get()->GetConnection();
+    if (!connection) return false;
+
+    try
+    {
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM block_info WHERE map_id = ?"));
+        statement->setUInt(1, map_id_);
+
+        std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+        while (result->next())
+        {
+            std::wstring color = StringHelper::UTF8ToUTF16(result->getString("color"));
+            int32_t hp = result->getInt("hp");
+            
+            Math::Vector2 position;
+            position.x = static_cast<float>(result->getDouble("position_x"));
+            position.y = static_cast<float>(result->getDouble("position_y"));
+            
+            SpawnBlock(color, hp, position);
+        }
+    }
+    catch (sql::SQLException& e)
+    {
+        std::cerr << "SQLException: " << e.what() << std::endl;
+        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
+        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception" << std::endl;
     }
 
     return true;
@@ -676,10 +785,14 @@ void Map::OnMobDeath(const std::shared_ptr<Mob>& mob)
             drop_position.x += static_cast<float>(sign * step) * .5f;
             GetDropPosition(drop_position);
 
-            if (!drop.item_id)
+            if (drop.id == 0)
                 SpawnColorDrop(count, mob, drop_position);
             else
-                SpawnItemDrop(drop.item_id, count, mob, drop_position);
+            {
+                uint32_t type_index = drop.id / 100000;
+                if (type_index == 1) SpawnItemDrop(EquipItem::Create(drop.id), mob, drop_position);
+                else SpawnItemDrop(Item::Create(drop.id, count), mob, drop_position);
+            }
                 
             ++d;
         }

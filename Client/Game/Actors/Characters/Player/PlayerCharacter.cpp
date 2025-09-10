@@ -15,6 +15,7 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Actors/Damage.h"
 #include "Actors/DroppedItem.h"
+#include "Actors/Effect.h"
 #include "Actors/Characters/Components/Controller2DComponent.h"
 #include "Actors/Components/StateMachineComponent.h"
 #include "Actors/Mobs/MobBase.h"
@@ -33,6 +34,7 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Time/Time.h"
@@ -44,6 +46,7 @@
 
 PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     CharacterBase(kName),
+    buff_effects_(),
     move_axis_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     was_grounded_(false),
@@ -54,7 +57,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     invincible_time_(0.f),
     prev_animation{0,},
     color_(Math::Color::White),
-    party_id_(0),
     bonus_jumps_(1)
 {
     SetLayer(ActorLayer::kPlayer);
@@ -96,24 +98,37 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 			animation_snapshots_.push_back(snapshot);
         }
         break;
+    case SkillCastPacket::StaticPacketID:
+        {
+            SkillCastPacket* skill_packet = static_cast<SkillCastPacket*>(packet);
+            auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+            if (IsValid(effect))
+            {
+                effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+                effect->SetFlipX(renderer_->IsFlipX());
+
+                // 임시
+                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\SkillUse.mp3");
+                AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
+            }
+        }
+        break;
         
     default:
         break;
     }
 }
 
-void PlayerCharacter::TakeDamage(uint32_t updated_hp, uint32_t damage_amount, float server_time)
+void PlayerCharacter::TakeDamage(int32_t damage_amount, float server_time)
 {
     if (damage_amount == 0) return;
     if (IsMine())
     {
         Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\p_hit.mp3");
         AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
-        
-        PlayerSubsystem::Get()->UpdateStat(PlayerStat::kHP, updated_hp);
     }
 
-    invincible_time_ = server_time + 2.f;
+    invincible_time_ = server_time + 1.f;
 }
 
 void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position)
@@ -228,7 +243,7 @@ void PlayerCharacter::Tick(float delta_time)
         Keyboard* keyboard = Keyboard::Get();
         Mouse* mouse = Mouse::Get();
 
-        if (!is_dead_ || !UI::Get()->IsEditingText())
+        if (!is_dead_ && !UI::Get()->IsEditingText())
         {
             move_axis_.x = keyboard->GetKey(Scancode::kKeyRight) - keyboard->GetKey(Scancode::kKeyLeft);
             move_axis_.y = keyboard->GetKey(Scancode::kKeyUp) - keyboard->GetKey(Scancode::kKeyDown);
@@ -309,36 +324,11 @@ void PlayerCharacter::Tick(float delta_time)
                 }
             }
 
-            // 공격 테스트
-            if (keyboard->GetKeyDown(Scancode::kKeyX))
+            if (keyboard->GetKeyDown(Scancode::kKeyQ))
             {
-                std::vector<Actor*> hit_actors;
-                bool is_hit = Physics2D::OverlapBoxAll(
-                    GetTransform()->GetPosition(),
-                    {3.f, 2.f},
-                    hit_actors,
-                    static_cast<uint16_t>(ActorLayer::kMob)
-                );
-
-                if (is_hit)
-                {
-                    for (const auto& actor : hit_actors)
-                    {
-                        MobBase* mob = static_cast<MobBase*>(actor);
-                        if (!IsValid(mob) || mob->IsDead()) continue;
-
-                        AttackRequest request;
-                        request.object_id = mob->GetObjectID();
-                        SendPacket(request);
-
-                        std::shared_ptr<Actor> damage = World::Get()->SpawnActor<Actor>(Damage::StaticClass());
-                        if (IsValid(damage))
-                        {
-                            damage->GetTransform()->SetPosition(
-                                mob->GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f);
-                        }
-                    }
-                }
+                SkillCastRequest request;
+                request.skill_id = 100000;
+                SendPacket(request);
             }
         }
         else
@@ -364,7 +354,7 @@ void PlayerCharacter::Tick(float delta_time)
                         menu->Clear();
                         menu->AddItem(L"파티에 초대", [this, player]()
                            {
-                                if (party_id_ == 0)
+                                if (PartySubsystem::Get()->IsJoinedParty() == false)
                                 {
                                     UIPopup::PopupParam param;
                                     param.caption = L"현재 파티에 소속되어 있지 않습니다.\n 파티를 생성하시겠습니까?";
@@ -400,8 +390,24 @@ void PlayerCharacter::Tick(float delta_time)
             }
         }
 
+        float now = SessionSubsystem::Get()->GetServerTime();
+        
+        auto it = buff_effects_.begin();
+        while (it != buff_effects_.end())
+        {
+            if (it->second > now)
+            {
+                ++it;
+                continue;
+            }
+
+            Logger::Print(L"Expired Buff: %d", it->first);
+            it = buff_effects_.erase(it);
+        }
+
         // 공격 범위 확인용
-        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition(), { 3.f, 2.f }, Math::Color::Red);
+        int32_t direction = renderer_->IsFlipX() ? -1 : 1;
+        DebugDrawHelper::Get()->DrawBox(GetTransform()->GetPosition() + Math::Vector2::Right() * direction * 3.f, { 6.f, 2.f }, Math::Color::Red);
     }
     else
     {

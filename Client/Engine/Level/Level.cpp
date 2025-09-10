@@ -11,6 +11,7 @@
 Level::Level(const std::wstring& kName) :
     name_(kName),
     actors_(),
+    active_actors_(),
     has_begun_play_(false)
 {
 }
@@ -21,28 +22,29 @@ void Level::Load()
 
 void Level::Unload(EndPlayReason type)
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         actor->EndPlay(type);
     }
 
+    active_actors_.clear();
     actors_.clear();
 }
 
 void Level::InitializeActors()
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         actor->PreInitializeComponents();
     }
     
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         actor->InitializeComponents();
         actor->PostInitializeComponents();
     }
     
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         actor->BeginPlay();
         if (actor->IsActive()) actor->OnEnable();
@@ -53,7 +55,7 @@ void Level::InitializeActors()
 
 void Level::PhysicsTick(float delta_time)
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         if (!actor->is_active_) continue;
         actor->PhysicsTick(delta_time);
@@ -62,7 +64,7 @@ void Level::PhysicsTick(float delta_time)
 
 void Level::Tick(float delta_time)
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         if (!actor->is_active_) continue;
         actor->Tick(delta_time);
@@ -71,7 +73,7 @@ void Level::Tick(float delta_time)
 
 void Level::PostTick(float delta_time)
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         if (!actor->is_active_) continue;
         actor->PostTick(delta_time);
@@ -80,7 +82,7 @@ void Level::PostTick(float delta_time)
 
 void Level::Render(float alpha)
 {
-    for (const auto& actor : actors_)
+    for (const auto& actor : active_actors_)
     {
         if (!actor->is_active_) continue;
         actor->Render(alpha);

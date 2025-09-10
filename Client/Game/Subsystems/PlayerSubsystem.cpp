@@ -2,9 +2,12 @@
 #include "PlayerSubsystem.h"
 
 #include "GameInstance.h"
+#include "PostProcessingSettings.h"
+#include "SessionSubsystem.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
+#include "Math/Math.h"
 #include "Publisher/PublisherSubsystem.h"
 
 PlayerSubsystem::PlayerSubsystem() :
@@ -74,6 +77,39 @@ void PlayerSubsystem::UpdateStat(PlayerStat stat, int32_t value)
             PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
         }
         break;
+    case PlayerStat::kAtk:
+        {
+            atk_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kAtk;
+            event_data.value = atk_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
+    case PlayerStat::kDef:
+        {
+            def_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kDef;
+            event_data.value = def_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
+    case PlayerStat::kDig:
+        {
+            dig_ = value;
+
+            StatUpdateData event_data;
+            event_data.stat = PlayerStat::kDig;
+            event_data.value = dig_;
+
+            PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kStatUpdated, event_data);
+        }
+        break;
     }
 
     Logger::Print(L"PlayerSubsystem::UpdateStat: Updated stat %d to value %u", static_cast<int>(stat), value);
@@ -94,6 +130,22 @@ void PlayerSubsystem::DeleteProfile(uint32_t character_id)
             return;
         }
     }
+}
+
+void PlayerSubsystem::UseItem(uint32_t item_id) const
+{
+    InventoryType type = static_cast<InventoryType>(item_id / 100000);
+    if (type != InventoryType::kUse) return;
+
+    uint32_t slot_id = inventory_->FindItemSlotID(type, item_id);
+    if (slot_id == 0) return;
+    
+    Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
+    if (audio) AudioManager::Get()->PlaySound2D(audio);
+            
+    UseItemPacket packet;
+    packet.slot_id = slot_id;
+    SessionSubsystem::Get()->SendPacket(packet);
 }
 
 PlayerSubsystem* PlayerSubsystem::Get()

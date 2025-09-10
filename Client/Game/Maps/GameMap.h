@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Level/Level.h"
 
+class TilemapLoader;
+
 class GameMap : public Level
 {
     SHADER_CLASS_HELPER(GameMap)

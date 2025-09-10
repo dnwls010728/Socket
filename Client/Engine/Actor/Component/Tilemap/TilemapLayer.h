@@ -20,6 +20,8 @@ public:
     ~TilemapLayer() = default;
 
     void UpdateShapes(const Math::Vector2& kPosition, const Math::Vector2& kScale, const Math::Vector2& kPivot = Math::Vector2::Zero());
+    void AddShapes() const;
+    void RemoveShapes() const;
 
     TilemapChunk* GetChunk(int32_t tile_x, int32_t tile_y);
     TilemapChunk* GetChunk(int32_t tile_x, int32_t tile_y, Math::Vector2& tile_relative_position);

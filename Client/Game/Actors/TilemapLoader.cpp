@@ -12,7 +12,7 @@ TilemapLoader::TilemapLoader(const std::wstring& kName) :
 
 }
 
-void TilemapLoader::SetTilemap(class Tilemap* tilemap)
+void TilemapLoader::SetTilemap(class Tilemap* tilemap) const
 {
     tilemap_->SetTilemap(tilemap);
 }

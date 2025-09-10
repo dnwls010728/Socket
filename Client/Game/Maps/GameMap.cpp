@@ -3,16 +3,17 @@
 
 #include <CustomPacket.h>
 
-#include "Actor/Component/TransformComponent.h"
+#include "DebugDrawHelper.h"
 #include "Actor/Component/Tilemap/Tilemap.h"
+#include "Actor/Component/Tilemap/TilemapComponent.h"
 #include "Actors/TilemapLoader.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Asset/AssetManager.h"
-#include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
 #include "Level/CameraManager.h"
 #include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
+#include "Subsystems/PlacementSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
@@ -34,7 +35,7 @@ void GameMap::Load()
     CameraManager* camera_manager = CameraManager::Get();
 
 #pragma region 타일맵
-    std::shared_ptr<TilemapLoader> tilemap_loader = World::Get()->SpawnActor<TilemapLoader>(TilemapLoader::StaticClass());
+    std::shared_ptr<TilemapLoader> tilemap_loader = AddActor<TilemapLoader>(TilemapLoader::StaticClass(), L"TilemapLoader");
     if (IsValid(tilemap_loader))
     {
         std::wstring wide_str = std::format(L"{:06}", player_subsystem->map_id_);
@@ -53,6 +54,7 @@ void GameMap::Load()
             }
 
             GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
+            PlacementSubsystem::Get()->SetTilemapComponent(tilemap_loader->GetTilemapComponent());
         }
     }
 #pragma endregion

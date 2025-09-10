@@ -1,7 +1,0 @@
-string:
-    equip: {}
-    use:
-        0:
-            name: "먹다 남은 빵"
-            desc: "먹다 남은 빵을 먹습니다."
-    etc: {}

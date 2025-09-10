@@ -90,6 +90,7 @@ private:
     void ActivateActor(Actor* actor, bool is_active);
     void SortZOrder();
     void UpdateCameraBounds(const Bounds& kBounds);
+    void EndFrame();
 
     std::shared_ptr<WindowsWindow> window_;
     
@@ -110,8 +111,8 @@ private:
     std::unordered_map<rttr::type::type_id, std::unique_ptr<class WorldSubsystem>> subsystems_;
     std::unordered_map<std::wstring, std::shared_ptr<Level>> levels_;
 
-    std::queue<std::shared_ptr<Actor>> pending_actors_;
-    std::queue<std::shared_ptr<Actor>> pending_destroy_actors_;
+    std::queue<Actor*> pending_actors_;
+    std::queue<Actor*> pending_destroy_actors_;
     std::queue<ActorActivation> pending_actor_activation_;
 };
 
@@ -145,7 +146,8 @@ std::shared_ptr<T> World::SpawnActor(const rttr::type& kType, const std::wstring
     if (var.is_valid())
     {
         std::shared_ptr<Actor> actor = var.get_value<std::shared_ptr<Actor>>();
-        pending_actors_.push(actor);
+        current_level_->actors_.push_back(actor);
+        pending_actors_.push(actor.get());
 
         actor->InitializeActor();
 

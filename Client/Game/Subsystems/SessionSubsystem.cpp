@@ -6,18 +6,15 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
-#include "PacketHandlers/AddItemHandler.h"
-#include "PacketHandlers/ChangeItemCountHandler.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/ColorGainHandler.h"
 #include "PacketHandlers/CreateCharacterHandler.h"
 #include "PacketHandlers/DeleteCharacterHandler.h"
 #include "PacketHandlers/ObjectDestroyHandler.h"
-#include "PacketHandlers/DropItemHandler.h"
+#include "PacketHandlers/InventoryUpdateHandler.h"
 #include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
-#include "PacketHandlers/MoveItemHandler.h"
 #include "PacketHandlers/MovePlayerHandler.h"
 #include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
@@ -25,11 +22,20 @@
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "PacketHandlers/SelectCharacterHandler.h"
 #include "PacketHandlers/ObjectSpawnHandler.h"
+#include "PacketHandlers/ObjectTakeDamageHandler.h"
 #include "PacketHandlers/TakeDamageHandler.h"
 #include "PacketHandlers/PartyInviteNotifyHandler.h"
 #include "PacketHandlers/PartyJoinHandler.h"
+#include "PacketHandlers/PartyMemberChangedHandler.h"
+#include "PacketHandlers/PartyLeaveHandler.h"
+#include "PacketHandlers/PartyMemberStatChangedHandler.h"
 #include "PacketHandlers/PlayerDeathHandler.h"
+#include "PacketHandlers/PartyInfoChangedHandler.h"
+#include "PacketHandlers/PlacementStartHandler.h"
+#include "PacketHandlers/PlacementStopHandler.h"
+#include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
+#include "PacketHandlers/SkillCastHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -95,18 +101,8 @@ void SessionSubsystem::Init()
     );
 
     handlers_.emplace(
-        AddItemPacket::StaticPacketID,
-        std::make_unique<AddItemHandler>()
-    );
-
-    handlers_.emplace(
-        ChangeItemCountPacket::StaticPacketID,
-        std::make_unique<ChangeItemCountHandler>()
-    );
-
-    handlers_.emplace(
-        MoveItemResponse::StaticPacketID,
-        std::make_unique<MoveItemHandler>()
+        InventoryUpdatePacket::StaticPacketID,
+        std::make_unique<InventoryUpdateHandler>()
     );
 
     handlers_.emplace(
@@ -117,6 +113,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PlayerAnimationPacket::StaticPacketID,
         std::make_unique<PlayerAnimationHandler>()
+    );
+
+    handlers_.emplace(
+        SkillCastPacket::StaticPacketID,
+        std::make_unique<SkillCastHandler>()
     );
 
     handlers_.emplace(
@@ -145,8 +146,18 @@ void SessionSubsystem::Init()
     );
 
     handlers_.emplace(
+        ObjectTakeDamagePacket::StaticPacketID,
+        std::make_unique<ObjectTakeDamageHandler>()
+    );
+
+    handlers_.emplace(
         PlayerStatsUpdatePacket::StaticPacketID,
         std::make_unique<PlayerStatsUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        PlayerBuffPacket::StaticPacketID,
+        std::make_unique<PlayerBuffHandler>()
     );
 
     handlers_.emplace(
@@ -157,11 +168,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PlayerDeathPacket::StaticPacketID,
         std::make_unique<PlayerDeathHandler>()
-    );
-
-    handlers_.emplace(
-        DropItemResponse::StaticPacketID,
-        std::make_unique<DropItemHandler>()
     );
 
     handlers_.emplace(
@@ -182,6 +188,36 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PartyJoinPacket::StaticPacketID,
         std::make_unique<PartyJoinHandler>()
+    );
+
+    handlers_.emplace(
+        PartyMemberChangedPacket::StaticPacketID,
+        std::make_unique<PartyMemberChangedHandler>()
+    );
+
+    handlers_.emplace(
+        PartyLeavePacket::StaticPacketID,
+        std::make_unique<PartyLeaveHandler>()
+    );
+
+    handlers_.emplace(
+        PartyMemberStatChangedPacket::StaticPacketID,
+        std::make_unique<PartyMemberStatChangedHandler>()
+    );
+
+    handlers_.emplace(
+        PartyInfoChangedPacket::StaticPacketID,
+        std::make_unique<PartyInfoChangedHandler>()
+    );
+
+    handlers_.emplace(
+        PlacementStartPacket::StaticPacketID,
+        std::make_unique<PlacementStartHandler>()
+    );
+
+    handlers_.emplace(
+        PlacementStopResponse::StaticPacketID,
+        std::make_unique<PlacementStopHandler>()
     );
 #pragma endregion
 

@@ -102,10 +102,13 @@ void UIScrollBox::UpdateLayout()
 
     Math::Vector2 content_size = Math::Vector2::Zero();
     float layout_y = 0.f;
-    const auto& children = content_->GetChildren();
+
+    std::vector<UIElement*> children;
+    content_->GetChildren(children);
+    
     for (int32_t i = 0; i < children.size(); ++i)
     {
-        UIElement* child = children[i].get();
+        UIElement* child = children[i];
         if (!child || !child->IsActive()) continue;
 
         child->SetRelativePosition({0.f, layout_y});

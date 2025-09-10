@@ -19,7 +19,7 @@ public:
     
     virtual void SetActive(bool active) override;
 
-    void UpdateSlot(uint32_t slot_index) const;
+    void UpdateSlot(uint32_t slot_id) const;
     void UpdateColor(uint32_t color) const;
 
 protected:
@@ -36,7 +36,7 @@ private:
     
     void OnEvent(const EventData& data);
 
-    std::array<UIButton*, static_cast<uint8_t>(Inventory::Type::kCount)> tab_buttons_;
+    std::array<UIButton*, static_cast<uint8_t>(InventoryType::kCount)> tab_buttons_;
     
     std::vector<UIInventorySlot*> slots_;
 
@@ -47,8 +47,6 @@ private:
 
     UIText* color_text_;
 
-    Inventory* inventory_;
-
-    Inventory::Type tab_;
+    InventoryType tab_;
     
 };

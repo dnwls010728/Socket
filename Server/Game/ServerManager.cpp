@@ -11,6 +11,7 @@
 #include "Map/PlayerCharacter.h"
 #include "Map/MapObjects/Mob/Mob.h"
 #include "Session/SessionManager.h"
+#include "Session/PartyManager.h"
 
 ServerManager::ServerManager()
 {
@@ -166,7 +167,20 @@ void ServerManager::OnClientDisconnected(const Net::TCPConnectionState& state)
         }
     }
     
-    session_manager->RemoveSession(state.uniqueKey);
+    if (session)
+    {
+        auto player = session->GetPlayer();
+        if (player)
+        {
+            auto character = player->GetPlayerCharacter();
+            if (character && character->GetPartyID() != 0)
+            {
+                PartyManager::Get()->DeletePlayerFromParty(character->GetPartyID(), character->GetObjectID());
+            }
+        }
+
+        session_manager->RemoveSession(state.uniqueKey);
+    }
 }
 
 void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::unique_ptr<Net::IPacket> packet)
@@ -243,7 +257,7 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         profile.body_color = character->GetBodyColor();
 
                         profile.stats.hp = character->hp_;
-                        profile.stats.max_hp = character->max_hp_;
+                        profile.stats.max_hp = character->base_max_hp_;
                         profile.stats.exp = character->exp_.load();
                         profile.stats.lv = character->lv_;
                         

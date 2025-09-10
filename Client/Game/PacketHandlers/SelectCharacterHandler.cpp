@@ -22,6 +22,9 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->UpdateStat(PlayerStat::kHP, response->hp);
     player_subsystem->UpdateStat(PlayerStat::kMaxHP, response->max_hp);
     player_subsystem->UpdateStat(PlayerStat::kExp, response->exp);
+    player_subsystem->UpdateStat(PlayerStat::kAtk, response->atk);
+    player_subsystem->UpdateStat(PlayerStat::kDef, response->def);
+    player_subsystem->UpdateStat(PlayerStat::kDig, response->dig);
 
     player_subsystem->map_id_ = response->map_id;
     player_subsystem->spawn_position.x = response->spawn_position.x;
@@ -30,14 +33,14 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     player_subsystem->inventory_ = std::make_unique<Inventory>();
     Inventory* inventory = player_subsystem->inventory_.get();
 
-    inventory->SetSlotCapacity(Inventory::Type::kEquip, response->equip_slot_capacity);
-    inventory->SetSlotCapacity(Inventory::Type::kUse, response->use_slot_capacity);
-    inventory->SetSlotCapacity(Inventory::Type::kEtc, response->etc_slot_capacity);
+    inventory->SetSlotCapacity(InventoryType::kEquip, response->equip_slot_capacity);
+    inventory->SetSlotCapacity(InventoryType::kUse, response->use_slot_capacity);
+    inventory->SetSlotCapacity(InventoryType::kEtc, response->etc_slot_capacity);
 
     for (const auto& item : response->inventory)
     {
-        Inventory::Type type = static_cast<Inventory::Type>(item.inventory_type);
-        inventory->AddSlot(type, item.slot_index, item.item_id, item.count);
+        InventoryType type = static_cast<InventoryType>(item.inventory_type);
+        inventory->AddSlot(type, item.slot_id, item.item_id, item.count);
     }
     
     inventory->SetColor(response->color);

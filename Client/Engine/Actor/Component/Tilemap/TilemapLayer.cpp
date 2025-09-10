@@ -31,6 +31,22 @@ void TilemapLayer::UpdateShapes(const Math::Vector2& kPosition, const Math::Vect
     }
 }
 
+void TilemapLayer::AddShapes() const
+{
+    for (const auto& chunk : chunks_)
+    {
+        chunk->AddShapes();
+    }
+}
+
+void TilemapLayer::RemoveShapes() const
+{
+    for (const auto& chunk : chunks_)
+    {
+        chunk->RemoveShapes();
+    }
+}
+
 TilemapChunk* TilemapLayer::GetChunk(int32_t x, int32_t y)
 {
     uint32_t chunk_x = (x * map_tile_size_.x) / chunk_size_.x;

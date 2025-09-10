@@ -4,6 +4,7 @@
 #include "ConstantBuffer.h"
 
 OutlineRenderer::OutlineRenderer(const Microsoft::WRL::ComPtr<ID2D1Brush>& outline_brush, const Microsoft::WRL::ComPtr<ID2D1Brush>& fill_brush, float stroke) :
+    ref_count(1),
     outline_brush_(outline_brush),
     fill_brush_(fill_brush),
     stroke_(stroke)
@@ -12,31 +13,75 @@ OutlineRenderer::OutlineRenderer(const Microsoft::WRL::ComPtr<ID2D1Brush>& outli
 
 HRESULT OutlineRenderer::QueryInterface(const IID& riid, void** ppvObject)
 {
-    return S_OK;
+    if (!ppvObject) return E_POINTER;
+    if (riid == __uuidof(IUnknown) ||
+        riid == __uuidof(IDWritePixelSnapping) ||
+        riid == __uuidof(IDWriteTextRenderer))
+    {
+        *ppvObject = static_cast<IDWriteTextRenderer*>(this);
+        AddRef();
+        return S_OK;
+    }
+
+    *ppvObject = nullptr;
+    return E_NOINTERFACE;
 }
 
 ULONG OutlineRenderer::AddRef()
 {
-    return 0;
+    return ref_count.fetch_add(1, std::memory_order_relaxed) + 1;
 }
 
 ULONG OutlineRenderer::Release()
 {
-    return 0;
+    ULONG prev_count = ref_count.fetch_sub(1, std::memory_order_acquire);
+    if (prev_count == 1)
+    {
+        std::atomic_thread_fence(std::memory_order_acquire);
+        delete this;
+        return 0;
+    }
+    
+    return prev_count - 1;
 }
 
 HRESULT OutlineRenderer::IsPixelSnappingDisabled(void* clientDrawingContext, BOOL* isDisabled)
 {
+    if (!isDisabled) return E_POINTER;
+    *isDisabled = FALSE;
     return S_OK;
 }
 
 HRESULT OutlineRenderer::GetCurrentTransform(void* clientDrawingContext, DWRITE_MATRIX* transform)
 {
+    if (!transform) return E_POINTER;
+    auto* device_context = static_cast<ID2D1DeviceContext*>(clientDrawingContext);
+    if (!device_context) return E_INVALIDARG;
+
+    D2D1_MATRIX_3X2_F matrix;
+    device_context->GetTransform(&matrix);
+    transform->m11 = matrix._11;
+    transform->m12 = matrix._12;
+    transform->m21 = matrix._21;
+    transform->m22 = matrix._22;
+    transform->dx = matrix._31;
+    transform->dy = matrix._32;
     return S_OK;
 }
 
 HRESULT OutlineRenderer::GetPixelsPerDip(void* clientDrawingContext, FLOAT* pixelsPerDip)
 {
+    if (!pixelsPerDip) return E_POINTER;
+    auto* device_context = static_cast<ID2D1DeviceContext*>(clientDrawingContext);
+    if (!device_context)
+    {
+        *pixelsPerDip = 1.f;
+        return S_OK;
+    }
+
+    FLOAT scale = 1.f;
+    device_context->GetDpi(&scale, &scale);
+    *pixelsPerDip = scale / 96.f;
     return S_OK;
 }
 
@@ -56,6 +101,8 @@ HRESULT OutlineRenderer::DrawGlyphRun(void* clientDrawingContext, FLOAT baseline
     Microsoft::WRL::ComPtr<ID2D1GeometrySink> sink;
     hr = path->Open(sink.GetAddressOf());
     if (FAILED(hr)) return hr;
+
+    sink->SetFillMode(D2D1_FILL_MODE_WINDING);
 
     hr = font_face->GetGlyphRunOutline(
         glyphRun->fontEmSize,
@@ -89,7 +136,8 @@ HRESULT OutlineRenderer::DrawGlyphRun(void* clientDrawingContext, FLOAT baseline
     );
     
     Microsoft::WRL::ComPtr<ID2D1StrokeStyle> stroke_style;
-    factory->CreateStrokeStyle(props, nullptr, 0, stroke_style.GetAddressOf());
+    hr = factory->CreateStrokeStyle(props, nullptr, 0, stroke_style.GetAddressOf());
+    if (FAILED(hr)) return hr;
     
     device_context->DrawGeometry(geo.Get(), outline_brush_.Get(), stroke_, stroke_style.Get());
     device_context->FillGeometry(geo.Get(), fill_brush_.Get());

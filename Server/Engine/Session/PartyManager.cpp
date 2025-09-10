@@ -3,7 +3,7 @@
 #include "Party.h"
 #include "Player.h"
 
-PartyManager::PartyManager():
+PartyManager::PartyManager() :
     next_party_id_(1)
 {
 }
@@ -68,32 +68,30 @@ void PartyManager::AddPlayerToParty(std::uint32_t party_id, const std::shared_pt
     if (!player)
         return;
 
-    std::lock_guard<std::mutex> lock(mtx_);
-    auto it = parties_.find(party_id);
-    if (it == parties_.end())
-        return;
-
-    it->second->AddPlayer(player);
+    auto party = GetParty(party_id);
+    if (party)
+        party->AddPlayer(player);
 }
 
-void PartyManager::RemovePlayerFromParty(std::uint32_t party_id, std::uint32_t player_id)
+void PartyManager::DeletePlayerFromParty(std::uint32_t party_id, std::uint32_t character_id)
 {
-    std::lock_guard<std::mutex> lock(mtx_);
-    auto it = parties_.find(party_id);
-    if (it == parties_.end())
-        return;
-
-    if (it->second->Contains(player_id))
+    std::shared_ptr<Party> party;
     {
-        it->second->RemovePlayer(player_id);
-        
-        if (it->second->GetPlayerCount() == 0) {
-            parties_.erase(it);
-        }
+        std::lock_guard<std::mutex> lock(mtx_);
+        auto it = parties_.find(party_id);
+        if (it == parties_.end())
+            return;
+        party = it->second;
+    }
+    if (party)
+    {
+        party->DeleteMember(character_id);
+        if (party->GetPlayerCount() == 0)
+            DestroyParty(party_id);
     }
 }
 
-void PartyManager::SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_player)
+void PartyManager::SendPacket(std::uint32_t party_id, const Net::IPacket& packet, uint32_t exclusion_member)
 {
     std::shared_ptr<Party> party;
     {
@@ -103,7 +101,7 @@ void PartyManager::SendPacket(std::uint32_t party_id, const Net::IPacket& packet
         party = it->second;
     }
 
-    party->SendPacket(packet, exclusion_player);
+    party->SendPacket(packet, exclusion_member);
 }
 
 uint32_t PartyManager::AllocatePatyID()

@@ -18,7 +18,7 @@ bool TakeDamageHandler::Handle(Net::IPacket* packet)
     {
         if (auto damageable = std::dynamic_pointer_cast<IDamageable>(network_actor))
         {
-            damageable->TakeDamage(received_packet->updated_hp, received_packet->damage_amount, received_packet->server_time);
+            damageable->TakeDamage(received_packet->damage_amount, received_packet->server_time);
         }
     }
     

@@ -34,8 +34,17 @@ namespace Net
 	SERIALIZER_EXTEND(ItemInfo,
 		v.inventory_type,
 		v.item_id,
-		v.slot_index,
+		v.slot_id,
 		v.count
 		)
+
+    SERIALIZER_EXTEND(PartyMemberInfo,
+        v.character_id,
+        v.name,
+        v.body_color,
+        v.lv,
+        v.hp,
+        v.max_hp
+        )
 
 } // namespace Net

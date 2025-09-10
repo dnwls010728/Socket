@@ -1,0 +1,18 @@
+target: Sprites\Effects\EffectSheet.png
+animations:
+  - name: Idle
+    frame_rate: 10
+    loop: false
+    frames:
+      - EffectSheet_0
+      - EffectSheet_1
+      - EffectSheet_2
+      - EffectSheet_3
+      - EffectSheet_4
+      - EffectSheet_5
+      - EffectSheet_6
+      - EffectSheet_7
+      - EffectSheet_8
+      - EffectSheet_9
+      - EffectSheet_10
+      - EffectSheet_11

@@ -1,71 +1,53 @@
 ﻿#include "pch.h"
 #include "UIContainer.h"
 
+#include "UIState.h"
+
 void UIContainer::RemoveChild(UIElement* child)
 {
-    for (auto it = children_.begin(); it != children_.end(); ++it)
-    {
-        if (it->get() == child)
-        {
-            if (is_initialized_) child->Uninit();
-            children_.erase(it);
-            return;
-        }
-    }
+    if (!child) return;
+
+    child->is_pending_removal_ = true;
+    pending_remove_children_.push(child);
+    --child_count_;
 }
 
-void UIContainer::SetActive(bool active)
+void UIContainer::GetChildren(std::vector<UIElement*>& children) const
 {
-    // for (uint32_t i = 0; i < children_.size(); ++i)
-    // {
-    //     UIElement* child = children_[children_.size() - i - 1].get();
-    //     if (child) child->SetActive(active);
-    // }
-    
-    UIElement::SetActive(active);
+    for (const auto& child : children_)
+    {
+        auto* element = child.get();
+        if (IsValid(element)) children.push_back(element);
+    }
 }
 
 UIContainer::UIContainer(const std::wstring& name) :
     UIElement(name),
-    children_()
+    children_(),
+    active_children_(),
+    pending_add_children_(),
+    pending_remove_children_(),
+    child_count_(0)
 {
-}
-
-void UIContainer::Init()
-{
-    for (auto& child : children_)
-    {
-        if (child) child->Init();
-    }
-    
-    UIElement::Init();
-}
-
-void UIContainer::Uninit()
-{
-    for (auto& child : children_)
-    {
-        if (child) child->Uninit();
-    }
-    
-    UIElement::Uninit();
 }
 
 void UIContainer::Tick(float delta_time)
 {
     UIElement::Tick(delta_time);
 
-    for (auto& child : children_)
+    for (auto& child : active_children_)
     {
         if (child && child->IsActive()) child->Tick(delta_time);
     }
+
+    RemoveChildren();
 }
 
 void UIContainer::Render()
 {
     UIElement::Render();
 
-    for (const auto& child : children_)
+    for (const auto& child : active_children_)
     {
         if (child && child->IsActive()) child->Render();
     }
@@ -73,9 +55,9 @@ void UIContainer::Render()
 
 UIElement* UIContainer::RayCast(const Math::Vector2& position)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position))
             return child->RayCast(position);
     }
@@ -86,36 +68,32 @@ UIElement* UIContainer::RayCast(const Math::Vector2& position)
 bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
 {
     bool result = UIElement::OnMouseMotion(position, delta);
+    bool leave = false;
 
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (!child || !child->IsActive()) continue;
         
         bool is_in_range = child->IsInRange(position);
         bool was_in_range = child->IsInRange(position - delta);
 
+        if (!is_in_range && was_in_range) leave |= child->OnMouseLeave();
         if (is_in_range && !was_in_range) result |= child->OnMouseEnter();
-        if (!is_in_range && was_in_range)
-        {
-            result |= child->OnMouseLeave();
-            if (result) return result;
-        }
 
         if (is_in_range || was_in_range)
             result |= child->OnMouseMotion(position, delta);
-
-        if (result) return result;
     }
 
-    return result;
+    if (result) return true;
+    return leave;
 }
 
 bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position))
         {
             if (child->OnMouseButton(position, button, is_pressed, timestamp)) return true;
@@ -127,9 +105,9 @@ bool UIContainer::OnMouseButton(const Math::Vector2& position, MouseButton butto
 
 bool UIContainer::OnScroll(const Math::Vector2& position, const Math::Vector2& delta)
 {
-    for (uint32_t i = 0; i < children_.size(); ++i)
+    for (uint32_t i = 0; i < active_children_.size(); ++i)
     {
-        UIElement* child = children_[children_.size() - i - 1].get();
+        UIElement* child = active_children_[active_children_.size() - i - 1];
         if (child && child->IsActive() && child->IsInRange(position) && child->OnScroll(position, delta))
             return true;
     }
@@ -164,13 +142,64 @@ UIElement* UIContainer::AddChild_Internal(const rttr::type& type, const std::wst
     {
         UIElement* child = var.get_value<UIElement*>();
         child->parent_ = this;
-        if (is_initialized_) child->Init();
-        
+
         children_.push_back(std::unique_ptr<UIElement>(child));
+        pending_add_children_.push(child);
         return child;
     }
     
     return nullptr;
+}
+
+void UIContainer::AddChildren()
+{
+    for (const auto& child : children_)
+    {
+        if (auto* container = dynamic_cast<UIContainer*>(child.get()))
+            container->AddChildren();
+    }
+    
+    while (!pending_add_children_.empty())
+    {
+        auto* child = pending_add_children_.front();
+        child->Init();
+        
+        active_children_.push_back(child);
+        pending_add_children_.pop();
+
+        ++child_count_;
+    }
+}
+
+void UIContainer::RemoveChildren()
+{
+    for (const auto& child : children_)
+    {
+        if (auto* container = dynamic_cast<UIContainer*>(child.get()))
+            container->RemoveChildren();
+    }
+    
+    while (!pending_remove_children_.empty())
+    {
+        auto* child = pending_remove_children_.front();
+        pending_remove_children_.pop();
+
+        if (auto* state = UI::Get()->GetState())
+        {
+            state->ClearFocus(child);
+            state->ClearDrag(child);
+        }
+
+        {
+            auto it = std::ranges::find(active_children_, child);
+            if (it != active_children_.end()) active_children_.erase(it);
+        }
+
+        {
+            auto it = std::ranges::find_if(children_, [&](const std::unique_ptr<UIElement>& e) { return e.get() == child; });
+            if (it != children_.end()) children_.erase(it);
+        }
+    }
 }
 
 RTTR_REGISTRATION

@@ -53,9 +53,38 @@ bool UIElement::IsDescendantOf(UIElement* ancestor) const
     return false;
 }
 
+void UIElement::SetActive(bool is_active)
+{
+    if (!is_initialized_)
+    {
+        is_active_ = is_active;
+        return;
+    }
+    
+    if (auto* state = UI::Get()->GetState())
+    {
+        if (is_active_ != is_active)
+            state->ActivateElement(this, is_active);
+    }
+}
+
+void UIElement::RemoveFromParent()
+{
+    if (parent_)
+    {
+        parent_->RemoveChild(this);
+        return;
+    }
+
+    if (auto* state = UI::Get()->GetState())
+        state->RemoveElement(this);
+}
+
 UIElement::UIElement(const std::wstring& name) :
     name_(name),
+    is_dirty_(false),
     is_initialized_(false),
+    is_pending_removal_(false),
     is_active_(true),
     is_focused_(false),
     is_ignore_raycast(false),
@@ -76,6 +105,7 @@ void UIElement::Render()
 void UIElement::Init()
 {
     is_initialized_ = true;
+    MakeDirty();
 }
 
 UIElement* UIElement::RayCast(const Math::Vector2& position)

@@ -6,6 +6,9 @@
 #include "UIInventory.h"
 #include "UIItemTooltip.h"
 #include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
+#include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIInGameState.h"
 #include "UI/UIState.h"
@@ -18,8 +21,6 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     UIContainer(name),
     ui_inventory_(nullptr),
     tooltip_(nullptr),
-    icon_(nullptr),
-    count_text_(nullptr),
     slot_id_(0),
     item_id_(0),
     last_time_(0.f)
@@ -52,7 +53,13 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     if (item_id > 0)
     {
         UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (ui_sprite) icon_->SetSprite(ui_sprite);
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+        }
+
+        icon_->SetSprite(ui_sprite);
 
         count_text_->SetText(std::to_wstring(count));
         count_text_->SetActive(true);
@@ -88,7 +95,32 @@ bool UIInventorySlot::OnMouseButton(const Math::Vector2& position, MouseButton b
 
     if (timestamp - last_time_ < .2f)
     {
-        Logger::Print(L"Double click!");
+        InventoryType type = ui_inventory_->tab_;
+        if (type == InventoryType::kEquip)
+        {
+            uint32_t type_index = (item_id_ / 10000) % 10; // 1 - 모자, 2 - 갑옷, 3 - 무기
+            
+            EquipItemPacket packet;
+            packet.first_slot = slot_id_;
+            packet.second_slot = type_index;
+            SessionSubsystem::Get()->SendPacket(packet);
+        }
+        else if (type == InventoryType::kUse)
+        {
+            Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\Use.mp3");
+            if (audio) AudioManager::Get()->PlaySound2D(audio);
+            
+            UseItemPacket packet;
+            packet.slot_id = slot_id_;
+            SessionSubsystem::Get()->SendPacket(packet);
+        }
+        
+        if (tooltip_)
+        {
+            tooltip_->SetActive(false);
+            tooltip_ = nullptr;
+        }
+        
         last_time_ = 0.f;
         return true;
     }
@@ -116,7 +148,6 @@ bool UIInventorySlot::OnMouseMotion(const Math::Vector2& position, const Math::V
     if (overflow_height > 0) tooltip_position.y -= overflow_height;
 
     tooltip_->SetAbsolutePosition(tooltip_position);
-    tooltip_->Set(item_id_);
 
     return true;
 }
@@ -129,6 +160,7 @@ bool UIInventorySlot::OnMouseEnter()
     if (!state) return false;
 
     tooltip_ = state->GetItemTooltip();
+    tooltip_->Set(item_id_);
     tooltip_->SetActive(true);
     
     return true;
@@ -194,14 +226,14 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
     UIElement* element = UI::Get()->GetState()->RayCast(position);
     if (!element)
     {
-        Inventory::Type type = ui_inventory_->tab_;
-        int32_t count = ui_inventory_->inventory_->GetItemCount(type, slot_id_);
+        InventoryType type = ui_inventory_->tab_;
+        int32_t count = PlayerSubsystem::Get()->GetInventory()->GetItemCount(type, slot_id_);
 
         if (count == 1)
         {
-            DropItemRequest request;
+            DropItemPacket request;
             request.inventory_type = static_cast<uint8_t>(type);
-            request.slot_index = slot_id_;
+            request.slot_id = slot_id_;
             request.count = 1;
             SessionSubsystem::Get()->SendPacket(request);
         }
@@ -227,8 +259,8 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                         return false;
                     }
                     
-                    Inventory::Type temp_type = ui_inventory_->tab_;
-                    int32_t temp_count = ui_inventory_->inventory_->GetItemCount(temp_type, slot_id_);
+                    InventoryType temp_type = ui_inventory_->tab_;
+                    int32_t temp_count = PlayerSubsystem::Get()->GetInventory()->GetItemCount(temp_type, slot_id_);
                     if (std::stoll(input_text) > temp_count)
                     {
                         temp_param.caption = std::to_wstring(temp_count) + L" 이하의 숫자만 가능합니다.";
@@ -236,9 +268,9 @@ bool UIInventorySlot::OnDragEnd(const Math::Vector2& position)
                         return false;
                     }
                     
-                    DropItemRequest request;
+                    DropItemPacket request;
                     request.inventory_type = static_cast<uint8_t>(temp_type);
-                    request.slot_index = slot_id_;
+                    request.slot_id = slot_id_;
                     request.count = std::stoi(input_text);
                     SessionSubsystem::Get()->SendPacket(request);
                     

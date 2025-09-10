@@ -18,8 +18,7 @@ UIInventory::UIInventory(const std::wstring& name) :
     UIContainer(name),
     slots_(),
     color_text_(nullptr),
-    inventory_(nullptr),
-    tab_(Inventory::Type::kEquip)
+    tab_(InventoryType::kEquip)
 {
     SetSize({164.f, 246.f});
     
@@ -51,10 +50,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     equip_button->SetText(L"장비");
     equip_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kEquip) return;
+        if (tab_ == InventoryType::kEquip) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kEquip;
+        tab_ = InventoryType::kEquip;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -74,10 +73,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     use_button->SetText(L"소비");
     use_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kUse) return;
+        if (tab_ == InventoryType::kUse) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kUse;
+        tab_ = InventoryType::kUse;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -97,10 +96,10 @@ UIInventory::UIInventory(const std::wstring& name) :
     etc_button->SetText(L"기타");
     etc_button->OnClick([&]()
     {
-        if (tab_ == Inventory::Type::kEtc) return;
+        if (tab_ == InventoryType::kEtc) return;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::White);
         
-        tab_ = Inventory::Type::kEtc;
+        tab_ = InventoryType::kEtc;
         tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
         
         for (uint32_t i = 0; i < 128; ++i)
@@ -109,9 +108,9 @@ UIInventory::UIInventory(const std::wstring& name) :
         }
     });
 
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEquip)] = equip_button;
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kUse)] = use_button;
-    tab_buttons_[static_cast<uint8_t>(Inventory::Type::kEtc)] = etc_button;
+    tab_buttons_[static_cast<uint8_t>(InventoryType::kEquip)] = equip_button;
+    tab_buttons_[static_cast<uint8_t>(InventoryType::kUse)] = use_button;
+    tab_buttons_[static_cast<uint8_t>(InventoryType::kEtc)] = etc_button;
 
     scroll_box_ = AddChild<UIScrollBox>(UIScrollBox::StaticClass(), L"ScrollBox");
     scroll_box_->SetRelativePosition({ 8.f, 48.f });
@@ -166,15 +165,17 @@ void UIInventory::SetActive(bool active)
     }
 }
 
-void UIInventory::UpdateSlot(uint32_t slot_index) const
+void UIInventory::UpdateSlot(uint32_t slot_id) const
 {
-    if (!inventory_) return;
-    if (uint32_t item_id = inventory_->GetItemID(tab_, slot_index))
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    if (!inventory) return;
+    
+    if (uint32_t item_id = inventory->GetItemID(tab_, slot_id))
     {
-        uint32_t count = inventory_->GetItemCount(tab_, slot_index);
-        slots_[slot_index - 1]->UpdateSlot(item_id, count);
+        uint32_t count = inventory->GetItemCount(tab_, slot_id);
+        slots_[slot_id - 1]->UpdateSlot(item_id, count);
     }
-    else slots_[slot_index - 1]->ResetSlot();
+    else slots_[slot_id - 1]->ResetSlot();
 }
 
 void UIInventory::UpdateColor(uint32_t color) const
@@ -193,16 +194,22 @@ void UIInventory::Init()
     background_->SetSize(GetSize());
     
     UIContainer::Init();
-    
-    PublisherSubsystem::Get()->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 
-    inventory_ = PlayerSubsystem::Get()->GetInventory();
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+
     for (uint32_t i = 0; i < 128; ++i)
     {
         UpdateSlot(i + 1);
     }
 
-    UpdateColor(inventory_->GetColor());
+    auto inventory = PlayerSubsystem::Get()->GetInventory();
+    UpdateColor(inventory->GetColor());
+    
     tab_buttons_[static_cast<uint8_t>(tab_)]->SetTextColor(Math::Color::Yellow);
     
 }
@@ -210,8 +217,13 @@ void UIInventory::Init()
 void UIInventory::Uninit()
 {
     UIContainer::Uninit();
-
-    PublisherSubsystem::Get()->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+    
+    PublisherSubsystem* subsystem = PublisherSubsystem::Get();
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
@@ -238,10 +250,10 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
     uint8_t current_tab = static_cast<uint8_t>(tab_);
     tab_buttons_[current_tab]->SetTextColor(Math::Color::White);
     
-    current_tab = (current_tab % (static_cast<uint8_t>(Inventory::Type::kCount) - 2)) + 1;
+    current_tab = (current_tab % (static_cast<uint8_t>(InventoryType::kCount) - 2)) + 1;
     tab_buttons_[current_tab]->SetTextColor(Math::Color::Yellow);
     
-    tab_ = static_cast<Inventory::Type>(current_tab);
+    tab_ = static_cast<InventoryType>(current_tab);
     
     for (uint32_t i = 0; i < 128; ++i)
     {
@@ -253,7 +265,30 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
 
 void UIInventory::OnEvent(const EventData& data)
 {
-    if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
+    if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
+    {
+        if (item_added->inventory_type != tab_) return;
+        UpdateSlot(item_added->slot_id);
+    }
+    else if (const auto* count_changed = dynamic_cast<const ItemCountChangedData*>(&data))
+    {
+        if (count_changed->inventory_type != tab_) return;
+        UpdateSlot(count_changed->slot_id);
+    }
+    else if (const auto* item_moved = dynamic_cast<const ItemMovedData*>(&data))
+    {
+        if (item_moved->first_inventory_type == tab_)
+            UpdateSlot(item_moved->first_slot_index);
+        
+        if (item_moved->second_inventory_type == tab_)
+            UpdateSlot(item_moved->second_slot_index);
+    }
+    else if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
+    {
+        if (item_removed->inventory_type != tab_) return;
+        UpdateSlot(item_removed->slot_id);
+    }
+    else if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
     {
         UpdateColor(color_update->color);
     }

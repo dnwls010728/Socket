@@ -2,6 +2,7 @@
 #include "GameEngine.h"
 
 #include "GameInstance.h"
+#include "PostProcessingSettings.h"
 #include "Level/World.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
@@ -115,10 +116,21 @@ void GameEngine::Tick(float delta_time)
 void GameEngine::Render(float alpha)
 {
     ImGui::Render();
+
+    Renderer::Get()->BeginRTT();
+    World::Get()->Render(alpha);
+    Renderer::Get()->EndRTT();
     
     Renderer::Get()->BeginRender(game_window_);
-    World::Get()->Render(alpha);
+
+    PostProcessingSettings* settings = PostProcessingSettings::Get();
     
+    float blur_radius = settings->GetBlurRadius();
+    float vignette_strength = settings->GetVignetteStrength();
+    float gamma = settings->GetGamma();
+    float grayscale = settings->GetGrayscale();
+    
+    Renderer::Get()->DrawPostProcess(blur_radius, vignette_strength, gamma, grayscale);
     Renderer::Get()->BeginRenderD2D(game_window_);
     UI::Get()->Render();
     Renderer::Get()->EndRenderD2D();
@@ -130,7 +142,6 @@ void GameEngine::Render(float alpha)
 
 void GameEngine::EndFrame()
 {
-    World::Get()->SpawnActors();
-    World::Get()->ProcessActorActivation();
-    World::Get()->DestroyActors();
+    World::Get()->EndFrame();
+    UI::Get()->EndFrame();
 }

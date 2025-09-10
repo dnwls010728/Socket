@@ -11,6 +11,7 @@ public:
     Damage(const std::wstring& name);
     virtual ~Damage() override = default;
 
+    void SetDamage(int damage);
 protected:
     virtual void Tick(float delta_time) override;
 

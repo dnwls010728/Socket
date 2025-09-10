@@ -83,6 +83,12 @@ float Math::PI()
     return std::numbers::pi_v<float>;
 }
 
+int32_t Math::Sign(int32_t a)
+{
+    if (a < 0) return -1;
+    return 1;
+}
+
 int32_t Math::RandRange(int32_t min, int32_t max)
 {
     if (min > max)

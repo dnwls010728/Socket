@@ -15,11 +15,55 @@ struct StatUpdateData : EventData
     virtual ~StatUpdateData() override = default;
 };
 
+struct ItemAddedData : EventData
+{
+    InventoryType inventory_type;
+    uint32_t slot_id;
+    uint32_t item_id;
+    int32_t count;
+    
+    virtual ~ItemAddedData() override = default;
+};
+
+struct ItemCountChangedData : EventData
+{
+    InventoryType inventory_type;
+    uint32_t slot_id;
+    int32_t count;
+    
+    virtual ~ItemCountChangedData() override = default;
+};
+
+struct ItemMovedData : EventData
+{
+    InventoryType first_inventory_type;
+    uint32_t first_slot_index;
+    InventoryType second_inventory_type;
+    uint32_t second_slot_index;
+    
+    virtual ~ItemMovedData() override = default;
+};
+
+struct ItemRemovedData : EventData
+{
+    InventoryType inventory_type;
+    uint32_t slot_id;
+    
+    virtual ~ItemRemovedData() override = default;
+};
+
 struct ColorUpdateData : EventData
 {
     int32_t color;
     
     virtual ~ColorUpdateData() override = default;
+};
+
+struct BuffExpiredData : EventData
+{
+    int32_t buff_id;
+    
+    virtual ~BuffExpiredData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -33,7 +77,12 @@ public:
     {
         kNone = 0,
         kStatUpdated,
-        kColorUpdated
+        kItemAdded,
+        kItemCountChanged,
+        kItemMoved,
+        kItemRemoved,
+        kColorUpdated,
+        kBuffExpired
     };
     
     PublisherSubsystem();

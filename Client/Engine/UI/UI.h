@@ -26,6 +26,7 @@ private:
     void Tick(float delta_time);
     void Render();
     void OnEvent(const Event& event);
+    void EndFrame() const;
 
     UISprite* cursor_sprite_;
 

@@ -3,6 +3,7 @@
 
 #include <CommonObject.h>
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
@@ -22,6 +23,9 @@ MobBase::MobBase(const std::wstring& name) :
     fade_timer_(0.f)
 {
     SetLayer(ActorLayer::kMob);
+    
+    collider_->SetOffset({ 0.f, .5f });
+    collider_->SetSize({1.f, 1.f});
     
 }
 

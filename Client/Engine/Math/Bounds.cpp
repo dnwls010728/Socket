@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Math/Bounds.h"
 
-Bounds::Bounds(Math::Vector2 center, Math::Vector2 size) :
+Bounds::Bounds(const Math::Vector2& center, const Math::Vector2& size) :
     center(center),
     size(size)
 {
@@ -20,7 +20,7 @@ void Bounds::Expand(float amount)
     max = center + extents;
 }
 
-Bounds Bounds::Intersect(Bounds a, Bounds b)
+Bounds Bounds::Intersect(const Bounds& a, const Bounds& b)
 {
     Math::Vector2 min = Math::Vector2::Max(a.min, b.min);
     Math::Vector2 max = Math::Vector2::Min(a.max, b.max);
@@ -28,7 +28,7 @@ Bounds Bounds::Intersect(Bounds a, Bounds b)
     return {(min + max) * .5f, max - min};
 }
 
-bool Bounds::Contains(Bounds a, Bounds b)
+bool Bounds::Contains(const Bounds& a, const Bounds& b)
 {
     if (a.max.x < b.min.x || a.min.x > b.max.x) return false;
     if (a.max.y < b.min.y || a.min.y > b.max.y) return false;

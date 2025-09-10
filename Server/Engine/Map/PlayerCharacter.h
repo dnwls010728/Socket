@@ -1,11 +1,18 @@
 ﻿#pragma once
 #include <mutex>
+#include <unordered_map>
+#include <memory>
 
+#include "KeyMapping.h"
+#include "Buff/BuffManager.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
+#include "Session/Player/Inventory/Inventory.h"
 #include "Utils/TimedBool.h"
+#include "Skill/SkillManager.h"
 
+class EquipItem;
 class Portal;
 
 namespace Net
@@ -13,14 +20,42 @@ namespace Net
     struct IPacket;
 }
 
-class Inventory;
+class OLD_Inventory;
 class Player;
+enum class PartyStatType : uint8_t;
+class SkillManager;
 
 ENUM_CLASS_FLAGS(PlayerStat)
 
 class PlayerCharacter : public MapObject
 {
 public:
+    struct EquipStat
+    {
+        int32_t max_hp = 0;
+        int32_t atk = 0;
+        int32_t def = 0;
+        int32_t dig = 0;
+
+        EquipStat& operator+=(const EquipStat& rhs)
+        {
+            max_hp += rhs.max_hp;
+            atk += rhs.atk;
+            def += rhs.def;
+            dig += rhs.dig;
+            return *this;
+        }
+
+        EquipStat& operator-=(const EquipStat& rhs)
+        {
+            max_hp -= rhs.max_hp;
+            atk -= rhs.atk;
+            def -= rhs.def;
+            dig -= rhs.dig;
+            return *this;
+        }
+    };
+    
     PlayerCharacter();
     virtual ~PlayerCharacter() override;
 
@@ -32,6 +67,7 @@ public:
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(int32_t damage_amount);
+    void ApplyHPDelta(int32_t hp_delta);
 
     bool Disconnect();
 
@@ -47,15 +83,26 @@ public:
     inline void SetBodyColor(const std::wstring& color) { body_color_ = color; }
     inline const std::wstring& GetBodyColor() const { return body_color_; }
     
-    inline void SetMapID(int32_t map_id) { map_id_ = map_id; }
-    inline int32_t GetMapID() const { return map_id_; }
+    inline void SetMapID(uint32_t map_id) { map_id_ = map_id; }
+    inline uint32_t GetMapID() const { return map_id_; }
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
-
-    inline void SetPartyID(int32_t party_id) { party_id_ = party_id; }
-    inline uint32_t GetPartyID() const { return party_id_; }
     
-    inline Inventory* GetInventory() const { return inventory_.get(); }
+    inline Inventory* GetInventory(InventoryType type) const { return inventories_[static_cast<uint8_t>(type)].get(); }
+
+    inline const std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)>& GetInventories() const { return inventories_; }
+
+    void SetPartyID(int32_t party_id);
+    inline uint32_t GetPartyID() const { return party_id_; }
+
+    inline int32_t GetLv() const { return lv_; }
+    inline int32_t GetHP() const { return hp_; }
+    inline int32_t GetMaxHP() const { return effective_max_hp_; }
+    inline int32_t GetAtk() const { return effective_atk_; }
+    inline int32_t GetDef() const { return effective_def_; }
+    inline int32_t GetDig() const { return effective_dig_; }
+    
+    inline bool IsFlipped() const { return is_flipped_; }
 
 protected:
     friend class ServerManager;
@@ -68,6 +115,11 @@ protected:
     void ExitMap();
     void UpdateDatabase();
     void GainExp(int32_t amount);
+    void NotifyPartyStatChange(PartyStatType stat, int32_t value, bool exclude_self = false);
+    void ComputeStats();
+    void SendStatUpdateIfNeeded();
+    void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
+    void RemoveEquipStats(uint32_t slot);
 
     virtual void Tick(float delta_time) override;
     
@@ -78,22 +130,44 @@ protected:
 
     std::wstring name_;
     std::wstring body_color_;
+    std::wstring current_animation_;
 
-    int32_t map_id_;
+    uint32_t map_id_;
+    
     int32_t lv_;
+    
     int32_t hp_;
-    int32_t max_hp_;
+    int32_t base_max_hp_;
+
+    EquipStat total_equip_stats_;
+    
+    int32_t effective_max_hp_;
+    int32_t effective_atk_;
+    int32_t effective_def_;
+    int32_t effective_dig_;
 
     bool is_dead_;
-
+    bool is_flipped_;
+    bool is_placing_;
+    
     std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
 
-    std::unique_ptr<Inventory> inventory_;
+    std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
+
+    std::map<uint32_t, KeyMapping> key_map_;
+
+    BuffManager buff_manager_;
+    SkillManager skill_manager_;
     
     TimedBool is_invincible_;
 
     std::mutex dropped_item_mutex_;
+    std::mutex effect_mutex_;
+
+    std::unordered_map<uint32_t, EquipStat> equip_stats_;
+
+    float buff_timer_;
 };

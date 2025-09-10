@@ -64,14 +64,22 @@ void CharacterBase::Speak(const std::wstring& message, float duration)
 void CharacterBase::BeginPlay()
 {
     NetworkActor::BeginPlay();
+    
+    Math::Vector2 screen_position = Renderer::Get()->WorldToScreen(GetTransform()->GetPosition());
 
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {
         name_tag_ = state->AddElement<UINameTag>(UINameTag::StaticClass(), L"NameTag");
         name_tag_->SetText(character_name_);
+        
+        Math::Vector2 name_tag_offset = { -name_tag_->GetSize().x * .5f, 4.f };
+        name_tag_->SetAbsolutePosition(screen_position + name_tag_offset);
 
         chat_balloon_ = state->AddElement<UIChatBalloon>(UIChatBalloon::StaticClass(), L"ChatBalloon");
         chat_balloon_->SetActive(false);
+        
+        Math::Vector2 chat_balloon_offset = { -chat_balloon_->GetSize().x * .5f, -chat_balloon_->GetSize().y - 64.f };
+        chat_balloon_->SetAbsolutePosition(screen_position + chat_balloon_offset);
     }
 }
 

@@ -19,6 +19,7 @@
 #include "Math/Rect.h"
 #include "Windows/WindowsWindow.h"
 
+class PostProcessShader;
 class UISprite;
 class DefaultPixelShader;
 class DefaultVertexShader;
@@ -76,9 +77,11 @@ public:
     
     // TEST
     bool CreateRenderToTexture();
+    bool CreatePostProcessResources();
 
     void BeginRTT();
     void EndRTT();
+    void DrawPostProcess(float blur_radius = 0.f, float vignette_strength = 0.f, float gamma = 1.f, float grayscale = 0.f);
 
     FORCEINLINE const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetSRV() const { return srv_; }
 
@@ -149,6 +152,16 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D> texture_;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv_;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> post_vertex_buffer_;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> post_index_buffer_;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> post_sampler_state_;
+    
+    std::shared_ptr<DefaultVertexShader> post_vertex_shader_;
+    std::shared_ptr<PostProcessShader> post_pixel_shader_;
+    
+    uint32_t rtt_width_ = 0;
+    uint32_t rtt_height_ = 0;
 
     Microsoft::WRL::ComPtr<IDWriteFontSetBuilder1> font_set_builder_;
 

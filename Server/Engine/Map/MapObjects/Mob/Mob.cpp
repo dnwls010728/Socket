@@ -15,7 +15,7 @@
 #include "States/MobWalkState.h"
 
 Mob::Mob(const MobData& mob_data) :
-    mob_id_(mob_data.mob_id),
+    mob_id_(mob_data.id),
     damage_(mob_data.stats.dmg),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
@@ -48,6 +48,8 @@ void Mob::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     MobInfo& info = packet.object_info.info.mob;
     info.mob_id = mob_id_;
+    info.is_fliped = is_flipped_;
+    wcscpy_s(info.animation_name, animation_.c_str());
     
     player->SendPacket(packet);
 }
@@ -183,15 +185,32 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::TakeDamage(uint32_t attacker, uint32_t damage)
+void Mob::TakeDamage(uint32_t attacker, int32_t damage)
+{
+    TakeMultiDamage(attacker, {damage});
+}
+
+void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
 {
     if (hp_ <= 0) return;
 
     const auto& player = map_->FindPlayer(attacker);
-    state_machine_->ChangeState(hit_state_);
 
+    state_machine_->ChangeState(hit_state_);
     last_animation_ = animation_;
-    hp_ -= damage;
+    for (int32_t damage : damages)
+    {
+        hp_ -= damage;
+    }
+    
+    if (player)
+    {
+        ObjectTakeDamagePacket packet;
+        packet.object_id = object_id_;
+        packet.damage_amount = damages;
+        player->SendPacket(packet);
+    }
+    
     if (hp_ <= 0)
     {
         death_event_(std::dynamic_pointer_cast<Mob>(shared_from_this()));
