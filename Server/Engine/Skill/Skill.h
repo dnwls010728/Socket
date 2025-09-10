@@ -23,13 +23,17 @@ public:
     
     inline bool IsPassive() const { return is_passive_; }
 
-    inline void SetCoolDown(float cool_down);
-    inline float GetCoolDown() const;
-    inline bool IsCoolDown() const;
-    inline float GetCoolDownLeft() const;
+    void SetCoolDown(float cool_down);
+    float GetCoolDown() const;
+    bool IsCoolDown() const;
+    float GetCoolDownElapsed() const;
+    float GetCoolDownLeft() const;
+    void SetCoolDownLeft(float cool_down_left);
     
     inline int32_t GetLevel() const { return level_; }
     inline void SetLevel(int32_t level) { level_ = level; }
+
+    int32_t GetDuration() const { return data_ ? data_->duration : 0; }
 
 protected:
     virtual void OnStart() = 0;

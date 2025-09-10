@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include <memory>
 #include <cstdint>
+#include <functional>
+
 #include "Skill.h"
 
 class Skill;
@@ -16,9 +18,16 @@ public:
     void AddSkill(uint32_t skill_id, int32_t level);
     bool UseSkill(uint32_t skill_id);
     void Tick(float delta_time);
+    
+    bool GetSkill(uint32_t skill_id, const std::function<void(Skill* skill)>& callback) const;
+    bool HasSkill(uint32_t skill_id) const;
+    void RemoveSkill(uint32_t skill_id);
+    void ClearSkills();
+    void EnumSkills(const std::function<void(Skill* skill)>& callback) const;
 
 private:
     PlayerCharacter* owner_;
     std::unordered_map<uint32_t, std::unique_ptr<Skill>> skills_;
+    mutable std::mutex skills_mutex_;
 };
 

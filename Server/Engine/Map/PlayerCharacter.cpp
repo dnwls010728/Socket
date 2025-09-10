@@ -104,7 +104,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
             inventories[i]->SetCapacity(128);
         }
-
+        
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
             statement->setUInt(1, character->object_id_);
@@ -147,12 +147,22 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
-                uint32_t skill_id = result->getUInt("skill_id");
+                int32_t skill_id = result->getInt("skill_id");
                 int32_t skill_level = result->getInt("skill_level");
-
                 character->skill_manager_.AddSkill(skill_id, skill_level);
+                character->skill_manager_.GetSkill(skill_id, [&result](Skill* skill)
+                {
+                    std::time_t now = std::time(nullptr);
+                    int start_time = result->getInt("start_time");
+                    float elapsed = static_cast<float>(now - start_time);
+                    float remain  = skill->GetCoolDown() - elapsed;
+                    
+                    float cooldown_left = Math::Max(remain, 0.f);
+                   skill->SetCoolDownLeft(cooldown_left);
+                });
             }
         }
+        
 
         character->map_ = World::Get()->GetMap(character->map_id_);
 
@@ -226,6 +236,10 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
         statement->executeUpdate();
         
         statement.reset(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
+        statement->setUInt(1, character_id);
+        statement->executeUpdate();
+
+        statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
     }
@@ -993,6 +1007,30 @@ void PlayerCharacter::UpdateDatabase()
             statement->setInt(8, color_.load());
             statement->setUInt(9, object_id_);
             statement->executeUpdate();
+
+            {
+                statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
+                statement->setUInt(1, object_id_);
+                statement->executeUpdate();
+
+                statement.reset(connection->prepareStatement("INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) VALUES (?, ?, ?, ?, ?)"));
+
+                skill_manager_.EnumSkills([&](Skill* skill)
+                {
+                    float elapsed = skill->GetCoolDownElapsed();
+
+                    std::time_t now = std::time(nullptr);
+                    std::time_t start_time = now - static_cast<std::time_t>(elapsed);
+
+                    statement->setUInt(1, object_id_);
+                    statement->setUInt(2, skill->GetID());
+                    statement->setInt(3,skill->GetLevel());
+                    statement->setInt(4, skill->GetDuration());
+                    statement->setInt(5, start_time);
+                    statement->executeUpdate();
+                });
+            }
+            
         }
     }
     catch (sql::SQLException& e)

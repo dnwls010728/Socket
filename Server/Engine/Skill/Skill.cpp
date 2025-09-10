@@ -28,13 +28,24 @@ float Skill::GetCoolDown() const
 
 bool Skill::IsCoolDown() const
 {
-    return GetCoolDownLeft() < GetCoolDown();
+    return GetCoolDownElapsed() < GetCoolDown();
+}
+
+float Skill::GetCoolDownElapsed() const
+{
+    float now = Net::GetClientTime();
+    return now - last_used_time_;
 }
 
 float Skill::GetCoolDownLeft() const
 {
+    return std::max(0.0f, GetCoolDown() - GetCoolDownElapsed());
+}
+
+void Skill::SetCoolDownLeft(float cool_down_left)
+{
     float now = Net::GetClientTime();
-    return now - last_used_time_;
+    last_used_time_ = now - (GetCoolDown() - cool_down_left);
 }
 
 void Skill::Start()
