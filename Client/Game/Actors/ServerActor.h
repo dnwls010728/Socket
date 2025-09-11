@@ -23,26 +23,32 @@ public:
         std::wstring  animation;
         float         server_time;
     };
+
+    struct DamageSnapshot
+    {
+        int damage_amount;
+        Math::Vector2 position;
+    };
     
     ServerActor(const std::wstring& name);
     virtual ~ServerActor() override = default;
 
     void SetFlip(bool is_fliped);
     void PlayAnimation(const std::wstring& animation);
-    void OnTakeDamage(int damage_amount);
+    void TakeDamage(std::vector<int> damage_amount);
     
 protected:
     virtual void PhysicsTick(float delta_time) override;
     virtual void Tick(float delta_time) override;
     virtual void ReceivePacket(Net::IPacket* packet) override;
+    virtual void OnShowDamage(const DamageSnapshot& damage_snapshot);
     
     std::deque<MovementSnapshot>  movement_snapshots_;
     std::deque<AnimationSnapshot> animation_snapshots_;
 
     AnimationSnapshot prev_animation;
-
-    std::vector<float> take_damage_history_;
-    std::deque<float> pending_damages_;
+    
+    std::deque<DamageSnapshot> pending_damages_;
     float last_damage_spawn_time_;
 
 #pragma region 컴포넌트

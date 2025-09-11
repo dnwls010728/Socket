@@ -19,6 +19,6 @@ bool ObjectTakeDamageHandler::Handle(Net::IPacket* packet)
     ServerActor* server_actor = dynamic_cast<ServerActor*>(object.get());
     if (!server_actor) return true;
 
-    server_actor->OnTakeDamage(received_packet->damage_amount);
+    server_actor->TakeDamage(received_packet->damage_amount);
     return true;
 }

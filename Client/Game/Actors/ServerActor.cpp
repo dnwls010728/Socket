@@ -15,7 +15,6 @@
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
     prev_animation{0,},
-    take_damage_history_(10, 0.f),
     last_damage_spawn_time_(0.f)
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
@@ -42,10 +41,16 @@ void ServerActor::PlayAnimation(const std::wstring& animation)
     animation_snapshots_.push_back(snapshot);
 }
 
-void ServerActor::OnTakeDamage(int damage_amount)
+void ServerActor::TakeDamage(std::vector<int> damage_amount)
 {
-    float now = Net::GetClientTime();
-    pending_damages_.push_back( damage_amount);
+    for (int i = 0; i < damage_amount.size(); ++i)
+    {
+        DamageSnapshot snapshot;
+        snapshot.damage_amount = damage_amount[i];
+        snapshot.position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
+        snapshot.position.y += i * 0.5f;
+        pending_damages_.push_back(snapshot);
+    }
 }
 
 void ServerActor::PhysicsTick(float delta_time)
@@ -113,28 +118,8 @@ void ServerActor::Tick(float delta_time)
     {
         if (now - last_damage_spawn_time_ >= 0.1f)
         {
-            const auto& damage_amount = pending_damages_.front();
-
-            for (size_t i = 0; i < take_damage_history_.size(); ++i)
-            {
-                if (take_damage_history_[i] <= now)
-                {
-                    std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
-                    if (IsValid(damage))
-                    {
-                        damage->SetDamage(damage_amount);
-
-                        Math::Vector2 position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
-                        position.y += static_cast<float>(i * 0.5f);
-                        damage->GetTransform()->SetPosition(position);
-
-                        take_damage_history_[i] = now + 1.5f;
-                        last_damage_spawn_time_ = now;
-                    }
-                    break;
-                }
-            }
-
+            const auto& damage_snapshot = pending_damages_.front();
+            OnShowDamage(damage_snapshot);
             pending_damages_.pop_front();
         }
     }
@@ -174,6 +159,18 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
             animation_snapshots_.push_back(snapshot);
         }
         break;
+    }
+}
+
+void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
+{
+    float now = Net::GetClientTime();
+    std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
+    if (IsValid(damage))
+    {
+        damage->SetDamage(damage_snapshot.damage_amount);
+        damage->GetTransform()->SetPosition(damage_snapshot.position);
+        last_damage_spawn_time_ = now;
     }
 }
 
