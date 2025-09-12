@@ -5,6 +5,7 @@
 
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/InputActions/InputActions.h"
 
 bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 {
@@ -44,6 +45,12 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     }
     
     inventory->SetColor(response->color);
+
+    InputActions* input_actions = InputActions::Get();
+    for (const auto& key : response->key_bindings)
+    {
+        input_actions->Bind(key.scancode, key.type, key.action);
+    }
     
     SessionSubsystem::Get()->SetState(SessionState::kInGame);
     World::Get()->OpenLevel(L"Game");

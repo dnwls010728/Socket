@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "KeyType.h"
+#include "Scancode.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 class InputActions : public GameInstanceSubsystem
@@ -9,7 +10,7 @@ class InputActions : public GameInstanceSubsystem
 public:
     struct Mapping
     {
-        KeyType type;
+        uint8_t type;
         int32_t action;
 
         bool operator==(const Mapping& other) const
@@ -25,8 +26,14 @@ public:
 
     InputActions();
     virtual ~InputActions() override = default;
-
+    
     Mapping GetMapping(uint32_t scancode) const;
+    Mapping GetMapping(Scancode scancode) const;
+    
+    void Bind(uint32_t scancode, uint8_t type, int32_t action);
+    void Bind(Scancode scancode, KeyType type, int32_t action);
+    void Unbind(uint32_t scancode);
+    void Unbind(Scancode scancode);
 
     static InputActions* Get();
 

@@ -7,16 +7,40 @@
 InputActions::InputActions() :
     key_map_()
 {
-    key_map_[static_cast<uint32_t>(Scancode::kKey0)] = { KeyType::kItem, 200000 };
-    key_map_[static_cast<uint32_t>(Scancode::kKeyQ)] = { KeyType::kSkill, 100000 };
 }
 
 InputActions::Mapping InputActions::GetMapping(uint32_t scancode) const
 {
     auto it = key_map_.find(scancode);
     if (it == key_map_.end())
-        return { KeyType::kNone, 0 };
+        return { static_cast<uint8_t>(KeyType::kNone), 0 };
     return it->second;
+}
+
+InputActions::Mapping InputActions::GetMapping(Scancode scancode) const
+{
+    return GetMapping(static_cast<uint32_t>(scancode));
+}
+
+void InputActions::Bind(uint32_t scancode, uint8_t type, int32_t action)
+{
+    if (type == 0) return;
+    key_map_[scancode] = { type, action };
+}
+
+void InputActions::Bind(Scancode scancode, KeyType type, int32_t action)
+{
+    Bind(static_cast<uint32_t>(scancode), static_cast<uint8_t>(type), action);
+}
+
+void InputActions::Unbind(uint32_t scancode)
+{
+    key_map_[scancode] = { static_cast<uint8_t>(KeyType::kNone), 0 };
+}
+
+void InputActions::Unbind(Scancode scancode)
+{
+    Unbind(static_cast<uint32_t>(scancode));
 }
 
 InputActions* InputActions::Get()

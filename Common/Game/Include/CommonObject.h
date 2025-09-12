@@ -222,3 +222,10 @@ enum class PartyInfoType : uint8_t
     kHostID = 0,
     kPartyName
 };
+
+struct KeyBindingInfo
+{
+    uint32_t scancode;
+    uint8_t type;
+    int32_t action;
+};

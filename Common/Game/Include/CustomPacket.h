@@ -120,10 +120,10 @@ struct SelectCharacterResponse : public Net::IPacket
     int32_t hp;
     int32_t max_hp;
     int32_t exp;
-    int32_t color;
     int32_t atk;
     int32_t def;
     int32_t dig;
+    int32_t color;
 
     struct
     {
@@ -136,8 +136,9 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t etc_slot_capacity;
 
     std::vector<ItemInfo> inventory;
+    std::vector<KeyBindingInfo> key_bindings;
     
-    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory)
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, key_bindings)
     REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 

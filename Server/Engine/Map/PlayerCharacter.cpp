@@ -136,7 +136,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 uint32_t type = result->getUInt("Type");
                 int32_t action = result->getInt("Action");
 
-                character->key_map_[scancode] = { type, action };
+                character->key_map_[scancode] = { static_cast<uint8_t>(type), action };
             }
         }
 

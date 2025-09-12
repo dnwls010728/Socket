@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "Scancode.h"
+#include "Subsystems/InputActions/KeyType.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
@@ -12,8 +14,10 @@ public:
     UIQuickSlot(const std::wstring& name);
     virtual ~UIQuickSlot() override = default;
 
+    void SetScancode(Scancode scancode);
+
 protected:
-    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
+    virtual void Init() override;
     
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
@@ -26,5 +30,9 @@ private:
 
     UIText* key_name_text_;
     UIText* count_text_;
+
+    Scancode scancode_;
+
+    KeyType key_type_;
     
 };

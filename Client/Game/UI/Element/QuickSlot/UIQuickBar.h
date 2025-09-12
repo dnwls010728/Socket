@@ -19,5 +19,13 @@ private:
 
     int32_t rows_;
     int32_t cols_;
+
+    inline static constexpr std::array<Scancode, 16> kDefaultScancodes =
+    {
+        Scancode::kKey1, Scancode::kKey2, Scancode::kKey3, Scancode::kKey4,
+        Scancode::kKeyQ, Scancode::kKeyW, Scancode::kKeyE, Scancode::kKeyR,
+        Scancode::kKeyA, Scancode::kKeyS, Scancode::kKeyD, Scancode::kKeyF,
+        Scancode::kKeyZ, Scancode::kKeyX, Scancode::kKeyC, Scancode::kKeyV
+    };
     
 };

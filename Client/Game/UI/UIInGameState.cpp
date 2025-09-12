@@ -60,8 +60,10 @@ UIInGameState::UIInGameState() :
 
     AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
 
-    auto* a = AddElement<UIQuickBar>(UIQuickBar::StaticClass(), L"QuickBar");
-    a->SetAbsolutePosition({ 768.f, 600.f });
+    auto* quick_bar = AddElement<UIQuickBar>(UIQuickBar::StaticClass(), L"QuickBar");
+
+    const Math::Vector2& size = quick_bar->GetSize();
+    quick_bar->SetAbsolutePosition({ 1366.f - size.x - 10.f, 768.f - size.y - 19.f });
 }
 
 void UIInGameState::Tick(float delta_time)
@@ -152,12 +154,12 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
 
     switch (mapping.type)
     {
-    case KeyType::kAction:
+    case static_cast<uint8_t>(KeyType::kAction):
         break;
-    case KeyType::kItem:
+    case static_cast<uint8_t>(KeyType::kItem):
         if (is_pressed) player->UseItem(mapping.action);
         break;
-    case KeyType::kSkill:
+    case static_cast<uint8_t>(KeyType::kSkill):
         if (is_pressed) player->UseSkill(mapping.action);
         break;
     }

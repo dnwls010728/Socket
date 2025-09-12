@@ -175,10 +175,10 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.hp = player_character_->hp_;
             response.max_hp = player_character_->effective_max_hp_;
             response.exp = player_character_->exp_;
-            response.color = player_character_->color_;
             response.atk = player_character_->effective_atk_;
             response.def = player_character_->effective_def_;
             response.dig = player_character_->effective_dig_;
+            response.color = player_character_->color_;
             response.map_id = player_character_->map_->GetMapID();
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
@@ -238,6 +238,15 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 item_info.slot_id = slot.first;
                 item_info.count = item->GetCount();
                 response.inventory.push_back(item_info);
+            }
+
+            for (const auto& key : player_character_->key_map_)
+            {
+                KeyBindingInfo key_binding_info;
+                key_binding_info.scancode = key.first;
+                key_binding_info.type = key.second.type;
+                key_binding_info.action = key.second.action;
+                response.key_bindings.push_back(key_binding_info);
             }
 
             SendPacket(response);

@@ -3,10 +3,13 @@
 
 #include "Asset/AssetManager.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/Inventory/UIInventorySlot.h"
 #include "Windows/DX/UISprite.h"
 
 UIQuickSlot::UIQuickSlot(const std::wstring& name) :
-    UIContainer(name)
+    UIContainer(name),
+    scancode_(Scancode::kKeyUnknown),
+    key_type_(KeyType::kNone)
 {
     SetSize({ 32.f, 32.f });
     
@@ -19,30 +22,40 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     background_->SetIgnoreRayCast(true);
 
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    icon_->SetSize(GetSize());
+    icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
+    icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
     icon_->SetIgnoreRayCast(true);
 
     key_name_text_ = AddChild<UIText>(UIText::StaticClass(), L"KeyNameText");
-    key_name_text_->SetSize(GetSize());
+    key_name_text_->SetRelativePosition(Math::Vector2(2.f, 2.f));
+    key_name_text_->SetSize(GetSize() - Math::Vector2(4.f, 4.f));
     key_name_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
     key_name_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     key_name_text_->SetColor(Math::Color::White);
-    key_name_text_->SetText(L"Shift");
     key_name_text_->SetIgnoreRayCast(true);
 
     count_text_ = AddChild<UIText>(UIText::StaticClass(), L"CountText");
-    count_text_->SetSize(GetSize());
-    count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    count_text_->SetRelativePosition(Math::Vector2(2.f, 2.f));
+    count_text_->SetSize(GetSize() - Math::Vector2(4.f, 4.f));
+    count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
     count_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
     count_text_->SetColor(Math::Color::White);
-    count_text_->SetText(L"99");
+    count_text_->SetText(L"");
     count_text_->SetIgnoreRayCast(true);
 }
 
-bool UIQuickSlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+void UIQuickSlot::SetScancode(Scancode scancode)
 {
-    Logger::Print(L"UIQuickSlot::OnMouseMotion Position: %f, %f Delta: %f, %f", position.x, position.y, delta.x, delta.y);
-    return true;
+    scancode_ = scancode;
+    if (IsInitialized())
+        key_name_text_->SetText(ScancodeToKeyName(scancode_));
+}
+
+void UIQuickSlot::Init()
+{
+    UIContainer::Init();
+
+    key_name_text_->SetText(ScancodeToKeyName(scancode_));
 }
 
 bool UIQuickSlot::OnDragBegin(const Math::Vector2& position)
@@ -62,8 +75,8 @@ bool UIQuickSlot::OnDragEnd(const Math::Vector2& position)
 
 bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
 {
-    Logger::Print(L"Target Name: %s", target->GetName().c_str());
-    return UIContainer::OnDrop(position, target);
+    return true;
+    
 }
 
 RTTR_REGISTRATION
