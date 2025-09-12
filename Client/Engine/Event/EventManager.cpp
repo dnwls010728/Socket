@@ -8,6 +8,7 @@
 #include "Time/Time.h"
 
 EventManager::EventManager() :
+    mutex_(),
     events_(),
     message_tick_(0)
 {
@@ -15,6 +16,7 @@ EventManager::EventManager() :
 
 bool EventManager::PollEvent(Event& event)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (events_.empty()) return false;
 
     event = events_.front();
@@ -37,8 +39,11 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.window.data1 = width;
         event.window.data2 = height;
         event.window.timestamp = GetEventTimestamp();
-
-        events_.push(event);
+        
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
     
@@ -68,7 +73,10 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.key.is_repeat = is_repeat;
         event.key.timestamp = GetEventTimestamp();
 
-        events_.push(event);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
     
@@ -82,7 +90,10 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.text.character = kCharacter;
         event.text.timestamp = GetEventTimestamp();
 
-        events_.push(event);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
     
@@ -153,7 +164,10 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.button.y = static_cast<float>(y);
         event.button.timestamp = GetEventTimestamp();
 
-        events_.push(event);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
 
@@ -168,7 +182,10 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         event.motion.y = static_cast<float>(y);
         event.motion.timestamp = GetEventTimestamp();
 
-        events_.push(event);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
 
@@ -201,19 +218,22 @@ bool EventManager::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
         event.wheel.timestamp = GetEventTimestamp();
 
-        events_.push(event);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            events_.push(event);
+        }
         return true;
     }
     
     return false;
 }
 
-double EventManager::GetEventTimestamp()
+double EventManager::GetEventTimestamp() const
 {
     static double timestamp_offset = 0;
 
     double now = Time::Seconds();
-    double timestamp = static_cast<double>(message_tick_) / 1000;
+    double timestamp = static_cast<double>(message_tick_.load()) / 1000;
     timestamp += timestamp_offset;
 
     if (timestamp_offset == 0)
@@ -227,5 +247,6 @@ double EventManager::GetEventTimestamp()
 
 void EventManager::Clear()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     events_ = std::queue<Event>();
 }
