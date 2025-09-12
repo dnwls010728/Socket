@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "Skill.h"
+#include "Misc/Function.h"
 
 class Skill;
 class PlayerCharacter;
@@ -23,7 +24,8 @@ public:
     bool HasSkill(uint32_t skill_id) const;
     void RemoveSkill(uint32_t skill_id);
     void ClearSkills();
-    void EnumSkills(const std::function<void(Skill* skill)>& callback) const;
+    void EnumSkills(const Function<void(Skill* skill)>& callback) const;
+    // void EnumSkills(const std::function<void(Skill* skill)>& callback) const;
 
 private:
     PlayerCharacter* owner_;

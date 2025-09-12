@@ -132,9 +132,9 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
-                uint32_t scancode = result->getUInt("Scancode");
-                uint32_t type = result->getUInt("Type");
-                int32_t action = result->getInt("Action");
+                uint32_t scancode = result->getUInt("scancode");
+                uint32_t type = result->getUInt("type");
+                int32_t action = result->getInt("action");
 
                 character->key_map_[scancode] = { static_cast<uint8_t>(type), action };
             }
@@ -1004,29 +1004,40 @@ void PlayerCharacter::UpdateDatabase()
             statement->setUInt(9, object_id_);
             statement->executeUpdate();
 
+            statement.reset(connection->prepareStatement("DELETE FROM key_map_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO key_map_info (character_id, scancode, type, action) VALUES (?, ?, ?, ?)"));
+            for (const auto& it : key_map_)
             {
-                statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
                 statement->setUInt(1, object_id_);
+                statement->setUInt(2, it.first);
+                statement->setUInt(3, it.second.type);
+                statement->setInt(4, it.second.action);
                 statement->executeUpdate();
-
-                statement.reset(connection->prepareStatement("INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) VALUES (?, ?, ?, ?, ?)"));
-
-                skill_manager_.EnumSkills([&](Skill* skill)
-                {
-                    float elapsed = skill->GetCoolDownElapsed();
-
-                    std::time_t now = std::time(nullptr);
-                    std::time_t start_time = now - static_cast<std::time_t>(elapsed);
-
-                    statement->setUInt(1, object_id_);
-                    statement->setUInt(2, skill->GetID());
-                    statement->setInt(3,skill->GetLevel());
-                    statement->setInt(4, skill->GetDuration());
-                    statement->setInt(5, start_time);
-                    statement->executeUpdate();
-                });
             }
-            
+
+            statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) VALUES (?, ?, ?, ?, ?)"));
+
+            skill_manager_.EnumSkills([&](Skill* skill)
+            {
+                float elapsed = skill->GetCoolDownElapsed();
+
+                std::time_t now = std::time(nullptr);
+                std::time_t start_time = now - static_cast<std::time_t>(elapsed);
+
+                statement->setUInt(1, object_id_);
+                statement->setUInt(2, skill->GetID());
+                statement->setInt(3,skill->GetLevel());
+                statement->setInt(4, skill->GetDuration());
+                statement->setInt(5, start_time);
+                statement->executeUpdate();
+            });
         }
     }
     catch (sql::SQLException& e)

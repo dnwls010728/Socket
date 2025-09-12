@@ -90,7 +90,7 @@ void SkillManager::ClearSkills()
     skills_.clear();
 }
 
-void SkillManager::EnumSkills(const std::function<void(Skill* skill)>& callback) const
+void SkillManager::EnumSkills(const Function<void(Skill* skill)>& callback) const
 {
     std::lock_guard<std::mutex> lock(skills_mutex_);
     for (auto& [id, skill] : skills_)
@@ -98,3 +98,12 @@ void SkillManager::EnumSkills(const std::function<void(Skill* skill)>& callback)
         callback(skill.get());
     }
 }
+
+// void SkillManager::EnumSkills(const std::function<void(Skill* skill)>& callback) const
+// {
+//     std::lock_guard<std::mutex> lock(skills_mutex_);
+//     for (auto& [id, skill] : skills_)
+//     {
+//         callback(skill.get());
+//     }
+// }
