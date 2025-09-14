@@ -6,5 +6,6 @@ enum class KeyType : uint8_t
     kAction,
     kItem,
     kSkill,
+    kMenu,
     kCount
 };

@@ -16,6 +16,7 @@ public:
 private:
     std::vector<UIQuickSlot*> quick_slots_;
     std::unordered_map<Scancode, uint32_t> scancode_to_slot_;
+    std::unordered_map<int32_t, uint32_t> item_to_slot_;
 
     int32_t rows_;
     int32_t cols_;

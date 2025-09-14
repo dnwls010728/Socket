@@ -2,7 +2,10 @@
 
 enum class KeyAction : uint8_t
 {
-    kLeft = 0,
-    kRight,
+    kItems = 0,
+    kEquipment,
+    kSkills,
+    kParty,
+    kMainMenu,
     kCount
 };

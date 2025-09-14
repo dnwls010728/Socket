@@ -113,55 +113,57 @@ void UIInGameState::Init()
 bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
 {
     bool is_handled = UIState::OnKey(scancode, is_pressed);
+    if (is_handled || IsEditingText()) return true;
     
-    if (!is_handled && is_pressed)
-    {
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyI) && !IsEditingText())
-        {
-            inventory_->SetActive(!inventory_->IsActive());
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyE) && !IsEditingText())
-        {
-            equipment_->SetActive(!equipment_->IsActive());
-            is_handled = true;
-        }
-        
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter) && !IsEditingText())
-        {
-            char_bar_->FocusInput();
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyEscape) && !IsEditingText())
-        {
-            menu_->SetActive(!menu_->IsActive());
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyP) && !IsEditingText())
-        {
-            party_window_->SetActive(!party_window_->IsActive());
-            is_handled = true;
-        }
-    }
-
     InputActions* actions = InputActions::Get();
     InputActions::Mapping mapping = actions->GetMapping(scancode);
 
     PlayerSubsystem* player = PlayerSubsystem::Get();
-
-    switch (mapping.type)
+    
+    if (is_pressed)
     {
-    case static_cast<uint8_t>(KeyType::kAction):
-        break;
-    case static_cast<uint8_t>(KeyType::kItem):
-        if (is_pressed) player->UseItem(mapping.action);
-        break;
-    case static_cast<uint8_t>(KeyType::kSkill):
-        if (is_pressed) player->UseSkill(mapping.action);
-        break;
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter))
+        {
+            char_bar_->FocusInput();
+            is_handled = true;
+        }
+        else
+        {
+            switch (mapping.type)
+            {
+            case static_cast<uint8_t>(KeyType::kItem):
+                player->UseItem(mapping.action);
+                is_handled = true;
+                break;
+            case static_cast<uint8_t>(KeyType::kSkill):
+                player->UseSkill(mapping.action);
+                is_handled = true;
+                break;
+            case static_cast<uint8_t>(KeyType::kMenu):
+                switch (mapping.action)
+                {
+            case static_cast<uint8_t>(KeyAction::kItems):
+                    inventory_->SetActive(!inventory_->IsActive());
+                    is_handled = true;
+                    break;
+            case static_cast<uint8_t>(KeyAction::kEquipment):
+                    equipment_->SetActive(!equipment_->IsActive());
+                    is_handled = true;
+                    break;
+            case static_cast<uint8_t>(KeyAction::kSkills):
+                    break;
+            case static_cast<uint8_t>(KeyAction::kParty):
+                    party_window_->SetActive(!party_window_->IsActive());
+                    is_handled = true;
+                    break;
+            case static_cast<uint8_t>(KeyAction::kMainMenu):
+                    menu_->SetActive(!menu_->IsActive());
+                    is_handled = true;
+                    break;
+                }
+                break;
+            }
+        }
     }
     
     return is_handled;

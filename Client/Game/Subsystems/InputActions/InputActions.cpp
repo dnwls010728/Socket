@@ -7,6 +7,11 @@
 InputActions::InputActions() :
     key_map_()
 {
+    Bind(Scancode::kKeyI, KeyType::kMenu, KeyAction::kItems);
+    Bind(Scancode::kKeyP, KeyType::kMenu, KeyAction::kEquipment);
+    Bind(Scancode::kKeyT, KeyType::kMenu, KeyAction::kSkills);
+    Bind(Scancode::kKeyO, KeyType::kMenu, KeyAction::kParty);
+    Bind(Scancode::kKeyEscape, KeyType::kMenu, KeyAction::kMainMenu);
 }
 
 InputActions::Mapping InputActions::GetMapping(uint32_t scancode) const
@@ -31,6 +36,11 @@ void InputActions::Bind(uint32_t scancode, uint8_t type, int32_t action)
 void InputActions::Bind(Scancode scancode, KeyType type, int32_t action)
 {
     Bind(static_cast<uint32_t>(scancode), static_cast<uint8_t>(type), action);
+}
+
+void InputActions::Bind(Scancode scancode, KeyType type, KeyAction action)
+{
+    Bind(static_cast<uint32_t>(scancode), static_cast<uint8_t>(type), static_cast<int32_t>(action));
 }
 
 void InputActions::Unbind(uint32_t scancode)

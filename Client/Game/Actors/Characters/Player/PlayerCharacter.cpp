@@ -278,7 +278,7 @@ void PlayerCharacter::Tick(float delta_time)
                 }
             }
 
-            if (keyboard->GetKey(Scancode::kKeyC) && collisions.is_below)
+            if (keyboard->GetKey(Scancode::kKeyLeftAlt) && collisions.is_below)
             {
                 Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
                 AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
@@ -286,7 +286,7 @@ void PlayerCharacter::Tick(float delta_time)
                 velocity_.y = 8.f;
             }
 
-            if (keyboard->GetKeyDown(Scancode::kKeyC) && !collisions.is_below)
+            if (keyboard->GetKeyDown(Scancode::kKeyLeftAlt) && !collisions.is_below)
             {
                 if (bonus_jumps_ > 0)
                 {
@@ -299,7 +299,7 @@ void PlayerCharacter::Tick(float delta_time)
             }
 
             // 아이템 줍기
-            if (keyboard->GetKeyDown(Scancode::kKeyZ))
+            if (keyboard->GetKeyDown(Scancode::kKeyLeftShift))
             {
                 Math::Vector2 center = GetTransform()->GetPosition();
                 Math::Vector2 size = {1.f, 1.f};

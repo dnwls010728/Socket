@@ -3,7 +3,7 @@
 /**
  * 스캔코드를 출력합니다.
  */
-static constexpr bool kDebugScancode = false;
+static constexpr bool kDebugScancode = true;
 
 enum class Scancode : uint32_t
 {
@@ -59,6 +59,15 @@ enum class Scancode : uint32_t
     kKeyDelete = 339,
     kKeyHome = 327,
     kKeyEnd = 335,
+
+    kKeyLeftShift = 42,
+    kKeyRightShift = 28,
+
+    kKeyLeftAlt = 56,
+    kKeyRightAlt = 312,
+
+    kKeyLeftCtrl = 29,
+    kKeyRightCtrl = 285,
 };
 
 std::wstring ScancodeToKeyName(Scancode scancode, bool is_extended = false);

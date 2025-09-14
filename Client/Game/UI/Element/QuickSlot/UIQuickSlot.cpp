@@ -75,8 +75,12 @@ bool UIQuickSlot::OnDragEnd(const Math::Vector2& position)
 
 bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
 {
-    return true;
+    if (auto* inventory_slot = dynamic_cast<UIInventorySlot*>(target))
+    {
+        return true;
+    }
     
+    return false;
 }
 
 RTTR_REGISTRATION

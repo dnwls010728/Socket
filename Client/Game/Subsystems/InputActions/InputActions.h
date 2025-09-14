@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "KeyAction.h"
 #include "KeyType.h"
 #include "Scancode.h"
 #include "Subsystem/GameInstanceSubsystem.h"
@@ -32,6 +33,7 @@ public:
     
     void Bind(uint32_t scancode, uint8_t type, int32_t action);
     void Bind(Scancode scancode, KeyType type, int32_t action);
+    void Bind(Scancode scancode, KeyType type, KeyAction action);
     void Unbind(uint32_t scancode);
     void Unbind(Scancode scancode);
 
