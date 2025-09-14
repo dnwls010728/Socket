@@ -183,6 +183,8 @@ void PlayerCharacter::BeginPlay()
         const auto& node = animator_->GetOrAddNode(L"Walk");
         node->AddCallback(4, this, &PlayerCharacter::OnFootstep);
         node->AddCallback(7, this, &PlayerCharacter::OnFootstep);
+
+        Keyboard::Get()->key_event.Add(this, &PlayerCharacter::OnKeyEvent);
     }
     else
     {
@@ -536,6 +538,10 @@ void PlayerCharacter::SyncCharacterMovement(float delta_time)
             }
         }
     }
+}
+
+void PlayerCharacter::OnKeyEvent(uint32_t scancode, bool is_pressed)
+{
 }
 
 void PlayerCharacter::OnFootstep() const

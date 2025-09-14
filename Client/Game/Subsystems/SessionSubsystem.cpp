@@ -224,7 +224,6 @@ void SessionSubsystem::ProcessPackets()
     client_socket_.ProcessPacketsFromQueue([&](Net::TCP::ReceivedPacketInfo& received_packet)
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
-        packet_handler.Execute(packet);
 
         auto it = handlers_.find(packet->GetPacketID());
         if (it != handlers_.end())

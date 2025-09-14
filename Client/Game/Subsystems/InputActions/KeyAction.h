@@ -7,5 +7,6 @@ enum class KeyAction : uint8_t
     kSkills,
     kParty,
     kMainMenu,
+    kJump,
     kCount
 };

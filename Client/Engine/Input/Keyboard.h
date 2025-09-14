@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include <map>
-#include <Windows.h>
 
 #include "Scancode.h"
 #include "Singleton.h"
 
 union Event;
+
+// Scancode
+DECLARE_DELEGATE(OnKeyDelegate, uint32_t, bool)
 
 struct KeyState
 {
@@ -28,6 +30,8 @@ public:
     bool GetKey(Scancode scancode);
     bool GetKeyDown(Scancode scancode);
     bool GetKeyUp(Scancode scancode);
+
+    OnKeyDelegate key_event;
 
 private:
     friend class Core;
