@@ -184,7 +184,7 @@ void PlayerCharacter::BeginPlay()
         node->AddCallback(4, this, &PlayerCharacter::OnFootstep);
         node->AddCallback(7, this, &PlayerCharacter::OnFootstep);
 
-        Keyboard::Get()->key_event.Add(this, &PlayerCharacter::OnKeyEvent);
+        Keyboard::Get()->key_event.AddObject(this, &PlayerCharacter::OnKeyEvent);
     }
     else
     {

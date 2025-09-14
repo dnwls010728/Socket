@@ -107,7 +107,7 @@ private:
 template <typename M, typename>
 void PublisherSubsystem::Subscribe(EventType type, M* obj, void(M::* func)(const EventData&))
 {
-    events_[type].Add(obj, func);
+    events_[type].AddObject(obj, func);
 }
 
 template <typename M, typename>
