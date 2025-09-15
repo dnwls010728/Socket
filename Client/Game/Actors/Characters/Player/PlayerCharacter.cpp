@@ -37,6 +37,7 @@
 #include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/InputActions/InputActions.h"
 #include "Time/Time.h"
 #include "UI/UI.h"
 #include "UI/Element/UIContextMenu.h"
@@ -183,8 +184,6 @@ void PlayerCharacter::BeginPlay()
         const auto& node = animator_->GetOrAddNode(L"Walk");
         node->AddCallback(4, this, &PlayerCharacter::OnFootstep);
         node->AddCallback(7, this, &PlayerCharacter::OnFootstep);
-
-        Keyboard::Get()->key_event.AddObject(this, &PlayerCharacter::OnKeyEvent);
     }
     else
     {
@@ -538,10 +537,6 @@ void PlayerCharacter::SyncCharacterMovement(float delta_time)
             }
         }
     }
-}
-
-void PlayerCharacter::OnKeyEvent(uint32_t scancode, bool is_pressed)
-{
 }
 
 void PlayerCharacter::OnFootstep() const

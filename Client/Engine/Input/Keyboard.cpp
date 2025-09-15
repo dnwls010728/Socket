@@ -68,8 +68,6 @@ void Keyboard::OnEvent(const Event& kEvent)
 	if (kType == static_cast<uint32_t>(EventType::kKeyPressed) ||
 		kType == static_cast<uint32_t>(EventType::kKeyReleased))
 	{
-		uint32_t scancode = kEvent.key.scancode;
-		bool a = false;
-		key_event.Execute(scancode, a);
+		key_event.Execute(kEvent.key.scancode, kEvent.key.is_repeat);
 	}
 }

@@ -53,8 +53,7 @@ protected:
     virtual void StartCreateParty();
     
     virtual void SyncCharacterMovement(float delta_time);
-
-    void OnKeyEvent(uint32_t scancode, bool is_pressed);
+    
     void OnFootstep() const;
 
     Math::Vector2 move_axis_;
