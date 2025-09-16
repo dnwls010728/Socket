@@ -26,7 +26,8 @@ UIEquipmentSlot::UIEquipmentSlot(const std::wstring& name) :
     background_->SetIgnoreRayCast(true);
 
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    icon_->SetSize(GetSize());
+    icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
+    icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
     icon_->SetIgnoreRayCast(true);
 }
 
