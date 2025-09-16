@@ -412,6 +412,30 @@ struct PlayerBuffPacket : public Net::IPacket
     REGISTER_PACKET(PlayerBuffPacket, 501)
 };
 
+struct KeyBindRequest : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(KeyBindRequest, 502)
+};
+
+struct KeyBindResponse : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(KeyBindResponse, 503)
+};
+
+struct KeyUnbindRequest : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(KeyUnbindRequest, 504)
+};
+
+struct KeyUnbindResponse : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(KeyUnbindResponse, 505)
+};
+
 struct PartyInviteRequest : public Net::IPacket
 {
     uint32_t invitee_id;

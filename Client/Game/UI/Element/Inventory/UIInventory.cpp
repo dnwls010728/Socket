@@ -143,7 +143,8 @@ UIInventory::UIInventory(const std::wstring& name) :
     color_text_->SetIgnoreRayCast(true);
     
     dragging_item_ = AddChild<UIImage>(UIImage::StaticClass(), L"DraggingItem");
-    dragging_item_->SetSize({32.f, 32.f});
+    dragging_item_->SetRelativePosition(Math::Vector2(4.f, 4.f));
+    dragging_item_->SetSize({24.f, 24.f});
     dragging_item_->SetActive(false);
     dragging_item_->SetIgnoreRayCast(true);
 
