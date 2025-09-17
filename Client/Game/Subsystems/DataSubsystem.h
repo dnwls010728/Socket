@@ -92,7 +92,9 @@ struct SkillData
 struct CardData
 {
     uint32_t id;
-    
+    std::wstring name;
+    std::wstring desc;
+
     uint32_t skill_id;
 
     int32_t max_hp;
@@ -249,6 +251,8 @@ namespace YAML
         static bool decode(const Node& node, CardData& data)
         {
             if (!node.IsMap()) return false;
+            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
+            data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.skill_id = node["skill_id"].as<uint32_t>(0);
             data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);

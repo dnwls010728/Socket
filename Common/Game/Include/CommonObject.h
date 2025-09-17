@@ -105,6 +105,12 @@ struct ObjectDestroyInfo
     } info;
 };
 
+struct CardSelectInfo
+{
+    uint32_t card_id;
+    uint32_t level;
+};
+
 enum class PlayerStat : uint8_t
 {
     kNone = 0,

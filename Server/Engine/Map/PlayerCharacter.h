@@ -122,6 +122,7 @@ protected:
     void SendStatUpdateIfNeeded();
     void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
     void RemoveEquipStats(uint32_t slot);
+    void SendSelectCardPacket();
 
     virtual void Tick(float delta_time) override;
     
@@ -169,6 +170,9 @@ protected:
     std::mutex effect_mutex_;
 
     std::unordered_map<uint32_t, EquipStat> equip_stats_;
+
+    int32_t left_card_select_count_;
+    bool is_selecting_cards_;
 
     float buff_timer_;
 };

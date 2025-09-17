@@ -308,6 +308,7 @@
     <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\DoSelectCardHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
@@ -352,6 +353,8 @@
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIPopup.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSelectPanel.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSlot.h" />
     <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
     <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
     <ClInclude Include="Game\UI\Element\UIPartyWindow.h" />
@@ -753,6 +756,7 @@
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DoSelectCardHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectSpawnHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
@@ -790,6 +794,8 @@
     <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIPopup.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSelectPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSlot.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />

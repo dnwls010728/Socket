@@ -11,6 +11,7 @@ class UIItemTooltip;
 class UIInventory;
 class UIPartyPanel;
 class UIPartyWindow;
+class UICardSelectPanel;
 
 class UIInGameState : public UIState
 {
@@ -24,6 +25,7 @@ public:
     FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
     FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
+    FORCEINLINE UICardSelectPanel* GetCardSelectPanel() const { return card_select_panel_; }
 
 protected:
     virtual void Tick(float delta_time) override;
@@ -40,6 +42,7 @@ private:
     UIContextMenu* context_menu_;
     UIPartyPanel* party_panel_;
     UIPartyWindow* party_window_;
+    UICardSelectPanel* card_select_panel_;
 
     bool show_post_process_;
 };

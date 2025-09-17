@@ -24,6 +24,9 @@ public:
     template <std::derived_from<UIElement> T>
     T* FindElement(const std::wstring& name);
 
+    template <std::derived_from<UIElement> T>
+    T* FindElementShallow(const std::wstring& name);
+
     void RemoveElement(UIElement* element);
     void SetFocus(UIElement* element);
     
@@ -96,6 +99,20 @@ T* UIState::AddElement(const rttr::type& type, const std::wstring& name)
         return dynamic_cast<T*>(element);
     }
     
+    return nullptr;
+}
+
+template <std::derived_from<UIElement> T>
+T* UIState::FindElementShallow(const std::wstring& name)
+{
+    for (uint32_t i = 0; i < elements_.size(); ++i)
+    {
+        UIElement* element = elements_[elements_.size() - i - 1].get();
+        
+        if (element->GetName() == name)
+            return dynamic_cast<T*>(element);
+    }
+
     return nullptr;
 }
 

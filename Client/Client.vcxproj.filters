@@ -216,6 +216,7 @@
     <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DoSelectCardHandler.cpp" />
     <ClCompile Include="Game\Subsystems\PartySubsystem.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />
@@ -283,6 +284,8 @@
     <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIPopup.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSelectPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSlot.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\Utils\TimedBool.cpp" />
     <ClCompile Include="Engine\Math\Vector2i.cpp" />
@@ -863,6 +866,7 @@
     <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\DoSelectCardHandler.h" />
     <ClInclude Include="Game\Subsystems\PartySubsystem.h" />
     <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
     <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
@@ -933,6 +937,8 @@
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIPopup.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSelectPanel.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSlot.h" />
     <ClInclude Include="Game\UI\Element\UIStatusBar.h" />
     <ClInclude Include="Game\Utils\TimedBool.h" />
     <ClInclude Include="Engine\Math\Vector2i.h" />

@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 #include <optional>
+#include <random>
 #include <ranges>
 #include <unordered_set>
 
@@ -51,7 +52,9 @@ PlayerCharacter::PlayerCharacter() :
     dropped_item_mutex_(),
     effect_mutex_(),
     equip_stats_(),
-    buff_timer_(0.f)
+    buff_timer_(0.f),
+    left_card_select_count_(0),
+    is_selecting_cards_(false)
 {
 }
 
@@ -825,6 +828,25 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
+    case SelectCardResult::StaticPacketID:
+        {
+            SelectCardResult* card_result = static_cast<SelectCardResult*>(packet);
+
+            const CardData* card_data = DataManager::Get()->GetCard(card_result->card_id);
+            if (!card_data) break;
+
+            // TODO : 카드 스캣 적용
+            
+            SendStatUpdateIfNeeded();
+            
+            left_card_select_count_ = Math::Max(left_card_select_count_ - 1, 0);
+            if (left_card_select_count_ > 0)
+                SendSelectCardPacket();
+            else
+                is_selecting_cards_ = false;
+        }
+        break;
+
     default:
         break;
     }
@@ -1066,7 +1088,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     
     int32_t new_exp = exp_.load();
     new_exp += amount;
-
+    
     while (lv_ < 50)
     {
         int32_t need = DataManager::Get()->GetExp(lv_);
@@ -1105,6 +1127,11 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     if (changed_lv)
     {
+        if (is_selecting_cards_)
+            left_card_select_count_++;
+        else
+            SendSelectCardPacket();
+        
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
         NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
@@ -1205,6 +1232,41 @@ void PlayerCharacter::RemoveEquipStats(uint32_t slot)
 
     total_equip_stats_ -= it->second;
     equip_stats_.erase(it);
+}
+
+void PlayerCharacter::SendSelectCardPacket()
+{
+    std::vector<CardSelectInfo> cards;
+    auto cards_key_ptr = DataManager::Get()->GetCardIDs();
+    int  count = cards_key_ptr->size();
+    if (count == 0) return;
+
+    // 랜덤
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, count - 1);
+
+    for (int i = 0; i < 3; ++i)
+    {
+        int idx = dist(gen);
+        auto card_id = cards_key_ptr->at(idx);
+        const CardData* card_data = DataManager::Get()->GetCard(card_id);
+        if (!card_data)
+        {
+            i--;
+            continue;
+        }
+
+        CardSelectInfo card_info;
+        card_info.card_id = card_data->id;
+        card_info.level = 1;
+        cards.push_back(card_info);
+    }
+    
+    is_selecting_cards_ = true;
+    DoSelectCardPacket select_card_packet;
+    select_card_packet.cards = std::move(cards);
+    SendPacket(select_card_packet);
 }
 
 void PlayerCharacter::Tick(float delta_time)

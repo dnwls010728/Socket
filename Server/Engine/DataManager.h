@@ -280,6 +280,8 @@ public:
     const ItemData* GetItem(uint32_t id) const;
     const SkillData* GetSkill(uint32_t id) const;
     const CardData* GetCard(uint32_t id) const;
+    const std::unordered_map<uint32_t, CardData>* GetCards() const;
+    const std::vector<uint32_t>* GetCardIDs() const;
     
     const std::vector<MobDropData>* GetDrop(uint32_t id);
     
@@ -296,5 +298,8 @@ private:
     std::unordered_map<uint32_t, std::vector<MobDropData>> mob_drop_map_;
 
     std::array<int32_t, 51> exp_table_;
+
+    // cache
+    std::vector<uint32_t> card_ids_cache_;
     
 };

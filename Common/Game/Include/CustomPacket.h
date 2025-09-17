@@ -533,3 +533,19 @@ struct PartyInfoChangedPacket :  public Net::IPacket
     SERIALIZABLE_FIELDS(type, value)
     REGISTER_PACKET(PartyInfoChangedPacket, 611)
 };
+
+struct DoSelectCardPacket : public Net::IPacket
+{
+    std::vector<CardSelectInfo> cards;
+
+    SERIALIZABLE_FIELDS(cards)
+    REGISTER_PACKET(DoSelectCardPacket, 612)
+};
+
+struct SelectCardResult : public Net::IPacket
+{
+    uint32_t card_id;
+
+    SERIALIZABLE_FIELDS(card_id)
+    REGISTER_PACKET(SelectCardResult, 613)
+};

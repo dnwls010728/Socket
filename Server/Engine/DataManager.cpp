@@ -65,6 +65,7 @@ void DataManager::Init()
             CardData data = card.second.as<CardData>();
             data.id = card.first.as<uint32_t>();
             card_map_[data.id] = data;
+            card_ids_cache_.push_back(data.id);
         }
     }
     catch (const YAML::BadFile& e)
@@ -99,6 +100,16 @@ const CardData* DataManager::GetCard(uint32_t id) const
     auto it = card_map_.find(id);
     if (it == card_map_.end()) return nullptr;
     return &it->second;
+}
+
+const std::unordered_map<uint32_t, CardData>* DataManager::GetCards() const
+{
+    return &card_map_;
+}
+
+const std::vector<uint32_t>* DataManager::GetCardIDs() const
+{
+    return &card_ids_cache_;
 }
 
 const std::vector<MobDropData>* DataManager::GetDrop(uint32_t id)

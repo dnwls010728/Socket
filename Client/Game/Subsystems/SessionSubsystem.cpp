@@ -34,6 +34,7 @@
 #include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "PacketHandlers/SkillCastHandler.h"
+#include "PacketHandlers/DoSelectCardHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -206,6 +207,10 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         PartyInfoChangedPacket::StaticPacketID,
         std::make_unique<PartyInfoChangedHandler>()
+    );
+    handlers_.emplace(
+        DoSelectCardPacket::StaticPacketID,
+        std::make_unique<DoSelectCardHandler>()
     );
 #pragma endregion
 
