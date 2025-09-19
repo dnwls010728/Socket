@@ -326,6 +326,7 @@
     <ClInclude Include="Include\tmxlite\Tileset.hpp" />
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
+    <ClInclude Include="Include\uuid.h" />
     <ClInclude Include="Include\yaml-cpp\anchor.h" />
     <ClInclude Include="Include\yaml-cpp\binary.h" />
     <ClInclude Include="Include\yaml-cpp\contrib\anchordict.h" />
