@@ -36,7 +36,7 @@ create table character_info
 
 create table card_offer_info
 (
-    offer_id     bigint                                   not null
+    offer_id     binary(16)                                   not null
         primary key,
     character_id int                                      not null,
     level        int                                      not null,
@@ -51,7 +51,7 @@ create table card_offer_info
 
 create table card_offer_item_info
 (
-    offer_id bigint  not null,
+    offer_id binary(16)  not null,
     slot     tinyint not null,
     card_id  int     not null,
     primary key (offer_id, slot),
@@ -64,7 +64,7 @@ create table card_offer_item_info
 
 create table card_choice_info
 (
-    offer_id       bigint                                   not null
+    offer_id       binary(16)                                   not null
         primary key,
     chosen_card_id int                                      null,
     slot           tinyint                                  null,
@@ -74,19 +74,6 @@ create table card_choice_info
             on delete cascade,
     constraint card_choice_info_card_offer_item_info_offer_id_card_id_fk
         foreign key (offer_id, chosen_card_id) references card_offer_item_info (offer_id, card_id)
-);
-
-create table cooldown_info
-(
-    cooldown_id  int auto_increment
-        primary key,
-    character_id int not null,
-    id           int not null,
-    length       int null,
-    start_time   int not null,
-    constraint cooldown_info_character_info_character_id_fk
-        foreign key (character_id) references character_info (character_id)
-            on delete cascade
 );
 
 create table drop_info
@@ -148,8 +135,19 @@ create table skill_info
             on delete cascade
 );
 
-create definer = y_eternal@`%` view v_character_card_choice as
-select `o`.`character_id` AS `character_id`, `o`.`level` AS `level`, `c`.`offer_id` AS `offer_id`, `c`.`chosen_card_id` AS `chosen_card_id`, `c`.`slot` AS `slot`, `c`.`chosen_at` AS `chosen_at`
-from (`socket_db`.`card_choice_info` `c` join `socket_db`.`card_offer_info` `o` on ((`o`.`offer_id` = `c`.`offer_id`)));
+CREATE OR REPLACE
+VIEW v_character_card_choice AS
+SELECT
+  o.character_id,
+  o.level,
+  o.offer_id                                AS offer_id_bin,         -- 바이너리 원본
+  BIN_TO_UUID(o.offer_id, TRUE)             AS offer_id,             -- 사람이 읽는 UUID
+  c.chosen_card_id,
+  c.slot,
+  c.chosen_at
+FROM socket_db.card_choice_info AS c
+JOIN socket_db.card_offer_info  AS o
+  ON o.offer_id = c.offer_id;  -- 여기서는 변환 X (인덱스 사용)
+
 
 

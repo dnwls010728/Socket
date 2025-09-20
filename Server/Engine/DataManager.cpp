@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "uuid.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MySQL/MySQLManager.h"
 #include "yaml-cpp/yaml.h"
@@ -72,6 +73,16 @@ void DataManager::Init()
     {
         std::cout << e.what() << std::endl;
     }
+    
+    std::random_device rd;
+    auto seed_data = std::array<int, std::mt19937::state_size> {};
+    std::ranges::generate(seed_data, std::ref(rd));
+    std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+    std::mt19937 generator(seq);
+    uuids::uuid_random_generator gen(generator);
+
+    uuids::uuid new_uuid = gen();
+    std::cout << "DataManager initialized. UUID: " << new_uuid << std::endl;
 }
 
 const MobData* DataManager::GetMob(uint32_t id) const
