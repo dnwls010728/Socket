@@ -56,7 +56,6 @@ PlayerCharacter::PlayerCharacter(const std::wstring& kName) :
     is_dead_(false),
     movement_sync_accumulator_(0.f),
     invincible_time_(0.f),
-    prev_animation{0,},
     color_(Math::Color::White),
     bonus_jumps_(1)
 {
@@ -76,29 +75,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
     switch (packet->GetPacketID())
     {
-    case MovePlayerPacket::StaticPacketID:
-        {
-            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
-            MovementSnapshot snapshot;
-            snapshot.position.x = move_player_packet->position_x;
-            snapshot.position.y = move_player_packet->position_y;
-            snapshot.velocity.x = move_player_packet->velocity_x;
-            snapshot.velocity.y = move_player_packet->velocity_y;
-            snapshot.server_time =  move_player_packet->server_time;
-            snapshot.time_update =  move_player_packet->time_update;
-            movement_snapshots_.push_back(snapshot);
-        }
-        break;
-    case PlayerAnimationPacket::StaticPacketID:
-        {
-            PlayerAnimationPacket* player_packet = static_cast<PlayerAnimationPacket*>(packet);
-            AnimationSnapshot snapshot;
-			snapshot.animation = player_packet->animation;
-			snapshot.is_flipped = player_packet->is_flipped;
-			snapshot.server_time = player_packet->server_time;
-			animation_snapshots_.push_back(snapshot);
-        }
-        break;
     case SkillCastPacket::StaticPacketID:
         {
             SkillCastPacket* skill_packet = static_cast<SkillCastPacket*>(packet);
@@ -428,116 +404,65 @@ void PlayerCharacter::StartCreateParty()
 
 void PlayerCharacter::SyncCharacterMovement(float delta_time)
 {
+    if (!IsMine()) return;
+
     std::shared_ptr<TransformComponent> transform = GetTransform();
-    
-    if (IsMine())
+    Math::Vector2 position = transform->GetPosition();
+    movement_sync_accumulator_ += delta_time;
+
+    bool is_moving_now = last_position_ != position;
+    bool is_moving_start = is_moving_now && !was_moving_;
+    bool is_interval_elapsed = is_moving_now && movement_sync_accumulator_ >= 0.1f;
+
+    if (is_moving_start || is_interval_elapsed)
     {
-        Math::Vector2 position = transform->GetPosition();
-        movement_sync_accumulator_ += delta_time;
-        
-        bool is_moving_now = last_position_ != position;
-        bool is_moving_start = (is_moving_now && !was_moving_);
-        bool is_interval_elapsed = (is_moving_now && movement_sync_accumulator_ >= 0.1f);
-        
-        // 전송할지 결정
-        if (is_moving_start || is_interval_elapsed)
+        float server_time = SessionSubsystem::Get()->GetServerTime();
+
+        if (is_moving_start)
         {
-            if (is_moving_start)
-            {
-                MovePlayerPacket dummy_packet;
-                dummy_packet.position_x = last_position_.x;
-                dummy_packet.position_y = last_position_.y;
-                dummy_packet.velocity_x = velocity_.x;
-                dummy_packet.velocity_y = velocity_.y;
-                dummy_packet.server_time = SessionSubsystem::Get()->GetServerTime();
-                dummy_packet.time_update = true;
-                SendPacket(dummy_packet);
-            }
-
-            MovePlayerPacket move_player_packet;
-            move_player_packet.position_x = position.x;
-            move_player_packet.position_y = position.y;
-            move_player_packet.velocity_x = velocity_.x;
-            move_player_packet.velocity_y = velocity_.y;
-            move_player_packet.server_time = SessionSubsystem::Get()->GetServerTime();
-            move_player_packet.time_update = false;
-            SendPacket(move_player_packet);
-
-            was_moving_ = is_moving_now;
-            last_position_ = position;
-            movement_sync_accumulator_ = 0.f;
+            ObjectPositionPacket dummy_packet;
+            dummy_packet.object_id = GetObjectID();
+            dummy_packet.position_x = last_position_.x;
+            dummy_packet.position_y = last_position_.y;
+            dummy_packet.velocity_x = velocity_.x;
+            dummy_packet.velocity_y = velocity_.y;
+            dummy_packet.server_time = server_time;
+            dummy_packet.time_update = true;
+            SendPacket(dummy_packet);
         }
 
-        std::wstring current_anim = animator_->GetCurrentState()->GetName();
-        bool is_flip = renderer_->IsFlipX();
-        if (current_anim != last_animation_ || is_flip != last_flip_)
-        {
-            PlayerAnimationPacket anim_pkt;
-            anim_pkt.is_flipped  = renderer_->IsFlipX();
-            anim_pkt.animation   = current_anim;
-            anim_pkt.server_time = SessionSubsystem::Get()->GetServerTime();
-            SendPacket(anim_pkt);
-            
-            last_animation_ = current_anim;
-            last_flip_ = is_flip;
-        }
+        ObjectPositionPacket position_packet;
+        position_packet.object_id = GetObjectID();
+        position_packet.position_x = position.x;
+        position_packet.position_y = position.y;
+        position_packet.velocity_x = velocity_.x;
+        position_packet.velocity_y = velocity_.y;
+        position_packet.server_time = server_time;
+        position_packet.time_update = false;
+        SendPacket(position_packet);
+
+        was_moving_ = is_moving_now;
+        last_position_ = position;
+        movement_sync_accumulator_ = 0.f;
     }
-    else
+
+    std::wstring current_anim = animator_->GetCurrentState()->GetName();
+    bool is_flip = renderer_->IsFlipX();
+    if (current_anim != last_animation_ || is_flip != last_flip_)
     {
-        float server_now = SessionSubsystem::Get()->GetServerTime();
+        ObjectAnimationPacket animation_packet;
+        animation_packet.object_id = GetObjectID();
+        animation_packet.is_flipped = is_flip;
+        animation_packet.animation = current_anim;
+        animation_packet.server_time = SessionSubsystem::Get()->GetServerTime();
+        animation_packet.instant_play = false;
+        SendPacket(animation_packet);
 
-        float interpolation_time = server_now - EngineSettings::Get()->GetCharacterInterpolationDelay();
-
-        // 오래된 스냅샷 제거
-        while (movement_snapshots_.size() >= 2 &&
-            movement_snapshots_[1].server_time < interpolation_time)
-        {
-            movement_snapshots_.pop_front(); 
-        }
-
-        if (movement_snapshots_.size() >= 2 &&
-            movement_snapshots_[1].time_update)
-        {
-            movement_snapshots_.pop_front();
-        }
-        
-        if (movement_snapshots_.size() >= 2)
-        {
-            if (movement_snapshots_[0].time_update)
-            {
-                movement_snapshots_[0].server_time = movement_snapshots_[1].server_time - EngineSettings::Get()->GetCharacterInterpolationDelay();
-            }
-            
-            const MovementSnapshot& from = movement_snapshots_[0];
-            const MovementSnapshot& to = movement_snapshots_[1];
-
-            float t = (interpolation_time - from.server_time) / (to.server_time - from.server_time);
-            t = Math::Clamp(t, 0.f, 1.f);
-
-            Math::Vector2 position = Math::Vector2::Lerp(from.position, to.position, t);
-            GetTransform()->SetPosition(position);
-        }
-
-        while (animation_snapshots_.size() >= 2 &&
-           animation_snapshots_[1].server_time < interpolation_time)
-        {
-            animation_snapshots_.pop_front();
-        }
-        
-        if (!animation_snapshots_.empty())
-        {
-            const auto& anim = animation_snapshots_.front();
-
-            // 이전 스냅샷과 다를 경우에만 처리
-            if ( prev_animation.server_time != anim.server_time)
-            {
-                renderer_->SetFlipX(anim.is_flipped);
-                animator_->PlayAnimation(anim.animation);
-                prev_animation = anim;
-            }
-        }
+        last_animation_ = current_anim;
+        last_flip_ = is_flip;
     }
 }
+
 
 void PlayerCharacter::OnFootstep() const
 {

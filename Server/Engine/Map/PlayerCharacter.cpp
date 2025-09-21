@@ -286,43 +286,44 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case MovePlayerPacket::StaticPacketID:
+    case ObjectPositionPacket::StaticPacketID:
         {
-            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
+            ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet);
             if (map_)
             {
-                float position_x = move_player_packet->position_x;
-                float position_y = move_player_packet->position_y;
-                
+                float position_x = object_position_packet->position_x;
+                float position_y = object_position_packet->position_y;
+
                 SetPosition({position_x, position_y});
-                
-                MovePlayerPacket move_player_broadcast_packet;
-                move_player_broadcast_packet.unique_id = object_id_;
-                move_player_broadcast_packet.position_x = position_x;
-                move_player_broadcast_packet.position_y = position_y;
-                move_player_broadcast_packet.velocity_x = move_player_packet->velocity_x;
-                move_player_broadcast_packet.velocity_y = move_player_packet->velocity_y;
-                move_player_broadcast_packet.server_time = Net::GetClientTime();
-                move_player_broadcast_packet.time_update = move_player_packet->time_update;
-                map_->SendPacket(move_player_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+
+                ObjectPositionPacket position_broadcast_packet;
+                position_broadcast_packet.object_id = object_id_;
+                position_broadcast_packet.position_x = position_x;
+                position_broadcast_packet.position_y = position_y;
+                position_broadcast_packet.velocity_x = object_position_packet->velocity_x;
+                position_broadcast_packet.velocity_y = object_position_packet->velocity_y;
+                position_broadcast_packet.server_time = Net::GetClientTime();
+                position_broadcast_packet.time_update = object_position_packet->time_update;
+                map_->SendPacket(position_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
             }
         }
         break;
 
-    case PlayerAnimationPacket::StaticPacketID:
+    case ObjectAnimationPacket::StaticPacketID:
         {
-            PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet);
+            ObjectAnimationPacket* object_animation_packet = static_cast<ObjectAnimationPacket*>(packet);
             if (map_)
             {
-                current_animation_ = player_animation_packet->animation;
-                is_flipped_ = player_animation_packet->is_flipped;
-                
-                PlayerAnimationPacket player_animation_broadcast_packet;
-                player_animation_broadcast_packet.unique_id = object_id_;
-                player_animation_broadcast_packet.server_time = Net::GetClientTime();
-                player_animation_broadcast_packet.animation = player_animation_packet->animation;
-                player_animation_broadcast_packet.is_flipped =  player_animation_packet->is_flipped;
-                map_->SendPacket(player_animation_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+                current_animation_ = object_animation_packet->animation;
+                is_flipped_ = object_animation_packet->is_flipped;
+
+                ObjectAnimationPacket animation_broadcast_packet;
+                animation_broadcast_packet.object_id = object_id_;
+                animation_broadcast_packet.server_time = Net::GetClientTime();
+                animation_broadcast_packet.animation = object_animation_packet->animation;
+                animation_broadcast_packet.is_flipped = object_animation_packet->is_flipped;
+                animation_broadcast_packet.instant_play = object_animation_packet->instant_play;
+                map_->SendPacket(animation_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
             }
         }
         break;
@@ -908,11 +909,12 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 
     player->SendPacket(packet);
 
-    PlayerAnimationPacket animation_packet;
-    animation_packet.unique_id = object_id_;
+    ObjectAnimationPacket animation_packet;
+    animation_packet.object_id = object_id_;
     animation_packet.animation =  current_animation_;
     animation_packet.is_flipped = is_flipped_;
     animation_packet.server_time = Net::GetClientTime();
+    animation_packet.instant_play = true;
     player->SendPacket(animation_packet);
 }
 

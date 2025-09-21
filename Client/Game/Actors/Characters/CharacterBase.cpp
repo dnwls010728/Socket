@@ -15,7 +15,7 @@
 #include "Windows/DX/Sprite.h"
 
 CharacterBase::CharacterBase(const std::wstring& kName) :
-    NetworkActor(kName),
+    ServerActor(kName),
     character_name_(L"Unknown"),
     state_machine_(nullptr),
     velocity_(Math::Vector2::Zero()),
@@ -24,13 +24,10 @@ CharacterBase::CharacterBase(const std::wstring& kName) :
     chat_balloon_(nullptr),
     chat_balloon_timer_handle_()
 {
-    collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     controller_ = AddComponent<Controller2DComponent>(L"Controller2D");
     
-    renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
     renderer_->SetZOrder(std::numeric_limits<int32_t>::max());
 
-    animator_ = AddComponent<AnimatorComponent>(L"Animator");
     state_machine_ = AddComponent<StateMachineComponent>(L"StateMachine");
 
 }
@@ -63,7 +60,7 @@ void CharacterBase::Speak(const std::wstring& message, float duration)
 
 void CharacterBase::BeginPlay()
 {
-    NetworkActor::BeginPlay();
+    ServerActor::BeginPlay();
     
     Math::Vector2 screen_position = Renderer::Get()->WorldToScreen(GetTransform()->GetPosition());
 
@@ -85,7 +82,7 @@ void CharacterBase::BeginPlay()
 
 void CharacterBase::PhysicsTick(float delta_time)
 {
-    NetworkActor::PhysicsTick(delta_time);
+    ServerActor::PhysicsTick(delta_time);
     
     Math::Vector2 screen_position = Renderer::Get()->WorldToScreen(GetTransform()->GetPosition());
 
@@ -98,7 +95,7 @@ void CharacterBase::PhysicsTick(float delta_time)
 
 void CharacterBase::EndPlay(EndPlayReason type)
 {
-    NetworkActor::EndPlay(type);
+    ServerActor::EndPlay(type);
 
     if (auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState()))
     {

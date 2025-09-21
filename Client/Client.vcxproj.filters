@@ -254,12 +254,10 @@
     <ClCompile Include="Game\PacketHandlers\ObjectDestroyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\LoginHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MapLoadHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyInviteNotifyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyJoinHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
@@ -907,12 +905,10 @@
     <ClInclude Include="Game\PacketHandlers\ObjectDestroyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\LoginHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MapLoadHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyInviteNotifyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyJoinHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PopupHandler.h" />

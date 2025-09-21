@@ -298,7 +298,6 @@
     <ClInclude Include="Game\PacketHandlers\ObjectDestroyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\LoginHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MapLoadHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectTakeDamageHandler.h" />
@@ -309,7 +308,6 @@
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DoSelectCardHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
@@ -741,7 +739,6 @@
     <ClCompile Include="Game\PacketHandlers\ObjectDestroyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\LoginHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MapLoadHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectTakeDamageHandler.cpp" />
@@ -751,7 +748,6 @@
     <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />

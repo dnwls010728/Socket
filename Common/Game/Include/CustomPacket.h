@@ -170,31 +170,6 @@ struct MapLoadCompletePacket : public Net::IPacket
     REGISTER_PACKET(MapLoadCompletePacket, 214)
 };
 
-struct MovePlayerPacket : public Net::IPacket
-{
-    uint32_t unique_id;
-    float position_x;
-    float position_y;
-    float velocity_x;
-    float velocity_y;
-    float server_time;
-    bool time_update;
-    
-    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 215)
-};
-
-struct PlayerAnimationPacket : public Net::IPacket
-{
-    uint32_t unique_id;
-    bool is_flipped;
-    std::wstring animation;
-    float server_time;
-    
-    SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 216)
-};
-
 struct ChatMessagePacket : public Net::IPacket
 {
     uint32_t unique_id;

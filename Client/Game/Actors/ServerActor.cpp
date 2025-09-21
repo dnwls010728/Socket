@@ -55,6 +55,7 @@ void ServerActor::TakeDamage(std::vector<int> damage_amount)
 
 void ServerActor::PhysicsTick(float delta_time)
 {
+    NetworkActor::PhysicsTick(delta_time);
     float server_now = SessionSubsystem::Get()->GetServerTime();
     float interpolation_time = server_now - EngineSettings::Get()->GetObjectInterpolationDelay();
 

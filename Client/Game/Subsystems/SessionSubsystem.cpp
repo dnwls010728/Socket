@@ -15,8 +15,6 @@
 #include "PacketHandlers/InventoryUpdateHandler.h"
 #include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
-#include "PacketHandlers/MovePlayerHandler.h"
-#include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
@@ -102,16 +100,6 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         InventoryUpdatePacket::StaticPacketID,
         std::make_unique<InventoryUpdateHandler>()
-    );
-
-    handlers_.emplace(
-        MovePlayerPacket::StaticPacketID,
-        std::make_unique<MovePlayerHandler>()
-    );
-
-    handlers_.emplace(
-        PlayerAnimationPacket::StaticPacketID,
-        std::make_unique<PlayerAnimationHandler>()
     );
 
     handlers_.emplace(

@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include <CommonObject.h>
-#include <deque>
-
 #include "Actors/Characters/CharacterBase.h"
 #include "Actors/Interfaces/IDamageable.h"
 #include "Math/Color.h"
@@ -10,21 +8,6 @@ class PlayerCharacter : public CharacterBase, public IDamageable
 {
     SHADER_CLASS_HELPER(PlayerCharacter)
     GENERATED_BODY(PlayerCharacter, CharacterBase)
-
-    struct MovementSnapshot
-    {
-        Math::Vector2 position;
-        Math::Vector2 velocity;
-        float server_time;
-        bool time_update;
-    };
-
-    struct AnimationSnapshot
-    {
-        bool is_flipped;
-        std::wstring animation;
-        float server_time;
-    };
 
 public:
     PlayerCharacter(const std::wstring& kName);
@@ -67,10 +50,6 @@ protected:
 
     uint32_t party_id_;
     
-    std::deque<MovementSnapshot> movement_snapshots_;
-    std::deque<AnimationSnapshot> animation_snapshots_;
-    AnimationSnapshot prev_animation;
-
     float movement_sync_accumulator_;
     float invincible_time_;
 
