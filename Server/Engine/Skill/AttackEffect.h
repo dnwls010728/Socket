@@ -1,17 +1,15 @@
 ﻿#pragma once
 #include <memory>
 
+#include "Map/IDamageable.h"
 #include "Map/PlayerCharacter.h"
-
-class Mob;
-class Player;
 class AttackEffect
 {
 public:
     struct AttackContext
     {
         PlayerCharacter* attacker;
-        Mob* target;
+        IDamageable* target;
     };
 
     AttackEffect() = default;

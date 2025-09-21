@@ -2,9 +2,11 @@
 #include <mutex>
 #include <unordered_map>
 #include <memory>
+#include <vector>
 
 #include "KeyMapping.h"
 #include "Buff/BuffManager.h"
+#include "IDamageable.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
 #include "Session/Player.h"
@@ -27,7 +29,7 @@ class SkillManager;
 
 ENUM_CLASS_FLAGS(PlayerStat)
 
-class PlayerCharacter : public MapObject
+class PlayerCharacter : public MapObject, public IDamageable
 {
 public:
     struct EquipStat
@@ -66,6 +68,8 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
+    void TakeDamage(uint32_t attacker, int32_t damage_amount) override;
+    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages) override;
     void TakeDamage(int32_t damage_amount);
     void ApplyHPDelta(int32_t hp_delta);
 

@@ -7,7 +7,7 @@
 #include "Map/PlayerCharacter.h"
 #include "Map/Map.h"
 #include "Map/MapObject.h"
-#include "Map/MapObjects/Mob/Mob.h"
+#include "Map/IDamageable.h"
 #include "Skill/AttackChain.h"
 #include "Skill/AttackEffect/DamageEffect.h"
 
@@ -78,14 +78,17 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
     for (const auto& target : target_objs)
     {
         if (!target) continue;
-        auto mob = dynamic_pointer_cast<Mob>(target);
-        if (!mob) continue;
+
+        if (target.get() == owner_) continue;
+
+        auto damageable = std::dynamic_pointer_cast<IDamageable>(target);
+        if (!damageable) continue;
 
         AttackEffect::AttackContext ctx;
         ctx.attacker = owner_;
-        ctx.target = mob.get();
+        ctx.target = damageable.get();
         attack_chain->Apply(ctx);
         if (++hit_count >= static_cast<uint32_t>(frame.max_targets))
-           break;
+            break;
     }
 }

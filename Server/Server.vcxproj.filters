@@ -428,6 +428,9 @@
     <ClInclude Include="Engine\Map\Foothold.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Map\IDamageable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Engine\Map\Map.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

@@ -394,7 +394,7 @@ void Map::Tick(float delta_time)
                 float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
                 if (distance < 1.f && !player->IsInvincible())
                 {
-                    player->TakeDamage(mob->damage_);
+                    player->TakeDamage(mob->GetObjectID(), mob->damage_);
                     break;
                 }
             }
@@ -437,16 +437,33 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 
 void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_ptr<MapObject>>& result)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
-     
-    for (const auto& [id, obj] : map_objects_)
     {
-        // 임시 사이즈
-        Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+        std::lock_guard<std::mutex> lock(object_mutex_);
+
+        for (const auto& [id, obj] : map_objects_)
+        {
+            if (!obj) continue;
+
+            // 임시 사이즈
+            Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+            Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
+
+            if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
+                result.push_back(obj);
+        }
+    }
+
+    std::lock_guard<std::mutex> player_lock(player_mutex_);
+    for (const auto& player_weak : players_ | std::views::values)
+    {
+        auto player = player_weak.lock();
+        if (!player) continue;
+
+        Bounds target_bounds(player->GetPosition(), {3.f, 2.f});
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
         if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
-            result.push_back(obj);
+            result.push_back(player);
     }
 }
 

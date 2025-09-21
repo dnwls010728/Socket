@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "FunctionMacros.h"
+#include "Engine/Map/IDamageable.h"
 #include "Engine/Map/MapObject.h"
 #include "FSM/StateMachine.h"
 #include "Misc/Function.h"
@@ -10,7 +11,7 @@ class MobHitState;
 class MobWalkState;
 class MobIdleState;
 
-class Mob : public MapObject
+class Mob : public MapObject, public IDamageable
 {
 private:
     Function<void(const std::shared_ptr<Mob>& mob)> death_event_;
@@ -46,8 +47,8 @@ public:
     inline std::shared_ptr<MobWalkState> GetWalkState() const { return walk_state_; }
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
-    void TakeDamage(uint32_t attacker, int32_t damage);
-    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages);
+    void TakeDamage(uint32_t attacker, int32_t damage) override;
+    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages) override;
 
     DEFINE_BIND_OVERLOADS(death_event_, OnDeath, void, const std::shared_ptr<Mob>&)
 

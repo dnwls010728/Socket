@@ -841,20 +841,33 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(int32_t damage_amount)
+void PlayerCharacter::TakeDamage(uint32_t attacker, int32_t damage)
 {
+    TakeMultiDamage(attacker, {damage});
+}
+
+void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
+{
+    if (hp_ <= 0) return;
+    if (damages.empty()) return;
     if (is_dead_ || is_invincible_) return;
-    hp_ = std::clamp(hp_ - damage_amount, 0, effective_max_hp_);
+
+    int32_t total_damage = 0;
+    for (int32_t damage_amount : damages)
+    {
+        total_damage += damage_amount;
+    }
+    
+    hp_ = std::clamp(hp_ - total_damage, 0, effective_max_hp_);
 
     PlayerStatsUpdatePacket stats_update_packet;
     stats_update_packet.mask |= PlayerStat::kHP;
     stats_update_packet.hp = hp_;
     SendPacket(stats_update_packet);
 
-    TakeDamagePacket packet;
+    ObjectTakeDamagePacket packet;
     packet.object_id = object_id_;
-    packet.damage_amount = damage_amount;
-    packet.server_time = Net::GetClientTime();
+    packet.damage_amount = damages;
     map_->SendPacket(packet);
 
     is_invincible_.Set(1.f);

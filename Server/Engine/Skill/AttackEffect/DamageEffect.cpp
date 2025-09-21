@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "DamageEffect.h"
-#include "Map/MapObjects/Mob/Mob.h"
+#include <vector>
 
 DamageEffect::DamageEffect() :
     damage_multiplier_(100.0f),
@@ -12,6 +12,9 @@ DamageEffect::DamageEffect() :
 
 void DamageEffect::Apply(const AttackContext& ctx)
 {
-    int32_t total_damage = base_damage_ + static_cast<int32_t>(damage_multiplier_ * ctx.attacker->GetAtk() );
-    ctx.target->TakeMultiDamage(ctx.attacker->GetObjectID() ,std::vector<int32_t>(attack_count_, total_damage));
+    if (ctx.attacker == nullptr || ctx.target == nullptr) return;
+
+    int32_t total_damage = base_damage_ + static_cast<int32_t>(damage_multiplier_ * ctx.attacker->GetAtk());
+    std::vector<int32_t> damages(attack_count_, total_damage);
+    ctx.target->TakeMultiDamage(ctx.attacker->GetObjectID(), damages);
 }
