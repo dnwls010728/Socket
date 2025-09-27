@@ -48,13 +48,12 @@ PlayerCharacter::PlayerCharacter() :
     key_map_(),
     buff_manager_(this),
     skill_manager_(this),
+    card_manager_(this),
     is_invincible_(),
     dropped_item_mutex_(),
     effect_mutex_(),
     equip_stats_(),
-    buff_timer_(0.f),
-    left_card_select_count_(0),
-    is_selecting_cards_(false)
+    buff_timer_(0.f)
 {
 }
 
@@ -177,6 +176,8 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             character->AddEquipStats(it.first, item);
         }
 
+        character->card_manager_.OnLoadCharacter();
+
         character->ComputeStats();
         character->hp_ = Math::Clamp(character->hp_, 1, character->effective_max_hp_);
     }
@@ -198,7 +199,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         std::cerr << "Unknown Exception" << std::endl;
         return nullptr;
     }
-
+    
     return character;
 }
 
@@ -820,19 +821,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case SelectCardResult::StaticPacketID:
         {
             SelectCardResult* card_result = static_cast<SelectCardResult*>(packet);
-
-            const CardData* card_data = DataManager::Get()->GetCard(card_result->card_id);
-            if (!card_data) break;
-
-            // TODO : 카드 스캣 적용
-            
+            card_manager_.OnCardSelected(card_result->card);
             SendStatUpdateIfNeeded();
-            
-            left_card_select_count_ = Math::Max(left_card_select_count_ - 1, 0);
-            if (left_card_select_count_ > 0)
-                SendSelectCardPacket();
-            else
-                is_selecting_cards_ = false;
         }
         break;
 
@@ -904,6 +894,11 @@ bool PlayerCharacter::Disconnect()
     }
     
     return false;
+}
+
+void PlayerCharacter::OnEnterMap()
+{
+    card_manager_.OnEnterMap();
 }
 
 void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
@@ -1064,6 +1059,8 @@ void PlayerCharacter::UpdateDatabase()
                 statement->executeUpdate();
             });
         }
+
+        card_manager_.OnUpdateDatabase();
     }
     catch (sql::SQLException& e)
     {
@@ -1130,10 +1127,7 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     if (changed_lv)
     {
-        if (is_selecting_cards_)
-            left_card_select_count_++;
-        else
-            SendSelectCardPacket();
+        card_manager_.OnLevelUp();
         
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
@@ -1162,10 +1156,10 @@ void PlayerCharacter::ComputeStats()
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
     const auto& total_buff_stats = buff_manager_.GetTotalStats();
-    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp;
-    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk;
-    effective_def_ = total_equip_stats_.def + total_buff_stats.def;
-    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig;
+    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp + card_manager_.GetMaxHP();
+    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk + card_manager_.GetATK();
+    effective_def_ = total_equip_stats_.def + total_buff_stats.def + card_manager_.GetDEF();
+    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig + card_manager_.GetDIG();
 }
 
 void PlayerCharacter::SendStatUpdateIfNeeded()
@@ -1235,41 +1229,6 @@ void PlayerCharacter::RemoveEquipStats(uint32_t slot)
 
     total_equip_stats_ -= it->second;
     equip_stats_.erase(it);
-}
-
-void PlayerCharacter::SendSelectCardPacket()
-{
-    std::vector<CardSelectInfo> cards;
-    auto cards_key_ptr = DataManager::Get()->GetCardIDs();
-    int  count = cards_key_ptr->size();
-    if (count == 0) return;
-
-    // 랜덤
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, count - 1);
-
-    for (int i = 0; i < 3; ++i)
-    {
-        int idx = dist(gen);
-        auto card_id = cards_key_ptr->at(idx);
-        const CardData* card_data = DataManager::Get()->GetCard(card_id);
-        if (!card_data)
-        {
-            i--;
-            continue;
-        }
-
-        CardSelectInfo card_info;
-        card_info.card_id = card_data->id;
-        card_info.level = 1;
-        cards.push_back(card_info);
-    }
-    
-    is_selecting_cards_ = true;
-    DoSelectCardPacket select_card_packet;
-    select_card_packet.cards = std::move(cards);
-    SendPacket(select_card_packet);
 }
 
 void PlayerCharacter::Tick(float delta_time)

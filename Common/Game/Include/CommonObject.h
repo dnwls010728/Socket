@@ -109,6 +109,8 @@ struct CardSelectInfo
 {
     uint32_t card_id;
     uint32_t level;
+    std::string offer_id;
+    uint32_t slot;
 };
 
 enum class PlayerStat : uint8_t

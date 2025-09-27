@@ -75,6 +75,7 @@ void Map::AddPlayers()
     
         player->SetMapID(map_id_);
         player->SetMap(this);
+        player->OnEnterMap();
         
         {
             for (const auto& player_weak : players_ | std::views::values)

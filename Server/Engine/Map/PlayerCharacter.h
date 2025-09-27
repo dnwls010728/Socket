@@ -9,6 +9,7 @@
 #include "IDamageable.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
+#include "Card/CardManager.h"
 #include "Session/Player.h"
 #include "Session/Player/Inventory/Inventory.h"
 #include "Utils/TimedBool.h"
@@ -70,10 +71,11 @@ public:
     void ReceivePacket(Net::IPacket* packet);
     void TakeDamage(uint32_t attacker, int32_t damage_amount) override;
     void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages) override;
-    void TakeDamage(int32_t damage_amount);
     void ApplyHPDelta(int32_t hp_delta);
 
     bool Disconnect();
+
+    virtual void OnEnterMap();
 
     virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
@@ -126,7 +128,6 @@ protected:
     void SendStatUpdateIfNeeded();
     void AddEquipStats(uint32_t slot, const std::shared_ptr<EquipItem>& item);
     void RemoveEquipStats(uint32_t slot);
-    void SendSelectCardPacket();
 
     virtual void Tick(float delta_time) override;
     
@@ -167,6 +168,7 @@ protected:
 
     BuffManager buff_manager_;
     SkillManager skill_manager_;
+    CardManager card_manager_;
     
     TimedBool is_invincible_;
 
@@ -174,9 +176,6 @@ protected:
     std::mutex effect_mutex_;
 
     std::unordered_map<uint32_t, EquipStat> equip_stats_;
-
-    int32_t left_card_select_count_;
-    bool is_selecting_cards_;
 
     float buff_timer_;
 };

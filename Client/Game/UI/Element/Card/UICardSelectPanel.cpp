@@ -80,7 +80,10 @@ void UICardSelectPanel::ShowCards(const std::vector<CardSelectInfo>& showing_car
 void UICardSelectPanel::OnSelectCard(const CardSelectInfo& card)
 {
     SelectCardResult result;
-    result.card_id = card.card_id;
+    result.card.card_id = card.card_id;
+    result.card.level = card.level;
+    result.card.offer_id = card.offer_id;
+    result.card.slot = card.slot;
     SessionSubsystem::Get()->SendPacket(result);
 
     if (pending_card_queue_.empty())

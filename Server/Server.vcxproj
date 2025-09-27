@@ -160,6 +160,7 @@
     <ClCompile Include="Engine\Buff\Buff.cpp" />
     <ClCompile Include="Engine\Buff\BuffManager.cpp" />
     <ClCompile Include="Engine\Buff\BuffStatBlock.cpp" />
+    <ClCompile Include="Engine\Card\CardManager.cpp" />
     <ClCompile Include="Engine\DataManager.cpp" />
     <ClCompile Include="Engine\FSM\Condition.cpp" />
     <ClCompile Include="Engine\FSM\StateMachine.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Engine\Buff\Buff.h" />
     <ClInclude Include="Engine\Buff\BuffManager.h" />
     <ClInclude Include="Engine\Buff\BuffStatBlock.h" />
+    <ClInclude Include="Engine\Card\CardManager.h" />
     <ClInclude Include="Engine\DataManager.h" />
     <ClInclude Include="Engine\FSM\Condition.h" />
     <ClInclude Include="Engine\FSM\IState.h" />

@@ -47,4 +47,11 @@ namespace Net
         v.max_hp
         )
 
+	SERIALIZER_EXTEND(CardSelectInfo,
+		v.card_id,
+		v.level,
+		v.offer_id,
+		v.slot
+		)
+
 } // namespace Net

@@ -519,8 +519,8 @@ struct DoSelectCardPacket : public Net::IPacket
 
 struct SelectCardResult : public Net::IPacket
 {
-    uint32_t card_id;
+    CardSelectInfo card;
 
-    SERIALIZABLE_FIELDS(card_id)
+    SERIALIZABLE_FIELDS(card)
     REGISTER_PACKET(SelectCardResult, 613)
 };
