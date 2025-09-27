@@ -898,6 +898,12 @@ bool PlayerCharacter::Disconnect()
 
 void PlayerCharacter::OnEnterMap()
 {
+    constexpr uint32_t kDefaultProjectileSkillId = 100001;
+    if (!skill_manager_.HasSkill(kDefaultProjectileSkillId))
+    {
+        skill_manager_.AddSkill(kDefaultProjectileSkillId, 1);
+    }
+
     card_manager_.OnEnterMap();
 }
 

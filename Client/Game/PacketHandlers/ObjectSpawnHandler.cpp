@@ -7,6 +7,7 @@
 #include "Actors/DroppedItem.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
+#include "Actors/Projectile.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
@@ -65,11 +66,11 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\moneydrop.mp3");
                     AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
-                
+
                 DroppedItemInfo info = object_info.info.dropped_item;
 
                 Math::Vector2 offset = Math::Vector2::Up() * .5f;
-                
+
                 dropped_item->SetObjectID(object_info.object_id);
                 dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y + offset.y });
 
@@ -77,7 +78,22 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             }
         }
         break;
+    case ObjectType::kProjectile:
+        {
+            std::shared_ptr<Actor> out_actor = nullptr;
+            if (!ObjectPoolSubsystem::Get()->GetFromPool(Projectile::StaticClass(), out_actor)) return false;
+            if (auto projectile = std::dynamic_pointer_cast<Projectile>(out_actor))
+            {
+                projectile->SetObjectID(object_info.object_id);
+                projectile->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y });
+
+                projectile->Init(object_info.info.projectile.projectile_id);
+                projectile->SetFlip(object_info.info.projectile.is_flipped);
+                projectile->PlayAnimation(object_info.info.projectile.animation_name);
+            }
+        }
+        break;
     }
-    
+
     return true;
 }

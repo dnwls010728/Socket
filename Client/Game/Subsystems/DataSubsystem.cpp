@@ -7,6 +7,7 @@ DataSubsystem::DataSubsystem() :
     mob_map_(),
     item_map_(),
     skill_map_(),
+    projectile_map_(),
     exp_table_()
 {
 }
@@ -46,6 +47,14 @@ void DataSubsystem::Init()
             SkillData data = skill.second.as<SkillData>();
             data.id = skill.first.as<uint32_t>();
             skill_map_[data.id] = data;
+        }
+
+        YAML::Node projectile_data = YAML::LoadFile("Content\\Data\\ProjectileData.data");
+        for (const auto& projectile : projectile_data["projectiles"])
+        {
+            ProjectileData data = projectile.second.as<ProjectileData>();
+            data.id = projectile.first.as<uint32_t>();
+            projectile_map_[data.id] = data;
         }
         
         YAML::Node exp_data = YAML::LoadFile("Content\\Data\\ExpData.data");
@@ -89,6 +98,13 @@ const SkillData* DataSubsystem::GetSkill(uint32_t id) const
 {
     auto it = skill_map_.find(id);
     if (it == skill_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const ProjectileData* DataSubsystem::GetProjectile(uint32_t id) const
+{
+    auto it = projectile_map_.find(id);
+    if (it == projectile_map_.end()) return nullptr;
     return &it->second;
 }
 

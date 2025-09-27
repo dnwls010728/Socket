@@ -55,6 +55,11 @@ bool ObjectDestroyHandler::Handle(Net::IPacket* packet)
             }
         }
         break;
+    case ObjectType::kProjectile:
+        {
+            if (IsValid(network_actor)) ObjectPoolSubsystem::Get()->ReturnToPool(network_actor);
+        }
+        break;
 
     default:
         {

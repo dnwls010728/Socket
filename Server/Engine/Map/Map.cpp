@@ -17,6 +17,7 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
+#include "MapObjects/ProjectileObject.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player/Inventory/EquipItem.h"
@@ -180,6 +181,46 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     number_spawned_mobs_.fetch_add(1);
 }
 
+void Map::SpawnProjectile(const std::shared_ptr<ProjectileObject>& projectile)
+{
+    if (!projectile) return;
+
+    projectile->SetObjectID(next_object_id_.fetch_add(1));
+    projectile->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(projectile);
+    }
+
+    ObjectSpawnPacket packet;
+    packet.object_info.type = ObjectType::kProjectile;
+    packet.object_info.object_id = projectile->GetObjectID();
+    packet.object_info.position_x = projectile->GetPosition().x;
+    packet.object_info.position_y = projectile->GetPosition().y;
+
+    ProjectileInfo& info = packet.object_info.info.projectile;
+    info.projectile_id = projectile->GetProjectileID();
+
+    if (auto owner = projectile->GetOwner())
+        info.owner_id = owner->GetObjectID();
+    else
+        info.owner_id = 0;
+
+    info.velocity_x = projectile->GetVelocity().x;
+    info.velocity_y = projectile->GetVelocity().y;
+    info.size_x = projectile->GetSize().x;
+    info.size_y = projectile->GetSize().y;
+    info.max_lifetime = projectile->GetMaxLifetime();
+    info.is_flipped = projectile->IsFlipped();
+    wcscpy_s(info.animation_name, projectile->GetAnimation().c_str());
+
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
 void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
@@ -268,6 +309,26 @@ void Map::DestroyMob(uint32_t object_id)
         SendPacket(object_destroy_packet);
     }
     
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        RemoveObject(object_id);
+    }
+}
+
+void Map::DestroyProjectile(uint32_t object_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kProjectile;
+    info.object_id = object_id;
+
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(object_destroy_packet);
+    }
+
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
         RemoveObject(object_id);

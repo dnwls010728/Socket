@@ -1,0 +1,10 @@
+projectiles:
+  1:
+    size: [1.5, 1.5]
+    speed: 18.0
+    max_lifetime: 3.0
+    damage: 150
+    damage_count: 1
+    max_targets: 1
+    animation: "Idle"
+    animation_pack: "Sprites\\Effects\\EffectSheet.png.apack"

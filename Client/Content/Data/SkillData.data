@@ -2,10 +2,7 @@ skills:
   100000:
     name: ""
     desc: ""
-    # atk: 0
-    # def: 0
-    # dig: 0
-    # duration: 0
+    projectile: 0
     cooldown: 1
     hit_frames:
       - hitbox:
@@ -15,3 +12,9 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
+  100001:
+    name: ""
+    desc: ""
+    projectile: 1
+    cooldown: 1
+    hit_frames: []

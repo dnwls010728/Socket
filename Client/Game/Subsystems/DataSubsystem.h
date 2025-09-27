@@ -86,6 +86,8 @@ struct SkillData
     int32_t duration;
     int32_t cooldown;
 
+    uint32_t projectile_id;
+
     std::vector<HitFrame> hit_frames;
 };
 
@@ -101,6 +103,22 @@ struct CardData
     int32_t atk;
     int32_t def;
     int32_t dig;
+};
+
+struct ProjectileData
+{
+    uint32_t id;
+
+    Math::Vector2 size;
+    float speed;
+    float max_lifetime;
+
+    int32_t damage;
+    int32_t damage_count;
+    int32_t max_targets;
+
+    std::wstring animation;
+    std::wstring animation_pack;
 };
 
 namespace YAML
@@ -237,10 +255,16 @@ namespace YAML
             data.dig = node["dig"].as<int32_t>(0);
             data.duration = node["duration"].as<int32_t>(0);
             data.cooldown = node["cooldown"].as<int32_t>(0);
-            
-            for (const auto& frame : node["hit_frames"])
-                data.hit_frames.push_back(frame.as<HitFrame>());
-            
+
+            data.projectile_id = node["projectile"].as<uint32_t>(0);
+
+            data.hit_frames.clear();
+            if (auto frames = node["hit_frames"]; frames)
+            {
+                for (const auto& frame : frames)
+                    data.hit_frames.push_back(frame.as<HitFrame>());
+            }
+
             return true;
         }
     };
@@ -261,6 +285,28 @@ namespace YAML
             return true;
         }
     };
+
+    template<>
+    struct convert<ProjectileData>
+    {
+        static bool decode(const Node& node, ProjectileData& data)
+        {
+            if (!node.IsMap()) return false;
+
+            data.size = Math::Vector2::One();
+            if (auto size_node = node["size"]; size_node)
+                data.size = size_node.as<Math::Vector2>();
+            data.speed = node["speed"].as<float>(0.f);
+            data.max_lifetime = node["max_lifetime"].as<float>(0.f);
+            data.damage = node["damage"].as<int32_t>(0);
+            data.damage_count = node["damage_count"].as<int32_t>(1);
+            data.max_targets = node["max_targets"].as<int32_t>(0);
+            data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>("Idle"));
+            data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+
+            return true;
+        }
+    };
 }
 
 class DataSubsystem : public GameInstanceSubsystem
@@ -276,6 +322,7 @@ public:
     const MobData* GetMob(uint32_t id) const;
     const ItemData* GetItem(uint32_t id) const;
     const SkillData* GetSkill(uint32_t id) const;
+    const ProjectileData* GetProjectile(uint32_t id) const;
     const CardData* GetCard(uint32_t id) const;
     
     int32_t GetExp(int32_t level) const;
@@ -286,6 +333,7 @@ private:
     std::unordered_map<uint32_t, MobData> mob_map_;
     std::unordered_map<uint32_t, ItemData> item_map_;
     std::unordered_map<uint32_t, SkillData> skill_map_;
+    std::unordered_map<uint32_t, ProjectileData> projectile_map_;
     std::unordered_map<uint32_t, CardData> card_map_;
     
     std::array<int32_t, 51> exp_table_;

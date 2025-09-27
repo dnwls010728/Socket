@@ -169,6 +169,7 @@
     <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapObject.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\DroppedItem.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\ProjectileObject.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\Mob.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobHitState.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobIdleState.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />
     <ClInclude Include="Engine\Map\MapObjects\DroppedItem.h" />
+    <ClInclude Include="Engine\Map\MapObjects\ProjectileObject.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\Mob.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobHitState.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobIdleState.h" />

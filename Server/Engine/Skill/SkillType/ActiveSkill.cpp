@@ -10,6 +10,7 @@
 #include "Map/IDamageable.h"
 #include "Skill/AttackChain.h"
 #include "Skill/AttackEffect/DamageEffect.h"
+#include "Map/MapObjects/ProjectileObject.h"
 
 ActiveSkill::ActiveSkill(PlayerCharacter* owner,  const SkillData* data, int32_t level)
 : Skill(owner, data, false, level), next_frame_(0), elapsed_(0.f), is_flipped_(false), owner_position_(Math::Vector2::Zero())
@@ -33,6 +34,39 @@ void ActiveSkill::OnStart()
             packet.skill_id = data_->id;
             packet.owner_id = owner_->GetObjectID();
             map->SendPacket(packet);
+
+            if (data_->projectile_id != 0)
+            {
+                const ProjectileData* projectile_data = DataManager::Get()->GetProjectile(data_->projectile_id);
+                if (projectile_data)
+                {
+                    std::shared_ptr<ProjectileObject> projectile = std::make_shared<ProjectileObject>();
+                    projectile->SetProjectileID(projectile_data->id);
+
+                    if (auto owner_shared = owner_->shared_from_this())
+                        projectile->SetOwner(owner_shared);
+
+                    projectile->SetAnimation(projectile_data->animation);
+                    projectile->SetFlip(is_flipped_);
+                    projectile->SetSize(projectile_data->size);
+                    projectile->SetDamage(projectile_data->damage);
+                    projectile->SetDamageCount(projectile_data->damage_count);
+                    projectile->SetMaxTargets(projectile_data->max_targets);
+                    projectile->SetMaxLifetime(projectile_data->max_lifetime);
+
+                    Math::Vector2 direction = is_flipped_ ? Math::Vector2::Left() : Math::Vector2::Right();
+                    projectile->SetVelocity(direction * projectile_data->speed);
+
+                    Math::Vector2 spawn_offset = direction * (projectile_data->size.x * 0.5f + 0.5f);
+                    spawn_offset.y += 0.5f;
+                    projectile->SetPosition(owner_position_ + spawn_offset);
+
+                    map->SpawnProjectile(projectile);
+                }
+
+                Stop();
+                return;
+            }
         }
     }
 }

@@ -114,6 +114,9 @@
     <ClCompile Include="Engine\Map\MapObjects\DroppedItem.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Map\MapObjects\ProjectileObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\Map\PlayerCharacter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -585,6 +588,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Map\MapObjects\DroppedItem.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Map\MapObjects\ProjectileObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Map\PlayerCharacter.h">

@@ -254,6 +254,7 @@
     <ClInclude Include="Game\Actors\DroppedItem.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
+    <ClInclude Include="Game\Actors\Projectile.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
     <ClInclude Include="Game\Actors\ServerActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
@@ -697,6 +698,7 @@
     <ClCompile Include="Game\Actors\Effect.cpp" />
     <ClCompile Include="Game\Actors\Grid.cpp" />
     <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />
+    <ClCompile Include="Game\Actors\Projectile.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
     <ClCompile Include="Game\Actors\ServerActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />

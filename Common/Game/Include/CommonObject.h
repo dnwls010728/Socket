@@ -48,7 +48,8 @@ enum class ObjectType : uint8_t
     kNone = 0,
     kPlayer,
     kMob,
-    kDroppedItem
+    kDroppedItem,
+    kProjectile
 };
 
 struct PlayerInfo
@@ -76,6 +77,19 @@ struct DroppedItemDestroyInfo
 {
 };
 
+struct ProjectileInfo
+{
+    uint32_t projectile_id;
+    uint32_t owner_id;
+    float velocity_x;
+    float velocity_y;
+    float size_x;
+    float size_y;
+    float max_lifetime;
+    bool is_flipped;
+    wchar_t animation_name[256];
+};
+
 struct ObjectInfo
 {
     ObjectType type;
@@ -88,6 +102,7 @@ struct ObjectInfo
         PlayerInfo player;
         MobInfo mob;
         DroppedItemInfo dropped_item;
+        ProjectileInfo projectile;
     } info;
 };
 
