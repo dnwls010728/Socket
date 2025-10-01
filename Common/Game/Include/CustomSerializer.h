@@ -51,6 +51,7 @@ namespace Net
 		v.card_id,
 		v.level,
 		v.offer_id,
+		v.offered_at,
 		v.slot
 		)
 

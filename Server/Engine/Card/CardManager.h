@@ -13,6 +13,16 @@ namespace sql { class Connection; }
 class CardManager
 {
 public:
+    struct StagedCard
+    {
+        uint32_t card_id;
+        uint32_t level;
+        std::string offer_id;
+        std::string offered_at;
+        std::string chosen_at;
+        uint32_t slot;
+        bool is_selected;
+    };
     using CardGroup = std::array<CardSelectInfo, 3>;
     
     CardManager(PlayerCharacter* player);
@@ -49,6 +59,8 @@ private:
     PlayerCharacter* player_;
 
     std::unordered_map<uint32_t, int> owned_cards_;
+
+    std::vector<StagedCard> staged_cards_;
 
     int effective_max_hp_ = 0;
     int effective_atk_    = 0;

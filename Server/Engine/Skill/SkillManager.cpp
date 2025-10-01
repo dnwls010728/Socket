@@ -24,8 +24,8 @@ void SkillManager::AddSkill(uint32_t skill_id, int32_t level)
         skill = std::make_unique<PassiveSkill>(owner_, data, level);
     else
         skill = std::make_unique<ActiveSkill>(owner_, data, level);
-
-    skills_.emplace(skill_id, std::move(skill));
+    
+    skills_.insert({skill_id, std::move(skill)});
 }
 
 bool SkillManager::UseSkill(uint32_t skill_id)

@@ -41,112 +41,52 @@ void CardManager::OnCardSelected(const CardSelectInfo& card)
 {
     if (selecting_cards.empty())
         return;
+
+    std::string chosen_time = NowForDB();
     
-    sql::Connection* connection = MySQLManager::Get()->GetConnection();
-    if (!connection)
-        return;
-
-    try
+    for (CardSelectInfo& c : selecting_cards)
     {
-        std::string offered_at = NowForDB();
-        for (CardSelectInfo& c : selecting_cards)
-        {
-            {
-                std::unique_ptr<sql::PreparedStatement> stmt(
-                    connection->prepareStatement(
-                        "INSERT INTO card_offer_info (offer_id, character_id, level, status, offered_at) "
-                        "VALUES (?, ?, ?, 1, ?) "
-                        "ON DUPLICATE KEY UPDATE status=1, offered_at=VALUES(offered_at)"
-                    )
-                );
-                std::istringstream iss(std::string(c.offer_id.data(), c.offer_id.size()));
-                stmt->setBlob(1, &iss);
-                stmt->setUInt(2, player_->GetObjectID());
-                stmt->setUInt(3, c.level);
-                stmt->setString(4, offered_at);
-                stmt->executeUpdate();
-            }
-            {
-                std::unique_ptr<sql::PreparedStatement> stmt(
-                    connection->prepareStatement(
-                        "INSERT INTO card_offer_item_info (offer_id, slot, card_id) "
-                        "VALUES (?, ?, ?) "
-                        "ON DUPLICATE KEY UPDATE card_id=VALUES(card_id)"
-                    )
-                );
-                std::istringstream iss(std::string(c.offer_id.data(), c.offer_id.size()));
-                stmt->setBlob(1, &iss);
-                stmt->setUInt(2, c.slot);
-                stmt->setUInt(3, c.card_id);
-                stmt->executeUpdate();
-            }
-        }
-        
-        std::string choice_offer_id = card.offer_id;
-        if (choice_offer_id.empty())
-        {
-            for (const auto& c : selecting_cards)
-            {
-                if (c.slot == card.slot && c.card_id == card.card_id)
-                {
-                    choice_offer_id = c.offer_id;
-                    break;
-                }
-            }
-            if (choice_offer_id.empty())
-                return;
-        }
-
-        {
-            std::unique_ptr<sql::PreparedStatement> stmt(
-                connection->prepareStatement(
-                    "INSERT INTO card_choice_info (offer_id, chosen_card_id, slot, chosen_at) "
-                    "VALUES (?, ?, ?, ?)"
-                )
-            );
-            std::istringstream iss(std::string(choice_offer_id.data(), choice_offer_id.size()));
-            stmt->setBlob(1, &iss);
-            stmt->setUInt(2, card.card_id);
-            stmt->setUInt(3, card.slot);
-            stmt->setString(4, NowForDB());
-            stmt->executeUpdate();
-        }
-
-        int new_level = card.level;
-        auto it = owned_cards_.find(card.card_id);
-        if (it == owned_cards_.end() || it->second < new_level)
-            owned_cards_[card.card_id] = new_level;
-
-        selecting_cards.clear();
-        ComputeStats();
-
-        if (!pending_cards_.empty())
-        {
-            CardGroup cards = pending_cards_.front();
-            pending_cards_.pop();
-
-            if (cards[0].offer_id.empty())
-            {
-                if (CreateCards(cards))
-                {
-                    selecting_cards.assign(cards.begin(), cards.end());
-                    SendSelectCardPacket(cards);
-                }
-            }
-            else
-            {
-                if (ActivatePendingCard(cards))
-                {
-                    selecting_cards.assign(cards.begin(), cards.end());
-                    SendSelectCardPacket(cards);
-                }
-            }
-            ComputeStats();
-        }
+        StagedCard staged;
+        staged.card_id     = c.card_id;
+        staged.level       = c.level;
+        staged.offer_id    = c.offer_id;
+        staged.offered_at  = c.offered_at;
+        staged.slot        = c.slot;
+        staged.is_selected = (c.slot == card.slot && c.card_id == card.card_id);
+        staged.chosen_at   = staged.is_selected ? chosen_time : "";
+        staged_cards_.push_back(std::move(staged));
     }
-    catch (sql::SQLException& e)
+    
+    int new_level = card.level;
+    auto it = owned_cards_.find(card.card_id);
+    if (it == owned_cards_.end() || it->second < new_level)
+        owned_cards_[card.card_id] = new_level;
+
+    selecting_cards.clear();
+    ComputeStats();
+    
+    if (!pending_cards_.empty())
     {
-        std::cerr << "SQLException in OnCardSelected: " << e.what() << std::endl;
+        CardGroup cards = pending_cards_.front();
+        pending_cards_.pop();
+
+        if (cards[0].offer_id.empty())
+        {
+            if (CreateCards(cards))
+            {
+                selecting_cards.assign(cards.begin(), cards.end());
+                SendSelectCardPacket(cards);
+            }
+        }
+        else
+        {
+            if (ActivatePendingCard(cards))
+            {
+                selecting_cards.assign(cards.begin(), cards.end());
+                SendSelectCardPacket(cards);
+            }
+        }
+        ComputeStats();
     }
 }
 
@@ -260,16 +200,8 @@ void CardManager::OnUpdateDatabase()
     {
         if (!selecting_cards.empty())
         {
-            std::string offered_at = NowForDB();
             for (auto& c : selecting_cards)
             {
-                if (c.offer_id.empty())
-                {
-                    std::string uuid;
-                    if (!CreateUUID(uuid)) continue;
-                    c.offer_id = uuid;
-                }
-
                 {
                     std::unique_ptr<sql::PreparedStatement> stmt(
                         connection->prepareStatement(
@@ -282,7 +214,7 @@ void CardManager::OnUpdateDatabase()
                     stmt->setBlob(1, &iss);
                     stmt->setUInt(2, player_->GetObjectID());
                     stmt->setUInt(3, c.level);
-                    stmt->setString(4, offered_at);
+                    stmt->setString(4, c.offered_at);
                     stmt->executeUpdate();
                 }
                 {
@@ -301,14 +233,13 @@ void CardManager::OnUpdateDatabase()
                 }
             }
         }
-
+        
         std::queue<CardGroup> temp_queue;
         while (!pending_cards_.empty())
         {
             CardGroup group = pending_cards_.front();
             pending_cards_.pop();
 
-            std::string offered_at = NowForDB();
             for (int i = 0; i < 3; ++i)
             {
                 if (group[i].offer_id.empty())
@@ -330,7 +261,7 @@ void CardManager::OnUpdateDatabase()
                     stmt->setBlob(1, &iss);
                     stmt->setUInt(2, player_->GetObjectID());
                     stmt->setUInt(3, group[i].level);
-                    stmt->setString(4, offered_at);
+                    stmt->setString(4, group[i].offered_at);
                     stmt->executeUpdate();
                 }
                 {
@@ -351,6 +282,55 @@ void CardManager::OnUpdateDatabase()
             temp_queue.push(std::move(group));
         }
         pending_cards_ = std::move(temp_queue);
+        
+        for (auto& sc : staged_cards_)
+        {
+            {
+                std::unique_ptr<sql::PreparedStatement> stmt(
+                    connection->prepareStatement(
+                        "INSERT INTO card_offer_info (offer_id, character_id, level, status, offered_at) "
+                        "VALUES (?, ?, ?, 1, ?) "
+                        "ON DUPLICATE KEY UPDATE status=1, offered_at=VALUES(offered_at)"
+                    )
+                );
+                std::istringstream iss(std::string(sc.offer_id.data(), sc.offer_id.size()));
+                stmt->setBlob(1, &iss);
+                stmt->setUInt(2, player_->GetObjectID());
+                stmt->setUInt(3, sc.level);
+                stmt->setString(4, sc.offered_at);
+                stmt->executeUpdate();
+            }
+            {
+                std::unique_ptr<sql::PreparedStatement> stmt(
+                    connection->prepareStatement(
+                        "INSERT INTO card_offer_item_info (offer_id, slot, card_id) "
+                        "VALUES (?, ?, ?) "
+                        "ON DUPLICATE KEY UPDATE card_id=VALUES(card_id)"
+                    )
+                );
+                std::istringstream iss(std::string(sc.offer_id.data(), sc.offer_id.size()));
+                stmt->setBlob(1, &iss);
+                stmt->setUInt(2, sc.slot);
+                stmt->setUInt(3, sc.card_id);
+                stmt->executeUpdate();
+            }
+            if (sc.is_selected)
+            {
+                std::unique_ptr<sql::PreparedStatement> stmt(
+                    connection->prepareStatement(
+                        "INSERT INTO card_choice_info (offer_id, chosen_card_id, slot, chosen_at) "
+                        "VALUES (?, ?, ?, ?)"
+                    )
+                );
+                std::istringstream iss(std::string(sc.offer_id.data(), sc.offer_id.size()));
+                stmt->setBlob(1, &iss);
+                stmt->setUInt(2, sc.card_id);
+                stmt->setUInt(3, sc.slot);
+                stmt->setString(4, sc.chosen_at);
+                stmt->executeUpdate();
+            }
+        }
+        staged_cards_.clear();
     }
     catch (sql::SQLException& e)
     {
@@ -546,7 +526,8 @@ void CardManager::ComputeStats()
     effective_atk_    = 0;
     effective_def_    = 0;
     effective_dig_    = 0;
-
+    
+    SkillManager& skill_manager = player_->GetSkillManager();
     for (auto& [card_id, level] : owned_cards_)
     {
         const CardData* data = DataManager::Get()->GetCard(card_id);
@@ -555,5 +536,7 @@ void CardManager::ComputeStats()
         effective_atk_    += data->atk    * level;
         effective_def_    += data->def    * level;
         effective_dig_    += data->dig    * level;
+        if (data->skill_id != 0)
+            skill_manager.AddSkill(data->skill_id, level);
     }
 }

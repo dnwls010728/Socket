@@ -125,6 +125,7 @@ struct CardSelectInfo
     uint32_t card_id;
     uint32_t level;
     std::string offer_id;
+    std::string offered_at;
     uint32_t slot;
 };
 
