@@ -12,6 +12,8 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
 #include "Player/Inventory/Item.h"
+#include "Skill/Skill.h"
+#include "Skill/SkillManager.h"
 
 Player::Player(Session* session, uint32_t account_id) :
     session_(session),
@@ -248,6 +250,15 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 key_binding_info.action = key.second.action;
                 response.key_bindings.push_back(key_binding_info);
             }
+
+            player_character_->skill_manager_.EnumSkills([&response](Skill* skill)
+            {
+                SkillInfo info{};
+                info.skill_id = skill->GetID();
+                info.level = skill->GetLevel();
+                info.cooldown = skill->GetCoolDown();
+                response.skills.push_back(info);
+            });
 
             SendPacket(response);
 

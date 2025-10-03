@@ -12,6 +12,7 @@ class UIInventory;
 class UIPartyPanel;
 class UIPartyWindow;
 class UICardSelectPanel;
+class UISkillWindow;
 
 class UIInGameState : public UIState
 {
@@ -37,6 +38,7 @@ private:
     UIChatBar* char_bar_;
     UIInventory* inventory_;
     UIEquipment* equipment_;
+    UISkillWindow* skill_window_;
     UIItemTooltip* item_tooltip_;
     UIMenu* menu_;
     UIContextMenu* context_menu_;

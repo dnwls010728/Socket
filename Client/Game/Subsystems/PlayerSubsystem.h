@@ -1,8 +1,11 @@
 ﻿#pragma once
+#include "CommonObject.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 #include "Inventory/Inventory.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
+
+#include <map>
 
 class PlayerSubsystem : public GameInstanceSubsystem
 {
@@ -17,6 +20,9 @@ public:
     void DeleteProfile(uint32_t character_id);
     void UseItem(uint32_t item_id) const;
     void UseSkill(uint32_t skill_id) const;
+    void SetSkills(const std::vector<SkillInfo>& skills);
+    void UpdateSkill(uint32_t skill_id, int32_t level);
+    std::vector<SkillInfo> GetSkillList() const;
 
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
@@ -46,7 +52,8 @@ private:
     friend class SelectCharacterHandler;
     friend class MapLoadHandler;
     friend class GameMap;
-    
+    friend class SkillUpdateHandler;
+
     uint32_t account_id_;
     uint32_t character_id_;
     uint32_t map_id_;
@@ -68,6 +75,10 @@ private:
     
     std::unique_ptr<Inventory> inventory_;
 
+    std::map<uint32_t, SkillInfo> skills_;
+
     float portal_cooldown_;
-    
+
+    void PublishSkills() const;
+
 };

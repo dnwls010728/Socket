@@ -29,11 +29,18 @@ struct CharacterProfile
 struct ItemInfo
 {
     uint8_t inventory_type; // 0: 장비, 1: 소비, 2: 기타
-    
+
     uint32_t item_id;
     uint32_t slot_id;
-    
+
     int32_t count;
+};
+
+struct SkillInfo
+{
+    uint32_t skill_id;
+    int32_t level;
+    float cooldown;
 };
 
 enum class ItemMoveType : uint8_t

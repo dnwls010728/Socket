@@ -1,6 +1,9 @@
 ﻿#pragma once
+#include "CommonObject.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
 #include "Subsystem/GameInstanceSubsystem.h"
+
+#include <vector>
 
 struct EventData
 {
@@ -62,8 +65,15 @@ struct ColorUpdateData : EventData
 struct BuffExpiredData : EventData
 {
     int32_t buff_id;
-    
+
     virtual ~BuffExpiredData() override = default;
+};
+
+struct SkillListUpdatedData : EventData
+{
+    std::vector<SkillInfo> skills;
+
+    virtual ~SkillListUpdatedData() override = default;
 };
 
 DECLARE_DELEGATE(OnPublisherDelegate, const EventData&)
@@ -82,7 +92,8 @@ public:
         kItemMoved,
         kItemRemoved,
         kColorUpdated,
-        kBuffExpired
+        kBuffExpired,
+        kSkillsUpdated
     };
     
     PublisherSubsystem();

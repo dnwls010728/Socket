@@ -1,7 +1,7 @@
 skills:
   100000:
-    name: ""
-    desc: ""
+    name: "테스트"
+    desc: "낫으로 전방의 적을 벤다."
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -13,8 +13,8 @@ skills:
         max_targets: 10
         time_offset: 0.3
   100001:
-    name: ""
-    desc: ""
+    name: "테스트2"
+    desc: "아무 설명."
     projectile: 1
     cooldown: 1
     hit_frames: []

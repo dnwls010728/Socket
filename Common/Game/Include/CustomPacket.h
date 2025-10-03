@@ -136,9 +136,10 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t etc_slot_capacity;
 
     std::vector<ItemInfo> inventory;
+    std::vector<SkillInfo> skills;
     std::vector<KeyBindingInfo> key_bindings;
-    
-    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, key_bindings)
+
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, skills, key_bindings)
     REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 
@@ -358,6 +359,15 @@ struct SkillCastPacket : public Net::IPacket
 
     SERIALIZABLE_FIELDS(owner_id, skill_id)
     REGISTER_PACKET(SkillCastPacket, 405)
+};
+
+struct SkillUpdatePacket : public Net::IPacket
+{
+    uint32_t skill_id;
+    int32_t skill_level;
+
+    SERIALIZABLE_FIELDS(skill_id, skill_level)
+    REGISTER_PACKET(SkillUpdatePacket, 406)
 };
 
 struct PlayerStatsUpdatePacket : public Net::IPacket

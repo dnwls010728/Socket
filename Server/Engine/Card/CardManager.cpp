@@ -64,7 +64,17 @@ void CardManager::OnCardSelected(const CardSelectInfo& card)
 
     selecting_cards.clear();
     ComputeStats();
-    
+
+    const CardData* selected_card_data = DataManager::Get()->GetCard(card.card_id);
+    if (selected_card_data && selected_card_data->skill_id != 0)
+    {
+        player_->GetSkillManager().AddSkill(selected_card_data->skill_id, card.level);
+        SkillUpdatePacket packet;
+        packet.skill_id = selected_card_data->skill_id;
+        packet.skill_level = card.level;
+        player_->SendPacket(packet);
+    }
+
     if (!pending_cards_.empty())
     {
         CardGroup cards = pending_cards_.front();
@@ -536,7 +546,5 @@ void CardManager::ComputeStats()
         effective_atk_    += data->atk    * level;
         effective_def_    += data->def    * level;
         effective_dig_    += data->dig    * level;
-        if (data->skill_id != 0)
-            skill_manager.AddSkill(data->skill_id, level);
     }
 }

@@ -31,12 +31,18 @@ namespace Net
 		v.stats
 		)
 
-	SERIALIZER_EXTEND(ItemInfo,
-		v.inventory_type,
-		v.item_id,
-		v.slot_id,
-		v.count
-		)
+        SERIALIZER_EXTEND(ItemInfo,
+                v.inventory_type,
+                v.item_id,
+                v.slot_id,
+                v.count
+                )
+
+        SERIALIZER_EXTEND(SkillInfo,
+                v.skill_id,
+                v.level,
+                v.cooldown
+                )
 
     SERIALIZER_EXTEND(PartyMemberInfo,
         v.character_id,

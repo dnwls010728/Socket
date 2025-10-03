@@ -13,6 +13,7 @@
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
 #include "Element/QuickSlot/UIQuickBar.h"
+#include "Element/Skill/UISkillWindow.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Subsystems/PartySubsystem.h"
@@ -35,6 +36,10 @@ UIInGameState::UIInGameState() :
 
     equipment_ = AddElement<UIEquipment>(UIEquipment::StaticClass(), L"Equipment");
     equipment_->SetActive(false);
+
+    skill_window_ = AddElement<UISkillWindow>(UISkillWindow::StaticClass(), L"SkillWindow");
+    skill_window_->SetActive(false);
+    skill_window_->SetAbsolutePosition({ 350.f, 120.f });
     
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
     
@@ -151,6 +156,8 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
                     is_handled = true;
                     break;
             case static_cast<uint8_t>(KeyAction::kSkills):
+                    skill_window_->SetActive(!skill_window_->IsActive());
+                    is_handled = true;
                     break;
             case static_cast<uint8_t>(KeyAction::kParty):
                     party_window_->SetActive(!party_window_->IsActive());

@@ -15,10 +15,17 @@ SkillManager::SkillManager(PlayerCharacter* owner)
 void SkillManager::AddSkill(uint32_t skill_id, int32_t level)
 {
     std::lock_guard<std::mutex> lock(skills_mutex_);
-    
+
     const SkillData* data = DataManager::Get()->GetSkill(skill_id);
     if (!data) return;
-    
+
+    auto it = skills_.find(skill_id);
+    if (it != skills_.end())
+    {
+        it->second->SetLevel(level);
+        return;
+    }
+
     std::unique_ptr<Skill> skill;
     if (false)
         skill = std::make_unique<PassiveSkill>(owner_, data, level);

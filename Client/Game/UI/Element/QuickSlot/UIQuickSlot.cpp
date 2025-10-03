@@ -4,12 +4,15 @@
 #include "Asset/AssetManager.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/Inventory/UIInventorySlot.h"
+#include "UI/Element/Skill/UISkillSlot.h"
+#include "Subsystems/InputActions/InputActions.h"
 #include "Windows/DX/UISprite.h"
 
 UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     UIContainer(name),
     scancode_(Scancode::kKeyUnknown),
-    key_type_(KeyType::kNone)
+    key_type_(KeyType::kNone),
+    action_(0)
 {
     SetSize({ 32.f, 32.f });
     
@@ -25,6 +28,7 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
     icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
     icon_->SetIgnoreRayCast(true);
+    icon_->SetActive(false);
 
     key_name_text_ = AddChild<UIText>(UIText::StaticClass(), L"KeyNameText");
     key_name_text_->SetRelativePosition(Math::Vector2(2.f, 2.f));
@@ -79,7 +83,24 @@ bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
     {
         return true;
     }
-    
+
+    if (auto* skill_slot = dynamic_cast<UISkillSlot*>(target))
+    {
+        if (skill_slot->GetSkillID() == 0) return false;
+
+        InputActions::Get()->Bind(scancode_, KeyType::kSkill, static_cast<int32_t>(skill_slot->GetSkillID()));
+
+        key_type_ = KeyType::kSkill;
+        action_ = static_cast<int32_t>(skill_slot->GetSkillID());
+
+        icon_->SetSprite(skill_slot->GetIcon()->GetSprite(), skill_slot->GetIcon()->GetFrameIndex());
+        icon_->SetDrawMode(skill_slot->GetIcon()->GetDrawMode());
+        icon_->SetColor(skill_slot->GetIcon()->GetColor());
+        icon_->SetActive(true);
+
+        return true;
+    }
+
     return false;
 }
 

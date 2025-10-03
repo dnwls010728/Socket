@@ -297,6 +297,7 @@
     <ClCompile Include="Game\PacketHandlers\PartyInfoChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SkillGainHandler.cpp" />
     <ClCompile Include="Game\Subsystems\InputActions\InputActions.cpp" />
     <ClCompile Include="Game\UI\Element\Buff\UIBuffIcon.cpp" />
     <ClCompile Include="Game\UI\Element\Buff\UIBuffList.cpp" />
@@ -304,6 +305,8 @@
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipmentSlot.cpp" />
     <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickBar.cpp" />
     <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Skill\UISkillSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Skill\UISkillWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Actor\Actor.h">
@@ -949,6 +952,7 @@
     <ClInclude Include="Game\PacketHandlers\PartyInfoChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillCastHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\SkillGainHandler.h" />
     <ClInclude Include="Game\Subsystems\InputActions\InputActions.h" />
     <ClInclude Include="Game\Subsystems\InputActions\KeyAction.h" />
     <ClInclude Include="Game\Subsystems\InputActions\KeyType.h" />
@@ -958,6 +962,8 @@
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipmentSlot.h" />
     <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickBar.h" />
     <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickSlot.h" />
+    <ClInclude Include="Game\UI\Element\Skill\UISkillSlot.h" />
+    <ClInclude Include="Game\UI\Element\Skill\UISkillWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Other">

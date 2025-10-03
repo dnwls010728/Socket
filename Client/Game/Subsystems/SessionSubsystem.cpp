@@ -32,6 +32,7 @@
 #include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "PacketHandlers/SkillCastHandler.h"
+#include "PacketHandlers/SkillUpdateHandler.h"
 #include "PacketHandlers/DoSelectCardHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
@@ -105,6 +106,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         SkillCastPacket::StaticPacketID,
         std::make_unique<SkillCastHandler>()
+    );
+
+    handlers_.emplace(
+        SkillUpdatePacket::StaticPacketID,
+        std::make_unique<SkillUpdateHandler>()
     );
 
     handlers_.emplace(

@@ -5,6 +5,7 @@
 #include "UI/Element/UIText.h"
 
 class UIImage;
+class UISkillSlot;
 
 class UIQuickSlot : public UIContainer
 {
@@ -34,5 +35,6 @@ private:
     Scancode scancode_;
 
     KeyType key_type_;
-    
+    int32_t action_;
+
 };

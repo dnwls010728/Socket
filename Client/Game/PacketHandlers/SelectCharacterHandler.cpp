@@ -46,6 +46,8 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     
     inventory->SetColor(response->color);
 
+    player_subsystem->SetSkills(response->skills);
+
     InputActions* input_actions = InputActions::Get();
     for (const auto& key : response->key_bindings)
     {
