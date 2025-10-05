@@ -639,6 +639,23 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
+    case KeyBindRequest::StaticPacketID:
+        {
+            auto* request = static_cast<KeyBindRequest*>(packet);
+            if (request->type == 0)
+                key_map_.erase(request->scancode);
+            else
+                key_map_[request->scancode] = { request->type, request->action };
+        }
+        break;
+
+    case KeyUnbindRequest::StaticPacketID:
+        {
+            auto* request = static_cast<KeyUnbindRequest*>(packet);
+            key_map_.erase(request->scancode);
+        }
+        break;
+
     case AttackRequest::StaticPacketID:
         {
             AttackRequest* attack_request = static_cast<AttackRequest*>(packet);

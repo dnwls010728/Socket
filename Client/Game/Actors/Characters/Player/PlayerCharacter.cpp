@@ -78,6 +78,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case SkillCastPacket::StaticPacketID:
         {
             SkillCastPacket* skill_packet = static_cast<SkillCastPacket*>(packet);
+            PlayerSubsystem::Get()->GetSkillManager()->UseSkill(skill_packet->skill_id, skill_packet->cooldown_expired_time);
             auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
             if (IsValid(effect))
             {

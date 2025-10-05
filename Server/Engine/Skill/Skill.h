@@ -29,6 +29,7 @@ public:
     float GetCoolDownElapsed() const;
     float GetCoolDownLeft() const;
     void SetCoolDownLeft(float cool_down_left);
+    float GetCoolDownExpireTime() const;
     
     inline int32_t GetLevel() const { return level_; }
     inline void SetLevel(int32_t level) { level_ = level; }

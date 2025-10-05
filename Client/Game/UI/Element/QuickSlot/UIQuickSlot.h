@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Scancode.h"
 #include "Subsystems/InputActions/KeyType.h"
+#include "Subsystems/InputActions/InputActions.h"
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
@@ -19,18 +20,26 @@ public:
 
 protected:
     virtual void Init() override;
-    
+    virtual void Tick(float delta_time) override;
+
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
     virtual bool OnDrop(const Math::Vector2& position, UIElement* target) override;
+    virtual bool OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp) override;
 
 private:
+    void ApplyMapping(const InputActions::Mapping& mapping);
+    void ApplySkillMapping(uint32_t skill_id);
+    void ClearMapping();
+    void UpdateCooldownVisual();
+
     UIImage* background_;
     UIImage* icon_;
 
     UIText* key_name_text_;
     UIText* count_text_;
+    UIText* cooldown_text_;
 
     Scancode scancode_;
 

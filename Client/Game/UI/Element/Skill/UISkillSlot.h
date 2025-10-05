@@ -27,6 +27,7 @@ protected:
     virtual bool OnDragBegin(const Math::Vector2& position) override;
     virtual bool OnDrag(const Math::Vector2& position, const Math::Vector2& delta) override;
     virtual bool OnDragEnd(const Math::Vector2& position) override;
+    virtual bool OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta) override;
 
     virtual bool OnMouseEnter() override;
     virtual bool OnMouseLeave() override;

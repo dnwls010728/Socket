@@ -121,8 +121,15 @@ bool UISkillSlot::OnDrag(const Math::Vector2& position, const Math::Vector2& del
     if (!dragging_icon || !dragging_icon->IsActive()) return false;
 
     dragging_icon->SetAbsolutePosition(position - dragging_icon->GetSize() * .5f);
+
+    UISkillTooltip* tooltip = owner_->GetTooltip();
+    if (tooltip)
+    {
+        tooltip->SetActive(false);
+    }
     return true;
 }
+
 
 bool UISkillSlot::OnDragEnd(const Math::Vector2& position)
 {
@@ -139,33 +146,58 @@ bool UISkillSlot::OnDragEnd(const Math::Vector2& position)
 
 bool UISkillSlot::OnMouseEnter()
 {
-    if (!owner_) return true;
+    if (!owner_ || skill_id_ == 0)
+        return false;
 
     UISkillTooltip* tooltip = owner_->GetTooltip();
-    if (!tooltip) return true;
+    if (!tooltip)
+        return false;
 
-    Math::Vector2 position = GetAbsolutePosition();
-    position.y += GetSize().y;
-    position.x += GetSize().x;
-    
-    tooltip->SetAbsolutePosition(position);
     tooltip->SetSkillInfo(name_text_->GetText(), level_, description_);
+    return true;
+}
+
+bool UISkillSlot::OnMouseMotion(const Math::Vector2& position, const Math::Vector2& delta)
+{
+    if (!owner_ || skill_id_ == 0)
+        return false;
+
+    UISkillTooltip* tooltip = owner_->GetTooltip();
+    if (!tooltip)
+        return false;
+
     tooltip->SetActive(true);
     
+    EngineSettings* settings = EngineSettings::Get();
+    Math::Vector2 tooltip_size = tooltip->GetSize();
+    Math::Vector2 tooltip_position = position + Math::Vector2::Up() * 32.f;
+
+    int32_t screen_width = settings->GetScreenWidth();
+    int32_t screen_height = settings->GetScreenHeight();
+
+    int32_t overflow_width = tooltip_position.x + tooltip_size.x - screen_width;
+    int32_t overflow_height = tooltip_position.y + tooltip_size.y - screen_height;
+
+    if (overflow_width > 0) tooltip_position.x -= overflow_width;
+    if (overflow_height > 0) tooltip_position.y -= overflow_height;
+
+    tooltip->SetAbsolutePosition(tooltip_position);
     return true;
 }
 
 bool UISkillSlot::OnMouseLeave()
 {
-    if (!owner_) return true;
+    if (!owner_ || skill_id_ == 0)
+        return false;
 
     UISkillTooltip* tooltip = owner_->GetTooltip();
-    if (!tooltip) return true;
+    if (!tooltip)
+        return false;
 
     tooltip->SetActive(false);
-    
     return true;
 }
+
 
 RTTR_REGISTRATION
 {

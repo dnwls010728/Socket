@@ -48,6 +48,11 @@ void Skill::SetCoolDownLeft(float cool_down_left)
     last_used_time_ = now - (GetCoolDown() - cool_down_left);
 }
 
+float Skill::GetCoolDownExpireTime() const
+{
+    return last_used_time_ + GetCoolDown();
+}
+
 void Skill::Start()
 {
     if (IsCoolDown()) return;

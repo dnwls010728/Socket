@@ -59,7 +59,7 @@ void UISkillWindow::Init()
     publisher->Subscribe(PublisherSubsystem::EventType::kSkillsUpdated, this, &UISkillWindow::OnSkillUpdate);
 
     PlayerSubsystem* player = PlayerSubsystem::Get();
-    Refresh(player->GetSkillList());
+    Refresh(player->GetSkillManager()->GetSkillList());
 }
 
 void UISkillWindow::Uninit()

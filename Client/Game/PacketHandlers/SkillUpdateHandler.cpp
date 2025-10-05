@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 
 #include "Subsystems/PlayerSubsystem.h"
+#include "Subsystems/Publisher/PublisherSubsystem.h"
 
 bool SkillUpdateHandler::Handle(Net::IPacket* packet)
 {
@@ -11,6 +12,11 @@ bool SkillUpdateHandler::Handle(Net::IPacket* packet)
     if (!response) return false;
 
     PlayerSubsystem* player = PlayerSubsystem::Get();
-    player->UpdateSkill(response->skill_id, response->skill_level);
+    player->GetSkillManager()->AddOrUpdateSkill(response->skill.skill_id, response->skill.level, response->skill.cooldown);
+    
+    SkillListUpdatedData data;
+    data.skills = player->GetSkillManager()->GetSkillList();
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kSkillsUpdated, data);
+
     return true;
 }

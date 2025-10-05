@@ -356,17 +356,17 @@ struct SkillCastPacket : public Net::IPacket
 {
     uint32_t owner_id;;
     uint32_t skill_id;
+    float cooldown_expired_time;
 
-    SERIALIZABLE_FIELDS(owner_id, skill_id)
+    SERIALIZABLE_FIELDS(owner_id, skill_id, cooldown_expired_time)
     REGISTER_PACKET(SkillCastPacket, 405)
 };
 
 struct SkillUpdatePacket : public Net::IPacket
 {
-    uint32_t skill_id;
-    int32_t skill_level;
+    SkillInfo skill;
 
-    SERIALIZABLE_FIELDS(skill_id, skill_level)
+    SERIALIZABLE_FIELDS(skill)
     REGISTER_PACKET(SkillUpdatePacket, 406)
 };
 
@@ -399,26 +399,20 @@ struct PlayerBuffPacket : public Net::IPacket
 
 struct KeyBindRequest : public Net::IPacket
 {
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(KeyBindRequest, 502)
-};
+    uint32_t scancode;
+    uint8_t type;
+    int32_t action;
 
-struct KeyBindResponse : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(KeyBindResponse, 503)
+    SERIALIZABLE_FIELDS(scancode, type, action)
+    REGISTER_PACKET(KeyBindRequest, 502)
 };
 
 struct KeyUnbindRequest : public Net::IPacket
 {
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(KeyUnbindRequest, 504)
-};
+    uint32_t scancode;
 
-struct KeyUnbindResponse : public Net::IPacket
-{
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(KeyUnbindResponse, 505)
+    SERIALIZABLE_FIELDS(scancode)
+    REGISTER_PACKET(KeyUnbindRequest, 504)
 };
 
 struct PartyInviteRequest : public Net::IPacket

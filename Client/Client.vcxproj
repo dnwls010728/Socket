@@ -327,6 +327,7 @@
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\Player\SkillManager.h" />
     <ClInclude Include="Game\Subsystems\Publisher\EventData.h" />
     <ClInclude Include="Game\Subsystems\Publisher\ISubscriber.h" />
     <ClInclude Include="Game\Subsystems\Publisher\PublisherSubsystem.h" />
@@ -771,6 +772,7 @@
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\Player\SkillManager.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\PublisherSubsystem.cpp" />

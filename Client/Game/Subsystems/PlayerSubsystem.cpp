@@ -23,7 +23,6 @@ PlayerSubsystem::PlayerSubsystem() :
     body_color_(L"FFFFFF"),
     profiles_(),
     inventory_(nullptr),
-    skills_(),
     portal_cooldown_(0.f)
 {
 }
@@ -150,60 +149,19 @@ void PlayerSubsystem::UseItem(uint32_t item_id) const
     SessionSubsystem::Get()->SendPacket(packet);
 }
 
-void PlayerSubsystem::UseSkill(uint32_t skill_id) const
+void PlayerSubsystem::UseSkill(uint32_t skill_id)
 {
+    if (!skill_manager_.HasSkill(skill_id) || !skill_manager_.CanUseSkill(skill_id))
+        return;
+
     SkillCastRequest request;
     request.skill_id = skill_id;
     SessionSubsystem::Get()->SendPacket(request);
 }
 
-void PlayerSubsystem::SetSkills(const std::vector<SkillInfo>& skills)
-{
-    skills_.clear();
-    for (const auto& skill : skills)
-        skills_[skill.skill_id] = skill;
-
-    PublishSkills();
-}
-
-void PlayerSubsystem::UpdateSkill(uint32_t skill_id, int32_t level)
-{
-    SkillInfo info{};
-    info.skill_id = skill_id;
-    info.level = level;
-    info.cooldown = 0.f;
-
-    if (const SkillData* data = DataSubsystem::Get()->GetSkill(skill_id))
-        info.cooldown = static_cast<float>(data->cooldown);
-    else if (auto it = skills_.find(skill_id); it != skills_.end())
-        info.cooldown = it->second.cooldown;
-
-    skills_[skill_id] = info;
-    PublishSkills();
-}
-
-std::vector<SkillInfo> PlayerSubsystem::GetSkillList() const
-{
-    std::vector<SkillInfo> result;
-    result.reserve(skills_.size());
-    for (const auto& [id, skill] : skills_)
-        result.push_back(skill);
-    return result;
-}
-
 PlayerSubsystem* PlayerSubsystem::Get()
 {
     return GameInstance::Get()->GetSubsystem<PlayerSubsystem>();
-}
-
-void PlayerSubsystem::PublishSkills() const
-{
-    SkillListUpdatedData data;
-    data.skills.reserve(skills_.size());
-    for (const auto& [id, skill] : skills_)
-        data.skills.push_back(skill);
-
-    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kSkillsUpdated, data);
 }
 
 RTTR_REGISTRATION

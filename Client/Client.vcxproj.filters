@@ -212,6 +212,7 @@
     <ClCompile Include="Game\Maps\EditorMap.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\Player\SkillManager.cpp" />
     <ClCompile Include="Game\UI\UIInGameState.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
@@ -864,6 +865,7 @@
     <ClInclude Include="Game\Maps\EditorMap.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\Player\SkillManager.h" />
     <ClInclude Include="Game\UI\UIInGameState.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />

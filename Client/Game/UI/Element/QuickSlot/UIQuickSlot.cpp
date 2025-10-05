@@ -5,8 +5,16 @@
 #include "UI/Element/UIImage.h"
 #include "UI/Element/Inventory/UIInventorySlot.h"
 #include "UI/Element/Skill/UISkillSlot.h"
+#include "Subsystems/PlayerSubsystem.h"
+#include "Subsystems/Player/SkillManager.h"
+#include "Subsystems/SessionSubsystem.h"
 #include "Subsystems/InputActions/InputActions.h"
 #include "Windows/DX/UISprite.h"
+#include "Math/Math.h"
+#include <CustomPacket.h>
+
+#include <iomanip>
+#include <sstream>
 
 UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     UIContainer(name),
@@ -46,6 +54,15 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     count_text_->SetColor(Math::Color::White);
     count_text_->SetText(L"");
     count_text_->SetIgnoreRayCast(true);
+
+    cooldown_text_ = AddChild<UIText>(UIText::StaticClass(), L"CooldownText");
+    cooldown_text_->SetRelativePosition(icon_->GetRelativePosition());
+    cooldown_text_->SetSize(icon_->GetSize());
+    cooldown_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    cooldown_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    cooldown_text_->SetColor(Math::Color::White);
+    cooldown_text_->SetIgnoreRayCast(true);
+    cooldown_text_->SetText(L"");
 }
 
 void UIQuickSlot::SetScancode(Scancode scancode)
@@ -60,6 +77,14 @@ void UIQuickSlot::Init()
     UIContainer::Init();
 
     key_name_text_->SetText(ScancodeToKeyName(scancode_));
+
+    ApplyMapping(InputActions::Get()->GetMapping(scancode_));
+}
+
+void UIQuickSlot::Tick(float delta_time)
+{
+    UIContainer::Tick(delta_time);
+    UpdateCooldownVisual();
 }
 
 bool UIQuickSlot::OnDragBegin(const Math::Vector2& position)
@@ -98,10 +123,140 @@ bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
         icon_->SetColor(skill_slot->GetIcon()->GetColor());
         icon_->SetActive(true);
 
+        KeyBindRequest request;
+        request.scancode = static_cast<uint32_t>(scancode_);
+        request.type = static_cast<uint8_t>(KeyType::kSkill);
+        request.action = action_;
+        SessionSubsystem::Get()->SendPacket(request);
+
+        ApplySkillMapping(skill_slot->GetSkillID());
+        UpdateCooldownVisual();
+
         return true;
     }
 
     return false;
+}
+
+bool UIQuickSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
+{
+    if (UIContainer::OnMouseButton(position, button, is_pressed, timestamp))
+        return true;
+
+    if (!is_pressed && button == MouseButton::kRight)
+    {
+        if (key_type_ != KeyType::kNone)
+        {
+            InputActions::Get()->Unbind(scancode_);
+            ClearMapping();
+
+            KeyUnbindRequest request;
+            request.scancode = static_cast<uint32_t>(scancode_);
+            SessionSubsystem::Get()->SendPacket(request);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void UIQuickSlot::ApplyMapping(const InputActions::Mapping& mapping)
+{
+    key_type_ = static_cast<KeyType>(mapping.type);
+    action_ = mapping.action;
+
+    switch (key_type_)
+    {
+    case KeyType::kSkill:
+        ApplySkillMapping(static_cast<uint32_t>(action_));
+        break;
+    case KeyType::kItem:
+    case KeyType::kMenu:
+    case KeyType::kNone:
+    default:
+        ClearMapping();
+        break;
+    }
+
+    UpdateCooldownVisual();
+}
+
+void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
+{
+    if (skill_id == 0)
+    {
+        ClearMapping();
+        return;
+    }
+
+    if (!icon_->IsActive())
+    {
+        UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+        icon_->SetSprite(panel_sprite, L"Panel_0");
+        icon_->SetDrawMode(UIImage::DrawMode::kSliced);
+        icon_->SetColor(Math::Color(80, 120, 200, 255));
+        icon_->SetActive(true);
+    }
+
+    PlayerSubsystem* player = PlayerSubsystem::Get();
+    SkillManager* skill_manager = player ? player->GetSkillManager() : nullptr;
+    if (skill_manager && !skill_manager->HasSkill(skill_id))
+    {
+        ClearMapping();
+        return;
+    }
+
+    key_type_ = KeyType::kSkill;
+    action_ = static_cast<int32_t>(skill_id);
+}
+
+void UIQuickSlot::ClearMapping()
+{
+    key_type_ = KeyType::kNone;
+    action_ = 0;
+
+    icon_->SetSprite(nullptr, L"");
+    icon_->SetActive(false);
+    
+    cooldown_text_->SetText(L"");
+    count_text_->SetText(L"");
+}
+
+void UIQuickSlot::UpdateCooldownVisual()
+{
+    auto set_no_cooldown = [&]()
+    {
+        cooldown_text_->SetText(L"");
+    };
+
+    if (key_type_ != KeyType::kSkill || action_ == 0)
+    {
+        set_no_cooldown();
+        return;
+    }
+
+    PlayerSubsystem* player = PlayerSubsystem::Get();
+    SkillManager* skill_manager = player->GetSkillManager();
+    if (!skill_manager)
+    {
+        set_no_cooldown();
+        return;
+    }
+
+    uint32_t skill_id = static_cast<uint32_t>(action_);
+    float cooldown = skill_manager->GetCooldown(skill_id);
+    float remaining = skill_manager->GetCoolDownLeft(skill_id);
+
+    if (cooldown <= 0.f || remaining <= 0.f)
+    {
+        set_no_cooldown();
+        return;
+    }
+
+    std::wstringstream stream;
+    stream << std::fixed << std::setprecision(1) << remaining;
+    cooldown_text_->SetText(stream.str());
 }
 
 RTTR_REGISTRATION

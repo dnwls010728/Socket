@@ -33,6 +33,7 @@ void ActiveSkill::OnStart()
             SkillCastPacket packet;
             packet.skill_id = data_->id;
             packet.owner_id = owner_->GetObjectID();
+            packet.cooldown_expired_time = GetCoolDownExpireTime();
             map->SendPacket(packet);
 
             if (data_->projectile_id != 0)

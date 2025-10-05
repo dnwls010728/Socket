@@ -6,6 +6,7 @@
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Subsystems/InputActions/InputActions.h"
+#include "Subsystems/Publisher/PublisherSubsystem.h"
 
 bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 {
@@ -46,7 +47,14 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     
     inventory->SetColor(response->color);
 
-    player_subsystem->SetSkills(response->skills);
+    for (const auto& skill : response->skills)
+    {
+        player_subsystem->GetSkillManager()->AddOrUpdateSkill(skill.skill_id, skill.level, skill.cooldown);
+    }
+
+    SkillListUpdatedData data;
+    data.skills = player_subsystem->GetSkillManager()->GetSkillList();
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kSkillsUpdated, data);
 
     InputActions* input_actions = InputActions::Get();
     for (const auto& key : response->key_bindings)

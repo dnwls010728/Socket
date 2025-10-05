@@ -68,10 +68,13 @@ void CardManager::OnCardSelected(const CardSelectInfo& card)
     const CardData* selected_card_data = DataManager::Get()->GetCard(card.card_id);
     if (selected_card_data && selected_card_data->skill_id != 0)
     {
+        const SkillData* skill_data = DataManager::Get()->GetSkill(selected_card_data->skill_id);
+        
         player_->GetSkillManager().AddSkill(selected_card_data->skill_id, card.level);
         SkillUpdatePacket packet;
-        packet.skill_id = selected_card_data->skill_id;
-        packet.skill_level = card.level;
+        packet.skill.skill_id = selected_card_data->skill_id;
+        packet.skill.level = card.level;
+        packet.skill.cooldown = skill_data->cooldown;
         player_->SendPacket(packet);
     }
 
