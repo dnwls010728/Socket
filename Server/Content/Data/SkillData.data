@@ -2,6 +2,9 @@ skills:
   100000:
     name: "테스트"
     desc: "낫으로 전방의 적을 벤다."
+    animation_pack: "Sprites\\Effects\\EffectSheet.png.apack"
+    animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -15,6 +18,7 @@ skills:
   100001:
     name: "테스트2"
     desc: "아무 설명."
+    sound: "Audio\\SE\\SkillUse.mp3"
     projectile: 1
     cooldown: 1
     hit_frames: []

@@ -23,12 +23,12 @@ void Effect::SetFlipX(bool flipX)
 void Effect::BeginPlay()
 {
     NetworkActor::BeginPlay();
-
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Effects\\EffectSheet.png.apack");
+    
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(animation_pack_);
     if (animation_pack)
     {
         animator_->SetAnimationPack(animation_pack);
-        animator_->PlayAnimation(L"Idle");
+        animator_->PlayAnimation(animation_);
     }
 }
 

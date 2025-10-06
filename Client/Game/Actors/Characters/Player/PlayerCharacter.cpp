@@ -33,6 +33,7 @@
 #include "State/PlayerFallState.h"
 #include "State/PlayerIdleState.h"
 #include "State/PlayerWalkState.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/PartySubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
@@ -79,15 +80,28 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             SkillCastPacket* skill_packet = static_cast<SkillCastPacket*>(packet);
             PlayerSubsystem::Get()->GetSkillManager()->UseSkill(skill_packet->skill_id, skill_packet->cooldown_expired_time);
-            auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
-            if (IsValid(effect))
-            {
-                effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
-                effect->SetFlipX(renderer_->IsFlipX());
 
-                // 임시
-                Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\SkillUse.mp3");
-                AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
+            const SkillData* skill_data = DataSubsystem::Get()->GetSkill(skill_packet->skill_id);
+            if (!skill_data)
+                return;
+            
+            if (!skill_data->animation_pack.empty() && !skill_data->animation.empty())
+            {
+                auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+                if (IsValid(effect))
+                {
+                    effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+                    effect->SetFlipX(renderer_->IsFlipX());
+                    effect->SetAnimationPack(skill_data->animation_pack);
+                    effect->SetAnimation(skill_data->animation);
+                }
+            }
+
+            if (!skill_data->sound.empty())
+            {
+                Audio* audio = AssetManager::Get()->Load<Audio>(skill_data->sound);
+                if (audio)
+                    AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
             }
         }
         break;
