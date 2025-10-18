@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Scancode.h"
+#include "Subsystems/InputActions/KeyType.h"
 #include "UI/UIContainer.h"
 
 class UIQuickSlot;
@@ -13,6 +14,10 @@ public:
     UIQuickBar(const std::wstring& name);
     virtual ~UIQuickBar() override = default;
 
+    UIQuickSlot* FindSlot(KeyType key_type, int32_t action);
+
+    void UnboundSlot(Scancode scancode);
+    void UnboundSlot(KeyType key_type, int32_t action);
 private:
     std::vector<UIQuickSlot*> quick_slots_;
     std::unordered_map<Scancode, uint32_t> scancode_to_slot_;

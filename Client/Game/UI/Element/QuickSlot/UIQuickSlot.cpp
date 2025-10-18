@@ -6,6 +6,7 @@
 #include "UI/Element/Inventory/UIInventorySlot.h"
 #include "UI/Element/Skill/UISkillSlot.h"
 #include "Subsystems/PlayerSubsystem.h"
+#include "Inventory/Inventory.h"
 #include "Subsystems/Player/SkillManager.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Subsystems/InputActions/InputActions.h"
@@ -15,6 +16,8 @@
 
 #include <iomanip>
 #include <sstream>
+
+#include "UIQuickBar.h"
 
 UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     UIContainer(name),
@@ -84,7 +87,9 @@ void UIQuickSlot::Init()
 void UIQuickSlot::Tick(float delta_time)
 {
     UIContainer::Tick(delta_time);
+
     UpdateCooldownVisual();
+    UpdateItemCountVisual();
 }
 
 bool UIQuickSlot::OnDragBegin(const Math::Vector2& position)
@@ -106,36 +111,61 @@ bool UIQuickSlot::OnDrop(const Math::Vector2& position, UIElement* target)
 {
     if (auto* inventory_slot = dynamic_cast<UIInventorySlot*>(target))
     {
-        return true;
-    }
+        uint32_t item_id = inventory_slot->GetItemID();
+        if (item_id == 0)
+            return false;
 
-    if (auto* skill_slot = dynamic_cast<UISkillSlot*>(target))
+        InventoryType inventory_type = static_cast<InventoryType>(item_id / 100000);
+        if (inventory_type != InventoryType::kUse)
+            return false;
+
+        InputActions* input_actions = InputActions::Get();
+        if (!input_actions)
+            return false;
+
+        KeyType key_type = KeyType::kItem;
+        int32_t action = static_cast<int32_t>(item_id);
+        if (owner_) owner_->UnboundSlot(key_type, action);
+        
+        input_actions->Bind(scancode_, KeyType::kItem, static_cast<int32_t>(item_id));
+        ApplyItemMapping(item_id);
+        
+        KeyBindRequest request;
+        request.scancode = static_cast<uint32_t>(scancode_);
+        request.type = static_cast<uint8_t>(KeyType::kItem);
+        request.action = static_cast<int32_t>(item_id);
+        SessionSubsystem::Get()->SendPacket(request);
+    }
+    else if (auto* skill_slot = dynamic_cast<UISkillSlot*>(target))
     {
         if (skill_slot->GetSkillID() == 0) return false;
 
-        InputActions::Get()->Bind(scancode_, KeyType::kSkill, static_cast<int32_t>(skill_slot->GetSkillID()));
+        InputActions* input_actions = InputActions::Get();
+        if (!input_actions)
+            return false;
 
-        key_type_ = KeyType::kSkill;
-        action_ = static_cast<int32_t>(skill_slot->GetSkillID());
+        uint32_t new_skill_id = skill_slot->GetSkillID();
 
-        icon_->SetSprite(skill_slot->GetIcon()->GetSprite(), skill_slot->GetIcon()->GetFrameIndex());
-        icon_->SetDrawMode(skill_slot->GetIcon()->GetDrawMode());
-        icon_->SetColor(skill_slot->GetIcon()->GetColor());
-        icon_->SetActive(true);
-
+        KeyType key_type = KeyType::kSkill;
+        int32_t action = static_cast<int32_t>(new_skill_id);
+        if (owner_) owner_->UnboundSlot(key_type, action);
+        
+        input_actions->Bind(scancode_, key_type, action);
+        
+        ApplySkillMapping(skill_slot->GetSkillID());
+        
         KeyBindRequest request;
         request.scancode = static_cast<uint32_t>(scancode_);
         request.type = static_cast<uint8_t>(KeyType::kSkill);
         request.action = action_;
         SessionSubsystem::Get()->SendPacket(request);
-
-        ApplySkillMapping(skill_slot->GetSkillID());
-        UpdateCooldownVisual();
-
-        return true;
     }
-
-    return false;
+    else
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 bool UIQuickSlot::OnMouseButton(const Math::Vector2& position, MouseButton button, bool is_pressed, double timestamp)
@@ -172,6 +202,8 @@ void UIQuickSlot::ApplyMapping(const InputActions::Mapping& mapping)
         ApplySkillMapping(static_cast<uint32_t>(action_));
         break;
     case KeyType::kItem:
+        ApplyItemMapping(static_cast<uint32_t>(action_));
+        break;
     case KeyType::kMenu:
     case KeyType::kNone:
     default:
@@ -180,6 +212,7 @@ void UIQuickSlot::ApplyMapping(const InputActions::Mapping& mapping)
     }
 
     UpdateCooldownVisual();
+    UpdateItemCountVisual();
 }
 
 void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
@@ -190,15 +223,13 @@ void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
         return;
     }
 
+    // 임시
+    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
+    icon_->SetSprite(panel_sprite, L"Panel_0");
+    
     if (!icon_->IsActive())
-    {
-        UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
-        icon_->SetSprite(panel_sprite, L"Panel_0");
-        icon_->SetDrawMode(UIImage::DrawMode::kSliced);
-        icon_->SetColor(Math::Color(80, 120, 200, 255));
         icon_->SetActive(true);
-    }
-
+    
     PlayerSubsystem* player = PlayerSubsystem::Get();
     SkillManager* skill_manager = player ? player->GetSkillManager() : nullptr;
     if (skill_manager && !skill_manager->HasSkill(skill_id))
@@ -209,6 +240,44 @@ void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
 
     key_type_ = KeyType::kSkill;
     action_ = static_cast<int32_t>(skill_id);
+
+    count_text_->SetText(L"");
+
+    UpdateCooldownVisual();
+}
+
+void UIQuickSlot::ApplyItemMapping(uint32_t item_id)
+{
+    if (item_id == 0)
+    {
+        ClearMapping();
+        return;
+    }
+
+    InventoryType inventory_type = static_cast<InventoryType>(item_id / 100000);
+    if (inventory_type != InventoryType::kUse)
+    {
+        ClearMapping();
+        return;
+    }
+
+    UISprite* item_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+    if (!item_sprite)
+    {
+        static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+        item_sprite = kMissing;
+    }
+
+    icon_->SetSprite(item_sprite);
+    
+    if (!icon_->IsActive())
+        icon_->SetActive(true);
+    
+    key_type_ = KeyType::kItem;
+    action_ = static_cast<int32_t>(item_id);
+
+    cooldown_text_->SetText(L"");
+    UpdateItemCountVisual();
 }
 
 void UIQuickSlot::ClearMapping()
@@ -257,6 +326,40 @@ void UIQuickSlot::UpdateCooldownVisual()
     std::wstringstream stream;
     stream << std::fixed << std::setprecision(1) << remaining;
     cooldown_text_->SetText(stream.str());
+}
+
+void UIQuickSlot::UpdateItemCountVisual()
+{
+    if (key_type_ != KeyType::kItem || action_ == 0)
+    {
+        count_text_->SetText(L"");
+        return;
+    }
+
+    PlayerSubsystem* player = PlayerSubsystem::Get();
+    Inventory* inventory = player ? player->GetInventory() : nullptr;
+    if (!inventory)
+    {
+        count_text_->SetText(L"");
+        return;
+    }
+
+    uint32_t item_id = static_cast<uint32_t>(action_);
+    InventoryType inventory_type = static_cast<InventoryType>(item_id / 100000);
+    if (inventory_type == InventoryType::kNone)
+    {
+        count_text_->SetText(L"");
+        return;
+    }
+
+    int32_t total_count = inventory->GetTotalItemCount(inventory_type, item_id);
+    if (total_count <= 0)
+    {
+        count_text_->SetText(L"0");
+        return;
+    }
+
+    count_text_->SetText(std::to_wstring(total_count));
 }
 
 RTTR_REGISTRATION
