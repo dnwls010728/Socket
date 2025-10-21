@@ -429,6 +429,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 
                 if (item->GetCount() <= 0)
                 {
+                    inventory->EraseItem(slot_id);
+
                     InventoryChange change;
                     change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
                     change.action = InventoryAction::kRemove;
