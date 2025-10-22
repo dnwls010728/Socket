@@ -46,6 +46,7 @@ SessionSubsystem::SessionSubsystem() :
 void SessionSubsystem::Init()
 {
     GameInstanceSubsystem::Init();
+    return;
     
     // bool result = Connect({"175.198.74.36", 9000});
     // bool result = Connect({"222.108.73.155", 9000});

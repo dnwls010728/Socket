@@ -38,7 +38,7 @@ void ProjectSettings::Init()
     settings->AddLevel<LoginMap>(L"Login");
     settings->AddLevel<GameMap>(L"Game");
 
-    settings->SetDefaultLevel(L"Login");
-    // settings->SetDefaultLevel(L"Editor");
+    // settings->SetDefaultLevel(L"Login");
+    settings->SetDefaultLevel(L"Editor");
     
 }
