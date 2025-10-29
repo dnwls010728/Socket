@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CardManager.h"
 
+#include <chrono>
 #include <CustomPacket.h>
 #include <iomanip>
 #include <random>
