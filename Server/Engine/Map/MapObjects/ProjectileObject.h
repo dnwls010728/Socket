@@ -20,6 +20,9 @@ public:
     inline void SetOwner(const std::shared_ptr<MapObject>& owner) { owner_ = owner; }
     inline std::shared_ptr<MapObject> GetOwner() const { return owner_.lock(); }
 
+    inline void SetOwnerIsPlayer(bool is_player) { owner_is_player_ = is_player; }
+    inline bool IsOwnerPlayer() const { return owner_is_player_; }
+
     inline void SetProjectileID(uint32_t projectile_id) { projectile_id_ = projectile_id; }
     inline uint32_t GetProjectileID() const { return projectile_id_; }
 
@@ -60,6 +63,7 @@ private:
     void RefreshDamageAmounts();
 
     std::weak_ptr<MapObject> owner_;
+    bool owner_is_player_;
 
     Math::Vector2 velocity_;
     Math::Vector2 size_;

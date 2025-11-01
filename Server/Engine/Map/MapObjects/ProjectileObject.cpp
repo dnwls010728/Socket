@@ -31,7 +31,8 @@ ProjectileObject::ProjectileObject() :
     last_flipped_(false),
     last_position_(Math::Vector2::Zero()),
     damage_amounts_(),
-    damaged_targets_()
+    damaged_targets_(),
+    owner_is_player_(true)
 {
     RefreshDamageAmounts();
 }
@@ -130,8 +131,15 @@ void ProjectileObject::Tick(float delta_time)
     std::vector<std::shared_ptr<MapObject>> overlap_objects;
     map_->GetOverlappingObjects(search_bounds, overlap_objects);
 
-    uint32_t owner_id = owner_.expired() ? 0 : owner_.lock()->GetObjectID();
-
+    auto owner_player = owner_.lock();
+    uint32_t owner_id = owner_player ? owner_player->GetObjectID() : 0;
+    int owner_party_id = 0;
+    if (owner_is_player_)
+    {
+        PlayerCharacter* owner_character = static_cast<PlayerCharacter*>(owner_player.get());
+        owner_party_id = owner_character->GetPartyID();
+    }
+    
     auto cmp = [&](std::shared_ptr<MapObject> left, std::shared_ptr<MapObject> right)
     {
         Math::Vector2 left_pos = left->GetPosition();
@@ -149,6 +157,13 @@ void ProjectileObject::Tick(float delta_time)
         if (object_id == object_id_) continue;
         if (object_id == owner_id) continue;
         if (damaged_targets_.contains(object_id)) continue;
+
+        if (owner_party_id != 0)
+        {
+            auto target_player = std::dynamic_pointer_cast<PlayerCharacter>(object);
+            if (target_player && target_player->GetPartyID() == owner_party_id)
+                continue;
+        }
 
         auto damageable = std::dynamic_pointer_cast<IDamageable>(object);
         if (!damageable) continue;

@@ -107,6 +107,8 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
     std::vector<std::shared_ptr<MapObject>> target_objs;
     map->GetOverlappingObjects(hitbox, target_objs);
 
+    const uint32_t owner_party_id = owner_->GetPartyID();
+
     auto attack_chain = std::make_shared<AttackChain>(frame);
     
     uint32_t hit_count = 0;
@@ -115,6 +117,13 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
         if (!target) continue;
 
         if (target.get() == owner_) continue;
+
+        if (owner_party_id != 0)
+        {
+            auto target_player = std::dynamic_pointer_cast<PlayerCharacter>(target);
+            if (target_player && target_player->GetPartyID() == owner_party_id)
+                continue;
+        }
 
         auto damageable = std::dynamic_pointer_cast<IDamageable>(target);
         if (!damageable) continue;
