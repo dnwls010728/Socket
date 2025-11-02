@@ -15,6 +15,8 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\EffectSheet.png.apack"
+        hit_effect_animation: "Idle"
   100001:
     name: "테스트2"
     desc: "아무 설명."

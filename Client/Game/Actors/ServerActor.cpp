@@ -4,6 +4,7 @@
 #include <CustomPacket.h>
 
 #include "Damage.h"
+#include "Effect.h"
 #include "IPacket.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
@@ -11,6 +12,7 @@
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Math/Math.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
@@ -41,14 +43,19 @@ void ServerActor::PlayAnimation(const std::wstring& animation)
     animation_snapshots_.push_back(snapshot);
 }
 
-void ServerActor::TakeDamage(std::vector<int> damage_amount)
+void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount)
 {
     for (int i = 0; i < damage_amount.size(); ++i)
     {
+        const DamageInfo &damage_info = damage_amount[i];
+        
         DamageSnapshot snapshot;
-        snapshot.damage_amount = damage_amount[i];
-        snapshot.position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
-        snapshot.position.y += i * 0.5f;
+        snapshot.damage_amount = damage_info.damage_amount;
+        snapshot.damage_effect_position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
+        snapshot.damage_effect_position.y += i * 0.5f;
+        snapshot.hit_effect_pack = damage_info.hit_effect_pack;
+        snapshot.hit_effect_animation = damage_info.hit_effect_animation;
+        snapshot.hit_effect_position = {damage_info.hit_effect_position_x, damage_info.hit_effect_position_y};
         pending_damages_.push_back(snapshot);
     }
 }
@@ -170,8 +177,19 @@ void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
     if (IsValid(damage))
     {
         damage->SetDamage(damage_snapshot.damage_amount);
-        damage->GetTransform()->SetPosition(damage_snapshot.position);
+        damage->GetTransform()->SetPosition(damage_snapshot.damage_effect_position);
         last_damage_spawn_time_ = now;
+    }
+
+    if (!damage_snapshot.hit_effect_pack.empty())
+    {
+        auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+        if (IsValid(effect))
+        {
+            effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+            effect->SetAnimationPack(damage_snapshot.hit_effect_pack);
+            effect->SetAnimation(damage_snapshot.hit_effect_animation);
+        }
     }
 }
 

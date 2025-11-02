@@ -260,3 +260,12 @@ struct KeyBindingInfo
     uint8_t type;
     int32_t action;
 };
+
+struct DamageInfo
+{
+    int32_t damage_amount;
+    float hit_effect_position_x;
+    float hit_effect_position_y;
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
+};

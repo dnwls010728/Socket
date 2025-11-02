@@ -850,23 +850,28 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(uint32_t attacker, int32_t damage)
+Bounds PlayerCharacter::GetDamageBounds() const
+{
+    return {position_, {3.f, 2.f}};
+}
+
+void PlayerCharacter::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)
 {
     TakeMultiDamage(attacker, {damage});
 }
 
-void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
+void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages)
 {
     if (hp_ <= 0) return;
     if (damages.empty()) return;
     if (is_dead_ || is_invincible_) return;
 
     int32_t total_damage = 0;
-    for (int32_t damage_amount : damages)
+    for (const auto& damage_amount : damages)
     {
-        total_damage += damage_amount;
+        total_damage += damage_amount.damage_amount;
     }
-    
+
     hp_ = std::clamp(hp_ - total_damage, 0, effective_max_hp_);
 
     PlayerStatsUpdatePacket stats_update_packet;
@@ -876,7 +881,17 @@ void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<int32
 
     ObjectTakeDamagePacket packet;
     packet.object_id = object_id_;
-    packet.damage_amount = damages;
+    packet.damage_amount.reserve(damages.size());
+    for (const auto& damage_info : damages)
+    {
+        DamageInfo info;
+        info.damage_amount = damage_info.damage_amount;
+        info.hit_effect_position_x = damage_info.position.x;
+        info.hit_effect_position_y = damage_info.position.y;
+        info.hit_effect_pack = damage_info.effect_pack;
+        info.hit_effect_animation = damage_info.effect_animation;
+        packet.damage_amount.push_back(info);
+    }
     map_->SendPacket(packet);
 
     is_invincible_.Set(1.f);

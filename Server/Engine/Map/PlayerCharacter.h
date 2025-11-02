@@ -69,8 +69,10 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    void TakeDamage(uint32_t attacker, int32_t damage_amount) override;
-    void TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages) override;
+    Bounds GetDamageBounds() const override;
+
+    void TakeDamage(uint32_t attacker, const DamageHitInfo& damage_amount) override;
+    void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) override;
     void ApplyHPDelta(int32_t hp_delta);
 
     bool Disconnect();

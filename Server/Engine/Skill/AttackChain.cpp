@@ -31,6 +31,8 @@ void AttackChain::AddChain(const HitFrame& hit_frame)
     effect->SetDamageMultiplier(hit_frame.damage / 100.f);
     effect->SetBaseDamage(0);
     effect->SetAttackCount(hit_frame.hit_count);
+    effect->SetHitEffectPack(hit_frame.hit_effect_pack);
+    effect->SetHitEffectAnimation(hit_frame.hit_effect_animation);
 
     attack_chain_.push_back(effect);
 }

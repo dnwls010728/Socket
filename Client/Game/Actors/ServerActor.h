@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <CustomPacket.h>
+
 #include "NetworkActor.h"
 
 class ServerActor : public NetworkActor
@@ -27,7 +29,10 @@ public:
     struct DamageSnapshot
     {
         int damage_amount;
-        Math::Vector2 position;
+        Math::Vector2 damage_effect_position;
+        std::wstring hit_effect_pack;
+        std::wstring hit_effect_animation;
+        Math::Vector2 hit_effect_position;
     };
     
     ServerActor(const std::wstring& name);
@@ -35,7 +40,7 @@ public:
 
     void SetFlip(bool is_fliped);
     void PlayAnimation(const std::wstring& animation);
-    void TakeDamage(std::vector<int> damage_amount);
+    void TakeDamage(const std::vector<DamageInfo>& damage_amount);
     
 protected:
     virtual void PhysicsTick(float delta_time) override;

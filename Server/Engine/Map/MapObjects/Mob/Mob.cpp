@@ -185,12 +185,17 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::TakeDamage(uint32_t attacker, int32_t damage)
+Bounds Mob::GetDamageBounds() const
+{
+    return {position_, {3.f, 2.f}};
+}
+
+void Mob::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)
 {
     TakeMultiDamage(attacker, {damage});
 }
 
-void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
+void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages)
 {
     if (hp_ <= 0) return;
 
@@ -198,16 +203,26 @@ void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages
 
     state_machine_->ChangeState(hit_state_);
     last_animation_ = animation_;
-    for (int32_t damage : damages)
+    for (const auto& damage : damages)
     {
-        hp_ -= damage;
+        hp_ -= damage.damage_amount;
     }
 
     if (map_)
     {
         ObjectTakeDamagePacket packet;
         packet.object_id = object_id_;
-        packet.damage_amount = damages;
+        packet.damage_amount.reserve(damages.size());
+        for (const auto& damage_info : damages)
+        {
+            DamageInfo info;
+            info.damage_amount = damage_info.damage_amount;
+            info.hit_effect_position_x = damage_info.position.x;
+            info.hit_effect_position_y = damage_info.position.y;
+            info.hit_effect_pack = damage_info.effect_pack;
+            info.hit_effect_animation = damage_info.effect_animation;
+            packet.damage_amount.push_back(info);
+        }
         map_->SendPacket(packet);
     }
     

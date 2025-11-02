@@ -8,3 +8,5 @@ projectiles:
     max_targets: 1
     animation: "Idle"
     animation_pack: "Sprites\\Effects\\EffectSheet.png.apack"
+    hit_effect_pack: "Sprites\\Effects\\EffectSheet.png.apack"
+    hit_effect_animation: "Idle"

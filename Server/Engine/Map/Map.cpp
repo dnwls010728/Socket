@@ -18,6 +18,7 @@
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
 #include "MapObjects/ProjectileObject.h"
+#include "IDamageable.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player/Inventory/EquipItem.h"
@@ -399,7 +400,11 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         Mob* mob = dynamic_cast<Mob*>(it->second.get());
         if (mob)
         {
-            mob->TakeDamage(attacker, 1000 + value);
+            DamageHitInfo damage;
+            damage.damage_amount = 1000 + value;
+            Bounds mob_bounds = mob->GetDamageBounds();
+            damage.position = mob_bounds.center;
+            mob->TakeDamage(attacker, damage);
         }
     }
 }
@@ -456,7 +461,11 @@ void Map::Tick(float delta_time)
                 float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
                 if (distance < 1.f && !player->IsInvincible())
                 {
-                    player->TakeDamage(mob->GetObjectID(), mob->damage_);
+                    DamageHitInfo damage;
+                    damage.damage_amount = mob->damage_;
+                    Bounds player_bounds = player->GetDamageBounds();
+                    damage.position = player_bounds.center;
+                    player->TakeDamage(mob->GetObjectID(), damage);
                     break;
                 }
             }
@@ -506,8 +515,11 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
         {
             if (!obj) continue;
 
-            // 임시 사이즈
             Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+            if (auto damageable = std::dynamic_pointer_cast<IDamageable>(obj))
+            {
+                target_bounds = damageable->GetDamageBounds();
+            }
             Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
             if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
@@ -522,6 +534,7 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
         if (!player) continue;
 
         Bounds target_bounds(player->GetPosition(), {3.f, 2.f});
+        target_bounds = player->GetDamageBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
         if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)

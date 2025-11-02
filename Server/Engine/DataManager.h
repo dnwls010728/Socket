@@ -64,12 +64,15 @@ struct ItemData
 struct HitFrame
 {
     Bounds hitbox;
-    
+
     int32_t damage;
     int32_t hit_count;
     int32_t max_targets;
-    
+
     float time_offset;
+
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
 };
 
 struct SkillData
@@ -108,6 +111,9 @@ struct ProjectileData
 
     std::wstring animation;
     std::wstring animation_pack;
+
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
 };
 
 struct MobDropData
@@ -247,6 +253,8 @@ namespace YAML
             data.hit_count = node["hit_count"].as<int32_t>(0);
             data.max_targets = node["max_targets"].as<int32_t>(0);
             data.time_offset = node["time_offset"].as<float>(0.f);
+            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
+            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
             return true;
         }
     };
@@ -299,6 +307,8 @@ namespace YAML
             data.max_targets = node["max_targets"].as<int32_t>(0);
             data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>("Idle"));
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
+            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
 
             return true;
         }

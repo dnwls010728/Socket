@@ -32,6 +32,8 @@ ProjectileObject::ProjectileObject() :
     last_position_(Math::Vector2::Zero()),
     damage_amounts_(),
     damaged_targets_(),
+    hit_effect_pack_(),
+    hit_effect_animation_(),
     owner_is_player_(true)
 {
     RefreshDamageAmounts();
@@ -248,15 +250,43 @@ void ProjectileObject::ApplyDamage(const std::shared_ptr<IDamageable>& target)
 
     uint32_t owner_id = owner_.expired() ? object_id_ : owner_.lock()->GetObjectID();
 
-    if (damage_amounts_.size() <= 1)
+    Bounds projectile_bounds(position_, size_);
+    Bounds target_bounds = target->GetDamageBounds();
+    Bounds intersect_bounds = Bounds::Intersect(projectile_bounds, target_bounds);
+
+    auto generate_position = [&](const Bounds& fallback) -> Math::Vector2
     {
-        int32_t damage_value = damage_amounts_.empty() ? damage_ : damage_amounts_.front();
-        target->TakeDamage(owner_id, damage_value);
+        const Bounds& spawn_bounds = (intersect_bounds.size.x > 0.f && intersect_bounds.size.y > 0.f) ? intersect_bounds : fallback;
+        float x = Math::RandRange(spawn_bounds.min.x, spawn_bounds.max.x);
+        float y = Math::RandRange(spawn_bounds.min.y, spawn_bounds.max.y);
+        return {x, y};
+    };
+
+    std::vector<DamageHitInfo> damage_infos;
+    if (damage_amounts_.empty())
+    {
+        DamageHitInfo info;
+        info.damage_amount = damage_;
+        info.position = generate_position(target_bounds);
+        info.effect_pack = hit_effect_pack_;
+        info.effect_animation = hit_effect_animation_;
+        damage_infos.push_back(info);
     }
     else
     {
-        target->TakeMultiDamage(owner_id, damage_amounts_);
+        damage_infos.reserve(damage_amounts_.size());
+        for (int32_t damage_value : damage_amounts_)
+        {
+            DamageHitInfo info;
+            info.damage_amount = damage_value;
+            info.position = generate_position(target_bounds);
+            info.effect_pack = hit_effect_pack_;
+            info.effect_animation = hit_effect_animation_;
+            damage_infos.push_back(info);
+        }
     }
+
+    target->TakeMultiDamage(owner_id, damage_infos);
 }
 
 void ProjectileObject::RequestDestroy()
