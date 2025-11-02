@@ -25,9 +25,13 @@ void CardManager::OnLevelUp()
         CardGroup cards;
         if (CreateCards(cards))
         {
-            SendSelectCardPacket(cards);
-            for (const auto& card : cards)
+            for (auto& card : cards)
+            {
+                card.offered_at = NowForDB();
                 selecting_cards.push_back(card);
+            }
+            SendSelectCardPacket(cards);
+            
         }
     }
     else
