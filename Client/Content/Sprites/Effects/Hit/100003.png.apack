@@ -2,7 +2,7 @@ target: Sprites\Effects\Hit\100003.png
 animations:
   - name: Idle
     frame_rate: 12
-    loop: true
+    loop: false
     frames:
       - 100003_0
       - 100003_1

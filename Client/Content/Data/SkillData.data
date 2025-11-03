@@ -1,10 +1,13 @@
 skills:
   100000:
-    name: "테스트"
-    desc: "낫으로 전방의 적을 벤다."
-    animation_pack: "Sprites\\Effects\\EffectSheet.png.apack"
+    name: "100000"
+    desc: "100000"
+    animation_pack: "Sprites\\Effects\\100000.png.apack"
     animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
+    hit_effect_animation: "Idle"
     sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -15,7 +18,114 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
+        hit_effect_animation: "Idle"
   100001:
+    name: "100001"
+    desc: "100001"
+    animation_pack: "Sprites\\Effects\\100001.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 0.0]
+          size: [6.0, 2.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
+        hit_effect_animation: "Idle"
+  100002:
+    name: "100002"
+    desc: "100002"
+    animation_pack: "Sprites\\Effects\\100002.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 0.0]
+          size: [6.0, 2.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
+        hit_effect_animation: "Idle"
+  100003:
+    name: "100003"
+    desc: "100003"
+    animation_pack: "Sprites\\Effects\\100003.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 0.0]
+          size: [6.0, 2.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
+        hit_effect_animation: "Idle"
+  100004:
+    name: "100004"
+    desc: "100004"
+    animation_pack: "Sprites\\Effects\\100004.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100004.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 0.0]
+          size: [6.0, 2.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100004.png.apack"
+        hit_effect_animation: "Idle"
+  100005:
+    name: "100005"
+    desc: "100005"
+    animation_pack: "Sprites\\Effects\\100005.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\SkillUse.mp3"
+    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 0.0]
+          size: [6.0, 2.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+        hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"
+        hit_effect_animation: "Idle"
+  199999:
     name: "테스트2"
     desc: "아무 설명."
     sound: "Audio\\SE\\SkillUse.mp3"
