@@ -1,4 +1,4 @@
-target: Sprites\Effects\Hit\100001.png
+target: Sprites\Effects\100001.png
 animations:
   - name: Idle
     frame_rate: 12
@@ -14,3 +14,11 @@ animations:
       - 100001_7
       - 100001_8
       - 100001_9
+      - 100001_10
+      - 100001_11
+      - 100001_12
+      - 100001_13
+      - 100001_14
+      - 100001_15
+      - 100001_16
+      - 100001_17

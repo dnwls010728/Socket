@@ -1,0 +1,58 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 32
+frames:
+  - name: 100000_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.476190001
+      y: 0.221590996
+  - name: 100000_1
+    rect:
+      x: 0.166666672
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.476190001
+      y: 0.215909004
+  - name: 100000_2
+    rect:
+      x: 0.333333343
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.482143015
+      y: 0.204545006
+  - name: 100000_3
+    rect:
+      x: 0.5
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.452381015
+      y: 0.193182006
+  - name: 100000_4
+    rect:
+      x: 0.666666687
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.488094985
+      y: 0.159090996
+  - name: 100000_5
+    rect:
+      x: 0.833333313
+      y: 0
+      width: 0.166666672
+      height: 1
+    pivot:
+      x: 0.410714
+      y: 0.414772987

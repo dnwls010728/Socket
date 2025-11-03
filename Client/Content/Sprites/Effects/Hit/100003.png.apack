@@ -1,0 +1,14 @@
+target: Sprites\Effects\Hit\100003.png
+animations:
+  - name: Idle
+    frame_rate: 12
+    loop: true
+    frames:
+      - 100003_0
+      - 100003_1
+      - 100003_2
+      - 100003_3
+      - 100003_4
+      - 100003_5
+      - 100003_6
+      - 100003_7
