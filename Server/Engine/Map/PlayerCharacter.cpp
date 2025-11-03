@@ -1023,8 +1023,8 @@ void PlayerCharacter::UpdateDatabase()
         }
 #else
         DeleteCharacter(object_id_);
-#endif
         return;
+#endif
     }
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();

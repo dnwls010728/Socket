@@ -35,17 +35,18 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     {
         if (option == UIPopup::PopupOption::OK)
         {
-            // PostProcessingSettings::Get()->SetBlurRadius(0.f);
-            // PostProcessingSettings::Get()->SetVignetteStrength(0.f);
-            // PostProcessingSettings::Get()->SetGamma(1.f);
-            // PostProcessingSettings::Get()->SetGrayscale(0.f);
-            //
-            // PlayerRespawnPacket respawn_packet;
-            // NetworkSubsystem::Get()->SendPacket(respawn_packet);
-
+#ifdef _DEBUG
+            PostProcessingSettings::Get()->SetBlurRadius(0.f);
+            PostProcessingSettings::Get()->SetVignetteStrength(0.f);
+            PostProcessingSettings::Get()->SetGamma(1.f);
+            PostProcessingSettings::Get()->SetGrayscale(0.f);
+            
+            PlayerRespawnPacket respawn_packet;
+            NetworkSubsystem::Get()->SendPacket(respawn_packet);
+#else
             WindowsApplication::Get()->QuitApplication();
+#endif
         }
-        
         return true;
     };
     UIPopup::ShowPopup(param);
