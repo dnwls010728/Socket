@@ -10,6 +10,7 @@
 #include "Audio/AudioManager.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "UI/Element/UIPopup.h"
+#include "Windows/WindowsApplication.h"
 
 bool PlayerDeathHandler::Handle(Net::IPacket* packet)
 {
@@ -28,19 +29,21 @@ bool PlayerDeathHandler::Handle(Net::IPacket* packet)
     player->SetDead();
     
     UIPopup::PopupParam param;
-    param.caption = L"캐릭터가 사망했습니다\n가까운 안전지대로 이동합니다.";
+    param.caption = L"캐릭터가 사망했습니다.\n캐릭터 데이터가 영구적으로 삭제됩니다.";
     param.option = UIPopup::PopupOption::OK;
     param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option)
     {
         if (option == UIPopup::PopupOption::OK)
         {
-            PostProcessingSettings::Get()->SetBlurRadius(0.f);
-            PostProcessingSettings::Get()->SetVignetteStrength(0.f);
-            PostProcessingSettings::Get()->SetGamma(1.f);
-            PostProcessingSettings::Get()->SetGrayscale(0.f);
-            
-            PlayerRespawnPacket respawn_packet;
-            NetworkSubsystem::Get()->SendPacket(respawn_packet);
+            // PostProcessingSettings::Get()->SetBlurRadius(0.f);
+            // PostProcessingSettings::Get()->SetVignetteStrength(0.f);
+            // PostProcessingSettings::Get()->SetGamma(1.f);
+            // PostProcessingSettings::Get()->SetGrayscale(0.f);
+            //
+            // PlayerRespawnPacket respawn_packet;
+            // NetworkSubsystem::Get()->SendPacket(respawn_packet);
+
+            WindowsApplication::Get()->QuitApplication();
         }
         
         return true;

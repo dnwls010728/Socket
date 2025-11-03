@@ -1010,8 +1010,9 @@ void PlayerCharacter::UpdateDatabase()
     
     if (is_dead_)
     {
+#ifdef  _DEBUG
         hp_ = 50;
-
+        
         if (Map* return_map = World::Get()->GetMap(map_->GetReturnMapID()))
         {
             if (Portal* return_portal = return_map->FindPortal(0))
@@ -1020,6 +1021,10 @@ void PlayerCharacter::UpdateDatabase()
                 position_ = return_portal->GetPosition() + Math::Vector2::Up();
             }
         }
+#else
+        DeleteCharacter(object_id_);
+#endif
+        return;
     }
     
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
