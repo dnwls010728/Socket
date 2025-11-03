@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: butterfly 1_0
+    rect:
+      x: 0.104166664
+      y: 0.078125
+      width: 0.787760377
+      height: 0.843098938
+    pivot:
+      x: 0.5
+      y: 0.400000006

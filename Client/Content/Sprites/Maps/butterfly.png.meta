@@ -1,0 +1,40 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: butterfly_0
+    rect:
+      x: 0.0759999976
+      y: 0.0460000001
+      width: 0.414000005
+      height: 0.356999993
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: butterfly_1
+    rect:
+      x: 0.529999971
+      y: 0.063000001
+      width: 0.445000052
+      height: 0.344986141
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: butterfly_2
+    rect:
+      x: 0.05859375
+      y: 0.516493082
+      width: 0.444878459
+      height: 0.381944418
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: butterfly_3
+    rect:
+      x: 0.545000017
+      y: 0.519999981
+      width: 0.419999957
+      height: 0.376267433
+    pivot:
+      x: 0.5
+      y: 0.400000006

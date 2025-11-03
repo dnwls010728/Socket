@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: platform tree 2_0
+    rect:
+      x: 0.179045096
+      y: 0.236000001
+      width: 0.654840827
+      height: 0.654999971
+    pivot:
+      x: 0.5
+      y: 0.0599999987

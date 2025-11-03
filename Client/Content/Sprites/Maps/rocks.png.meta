@@ -1,0 +1,40 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: rocks_0
+    rect:
+      x: 0.159999996
+      y: 0.201171875
+      width: 0.345859379
+      height: 0.181640625
+    pivot:
+      x: 0.5
+      y: 0.0359999985
+  - name: rocks_1
+    rect:
+      x: 0.610000014
+      y: 0.142822251
+      width: 0.312851489
+      height: 0.294189453
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: rocks_2
+    rect:
+      x: 0
+      y: 0.500488222
+      width: 0.549316347
+      height: 0.346679688
+    pivot:
+      x: 0.5
+      y: 0.0700000003
+  - name: rocks_3
+    rect:
+      x: 0.660400331
+      y: 0.558000028
+      width: 0.338134766
+      height: 0.279402256
+    pivot:
+      x: 0.5
+      y: 0.0199999996

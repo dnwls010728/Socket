@@ -1,0 +1,58 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: pink flower_0
+    rect:
+      x: 0.112000003
+      y: 0.0594101511
+      width: 0.304666758
+      height: 0.290685385
+    pivot:
+      x: 0.485000014
+      y: 0.0199999996
+  - name: pink flower_1
+    rect:
+      x: 0.51700002
+      y: 0.0410000011
+      width: 0.405851662
+      height: 0.413063288
+    pivot:
+      x: 0.550000012
+      y: 0.00999999978
+  - name: pink flower_2
+    rect:
+      x: 0.165000007
+      y: 0.408656895
+      width: 0.219765618
+      height: 0.187141955
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: pink flower_3
+    rect:
+      x: 0.492000014
+      y: 0.449999988
+      width: 0.432479292
+      height: 0.320210218
+    pivot:
+      x: 0.550000012
+      y: 0.0199999996
+  - name: pink flower_4
+    rect:
+      x: 0.156000003
+      y: 0.660407424
+      width: 0.221197292
+      height: 0.17345643
+    pivot:
+      x: 0.469999999
+      y: 0.0199999996
+  - name: pink flower_5
+    rect:
+      x: 0.167999998
+      y: 0.841024876
+      width: 0.19454886
+      height: 0.13924253
+    pivot:
+      x: 0.519999981
+      y: 0.00999999978

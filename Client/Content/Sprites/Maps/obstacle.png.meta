@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: obstacle_0
+    rect:
+      x: 0.346679747
+      y: 0.0790000036
+      width: 0.371093869
+      height: 0.81455487
+    pivot:
+      x: 0.5
+      y: 0.0120000001

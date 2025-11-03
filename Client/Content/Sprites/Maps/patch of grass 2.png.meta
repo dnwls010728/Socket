@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: patch of grass 2_0
+    rect:
+      x: 0.0900000036
+      y: 0.234375045
+      width: 0.83099997
+      height: 0.53515631
+    pivot:
+      x: 0.460000008
+      y: 0.0799999982

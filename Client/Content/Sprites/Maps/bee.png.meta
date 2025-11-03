@@ -1,0 +1,22 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: bee_0
+    rect:
+      x: 0.00999999978
+      y: 0.0320000015
+      width: 0.986999989
+      height: 0.451000005
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: bee_1
+    rect:
+      x: 0
+      y: 0.550999999
+      width: 0.949999988
+      height: 0.424000084
+    pivot:
+      x: 0.550000012
+      y: 0.400000006

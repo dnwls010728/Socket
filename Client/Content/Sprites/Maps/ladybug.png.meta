@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: ladybug_0
+    rect:
+      x: 0.141601548
+      y: 0.236816391
+      width: 0.720214784
+      height: 0.559081972
+    pivot:
+      x: 0.300000012
+      y: 0.319999993

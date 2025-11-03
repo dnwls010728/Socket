@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: waterfall_0
+    rect:
+      x: 0.0149999997
+      y: 0.0399999991
+      width: 0.936195195
+      height: 0.899999976
+    pivot:
+      x: 0.5
+      y: 0.0340000018

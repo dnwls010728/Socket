@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: fog 2_0
+    rect:
+      x: 0.00558035774
+      y: 0.022321431
+      width: 0.987723291
+      height: 0.943080485
+    pivot:
+      x: 0.5
+      y: 0.479999989

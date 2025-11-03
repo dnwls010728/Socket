@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 32
+frames:
+  - name: platform stone_0
+    rect:
+      x: 0.068359375
+      y: 0.0299999993
+      width: 0.373535156
+      height: 0.62673831
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: platform stone_1
+    rect:
+      x: 0.5078125
+      y: 0.0130000003
+      width: 0.361328065
+      height: 0.63966924
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: platform stone_2
+    rect:
+      x: 0.11230468
+      y: 0.743815064
+      width: 0.758463502
+      height: 0.250651062
+    pivot:
+      x: 0.430000007
+      y: 0.0399999991
