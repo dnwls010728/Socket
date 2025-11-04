@@ -75,8 +75,8 @@ void UIInGameState::Tick(float delta_time)
 {
     UIState::Tick(delta_time);
 
-    if (Keyboard::Get()->GetKeyDown(Scancode::kKeyR))
-        show_post_process_ = !show_post_process_;
+    // if (Keyboard::Get()->GetKeyDown(Scancode::kKeyR))
+    //     show_post_process_ = !show_post_process_;
 
     if (show_post_process_)
     {

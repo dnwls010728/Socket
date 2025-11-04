@@ -783,6 +783,24 @@ void Map::KillAllMobs()
             
             RemoveObject(object_id);
         }
+        else if (const auto& droppedItem = std::dynamic_pointer_cast<DroppedItem>(map_object))
+        {
+            uint32_t object_id = droppedItem->GetObjectID();
+            
+            ObjectDestroyInfo info;
+            info.type = ObjectType::kDroppedItem;
+            info.object_id = object_id;
+    
+            ObjectDestroyPacket object_destroy_packet;
+            object_destroy_packet.object_info = info;
+    
+            {
+                // std::lock_guard<std::mutex> player_lock(player_mutex_);
+                SendPacket(object_destroy_packet);
+            }
+            
+            RemoveObject(object_id);
+        }
     }
 
     number_spawned_mobs_.store(0);

@@ -833,6 +833,8 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case SkillCastRequest::StaticPacketID:
         {
             SkillCastRequest* skill_request = static_cast<SkillCastRequest*>(packet);
+
+            if (is_dead_) break;
             skill_manager_.UseSkill(skill_request->skill_id);
         }
         break;
@@ -1202,7 +1204,7 @@ void PlayerCharacter::ComputeStats()
 
     const auto& total_buff_stats = buff_manager_.GetTotalStats();
     effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp + card_manager_.GetMaxHP();
-    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk + card_manager_.GetATK();
+    effective_atk_ = 100 + total_equip_stats_.atk + total_buff_stats.atk + card_manager_.GetATK();
     effective_def_ = total_equip_stats_.def + total_buff_stats.def + card_manager_.GetDEF();
     effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig + card_manager_.GetDIG();
 }

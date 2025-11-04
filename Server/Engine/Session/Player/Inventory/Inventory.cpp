@@ -5,6 +5,7 @@
 #include <ranges>
 
 #include "DataManager.h"
+#include "EquipItem.h"
 #include "Item.h"
 #include "Map/PlayerCharacter.h"
 
@@ -207,7 +208,9 @@ bool Inventory::AddItem(const std::shared_ptr<Item>& item)
             if (free_slot == 0) break;
 
             int32_t to_add = std::min(remaining_count, max_count);
-            items_.try_emplace(free_slot, Item::Create(item_id, to_add));
+            if (type_ == InventoryType::kEquip || type_ == InventoryType::kEquipped)
+                items_.try_emplace(free_slot, EquipItem::Create(item_id));
+            else items_.try_emplace(free_slot, Item::Create(item_id, to_add));
             remaining_count -= to_add;
 
             InventoryChange change;
