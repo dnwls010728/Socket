@@ -90,6 +90,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
                 if (IsValid(effect))
                 {
+                    // effect->SetOwner(this);
                     effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
                     effect->SetFlipX(renderer_->IsFlipX());
                     effect->SetAnimationPack(skill_data->animation_pack);

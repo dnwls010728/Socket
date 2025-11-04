@@ -2,6 +2,7 @@
 #include "Effect.h"
 
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 
@@ -37,6 +38,13 @@ void Effect::Tick(float DeltaTime)
     NetworkActor::Tick(DeltaTime);
 
     if (!animator_->IsPlaying()) Destroy();
+
+    Actor* owner = GetOwner();
+    if (IsValid(owner))
+    {
+        Math::Vector2 position = owner->GetTransform()->GetPosition();
+        GetTransform()->SetPosition(position);
+    }
 }
 
 RTTR_REGISTRATION
