@@ -6,8 +6,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100000\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100000\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -27,8 +27,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100001\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100001\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -48,8 +48,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100002\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100002\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -87,8 +87,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100003\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100003\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -117,8 +117,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100004.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100004\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100004\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
@@ -138,8 +138,8 @@ skills:
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"
     hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\SkillUse.mp3"
-    hit_sound: "Audio\\SE\\SkillUse.mp3"
+    sound: "Audio\\SE\\Skill\\100005\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100005\\Hit.mp3"
     projectile: 0
     cooldown: 1
     hit_frames:
