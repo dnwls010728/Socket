@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "SpriteRendererComponent.h"
 
+#include "DebugDrawHelper.h"
 #include "TransformComponent.h"
 #include "Actor/Actor.h"
 #include "Level/World.h"
@@ -169,12 +170,9 @@ void SpriteRendererComponent::UpdateFrame()
     uint32_t ppu = sprite_->GetPPU();
     frame_width_ = sprite_->GetWidth() * frame.uv_scale.x / ppu;
     frame_height_ = sprite_->GetHeight() * frame.uv_scale.y / ppu;
-
-    if (HasBegunPlay())
-    {
-        shape_->SetUVOffset(frame.uv_offset);
-        shape_->SetUVScale(frame.uv_scale);
-    }
+    
+    shape_->SetUVOffset(frame.uv_offset);
+    shape_->SetUVScale(frame.uv_scale);
 }
 
 RTTR_REGISTRATION

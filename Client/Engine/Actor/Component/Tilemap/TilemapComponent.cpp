@@ -5,6 +5,7 @@
 #include "TilemapLayer.h"
 #include "Actor/Actor.h"
 #include "Actor/Portal.h"
+#include "Actor/Prop.h"
 #include "Actor/Component/TransformComponent.h"
 #include "box2d/box2d.h"
 #include "Level/World.h"
@@ -98,6 +99,7 @@ void TilemapComponent::BeginPlay()
 				if (layer->getName() == "Foothold") GeneratePhysics(object);
 				else if (layer->getName() == "Spawn") GenerateSpawn(object);
 				else if (layer->getName() == "Portal") GeneratePortal(object);
+				else if (layer->getName() == "Prop") GenerateProp(object);
 			}
 			else if (layer->getType() == tmx::Layer::Type::Tile)
 			{
@@ -269,6 +271,34 @@ void TilemapComponent::GeneratePortal(const tmx::ObjectGroup& kObject) const
 			{
 				portal->GetTransform()->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
 				portal->SetID(id);
+			}
+		}
+	}
+}
+
+void TilemapComponent::GenerateProp(const tmx::ObjectGroup& kObject) const
+{
+	const auto& objects = kObject.getObjects();
+
+	for (const auto& temp : objects)
+	{
+		if (temp.getShape() != tmx::Object::Shape::Point) continue;
+
+		const auto& properties = temp.getProperties();
+		if (properties.empty()) continue;
+
+		int32_t index = properties[0].getIntValue();
+		std::wstring path = StringHelper::UTF8ToUTF16(properties[1].getStringValue());
+		
+		rttr::type type = rttr::type::get_by_name(temp.getClass());
+		if (type.is_valid())
+		{
+			std::wstring name = StringHelper::UTF8ToUTF16(temp.getName());
+			std::shared_ptr<Prop> prop = World::Get()->SpawnActor<Prop>(type, name);
+			if (IsValid(prop))
+			{
+				prop->GetTransform()->SetPosition({temp.getPosition().x / ppu_ - map_size_.x / 2.f, -1 * temp.getPosition().y / ppu_ + map_size_.y / 2.f});
+				prop->SetSprite(path, index);
 			}
 		}
 	}
