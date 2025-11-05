@@ -10,9 +10,7 @@ DamageEffect::DamageEffect() :
     damage_multiplier_(100.0f),
     base_damage_(0),
     can_critical_(false),
-    attack_count_(1),
-    hit_effect_pack_(),
-    hit_effect_animation_()
+    attack_count_(1)
 {
 }
 
@@ -38,8 +36,8 @@ void DamageEffect::Apply(const AttackContext& ctx)
         DamageHitInfo info;
         info.damage_amount = total_damage;
         info.position = position;
-        info.effect_pack = hit_effect_pack_;
-        info.effect_animation = hit_effect_animation_;
+        info.source_type = ctx.source_type;
+        info.source_id = ctx.source_id;
         damages.push_back(info);
     }
 

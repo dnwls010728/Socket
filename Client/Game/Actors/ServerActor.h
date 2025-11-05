@@ -30,9 +30,9 @@ public:
     {
         int damage_amount;
         Math::Vector2 damage_effect_position;
-        std::wstring hit_effect_pack;
-        std::wstring hit_effect_animation;
         Math::Vector2 hit_effect_position;
+        DamageSourceType source_type;
+        uint32_t source_id;
     };
     
     ServerActor(const std::wstring& name);

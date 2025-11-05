@@ -890,8 +890,8 @@ void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<Damag
         info.damage_amount = damage_info.damage_amount;
         info.hit_effect_position_x = damage_info.position.x;
         info.hit_effect_position_y = damage_info.position.y;
-        info.hit_effect_pack = damage_info.effect_pack;
-        info.hit_effect_animation = damage_info.effect_animation;
+        info.source_type = damage_info.source_type;
+        info.source_id = damage_info.source_id;
         packet.damage_amount.push_back(info);
     }
     map_->SendPacket(packet);

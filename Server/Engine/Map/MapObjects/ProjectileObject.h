@@ -50,12 +50,6 @@ public:
     inline void SetFlip(bool is_flipped) { is_flipped_ = is_flipped; }
     inline bool IsFlipped() const { return is_flipped_; }
 
-    inline void SetHitEffectPack(const std::wstring& effect_pack) { hit_effect_pack_ = effect_pack; }
-    inline const std::wstring& GetHitEffectPack() const { return hit_effect_pack_; }
-
-    inline void SetHitEffectAnimation(const std::wstring& effect_animation) { hit_effect_animation_ = effect_animation; }
-    inline const std::wstring& GetHitEffectAnimation() const { return hit_effect_animation_; }
-
 protected:
     void BeginPlay() override;
     void PhysicsTick(float delta_time) override;
@@ -66,7 +60,6 @@ private:
     void SendAnimationPacket(const std::wstring& animation, bool is_flip, bool instant_play = false) const;
     void ApplyDamage(const std::shared_ptr<IDamageable>& target);
     void RequestDestroy();
-    void RefreshDamageAmounts();
 
     std::weak_ptr<MapObject> owner_;
     bool owner_is_player_;
@@ -93,11 +86,7 @@ private:
     bool last_flipped_;
 
     Math::Vector2 last_position_;
-
-    std::vector<int32_t> damage_amounts_;
+    
     std::unordered_set<uint32_t> damaged_targets_;
-
-    std::wstring hit_effect_pack_;
-    std::wstring hit_effect_animation_;
 };
 

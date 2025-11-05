@@ -65,7 +65,7 @@ namespace Net
 		v.damage_amount,
 		v.hit_effect_position_x,
 		v.hit_effect_position_y,
-		v.hit_effect_pack,
-		v.hit_effect_animation
+		v.source_id,
+		v.source_type
 		)
 } // namespace Net

@@ -13,6 +13,8 @@ public:
         IDamageable* target;
         Bounds hitbox;
         bool has_hitbox{false};
+        DamageSourceType source_type;
+        uint32_t source_id;
     };
 
     AttackEffect() = default;

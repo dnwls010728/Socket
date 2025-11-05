@@ -30,13 +30,9 @@ ProjectileObject::ProjectileObject() :
     last_animation_(),
     last_flipped_(false),
     last_position_(Math::Vector2::Zero()),
-    damage_amounts_(),
     damaged_targets_(),
-    hit_effect_pack_(),
-    hit_effect_animation_(),
     owner_is_player_(true)
 {
-    RefreshDamageAmounts();
 }
 
 void ProjectileObject::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
@@ -67,13 +63,11 @@ void ProjectileObject::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 void ProjectileObject::SetDamage(int32_t damage)
 {
     damage_ = damage;
-    RefreshDamageAmounts();
 }
 
 void ProjectileObject::SetDamageCount(int32_t count)
 {
     damage_count_ = std::max(1, count);
-    RefreshDamageAmounts();
 }
 
 void ProjectileObject::BeginPlay()
@@ -254,38 +248,22 @@ void ProjectileObject::ApplyDamage(const std::shared_ptr<IDamageable>& target)
     Bounds target_bounds = target->GetBounds();
     Bounds intersect_bounds = Bounds::Intersect(projectile_bounds, target_bounds);
 
-    auto generate_position = [&](const Bounds& fallback) -> Math::Vector2
-    {
-        const Bounds& spawn_bounds = (intersect_bounds.size.x > 0.f && intersect_bounds.size.y > 0.f) ? intersect_bounds : fallback;
-        float x = Math::RandRange(spawn_bounds.min.x, spawn_bounds.max.x);
-        float y = Math::RandRange(spawn_bounds.min.y, spawn_bounds.max.y);
-        return {x, y};
-    };
+    
+    const Bounds& spawn_bounds = (intersect_bounds.size.x > 0.f && intersect_bounds.size.y > 0.f) ? intersect_bounds : target_bounds;
+    float x = Math::RandRange(spawn_bounds.min.x, spawn_bounds.max.x);
+    float y = Math::RandRange(spawn_bounds.min.y, spawn_bounds.max.y);
+    Math::Vector2 position = {x, y};
+    
 
+    DamageHitInfo info;
+    info.damage_amount = damage_;
+    info.position = position;
+    info.source_type = DamageSourceType::kProjectile;
+    info.source_id = projectile_id_;
+    
     std::vector<DamageHitInfo> damage_infos;
-    if (damage_amounts_.empty())
-    {
-        DamageHitInfo info;
-        info.damage_amount = damage_;
-        info.position = generate_position(target_bounds);
-        info.effect_pack = hit_effect_pack_;
-        info.effect_animation = hit_effect_animation_;
-        damage_infos.push_back(info);
-    }
-    else
-    {
-        damage_infos.reserve(damage_amounts_.size());
-        for (int32_t damage_value : damage_amounts_)
-        {
-            DamageHitInfo info;
-            info.damage_amount = damage_value;
-            info.position = generate_position(target_bounds);
-            info.effect_pack = hit_effect_pack_;
-            info.effect_animation = hit_effect_animation_;
-            damage_infos.push_back(info);
-        }
-    }
-
+    damage_infos.assign(damage_count_, info);
+    
     target->TakeMultiDamage(owner_id, damage_infos);
 }
 
@@ -297,10 +275,5 @@ void ProjectileObject::RequestDestroy()
     if (!map_) return;
 
     map_->DestroyProjectile(object_id_);
-}
-
-void ProjectileObject::RefreshDamageAmounts()
-{
-    damage_amounts_.assign(std::max(1, damage_count_), damage_);
 }
 

@@ -6,13 +6,14 @@
 
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
+#include <CommonObject.h>
 
 struct DamageHitInfo
 {
     int32_t damage_amount;
     Math::Vector2 position;
-    std::wstring effect_pack;
-    std::wstring effect_animation;
+    DamageSourceType source_type;
+    uint32_t source_id;
 };
 
 class IDamageable

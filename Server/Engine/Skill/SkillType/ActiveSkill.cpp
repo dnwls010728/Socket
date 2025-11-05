@@ -54,8 +54,6 @@ void ActiveSkill::OnStart()
                     projectile->SetDamageCount(projectile_data->damage_count);
                     projectile->SetMaxTargets(projectile_data->max_targets);
                     projectile->SetMaxLifetime(projectile_data->max_lifetime);
-                    projectile->SetHitEffectPack(projectile_data->hit_effect_pack);
-                    projectile->SetHitEffectAnimation(projectile_data->hit_effect_animation);
 
                     Math::Vector2 direction = is_flipped_ ? Math::Vector2::Left() : Math::Vector2::Right();
                     projectile->SetVelocity(direction * projectile_data->speed);
@@ -135,6 +133,8 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
         ctx.target = damageable.get();
         ctx.hitbox = hitbox;
         ctx.has_hitbox = true;
+        ctx.source_type = DamageSourceType::kSkill;
+        ctx.source_id = data_ ? data_->id : 0;
         attack_chain->Apply(ctx);
         if (++hit_count >= static_cast<uint32_t>(frame.max_targets))
             break;

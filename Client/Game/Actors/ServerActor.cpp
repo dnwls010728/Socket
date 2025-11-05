@@ -10,7 +10,11 @@
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
@@ -53,9 +57,9 @@ void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount)
         snapshot.damage_amount = damage_info.damage_amount;
         snapshot.damage_effect_position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
         snapshot.damage_effect_position.y += i * 0.5f;
-        snapshot.hit_effect_pack = damage_info.hit_effect_pack;
-        snapshot.hit_effect_animation = damage_info.hit_effect_animation;
         snapshot.hit_effect_position = {damage_info.hit_effect_position_x, damage_info.hit_effect_position_y};
+        snapshot.source_type = static_cast<DamageSourceType>(damage_info.source_type);
+        snapshot.source_id = damage_info.source_id;
         pending_damages_.push_back(snapshot);
     }
 }
@@ -181,14 +185,48 @@ void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
         last_damage_spawn_time_ = now;
     }
 
-    if (!damage_snapshot.hit_effect_pack.empty())
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
+    std::wstring hit_sound;
+
+    switch (damage_snapshot.source_type)
+    {
+    case DamageSourceType::kSkill:
+        if (const SkillData* skill_data = DataSubsystem::Get()->GetSkill(damage_snapshot.source_id))
+        {
+            hit_effect_pack = skill_data->hit_effect_pack;
+            hit_effect_animation = skill_data->hit_effect_animation;
+            hit_sound = skill_data->hit_sound;
+        }
+        break;
+    case DamageSourceType::kProjectile:
+        if (const ProjectileData* projectile_data = DataSubsystem::Get()->GetProjectile(damage_snapshot.source_id))
+        {
+            hit_effect_pack = projectile_data->hit_effect_pack;
+            hit_effect_animation = projectile_data->hit_effect_animation;
+            hit_sound = projectile_data->hit_sound;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (!hit_effect_pack.empty() && !hit_effect_animation.empty())
     {
         auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
         if (IsValid(effect))
         {
             effect->GetTransform()->SetPosition(damage_snapshot.hit_effect_position);
-            effect->SetAnimationPack(damage_snapshot.hit_effect_pack);
-            effect->SetAnimation(damage_snapshot.hit_effect_animation);
+            effect->SetAnimationPack(hit_effect_pack);
+            effect->SetAnimation(hit_effect_animation);
+        }
+    }
+
+    if (!hit_sound.empty())
+    {
+        if (Audio* audio = AssetManager::Get()->Load<Audio>(hit_sound))
+        {
+            AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
         }
     }
 }

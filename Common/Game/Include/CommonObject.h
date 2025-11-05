@@ -261,11 +261,18 @@ struct KeyBindingInfo
     int32_t action;
 };
 
+enum class DamageSourceType : uint8_t
+{
+    kUnknown = 0,
+    kSkill,
+    kProjectile
+};
+
 struct DamageInfo
 {
     int32_t damage_amount;
     float hit_effect_position_x;
     float hit_effect_position_y;
-    std::wstring hit_effect_pack;
-    std::wstring hit_effect_animation;
+    DamageSourceType source_type;
+    uint32_t source_id;
 };
