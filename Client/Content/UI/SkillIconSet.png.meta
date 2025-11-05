@@ -1,0 +1,68 @@
+filter_mode: 0
+frames:
+  - name: SkillIconSet_0
+    rect:
+      x: 0
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: SkillIconSet_1
+    rect:
+      x: 32
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: SkillIconSet_2
+    rect:
+      x: 64
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: SkillIconSet_3
+    rect:
+      x: 96
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: SkillIconSet_4
+    rect:
+      x: 128
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
+  - name: SkillIconSet_5
+    rect:
+      x: 160
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0

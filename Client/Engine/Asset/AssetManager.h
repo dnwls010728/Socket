@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <future>
+
 #include "Asset.h"
 #include "Singleton.h"
 
@@ -12,9 +14,17 @@ public:
     T* Load(const std::wstring& kPath);
 
     template <std::derived_from<Asset> T>
-    T* LoadAsync(const std::wstring& kPath, Function<void(T*)> callback);
+    void LoadAsync(const std::wstring& kPath, Function<void(T*)> callback);
 
 private:
+    struct PendingLoad
+    {
+        std::wstring path;
+        std::future<void*> future;
+        Function<void(void*)> callback;
+        rttr::type expected_type;
+    };
+    
     std::unordered_map<std::wstring, std::unique_ptr<Asset>> assets_;
     
 };
@@ -22,24 +32,37 @@ private:
 template <std::derived_from<Asset> T>
 T* AssetManager::Load(const std::wstring& kPath)
 {
-    std::wstring path = L".\\Content\\" + kPath;
-    if (assets_.contains(path))
+    std::wstring full_path = L".\\Content\\" + kPath;
+    rttr::type type = rttr::type::get<T>();
+    
+    if (assets_.contains(full_path))
     {
-        Asset* asset = assets_[path].get();
+        Asset* asset = assets_[full_path].get();
         
-        rttr::type type = rttr::type::get<T>();
-        if (type == asset->get_type()) return static_cast<T*>(asset);
-        return nullptr;
+        if (type == asset->get_type())
+            return static_cast<T*>(asset);
     }
 
     std::unique_ptr<T> asset = std::make_unique<T>();
-    if (!asset->Load(path)) return nullptr;
+    if (!asset->Load(full_path)) return nullptr;
 
-    assets_[path] = std::move(asset);
-    return static_cast<T*>(assets_[path].get());
+    assets_[full_path] = std::move(asset);
+    return static_cast<T*>(assets_[full_path].get());
 }
 
 template <std::derived_from<Asset> T>
-T* AssetManager::LoadAsync(const std::wstring& kPath, Function<void(T*)> callback)
+void AssetManager::LoadAsync(const std::wstring& kPath, Function<void(T*)> callback)
 {
+    std::wstring full_path = L".\\Content\\" + kPath;
+    rttr::type type = rttr::type::get<T>();
+
+    if (assets_.contains(full_path))
+    {
+        Asset* asset = assets_[full_path].get();
+        if (type == asset->get_type())
+        {
+            callback(static_cast<T*>(asset));
+            return;
+        }
+    }
 }
