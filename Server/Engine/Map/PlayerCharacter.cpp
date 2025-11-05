@@ -854,7 +854,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
 Bounds PlayerCharacter::GetBounds() const
 {
-    return {position_, {3.f, 2.f}};
+    return {position_, {2.f, 2.f}};
 }
 
 void PlayerCharacter::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)

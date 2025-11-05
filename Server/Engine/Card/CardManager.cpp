@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CardManager.h"
 
+#include <algorithm>
 #include <chrono>
 #include <CustomPacket.h>
 #include <iomanip>
@@ -11,6 +12,7 @@
 #include "jdbc/cppconn/connection.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
+#include "Skill/SkillManager.h"
 #include "MySQL/MySQLManager.h"
 
 CardManager::CardManager(PlayerCharacter* player) :
@@ -68,20 +70,40 @@ void CardManager::OnCardSelected(const CardSelectInfo& card)
         owned_cards_[card.card_id] = new_level;
 
     selecting_cards.clear();
-    ComputeStats();
 
     const CardData* selected_card_data = DataManager::Get()->GetCard(card.card_id);
     if (selected_card_data && selected_card_data->skill_id != 0)
     {
-        const SkillData* skill_data = DataManager::Get()->GetSkill(selected_card_data->skill_id);
-        
-        player_->GetSkillManager().AddSkill(selected_card_data->skill_id, card.level);
+        SkillManager& skill_manager = player_->GetSkillManager();
+        uint32_t skill_id = selected_card_data->skill_id;
+        int skill_level = new_level;
+
+        if (skill_manager.HasSkill(skill_id))
+        {
+            skill_manager.GetSkill(skill_id, [&](Skill* skill)
+            {
+                skill_level = std::max(skill_level, skill->GetLevel() + 1);
+                skill->SetLevel(skill_level);
+            });
+        }
+        else
+        {
+            skill_level = std::max(skill_level, 1);
+            skill_manager.AddSkill(skill_id, skill_level);
+        }
+
+        owned_cards_[card.card_id] = std::max(owned_cards_[card.card_id], skill_level);
+
+        const SkillData* skill_data = DataManager::Get()->GetSkill(skill_id);
+
         SkillUpdatePacket packet;
-        packet.skill.skill_id = selected_card_data->skill_id;
-        packet.skill.level = card.level;
-        packet.skill.cooldown = skill_data->cooldown;
+        packet.skill.skill_id = skill_id;
+        packet.skill.level = skill_level;
+        packet.skill.cooldown = skill_data ? skill_data->cooldown : 0;
         player_->SendPacket(packet);
     }
+
+    ComputeStats();
 
     if (!pending_cards_.empty())
     {

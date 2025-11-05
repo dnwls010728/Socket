@@ -187,7 +187,7 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
 
 Bounds Mob::GetBounds() const
 {
-    return {position_, {3.f, 2.f}};
+    return {position_, {2.f, 2.f}};
 }
 
 void Mob::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)

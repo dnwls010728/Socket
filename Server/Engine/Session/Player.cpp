@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include <CustomPacket.h>
+#include <ctime>
 
 #include "DataManager.h"
 #include "IPacket.h"
@@ -113,6 +114,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 {
                     uint32_t character_id = result->getUInt(1);
                     new_character->SetObjectID(character_id);
+
+                    constexpr uint32_t kInitialSkillId = 100000;
+                    const SkillData* default_skill_data = DataManager::Get()->GetSkill(kInitialSkillId);
+                    if (default_skill_data)
+                    {
+                        new_character->GetSkillManager().AddSkill(kInitialSkillId, 1);
+
+                        statement.reset(connection->prepareStatement(
+                            "INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) "
+                            "VALUES (?, ?, ?, ?, ?) "
+                            "ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), duration = VALUES(duration), start_time = VALUES(start_time)"));
+                        statement->setUInt(1, new_character->GetObjectID());
+                        statement->setUInt(2, kInitialSkillId);
+                        statement->setInt(3, 1);
+                        statement->setInt(4, default_skill_data->duration);
+                        statement->setInt(5, 0);
+                        statement->executeUpdate();
+                    }
                 }
             }
             catch (sql::SQLException& e)
