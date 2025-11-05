@@ -5,9 +5,11 @@
 
 #include "UIEquipment.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIImage.h"
+#include "Windows/DX/Sprite.h"
 #include "Windows/DX/UISprite.h"
 
 UIEquipmentSlot::UIEquipmentSlot(const std::wstring& name) :
@@ -35,15 +37,21 @@ void UIEquipmentSlot::UpdateSlot(uint32_t item_id)
 {
     item_id_ = item_id;
     if (item_id <= 0) return;
+    
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
+    
+    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(item_data->ui_icon.path);
+    int32_t frame_index = item_data->ui_icon.index;
 
-    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
     if (!ui_sprite)
     {
         static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
         ui_sprite = kMissing;
+        frame_index = 0;
     }
 
-    icon_->SetSprite(ui_sprite);
+    icon_->SetSprite(ui_sprite, frame_index);
 }
 
 void UIEquipmentSlot::ResetSlot()

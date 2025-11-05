@@ -8,7 +8,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 #include "Windows/DX/Sprite.h"
@@ -62,15 +62,21 @@ void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& dro
         is_color_ = true;
         return;
     }
+
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
     
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\" + std::to_wstring(item_id) + L".png");
+    Sprite* sprite = AssetManager::Get()->Load<Sprite>(item_data->icon.path);
+    int32_t frame_index = item_data->icon.index;
+    
     if (!sprite)
     {
         static Sprite* kMissing = AssetManager::Get()->Load<Sprite>(L"Sprites\\Missing.png");
         sprite = kMissing;
+        frame_index = 0;
     }
     
-    if (sprite) renderer_->SetSprite(sprite);
+    if (sprite) renderer_->SetSprite(sprite, frame_index);
 }
 
 

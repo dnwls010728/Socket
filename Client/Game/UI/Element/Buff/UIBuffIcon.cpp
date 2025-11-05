@@ -3,6 +3,7 @@
 
 #include "Asset/AssetManager.h"
 #include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Subsystems/Publisher/PublisherSubsystem.h"
 #include "UI/UIInGameState.h"
@@ -41,14 +42,21 @@ void UIBuffIcon::Init(int32_t id, float expire_time)
     if (id < 0) // 아이템 버프
     {
         int32_t item_id = std::abs(id);
-        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+        
+        const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+        if (!item_data) return;
+    
+        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(item_data->ui_icon.path);
+        int32_t frame_index = item_data->ui_icon.index;
+        
         if (!ui_sprite)
         {
             static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
             ui_sprite = kMissing;
+            frame_index = 0;
         }
         
-        icon_->SetSprite(ui_sprite);
+        icon_->SetSprite(ui_sprite, frame_index);
     }
     else if (id > 0) // 스킬 버프
     {

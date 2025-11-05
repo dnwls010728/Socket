@@ -39,16 +39,21 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
 
 void UIItemTooltip::Set(uint32_t item_id)
 {
-    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
+    
+    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(item_data->ui_icon.path);
+    int32_t frame_index = item_data->ui_icon.index;
+    
     if (!ui_sprite)
     {
         static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
         ui_sprite = kMissing;
+        frame_index = 0;
     }
     
-    item_icon_->SetSprite(ui_sprite);
+    item_icon_->SetSprite(ui_sprite, frame_index);
 
-    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
     if (item_data)
     {
         item_name_->SetText(item_data->name);

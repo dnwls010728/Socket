@@ -6,6 +6,7 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "Asset/AssetManager.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/ColorGainHandler.h"

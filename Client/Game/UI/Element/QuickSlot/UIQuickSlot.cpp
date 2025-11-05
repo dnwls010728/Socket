@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include "UIQuickBar.h"
+#include "Subsystems/DataSubsystem.h"
 
 UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     UIContainer(name),
@@ -260,15 +261,21 @@ void UIQuickSlot::ApplyItemMapping(uint32_t item_id)
         ClearMapping();
         return;
     }
+    
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
+    
+    UISprite* item_sprite = AssetManager::Get()->Load<UISprite>(item_data->ui_icon.path);
+    int32_t frame_index = item_data->ui_icon.index;
 
-    UISprite* item_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
     if (!item_sprite)
     {
         static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
         item_sprite = kMissing;
+        frame_index = 0;
     }
 
-    icon_->SetSprite(item_sprite);
+    icon_->SetSprite(item_sprite, frame_index);
     
     if (!icon_->IsActive())
         icon_->SetActive(true);
