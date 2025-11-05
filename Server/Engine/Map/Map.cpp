@@ -402,7 +402,7 @@ void Map::OnAttack(uint32_t attacker, uint32_t defender)
         {
             DamageHitInfo damage;
             damage.damage_amount = 1000 + value;
-            Bounds mob_bounds = mob->GetDamageBounds();
+            Bounds mob_bounds = mob->GetBounds();
             damage.position = mob_bounds.center;
             mob->TakeDamage(attacker, damage);
         }
@@ -463,7 +463,7 @@ void Map::Tick(float delta_time)
                 {
                     DamageHitInfo damage;
                     damage.damage_amount = mob->damage_;
-                    Bounds player_bounds = player->GetDamageBounds();
+                    Bounds player_bounds = player->GetBounds();
                     damage.position = player_bounds.center;
                     player->TakeDamage(mob->GetObjectID(), damage);
                     break;
@@ -514,12 +514,11 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
         for (const auto& [id, obj] : map_objects_)
         {
             if (!obj) continue;
-
-            Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
-            if (auto damageable = std::dynamic_pointer_cast<IDamageable>(obj))
-            {
-                target_bounds = damageable->GetDamageBounds();
-            }
+            
+            auto damageable = std::dynamic_pointer_cast<IDamageable>(obj);
+            if (!damageable) continue;
+            
+            Bounds target_bounds = damageable->GetBounds();
             Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
             if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
@@ -532,9 +531,8 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
     {
         auto player = player_weak.lock();
         if (!player) continue;
-
-        Bounds target_bounds(player->GetPosition(), {3.f, 2.f});
-        target_bounds = player->GetDamageBounds();
+        
+        Bounds target_bounds = player->GetBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
         if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)

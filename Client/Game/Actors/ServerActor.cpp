@@ -186,7 +186,7 @@ void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
         auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
         if (IsValid(effect))
         {
-            effect->GetTransform()->SetPosition(GetTransform()->GetPosition());
+            effect->GetTransform()->SetPosition(damage_snapshot.hit_effect_position);
             effect->SetAnimationPack(damage_snapshot.hit_effect_pack);
             effect->SetAnimation(damage_snapshot.hit_effect_animation);
         }

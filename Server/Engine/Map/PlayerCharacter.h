@@ -69,7 +69,7 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    Bounds GetDamageBounds() const override;
+    Bounds GetBounds() const override;
 
     void TakeDamage(uint32_t attacker, const DamageHitInfo& damage_amount) override;
     void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) override;
