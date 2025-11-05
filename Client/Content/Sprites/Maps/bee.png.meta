@@ -1,6 +1,6 @@
 wrap_mode: 1
-filter_mode: 0
-ppu: 32
+filter_mode: 1
+ppu: 256
 frames:
   - name: bee_0
     rect:

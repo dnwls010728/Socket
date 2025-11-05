@@ -2,6 +2,12 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
   119999:
     name: "Eternal 모자"
     desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 0
     max_count: 1
     stat:
@@ -10,6 +16,12 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
   129999:
     name: "Eternal 갑옷"
     desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 0
     max_count: 1
     stat:
@@ -18,6 +30,12 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
   131999:
     name: "Eternal 검"
     desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 0
     max_count: 1
     stat:
@@ -26,6 +44,12 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
   200000: # 아이템 고유 ID
     name: "먹다 남은 빵"
     desc: "먹다 남은 빵입니다. 먹어도 별로 맛이 없습니다.\nHP를 약 10 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 100 # 유저가 상점에 판매할 때의 가격
     max_count: 3000
     # 위 속성이 공통 속성입니다.
@@ -36,128 +60,203 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
       # atk: 0
       # def: 0
       # dig: 0
-
   200001:
     name: "초급 물약"
     desc: "초급 물약입니다. HP를 약 20% 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 1000
     max_count: 99
     effect:
       hp_percent: 20
-
   200002:
     name: "중급 물약"
     desc: "중급 물약입니다. HP를 약 40% 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 2000
     max_count: 49
     effect:
       hp_percent: 40
-
   200003:
     name: "고급 물약"
     desc: "고급 물약입니다. HP를 약 60% 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 3000
     max_count: 99
     effect:
       hp_percent: 60
-
   200004:
     name: "장인의 물약"
     desc: "장인의 물약입니다. HP를 약 80% 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 4000
     max_count: 99
     effect:
       hp_percent: 80
-
   200005:
     name: "순수의 물약"
     desc: "순수의 물약입니다. HP를 약 100% 회복시킨다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 5000
     max_count: 99
     effect:
       hp_percent: 100
-
   200011:
     name: "낡은 붕대"
     desc: "체력을 100만큼 회복합니다"
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 100
     max_count: 99
     effect:
       hp: 100
-
   200012:
     name: "괜찮은 붕대"
     desc: "체력을 300만큼 회복합니다"
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 300
     max_count: 99
     effect:
       hp: 300
-
   200013:
     name: "좋은 붕대"
     desc: "체력을 1000만큼 회복합니다"
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 1000
     max_count: 99
     effect:
       hp: 1000
-
   200301:
     name: "칼날풀"
     desc: "뾰족한 털이 가득한 식물입니다. 섭취시 공격력이 소폭 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 500
     max_count: 1
     effect:
       duration: 60
       atk: 100
-
   200302:
     name: "칼날물약"
     desc: "칼날풀을 가공하여 제작한 물약입니다. 사용시 공격력이 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 2500
     max_count: 1
     effect:
       duration: 120
       atk: 250
-
   200311:
     name: "갑옷과일"
     desc: "껍질이 아주 단단한 과일입니다. 섭취시 방어력이 소폭 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 500
     max_count: 1
     effect:
       duration: 60
       def: 100
-
   200312:
     name: "갑옷물약"
     desc: "갑옷과일을 가공하여 제작한 물약입니다. 사용시 방어력이 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 2500
     max_count: 1
     effect:
       duration: 120
       def: 250
-
   200321:
     name: "창나무"
     desc: "끝이 아주 뾰족한 나무입니다. 섭취시 방어관통력이 소폭 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 1000
     max_count: 1
     effect:
       duration: 60
       dig: 50
-
   200322:
     name: "창물약"
     desc: "창나무를 가공하여 제작한 물약입니다. 사용시 방어관통력이 증가합니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 5000
     max_count: 1
     effect:
       duration: 120
       dig: 100
-
   200501:
     name: "무지개 조각"
     desc: "여러가지 색이 번갈아가며 빛나는 조각입니다. 섭취시 무슨 일이 일어날까요...?"
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 10000
     max_count: 1
     effect:
@@ -165,10 +264,15 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
       atk: 100
       def: 100
       dig: 50
-
   200502:
     name: "무지개 물약"
     desc: "무지개 조각을 가공하여 제작한 물약입니다. 고작 이런 일에 이 물약을 마시겠다고요?"
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 50000
     max_count: 1
     effect:
@@ -176,18 +280,28 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
       atk: 500
       def: 500
       dig: 250
-
   290000:
     name: "노란색 블럭"
     desc: "노란색 블럭입니다. 건축에 사용됩니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 1
     max_count: 99
     effect:
       block_color: "FFFF00"
-
   299999:
     name: "미지의 포션"
     desc: "무언가 좋은 일이 일어날 것 같은 포션입니다."
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 2190
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 2190
     price: 5000
     max_count: 1
     effect:

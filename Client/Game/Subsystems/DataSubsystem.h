@@ -4,6 +4,12 @@
 
 #include "yaml-cpp/yaml.h"
 
+struct FrameData
+{
+    std::wstring path;
+    int32_t index;
+};
+
 struct MobStats
 {
     int32_t lv;
@@ -50,6 +56,9 @@ struct ItemData
 
     std::wstring name;
     std::wstring desc;
+
+    FrameData icon;
+    FrameData ui_icon;
 
     int32_t price;
     int32_t max_count;
@@ -133,6 +142,18 @@ struct ProjectileData
 namespace YAML
 {
     template<>
+    struct convert<FrameData>
+    {
+        static bool decode(const Node& node, FrameData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.path = StringHelper::UTF8ToUTF16(node["path"].as<std::string>(""));
+            data.index = node["index"].as<int32_t>(0);
+            return true;
+        }
+    };
+    
+    template<>
     struct convert<MobStats>
     {
         static bool decode(const Node& node, MobStats& data)
@@ -204,6 +225,8 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.icon = node["icon"].as<FrameData>();
+            data.ui_icon = node["ui_icon"].as<FrameData>();
             data.price = node["price"].as<int32_t>(0);
             data.max_count = node["max_count"].as<int32_t>(0);
             return true;
