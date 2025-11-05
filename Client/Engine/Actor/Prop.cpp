@@ -10,12 +10,13 @@ Prop::Prop(const std::wstring& name) :
     renderer_ = AddComponent<SpriteRendererComponent>(L"SpriteRenderer");
 }
 
-void Prop::SetSprite(const std::wstring& path, int32_t frame_index) const
+void Prop::SetSprite(const std::wstring& path, int32_t frame_index, int32_t order) const
 {
     Sprite* sprite = AssetManager::Get()->Load<Sprite>(path);
     if (!sprite) return;
     
     renderer_->SetSprite(sprite, frame_index);
+    renderer_->SetZOrder(order);
 }
 
 void Prop::Render(float alpha)

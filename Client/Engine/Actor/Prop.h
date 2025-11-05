@@ -10,7 +10,7 @@ public:
     Prop(const std::wstring& name);
     virtual ~Prop() override = default;
 
-    void SetSprite(const std::wstring& path, int32_t frame_index) const;
+    void SetSprite(const std::wstring& path, int32_t frame_index, int32_t order = 0) const;
 
 protected:
     virtual void Render(float alpha) override;

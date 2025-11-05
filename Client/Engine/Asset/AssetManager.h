@@ -11,6 +11,9 @@ public:
     template <std::derived_from<Asset> T>
     T* Load(const std::wstring& kPath);
 
+    template <std::derived_from<Asset> T>
+    T* LoadAsync(const std::wstring& kPath, Function<void(T*)> callback);
+
 private:
     std::unordered_map<std::wstring, std::unique_ptr<Asset>> assets_;
     
@@ -34,4 +37,9 @@ T* AssetManager::Load(const std::wstring& kPath)
 
     assets_[path] = std::move(asset);
     return static_cast<T*>(assets_[path].get());
+}
+
+template <std::derived_from<Asset> T>
+T* AssetManager::LoadAsync(const std::wstring& kPath, Function<void(T*)> callback)
+{
 }
