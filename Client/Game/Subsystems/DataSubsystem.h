@@ -90,6 +90,7 @@ struct SkillData
     
     std::wstring name;
     std::wstring desc;
+    std::wstring icon;
     std::wstring animation_pack;
     std::wstring animation;
     std::wstring sound;
@@ -283,6 +284,7 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.icon = StringHelper::UTF8ToUTF16(node["icon"].as<std::string>(""));
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
             data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>(""));
             data.sound = StringHelper::UTF8ToUTF16(node["sound"].as<std::string>(""));

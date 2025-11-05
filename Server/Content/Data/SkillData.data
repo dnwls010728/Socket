@@ -2,6 +2,7 @@ skills:
   100000:
     name: "100000"
     desc: "100000"
+    icon: "SkillIconSet_0"
     animation_pack: "Sprites\\Effects\\100000.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
@@ -23,6 +24,7 @@ skills:
   100001:
     name: "100001"
     desc: "100001"
+    icon: "SkillIconSet_1"
     animation_pack: "Sprites\\Effects\\100001.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
@@ -44,6 +46,7 @@ skills:
   100002:
     name: "100002"
     desc: "100002"
+    icon: "SkillIconSet_2"
     animation_pack: "Sprites\\Effects\\100002.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
@@ -83,6 +86,7 @@ skills:
   100003:
     name: "100003"
     desc: "100003"
+    icon: "SkillIconSet_3"
     animation_pack: "Sprites\\Effects\\100003.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
@@ -113,6 +117,7 @@ skills:
   100004:
     name: "100004"
     desc: "100004"
+    icon: "SkillIconSet_4"
     animation_pack: "Sprites\\Effects\\100004.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100004.png.apack"
@@ -134,6 +139,7 @@ skills:
   100005:
     name: "100005"
     desc: "100005"
+    icon: "SkillIconSet_5"
     animation_pack: "Sprites\\Effects\\100005.png.apack"
     animation: "Idle"
     hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"

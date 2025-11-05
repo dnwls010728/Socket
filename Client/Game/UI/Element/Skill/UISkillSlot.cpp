@@ -31,9 +31,9 @@ UISkillSlot::UISkillSlot(const std::wstring& name) :
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     icon_->SetRelativePosition({ 4.f, 4.f });
     icon_->SetSize({ 32.f, 32.f });
-    icon_->SetSprite(panel_sprite, L"Panel_0");
-    icon_->SetDrawMode(UIImage::DrawMode::kSliced);
-    icon_->SetColor({ 80, 120, 200, 255 });
+    icon_->SetSprite(nullptr, L"");
+    icon_->SetDrawMode(UIImage::DrawMode::kSimple);
+    icon_->SetColor(Math::Color::White);
     icon_->SetIgnoreRayCast(true);
 
     name_text_ = AddChild<UIText>(UIText::StaticClass(), L"NameText");
@@ -64,9 +64,25 @@ void UISkillSlot::SetSkill(uint32_t skill_id, int32_t level, float cooldown)
     {
         name_text_->SetText(data->name);
         description_ = data->desc;
+
+        static UISprite* skill_icon_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
+        if (skill_icon_sprite && !data->icon.empty())
+        {
+            icon_->SetSprite(skill_icon_sprite, data->icon);
+            icon_->SetActive(true);
+        }
+        else
+        {
+            icon_->SetSprite(nullptr, L"");
+            icon_->SetActive(false);
+        }
     }
     else
+    {
         name_text_->SetText(L"알 수 없는 스킬");
+        icon_->SetSprite(nullptr, L"");
+        icon_->SetActive(false);
+    }
 
     level_text_->SetText(L"Lv. " + std::to_wstring(level_));
     SetActive(true);
@@ -80,6 +96,8 @@ void UISkillSlot::Reset()
 
     name_text_->SetText(L"");
     level_text_->SetText(L"");
+    icon_->SetSprite(nullptr, L"");
+    icon_->SetActive(false);
     SetActive(false);
 }
 

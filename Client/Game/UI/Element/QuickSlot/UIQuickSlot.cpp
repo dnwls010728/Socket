@@ -39,6 +39,8 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
     icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
     icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
+    icon_->SetDrawMode(UIImage::DrawMode::kSimple);
+    icon_->SetColor(Math::Color::White);
     icon_->SetIgnoreRayCast(true);
     icon_->SetActive(false);
 
@@ -224,19 +226,32 @@ void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
         return;
     }
 
-    // 임시
-    UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
-    icon_->SetSprite(panel_sprite, L"Panel_0");
-    
-    if (!icon_->IsActive())
-        icon_->SetActive(true);
-    
     PlayerSubsystem* player = PlayerSubsystem::Get();
     SkillManager* skill_manager = player ? player->GetSkillManager() : nullptr;
     if (skill_manager && !skill_manager->HasSkill(skill_id))
     {
         ClearMapping();
         return;
+    }
+
+    const SkillData* skill_data = DataSubsystem::Get()->GetSkill(skill_id);
+    if (!skill_data)
+    {
+        ClearMapping();
+        return;
+    }
+
+    UISprite* skill_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
+    if (skill_sprite && !skill_data->icon.empty())
+    {
+        icon_->SetSprite(skill_sprite, skill_data->icon);
+        if (!icon_->IsActive())
+            icon_->SetActive(true);
+    }
+    else
+    {
+        icon_->SetSprite(nullptr, L"");
+        icon_->SetActive(false);
     }
 
     key_type_ = KeyType::kSkill;
