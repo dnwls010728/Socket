@@ -98,9 +98,14 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
     Map* map = owner_->GetMap();
     if (map == nullptr) return;
 
+    Math::Vector2 center = {
+        frame.hitbox.center.x  * (is_flipped_ ? -1.f : 1.f),
+        frame.hitbox.center.y
+    };
+
     // Attach
     Bounds hitbox = {
-        owner_position_ + frame.hitbox.center * (is_flipped_ ? -1.f : 1.f),
+        owner_position_ + center,
         frame.hitbox.size
     };
 
