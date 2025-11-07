@@ -26,6 +26,7 @@ Mob::Mob(const MobData& mob_data) :
     foothold_(nullptr),
     hp_(mob_data.stats.hp),
     exp_(mob_data.stats.exp),
+    hitbox_(mob_data.hitbox),
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false),
@@ -187,7 +188,10 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
 
 Bounds Mob::GetBounds() const
 {
-    return {position_, {2.f, 2.f}};
+    return {
+        position_ + hitbox_.center,
+        hitbox_.size
+    };
 }
 
 void Mob::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)

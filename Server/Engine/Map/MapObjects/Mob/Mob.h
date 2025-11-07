@@ -90,6 +90,8 @@ protected:
 
     int32_t exp_;
 
+    Bounds hitbox_;
+
 #pragma region 상태
     std::shared_ptr<MobIdleState> idle_state_;
     std::shared_ptr<MobWalkState> walk_state_;

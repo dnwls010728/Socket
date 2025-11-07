@@ -24,6 +24,7 @@ struct MobData
 {
     uint32_t id;
     MobStats stats;
+    Bounds hitbox;
     std::wstring animation_pack;
 };
 
@@ -181,6 +182,7 @@ namespace YAML
         {
             if (!node.IsMap()) return false;
             data.stats = node["stats"].as<MobStats>();
+            data.hitbox = node["hitbox"].as<Bounds>();
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
             return true;
         }
