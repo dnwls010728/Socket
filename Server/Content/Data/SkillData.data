@@ -19,8 +19,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.1
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
-        hit_effect_animation: "Idle"
   100001:
     name: "100001"
     desc: "100001"
@@ -41,8 +39,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
-        hit_effect_animation: "Idle"
   100002:
     name: "100002"
     desc: "100002"
@@ -63,8 +59,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.1
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
-        hit_effect_animation: "Idle"
       - hitbox:
           center: [3.0, 1.0]
           size: [6.0, 3.5]
@@ -72,8 +66,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.2
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
-        hit_effect_animation: "Idle"
       - hitbox:
           center: [3.0, 1.0]
           size: [6.0, 3.5]
@@ -81,8 +73,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
-        hit_effect_animation: "Idle"
   100003:
     name: "100003"
     desc: "100003"
@@ -103,8 +93,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.2
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
-        hit_effect_animation: "Idle"
       - hitbox:
           center: [1.3, 1.0]
           size: [6.0, 3.6]
@@ -112,8 +100,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100003.png.apack"
-        hit_effect_animation: "Idle"
   100004:
     name: "100004"
     desc: "100004"
@@ -134,8 +120,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100004.png.apack"
-        hit_effect_animation: "Idle"
   100005:
     name: "100005"
     desc: "100005"
@@ -156,8 +140,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.3
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"
-        hit_effect_animation: "Idle"
       - hitbox:
           center: [3.5, 0.7]
           size: [7.0, 3.0]
@@ -165,8 +147,6 @@ skills:
         hit_count: 3
         max_targets: 10
         time_offset: 0.4
-        hit_effect_pack: "Sprites\\Effects\\Hit\\100005.png.apack"
-        hit_effect_animation: "Idle"
   199999:
     name: "테스트2"
     desc: "아무 설명."
