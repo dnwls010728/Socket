@@ -19,7 +19,7 @@ public:
     
     virtual void OnDeath();
 
-    void Init(uint32_t mob_id) const;
+    void Init(uint32_t mob_id);
     
     FORCEINLINE bool IsDead() const { return is_dead_; }
     FORCEINLINE bool IsFading() const { return fade_state_ != FadeState::kNone; }
@@ -41,5 +41,7 @@ protected:
     FadeState fade_state_;
 
     float fade_timer_;
+
+    Bounds hitbox_;
     
 };
