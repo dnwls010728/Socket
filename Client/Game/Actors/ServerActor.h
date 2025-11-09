@@ -31,6 +31,7 @@ public:
         int damage_amount;
         Math::Vector2 damage_effect_position;
         Math::Vector2 hit_effect_position;
+        float attacker_direction;
         DamageSourceType source_type;
         uint32_t source_id;
     };

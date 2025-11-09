@@ -12,6 +12,7 @@ struct DamageHitInfo
 {
     int32_t damage_amount;
     Math::Vector2 position;
+    float attacker_direction;
     DamageSourceType source_type;
     uint32_t source_id;
 };
@@ -22,6 +23,7 @@ public:
     virtual ~IDamageable() = default;
 
     virtual Bounds GetBounds() const = 0;
+    virtual Math::Vector2 GetPosition() const = 0;
 
     virtual void TakeDamage(uint32_t attacker, const DamageHitInfo& damage) = 0;
     virtual void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) = 0;

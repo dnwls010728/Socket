@@ -48,6 +48,7 @@ public:
     inline std::shared_ptr<MobHitState> GetHitState() const { return hit_state_; }
 
     Bounds GetBounds() const override;
+    Math::Vector2 GetPosition() const override;
 
     void TakeDamage(uint32_t attacker, const DamageHitInfo& damage) override;
     void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) override;

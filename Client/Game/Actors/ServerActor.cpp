@@ -58,6 +58,7 @@ void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount)
         snapshot.damage_effect_position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
         snapshot.damage_effect_position.y += i * 0.5f;
         snapshot.hit_effect_position = {damage_info.hit_effect_position_x, damage_info.hit_effect_position_y};
+        snapshot.attacker_direction = damage_info.attacker_direction;
         snapshot.source_type = static_cast<DamageSourceType>(damage_info.source_type);
         snapshot.source_id = damage_info.source_id;
         pending_damages_.push_back(snapshot);
@@ -219,6 +220,7 @@ void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
             effect->GetTransform()->SetPosition(damage_snapshot.hit_effect_position);
             effect->SetAnimationPack(hit_effect_pack);
             effect->SetAnimation(hit_effect_animation);
+            effect->SetFlipX(damage_snapshot.attacker_direction > 0.f);
         }
     }
 

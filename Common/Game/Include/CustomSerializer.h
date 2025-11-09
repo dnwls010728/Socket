@@ -65,6 +65,7 @@ namespace Net
 		v.damage_amount,
 		v.hit_effect_position_x,
 		v.hit_effect_position_y,
+		v.attacker_direction,
 		v.source_id,
 		v.source_type
 		)

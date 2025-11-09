@@ -194,6 +194,11 @@ Bounds Mob::GetBounds() const
     };
 }
 
+Math::Vector2 Mob::GetPosition() const
+{
+    return position_;
+}
+
 void Mob::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)
 {
     TakeMultiDamage(attacker, {damage});
@@ -223,6 +228,7 @@ void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& d
             info.damage_amount = damage_info.damage_amount;
             info.hit_effect_position_x = damage_info.position.x;
             info.hit_effect_position_y = damage_info.position.y;
+            info.attacker_direction = damage_info.attacker_direction;
             info.source_type = damage_info.source_type;
             info.source_id = damage_info.source_id;
             packet.damage_amount.push_back(info);

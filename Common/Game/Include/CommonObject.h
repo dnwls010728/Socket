@@ -273,6 +273,7 @@ struct DamageInfo
     int32_t damage_amount;
     float hit_effect_position_x;
     float hit_effect_position_y;
+    float attacker_direction;
     DamageSourceType source_type;
     uint32_t source_id;
 };
