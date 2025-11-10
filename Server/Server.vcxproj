@@ -266,6 +266,7 @@
     <ClInclude Include="Engine\Utils\TimedBool.h" />
     <ClInclude Include="Game\ServerManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
+    <ClInclude Include="Include\exprtk.hpp" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
