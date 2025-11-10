@@ -137,9 +137,9 @@ void ActiveSkill::ApplyHitFrame(const HitFrame& frame)
         ctx.attacker = owner_;
         ctx.target = damageable.get();
         ctx.hitbox = hitbox;
-        ctx.has_hitbox = true;
         ctx.source_type = DamageSourceType::kSkill;
         ctx.source_id = data_ ? data_->id : 0;
+        ctx.source_level = level_;
         attack_chain->Apply(ctx);
         if (++hit_count >= static_cast<uint32_t>(frame.max_targets))
             break;

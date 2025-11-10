@@ -28,7 +28,8 @@ void MobIdleState::Tick(float delta_time)
     transition_timer_ += delta_time;
     if (transition_timer_ >= 1.6f)
     {
-        if (auto owner = owner_.lock()) state_machine_.ChangeState(owner->GetWalkState());
+        if (auto owner = owner_.lock())
+            state_machine_.ChangeState(owner->GetWalkState());
         transition_timer_ -= 1.6f;
     }
     
