@@ -82,13 +82,6 @@ void DataManager::Init()
     {
         std::cout << e.what() << std::endl;
     }
-    
-    exprtk::expression<int32_t> expression;
-    exprtk::parser<int32_t> parser;
-
-    if (parser.compile("", expression))
-    {
-    }
 }
 
 const MobData* DataManager::GetMob(uint32_t id) const
