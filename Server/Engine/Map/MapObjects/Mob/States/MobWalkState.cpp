@@ -21,7 +21,7 @@ void MobWalkState::Enter()
     if (auto owner = owner_.lock())
     {
         owner->SetAnimation(L"Walk");
-        owner->SetFlipped(!is_right_);
+        owner->SetFlipped(is_right_);
     }
     
 }
