@@ -69,7 +69,7 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
 
                 DroppedItemInfo info = object_info.info.dropped_item;
 
-                Math::Vector2 offset = Math::Vector2::Up() * .5f;
+                Math::Vector2 offset = Math::Vector2::Up() * .25f;
 
                 dropped_item->SetObjectID(object_info.object_id);
                 dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y + offset.y });

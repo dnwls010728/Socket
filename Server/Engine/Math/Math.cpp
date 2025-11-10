@@ -114,6 +114,18 @@ int32_t Math::Abs(int32_t a)
     return a < 0 ? -a : a;
 }
 
+int32_t Math::Pow(int32_t f, int32_t p)
+{
+    int32_t result = 1;
+
+    for (int32_t i = 0; i < p; ++i)
+    {
+        result *= f;
+    }
+    
+    return result;
+}
+
 int32_t Math::RandRange(int32_t min, int32_t max)
 {
     if (min > max)

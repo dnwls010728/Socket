@@ -22,8 +22,9 @@ class IDamageable
 public:
     virtual ~IDamageable() = default;
 
-    virtual Bounds GetBounds() const = 0;
-    virtual Math::Vector2 GetPosition() const = 0;
+    virtual Bounds GetHitBounds() const = 0;
+    virtual Math::Vector2 GetHitPosition() const = 0;
+    virtual int32_t GetHitDef() const = 0;
 
     virtual void TakeDamage(uint32_t attacker, const DamageHitInfo& damage) = 0;
     virtual void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) = 0;

@@ -245,7 +245,7 @@ void ProjectileObject::ApplyDamage(const std::shared_ptr<IDamageable>& target)
     uint32_t owner_id = owner_.expired() ? object_id_ : owner_.lock()->GetObjectID();
 
     Bounds projectile_bounds(position_, size_);
-    Bounds target_bounds = target->GetBounds();
+    Bounds target_bounds = target->GetHitBounds();
     Bounds intersect_bounds = Bounds::Intersect(projectile_bounds, target_bounds);
 
     

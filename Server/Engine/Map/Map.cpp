@@ -379,36 +379,6 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerChara
     }
 }
 
-void Map::OnAttack(uint32_t attacker, uint32_t defender)
-{
-    // std::lock_guard<std::mutex> lock(object_mutex_);
-    
-    int32_t value = 0;
-    
-    {
-        auto it = players_.find(attacker);
-        if (it != players_.end())
-        {
-            auto player = it->second.lock();
-            if (player) value = player->GetAtk();
-        }
-    }
-
-    auto it = map_objects_.find(defender);
-    if (it != map_objects_.end())
-    {
-        Mob* mob = dynamic_cast<Mob*>(it->second.get());
-        if (mob)
-        {
-            DamageHitInfo damage;
-            damage.damage_amount = 1000 + value;
-            Bounds mob_bounds = mob->GetBounds();
-            damage.position = mob_bounds.center;
-            mob->TakeDamage(attacker, damage);
-        }
-    }
-}
-
 void Map::PhysicsTick(float delta_time)
 {
     for (const auto& player_weak : std::views::values(players_))
@@ -463,7 +433,7 @@ void Map::Tick(float delta_time)
                 {
                     DamageHitInfo damage;
                     damage.damage_amount = mob->damage_;
-                    Bounds player_bounds = player->GetBounds();
+                    Bounds player_bounds = player->GetHitBounds();
                     damage.position = player_bounds.center;
                     player->TakeDamage(mob->GetObjectID(), damage);
                     break;
@@ -518,7 +488,7 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
             auto damageable = std::dynamic_pointer_cast<IDamageable>(obj);
             if (!damageable) continue;
             
-            Bounds target_bounds = damageable->GetBounds();
+            Bounds target_bounds = damageable->GetHitBounds();
             Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
             if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
@@ -532,7 +502,7 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
         auto player = player_weak.lock();
         if (!player) continue;
         
-        Bounds target_bounds = player->GetBounds();
+        Bounds target_bounds = player->GetHitBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
         if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)

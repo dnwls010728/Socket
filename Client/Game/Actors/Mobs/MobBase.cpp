@@ -109,8 +109,8 @@ void MobBase::Tick(float delta_time)
         }
     }
 
-    Math::Vector2 position = GetTransform()->GetPosition();
-    DebugDrawHelper::Get()->DrawBox(position + hitbox_.center, hitbox_.size, Math::Color::Red);
+    // Math::Vector2 position = GetTransform()->GetPosition();
+    // DebugDrawHelper::Get()->DrawBox(position + hitbox_.center, hitbox_.size, Math::Color::Red);
 }
 
 RTTR_REGISTRATION

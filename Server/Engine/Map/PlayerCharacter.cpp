@@ -658,15 +658,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case AttackRequest::StaticPacketID:
-        {
-            AttackRequest* attack_request = static_cast<AttackRequest*>(packet);
-            if (!map_) return;
-
-            map_->OnAttack(object_id_, attack_request->object_id);
-        }
-        break;
-
     case PlayerRespawnPacket::StaticPacketID:
         {
             hp_ = 50;
@@ -852,14 +843,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-Bounds PlayerCharacter::GetBounds() const
+Bounds PlayerCharacter::GetHitBounds() const
 {
     return {position_, {2.f, 2.f}};
 }
 
-Math::Vector2 PlayerCharacter::GetPosition() const
+Math::Vector2 PlayerCharacter::GetHitPosition() const
 {
     return position_;
+}
+
+int32_t PlayerCharacter::GetHitDef() const
+{
+    return effective_def_;
 }
 
 void PlayerCharacter::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)

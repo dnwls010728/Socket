@@ -18,14 +18,15 @@ void DamageEffect::Apply(const AttackContext& ctx)
 {
     if (ctx.attacker == nullptr || ctx.target == nullptr) return;
 
-    int32_t total_damage = base_damage_ + static_cast<int32_t>(damage_multiplier_ * ctx.attacker->GetAtk());
+    int32_t total_def = ctx.target->GetHitDef() - static_cast<int32_t>(ctx.target->GetHitDef() * (1 + ctx.attacker->GetDef() * .01f));
+    int32_t total_damage = Math::Pow(ctx.attacker->GetAtk(), 2) / (ctx.attacker->GetAtk() + Math::Max(0, total_def)) * static_cast<int32_t>(damage_multiplier_);
 
-    Bounds target_bounds = ctx.target->GetBounds();
+    Bounds target_bounds = ctx.target->GetHitBounds();
     Bounds hit_bounds = ctx.has_hitbox ? Bounds::Intersect(ctx.hitbox, target_bounds) : target_bounds;
     
     const Bounds& spawn_bounds = (hit_bounds.size.x > 0.f && hit_bounds.size.y > 0.f) ? hit_bounds : target_bounds;
 
-    float direction = ctx.attacker->GetPosition().x - ctx.target->GetPosition().x;
+    float direction = ctx.attacker->GetPosition().x - ctx.target->GetHitPosition().x;
     
     std::vector<DamageHitInfo> damages;
     damages.reserve(static_cast<size_t>(attack_count_));

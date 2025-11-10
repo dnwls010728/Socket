@@ -49,8 +49,6 @@ public:
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter>& excluded_player_weak);
 
-    void OnAttack(uint32_t attacker, uint32_t defender);
-
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
 

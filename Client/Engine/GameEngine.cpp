@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "PostProcessingSettings.h"
+#include "Asset/AssetManager.h"
 #include "Level/World.h"
 #include "Audio/AudioManager.h"
 #include "Event/EventManager.h"
@@ -98,6 +99,7 @@ void GameEngine::Tick(float delta_time)
     accumulator_ += kLimitFrameTime;
     
     AudioManager::Get()->Tick();
+    AssetManager::Get()->Tick();
 
     EngineSettings* settings = EngineSettings::Get();
     while (accumulator_ >= settings->GetFixedTimeStep())

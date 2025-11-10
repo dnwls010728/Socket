@@ -11,13 +11,15 @@ public:
     UISkillTooltip(const std::wstring& name);
     virtual ~UISkillTooltip() override = default;
 
-    void SetSkillInfo(const std::wstring& name, int32_t level, const std::wstring& description);
+    void SetSkillInfo(uint32_t skill_id, int32_t level);
 
 protected:
     virtual void Init() override;
 
 private:
     UIImage* background_;
+    UIImage* icon_slot_;
+    UIImage* skill_icon_;
     UIText* name_text_;
     UIText* level_text_;
     UIText* desc_text_;

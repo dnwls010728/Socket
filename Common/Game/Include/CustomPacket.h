@@ -314,14 +314,6 @@ struct UnequipItemPacket : public Net::IPacket
     REGISTER_PACKET(UnequipItemPacket, 308)
 };
 
-struct AttackRequest : public Net::IPacket
-{
-    uint32_t object_id;
-    
-    SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(AttackRequest, 400)
-};
-
 struct TakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;

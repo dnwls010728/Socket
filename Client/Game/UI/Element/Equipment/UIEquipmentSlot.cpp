@@ -41,17 +41,18 @@ void UIEquipmentSlot::UpdateSlot(uint32_t item_id)
     const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
     if (!item_data) return;
     
-    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(item_data->ui_icon.path);
-    int32_t frame_index = item_data->ui_icon.index;
-
-    if (!ui_sprite)
+    AssetManager::Get()->LoadAsync<UISprite>(item_data->ui_icon.path, [this, item_data](UISprite* ui_sprite)
     {
-        static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
-        ui_sprite = kMissing;
-        frame_index = 0;
-    }
-
-    icon_->SetSprite(ui_sprite, frame_index);
+        int32_t frame_index = item_data->ui_icon.index;
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+            frame_index = 0;
+        }
+        
+        icon_->SetSprite(ui_sprite, frame_index);
+    });
 }
 
 void UIEquipmentSlot::ResetSlot()

@@ -171,7 +171,7 @@ bool UISkillSlot::OnMouseEnter()
     if (!tooltip)
         return false;
 
-    tooltip->SetSkillInfo(name_text_->GetText(), level_, description_);
+    tooltip->SetSkillInfo(skill_id_, level_);
     return true;
 }
 
