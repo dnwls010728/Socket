@@ -29,7 +29,6 @@ void CardManager::OnLevelUp()
         {
             for (auto& card : cards)
             {
-                card.offered_at = NowForDB();
                 selecting_cards.push_back(card);
             }
             SendSelectCardPacket(cards);
@@ -215,6 +214,7 @@ void CardManager::LoadOffers(sql::Connection* connection)
         info.level    = level;
         info.slot     = slot;
         info.card_id  = card_id;
+        info.offered_at = ts;
         groups[ts][slot - 1] = info;
     }
 
@@ -330,7 +330,7 @@ void CardManager::OnUpdateDatabase()
                     connection->prepareStatement(
                         "INSERT INTO card_offer_info (offer_id, character_id, level, status, offered_at) "
                         "VALUES (?, ?, ?, 1, ?) "
-                        "ON DUPLICATE KEY UPDATE status=1, offered_at=VALUES(offered_at)"
+                        "ON DUPLICATE KEY UPDATE level=VALUES(level), status=1, offered_at=VALUES(offered_at)"
                     )
                 );
                 std::istringstream iss(std::string(sc.offer_id.data(), sc.offer_id.size()));
@@ -445,12 +445,14 @@ const CardData* CardManager::GetRandomCardData() const
 
 bool CardManager::CreatePendingCard(CardGroup& cards) const
 {
+    std::string now = NowForDB();
     for (int i = 0; i < 3; ++i)
     {
         cards[i].offer_id.clear();
         cards[i].level = 0;
         cards[i].card_id = 0;
         cards[i].slot = i + 1;
+        cards[i].offered_at = now;
     }
     return true;
 }
@@ -476,6 +478,7 @@ bool CardManager::ActivatePendingCard(CardGroup& group) const
 
 bool CardManager::CreateCards(CardGroup& cards) const
 {
+    std::string now = NowForDB();
     for (int i = 0; i < 3; ++i)
     {
         const CardData* card_data = GetRandomCardData();
@@ -494,6 +497,7 @@ bool CardManager::CreateCards(CardGroup& cards) const
         cards[i].level    = prev_level + 1;
         cards[i].card_id  = card_data->id;
         cards[i].slot     = i + 1;
+        cards[i].offered_at = now;
     }
     return true;
 }

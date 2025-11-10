@@ -1137,7 +1137,8 @@ void PlayerCharacter::GainExp(int32_t amount)
     
     int32_t new_exp = exp_.load();
     new_exp += amount;
-    
+
+    int level_up_count = 0;
     while (lv_ < 50)
     {
         int32_t need = DataManager::Get()->GetExp(lv_);
@@ -1146,6 +1147,7 @@ void PlayerCharacter::GainExp(int32_t amount)
         new_exp -= need;
 
         ++lv_;
+        ++level_up_count;
         changed_lv = true;
 
         base_max_hp_ += 25;
@@ -1176,7 +1178,10 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     if (changed_lv)
     {
-        card_manager_.OnLevelUp();
+        for (int i = 0; i < level_up_count; ++i)
+        {
+            card_manager_.OnLevelUp();
+        }
         
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
