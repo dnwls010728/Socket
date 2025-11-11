@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="111">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="201">
  <properties>
   <property name="BGM" value="Audio\BGM\Buff.mp3"/>
   <property name="Name" value="알 수 없는 곳 1"/>
@@ -32,31 +32,8 @@
 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7
 </data>
  </layer>
- <layer id="4" name="Tile Layer 2" width="25" height="19">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,32,32,32,32,32,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,32,32,32,0,0,0,0,0,0,
-0,0,0,10,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,10,1,1,1,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,
-32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
-</data>
- </layer>
  <objectgroup id="8" name="Portal">
-  <object id="81" name="Portal" type="Portal" x="768" y="544">
+  <object id="182" name="Portal" type="Portal" x="768" y="507">
    <properties>
     <property name="ID" type="int" value="0"/>
     <property name="ToID" type="int" value="0"/>
@@ -84,50 +61,50 @@
    </properties>
    <polyline points="0,0 128,0"/>
   </object>
-  <object id="28" x="0" y="544">
+  <object id="28" x="0" y="512">
    <properties>
     <property name="ID" type="int" value="1"/>
     <property name="Next" type="int" value="2"/>
     <property name="Previous" type="int" value="0"/>
     <property name="Type" type="int" value="0"/>
    </properties>
-   <polyline points="0,0 64,0"/>
+   <polyline points="0,0 96,0"/>
   </object>
-  <object id="29" x="64" y="544">
+  <object id="29" x="113" y="540.333">
    <properties>
     <property name="ID" type="int" value="2"/>
     <property name="Next" type="int" value="3"/>
     <property name="Previous" type="int" value="1"/>
     <property name="Type" type="int" value="0"/>
    </properties>
-   <polyline points="0,0 64,-64"/>
+   <polyline points="-32,-21.3333 -31.36,-85.3333"/>
   </object>
-  <object id="30" x="128" y="480">
+  <object id="30" x="82" y="454">
    <properties>
     <property name="ID" type="int" value="3"/>
     <property name="Next" type="int" value="4"/>
     <property name="Previous" type="int" value="2"/>
     <property name="Type" type="int" value="0"/>
    </properties>
-   <polyline points="0,0 64,0"/>
+   <polyline points="0,0 128,0"/>
   </object>
-  <object id="33" x="192" y="480">
+  <object id="33" x="208" y="457">
    <properties>
     <property name="ID" type="int" value="4"/>
     <property name="Next" type="int" value="5"/>
     <property name="Previous" type="int" value="3"/>
     <property name="Type" type="int" value="0"/>
    </properties>
-   <polyline points="0,0 64,64"/>
+   <polyline points="0,0 0.244421,21.0049 0.64,55"/>
   </object>
-  <object id="34" x="256" y="544">
+  <object id="34" x="256" y="513">
    <properties>
     <property name="ID" type="int" value="5"/>
     <property name="Next" type="int" value="0"/>
     <property name="Previous" type="int" value="4"/>
     <property name="Type" type="int" value="0"/>
    </properties>
-   <polyline points="0,0 544,0"/>
+   <polyline points="-64,-1 544,0"/>
   </object>
  </objectgroup>
  <objectgroup id="7" name="SpawnPoint"/>
@@ -137,192 +114,122 @@
   </object>
  </objectgroup>
  <objectgroup id="9" name="Prop">
-  <object id="83" name="Platform_0" type="Prop" x="48" y="544">
+  <object id="164" name="Platform_0" type="Prop" x="48" y="544">
    <properties>
     <property name="Index" type="int" value="0"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="84" name="platform_2" type="Prop" x="144" y="576">
+  <object id="165" name="platform_2" type="Prop" x="48" y="608">
    <properties>
     <property name="index" type="int" value="2"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="85" name="Platform_0" type="Prop" x="144" y="512">
+  <object id="166" name="Platform_0" type="Prop" x="299" y="544">
    <properties>
     <property name="Index" type="int" value="0"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="86" name="platform_2" type="Prop" x="144" y="640">
+  <object id="167" name="platform_2" type="Prop" x="295" y="608">
    <properties>
     <property name="index" type="int" value="2"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="87" name="platform_2" type="Prop" x="48" y="608">
+  <object id="168" name="platform_2" type="Prop" x="446" y="608">
    <properties>
     <property name="index" type="int" value="2"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="88" name="Platform_0" type="Prop" x="299" y="544">
+  <object id="169" name="Platform_0" type="Prop" x="463" y="544">
    <properties>
     <property name="Index" type="int" value="0"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="89" name="platform_2" type="Prop" x="295" y="606">
+  <object id="170" name="platform_2" type="Prop" x="593" y="608">
    <properties>
     <property name="index" type="int" value="2"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="90" name="platform_2" type="Prop" x="446" y="608">
-   <properties>
-    <property name="index" type="int" value="2"/>
-    <property name="path" value="Sprites\Maps\platform.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="91" name="Platform_0" type="Prop" x="447" y="544">
+  <object id="171" name="Platform_0" type="Prop" x="623" y="544">
    <properties>
     <property name="Index" type="int" value="0"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="92" name="platform_2" type="Prop" x="593" y="608">
-   <properties>
-    <property name="index" type="int" value="2"/>
-    <property name="path" value="Sprites\Maps\platform.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="93" name="Platform_0" type="Prop" x="610" y="544">
+  <object id="172" name="Platform_0" type="Prop" x="740" y="544">
    <properties>
     <property name="Index" type="int" value="0"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="94" name="Platform_0" type="Prop" x="752" y="544">
-   <properties>
-    <property name="Index" type="int" value="0"/>
-    <property name="path" value="Sprites\Maps\platform.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="95" name="platform_2" type="Prop" x="740" y="608">
+  <object id="173" name="platform_2" type="Prop" x="740" y="608">
    <properties>
     <property name="index" type="int" value="2"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="96" name="Clouds_2" type="Prop" x="354" y="160">
+  <object id="174" name="platform_2" type="Prop" x="144" y="552">
    <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
+    <property name="index" type="int" value="2"/>
+    <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="97" name="Clouds_2" type="Prop" x="240" y="608">
+  <object id="175" name="Platform_0" type="Prop" x="144" y="488">
    <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
+    <property name="Index" type="int" value="0"/>
+    <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="98" name="Clouds" type="Prop" x="624" y="192">
+  <object id="176" name="platform_2" type="Prop" x="144" y="616">
    <properties>
-    <property name="index" type="int" value="0"/>
-    <property name="path" value="Sprites\Maps\clouds.png"/>
+    <property name="index" type="int" value="2"/>
+    <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="99" name="Clouds" type="Prop" x="102" y="220">
-   <properties>
-    <property name="index" type="int" value="4"/>
-    <property name="path" value="Sprites\Maps\clouds.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="100" name="Clouds_2" type="Prop" x="400" y="608">
-   <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="101" name="Clouds_2" type="Prop" x="528" y="608">
-   <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="102" name="Clouds_2" type="Prop" x="688" y="608">
-   <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="103" name="Clouds_2" type="Prop" x="80" y="608">
-   <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="104" name="Platform small" type="Prop" x="346" y="417">
-   <properties>
-    <property name="index" type="int" value="3"/>
-    <property name="path" value="Sprites\Maps\platform small.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="105" name="Flowers" type="Prop" x="112" y="480">
+  <object id="184" name="Flowers" type="Prop" x="113" y="458">
    <properties>
     <property name="Index" type="int" value="1"/>
     <property name="path" value="Sprites\Maps\flowers 2.png"/>
    </properties>
    <point/>
   </object>
-  <object id="106" name="Clouds_2" type="Prop" x="144" y="608">
+  <object id="187" name="Landscape" type="Prop" x="352" y="512">
    <properties>
     <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
+    <property name="path" value="Sprites\Maps\grass.png"/>
    </properties>
    <point/>
   </object>
-  <object id="107" name="Clouds_2" type="Prop" x="752" y="608">
+  <object id="197" name="Platform_0" type="Prop" x="544" y="481">
    <properties>
-    <property name="index" type="int" value="1"/>
-    <property name="path" value="Sprites\Maps\clouds 2.png"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="108" name="Platform" type="Prop" x="529" y="478">
-   <properties>
-    <property name="index" type="int" value="1"/>
+    <property name="Index" type="int" value="1"/>
     <property name="path" value="Sprites\Maps\platform.png"/>
    </properties>
    <point/>
   </object>
-  <object id="109" name="platform" type="Prop" x="528" y="551">
+  <object id="199" name="Platform_0" type="Prop" x="369" y="380">
    <properties>
-    <property name="index" type="int" value="2"/>
-    <property name="path" value="Sprites\Maps\platform.png"/>
+    <property name="Index" type="int" value="0"/>
+    <property name="path" value="Sprites\Maps\platform small.png"/>
    </properties>
    <point/>
   </object>

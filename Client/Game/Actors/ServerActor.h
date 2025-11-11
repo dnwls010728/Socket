@@ -41,7 +41,7 @@ public:
 
     void SetFlip(bool is_fliped);
     void PlayAnimation(const std::wstring& animation);
-    void TakeDamage(const std::vector<DamageInfo>& damage_amount);
+    virtual void TakeDamage(const std::vector<DamageInfo>& damage_amount, float server_time);
     
 protected:
     virtual void PhysicsTick(float delta_time) override;

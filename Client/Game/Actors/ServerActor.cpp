@@ -47,7 +47,7 @@ void ServerActor::PlayAnimation(const std::wstring& animation)
     animation_snapshots_.push_back(snapshot);
 }
 
-void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount)
+void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount, float server_time)
 {
     for (int i = 0; i < damage_amount.size(); ++i)
     {

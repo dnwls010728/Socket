@@ -112,9 +112,10 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(int32_t damage_amount, float server_time)
+void PlayerCharacter::TakeDamage(const std::vector<DamageInfo>& damage_amount, float server_time)
 {
-    if (damage_amount == 0) return;
+    CharacterBase::TakeDamage(damage_amount, server_time);
+    if (damage_amount.empty()) return;
     if (IsMine())
     {
         Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\p_hit.mp3");

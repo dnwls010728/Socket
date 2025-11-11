@@ -239,6 +239,7 @@ void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& d
             info.source_id = damage_info.source_id;
             packet.damage_amount.push_back(info);
         }
+        packet.server_time = Net::GetClientTime();
         map_->SendPacket(packet);
     }
     

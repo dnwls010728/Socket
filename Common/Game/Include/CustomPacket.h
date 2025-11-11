@@ -226,8 +226,9 @@ struct ObjectTakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;
     std::vector<DamageInfo> damage_amount;
+    float server_time;
 
-    SERIALIZABLE_FIELDS(object_id, damage_amount)
+    SERIALIZABLE_FIELDS(object_id, damage_amount, server_time)
     REGISTER_PACKET(ObjectTakeDamagePacket, 234)
 };
 
