@@ -117,6 +117,8 @@ struct CardData
     std::wstring name;
     std::wstring desc;
 
+    FrameData icon;
+
     uint32_t skill_id;
 
     int32_t max_hp;
@@ -325,6 +327,7 @@ namespace YAML
             if (!node.IsMap()) return false;
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.icon = node["icon"].as<FrameData>();
             data.skill_id = node["skill_id"].as<uint32_t>(0);
             data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);

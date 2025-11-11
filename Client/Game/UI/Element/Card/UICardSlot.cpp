@@ -82,7 +82,22 @@ void UICardSlot::SetCard(const CardSelectInfo& card)
     std::wstring card_name = L"LV. " + std::to_wstring(card.level);
     name_->SetText(card_name + L" " + data->name);
     desc_->SetText(data->desc);
-    icon_->SetSprite(AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png"));
+
+    const CardData* card_data = DataSubsystem::Get()->GetCard(card.card_id);
+    if (!card_data) return;
+
+    AssetManager::Get()->LoadAsync<UISprite>(card_data->icon.path, [this, card_data](UISprite* ui_sprite)
+    {
+        int32_t frame_index = card_data->icon.index;
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+            frame_index = 0;
+        }
+
+        icon_->SetSprite(ui_sprite, frame_index);
+    });
 }
 
 RTTR_REGISTRATION
