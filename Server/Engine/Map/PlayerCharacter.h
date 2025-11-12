@@ -15,6 +15,7 @@
 #include "Utils/TimedBool.h"
 #include "Skill/SkillManager.h"
 
+class Shop;
 class EquipItem;
 class Portal;
 
@@ -182,4 +183,6 @@ protected:
     std::unordered_map<uint32_t, EquipStat> equip_stats_;
 
     float buff_timer_;
+
+    std::shared_ptr<Shop> shop_;
 };

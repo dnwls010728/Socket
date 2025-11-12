@@ -53,7 +53,8 @@ PlayerCharacter::PlayerCharacter() :
     dropped_item_mutex_(),
     effect_mutex_(),
     equip_stats_(),
-    buff_timer_(0.f)
+    buff_timer_(0.f),
+    shop_(nullptr)
 {
 }
 
