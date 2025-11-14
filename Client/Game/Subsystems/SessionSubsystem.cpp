@@ -35,6 +35,7 @@
 #include "PacketHandlers/SkillCastHandler.h"
 #include "PacketHandlers/SkillUpdateHandler.h"
 #include "PacketHandlers/DoSelectCardHandler.h"
+#include "PacketHandlers/ShopOpenHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -203,9 +204,15 @@ void SessionSubsystem::Init()
         PartyInfoChangedPacket::StaticPacketID,
         std::make_unique<PartyInfoChangedHandler>()
     );
+    
     handlers_.emplace(
         DoSelectCardPacket::StaticPacketID,
         std::make_unique<DoSelectCardHandler>()
+    );
+    
+    handlers_.emplace(
+        ShopOpenResponse::StaticPacketID,
+        std::make_unique<ShopOpenHandler>()
     );
 #pragma endregion
 

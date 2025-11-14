@@ -25,6 +25,7 @@ void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
     player->SetShop(this);
     
     ShopOpenResponse packet;
+    packet.npc_id = npc_id_;
     
     for (const auto& item : items_)
     {
@@ -37,7 +38,7 @@ void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
     player->SendPacket(packet);
 }
 
-std::shared_ptr<Shop> Shop::CreateShop(int32_t id)
+std::shared_ptr<Shop> Shop::CreateShop(int32_t id, bool is_shop_id)
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return nullptr;
@@ -46,17 +47,22 @@ std::shared_ptr<Shop> Shop::CreateShop(int32_t id)
 
     try
     {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM shop_info WHERE shop_id = ?"));
+        std::unique_ptr<sql::PreparedStatement> statement;
+        
+        if (is_shop_id) statement.reset(connection->prepareStatement("SELECT * FROM shop_info WHERE id = ?"));
+        else statement.reset(connection->prepareStatement("SELECT * FROM shop_info WHERE npc_id = ?"));
+        
         statement->setInt(1, id);
         
         std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
         if (!result->next()) return nullptr;
         
+        int32_t shop_id = result->getInt("id");
         int32_t npc_id = result->getInt("npc_id");
-        shop = std::make_unique<Shop>(id, npc_id);
+        shop = std::make_unique<Shop>(shop_id, npc_id);
 
-        statement.reset(connection->prepareStatement("SELECT * FROM shop_item_info WHERE shop_id = ? ORDER BY order DESC"));
-        statement->setInt(1, id);
+        statement.reset(connection->prepareStatement("SELECT * FROM shop_item_info WHERE shop_id = ? ORDER BY item_order DESC"));
+        statement->setInt(1, shop->GetID());
 
         result.reset(statement->executeQuery());
         while (result->next())

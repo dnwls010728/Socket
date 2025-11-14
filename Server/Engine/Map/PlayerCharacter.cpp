@@ -20,6 +20,7 @@
 #include "Session/Player.h"
 #include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
+#include "Shop/ShopManager.h"
 #include "Skill/SkillManager.h"
 
 
@@ -836,6 +837,17 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             SelectCardResult* card_result = static_cast<SelectCardResult*>(packet);
             card_manager_.OnCardSelected(card_result->card);
             SendStatUpdateIfNeeded();
+        }
+        break;
+        
+    case ShopOpenRequest::StaticPacketID:
+        {
+            ShopOpenRequest* shop_open_request = static_cast<ShopOpenRequest*>(packet);
+            
+            std::shared_ptr<Shop> shop = ShopManager::Get()->GetShopByNPC(shop_open_request->npc_id);
+            if (!shop) break;
+            
+            shop->SendShop(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
         }
         break;
 
