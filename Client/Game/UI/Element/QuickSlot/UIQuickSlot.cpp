@@ -24,7 +24,8 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     UIContainer(name),
     scancode_(Scancode::kKeyUnknown),
     key_type_(KeyType::kNone),
-    action_(0)
+    action_(0),
+    combo_index_(0)
 {
     SetSize({ 32.f, 32.f });
     
@@ -66,7 +67,7 @@ UIQuickSlot::UIQuickSlot(const std::wstring& name) :
     cooldown_text_->SetSize(icon_->GetSize());
     cooldown_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     cooldown_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    cooldown_text_->SetColor(Math::Color::White);
+    cooldown_text_->SetColor(Math::Color::Black);
     cooldown_text_->SetIgnoreRayCast(true);
     cooldown_text_->SetText(L"");
 }
@@ -349,6 +350,30 @@ void UIQuickSlot::UpdateCooldownVisual()
     std::wstringstream stream;
     stream << std::fixed << std::setprecision(1) << remaining;
     cooldown_text_->SetText(stream.str());
+
+    const SkillData* data = DataSubsystem::Get()->GetSkill(skill_id);
+    if (data && data->type == SkillType::kComboAttack)
+    {
+        int32_t combo = skill_manager->GetSkillComboIndex(skill_id);
+
+        if (combo_index_ != combo &&
+            !data->combo_skills.empty() &&
+            data->combo_skills.size() > combo)
+        {
+            uint32_t next_skill_id = data->combo_skills[combo];
+            const SkillData* next_skill_data = DataSubsystem::Get()->GetSkill(next_skill_id);
+            if (next_skill_data)
+            {
+                static UISprite* skill_icon_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
+                if (skill_icon_sprite && !next_skill_data->icon.empty())
+                {
+                    icon_->SetSprite(skill_icon_sprite, next_skill_data->icon);
+                    icon_->SetActive(true);
+                    combo_index_ = combo;
+                }
+            }
+        }
+    }
 }
 
 void UIQuickSlot::UpdateItemCountVisual()

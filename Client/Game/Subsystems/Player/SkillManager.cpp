@@ -113,12 +113,28 @@ float SkillManager::GetExpireTime(uint32_t skill_id) const
     return it->second.expire_time;
 }
 
+void SkillManager::SetSkillComboIndex(uint32_t skill_id, int32_t combo_index)
+{
+    auto it = skills_.find(skill_id);
+    if (it == skills_.end())
+        return;
+    it->second.combo_index = combo_index;
+}
+
+int32_t SkillManager::GetSkillComboIndex(uint32_t skill_id) const
+{
+    auto it = skills_.find(skill_id);
+    if (it == skills_.end())
+        return -1;
+    return it->second.combo_index;
+}
+
 std::vector<SkillInfo> SkillManager::GetSkillList() const
 {
     std::vector<SkillInfo> skills;
     for (const auto& [skill_id, skill_state] : skills_)
     {
-        skills.push_back({ skill_id, skill_state.level, skill_state.cooldown });
+        skills.push_back({ skill_id, skill_state.level, skill_state.cooldown , skill_state.combo_index});
     }
     return skills;
 }

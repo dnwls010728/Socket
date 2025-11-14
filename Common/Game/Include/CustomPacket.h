@@ -363,6 +363,16 @@ struct SkillUpdatePacket : public Net::IPacket
     REGISTER_PACKET(SkillUpdatePacket, 406)
 };
 
+struct ComboSkillStateChangedPacket : public Net::IPacket
+{
+    uint32_t skill_id;
+    float cooldown_expired_time;
+    int32_t combo_idx;
+
+    SERIALIZABLE_FIELDS(skill_id, cooldown_expired_time, combo_idx)
+    REGISTER_PACKET(ComboSkillStateChangedPacket, 407)
+};
+
 struct PlayerStatsUpdatePacket : public Net::IPacket
 {
     PlayerStat mask = PlayerStat::kNone;

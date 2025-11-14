@@ -201,8 +201,11 @@
     <ClCompile Include="Engine\Skill\AttackChain.cpp" />
     <ClCompile Include="Engine\Skill\AttackEffect.cpp" />
     <ClCompile Include="Engine\Skill\AttackEffect\DamageEffect.cpp" />
+    <ClCompile Include="Engine\Skill\SkillFactory.cpp" />
     <ClCompile Include="Engine\Skill\SkillType\ActiveSkill.cpp" />
-    <ClCompile Include="Engine\Skill\SkillType\PasiveSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\ComboActiveSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\GeneralAttackSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\PassiveSkill.cpp" />
     <ClCompile Include="Engine\Skill\Skill.cpp" />
     <ClCompile Include="Engine\Skill\SkillManager.cpp" />
     <ClCompile Include="Engine\Utils\TimedBool.cpp" />
@@ -267,8 +270,11 @@
     <ClInclude Include="Engine\Skill\AttackChain.h" />
     <ClInclude Include="Engine\Skill\AttackEffect.h" />
     <ClInclude Include="Engine\Skill\AttackEffect\DamageEffect.h" />
+    <ClInclude Include="Engine\Skill\SkillFactory.h" />
     <ClInclude Include="Engine\Skill\SkillType\ActiveSkill.h" />
-    <ClInclude Include="Engine\Skill\SkillType\PasiveSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\ComboActiveSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\GeneralAttackSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\PassiveSkill.h" />
     <ClInclude Include="Engine\Skill\Skill.h" />
     <ClInclude Include="Engine\Skill\SkillManager.h" />
     <ClInclude Include="Engine\Utils\TimedBool.h" />
