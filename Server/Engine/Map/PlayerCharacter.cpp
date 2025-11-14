@@ -975,6 +975,8 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
 {
     map_transitioning_.store(true);
+    
+    shop_ = nullptr;
 
     map_->RemovePlayer(GetObjectID());
     map_ = to;

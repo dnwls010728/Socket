@@ -277,3 +277,9 @@ struct DamageInfo
     DamageSourceType source_type;
     uint32_t source_id;
 };
+
+struct ShopItemInfo
+{
+    int32_t item_id;
+    int32_t price;
+};

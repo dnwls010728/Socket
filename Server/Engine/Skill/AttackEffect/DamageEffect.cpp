@@ -19,7 +19,7 @@ void DamageEffect::Apply(const AttackContext& ctx)
     if (ctx.attacker == nullptr || ctx.target == nullptr) return;
 
     int32_t total_def = ctx.target->GetHitDef() - static_cast<int32_t>(ctx.target->GetHitDef() * (1 + ctx.attacker->GetDef() * .01f));
-    int32_t total_damage = Math::Pow(ctx.attacker->GetAtk(), 2) / (ctx.attacker->GetAtk() + Math::Max(0, total_def)) * static_cast<int32_t>(damage_multiplier_) * ctx.source_level;
+    int32_t total_damage = static_cast<int32_t>(Math::Pow(ctx.attacker->GetAtk(), 2) / (ctx.attacker->GetAtk() + Math::Max(0, total_def)) * damage_multiplier_) * ctx.source_level;
 
     Bounds target_bounds = ctx.target->GetHitBounds();
     Bounds hit_bounds = Bounds::Intersect(ctx.hitbox, target_bounds);

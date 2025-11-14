@@ -1,8 +1,11 @@
 ﻿#include "pch.h"
 #include "Shop.h"
 
+#include <CustomPacket.h>
+
 #include "ShopItem.h"
 #include "jdbc/cppconn/prepared_statement.h"
+#include "Map/PlayerCharacter.h"
 #include "MySQL/MySQLManager.h"
 
 Shop::Shop(int32_t id, int32_t npc_id) :
@@ -15,6 +18,23 @@ Shop::Shop(int32_t id, int32_t npc_id) :
 void Shop::AddItem(const std::shared_ptr<ShopItem>& item)
 {
     items_.push_back(item);
+}
+
+void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
+{
+    player->SetShop(this);
+    
+    ShopOpenResponse packet;
+    
+    for (const auto& item : items_)
+    {
+        ShopItemInfo item_info;
+        item_info.item_id = item->GetItemID();
+        item_info.price = item->GetPrice();
+        packet.items.push_back(item_info);
+    }
+    
+    player->SendPacket(packet);
 }
 
 std::shared_ptr<Shop> Shop::CreateShop(int32_t id)

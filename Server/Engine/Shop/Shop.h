@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+class PlayerCharacter;
 class ShopItem;
 
 class Shop
@@ -12,6 +13,7 @@ public:
     ~Shop() = default;
 
     void AddItem(const std::shared_ptr<ShopItem>& item);
+    void SendShop(const std::shared_ptr<PlayerCharacter>& player);
 
     static std::shared_ptr<Shop> CreateShop(int32_t id);
 

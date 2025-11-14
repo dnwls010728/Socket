@@ -12,6 +12,7 @@
 #include "Card/CardManager.h"
 #include "Session/Player.h"
 #include "Session/Player/Inventory/Inventory.h"
+#include "Shop/Shop.h"
 #include "Utils/TimedBool.h"
 #include "Skill/SkillManager.h"
 
@@ -116,6 +117,9 @@ public:
     inline int32_t GetDig() const { return effective_dig_; }
     
     inline bool IsFlipped() const { return is_flipped_; }
+    
+    inline void SetShop(Shop* shop) { shop_ = shop; }
+    inline Shop* GetShop() const { return shop_; }
 
 protected:
     friend class ServerManager;
@@ -184,5 +188,5 @@ protected:
 
     float buff_timer_;
 
-    std::shared_ptr<Shop> shop_;
+    Shop* shop_;
 };

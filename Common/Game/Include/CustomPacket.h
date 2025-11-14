@@ -521,3 +521,19 @@ struct SelectCardResult : public Net::IPacket
     SERIALIZABLE_FIELDS(card)
     REGISTER_PACKET(SelectCardResult, 613)
 };
+
+struct ShopOpenRequest : public Net::IPacket
+{
+    int32_t shop_id;
+    
+    SERIALIZABLE_FIELDS(shop_id)
+    REGISTER_PACKET(ShopOpenRequest, 700)
+};
+
+struct ShopOpenResponse : public Net::IPacket
+{
+    std::vector<ShopItemInfo> items;
+    
+    SERIALIZABLE_FIELDS(items)
+    REGISTER_PACKET(ShopOpenResponse, 701)
+};
