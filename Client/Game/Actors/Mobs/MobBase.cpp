@@ -32,7 +32,13 @@ MobBase::MobBase(const std::wstring& name) :
 
 void MobBase::OnActivate()
 {
-    if (HasBegunPlay()) SetActive(true);
+    if (HasBegunPlay())
+    {
+        movement_snapshots_.clear();
+        animation_snapshots_.clear();
+        pending_damages_.clear();
+        SetActive(true);
+    }
 }
 
 void MobBase::OnDeactivate()
