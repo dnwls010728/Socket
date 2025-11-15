@@ -242,10 +242,36 @@ void UIQuickSlot::ApplySkillMapping(uint32_t skill_id)
         return;
     }
 
-    UISprite* skill_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
-    if (skill_sprite && !skill_data->icon.empty())
+    const SkillData* icon_skill_data = skill_data;
+    int32_t current_combo_index = 0;
+
+    if (skill_data->type == SkillType::kComboAttack)
     {
-        icon_->SetSprite(skill_sprite, skill_data->icon);
+        if (skill_manager)
+            current_combo_index = skill_manager->GetSkillComboIndex(skill_id);
+
+        if (current_combo_index < 0 || current_combo_index >= static_cast<int32_t>(skill_data->combo_skills.size()))
+            current_combo_index = 0;
+
+        if (!skill_data->combo_skills.empty())
+        {
+            uint32_t sub_skill_id = skill_data->combo_skills[current_combo_index];
+            if (const SkillData* sub_skill_data = DataSubsystem::Get()->GetSkill(sub_skill_id))
+                icon_skill_data = sub_skill_data;
+        }
+
+        combo_index_ = current_combo_index;
+    }
+    else
+    {
+        combo_index_ = 0;
+    }
+
+
+    UISprite* skill_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
+    if (skill_sprite && icon_skill_data && !icon_skill_data->icon.empty())
+    {
+        icon_->SetSprite(skill_sprite, icon_skill_data->icon);
         if (!icon_->IsActive())
             icon_->SetActive(true);
     }

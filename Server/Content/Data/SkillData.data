@@ -194,7 +194,7 @@ skills:
     sound: "Audio\\SE\\Skill\\100001\\Use.mp3"
     hit_sound: "Audio\\SE\\Skill\\100001\\Hit.mp3"
     projectile: 0
-    cooldown: 2
+    cooldown: 1
     hit_frames:
       - hitbox:
           center: [3.0, 1.0]
@@ -215,7 +215,7 @@ skills:
     sound: "Audio\\SE\\Skill\\100002\\Use.mp3"
     hit_sound: "Audio\\SE\\Skill\\100002\\Hit.mp3"
     projectile: 0
-    cooldown: 3
+    cooldown: 1
     hit_frames:
       - hitbox:
           center: [3.5, 1.5]
@@ -228,14 +228,6 @@ skills:
     type: 3
     name: "200000"
     desc: "200000"
-    icon: "SkillIconSet_0"
-    animation_pack: "Sprites\\Effects\\100000.png.apack"
-    animation: "Idle"
-    hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
-    hit_effect_animation: "Idle"
-    sound: "Audio\\SE\\Skill\\100000\\Use.mp3"
-    hit_sound: "Audio\\SE\\Skill\\100000\\Hit.mp3"
-    projectile: 0
     cooldown: 8
     reset_time: 3
     combo_skills:

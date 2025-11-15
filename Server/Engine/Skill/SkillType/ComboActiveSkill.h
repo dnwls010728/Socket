@@ -23,5 +23,5 @@ private:
 
     std::vector<std::unique_ptr<GeneralAttackSkill>> combo_skills_;
     int combo_idx_;
-    float last_input_time_;
+    float skill_available_time_;
 };

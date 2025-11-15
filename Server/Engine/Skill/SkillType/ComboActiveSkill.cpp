@@ -11,7 +11,7 @@
 ComboActiveSkill::ComboActiveSkill(PlayerCharacter* owner, const SkillData* data, int32_t level)
     : ActiveSkill(owner, data, level),
       combo_idx_(0),
-      last_input_time_(-1000.f)
+      skill_available_time_(-1000.f)
 {
     for (uint32_t sub_id : data_->combo_skills)
     {
@@ -60,8 +60,8 @@ void ComboActiveSkill::StartNextCombo()
     auto& combo = combo_skills_[combo_idx_];
     combo->Start();
     combo->Tick(0.f);
-    
-    last_input_time_ = now;
+
+    skill_available_time_ = -1000.f;
     combo_idx_++;
 
     if (combo_idx_ >= combo_skills_.size())
@@ -82,20 +82,38 @@ void ComboActiveSkill::StartNextCombo()
 
 void ComboActiveSkill::Tick(float delta_time)
 {
-    if (!IsStart())
-        return;
-
-    float now = Net::GetClientTime();
-
-    if (now - last_input_time_ > data_->reset_time)
-    {
-        ResetCombo();
-        Stop();
-    }
-
     for (auto& combo : combo_skills_)
     {
-        combo->Tick(delta_time);
+        if (combo->IsStart())
+            combo->Tick(delta_time);
+    }
+    
+    if (IsStart())
+    {
+        float now = Net::GetClientTime();
+        
+        bool prev_ready = true;
+
+        if (combo_idx_ > 0)
+        {
+            auto& prev = combo_skills_[combo_idx_ - 1];
+            prev_ready = !prev->IsCoolDown();
+        }
+        
+        if (skill_available_time_ < 0 && prev_ready)
+        {
+            skill_available_time_ = now;
+            return;
+        }
+        
+        if (skill_available_time_ >= 0)
+        {
+            if (now - skill_available_time_ > data_->reset_time)
+            {
+                ResetCombo();
+                Stop();
+            }
+        }
     }
 }
 
