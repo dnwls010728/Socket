@@ -34,6 +34,7 @@
 #include "PacketHandlers/PopupHandler.h"
 #include "PacketHandlers/SkillCastHandler.h"
 #include "PacketHandlers/SkillUpdateHandler.h"
+#include "PacketHandlers/ComboSkillStateChangedHandler.h"
 #include "PacketHandlers/DoSelectCardHandler.h"
 #include "PacketHandlers/ShopOpenHandler.h"
 #include "UI/UILoginState.h"
@@ -113,6 +114,11 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         SkillUpdatePacket::StaticPacketID,
         std::make_unique<SkillUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        ComboSkillStateChangedPacket::StaticPacketID,
+        std::make_unique<ComboSkillStateChangedHandler>()
     );
 
     handlers_.emplace(

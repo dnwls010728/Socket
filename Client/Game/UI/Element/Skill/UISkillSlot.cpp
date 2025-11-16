@@ -53,38 +53,60 @@ UISkillSlot::UISkillSlot(const std::wstring& name) :
     level_text_->SetIgnoreRayCast(true);
 }
 
-void UISkillSlot::SetSkill(uint32_t skill_id, int32_t level, float cooldown)
+void UISkillSlot::SetSkill(const SkillInfo& skill_info)
 {
-    skill_id_ = skill_id;
-    level_ = level;
-    cooldown_ = cooldown;
+    skill_id_ = skill_info.skill_id;
+    level_ = skill_info.level;
+    cooldown_ = skill_info.cooldown;
+
+    auto set_empty_icon_lambda = [this](){
+        icon_->SetSprite(nullptr, L"");
+        icon_->SetActive(false);
+    };
 
     const SkillData* data = DataSubsystem::Get()->GetSkill(skill_id_);
-    if (data)
+    if (!data)
     {
-        name_text_->SetText(data->name);
-        description_ = data->desc;
+        name_text_->SetText(L"알 수 없는 스킬");
+        set_empty_icon_lambda();
+        return;
+    }
 
-        static UISprite* skill_icon_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
-        if (skill_icon_sprite && !data->icon.empty())
+    name_text_->SetText(data->name);
+    level_text_->SetText(L"Lv. " + std::to_wstring(level_));
+    description_ = data->desc;
+
+    const SkillData* sprite_data = data;
+    if (data->type == SkillType::kComboAttack)
+    {
+        if (data->combo_skills.empty() || data->combo_skills.size() < skill_info.combo_idx + 1)
         {
-            icon_->SetSprite(skill_icon_sprite, data->icon);
-            icon_->SetActive(true);
+            set_empty_icon_lambda();
+            SetActive(true);
+            return;
         }
-        else
+
+        uint32_t sub_skill_id = data->combo_skills[skill_info.combo_idx];
+        sprite_data = DataSubsystem::Get()->GetSkill(sub_skill_id);
+        if (!sprite_data)
         {
-            icon_->SetSprite(nullptr, L"");
-            icon_->SetActive(false);
+            set_empty_icon_lambda();
+            SetActive(true);
+            return;
         }
+    }
+    
+    static UISprite* skill_icon_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\SkillIconSet.png");
+    if (skill_icon_sprite && !sprite_data->icon.empty())
+    {
+        icon_->SetSprite(skill_icon_sprite, sprite_data->icon);
+        icon_->SetActive(true);
     }
     else
     {
-        name_text_->SetText(L"알 수 없는 스킬");
-        icon_->SetSprite(nullptr, L"");
-        icon_->SetActive(false);
+        set_empty_icon_lambda();
     }
-
-    level_text_->SetText(L"Lv. " + std::to_wstring(level_));
+    
     SetActive(true);
 }
 

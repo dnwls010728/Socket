@@ -1,5 +1,6 @@
 skills:
   100000:
+    type: 1
     name: "100000"
     desc: "100000"
     icon: "SkillIconSet_0"
@@ -20,6 +21,7 @@ skills:
         max_targets: 10
         time_offset: 0.1
   100001:
+    type: 1
     name: "100001"
     desc: "100001"
     icon: "SkillIconSet_1"
@@ -40,6 +42,7 @@ skills:
         max_targets: 10
         time_offset: 0.3
   100002:
+    type: 1
     name: "100002"
     desc: "100002"
     icon: "SkillIconSet_2"
@@ -74,6 +77,7 @@ skills:
         max_targets: 10
         time_offset: 0.3
   100003:
+    type: 1
     name: "100003"
     desc: "100003"
     icon: "SkillIconSet_3"
@@ -101,6 +105,7 @@ skills:
         max_targets: 10
         time_offset: 0.3
   100004:
+    type: 1
     name: "100004"
     desc: "100004"
     icon: "SkillIconSet_4"
@@ -121,6 +126,7 @@ skills:
         max_targets: 10
         time_offset: 0.3
   100005:
+    type: 1
     name: "100005"
     desc: "100005"
     icon: "SkillIconSet_5"
@@ -148,9 +154,83 @@ skills:
         max_targets: 10
         time_offset: 0.4
   199999:
+    type: 2
     name: "테스트2"
     desc: "아무 설명."
     sound: "Audio\\SE\\SkillUse.mp3"
     projectile: 1
     cooldown: 1
     hit_frames: []
+  100500:
+    type: 3
+    name: "100500"
+    desc: "100500"
+    icon: "SkillIconSet_0"
+    animation_pack: "Sprites\\Effects\\100000.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100000.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\Skill\\100000\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100000\\Hit.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [0.5, 0.7]
+          size: [2.0, 2.5]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.1
+  100501:
+    type: 1
+    name: "100501"
+    desc: "100501"
+    icon: "SkillIconSet_1"
+    animation_pack: "Sprites\\Effects\\100001.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100001.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\Skill\\100001\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100001\\Hit.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.0, 1.0]
+          size: [8.0, 4.6]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+  100502:
+    type: 1
+    name: "100502"
+    desc: "100502"
+    icon: "SkillIconSet_2"
+    animation_pack: "Sprites\\Effects\\100002.png.apack"
+    animation: "Idle"
+    hit_effect_pack: "Sprites\\Effects\\Hit\\100002.png.apack"
+    hit_effect_animation: "Idle"
+    sound: "Audio\\SE\\Skill\\100002\\Use.mp3"
+    hit_sound: "Audio\\SE\\Skill\\100002\\Hit.mp3"
+    projectile: 0
+    cooldown: 1
+    hit_frames:
+      - hitbox:
+          center: [3.5, 1.5]
+          size: [7.0, 5.0]
+        damage: 100
+        hit_count: 3
+        max_targets: 10
+        time_offset: 0.3
+  200000:
+    type: 3
+    name: "200000"
+    desc: "200000"
+    cooldown: 8
+    reset_time: 3
+    combo_skills:
+      - 100500
+      - 100501
+      - 100502

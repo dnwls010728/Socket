@@ -1,6 +1,7 @@
 #pragma once
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
+#include "CommonObject.h"
 
 class UISkillWindow;
 class UIImage;
@@ -13,7 +14,7 @@ public:
     UISkillSlot(const std::wstring& name);
     virtual ~UISkillSlot() override = default;
 
-    void SetSkill(uint32_t skill_id, int32_t level, float cooldown);
+    void SetSkill(const SkillInfo& skill_info);
     void Reset();
 
     FORCEINLINE uint32_t GetSkillID() const { return skill_id_; }

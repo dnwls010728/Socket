@@ -85,10 +85,19 @@ struct HitFrame
     std::wstring hit_effect_animation;
 };
 
+enum class SkillType : uint8_t
+{
+    kNone            = 0,
+    kGeneralAttack   = 1,
+    kProjectile      = 2,
+    kComboAttack     = 3
+    
+};
 struct SkillData
 {
     uint32_t id;
-    
+
+    SkillType type;
     std::wstring name;
     std::wstring desc;
     std::wstring icon;
@@ -106,9 +115,12 @@ struct SkillData
     int32_t duration;
     int32_t cooldown;
 
+    float reset_time;
+
     uint32_t projectile_id;
 
     std::vector<HitFrame> hit_frames;
+    std::vector<uint32_t> combo_skills;
 };
 
 struct CardData
@@ -290,13 +302,14 @@ namespace YAML
         static bool decode(const Node& node, SkillData& data)
         {
             if (!node.IsMap()) return false;
+            data.hit_frames.clear();
+            data.combo_skills.clear();
+            data.type = static_cast<SkillType>(node["type"].as<uint32_t>(0)); 
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
             data.icon = StringHelper::UTF8ToUTF16(node["icon"].as<std::string>(""));
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
             data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>(""));
-            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
-            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
             data.sound = StringHelper::UTF8ToUTF16(node["sound"].as<std::string>(""));
             data.hit_sound = StringHelper::UTF8ToUTF16(node["hit_sound"].as<std::string>(""));
             data.max_hp = node["max_hp"].as<int32_t>(0);
@@ -305,16 +318,18 @@ namespace YAML
             data.dig = node["dig"].as<int32_t>(0);
             data.duration = node["duration"].as<int32_t>(0);
             data.cooldown = node["cooldown"].as<int32_t>(0);
-
-            data.projectile_id = node["projectile"].as<uint32_t>(0);
-
-            data.hit_frames.clear();
             if (auto frames = node["hit_frames"]; frames)
             {
                 for (const auto& frame : frames)
                     data.hit_frames.push_back(frame.as<HitFrame>());
             }
-
+            data.projectile_id = node["projectile"].as<uint32_t>(0);
+            data.reset_time = node["reset_time"].as<float>(0.f);
+            if (auto combo_list = node["combo_skills"]; combo_list && combo_list.IsSequence())
+            {
+                for (const auto& combo_skill : combo_list)
+                    data.combo_skills.push_back(combo_skill.as<uint32_t>(0));
+            }
             return true;
         }
     };

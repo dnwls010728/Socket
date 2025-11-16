@@ -85,7 +85,7 @@ void UISkillWindow::Refresh(const std::vector<SkillInfo>& skills)
     {
         if (i < required_slots)
         {
-            slots_[i]->SetSkill(skills[i].skill_id, skills[i].level, skills[i].cooldown);
+            slots_[i]->SetSkill(skills[i]);
         }
         else
         {

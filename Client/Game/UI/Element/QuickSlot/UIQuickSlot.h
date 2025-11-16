@@ -2,6 +2,7 @@
 #include "Scancode.h"
 #include "Subsystems/InputActions/KeyType.h"
 #include "Subsystems/InputActions/InputActions.h"
+#include "CommonObject.h""
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
@@ -55,5 +56,8 @@ private:
 
     KeyType key_type_;
     int32_t action_;
+
+    // Skill
+    int32_t combo_index_;
 
 };

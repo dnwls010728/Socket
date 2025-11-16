@@ -11,8 +11,8 @@ public:
     Skill(PlayerCharacter* owner, const SkillData* data, bool is_passive, int32_t level);
     virtual ~Skill() = default;
 
-    virtual void Start() final;
-    virtual void Stop() final;
+    virtual void Start();
+    virtual void Stop();
     inline bool IsStart() const { return is_start_; }
     virtual void Tick(float delta_time) = 0;
     

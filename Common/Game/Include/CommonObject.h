@@ -41,6 +41,7 @@ struct SkillInfo
     uint32_t skill_id;
     int32_t level;
     float cooldown;
+    int32_t combo_idx;
 };
 
 enum class ItemMoveType : uint8_t
