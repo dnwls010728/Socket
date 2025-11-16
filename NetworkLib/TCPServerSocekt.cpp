@@ -11,6 +11,8 @@
 #include <atomic>
 #include <cstring>
 #include <chrono>
+#include <queue>
+#include <mutex>
 
 namespace Net::TCP {
 
@@ -222,6 +224,31 @@ namespace Net::TCP {
         return true;
     }
 
+    void TCPServerSocket::EnqueueDisconnect(uint32_t unique_key)
+    {
+        {
+            std::lock_guard<std::mutex> lock(disconnect_mutex_);
+            disconnect_queue_.push(unique_key);
+        }
+        PostQueuedCompletionStatus(iocp_handle_, 0, 0, nullptr);
+    }
+
+    void TCPServerSocket::ProcessDisconnectQueue()
+    {
+        std::queue<uint32_t> local;
+        {
+            std::lock_guard<std::mutex> lock(disconnect_mutex_);
+            std::swap(local, disconnect_queue_);
+        }
+
+        while (!local.empty())
+        {
+            uint32_t key = local.front();
+            local.pop();
+            DisconnectClientInternal(key);
+        }
+    }
+
     void TCPServerSocket::WorkerThread()
     {
         DWORD bytes_transferred = 0;
@@ -231,22 +258,46 @@ namespace Net::TCP {
         while (running_.load())
         {
             BOOL result = GetQueuedCompletionStatus(iocp_handle_, &bytes_transferred, &completion_key, (LPOVERLAPPED*)&p_context, INFINITE);
+
+            ProcessDisconnectQueue();
+
             if (!result)
             {
+                if (p_context)
+                {
+                    delete[] p_context->wsabuf.buf;
+                    delete p_context;
+                    p_context = nullptr;
+                }
+
+                if (completion_key != NULL)
+                {
+                    TCPConnectionState state = connection_manager_.GetClientStateBySocket((SOCKET)completion_key);
+                    if (state.uniqueKey != 0)
+                    {
+                        EnqueueDisconnect(state.uniqueKey);
+                    }
+                }
                 continue;
             }
 
             if (bytes_transferred == 0 || p_context == nullptr)
             {
-                if (p_context != nullptr)
+                if (p_context)
                 {
-                    delete p_context->wsabuf.buf;
+                    delete[] p_context->wsabuf.buf;
                     delete p_context;
+                    p_context = nullptr;
                 }
+
                 if (completion_key != NULL)
                 {
                     std::cout << "Client disconnected, socket: " << completion_key << std::endl;
-                    DisconnectClient((SOCKET)completion_key);
+                    TCPConnectionState state = connection_manager_.GetClientStateBySocket((SOCKET)completion_key);
+                    if (state.uniqueKey != 0)
+                    {
+                        EnqueueDisconnect(state.uniqueKey);
+                    }
                 }
                 continue;
             }
@@ -321,15 +372,20 @@ namespace Net::TCP {
                 if (err != WSA_IO_PENDING)
                 {
                     std::cerr << "WSARecv failed : " << err << std::endl;
-                    DisconnectClient((SOCKET)completion_key);
+                    TCPConnectionState state = connection_manager_.GetClientStateBySocket((SOCKET)completion_key);
+                    if (state.uniqueKey != 0)
+                    {
+                        EnqueueDisconnect(state.uniqueKey);
+                    }
                     delete[] p_context->wsabuf.buf;
                     delete p_context;
+                    p_context = nullptr;
                 }
             }
         }
     }
 
-    bool TCPServerSocket::DisconnectClient(uint32_t unique_key)
+    bool TCPServerSocket::DisconnectClientInternal(uint32_t unique_key)
     {
         TCPConnectionState state = connection_manager_.GetClientState(unique_key);
         if (state.uniqueKey == 0)
@@ -342,6 +398,12 @@ namespace Net::TCP {
         {
             OnClientClosed(state);
         }
+        return true;
+    }
+
+    bool TCPServerSocket::DisconnectClient(uint32_t unique_key)
+    {
+        EnqueueDisconnect(unique_key);
         return true;
     }
 
