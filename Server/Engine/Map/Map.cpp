@@ -19,6 +19,7 @@
 #include "MapObjects/Mob/Mob.h"
 #include "MapObjects/ProjectileObject.h"
 #include "IDamageable.h"
+#include "MapObjects/NPC.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player/Inventory/EquipItem.h"
@@ -615,6 +616,36 @@ bool Map::LoadMapData()
                     int32_t to_map = properties[2].getIntValue();
 
                     portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_id, to_map, position));
+                }
+            }
+            else if (layer->getName() == "NPC")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() != tmx::Object::Shape::Point) continue;
+                    
+                    Math::Vector2 position = {
+                        object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                        -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                    };
+                    
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+                    
+                    int32_t id = properties[0].getIntValue();
+                    
+                    std::shared_ptr<NPC> npc = std::make_shared<NPC>(id);
+                    npc->SetObjectID(next_object_id_.fetch_add(1));
+                    npc->SetMap(this);
+                    npc->SetPosition(position);
+                    
+                    npc->BeginPlay();
+                    
+                    {
+                        std::scoped_lock lock(object_mutex_);
+                        map_objects_.emplace(npc->GetObjectID(), npc);
+                    }
                 }
             }
         }

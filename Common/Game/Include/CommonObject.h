@@ -57,7 +57,8 @@ enum class ObjectType : uint8_t
     kPlayer,
     kMob,
     kDroppedItem,
-    kProjectile
+    kProjectile,
+    kNPC
 };
 
 struct PlayerInfo
@@ -98,6 +99,11 @@ struct ProjectileInfo
     wchar_t animation_name[256];
 };
 
+struct NPCInfo
+{
+    uint32_t npc_id;
+};
+
 struct ObjectInfo
 {
     ObjectType type;
@@ -111,6 +117,7 @@ struct ObjectInfo
         MobInfo mob;
         DroppedItemInfo dropped_item;
         ProjectileInfo projectile;
+        NPCInfo npc;
     } info;
 };
 

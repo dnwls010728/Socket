@@ -11,6 +11,7 @@
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
+class NPC;
 class Item;
 class SpawnPoint;
 class PlayerCharacter;
