@@ -261,6 +261,8 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
 
 void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
+    if (!item) return;
+    
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetItem(item);

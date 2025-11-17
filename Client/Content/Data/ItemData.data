@@ -1,55 +1,97 @@
 items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
-  119999:
-    name: "Eternal 모자"
+  110001:
+    name: "가죽 투구"
     desc: ""
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 1908
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 1908
     price: 0
     max_count: 1
     stat:
-      req_lv: 1
-      max_hp: 1000
-  129999:
-    name: "Eternal 갑옷"
+      req_lv: 10
+      max_hp: 1831
+  110002:
+    name: "철제 투구 "
     desc: ""
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 1904
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 1904
     price: 0
     max_count: 1
     stat:
-      req_lv: 1
-      max_hp: 1000
-  131999:
-    name: "Eternal 검"
+      req_lv: 25
+      max_hp: 10000
+  120001:
+    name: "가죽 갑옷"
     desc: ""
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 1924
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 1924
     price: 0
     max_count: 1
     stat:
-      req_lv: 1
+      req_lv: 10
+      max_hp: 5000
+  120002:
+    name: "철제 갑옷"
+    desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 1920
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 1920
+    price: 0
+    max_count: 1
+    stat:
+      req_lv: 25
+      max_hp: 10000
+  131001:
+    name: "목검"
+    desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 153
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 153
+    price: 0
+    max_count: 1
+    stat:
+      req_lv: 10
       atk: 1000
+  131002:
+    name: "철검"
+    desc: ""
+    icon:
+      path: "Sprites\\ItemIconSet.png"
+      index: 154
+    ui_icon:
+      path: "UI\\ItemIconSet.png"
+      index: 154
+    price: 0
+    max_count: 1
+    stat:
+      req_lv: 25
+      atk: 2000
   200000: # 아이템 고유 ID
     name: "먹다 남은 빵"
     desc: "먹다 남은 빵입니다. 먹어도 별로 맛이 없습니다.\nHP를 약 10 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 512
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 512
     price: 100 # 유저가 상점에 판매할 때의 가격
     max_count: 3000
     # 위 속성이 공통 속성입니다.
@@ -65,10 +107,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "초급 물약입니다. HP를 약 20% 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 264
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 264
     price: 1000
     max_count: 99
     effect:
@@ -78,10 +120,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "중급 물약입니다. HP를 약 40% 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 265
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 265
     price: 2000
     max_count: 49
     effect:
@@ -91,10 +133,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "고급 물약입니다. HP를 약 60% 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 266
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 266
     price: 3000
     max_count: 99
     effect:
@@ -104,10 +146,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "장인의 물약입니다. HP를 약 80% 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 267
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 267
     price: 4000
     max_count: 99
     effect:
@@ -117,49 +159,49 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "순수의 물약입니다. HP를 약 100% 회복시킨다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 268
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 268
     price: 5000
     max_count: 99
     effect:
       hp_percent: 100
   200011:
-    name: "낡은 붕대"
+    name: "낡은 고기"
     desc: "체력을 100만큼 회복합니다"
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 484
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 484
     price: 100
     max_count: 99
     effect:
       hp: 100
   200012:
-    name: "괜찮은 붕대"
+    name: "괜찮은 고기"
     desc: "체력을 300만큼 회복합니다"
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 480
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 480
     price: 300
     max_count: 99
     effect:
       hp: 300
   200013:
-    name: "좋은 붕대"
+    name: "좋은 고기"
     desc: "체력을 1000만큼 회복합니다"
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 485
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 485
     price: 1000
     max_count: 99
     effect:
@@ -169,10 +211,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "뾰족한 털이 가득한 식물입니다. 섭취시 공격력이 소폭 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 31
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 31
     price: 500
     max_count: 1
     effect:
@@ -183,127 +225,100 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     desc: "칼날풀을 가공하여 제작한 물약입니다. 사용시 공격력이 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 120
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 120
     price: 2500
     max_count: 1
     effect:
       duration: 120
-      atk: 250
+      atk: 300
   200311:
     name: "갑옷과일"
     desc: "껍질이 아주 단단한 과일입니다. 섭취시 방어력이 소폭 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 435
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 435
     price: 500
     max_count: 1
     effect:
       duration: 60
-      def: 100
+      def: 50
   200312:
     name: "갑옷물약"
     desc: "갑옷과일을 가공하여 제작한 물약입니다. 사용시 방어력이 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 122
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 122
     price: 2500
     max_count: 1
     effect:
       duration: 120
-      def: 250
+      def: 150
   200321:
     name: "창나무"
     desc: "끝이 아주 뾰족한 나무입니다. 섭취시 방어관통력이 소폭 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 45
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 45
     price: 1000
     max_count: 1
     effect:
       duration: 60
-      dig: 50
+      dig: 4
   200322:
     name: "창물약"
     desc: "창나무를 가공하여 제작한 물약입니다. 사용시 방어관통력이 증가합니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 121
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 121
     price: 5000
     max_count: 1
     effect:
       duration: 120
-      dig: 100
+      dig: 16
   200501:
     name: "무지개 조각"
     desc: "여러가지 색이 번갈아가며 빛나는 조각입니다. 섭취시 무슨 일이 일어날까요...?"
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 163
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 163
     price: 10000
     max_count: 1
     effect:
-      duration: 300
+      duration: 60
       atk: 100
-      def: 100
-      dig: 50
+      def: 50
+      dig: 4
   200502:
     name: "무지개 물약"
     desc: "무지개 조각을 가공하여 제작한 물약입니다. 고작 이런 일에 이 물약을 마시겠다고요?"
     icon:
       path: "Sprites\\ItemIconSet.png"
-      index: 2190
+      index: 399
     ui_icon:
       path: "UI\\ItemIconSet.png"
-      index: 2190
+      index: 399
     price: 50000
     max_count: 1
     effect:
-      duration: 300
-      atk: 500
-      def: 500
-      dig: 250
-  290000:
-    name: "노란색 블럭"
-    desc: "노란색 블럭입니다. 건축에 사용됩니다."
-    icon:
-      path: "Sprites\\ItemIconSet.png"
-      index: 2190
-    ui_icon:
-      path: "UI\\ItemIconSet.png"
-      index: 2190
-    price: 1
-    max_count: 99
-    effect:
-      block_color: "FFFF00"
-  299999:
-    name: "미지의 포션"
-    desc: "무언가 좋은 일이 일어날 것 같은 포션입니다."
-    icon:
-      path: "Sprites\\ItemIconSet.png"
-      index: 2190
-    ui_icon:
-      path: "UI\\ItemIconSet.png"
-      index: 2190
-    price: 5000
-    max_count: 1
-    effect:
-      duration: 30 # 초 단위
-      max_hp: 500
+      duration: 120
+      atk: 200
+      def: 100
+      dig: 8
