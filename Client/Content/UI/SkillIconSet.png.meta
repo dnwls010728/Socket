@@ -66,3 +66,14 @@ frames:
       top: 0
       right: 0
       bottom: 0
+  - name: SkillIconSet_6
+    rect:
+      x: 192
+      y: 0
+      width: 32
+      height: 32
+    border:
+      left: 0
+      top: 0
+      right: 0
+      bottom: 0
