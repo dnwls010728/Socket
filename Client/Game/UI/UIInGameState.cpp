@@ -6,6 +6,7 @@
 #include "Element/UIChatBar.h"
 #include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
+#include "Element/Shop/UIShop.h"
 #include "Element/UIStatusBar.h"
 #include "Element/UIPartyPanel.h"
 #include "Element/UIPartyWindow.h"
@@ -24,6 +25,8 @@ UIInGameState::UIInGameState() :
     context_menu_(nullptr),
     party_panel_(nullptr),
     party_window_(nullptr),
+    card_select_panel_(nullptr),
+    shop_(nullptr),
     show_post_process_(false)
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
@@ -62,6 +65,10 @@ UIInGameState::UIInGameState() :
 
     context_menu_ = AddElement<UIContextMenu>(UIContextMenu::StaticClass(), L"ContextMenu");
     context_menu_->SetActive(false);
+
+    shop_ = AddElement<UIShop>(UIShop::StaticClass(), L"Shop");
+    shop_->SetActive(false);
+    shop_->SetAbsolutePosition({ 360.f, 120.f });
 
     AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
 

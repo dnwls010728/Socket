@@ -13,6 +13,7 @@ class UIPartyPanel;
 class UIPartyWindow;
 class UICardSelectPanel;
 class UISkillWindow;
+class UIShop;
 
 class UIInGameState : public UIState
 {
@@ -27,6 +28,7 @@ public:
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
     FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
     FORCEINLINE UICardSelectPanel* GetCardSelectPanel() const { return card_select_panel_; }
+    FORCEINLINE UIShop* GetShop() const { return shop_; }
 
 protected:
     virtual void Tick(float delta_time) override;
@@ -45,6 +47,7 @@ private:
     UIPartyPanel* party_panel_;
     UIPartyWindow* party_window_;
     UICardSelectPanel* card_select_panel_;
+    UIShop* shop_;
 
     bool show_post_process_;
 };
