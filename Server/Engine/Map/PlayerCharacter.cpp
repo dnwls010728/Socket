@@ -47,6 +47,7 @@ PlayerCharacter::PlayerCharacter() :
     map_transitioning_(false),
     exp_(0),
     color_(0),
+    gm_level_(0),
     inventories_(),
     key_map_(),
     buff_manager_(this),
@@ -101,6 +102,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->color_.store(result->getInt("color"));
+                character->gm_level_ = result->getInt("gm_level");
             }
         }
 

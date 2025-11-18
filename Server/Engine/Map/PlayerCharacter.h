@@ -99,6 +99,7 @@ public:
     inline uint32_t GetMapID() const { return map_id_; }
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
+    inline bool IsGM() const { return gm_level_ > 0; }
     
     inline Inventory* GetInventory(InventoryType type) const { return inventories_[static_cast<uint8_t>(type)].get(); }
 
@@ -170,6 +171,8 @@ protected:
     
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
+    
+    int8_t gm_level_;
 
     std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
 

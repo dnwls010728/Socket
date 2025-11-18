@@ -424,7 +424,7 @@ void Map::Tick(float delta_time)
         for (const auto& player_weak : players_ | std::views::values)
         {
             auto player = player_weak.lock();
-            if (!player) continue;
+            if (!player || player->IsGM()) continue;
 
             for (const auto& map_object : map_objects_ | std::views::values)
             {
@@ -503,7 +503,7 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
     for (const auto& player_weak : players_ | std::views::values)
     {
         auto player = player_weak.lock();
-        if (!player) continue;
+        if (!player || player->IsGM()) continue;
         
         Bounds target_bounds = player->GetHitBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
