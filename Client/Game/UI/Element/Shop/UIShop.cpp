@@ -173,9 +173,9 @@ UIShop::UIShop(const std::wstring& name) :
     player_list_content_->SetSize({ player_scroll_box_->GetSize().x - 12.f, player_scroll_box_->GetSize().y });
     
     player_money_text_ = AddChild<UIText>(UIText::StaticClass(), L"PlayerMoney");
-    player_money_text_->SetRelativePosition({ kWindowWidth - 150.f, 175.f });
-    player_money_text_->SetSize({ 150.f, 24.f });
-    player_money_text_->SetColor(Math::Color::White);
+    player_money_text_->SetRelativePosition({ player_panel_->GetRelativePosition().x + 10.f, player_panel_->GetRelativePosition().y + 10.f });
+    player_money_text_->SetSize({ player_panel_->GetSize().x - 20.f, 24.f });
+    player_money_text_->SetColor(Math::Color(255, 230, 120, 255));
     player_money_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
     player_money_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     player_money_text_->SetText(L"보유 금액: 0 컬러");
