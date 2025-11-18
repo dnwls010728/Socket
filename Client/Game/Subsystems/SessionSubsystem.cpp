@@ -58,7 +58,7 @@ void SessionSubsystem::Init()
 #ifdef _DEBUG
     bool result = Connect({"127.0.0.1", 9101});
 #else
-    bool result = Connect({"58.79.118.105", 9101});
+    bool result = Connect({"124.61.139.139", 9101});
 #endif
     if (!result)
     {
