@@ -30,6 +30,8 @@ protected:
     virtual bool OnMouseLeave() override;
 
 private:
+    static std::wstring FormatCurrency(int32_t value);
+    
     UIImage* background_;
     UIImage* icon_;
     UIText* name_text_;

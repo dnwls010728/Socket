@@ -95,6 +95,8 @@ void UIShopItemRow::SetItem(uint32_t item_id)
         }
         icon_->SetSprite(sprite, frame_index);
     });
+    
+    SetPriceText(L"판매 가격: " + FormatCurrency(item_data->price) + L" 컬러");
 }
 
 void UIShopItemRow::SetPriceText(const std::wstring& text) const
@@ -200,6 +202,18 @@ bool UIShopItemRow::OnMouseLeave()
     tooltip_->SetActive(false);
     tooltip_ = nullptr;
     return true;
+}
+
+std::wstring UIShopItemRow::FormatCurrency(int32_t value)
+{
+    std::wstring out = std::to_wstring(value);
+    int32_t idx = out.size() - 3;
+    while (idx > 0)
+    {
+        out.insert(idx, L",");
+        idx -= 3;
+    }
+    return out;
 }
 
 RTTR_REGISTRATION

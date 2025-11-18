@@ -42,7 +42,7 @@ private:
     void OnPlayerItemDoubleClicked(int32_t item_id);
     void OnEvent(const EventData& data);
 
-    static std::wstring FormatCurrency(int32_t price);
+    static std::wstring FormatCurrency(int32_t value);
 
     UIImage* background_;
     UIImage* npc_panel_;

@@ -554,3 +554,9 @@ struct ShopClosePacket : public Net::IPacket
     SERIALIZABLE_FIELDS()
     REGISTER_PACKET(ShopClosePacket, 702)
 };
+
+struct ShopSellPacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(ShopSellPacket, 703)
+};

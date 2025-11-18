@@ -38,6 +38,10 @@ void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
     player->SendPacket(packet);
 }
 
+void Shop::Sell(const std::shared_ptr<PlayerCharacter>& player)
+{
+}
+
 std::shared_ptr<Shop> Shop::CreateShop(uint32_t id, bool is_shop_id)
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();

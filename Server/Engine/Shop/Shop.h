@@ -14,6 +14,7 @@ public:
 
     void AddItem(const std::shared_ptr<ShopItem>& item);
     void SendShop(const std::shared_ptr<PlayerCharacter>& player);
+    void Sell(const std::shared_ptr<PlayerCharacter>& player);
     
     inline uint32_t GetID() const { return id_; }
     inline uint32_t GetNPCID() const { return npc_id_; }

@@ -305,8 +305,6 @@ void UIShop::RefreshPlayerInventory()
         {
             row->SetActive(true);
             row->SetItem(items[i].first);
-            // TODO :: 판매 가격 반영
-            row->SetPriceText(L"판매 가격: " + FormatCurrency(1000) + L" 컬러");
             row->SetCountText(L"보유: " + std::to_wstring(items[i].second));
 
             row->SetDoubleClickHandler(Function<void(void)>(
@@ -360,7 +358,7 @@ void UIShop::OnPlayerItemDoubleClicked(int32_t item_id)
     // TODO :: 판매 가격 반영
     
     UIPopup::PopupParam param;
-    param.caption = name + L"을(를) " + FormatCurrency(1000) + L" 컬러에 판매하시겠습니까?";
+    param.caption = name + L"을(를) " + FormatCurrency(item->price) + L" 컬러에 판매하시겠습니까?";
     param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
     param.callback = [](const std::wstring&, UIPopup::PopupOption) { return true; };
 
