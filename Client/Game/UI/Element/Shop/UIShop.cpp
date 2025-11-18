@@ -339,18 +339,44 @@ void UIShop::OnNpcItemDoubleClicked(int32_t item_id, int32_t price)
     std::wstring name = item ? item->name : L"알 수 없는 아이템";
 
     UIPopup::PopupParam param;
-    param.caption = name + L"을(를) " + FormatCurrency(price) + L" 컬러에 구매하시겠습니까?";
-    param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
-    param.callback = [item_id, npc = npc_id_](const std::wstring&, UIPopup::PopupOption opt)
+    param.caption = name + L"을(를) 몇 개 구매하시겠습니까? (개당 " + FormatCurrency(price) + L" 컬러)";
+    param.default_input_text = L"1";
+    param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No | UIPopup::PopupOption::Edit;
+    param.content_type = UIEditableText::ContentType::kIntegerNumber;
+    param.callback = [item_id, npc = npc_id_](const std::wstring& text, UIPopup::PopupOption opt)
     {
-        if (opt == UIPopup::PopupOption::Yes)
+        if (opt != UIPopup::PopupOption::Yes)
+            return true;
+
+        int32_t buy_count = 0;
+        bool input_success = true;
+
+        try
         {
-            ShopBuyRequest request;
-            request.npc_id = npc;
-            request.item_id = item_id;
-            request.count = 1;
-            SessionSubsystem::Get()->SendPacket(request);
+            buy_count = std::stoi(text);
         }
+        catch (...)
+        {
+            input_success = false;
+        }
+
+        if (buy_count <= 0)
+            input_success = false;
+
+        if (!input_success)
+        {
+            UIPopup::PopupParam param;
+            param.caption = L"입력한 수량이 올바르지 않습니다.";
+            param.option = UIPopup::PopupOption::OK;
+            UIPopup::ShowPopup(param);
+            return false;
+        }
+
+        ShopBuyRequest request;
+        request.npc_id = npc;
+        request.item_id = item_id;
+        request.count = buy_count;
+        SessionSubsystem::Get()->SendPacket(request);
         return true;
     };
 
