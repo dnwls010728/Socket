@@ -19,6 +19,7 @@ public:
     void SetPriceText(const std::wstring& text) const;
     void SetCountText(const std::wstring& text) const;
     void SetDoubleClickHandler(const Function<void(void)>& handler);
+    void SetTooltip(UIItemTooltip* tooltip);
     void Clear();
 
 protected:

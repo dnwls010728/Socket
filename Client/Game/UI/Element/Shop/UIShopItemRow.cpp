@@ -4,8 +4,6 @@
 #include "Asset/AssetManager.h"
 #include "Math/Color.h"
 #include "Subsystems/DataSubsystem.h"
-#include "UI/UI.h"
-#include "UI/UIInGameState.h"
 #include "UI/Element/Inventory/UIItemTooltip.h"
 #include "UI/Element/UIImage.h"
 #include "UI/Element/UIText.h"
@@ -73,7 +71,6 @@ void UIShopItemRow::SetItem(uint32_t item_id)
     {
         icon_->SetSprite(nullptr, L"");
         name_text_->SetText(L"-");
-        tooltip_ = nullptr;
         return;
     }
 
@@ -116,6 +113,11 @@ void UIShopItemRow::SetDoubleClickHandler(const Function<void(void)>& handler)
     double_click_event_ = handler;
 }
 
+void UIShopItemRow::SetTooltip(UIItemTooltip* tooltip)
+{
+    tooltip_ = tooltip;
+}
+
 void UIShopItemRow::Clear()
 {
     item_id_ = 0;
@@ -126,7 +128,6 @@ void UIShopItemRow::Clear()
     count_text_->SetText(L"");
     count_text_->SetActive(false);
     double_click_event_ = [](){};
-    tooltip_ = nullptr;
 }
 
 void UIShopItemRow::Init()
@@ -178,15 +179,7 @@ bool UIShopItemRow::OnMouseMotion(const Math::Vector2& position, const Math::Vec
 
 bool UIShopItemRow::OnMouseEnter()
 {
-    if (item_id_ == 0)
-        return false;
-
-    auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
-    if (!state)
-        return false;
-
-    tooltip_ = state->GetItemTooltip();
-    if (!tooltip_)
+    if (item_id_ == 0 || !tooltip_)
         return false;
 
     tooltip_->Set(item_id_);
@@ -196,11 +189,10 @@ bool UIShopItemRow::OnMouseEnter()
 
 bool UIShopItemRow::OnMouseLeave()
 {
-    if (!tooltip_)
+    if (item_id_ == 0 || !tooltip_)
         return false;
 
     tooltip_->SetActive(false);
-    tooltip_ = nullptr;
     return true;
 }
 

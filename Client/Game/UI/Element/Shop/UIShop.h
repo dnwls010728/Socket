@@ -12,6 +12,7 @@ class UIImage;
 class UIText;
 class UIScrollBox;
 class UIShopItemRow;
+class UIItemTooltip;
 struct ShopBuyResponse;
 struct ShopSellPriceResponse;
 struct ShopSellResponse;
@@ -80,6 +81,8 @@ private:
     std::vector<UIShopItemRow*> npc_item_rows_;
     std::vector<UIShopItemRow*> player_item_rows_;
     std::vector<PlayerInventoryEntry> player_items_;
+
+    UIItemTooltip* tooltip_;
 
     InventoryType player_tab_;
 

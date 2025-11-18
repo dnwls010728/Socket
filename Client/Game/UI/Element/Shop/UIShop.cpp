@@ -17,6 +17,7 @@
 #include "UI/Element/UIScrollBox.h"
 #include "UI/Element/UIText.h"
 #include "UI/Element/UIPopup.h"
+#include "UI/Element/Inventory/UIItemTooltip.h"
 #include "UI/Element/Shop/UIShopItemRow.h"
 #include "Windows/DX/UISprite.h"
 
@@ -45,6 +46,7 @@ UIShop::UIShop(const std::wstring& name) :
     npc_item_rows_(),
     player_item_rows_(),
     player_items_(),
+    tooltip_(nullptr),
     player_tab_(InventoryType::kEquip),
     npc_id_(0)
 {
@@ -180,6 +182,10 @@ UIShop::UIShop(const std::wstring& name) :
     player_money_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     player_money_text_->SetText(L"보유 금액: 0 컬러");
     player_money_text_->SetIgnoreRayCast(true);
+
+    tooltip_ = AddChild<UIItemTooltip>(UIItemTooltip::StaticClass(), L"ShopTooltip");
+    tooltip_->SetSize({ 322.f, 122.f });
+    tooltip_->SetActive(false);
 }
 
 void UIShop::OpenShop(int32_t npc_id, const std::vector<ShopItemInfo>& items)
@@ -524,6 +530,7 @@ void UIShop::AllocNPCItemRow(size_t count)
         );
 
         itemRow->SetSize({ npc_scroll_box_->GetSize().x - 12.f, kItemRowHeight - 6.f });
+        itemRow->SetTooltip(tooltip_);
         npc_item_rows_.push_back(itemRow);
     }
 
@@ -548,6 +555,7 @@ void UIShop::AllocPlayerItemRow(size_t count)
         );
 
         itemRow->SetSize({ player_scroll_box_->GetSize().x - 12.f, kItemRowHeight - 6.f });
+        itemRow->SetTooltip(tooltip_);
         player_item_rows_.push_back(itemRow);
     }
 
