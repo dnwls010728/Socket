@@ -9,21 +9,21 @@ ShopManager::ShopManager() :
 {
 }
 
-std::shared_ptr<Shop> ShopManager::GetShop(int32_t id)
+std::shared_ptr<Shop> ShopManager::GetShop(uint32_t id)
 {
     auto it = shops_.find(id);
-    if (it != shops_.end()) return nullptr;
+    if (it != shops_.end()) return it->second;
     return LoadShop(id, true);
 }
 
-std::shared_ptr<Shop> ShopManager::GetShopByNPC(int32_t npc_id)
+std::shared_ptr<Shop> ShopManager::GetShopByNPC(uint32_t npc_id)
 {
     auto it = npc_shops_.find(npc_id);
-    if (it != npc_shops_.end()) return nullptr;
+    if (it != npc_shops_.end()) return it->second;
     return LoadShop(npc_id, false);
 }
 
-std::shared_ptr<Shop> ShopManager::LoadShop(int32_t id, bool is_shop_id)
+std::shared_ptr<Shop> ShopManager::LoadShop(uint32_t id, bool is_shop_id)
 {
     std::shared_ptr<Shop> shop = Shop::CreateShop(id, is_shop_id);
     if (shop)

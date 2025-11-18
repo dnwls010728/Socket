@@ -99,7 +99,13 @@ UIShop::UIShop(const std::wstring& name) :
     close_button_->SetSprite(UIButton::State::kHover, close_sprite, L"CloseButton_0");
     close_button_->SetSprite(UIButton::State::kPressed, close_sprite, L"CloseButton_0");
     close_button_->SetSprite(UIButton::State::kDisabled, close_sprite, L"CloseButton_0");
-    close_button_->OnClick([this]() { SetActive(false); });
+    close_button_->OnClick([this]()
+    {
+        ShopClosePacket packet;
+        SessionSubsystem::Get()->SendPacket(packet);
+        
+        SetActive(false);
+    });
     
     npc_image_ = AddChild<UIImage>(UIImage::StaticClass(), L"NpcImage");
     npc_image_->SetRelativePosition({ 28.f, 48.f });
@@ -116,7 +122,7 @@ UIShop::UIShop(const std::wstring& name) :
     player_image_ = AddChild<UIImage>(UIImage::StaticClass(), L"PlayerImage");
     player_image_->SetRelativePosition({ kWindowWidth - 300.f + 16.f, 48.f });
     player_image_->SetSize({ 160.f, 160.f });
-    player_image_->SetSprite(character_sheet, L"UIPlayerSheet_0");
+    // player_image_->SetSprite(character_sheet, L"UIPlayerSheet_0");
 
     UIButton* equip_button = AddChild<UIButton>(UIButton::StaticClass(), L"EquipTab");
     equip_button->SetRelativePosition({ kWindowWidth - 300.f, 48.f + 160.f + 12.f });
@@ -127,6 +133,7 @@ UIShop::UIShop(const std::wstring& name) :
     equip_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"Panel_0");
     equip_button->SetText(L"장비");
     equip_button->SetTextColor(Math::Color::White);
+    equip_button->SetDrawMode(UIImage::DrawMode::kSliced);
     equip_button->OnClick([this]() { SwitchPlayerTab(InventoryType::kEquip); });
 
     UIButton* use_button = AddChild<UIButton>(UIButton::StaticClass(), L"UseTab");
@@ -138,6 +145,7 @@ UIShop::UIShop(const std::wstring& name) :
     use_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"Panel_0");
     use_button->SetText(L"소비");
     use_button->SetTextColor(Math::Color::White);
+    use_button->SetDrawMode(UIImage::DrawMode::kSliced);
     use_button->OnClick([this]() { SwitchPlayerTab(InventoryType::kUse); });
 
     UIButton* etc_button = AddChild<UIButton>(UIButton::StaticClass(), L"EtcTab");
@@ -149,6 +157,7 @@ UIShop::UIShop(const std::wstring& name) :
     etc_button->SetSprite(UIButton::State::kDisabled, button_sprite, L"Panel_0");
     etc_button->SetText(L"기타");
     etc_button->SetTextColor(Math::Color::White);
+    etc_button->SetDrawMode(UIImage::DrawMode::kSliced);
     etc_button->OnClick([this]() { SwitchPlayerTab(InventoryType::kEtc); });
 
     player_tab_buttons_[static_cast<uint8_t>(InventoryType::kEquip)] = equip_button;
@@ -174,13 +183,16 @@ UIShop::UIShop(const std::wstring& name) :
 
 void UIShop::OpenShop(int32_t npc_id, const std::vector<ShopItemInfo>& items)
 {
+    const NPCData* npc_data = DataSubsystem::Get()->GetNPC(npc_id);
+    if (!npc_data) return;
+    
     npc_id_ = npc_id;
 
     npc_title_text_->SetText(L"NPC 상점 - " + std::to_wstring(npc_id));
 
-    UISprite* character_sheet = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
-    uint32_t frame_index = npc_id % 7;
-    npc_image_->SetSprite(character_sheet, L"UIPlayerSheet_" + std::to_wstring(frame_index));
+    // UISprite* character_sheet = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
+    // uint32_t frame_index = npc_id % 7;
+    // npc_image_->SetSprite(character_sheet, L"UIPlayerSheet_" + std::to_wstring(frame_index));
 
     UpdateNpcItems(items);
     RefreshPlayerInventory();

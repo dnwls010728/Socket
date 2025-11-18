@@ -13,6 +13,7 @@
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
+#include "MapObjects/NPC.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/PartyManager.h"
@@ -843,11 +844,19 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     case ShopOpenRequest::StaticPacketID:
         {
             ShopOpenRequest* shop_open_request = static_cast<ShopOpenRequest*>(packet);
-            
-            std::shared_ptr<Shop> shop = ShopManager::Get()->GetShopByNPC(shop_open_request->npc_id);
-            if (!shop) break;
-            
-            shop->SendShop(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+
+            std::shared_ptr<NPC> npc = std::dynamic_pointer_cast<NPC>(map_->FindMapObject(shop_open_request->object_id));
+            if (!npc) break;
+
+            if (!npc->HasShop()) break;
+            npc->SendShop(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+        }
+        break;
+
+    case ShopClosePacket::StaticPacketID:
+        {
+            ShopClosePacket* shop_close_packet = static_cast<ShopClosePacket*>(packet);
+            shop_ = nullptr;
         }
         break;
 

@@ -1,0 +1,6 @@
+npcs:
+  100000:
+    name: "Temp"
+    path: "Sprites\\Characters\\Player\\PlayerSheet.png.apack"
+    speeches:
+      - "Test speech 1."

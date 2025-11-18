@@ -85,7 +85,6 @@ void Mob::PhysicsTick(float delta_time)
     velocity_.y += gravity_ * delta_time;
     
     Math::Vector2 next_position = position_ + velocity_ * delta_time;
-    next_position.x = Math::Clamp(next_position.x, bounds.min.x, bounds.max.x);
 
     while (foothold_ && (next_position.x < foothold_->GetX1() || next_position.x > foothold_->GetX2()))
     {
@@ -122,6 +121,7 @@ void Mob::PhysicsTick(float delta_time)
     }
     else is_grounded_ = false;
     
+    next_position.x = Math::Clamp(next_position.x, bounds.min.x, bounds.max.x);
     next_position.y = Math::Clamp(next_position.y, bounds.min.y, bounds.max.y);
     SetPosition(next_position);
     

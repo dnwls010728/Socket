@@ -166,10 +166,10 @@ bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
                     skill_window_->SetActive(!skill_window_->IsActive());
                     is_handled = true;
                     break;
-            case static_cast<uint8_t>(KeyAction::kParty):
-                    party_window_->SetActive(!party_window_->IsActive());
-                    is_handled = true;
-                    break;
+            // case static_cast<uint8_t>(KeyAction::kParty):
+            //         party_window_->SetActive(!party_window_->IsActive());
+            //         is_handled = true;
+            //         break;
             case static_cast<uint8_t>(KeyAction::kMainMenu):
                     menu_->SetActive(!menu_->IsActive());
                     is_handled = true;

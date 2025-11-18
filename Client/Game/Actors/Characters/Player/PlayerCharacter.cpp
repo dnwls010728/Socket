@@ -317,14 +317,6 @@ void PlayerCharacter::Tick(float delta_time)
                     }
                 }
             }
-            
-            if (keyboard->GetKeyDown(Scancode::kKey9))
-            {
-                ShopOpenRequest request;
-                request.npc_id = 100000;
-    
-                SendPacket(request);
-            }
         }
         else
         {

@@ -8,6 +8,7 @@
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
 #include "Actors/Projectile.h"
+#include "Actors/Characters/NPC.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
@@ -91,6 +92,15 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                 projectile->SetFlip(object_info.info.projectile.is_flipped);
                 projectile->PlayAnimation(object_info.info.projectile.animation_name);
             }
+        }
+        break;
+    case ObjectType::kNPC:
+        {
+            NPCInfo npc_info = object_info.info.npc;
+            
+            NetworkSubsystem* network_subsystem = NetworkSubsystem::Get();
+            std::shared_ptr<NPC> npc = network_subsystem->SpawnNetworkActor<NPC>(NPC::StaticClass(), object_info.object_id);
+            if (IsValid(npc)) npc->Init(npc_info.npc_id, {object_info.position_x, object_info.position_y});
         }
         break;
     }

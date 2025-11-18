@@ -238,7 +238,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Characters\Npc.h" />
+    <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerDeathState.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerFallState.h" />
@@ -693,7 +693,7 @@
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Npc.cpp" />
+    <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerDeathState.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerFallState.cpp" />

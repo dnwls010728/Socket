@@ -8,7 +8,7 @@
 #include "Map/PlayerCharacter.h"
 #include "MySQL/MySQLManager.h"
 
-Shop::Shop(int32_t id, int32_t npc_id) :
+Shop::Shop(uint32_t id, uint32_t npc_id) :
     id_(id),
     npc_id_(npc_id),
     items_()
@@ -38,7 +38,7 @@ void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
     player->SendPacket(packet);
 }
 
-std::shared_ptr<Shop> Shop::CreateShop(int32_t id, bool is_shop_id)
+std::shared_ptr<Shop> Shop::CreateShop(uint32_t id, bool is_shop_id)
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();
     if (!connection) return nullptr;
@@ -57,8 +57,8 @@ std::shared_ptr<Shop> Shop::CreateShop(int32_t id, bool is_shop_id)
         std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
         if (!result->next()) return nullptr;
         
-        int32_t shop_id = result->getInt("id");
-        int32_t npc_id = result->getInt("npc_id");
+        uint32_t shop_id = result->getInt("id");
+        uint32_t npc_id = result->getInt("npc_id");
         shop = std::make_unique<Shop>(shop_id, npc_id);
 
         statement.reset(connection->prepareStatement("SELECT * FROM shop_item_info WHERE shop_id = ? ORDER BY item_order DESC"));
@@ -67,8 +67,8 @@ std::shared_ptr<Shop> Shop::CreateShop(int32_t id, bool is_shop_id)
         result.reset(statement->executeQuery());
         while (result->next())
         {
-            int32_t item_id = result->getInt("item_id");
-            int32_t price = result->getInt("price");
+            uint32_t item_id = result->getInt("item_id");
+            uint32_t price = result->getInt("price");
             
             shop->AddItem(std::make_shared<ShopItem>(item_id, price));
         }

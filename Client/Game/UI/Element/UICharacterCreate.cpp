@@ -165,7 +165,7 @@ void UICharacterCreate::OnClick() const
     if (name_input_->GetText().empty())
     {
         UIPopup::PopupParam param;
-        param.caption = L"이 이름은 사용할 수 없`습니다.";
+        param.caption = L"이 이름은 사용할 수 없습니다.";
         param.option = UIPopup::PopupOption::OK;
         param.callback = [&](const std::wstring& text,  UIPopup::PopupOption option){ return true;};
         UIPopup::ShowPopup(param);

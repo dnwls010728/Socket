@@ -71,6 +71,16 @@ struct ItemData
     };
 };
 
+struct NPCData
+{
+    uint32_t id;
+    
+    std::wstring name;
+    std::wstring path;
+
+    std::vector<std::wstring> speeches;
+};
+
 struct HitFrame
 {
     Bounds hitbox;
@@ -378,6 +388,27 @@ namespace YAML
             return true;
         }
     };
+
+    template<>
+    struct convert<NPCData>
+    {
+        static bool decode(const Node& node, NPCData& data)
+        {
+            if (!node.IsMap()) return false;
+            
+            data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
+            data.path = StringHelper::UTF8ToUTF16(node["path"].as<std::string>(""));
+            
+            data.speeches.clear();
+            if (auto speeches_node = node["speeches"]; speeches_node && speeches_node.IsSequence())
+            {
+                for (const auto& speech : speeches_node)
+                    data.speeches.push_back(StringHelper::UTF8ToUTF16(speech.as<std::string>("")));
+            }
+            
+            return true;
+        }
+    };
 }
 
 class DataSubsystem : public GameInstanceSubsystem
@@ -395,6 +426,7 @@ public:
     const SkillData* GetSkill(uint32_t id) const;
     const ProjectileData* GetProjectile(uint32_t id) const;
     const CardData* GetCard(uint32_t id) const;
+    const NPCData* GetNPC(uint32_t id) const;
     
     int32_t GetExp(int32_t level) const;
 
@@ -406,6 +438,7 @@ private:
     std::unordered_map<uint32_t, SkillData> skill_map_;
     std::unordered_map<uint32_t, ProjectileData> projectile_map_;
     std::unordered_map<uint32_t, CardData> card_map_;
+    std::unordered_map<uint32_t, NPCData> npc_map_;
     
     std::array<int32_t, 51> exp_table_;
     

@@ -72,6 +72,14 @@ void DataSubsystem::Init()
             data.id = card.first.as<uint32_t>();
             card_map_[data.id] = data;
         }
+
+        YAML::Node npc_data = YAML::LoadFile("Content\\Data\\NPCData.data");
+        for (const auto& npc : npc_data["npcs"])
+        {
+            NPCData data = npc.second.as<NPCData>();
+            data.id = npc.first.as<uint32_t>();
+            npc_map_[data.id] = data;
+        }
     }
     catch (const YAML::BadFile& e)
     {
@@ -112,6 +120,13 @@ const CardData* DataSubsystem::GetCard(uint32_t id) const
 {
     auto it = card_map_.find(id);
     if (it == card_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const NPCData* DataSubsystem::GetNPC(uint32_t id) const
+{
+    auto it = npc_map_.find(id);
+    if (it == npc_map_.end()) return nullptr;
     return &it->second;
 }
 
