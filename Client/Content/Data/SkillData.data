@@ -2,7 +2,7 @@ skills:
   100000:
     type: 1
     name: "엘리멘탈 슬래시"
-    desc: "100000"
+    desc: "전방을 짧게 휘두릅니다."
     icon: "SkillIconSet_0"
     animation_pack: "Sprites\\Effects\\100000.png.apack"
     animation: "Idle"
@@ -16,14 +16,14 @@ skills:
       - hitbox:
           center: [0.5, 0.7]
           size: [2.0, 2.5]
-        damage: 100
+        damage: 60
         hit_count: 4
         max_targets: 10
         time_offset: 0.1
   100001:
     type: 1
     name: "다크 임페일"
-    desc: "100001"
+    desc: "전방 넓은 범위를 빠르게 공격합니다."
     icon: "SkillIconSet_1"
     animation_pack: "Sprites\\Effects\\100001.png.apack"
     animation: "Idle"
@@ -51,7 +51,7 @@ skills:
   100002:
     type: 1
     name: "팬텀 블로우"
-    desc: "100002"
+    desc: "전방 좁은 범위를 여러번 찔러 공격합니다."
     icon: "SkillIconSet_2"
     animation_pack: "Sprites\\Effects\\100002.png.apack"
     animation: "Idle"
@@ -85,8 +85,8 @@ skills:
         time_offset: 0.3
   100003:
     type: 1
-    name: "암살"
-    desc: "100003"
+    name: "스매시"
+    desc: "캐릭터 주변을 2번 휘둘러 공격합니다."
     icon: "SkillIconSet_3"
     animation_pack: "Sprites\\Effects\\100003.png.apack"
     animation: "Idle"
@@ -113,8 +113,8 @@ skills:
         time_offset: 0.25	
   100004:
     type: 1
-    name: "체인아츠:스트로크"
-    desc: "100004"
+    name: "체인 스트로크"
+    desc: "전방에 채찍을 휩쓸어 공격합니다."
     icon: "SkillIconSet_4"
     animation_pack: "Sprites\\Effects\\100004.png.apack"
     animation: "Idle"
@@ -142,7 +142,7 @@ skills:
   100005:
     type: 1
     name: "레이징 블로우"
-    desc: "100005"
+    desc: "캐릭터 정면 넓은 범위를 크게 휘둘러 공격합니다."
     icon: "SkillIconSet_5"
     animation_pack: "Sprites\\Effects\\100005.png.apack"
     animation: "Idle"
@@ -190,10 +190,10 @@ skills:
     cooldown: 1
     hit_frames:
       - hitbox:
-          center: [0.5, 0.7]
-          size: [2.0, 2.5]
-        damage: 100
-        hit_count: 3
+          center: [3.5, 0.7]
+          size: [6.5, 2.5]
+        damage: 60
+        hit_count: 4
         max_targets: 10
         time_offset: 0.1
   100501:
@@ -211,10 +211,10 @@ skills:
     cooldown: 1
     hit_frames:
       - hitbox:
-          center: [3.0, 1.0]
-          size: [8.0, 4.6]
-        damage: 100
-        hit_count: 3
+          center: [3.5, 1.0]
+          size: [6.5, 2.5]
+        damage: 60
+        hit_count: 4
         max_targets: 10
         time_offset: 0.3
   100502:
@@ -233,15 +233,15 @@ skills:
     hit_frames:
       - hitbox:
           center: [3.5, 1.5]
-          size: [7.0, 5.0]
-        damage: 100
-        hit_count: 3
+          size: [6.0, 2.5]
+        damage: 60
+        hit_count: 4
         max_targets: 10
         time_offset: 0.3
   100006:
     type: 3
-    name: "스트라이크"
-    desc: "200000"
+    name: "베어 슬래쉬"
+    desc: "3번에 걸쳐 곰을 소환하여 정면 범위에 공격을 가합니다."
     icon: "SkillIconSet_6"
     cooldown: 1
     reset_time: 3

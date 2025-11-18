@@ -38,10 +38,6 @@ void Shop::SendShop(const std::shared_ptr<PlayerCharacter>& player)
     player->SendPacket(packet);
 }
 
-void Shop::Sell(const std::shared_ptr<PlayerCharacter>& player)
-{
-}
-
 std::shared_ptr<ShopItem> Shop::FindItem(uint32_t item_id) const
 {
     for (const auto& item : items_)

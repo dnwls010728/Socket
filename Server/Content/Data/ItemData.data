@@ -1,7 +1,7 @@
 items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
   110001:
     name: "가죽 투구"
-    desc: ""
+    desc: "체력을 5000 증가시키는 방어구입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 1908
@@ -12,10 +12,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     stat:
       req_lv: 10
-      max_hp: 1831
+      max_hp: 5000
   110002:
     name: "철제 투구 "
-    desc: ""
+    desc: "체력을 10000 증가시키는 방어구입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 1904
@@ -29,7 +29,7 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
       max_hp: 10000
   120001:
     name: "가죽 갑옷"
-    desc: ""
+    desc: "방어력을 50 올려주는 방어구입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 1924
@@ -40,10 +40,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     stat:
       req_lv: 10
-      max_hp: 5000
+      def: 50
   120002:
     name: "철제 갑옷"
-    desc: ""
+    desc: "방어력을 100 올려주는 방어구입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 1920
@@ -54,10 +54,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     stat:
       req_lv: 25
-      max_hp: 10000
+      def: 100
   131001:
     name: "목검"
-    desc: ""
+    desc: "공격력을 500 올려주는 장비입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 153
@@ -68,10 +68,10 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     stat:
       req_lv: 10
-      atk: 1000
+      atk: 500
   131002:
     name: "철검"
-    desc: ""
+    desc: "공격력을 1000 올려주는 장비입니다."
     icon:
       path: "Sprites\\ItemIconSet.png"
       index: 154
@@ -82,7 +82,7 @@ items: # 장비 - 100000, 소비 - 200000, 기타 - 300000
     max_count: 1
     stat:
       req_lv: 25
-      atk: 2000
+      atk: 1000
   200000: # 아이템 고유 ID
     name: "먹다 남은 빵"
     desc: "먹다 남은 빵입니다. 먹어도 별로 맛이 없습니다.\nHP를 약 10 회복시킨다."

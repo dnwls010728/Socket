@@ -1,6 +1,6 @@
 npcs:
   100000:
-    name: "Temp"
+    name: "잡화상인"
     path: "Sprites\\Characters\\Player\\PlayerSheet.png.apack"
     speeches:
-      - "Test speech 1."
+      - "없는거 뺴고 다 팜"

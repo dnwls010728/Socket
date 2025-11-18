@@ -1,48 +1,48 @@
 mobs:
   100000:
     stats:
-      lv: 1
-      hp: 3000
+      lv: 10
+      hp: 550
       dmg: 10
       def: 5
       speed: 1.0
-      exp: 1000
+      exp: 200
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
     animation_pack: "Sprites\\Mobs\\100000.png.apack"
   100001:
     stats:
-      lv: 1
-      hp: 3000
-      dmg: 10
-      def: 5
+      lv: 20
+      hp: 2500
+      dmg: 42
+      def: 25
       speed: 1.0
-      exp: 1000
+      exp: 412
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
     animation_pack: "Sprites\\Mobs\\100001.png.apack"
   100002:
     stats:
-      lv: 1
-      hp: 3000
-      dmg: 10
-      def: 5
+      lv: 30
+      hp: 34567
+      dmg: 1434
+      def: 70
       speed: 1.0
-      exp: 1000
+      exp: 618
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
     animation_pack: "Sprites\\Mobs\\100002.png.apack"
   100003:
     stats:
-      lv: 1
-      hp: 3000
-      dmg: 10
-      def: 5
+      lv: 40
+      hp: 67899
+      dmg: 2534
+      def: 100
       speed: 1.0
-      exp: 1000
+      exp: 1001
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
