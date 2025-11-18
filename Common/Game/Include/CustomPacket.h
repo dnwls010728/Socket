@@ -141,7 +141,7 @@ struct SelectCharacterResponse : public Net::IPacket
     std::vector<SkillInfo> skills;
     std::vector<KeyBindingInfo> key_bindings;
 
-    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, skills, key_bindings)
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, gm_level, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, skills, key_bindings)
     REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 
