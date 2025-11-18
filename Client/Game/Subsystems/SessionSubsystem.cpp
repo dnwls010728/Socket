@@ -37,6 +37,9 @@
 #include "PacketHandlers/ComboSkillStateChangedHandler.h"
 #include "PacketHandlers/DoSelectCardHandler.h"
 #include "PacketHandlers/ShopOpenHandler.h"
+#include "PacketHandlers/ShopBuyResponseHandler.h"
+#include "PacketHandlers/ShopSellPriceResponseHandler.h"
+#include "PacketHandlers/ShopSellResponseHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -219,6 +222,21 @@ void SessionSubsystem::Init()
     handlers_.emplace(
         ShopOpenResponse::StaticPacketID,
         std::make_unique<ShopOpenHandler>()
+    );
+
+    handlers_.emplace(
+        ShopSellPriceResponse::StaticPacketID,
+        std::make_unique<ShopSellPriceResponseHandler>()
+    );
+
+    handlers_.emplace(
+        ShopSellResponse::StaticPacketID,
+        std::make_unique<ShopSellResponseHandler>()
+    );
+
+    handlers_.emplace(
+        ShopBuyResponse::StaticPacketID,
+        std::make_unique<ShopBuyResponseHandler>()
     );
 #pragma endregion
 

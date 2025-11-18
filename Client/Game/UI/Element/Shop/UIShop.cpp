@@ -42,8 +42,9 @@ UIShop::UIShop(const std::wstring& name) :
     player_scroll_box_(nullptr),
     npc_list_content_(nullptr),
     player_list_content_(nullptr),
-    npc_entries_(),
-    player_entries_(),
+    npc_item_rows_(),
+    player_item_rows_(),
+    player_items_(),
     player_tab_(InventoryType::kEquip),
     npc_id_(0)
 {
@@ -172,7 +173,7 @@ UIShop::UIShop(const std::wstring& name) :
     player_list_content_->SetSize({ player_scroll_box_->GetSize().x - 12.f, player_scroll_box_->GetSize().y });
     
     player_money_text_ = AddChild<UIText>(UIText::StaticClass(), L"PlayerMoney");
-    player_money_text_->SetRelativePosition({ kWindowWidth - 160.f, 225.f });
+    player_money_text_->SetRelativePosition({ kWindowWidth - 110.f, 175.f });
     player_money_text_->SetSize({ 150.f, 24.f });
     player_money_text_->SetColor(Math::Color::White);
     player_money_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
@@ -188,7 +189,7 @@ void UIShop::OpenShop(int32_t npc_id, const std::vector<ShopItemInfo>& items)
     
     npc_id_ = npc_id;
 
-    npc_title_text_->SetText(L"NPC 상점 - " + std::to_wstring(npc_id));
+    npc_title_text_->SetText(L"NPC 상점");
 
     // UISprite* character_sheet = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
     // uint32_t frame_index = npc_id % 7;
@@ -249,11 +250,11 @@ bool UIShop::OnDragEnd(const Math::Vector2&) { return true; }
 
 void UIShop::UpdateNpcItems(const std::vector<ShopItemInfo>& items)
 {
-    EnsureNpcEntries(items.size());
+    AllocNPCItemRow(items.size());
 
-    for (size_t i = 0; i < npc_entries_.size(); ++i)
+    for (size_t i = 0; i < npc_item_rows_.size(); ++i)
     {
-        UIShopItemRow* row = npc_entries_[i];
+        UIShopItemRow* row = npc_item_rows_[i];
         if (i < items.size())
         {
             row->SetActive(true);
@@ -283,7 +284,7 @@ void UIShop::RefreshPlayerInventory()
     Inventory* inventory = player->GetInventory();
     if (!inventory) return;
 
-    std::vector<std::pair<uint32_t, int32_t>> items;
+    player_items_.clear();
 
     uint32_t capacity = inventory->GetSlotCapacity(player_tab_);
     for (uint32_t slot = 1; slot <= capacity; ++slot)
@@ -292,23 +293,25 @@ void UIShop::RefreshPlayerInventory()
         if (!item_id) continue;
 
         int32_t count = inventory->GetItemCount(player_tab_, slot);
-        items.emplace_back(item_id, count);
+        player_items_.push_back({ slot, item_id, count });
     }
 
-    AllocPlayerItemRow(items.size());
+    AllocPlayerItemRow(player_items_.size());
 
-    for (size_t i = 0; i < player_entries_.size(); ++i)
+    for (size_t i = 0; i < player_item_rows_.size(); ++i)
     {
-        UIShopItemRow* row = player_entries_[i];
+        UIShopItemRow* row = player_item_rows_[i];
 
-        if (i < items.size())
+        if (i < player_items_.size())
         {
+            const auto& entry = player_items_[i];
             row->SetActive(true);
-            row->SetItem(items[i].first);
-            row->SetCountText(L"보유: " + std::to_wstring(items[i].second));
+            row->SetItem(entry.item_id);
+            row->SetCountText(L"보유: " + std::to_wstring(entry.count));
 
+            InventoryType type = player_tab_;
             row->SetDoubleClickHandler(Function<void(void)>(
-                [this, item_id = items[i].first]() { OnPlayerItemDoubleClicked(item_id); }));
+                [this, slot_id = entry.slot_id, type]() { OnPlayerItemDoubleClicked(type, slot_id); }));
         }
         else
         {
@@ -338,11 +341,15 @@ void UIShop::OnNpcItemDoubleClicked(int32_t item_id, int32_t price)
     UIPopup::PopupParam param;
     param.caption = name + L"을(를) " + FormatCurrency(price) + L" 컬러에 구매하시겠습니까?";
     param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
-    param.callback = [item_id, price, npc = npc_id_](const std::wstring&, UIPopup::PopupOption opt)
+    param.callback = [item_id, npc = npc_id_](const std::wstring&, UIPopup::PopupOption opt)
     {
         if (opt == UIPopup::PopupOption::Yes)
         {
-            // TODO: 구매
+            ShopBuyRequest request;
+            request.npc_id = npc;
+            request.item_id = item_id;
+            request.count = 1;
+            SessionSubsystem::Get()->SendPacket(request);
         }
         return true;
     };
@@ -350,18 +357,76 @@ void UIShop::OnNpcItemDoubleClicked(int32_t item_id, int32_t price)
     UIPopup::ShowPopup(param);
 }
 
-void UIShop::OnPlayerItemDoubleClicked(int32_t item_id)
+void UIShop::OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id)
+{
+    RequestSellPrice(type, slot_id);
+}
+
+void UIShop::RequestSellPrice(InventoryType type, uint32_t slot_id)
+{
+    ShopSellPriceRequest request;
+    request.inventory_type = static_cast<uint8_t>(type);
+    request.slot_id = slot_id;
+    SessionSubsystem::Get()->SendPacket(request);
+}
+
+void UIShop::ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price)
 {
     const ItemData* item = DataSubsystem::Get()->GetItem(item_id);
     std::wstring name = item ? item->name : L"알 수 없는 아이템";
 
-    // TODO :: 판매 가격 반영
-    
     UIPopup::PopupParam param;
-    param.caption = name + L"을(를) " + FormatCurrency(item->price) + L" 컬러에 판매하시겠습니까?";
+    param.caption = name + L"을(를) " + FormatCurrency(price) + L" 컬러에 판매하시겠습니까?";
     param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
-    param.callback = [](const std::wstring&, UIPopup::PopupOption) { return true; };
+    param.callback = [type, slot_id](const std::wstring&, UIPopup::PopupOption opt)
+    {
+        if (opt != UIPopup::PopupOption::Yes)
+            return true;
 
+        ShopSellRequest request;
+        request.inventory_type = static_cast<uint8_t>(type);
+        request.slot_id = slot_id;
+        SessionSubsystem::Get()->SendPacket(request);
+        return true;
+    };
+
+    UIPopup::ShowPopup(param);
+}
+
+void UIShop::HandleSellPriceResponse(const ShopSellPriceResponse& response)
+{
+    if (!response.success)
+    {
+        UIPopup::PopupParam param;
+        param.caption = L"판매할 수 있는 아이템이 없습니다.";
+        param.option = UIPopup::PopupOption::OK;
+        UIPopup::ShowPopup(param);
+        return;
+    }
+
+    InventoryType type = static_cast<InventoryType>(response.inventory_type);
+    ShowSellPopup(type, response.slot_id, response.item_id, response.price);
+}
+
+void UIShop::HandleSellResponse(const ShopSellResponse& response)
+{
+    if (response.success)
+        return;
+
+    UIPopup::PopupParam param;
+    param.caption = L"아이템을 판매할 수 없습니다.";
+    param.option = UIPopup::PopupOption::OK;
+    UIPopup::ShowPopup(param);
+}
+
+void UIShop::HandleBuyResponse(const ShopBuyResponse& response)
+{
+    if (response.success)
+        return;
+
+    UIPopup::PopupParam param;
+    param.caption = L"아이템을 구매할 수 없습니다";
+    param.option = UIPopup::PopupOption::OK;
     UIPopup::ShowPopup(param);
 }
 
@@ -376,21 +441,21 @@ std::wstring UIShop::FormatCurrency(int32_t value)
     }
     return out;
 }
-void UIShop::EnsureNpcEntries(size_t count)
+void UIShop::AllocNPCItemRow(size_t count)
 {
-    while (npc_entries_.size() < count)
+    while (npc_item_rows_.size() < count)
     {
         auto* itemRow = npc_list_content_->AddChild<UIShopItemRow>(
             UIShopItemRow::StaticClass(),
-            L"NpcItemRow" + std::to_wstring(npc_entries_.size())
+            L"NpcItemRow" + std::to_wstring(npc_item_rows_.size())
         );
 
         itemRow->SetSize({ npc_scroll_box_->GetSize().x - 12.f, kItemRowHeight - 6.f });
-        npc_entries_.push_back(itemRow);
+        npc_item_rows_.push_back(itemRow);
     }
 
-    for (size_t i = 0; i < npc_entries_.size(); ++i)
-        npc_entries_[i]->SetRelativePosition({ 0.f, static_cast<float>(i) * kItemRowHeight });
+    for (size_t i = 0; i < npc_item_rows_.size(); ++i)
+        npc_item_rows_[i]->SetRelativePosition({ 0.f, static_cast<float>(i) * kItemRowHeight });
 
     float content_height = std::max(
         npc_scroll_box_->GetSize().y,
@@ -402,19 +467,19 @@ void UIShop::EnsureNpcEntries(size_t count)
 
 void UIShop::AllocPlayerItemRow(size_t count)
 {
-    while (player_entries_.size() < count)
+    while (player_item_rows_.size() < count)
     {
         auto* itemRow = player_list_content_->AddChild<UIShopItemRow>(
             UIShopItemRow::StaticClass(),
-            L"PlayerItemRow" + std::to_wstring(player_entries_.size())
+            L"PlayerItemRow" + std::to_wstring(player_item_rows_.size())
         );
 
         itemRow->SetSize({ player_scroll_box_->GetSize().x - 12.f, kItemRowHeight - 6.f });
-        player_entries_.push_back(itemRow);
+        player_item_rows_.push_back(itemRow);
     }
 
-    for (size_t i = 0; i < player_entries_.size(); ++i)
-        player_entries_[i]->SetRelativePosition({ 0.f, static_cast<float>(i) * kItemRowHeight });
+    for (size_t i = 0; i < player_item_rows_.size(); ++i)
+        player_item_rows_[i]->SetRelativePosition({ 0.f, static_cast<float>(i) * kItemRowHeight });
 
     float content_height = std::max(
         player_scroll_box_->GetSize().y,
@@ -437,7 +502,6 @@ void UIShop::SwitchPlayerTab(InventoryType type)
     RefreshPlayerInventory();
 }
 
-// TODO: 함수 분리
 void UIShop::OnEvent(const EventData& data)
 {
     if (dynamic_cast<const ItemAddedData*>(&data) ||

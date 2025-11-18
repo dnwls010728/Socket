@@ -317,6 +317,9 @@
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectSpawnHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ShopOpenHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopBuyResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellPriceResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellResponseHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillCastHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\TakeDamageHandler.h" />
@@ -769,6 +772,9 @@
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectSpawnHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ShopOpenHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopBuyResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellPriceResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellResponseHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\TakeDamageHandler.cpp" />

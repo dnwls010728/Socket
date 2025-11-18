@@ -197,11 +197,11 @@ void UIInventory::Init()
     UIContainer::Init();
 
     PublisherSubsystem* subsystem = PublisherSubsystem::Get();
-    subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
-    subsystem->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
-    subsystem->Subscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
-    subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
-    subsystem->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnItemAdded);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnItemCountChanged);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnItemMoved);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnItemRemoved);
+    subsystem->Subscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnColorUpdated);
 
     for (uint32_t i = 0; i < 128; ++i)
     {
@@ -220,11 +220,11 @@ void UIInventory::Uninit()
     UIContainer::Uninit();
     
     PublisherSubsystem* subsystem = PublisherSubsystem::Get();
-    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnEvent);
-    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnEvent);
-    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnEvent);
-    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnEvent);
-    subsystem->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnEvent);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemAdded, this, &UIInventory::OnItemAdded);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemCountChanged, this, &UIInventory::OnItemCountChanged);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemMoved, this, &UIInventory::OnItemMoved);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kItemRemoved, this, &UIInventory::OnItemRemoved);
+    subsystem->Unsubscribe(PublisherSubsystem::EventType::kColorUpdated, this, &UIInventory::OnColorUpdated);
 }
 
 bool UIInventory::OnDragBegin(const Math::Vector2& position)
@@ -264,32 +264,48 @@ bool UIInventory::OnKey(uint32_t scancode, bool is_pressed)
     return true;
 }
 
-void UIInventory::OnEvent(const EventData& data)
+void UIInventory::OnItemAdded(const EventData& data)
 {
     if (const auto* item_added = dynamic_cast<const ItemAddedData*>(&data))
     {
         if (item_added->inventory_type != tab_) return;
         UpdateSlot(item_added->slot_id);
     }
-    else if (const auto* count_changed = dynamic_cast<const ItemCountChangedData*>(&data))
+}
+
+void UIInventory::OnItemCountChanged(const EventData& data)
+{
+    if (const auto* count_changed = dynamic_cast<const ItemCountChangedData*>(&data))
     {
         if (count_changed->inventory_type != tab_) return;
         UpdateSlot(count_changed->slot_id);
     }
-    else if (const auto* item_moved = dynamic_cast<const ItemMovedData*>(&data))
+}
+
+void UIInventory::OnItemMoved(const EventData& data)
+{
+    if (const auto* item_moved = dynamic_cast<const ItemMovedData*>(&data))
     {
         if (item_moved->first_inventory_type == tab_)
             UpdateSlot(item_moved->first_slot_index);
-        
+
         if (item_moved->second_inventory_type == tab_)
             UpdateSlot(item_moved->second_slot_index);
     }
-    else if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
+}
+
+void UIInventory::OnItemRemoved(const EventData& data)
+{
+    if (const auto* item_removed = dynamic_cast<const ItemRemovedData*>(&data))
     {
         if (item_removed->inventory_type != tab_) return;
         UpdateSlot(item_removed->slot_id);
     }
-    else if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
+}
+
+void UIInventory::OnColorUpdated(const EventData& data)
+{
+    if (const auto* color_update = dynamic_cast<const ColorUpdateData*>(&data))
     {
         UpdateColor(color_update->color);
     }

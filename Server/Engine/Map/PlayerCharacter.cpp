@@ -23,6 +23,7 @@
 #include "Session/Player/Inventory/Item.h"
 #include "Shop/ShopManager.h"
 #include "Skill/SkillManager.h"
+#include "Shop/ShopItem.h"
 
 
 PlayerCharacter::PlayerCharacter() :
@@ -857,6 +858,197 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         {
             ShopClosePacket* shop_close_packet = static_cast<ShopClosePacket*>(packet);
             shop_ = nullptr;
+        }
+        break;
+
+    case ShopSellPriceRequest::StaticPacketID:
+        {
+            ShopSellPriceRequest* request = static_cast<ShopSellPriceRequest*>(packet);
+
+            ShopSellPriceResponse response{};
+            response.success = false;
+            response.inventory_type = request->inventory_type;
+            response.slot_id = request->slot_id;
+            response.item_id = 0;
+            response.price = 0;
+            
+            if (!shop_)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            uint8_t type_index = request->inventory_type;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> item = nullptr;
+            {
+                auto lock = inventory->Lock();
+                item = inventory->FindItem(request->slot_id);
+            }
+
+            if (!item)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t price;
+            bool calculate_price_res = shop_->CalculateSellPrice(item->GetID(), item->GetCount(), price);
+            if (!calculate_price_res)
+            {
+                SendPacket(response);
+                break;           
+            }
+            
+            response.success = true;
+            response.item_id = item->GetID();
+            response.price = price;
+
+            SendPacket(response);
+        }
+        break;
+
+    case ShopSellRequest::StaticPacketID:
+        {
+            ShopSellRequest* request = static_cast<ShopSellRequest*>(packet);
+
+            ShopSellResponse response{};
+            response.success = false;
+            response.inventory_type = request->inventory_type;
+            response.slot_id = request->slot_id;
+            response.item_id = 0;
+            response.price = 0;
+            response.color = color_.load();
+
+            if (!shop_)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            uint8_t type_index = request->inventory_type;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> sold_item = nullptr;
+            InventoryUpdatePacket update_packet;
+
+            {
+                auto lock = inventory->Lock();
+                sold_item = inventory->EraseItem(request->slot_id);
+                if (sold_item)
+                {
+                    InventoryChange change;
+                    change.inventory_type = type_index;
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = request->slot_id;
+                    update_packet.changes.push_back(change);
+                }
+            }
+
+            if (!sold_item)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            if (!update_packet.changes.empty())
+                SendPacket(update_packet);
+
+            int32_t price;
+            bool calculate_price_res = shop_->CalculateSellPrice(sold_item->GetID(), sold_item->GetCount(), price);
+            int32_t new_color = color_.fetch_add(price) + price;
+
+            if (!calculate_price_res)
+            {
+                SendPacket(response);
+                break;           
+            }
+
+            response.success = true;
+            response.item_id = sold_item->GetID();
+            response.price = price;
+            response.color = new_color;
+
+            SendPacket(response);
+        }
+        break;
+
+    case ShopBuyRequest::StaticPacketID:
+        {
+            ShopBuyRequest* request = static_cast<ShopBuyRequest*>(packet);
+
+            ShopBuyResponse response{};
+            response.success = false;
+            response.item_id = request->item_id;
+            response.count = request->count;
+            response.color = color_.load();
+
+            if (!shop_ || request->npc_id != shop_->GetNPCID())
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto shop_item = shop_->FindItem(request->item_id);
+            if (!shop_item)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t count = request->count > 0 ? request->count : 1;
+            int32_t total_price = shop_item->GetPrice() * count;
+
+            if (color_.load() < total_price)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            uint32_t type_index = request->item_id / 100000;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> item_to_add = nullptr;
+            if (type_index == static_cast<uint8_t>(InventoryType::kEquip))
+                item_to_add = EquipItem::Create(request->item_id);
+            else
+                item_to_add = Item::Create(request->item_id, count);
+
+            if (!item_to_add)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            bool added = inventory->AddItem(item_to_add);
+            if (!added)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t new_color = color_.fetch_sub(total_price) - total_price;
+            response.success = true;
+            response.count = count;
+            response.color = new_color;
+
+            SendPacket(response);
         }
         break;
 

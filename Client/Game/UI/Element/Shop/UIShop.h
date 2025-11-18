@@ -12,6 +12,9 @@ class UIImage;
 class UIText;
 class UIScrollBox;
 class UIShopItemRow;
+struct ShopBuyResponse;
+struct ShopSellPriceResponse;
+struct ShopSellResponse;
 
 class UIShop : public UIContainer
 {
@@ -22,6 +25,9 @@ public:
     virtual ~UIShop() override = default;
 
     void OpenShop(int32_t npc_id, const std::vector<ShopItemInfo>& items);
+    void HandleSellPriceResponse(const ShopSellPriceResponse& response);
+    void HandleSellResponse(const ShopSellResponse& response);
+    void HandleBuyResponse(const ShopBuyResponse& response);
 
 protected:
     virtual void Init() override;
@@ -32,17 +38,26 @@ protected:
     virtual bool OnDragEnd(const Math::Vector2& position) override;
 
 private:
-    void EnsureNpcEntries(size_t count);
+    void AllocNPCItemRow(size_t count);
     void AllocPlayerItemRow(size_t count);
     void UpdateNpcItems(const std::vector<ShopItemInfo>& items);
     void RefreshPlayerInventory();
     void UpdatePlayerMoney(int32_t color = -1);
     void SwitchPlayerTab(InventoryType type);
     void OnNpcItemDoubleClicked(int32_t item_id, int32_t price);
-    void OnPlayerItemDoubleClicked(int32_t item_id);
+    void OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id);
+    void RequestSellPrice(InventoryType type, uint32_t slot_id);
+    void ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price);
     void OnEvent(const EventData& data);
 
     static std::wstring FormatCurrency(int32_t value);
+
+    struct PlayerInventoryEntry
+    {
+        uint32_t slot_id;
+        uint32_t item_id;
+        int32_t count;
+    };
 
     UIImage* background_;
     UIImage* npc_panel_;
@@ -62,8 +77,9 @@ private:
     UIContainer* npc_list_content_;
     UIContainer* player_list_content_;
 
-    std::vector<UIShopItemRow*> npc_entries_;
-    std::vector<UIShopItemRow*> player_entries_;
+    std::vector<UIShopItemRow*> npc_item_rows_;
+    std::vector<UIShopItemRow*> player_item_rows_;
+    std::vector<PlayerInventoryEntry> player_items_;
 
     InventoryType player_tab_;
 

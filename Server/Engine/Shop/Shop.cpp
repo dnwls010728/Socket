@@ -42,6 +42,26 @@ void Shop::Sell(const std::shared_ptr<PlayerCharacter>& player)
 {
 }
 
+std::shared_ptr<ShopItem> Shop::FindItem(uint32_t item_id) const
+{
+    for (const auto& item : items_)
+    {
+        if (item->GetItemID() == item_id)
+            return item;
+    }
+
+    return nullptr;
+}
+
+bool Shop::CalculateSellPrice(uint32_t item_id, int32_t count, int32_t &price) const
+{
+    auto item_data = DataManager::Get()->GetItem(item_id);
+    if (!item_data)
+        return false;
+    price = item_data->price * count;
+    return true;
+}
+
 std::shared_ptr<Shop> Shop::CreateShop(uint32_t id, bool is_shop_id)
 {
     sql::Connection* connection = MySQLManager::Get()->GetConnection();

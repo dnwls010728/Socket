@@ -299,6 +299,9 @@
     <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillGainHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopBuyResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellPriceResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellResponseHandler.cpp" />
     <ClCompile Include="Game\Subsystems\InputActions\InputActions.cpp" />
     <ClCompile Include="Game\UI\Element\Buff\UIBuffIcon.cpp" />
     <ClCompile Include="Game\UI\Element\Buff\UIBuffList.cpp" />
@@ -955,6 +958,9 @@
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillCastHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillGainHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopBuyResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellPriceResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellResponseHandler.h" />
     <ClInclude Include="Game\Subsystems\InputActions\InputActions.h" />
     <ClInclude Include="Game\Subsystems\InputActions\KeyAction.h" />
     <ClInclude Include="Game\Subsystems\InputActions\KeyType.h" />
