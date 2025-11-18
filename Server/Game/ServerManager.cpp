@@ -262,6 +262,8 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         profile.stats.exp = character->exp_.load();
                         profile.stats.lv = character->lv_;
                         
+                        profile.gm_level = character->gm_level_;
+                        
                         profiles.push_back(profile);
                     }
                     

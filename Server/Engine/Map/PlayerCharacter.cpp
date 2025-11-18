@@ -102,7 +102,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->color_.store(result->getInt("color"));
-                character->gm_level_ = result->getInt("gm_level");
+                character->gm_level_ = result->getInt("gm");
             }
         }
 
@@ -1194,6 +1194,7 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     PlayerInfo& info = packet.object_info.info.player;
     wcscpy_s(info.name, name_.c_str());
     wcscpy_s(info.body_color, body_color_.c_str());
+    info.gm_level = gm_level_;
 
     player->SendPacket(packet);
 

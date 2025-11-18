@@ -34,6 +34,8 @@ public:
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
     FORCEINLINE const std::wstring& GetBodyColor() const { return body_color_; }
+    
+    FORCEINLINE bool IsGM() const { return gm_level_ > 0; }
 
     FORCEINLINE const std::vector<CharacterProfile>& GetProfiles() const { return profiles_; }
     
@@ -70,6 +72,8 @@ private:
 
     std::wstring name_;
     std::wstring body_color_;
+    
+    int8_t gm_level_;
 
     std::vector<CharacterProfile> profiles_;
     

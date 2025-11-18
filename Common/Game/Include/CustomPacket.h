@@ -124,6 +124,8 @@ struct SelectCharacterResponse : public Net::IPacket
     int32_t def;
     int32_t dig;
     int32_t color;
+    
+    int8_t gm_level;
 
     struct
     {

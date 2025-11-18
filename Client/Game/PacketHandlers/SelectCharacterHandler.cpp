@@ -17,6 +17,8 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 
     player_subsystem->name_ = response->name;
     player_subsystem->body_color_ = response->body_color;
+    
+    player_subsystem->gm_level_ = response->gm_level;
 
     player_subsystem->character_id_ = response->character_id;
 

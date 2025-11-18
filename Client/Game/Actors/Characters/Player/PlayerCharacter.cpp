@@ -125,9 +125,9 @@ void PlayerCharacter::TakeDamage(const std::vector<DamageInfo>& damage_amount, f
     invincible_time_ = server_time + 1.f;
 }
 
-void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position)
+void PlayerCharacter::Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position, int8_t gm_level)
 {
-    character_name_ = name;
+    character_name_ = gm_level > 0 ? L"[GM]" + name : name;
 
     color_ = Math::Color::HexToColor(body_color);
     renderer_->SetColor(color_);

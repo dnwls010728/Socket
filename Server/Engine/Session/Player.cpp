@@ -200,6 +200,7 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.def = player_character_->effective_def_;
             response.dig = player_character_->effective_dig_;
             response.color = player_character_->color_;
+            response.gm_level = player_character_->gm_level_;
             response.map_id = player_character_->map_->GetMapID();
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;

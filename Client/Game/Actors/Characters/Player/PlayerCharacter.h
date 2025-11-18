@@ -16,7 +16,7 @@ public:
     virtual void ReceivePacket(Net::IPacket* packet) override;
     virtual void TakeDamage(const std::vector<DamageInfo>& damage_amount, float server_time) override;
 
-    void Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position);
+    void Init(const std::wstring& name, const std::wstring& body_color, const Math::Vector2& position, int8_t gm_level = 0);
     void UpdateFlip() const;
     void SetDead();
 

@@ -24,6 +24,8 @@ struct CharacterProfile
         int32_t exp;
         int32_t lv;
     } stats;
+    
+    int8_t gm_level;
 };
 
 struct ItemInfo
@@ -65,6 +67,8 @@ struct PlayerInfo
 {
     wchar_t name[256];
     wchar_t body_color[256];
+    
+    int8_t gm_level;
 };
 
 struct MobInfo

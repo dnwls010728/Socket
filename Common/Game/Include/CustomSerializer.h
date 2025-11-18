@@ -28,7 +28,8 @@ namespace Net
 		v.position.x,
 		v.position.y,
 		v.body_color,
-		v.stats
+		v.stats,
+		v.gm_level
 		)
 
     SERIALIZER_EXTEND(ItemInfo,
