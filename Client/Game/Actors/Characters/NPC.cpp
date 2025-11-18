@@ -1,16 +1,19 @@
 ﻿#include "pch.h"
 #include "NPC.h"
 
+#include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimationPack.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 #include "Math/Color.h"
 #include "Math/Math.h"
+#include "Physics/Physics2D.h"
 #include "Subsystems/DataSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "Time/Time.h"
 #include "UI/Element/UINameTag.h"
+#include "Windows/DX/Renderer.h"
 
 NPC::NPC(const std::wstring& name) :
     CharacterBase(name),
@@ -23,6 +26,8 @@ NPC::NPC(const std::wstring& name) :
     last_pressed_time_(0.f)
 {
     SetLayer(ActorLayer::kNPC);
+    
+    collider_->SetOffset({0.f, .5f});
 }
 
 void NPC::Init(uint32_t npc_id, const Math::Vector2& position)
@@ -68,16 +73,23 @@ void NPC::Tick(float delta_time)
     Mouse* mouse = Mouse::Get();
     if (mouse->GetMouseButtonDown(MouseButton::kLeft))
     {
-        if (Time::Seconds() - last_pressed_time_ < .2f)
-        {
-            ShopOpenRequest request;
-            request.object_id = GetObjectID();
+        Math::Vector2 position = Renderer::Get()->ScreenToWorld(mouse->GetMousePosition());
             
-            SessionSubsystem::Get()->SendPacket(request);
-        }
-        else
+        Actor* out_actor = nullptr;
+        bool is_hit = Physics2D::OverlapPoint(position, &out_actor, static_cast<uint16_t>(ActorLayer::kNPC));
+        if (is_hit)
         {
-            last_pressed_time_ = Time::Seconds();
+            if (Time::Seconds() - last_pressed_time_ < .2f)
+            {
+                ShopOpenRequest request;
+                request.object_id = GetObjectID();
+            
+                SessionSubsystem::Get()->SendPacket(request);
+            }
+            else
+            {
+                last_pressed_time_ = Time::Seconds();
+            }
         }
     }
 }
