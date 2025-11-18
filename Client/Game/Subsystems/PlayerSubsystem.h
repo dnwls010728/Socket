@@ -42,6 +42,9 @@ public:
     FORCEINLINE void SetPortalCooldown(float value) { portal_cooldown_ = value; }
     FORCEINLINE float GetPortalCooldown() const { return portal_cooldown_; }
 
+    FORCEINLINE void SetPickupCooldown(float value) { pickup_cooldown_ = value; }
+    FORCEINLINE float GetPickupCooldown() const { return pickup_cooldown_; }
+
     static PlayerSubsystem* Get();
 
 private:
@@ -75,6 +78,7 @@ private:
     SkillManager skill_manager_;
 
     float portal_cooldown_;
+    float pickup_cooldown_;
 
     void PublishSkills() const;
 

@@ -23,7 +23,8 @@ PlayerSubsystem::PlayerSubsystem() :
     body_color_(L"FFFFFF"),
     profiles_(),
     inventory_(nullptr),
-    portal_cooldown_(0.f)
+    portal_cooldown_(0.f),
+    pickup_cooldown_(0.f)
 {
 }
 

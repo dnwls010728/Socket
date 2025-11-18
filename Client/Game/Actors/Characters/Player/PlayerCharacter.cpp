@@ -291,9 +291,11 @@ void PlayerCharacter::Tick(float delta_time)
                     --bonus_jumps_;
                 }
             }
+            
+            float pickup_cooldown = player_subsystem->GetPickupCooldown();
 
             // 아이템 줍기
-            if (keyboard->GetKeyDown(Scancode::kKeyLeftShift))
+            if (keyboard->GetKey(Scancode::kKeyLeftShift) && pickup_cooldown - Time::Seconds() <= 0.f)
             {
                 Math::Vector2 center = GetTransform()->GetPosition();
                 Math::Vector2 size = {1.f, 1.f};
@@ -315,6 +317,8 @@ void PlayerCharacter::Tick(float delta_time)
                         request.object_id = dropped_item->GetObjectID();
                         SendPacket(request);
                     }
+
+                    player_subsystem->SetPickupCooldown(Time::Seconds() + .25f);
                 }
             }
         }
