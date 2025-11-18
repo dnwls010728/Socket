@@ -78,6 +78,7 @@ public:
     void SetFarZ(float far_z);
     void SetTarget(const std::shared_ptr<Actor>& kActor);
     void SetLimit(float width, float height);
+    void Shake(float intensity, float duration);
 
     const Bounds& GetBounds();
 
@@ -114,5 +115,7 @@ private:
     Math::Vector2 focus_area_size_;
 
     TickType tick_type_;
+    
+    float shake_timer_;
     
 };

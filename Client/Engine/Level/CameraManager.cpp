@@ -84,6 +84,11 @@ void CameraManager::SetLimit(const float width, const float height)
     limit_half_height_ = height * .5f;
 }
 
+void CameraManager::Shake(float intensity, float duration)
+{
+    shake_timer_ = duration;
+}
+
 const Bounds& CameraManager::GetBounds()
 {
     const float kHeight = size_ * 2.f;
