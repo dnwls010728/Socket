@@ -873,6 +873,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             response.slot_id = request->slot_id;
             response.item_id = 0;
             response.price = 0;
+            response.count = 0;
             
             if (!shop_)
             {
@@ -894,14 +895,14 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 item = inventory->FindItem(request->slot_id);
             }
 
-            if (!item)
+            if (!item || item->GetCount() < request->count)
             {
                 SendPacket(response);
                 break;
             }
 
             int32_t price;
-            bool calculate_price_res = shop_->CalculateSellPrice(item->GetID(), item->GetCount(), price);
+            bool calculate_price_res = shop_->CalculateSellPrice(item->GetID(), request->count, price);
             if (!calculate_price_res)
             {
                 SendPacket(response);
@@ -911,6 +912,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             response.success = true;
             response.item_id = item->GetID();
             response.price = price;
+            response.count = request->count;
 
             SendPacket(response);
         }
@@ -927,6 +929,7 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             response.item_id = 0;
             response.price = 0;
             response.color = color_.load();
+            response.count = 0;
 
             if (!shop_)
             {
@@ -947,21 +950,38 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
 
             {
                 auto lock = inventory->Lock();
-                sold_item = inventory->EraseItem(request->slot_id);
-                if (sold_item)
+                sold_item = inventory->FindItem(request->slot_id);
+                if (!sold_item)
                 {
+                    SendPacket(response);
+                    break;
+                }
+
+                int32_t left_count = sold_item->GetCount() - request->count;
+                if (left_count < 0)
+                {
+                    SendPacket(response);
+                    break;
+                }
+                else if (left_count == 0)
+                {
+                    inventory->EraseItem(sold_item->GetSlot());
                     InventoryChange change;
                     change.inventory_type = type_index;
                     change.action = InventoryAction::kRemove;
                     change.remove.slot_id = request->slot_id;
                     update_packet.changes.push_back(change);
                 }
-            }
-
-            if (!sold_item)
-            {
-                SendPacket(response);
-                break;
+                else
+                {
+                    sold_item->SetCount(sold_item->GetCount() - request->count);
+                    InventoryChange change;
+                    change.inventory_type = type_index;
+                    change.action = InventoryAction::kChangeCount;
+                    change.change_count.slot_id = request->slot_id;
+                    change.change_count.count = left_count;
+                    update_packet.changes.push_back(change);
+                }
             }
 
             if (!update_packet.changes.empty())
@@ -981,7 +1001,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             response.item_id = sold_item->GetID();
             response.price = price;
             response.color = new_color;
-
             SendPacket(response);
         }
         break;

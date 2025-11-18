@@ -559,8 +559,9 @@ struct ShopSellPriceRequest : public Net::IPacket
 {
     uint8_t inventory_type;
     uint32_t slot_id;
+    int32_t count;
 
-    SERIALIZABLE_FIELDS(inventory_type, slot_id)
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
     REGISTER_PACKET(ShopSellPriceRequest, 703)
 };
 
@@ -571,8 +572,9 @@ struct ShopSellPriceResponse : public Net::IPacket
     uint32_t slot_id;
     uint32_t item_id;
     int32_t price;
+    int32_t count;
 
-    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price)
+    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price, count)
     REGISTER_PACKET(ShopSellPriceResponse, 704)
 };
 
@@ -580,8 +582,9 @@ struct ShopSellRequest : public Net::IPacket
 {
     uint8_t inventory_type;
     uint32_t slot_id;
+    int32_t count;
 
-    SERIALIZABLE_FIELDS(inventory_type, slot_id)
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
     REGISTER_PACKET(ShopSellRequest, 705)
 };
 
@@ -593,8 +596,9 @@ struct ShopSellResponse : public Net::IPacket
     uint32_t item_id;
     int32_t price;
     int32_t color;
+    int32_t count;
 
-    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price, color)
+    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price, color, count)
     REGISTER_PACKET(ShopSellResponse, 706)
 };
 

@@ -45,9 +45,9 @@ private:
     void UpdatePlayerMoney(int32_t color = -1);
     void SwitchPlayerTab(InventoryType type);
     void OnNpcItemDoubleClicked(int32_t item_id, int32_t price);
-    void OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id);
-    void RequestSellPrice(InventoryType type, uint32_t slot_id);
-    void ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price);
+    void OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id, int32_t row_dix);
+    void RequestSellPrice(InventoryType type, uint32_t slot_id, int32_t count);
+    void ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price, int32_t count);
     void OnEvent(const EventData& data);
 
     static std::wstring FormatCurrency(int32_t value);

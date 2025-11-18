@@ -123,7 +123,7 @@ UIShop::UIShop(const std::wstring& name) :
     player_image_ = AddChild<UIImage>(UIImage::StaticClass(), L"PlayerImage");
     player_image_->SetRelativePosition({ kWindowWidth - 300.f + 16.f, 48.f });
     player_image_->SetSize({ 160.f, 160.f });
-    // player_image_->SetSprite(character_sheet, L"UIPlayerSheet_0");
+    player_image_->SetSprite(character_sheet, L"UIPlayerSheet_0");
 
     UIButton* equip_button = AddChild<UIButton>(UIButton::StaticClass(), L"EquipTab");
     equip_button->SetRelativePosition({ kWindowWidth - 300.f, 48.f + 160.f + 12.f });
@@ -173,7 +173,7 @@ UIShop::UIShop(const std::wstring& name) :
     player_list_content_->SetSize({ player_scroll_box_->GetSize().x - 12.f, player_scroll_box_->GetSize().y });
     
     player_money_text_ = AddChild<UIText>(UIText::StaticClass(), L"PlayerMoney");
-    player_money_text_->SetRelativePosition({ kWindowWidth - 110.f, 175.f });
+    player_money_text_->SetRelativePosition({ kWindowWidth - 150.f, 175.f });
     player_money_text_->SetSize({ 150.f, 24.f });
     player_money_text_->SetColor(Math::Color::White);
     player_money_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
@@ -191,9 +191,9 @@ void UIShop::OpenShop(int32_t npc_id, const std::vector<ShopItemInfo>& items)
 
     npc_title_text_->SetText(L"NPC 상점");
 
-    // UISprite* character_sheet = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
-    // uint32_t frame_index = npc_id % 7;
-    // npc_image_->SetSprite(character_sheet, L"UIPlayerSheet_" + std::to_wstring(frame_index));
+    UISprite* character_sheet = AssetManager::Get()->Load<UISprite>(L"UI\\UIPlayerSheet.png");
+    uint32_t frame_index = npc_id % 7;
+    npc_image_->SetSprite(character_sheet, L"UIPlayerSheet_" + std::to_wstring(frame_index));
 
     UpdateNpcItems(items);
     RefreshPlayerInventory();
@@ -311,7 +311,7 @@ void UIShop::RefreshPlayerInventory()
 
             InventoryType type = player_tab_;
             row->SetDoubleClickHandler(Function<void(void)>(
-                [this, slot_id = entry.slot_id, type]() { OnPlayerItemDoubleClicked(type, slot_id); }));
+                [this, slot_id = entry.slot_id, type, idx = i]() { OnPlayerItemDoubleClicked(type, slot_id, idx); }));
         }
         else
         {
@@ -357,20 +357,66 @@ void UIShop::OnNpcItemDoubleClicked(int32_t item_id, int32_t price)
     UIPopup::ShowPopup(param);
 }
 
-void UIShop::OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id)
+void UIShop::OnPlayerItemDoubleClicked(InventoryType type, uint32_t slot_id, int32_t idx)
 {
-    RequestSellPrice(type, slot_id);
+    if (player_items_.size() <= idx) return;
+    
+    UIPopup::PopupParam param;
+    param.caption = L"판매할 아이템 수량을 입력하세요.";
+    param.default_input_text = std::to_wstring(player_items_[idx].count);
+    param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No | UIPopup::PopupOption::Edit;
+    param.content_type = UIEditableText::ContentType::kIntegerNumber;
+    param.callback = [this, type, slot_id, idx](const std::wstring& text,  UIPopup::PopupOption option)
+    {
+        if (option == UIPopup::PopupOption::No)
+        {
+            return true;
+        }
+        
+        int32_t held_count = player_items_[idx].count;
+        bool input_success = true;;
+        int32_t sell_count = 0;
+        try
+        {
+            sell_count = std::stoi(text);
+        }
+        catch (...)
+        {
+            input_success = false;
+        }
+
+        if (sell_count <= 0 || sell_count > held_count)
+        {
+            input_success = false;
+        }
+
+        if (!input_success)
+        {
+            UIPopup::PopupParam param;
+            param.caption = L"입력한 수량이 올바르지 않습니다.";
+            param.option = UIPopup::PopupOption::OK;
+            UIPopup::ShowPopup(param);
+            return false;
+        }
+       
+        RequestSellPrice(type, slot_id, sell_count);
+        return true;
+    };
+    UIPopup::ShowPopup(param);
+    
+    
 }
 
-void UIShop::RequestSellPrice(InventoryType type, uint32_t slot_id)
+void UIShop::RequestSellPrice(InventoryType type, uint32_t slot_id, int32_t count)
 {
     ShopSellPriceRequest request;
     request.inventory_type = static_cast<uint8_t>(type);
     request.slot_id = slot_id;
+    request.count = count;
     SessionSubsystem::Get()->SendPacket(request);
 }
 
-void UIShop::ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price)
+void UIShop::ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_id, int32_t price, int32_t count)
 {
     const ItemData* item = DataSubsystem::Get()->GetItem(item_id);
     std::wstring name = item ? item->name : L"알 수 없는 아이템";
@@ -378,7 +424,7 @@ void UIShop::ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_i
     UIPopup::PopupParam param;
     param.caption = name + L"을(를) " + FormatCurrency(price) + L" 컬러에 판매하시겠습니까?";
     param.option = UIPopup::PopupOption::Yes | UIPopup::PopupOption::No;
-    param.callback = [type, slot_id](const std::wstring&, UIPopup::PopupOption opt)
+    param.callback = [type, slot_id, count](const std::wstring&, UIPopup::PopupOption opt)
     {
         if (opt != UIPopup::PopupOption::Yes)
             return true;
@@ -386,6 +432,7 @@ void UIShop::ShowSellPopup(InventoryType type, uint32_t slot_id, uint32_t item_i
         ShopSellRequest request;
         request.inventory_type = static_cast<uint8_t>(type);
         request.slot_id = slot_id;
+        request.count = count;
         SessionSubsystem::Get()->SendPacket(request);
         return true;
     };
@@ -405,7 +452,7 @@ void UIShop::HandleSellPriceResponse(const ShopSellPriceResponse& response)
     }
 
     InventoryType type = static_cast<InventoryType>(response.inventory_type);
-    ShowSellPopup(type, response.slot_id, response.item_id, response.price);
+    ShowSellPopup(type, response.slot_id, response.item_id, response.price, response.count);
 }
 
 void UIShop::HandleSellResponse(const ShopSellResponse& response)
@@ -487,6 +534,7 @@ void UIShop::AllocPlayerItemRow(size_t count)
     );
 
     player_list_content_->SetSize({ player_scroll_box_->GetSize().x - 12.f, content_height });
+    player_scroll_box_->UpdateLayout();
 }
 
 void UIShop::SwitchPlayerTab(InventoryType type)
