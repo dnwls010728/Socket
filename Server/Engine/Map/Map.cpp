@@ -31,6 +31,7 @@ Map::Map(uint32_t map_id) :
     map_id_(map_id),
     return_map_id_(0),
     map_bounds_(),
+    is_safe_zone_(false),
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
@@ -505,7 +506,7 @@ void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_pt
     for (const auto& player_weak : players_ | std::views::values)
     {
         auto player = player_weak.lock();
-        if (!player || player->IsGM()) continue;
+        if (!player || player->IsGM() || IsSafeZone()) continue;
         
         Bounds target_bounds = player->GetHitBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
@@ -536,6 +537,7 @@ bool Map::LoadMapData()
 
     float ppu = properties[2].getFloatValue();
     return_map_id_ = properties[3].getIntValue();
+    is_safe_zone_ = properties[4].getBoolValue();
 
     tmx::FloatRect local_bounds = map_data.getBounds();
     float world_width = local_bounds.width / ppu;

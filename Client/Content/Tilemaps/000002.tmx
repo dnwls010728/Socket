@@ -5,6 +5,7 @@
   <property name="Name" value="깊은 숲속 1"/>
   <property name="PPU" type="float" value="32"/>
   <property name="ReturnMap" type="int" value="1"/>
+  <property name="SafeZone" type="bool" value="false"/>
  </properties>
  <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Tilesets/TemplateTileset.png" width="224" height="256"/>
@@ -129,7 +130,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="5" name="Portal" visible="0">
+ <objectgroup id="5" name="Portal">
   <object id="8" name="Portal" type="Portal" x="160" y="704">
    <properties>
     <property name="ID" type="int" value="0"/>
@@ -138,7 +139,7 @@
    </properties>
    <point/>
   </object>
-  <object id="131" name="Portal" type="Portal" x="1120" y="384">
+  <object id="131" name="Portal" type="Portal" x="1192" y="800">
    <properties>
     <property name="ID" type="int" value="1"/>
     <property name="ToID" type="int" value="0"/>

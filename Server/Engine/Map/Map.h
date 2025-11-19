@@ -74,6 +74,7 @@ public:
     inline uint32_t GetMapID() const { return map_id_; }
     inline uint32_t GetReturnMapID() const { return return_map_id_; }
     inline const Bounds& GetMapBounds() const { return map_bounds_; }
+    inline bool IsSafeZone() const { return is_safe_zone_; }
 
 private:
     void AddObjects();
@@ -87,6 +88,8 @@ private:
     uint32_t return_map_id_;
 
     Bounds map_bounds_;
+    
+    bool is_safe_zone_;
 
     std::mutex player_mutex_;
     std::mutex object_mutex_;

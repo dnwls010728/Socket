@@ -5,6 +5,7 @@
   <property name="Name" value="깊은 숲 속 2"/>
   <property name="PPU" type="float" value="32"/>
   <property name="ReturnMap" type="int" value="1"/>
+  <property name="SafeZone" type="bool" value="false"/>
  </properties>
  <tileset firstgid="1" name="TemplateTileset" tilewidth="32" tileheight="32" tilecount="56" columns="7">
   <image source="../Tilesets/TemplateTileset.png" width="224" height="256"/>
