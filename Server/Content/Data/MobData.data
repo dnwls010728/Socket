@@ -2,11 +2,11 @@ mobs:
   100000:
     stats:
       lv: 10
-      hp: 550
+      hp: 300
       dmg: 10
-      def: 5
+      def: 0
       speed: 1.0
-      exp: 200
+      exp: 400
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
@@ -14,11 +14,11 @@ mobs:
   100001:
     stats:
       lv: 20
-      hp: 2500
+      hp: 2000
       dmg: 42
       def: 25
       speed: 1.0
-      exp: 412
+      exp: 800
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
@@ -26,11 +26,11 @@ mobs:
   100002:
     stats:
       lv: 30
-      hp: 34567
+      hp: 12345
       dmg: 1434
       def: 70
       speed: 1.0
-      exp: 618
+      exp: 1200
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]
@@ -38,11 +38,11 @@ mobs:
   100003:
     stats:
       lv: 40
-      hp: 67899
+      hp: 23456
       dmg: 2534
       def: 100
       speed: 1.0
-      exp: 1001
+      exp: 2000
     hitbox:
       center: [0.0, 1.0]
       size: [2.0, 2.0]

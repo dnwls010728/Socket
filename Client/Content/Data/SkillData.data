@@ -37,13 +37,13 @@ skills:
       - hitbox:
           center: [4.0, 1.0]
           size: [6.0, 4.6]
-        damage: 120
+        damage: 45
         hit_count: 4
         max_targets: 15
         time_offset: 0.3
       - hitbox:
           center: [2.0, 1.0]
-          size: [4.0, 4.6]
+          size: [4.0, 2.6]
         damage: 20
         hit_count: 1
         max_targets: 10
@@ -65,21 +65,21 @@ skills:
       - hitbox:
           center: [3.0, 1.0]
           size: [4.0, 3.5]
-        damage: 28
+        damage: 22
         hit_count: 3
         max_targets: 8
         time_offset: 0.1
       - hitbox:
           center: [3.0, 1.0]
           size: [4.0, 3.5]
-        damage: 28
+        damage: 22
         hit_count: 3
         max_targets: 8
         time_offset: 0.2
       - hitbox:
           center: [3.0, 1.0]
           size: [4.0, 3.5]
-        damage: 27
+        damage: 23
         hit_count: 3
         max_targets: 8
         time_offset: 0.3
@@ -100,14 +100,14 @@ skills:
       - hitbox:
           center: [1.3, 1.0]
           size: [5.0, 4.1]
-        damage: 125
+        damage: 100
         hit_count: 1
         max_targets: 10
         time_offset: 0.1
       - hitbox:
           center: [1.3, 1.0]
           size: [6.0, 3.6]
-        damage: 125
+        damage: 100
         hit_count: 1
         max_targets: 10
         time_offset: 0.25	
@@ -128,14 +128,14 @@ skills:
       - hitbox:
           center: [3.5, 1.5]
           size: [6.0, 5.0]
-        damage: 170
+        damage: 90
         hit_count: 1
         max_targets: 15
         time_offset: 0.2
       - hitbox:
           center: [3.5, 1.5]
           size: [6.0, 5.0]
-        damage: 110
+        damage: 37
         hit_count: 3
         max_targets: 15
         time_offset: 0.5
@@ -156,14 +156,14 @@ skills:
       - hitbox:
           center: [3.5, 1.5]
           size: [5.0, 6.0]
-        damage: 150
+        damage: 50
         hit_count: 2
         max_targets: 18
         time_offset: 0.3
       - hitbox:
           center: [3.5, 0.7]
           size: [6.0, 3.0]
-        damage: 200
+        damage: 100
         hit_count: 1
         max_targets: 15
         time_offset: 0.8
@@ -190,9 +190,9 @@ skills:
     cooldown: 1
     hit_frames:
       - hitbox:
-          center: [3.5, 0.7]
-          size: [6.5, 2.5]
-        damage: 60
+          center: [3.5, 1.0]
+          size: [6.5, 4.5]
+        damage: 50
         hit_count: 4
         max_targets: 10
         time_offset: 0.1
@@ -212,8 +212,8 @@ skills:
     hit_frames:
       - hitbox:
           center: [3.5, 1.0]
-          size: [6.5, 2.5]
-        damage: 60
+          size: [6.5, 4.5]
+        damage: 50
         hit_count: 4
         max_targets: 10
         time_offset: 0.3
@@ -232,9 +232,9 @@ skills:
     cooldown: 1
     hit_frames:
       - hitbox:
-          center: [3.5, 1.5]
-          size: [6.0, 2.5]
-        damage: 60
+          center: [3.5, 1.0]
+          size: [6.0, 4.5]
+        damage: 50
         hit_count: 4
         max_targets: 10
         time_offset: 0.3

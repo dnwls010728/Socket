@@ -5,6 +5,7 @@
 
 #include "UIInventory.h"
 #include "UIItemTooltip.h"
+#include "UIEquipTooltip.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
@@ -168,8 +169,11 @@ bool UIInventorySlot::OnMouseEnter()
 
     auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
     if (!state) return false;
-
-    tooltip_ = state->GetItemTooltip();
+    
+    if (ui_inventory_->tab_ == InventoryType::kEquip)
+        tooltip_ = state->GetEquipTooltip();
+    else tooltip_ = state->GetItemTooltip();
+    
     tooltip_->Set(item_id_);
     tooltip_->SetActive(true);
     

@@ -4,10 +4,11 @@
 #include "Asset/AssetManager.h"
 #include "Subsystems/DataSubsystem.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIText.h"
 #include "Windows/DX/UISprite.h"
 
 UIItemTooltip::UIItemTooltip(const std::wstring& name) :
-    UIContainer(name)
+    UITooltip(name)
 {
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     
@@ -39,6 +40,8 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
 
 void UIItemTooltip::Set(uint32_t item_id)
 {
+    UITooltip::Set(item_id);
+    
     const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
     if (!item_data) return;
     

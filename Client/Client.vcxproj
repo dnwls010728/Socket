@@ -345,9 +345,11 @@
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSlot.h" />
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipment.h" />
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipmentSlot.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UIEquipTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UITooltip.h" />
     <ClInclude Include="Game\UI\Element\Shop\UIShop.h" />
     <ClInclude Include="Game\UI\Element\Shop\UIShopItemRow.h" />
     <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickBar.h" />
@@ -798,9 +800,11 @@
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipment.cpp" />
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipmentSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UIEquipTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UITooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Shop\UIShop.cpp" />
     <ClCompile Include="Game\UI\Element\Shop\UIShopItemRow.cpp" />
     <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickBar.cpp" />

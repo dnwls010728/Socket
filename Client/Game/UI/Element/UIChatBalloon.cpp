@@ -23,6 +23,8 @@ UIChatBalloon::UIChatBalloon(const std::wstring& name) :
     text_->SetSize({ 128.f, 32.f });
     text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     
+    SetIgnoreRayCast(true);
+    
 }
 
 void UIChatBalloon::SetText(const std::wstring& text)

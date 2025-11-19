@@ -3,6 +3,7 @@
 #include "UI/Element/UIPopup.h"
 #include "UI/UIState.h"
 
+class UIEquipTooltip;
 class UIMiniMap;
 class UIMenu;
 class UIContextMenu;
@@ -24,6 +25,7 @@ public:
     virtual ~UIInGameState() override = default;
 
     FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
+    FORCEINLINE UIEquipTooltip* GetEquipTooltip() const { return equip_tooltip_; }
     FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
     FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
@@ -42,6 +44,7 @@ private:
     UIEquipment* equipment_;
     UISkillWindow* skill_window_;
     UIItemTooltip* item_tooltip_;
+    UIEquipTooltip* equip_tooltip_;
     UIMenu* menu_;
     UIContextMenu* context_menu_;
     UIPartyPanel* party_panel_;

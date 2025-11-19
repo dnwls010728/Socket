@@ -4,3 +4,4 @@ npcs:
     path: "Sprites\\Characters\\Player\\PlayerSheet.png.apack"
     speeches:
       - "없는거 뺴고 다 팜"
+      - "나를 더블 클릭하면 상점을 열 수 있지"

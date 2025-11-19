@@ -11,6 +11,7 @@
 #include "Element/UIPartyPanel.h"
 #include "Element/UIPartyWindow.h"
 #include "Element/Buff/UIBuffList.h"
+#include "Element/Inventory/UIEquipTooltip.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
 #include "Element/QuickSlot/UIQuickBar.h"
@@ -59,6 +60,12 @@ UIInGameState::UIInGameState() :
     item_tooltip_->SetSize({ 322.f, 122.f });
     item_tooltip_->SetActive(false);
     item_tooltip_->SetIgnoreRayCast(true);
+    
+    equip_tooltip_ = AddElement<UIEquipTooltip>(UIEquipTooltip::StaticClass(), L"EquipTooltip");
+    equip_tooltip_->SetAbsolutePosition({ 100.f, 100.f });
+    equip_tooltip_->SetSize({ 260.f, 252.f });
+    equip_tooltip_->SetActive(false);
+    equip_tooltip_->SetIgnoreRayCast(true);
 
     menu_ = AddElement<UIMenu>(UIMenu::StaticClass(), L"Menu");
     menu_->SetActive(false);
