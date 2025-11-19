@@ -58,6 +58,7 @@ void ComboActiveSkill::StartNextCombo()
     }
 
     auto& combo = combo_skills_[combo_idx_];
+    combo->SetLevel(GetLevel());
     combo->Start();
     combo->Tick(0.f);
 
