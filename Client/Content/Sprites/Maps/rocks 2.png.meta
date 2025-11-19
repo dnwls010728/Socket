@@ -1,0 +1,22 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: rocks 2_0
+    rect:
+      x: 0
+      y: 0.234374985
+      width: 0.89843744
+      height: 0.66406244
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: rocks 2_1
+    rect:
+      x: 0.709999979
+      y: 0.0512695275
+      width: 0.286093712
+      height: 0.161132798
+    pivot:
+      x: 0.5
+      y: 0.0299999993

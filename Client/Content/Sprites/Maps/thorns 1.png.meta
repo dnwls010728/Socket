@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: thorns 1_0
+    rect:
+      x: 0.0170898456
+      y: 0.0341796912
+      width: 0.977783263
+      height: 0.939941466
+    pivot:
+      x: 0.379999995
+      y: 0.0500000007

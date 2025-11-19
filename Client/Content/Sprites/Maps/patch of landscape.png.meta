@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: patch of landscape_0
+    rect:
+      x: 0.423999995
+      y: 0.00390625093
+      width: 0.553539276
+      height: 0.26562506
+    pivot:
+      x: 0.5
+      y: 0.0299999993
+  - name: patch of landscape_1
+    rect:
+      x: 0.0332031325
+      y: 0.319999993
+      width: 0.627929807
+      height: 0.287422001
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: patch of landscape_2
+    rect:
+      x: 0.0299999993
+      y: 0.6176759
+      width: 0.940459192
+      height: 0.372314513
+    pivot:
+      x: 0.5
+      y: 0.00999999978

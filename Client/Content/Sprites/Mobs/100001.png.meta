@@ -1,0 +1,265 @@
+wrap_mode: 1
+filter_mode: 0
+ppu: 64
+frames:
+  - name: 100001_0
+    rect:
+      x: 0
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.491228014
+      y: 0.241596997
+  - name: 100001_1
+    rect:
+      x: 0.0625
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.471929997
+      y: 0.247898996
+  - name: 100001_2
+    rect:
+      x: 0.125
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.471929997
+      y: 0.231092006
+  - name: 100001_3
+    rect:
+      x: 0.1875
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.470174998
+      y: 0.233192995
+  - name: 100001_4
+    rect:
+      x: 0.25
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.468421012
+      y: 0.239426002
+  - name: 100001_5
+    rect:
+      x: 0.3125
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.466666996
+      y: 0.241596997
+  - name: 100001_6
+    rect:
+      x: 0.375
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.464911997
+      y: 0.241596997
+  - name: 100001_7
+    rect:
+      x: 0.4375
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.464911997
+      y: 0.243697003
+  - name: 100001_8
+    rect:
+      x: 0.5
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.431578994
+      y: 0.191175997
+  - name: 100001_9
+    rect:
+      x: 0.5625
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.415789008
+      y: 0.235293999
+  - name: 100001_10
+    rect:
+      x: 0.625
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.357894987
+      y: 0.218486995
+  - name: 100001_11
+    rect:
+      x: 0.6875
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.336842
+      y: 0.210084006
+  - name: 100001_12
+    rect:
+      x: 0.75
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.336842
+      y: 0.214286
+  - name: 100001_13
+    rect:
+      x: 0.8125
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.347368002
+      y: 0.226890996
+  - name: 100001_14
+    rect:
+      x: 0.875
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.394737005
+      y: 0.226890996
+  - name: 100001_15
+    rect:
+      x: 0.9375
+      y: 0
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.394737005
+      y: 0.233192995
+  - name: 100001_16
+    rect:
+      x: 0
+      y: 0.25
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.415789008
+      y: 0.239495993
+  - name: 100001_32
+    rect:
+      x: 0
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.482455999
+      y: 0.241596997
+  - name: 100001_33
+    rect:
+      x: 0.0625
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.487718999
+      y: 0.224790007
+  - name: 100001_34
+    rect:
+      x: 0.125
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.470174998
+      y: 0.241596997
+  - name: 100001_35
+    rect:
+      x: 0.1875
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.482455999
+      y: 0.241596997
+  - name: 100001_36
+    rect:
+      x: 0.25
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.487718999
+      y: 0.224790007
+  - name: 100001_37
+    rect:
+      x: 0.3125
+      y: 0.5
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.470174998
+      y: 0.241596997
+  - name: 100001_48
+    rect:
+      x: 0
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.489473999
+      y: 0.239495993
+  - name: 100001_49
+    rect:
+      x: 0.0625
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.468421012
+      y: 0.283612996
+  - name: 100001_50
+    rect:
+      x: 0.125
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.470174998
+      y: 0.321429014
+  - name: 100001_51
+    rect:
+      x: 0.1875
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.477192998
+      y: 0.304621994
+  - name: 100001_52
+    rect:
+      x: 0.25
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.489473999
+      y: 0.237595007
+  - name: 100001_53
+    rect:
+      x: 0.3125
+      y: 0.75
+      width: 0.0625
+      height: 0.25
+    pivot:
+      x: 0.492982
+      y: 0.218486995

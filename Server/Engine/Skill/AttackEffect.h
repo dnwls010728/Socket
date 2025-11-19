@@ -1,17 +1,20 @@
 ﻿#pragma once
 #include <memory>
 
+#include "Map/IDamageable.h"
 #include "Map/PlayerCharacter.h"
-
-class Mob;
-class Player;
+#include "Math/Bounds.h"
 class AttackEffect
 {
 public:
     struct AttackContext
     {
         PlayerCharacter* attacker;
-        Mob* target;
+        IDamageable* target;
+        Bounds hitbox;
+        DamageSourceType source_type;
+        uint32_t source_id;
+        int source_level;
     };
 
     AttackEffect() = default;

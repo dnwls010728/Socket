@@ -53,13 +53,13 @@ typedef void b2FinishTaskCallback( void* userTask, void* userContext );
 /// from a worker thread.
 /// @warning This function should not attempt to modify Box2D state or user application state.
 /// @ingroup world
-typedef float b2FrictionCallback( float frictionA, int userMaterialIdA, float frictionB, int userMaterialIdB );
+typedef float b2FrictionCallback( float frictionA, uint64_t userMaterialIdA, float frictionB, uint64_t userMaterialIdB );
 
 /// Optional restitution mixing callback. This intentionally provides no context objects because this is called
 /// from a worker thread.
 /// @warning This function should not attempt to modify Box2D state or user application state.
 /// @ingroup world
-typedef float b2RestitutionCallback( float restitutionA, int userMaterialIdA, float restitutionB, int userMaterialIdB );
+typedef float b2RestitutionCallback( float restitutionA, uint64_t userMaterialIdA, float restitutionB, uint64_t userMaterialIdB );
 
 /// Result from b2World_RayCastClosest
 /// If there is initial overlap the fraction and normal will be zero while the point is an arbitrary point in the overlap region.
@@ -116,6 +116,9 @@ typedef struct b2WorldDef
 
 	/// Enable continuous collision
 	bool enableContinuous;
+
+	/// Contact softening when mass ratios are large. Experimental.
+	bool enableContactSoftening;
 
 	/// Number of workers to use with the provided task system. Box2D performs best when using only
 	/// performance cores and accessing a single L2 cache. Efficiency cores and hyper-threading provide
@@ -358,7 +361,7 @@ typedef struct b2SurfaceMaterial
 
 	/// User material identifier. This is passed with query results and to friction and restitution
 	/// combining functions. It is not used internally.
-	int userMaterialId;
+	uint64_t userMaterialId;
 
 	/// Custom debug draw color.
 	uint32_t customColor;
@@ -388,6 +391,9 @@ typedef struct b2ShapeDef
 
 	/// Collision filtering data.
 	b2Filter filter;
+
+	/// Enable custom filtering. Only one of the two shapes needs to enable custom filtering. See b2WorldDef.
+	bool enableCustomFiltering;
 
 	/// A sensor shape generates overlap events but never generates a collision response.
 	/// Sensors do not have continuous collision. Instead, use a ray or shape cast for those scenarios.
@@ -483,7 +489,6 @@ typedef struct b2Profile
 	float pairs;
 	float collide;
 	float solve;
-	float mergeIslands;
 	float prepareStages;
 	float solveConstraints;
 	float prepareConstraints;
@@ -532,7 +537,6 @@ typedef enum b2JointType
 	b2_distanceJoint,
 	b2_filterJoint,
 	b2_motorJoint,
-	b2_mouseJoint,
 	b2_prismaticJoint,
 	b2_revoluteJoint,
 	b2_weldJoint,
@@ -596,6 +600,12 @@ typedef struct b2DistanceJointDef
 	/// then the distance joint will be rigid, overriding the limit and motor.
 	bool enableSpring;
 
+	/// The lower spring force controls how much tension it can sustain
+	float lowerSpringForce;
+
+	/// The upper spring force controls how much compression it an sustain
+	float upperSpringForce;
+
 	/// The spring linear stiffness Hertz, cycles per second
 	float hertz;
 
@@ -628,23 +638,43 @@ typedef struct b2DistanceJointDef
 /// @ingroup distance_joint
 B2_API b2DistanceJointDef b2DefaultDistanceJointDef( void );
 
-/// A motor joint is used to control the relative motion between two bodies
-/// You may move local frame A to change the target transform.
-/// A typical usage is to control the movement of a dynamic body with respect to the ground.
+/// A motor joint is used to control the relative velocity and or transform between two bodies.
+/// With a velocity of zero this acts like top-down friction.
 /// @ingroup motor_joint
 typedef struct b2MotorJointDef
 {
 	/// Base joint definition
 	b2JointDef base;
 
+	/// The desired linear velocity
+	b2Vec2 linearVelocity;
+
 	/// The maximum motor force in newtons
-	float maxForce;
+	float maxVelocityForce;
+
+	/// The desired angular velocity
+	float angularVelocity;
 
 	/// The maximum motor torque in newton-meters
-	float maxTorque;
+	float maxVelocityTorque;
 
-	/// Position correction factor in the range [0,1]
-	float correctionFactor;
+	/// Linear spring hertz for position control
+	float linearHertz;
+
+	/// Linear spring damping ratio
+	float linearDampingRatio;
+
+	/// Maximum spring force in newtons
+	float maxSpringForce;
+
+	/// Angular spring hertz for position control
+	float angularHertz;
+
+	/// Angular spring damping ratio
+	float angularDampingRatio;
+
+	/// Maximum spring torque in newton-meters
+	float maxSpringTorque;
 
 	/// Used internally to detect a valid definition. DO NOT SET.
 	int internalValue;
@@ -653,33 +683,6 @@ typedef struct b2MotorJointDef
 /// Use this to initialize your joint definition
 /// @ingroup motor_joint
 B2_API b2MotorJointDef b2DefaultMotorJointDef( void );
-
-/// A mouse joint is used to make a point on body B track a point on body A.
-/// You may move local frame A to change the target point.
-/// This a soft constraint and allows the constraint to stretch without
-/// applying huge forces. This also applies rotation constraint heuristic to improve control.
-/// @ingroup mouse_joint
-typedef struct b2MouseJointDef
-{
-	/// Base joint definition
-	b2JointDef base;
-
-	/// Stiffness in hertz
-	float hertz;
-
-	/// Damping ratio, non-dimensional
-	float dampingRatio;
-
-	/// Maximum force, typically in newtons
-	float maxForce;
-
-	/// Used internally to detect a valid definition. DO NOT SET.
-	int internalValue;
-} b2MouseJointDef;
-
-/// Use this to initialize your joint definition
-/// @ingroup mouse_joint
-B2_API b2MouseJointDef b2DefaultMouseJointDef( void );
 
 /// A filter joint is used to disable collision between two specific bodies.
 ///
@@ -1111,7 +1114,7 @@ typedef struct b2ContactData
 /// Notes:
 /// - this function must be thread-safe
 /// - this is only called if one of the two shapes has enabled custom filtering
-/// - this is called only for awake dynamic bodies
+/// - this may be called for awake dynamic bodies and sensors
 /// Return false if you want to disable the collision
 /// @see b2ShapeDef
 /// @warning Do not attempt to modify the world inside this callback

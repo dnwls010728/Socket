@@ -1,0 +1,22 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: bush_0
+    rect:
+      x: 0
+      y: 0.519999981
+      width: 0.317000002
+      height: 0.400000036
+    pivot:
+      x: 0.649999976
+      y: 0.00999999978
+  - name: bush_1
+    rect:
+      x: 0.414999992
+      y: 0.0553385578
+      width: 0.584670901
+      height: 0.879661441
+    pivot:
+      x: 0.577000022
+      y: 0.00999999978

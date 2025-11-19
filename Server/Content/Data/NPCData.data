@@ -1,0 +1,7 @@
+npcs:
+  100000:
+    name: "잡화상인"
+    path: "Sprites\\Characters\\Player\\PlayerSheet.png.apack"
+    speeches:
+      - "없는거 뺴고 다 팜"
+      - "나를 더블 클릭하면 상점을 열 수 있지"

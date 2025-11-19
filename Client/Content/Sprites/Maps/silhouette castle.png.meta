@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: silhouette castle_0
+    rect:
+      x: 0.155000001
+      y: 0.0123762367
+      width: 0.755240083
+      height: 0.321782142
+    pivot:
+      x: 0.5
+      y: 0.0399999991
+  - name: silhouette castle_1
+    rect:
+      x: 0.189633355
+      y: 0.364214957
+      width: 0.695322335
+      height: 0.272277236
+    pivot:
+      x: 0.5
+      y: 0.0250000004
+  - name: silhouette castle_2
+    rect:
+      x: 0.153999999
+      y: 0.64200002
+      width: 0.725850105
+      height: 0.317634284
+    pivot:
+      x: 0.5
+      y: 0.0120000001

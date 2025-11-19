@@ -7,6 +7,7 @@ DataSubsystem::DataSubsystem() :
     mob_map_(),
     item_map_(),
     skill_map_(),
+    projectile_map_(),
     exp_table_()
 {
 }
@@ -47,6 +48,14 @@ void DataSubsystem::Init()
             data.id = skill.first.as<uint32_t>();
             skill_map_[data.id] = data;
         }
+
+        YAML::Node projectile_data = YAML::LoadFile("Content\\Data\\ProjectileData.data");
+        for (const auto& projectile : projectile_data["projectiles"])
+        {
+            ProjectileData data = projectile.second.as<ProjectileData>();
+            data.id = projectile.first.as<uint32_t>();
+            projectile_map_[data.id] = data;
+        }
         
         YAML::Node exp_data = YAML::LoadFile("Content\\Data\\ExpData.data");
         for (const auto& exp : exp_data["exp"])
@@ -54,6 +63,22 @@ void DataSubsystem::Init()
             int32_t level = exp.first.as<int32_t>();
             int32_t exp_value = exp.second.as<int32_t>();
             exp_table_[level] = exp_value;
+        }
+
+        YAML::Node card_data = YAML::LoadFile("Content\\Data\\CardData.data");
+        for (const auto& card : card_data["cards"])
+        {
+            CardData data = card.second.as<CardData>();
+            data.id = card.first.as<uint32_t>();
+            card_map_[data.id] = data;
+        }
+
+        YAML::Node npc_data = YAML::LoadFile("Content\\Data\\NPCData.data");
+        for (const auto& npc : npc_data["npcs"])
+        {
+            NPCData data = npc.second.as<NPCData>();
+            data.id = npc.first.as<uint32_t>();
+            npc_map_[data.id] = data;
         }
     }
     catch (const YAML::BadFile& e)
@@ -81,6 +106,27 @@ const SkillData* DataSubsystem::GetSkill(uint32_t id) const
 {
     auto it = skill_map_.find(id);
     if (it == skill_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const ProjectileData* DataSubsystem::GetProjectile(uint32_t id) const
+{
+    auto it = projectile_map_.find(id);
+    if (it == projectile_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const CardData* DataSubsystem::GetCard(uint32_t id) const
+{
+    auto it = card_map_.find(id);
+    if (it == card_map_.end()) return nullptr;
+    return &it->second;
+}
+
+const NPCData* DataSubsystem::GetNPC(uint32_t id) const
+{
+    auto it = npc_map_.find(id);
+    if (it == npc_map_.end()) return nullptr;
     return &it->second;
 }
 

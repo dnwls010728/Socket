@@ -8,6 +8,7 @@
 #include <atomic>
 #include <unordered_map>
 #include <functional>
+#include <queue>
 #include "NetTCPSocket.h"
 #include "IPacket.h"
 #include "NetDef.h"
@@ -96,8 +97,15 @@ namespace Net::TCP {
     	// 내부 함수: 누적 데이터(recvAccumulated)에서 완전한 패킷 추출 ([4바이트 길이][PayloadHeader][payload])
     	bool ProcessAccumulatedData(TCPIOContext* context, std::vector<char>& packet_data);
 
-    	// 내부 함수: clientSocket의 IP, Port 정보 획득
-    	bool GetClientAddress(SOCKET client_socket, NetAddress& address);
+        // 내부 함수: clientSocket의 IP, Port 정보 획득
+        bool GetClientAddress(SOCKET client_socket, NetAddress& address);
+
+        std::mutex disconnect_mutex_;
+        std::queue<uint32_t> disconnect_queue_;
+
+        void EnqueueDisconnect(uint32_t unique_key);
+        void ProcessDisconnectQueue();
+        bool DisconnectClientInternal(uint32_t unique_key);
     };
 
 } // namespace Net

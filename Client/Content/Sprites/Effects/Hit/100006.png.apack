@@ -1,0 +1,14 @@
+target: Sprites\Effects\Hit\100006.png
+animations:
+  - name: Hit
+    frame_rate: 12
+    loop: false
+    frames:
+      - 100006_0
+      - 100006_1
+      - 100006_2
+      - 100006_3
+      - 100006_4
+      - 100006_5
+      - 100006_6
+      - 100006_7

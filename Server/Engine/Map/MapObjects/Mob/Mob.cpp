@@ -17,6 +17,7 @@
 Mob::Mob(const MobData& mob_data) :
     mob_id_(mob_data.id),
     damage_(mob_data.stats.dmg),
+    def_(mob_data.stats.def),
     velocity_(Math::Vector2::Zero()),
     last_position_(Math::Vector2::Zero()),
     gravity_(-20.f),
@@ -26,6 +27,7 @@ Mob::Mob(const MobData& mob_data) :
     foothold_(nullptr),
     hp_(mob_data.stats.hp),
     exp_(mob_data.stats.exp),
+    hitbox_(mob_data.hitbox),
     animation_(L"Idle"),
     is_flipped_(false),
     last_flipped_(false),
@@ -185,12 +187,30 @@ void Mob::SendAnimationPacket(const std::wstring& animation, bool is_flip, bool 
     map_->SendPacket(packet);
 }
 
-void Mob::TakeDamage(uint32_t attacker, int32_t damage)
+Bounds Mob::GetHitBounds() const
+{
+    return {
+        position_ + hitbox_.center,
+        hitbox_.size
+    };
+}
+
+Math::Vector2 Mob::GetHitPosition() const
+{
+    return position_;
+}
+
+int32_t Mob::GetHitDef() const
+{
+    return def_;
+}
+
+void Mob::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)
 {
     TakeMultiDamage(attacker, {damage});
 }
 
-void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages)
+void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages)
 {
     if (hp_ <= 0) return;
 
@@ -198,17 +218,29 @@ void Mob::TakeMultiDamage(uint32_t attacker, const std::vector<int32_t>& damages
 
     state_machine_->ChangeState(hit_state_);
     last_animation_ = animation_;
-    for (int32_t damage : damages)
+    for (const auto& damage : damages)
     {
-        hp_ -= damage;
+        hp_ -= damage.damage_amount;
     }
-    
-    if (player)
+
+    if (map_)
     {
         ObjectTakeDamagePacket packet;
         packet.object_id = object_id_;
-        packet.damage_amount = damages;
-        player->SendPacket(packet);
+        packet.damage_amount.reserve(damages.size());
+        for (const auto& damage_info : damages)
+        {
+            DamageInfo info;
+            info.damage_amount = damage_info.damage_amount;
+            info.hit_effect_position_x = damage_info.position.x;
+            info.hit_effect_position_y = damage_info.position.y;
+            info.attacker_direction = damage_info.attacker_direction;
+            info.source_type = damage_info.source_type;
+            info.source_id = damage_info.source_id;
+            packet.damage_amount.push_back(info);
+        }
+        packet.server_time = Net::GetClientTime();
+        map_->SendPacket(packet);
     }
     
     if (hp_ <= 0)

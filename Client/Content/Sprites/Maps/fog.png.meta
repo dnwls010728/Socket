@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: fog_0
+    rect:
+      x: 0.0850000009
+      y: 0.134277359
+      width: 0.835000038
+      height: 0.756835997
+    pivot:
+      x: 0.5
+      y: 0.449999988

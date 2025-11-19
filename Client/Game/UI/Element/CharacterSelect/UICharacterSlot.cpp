@@ -84,7 +84,7 @@ void UICharacterSlot::InitSlot(UICharacterSelect* character_select, uint32_t slo
     int32_t lv = profile.stats.lv;
     lv_text_->SetText(L"레벨 " + std::to_wstring(lv));
     
-    name_text_->SetText(profile.name);
+    name_text_->SetText(profile.gm_level > 0 ? L"[GM]" + profile.name : profile.name);
     color_code_text_->SetText(L"색상코드 #" + profile.body_color);
 }
 

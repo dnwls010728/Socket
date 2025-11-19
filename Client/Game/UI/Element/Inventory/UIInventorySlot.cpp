@@ -5,9 +5,11 @@
 
 #include "UIInventory.h"
 #include "UIItemTooltip.h"
+#include "UIEquipTooltip.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UIInGameState.h"
@@ -35,13 +37,15 @@ UIInventorySlot::UIInventorySlot(const std::wstring& name) :
     background_->SetIgnoreRayCast(true);
     
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    icon_->SetSize(GetSize());
+    icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
+    icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
     icon_->SetIgnoreRayCast(true);
     
     count_text_ = AddChild<UIText>(UIText::StaticClass(), L"Count");
-    count_text_->SetSize(GetSize());
+    count_text_->SetRelativePosition(Math::Vector2(2.f, 2.f));
+    count_text_->SetSize(GetSize() - Math::Vector2(4.f, 4.f));
     count_text_->SetColor(Math::Color::White);
-    count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+    count_text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
     count_text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
     count_text_->SetIgnoreRayCast(true);
     count_text_->SetActive(false);
@@ -52,14 +56,21 @@ void UIInventorySlot::UpdateSlot(uint32_t item_id, uint32_t count)
     item_id_ = item_id;
     if (item_id > 0)
     {
-        UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-        if (!ui_sprite)
+        const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+        if (!item_data) return;
+    
+        AssetManager::Get()->LoadAsync<UISprite>(item_data->ui_icon.path, [this, item_data](UISprite* ui_sprite)
         {
-            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
-            ui_sprite = kMissing;
-        }
-
-        icon_->SetSprite(ui_sprite);
+            int32_t frame_index = item_data->ui_icon.index;
+            if (!ui_sprite)
+            {
+                static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+                ui_sprite = kMissing;
+                frame_index = 0;
+            }
+            
+            icon_->SetSprite(ui_sprite, frame_index);
+        });
 
         count_text_->SetText(std::to_wstring(count));
         count_text_->SetActive(true);
@@ -158,8 +169,11 @@ bool UIInventorySlot::OnMouseEnter()
 
     auto* state = dynamic_cast<UIInGameState*>(UI::Get()->GetState());
     if (!state) return false;
-
-    tooltip_ = state->GetItemTooltip();
+    
+    if (ui_inventory_->tab_ == InventoryType::kEquip)
+        tooltip_ = state->GetEquipTooltip();
+    else tooltip_ = state->GetItemTooltip();
+    
     tooltip_->Set(item_id_);
     tooltip_->SetActive(true);
     

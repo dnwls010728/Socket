@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include <CustomPacket.h>
+#include <ctime>
 
 #include "DataManager.h"
 #include "IPacket.h"
@@ -12,6 +13,8 @@
 #include "jdbc/cppconn/prepared_statement.h"
 #include "Map/PlayerCharacter.h"
 #include "Player/Inventory/Item.h"
+#include "Skill/Skill.h"
+#include "Skill/SkillManager.h"
 
 Player::Player(Session* session, uint32_t account_id) :
     session_(session),
@@ -111,6 +114,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 {
                     uint32_t character_id = result->getUInt(1);
                     new_character->SetObjectID(character_id);
+
+                    constexpr uint32_t kInitialSkillId = 100000;
+                    const SkillData* default_skill_data = DataManager::Get()->GetSkill(kInitialSkillId);
+                    if (default_skill_data)
+                    {
+                        new_character->GetSkillManager().AddSkill(kInitialSkillId, 1);
+
+                        statement.reset(connection->prepareStatement(
+                            "INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) "
+                            "VALUES (?, ?, ?, ?, ?) "
+                            "ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), duration = VALUES(duration), start_time = VALUES(start_time)"));
+                        statement->setUInt(1, new_character->GetObjectID());
+                        statement->setUInt(2, kInitialSkillId);
+                        statement->setInt(3, 1);
+                        statement->setInt(4, default_skill_data->duration);
+                        statement->setInt(5, 0);
+                        statement->executeUpdate();
+                    }
                 }
             }
             catch (sql::SQLException& e)
@@ -175,10 +196,11 @@ void Player::ReceivePacket(Net::IPacket* packet)
             response.hp = player_character_->hp_;
             response.max_hp = player_character_->effective_max_hp_;
             response.exp = player_character_->exp_;
-            response.color = player_character_->color_;
             response.atk = player_character_->effective_atk_;
             response.def = player_character_->effective_def_;
             response.dig = player_character_->effective_dig_;
+            response.color = player_character_->color_;
+            response.gm_level = player_character_->gm_level_;
             response.map_id = player_character_->map_->GetMapID();
             response.spawn_position.x = player_character_->position_.x;
             response.spawn_position.y = player_character_->position_.y;
@@ -239,6 +261,24 @@ void Player::ReceivePacket(Net::IPacket* packet)
                 item_info.count = item->GetCount();
                 response.inventory.push_back(item_info);
             }
+
+            for (const auto& key : player_character_->key_map_)
+            {
+                KeyBindingInfo key_binding_info;
+                key_binding_info.scancode = key.first;
+                key_binding_info.type = key.second.type;
+                key_binding_info.action = key.second.action;
+                response.key_bindings.push_back(key_binding_info);
+            }
+
+            player_character_->skill_manager_.EnumSkills([&response](Skill* skill)
+            {
+                SkillInfo info{};
+                info.skill_id = skill->GetID();
+                info.level = skill->GetLevel();
+                info.cooldown = skill->GetCoolDown();
+                response.skills.push_back(info);
+            });
 
             SendPacket(response);
 

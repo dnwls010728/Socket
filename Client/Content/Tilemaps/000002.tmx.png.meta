@@ -4,7 +4,7 @@ frames:
     rect:
       x: 0
       y: 0
-      width: 800
+      width: 1280
       height: 960
     border:
       left: 0

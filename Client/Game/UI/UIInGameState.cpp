@@ -6,12 +6,16 @@
 #include "Element/UIChatBar.h"
 #include "Element/UIMenu.h"
 #include "Element/UIMiniMap.h"
+#include "Element/Shop/UIShop.h"
 #include "Element/UIStatusBar.h"
 #include "Element/UIPartyPanel.h"
 #include "Element/UIPartyWindow.h"
 #include "Element/Buff/UIBuffList.h"
+#include "Element/Inventory/UIEquipTooltip.h"
 #include "Element/Inventory/UIInventory.h"
 #include "Element/Inventory/UIItemTooltip.h"
+#include "Element/QuickSlot/UIQuickBar.h"
+#include "Element/Skill/UISkillWindow.h"
 #include "imgui/imgui.h"
 #include "Input/Keyboard.h"
 #include "Subsystems/PartySubsystem.h"
@@ -22,6 +26,8 @@ UIInGameState::UIInGameState() :
     context_menu_(nullptr),
     party_panel_(nullptr),
     party_window_(nullptr),
+    card_select_panel_(nullptr),
+    shop_(nullptr),
     show_post_process_(false)
 {
     AddElement<UIMiniMap>(UIMiniMap::StaticClass(), L"MiniMap");
@@ -34,6 +40,10 @@ UIInGameState::UIInGameState() :
 
     equipment_ = AddElement<UIEquipment>(UIEquipment::StaticClass(), L"Equipment");
     equipment_->SetActive(false);
+
+    skill_window_ = AddElement<UISkillWindow>(UISkillWindow::StaticClass(), L"SkillWindow");
+    skill_window_->SetActive(false);
+    skill_window_->SetAbsolutePosition({ 350.f, 120.f });
     
     AddElement<UIStatusBar>(UIStatusBar::StaticClass(), L"StatusBar");
     
@@ -50,6 +60,12 @@ UIInGameState::UIInGameState() :
     item_tooltip_->SetSize({ 322.f, 122.f });
     item_tooltip_->SetActive(false);
     item_tooltip_->SetIgnoreRayCast(true);
+    
+    equip_tooltip_ = AddElement<UIEquipTooltip>(UIEquipTooltip::StaticClass(), L"EquipTooltip");
+    equip_tooltip_->SetAbsolutePosition({ 100.f, 100.f });
+    equip_tooltip_->SetSize({ 260.f, 252.f });
+    equip_tooltip_->SetActive(false);
+    equip_tooltip_->SetIgnoreRayCast(true);
 
     menu_ = AddElement<UIMenu>(UIMenu::StaticClass(), L"Menu");
     menu_->SetActive(false);
@@ -57,15 +73,24 @@ UIInGameState::UIInGameState() :
     context_menu_ = AddElement<UIContextMenu>(UIContextMenu::StaticClass(), L"ContextMenu");
     context_menu_->SetActive(false);
 
+    shop_ = AddElement<UIShop>(UIShop::StaticClass(), L"Shop");
+    shop_->SetActive(false);
+    shop_->SetAbsolutePosition({ 360.f, 120.f });
+
     AddElement<UIBuffList>(UIBuffList::StaticClass(), L"BuffList");
+
+    auto* quick_bar = AddElement<UIQuickBar>(UIQuickBar::StaticClass(), L"QuickBar");
+
+    const Math::Vector2& size = quick_bar->GetSize();
+    quick_bar->SetAbsolutePosition({ 1366.f - size.x - 10.f, 768.f - size.y - 19.f });
 }
 
 void UIInGameState::Tick(float delta_time)
 {
     UIState::Tick(delta_time);
 
-    if (Keyboard::Get()->GetKeyDown(Scancode::kKeyR))
-        show_post_process_ = !show_post_process_;
+    // if (Keyboard::Get()->GetKeyDown(Scancode::kKeyR))
+    //     show_post_process_ = !show_post_process_;
 
     if (show_post_process_)
     {
@@ -107,54 +132,59 @@ void UIInGameState::Init()
 bool UIInGameState::OnKey(uint32_t scancode, bool is_pressed)
 {
     bool is_handled = UIState::OnKey(scancode, is_pressed);
+    if (is_handled || IsEditingText()) return true;
     
-    if (!is_handled && is_pressed)
-    {
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyI) && !IsEditingText())
-        {
-            inventory_->SetActive(!inventory_->IsActive());
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyE) && !IsEditingText())
-        {
-            equipment_->SetActive(!equipment_->IsActive());
-            is_handled = true;
-        }
-        
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter) && !IsEditingText())
-        {
-            char_bar_->FocusInput();
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyEscape) && !IsEditingText())
-        {
-            menu_->SetActive(!menu_->IsActive());
-            is_handled = true;
-        }
-
-        if (scancode == static_cast<uint32_t>(Scancode::kKeyP) && !IsEditingText())
-        {
-            party_window_->SetActive(!party_window_->IsActive());
-            is_handled = true;
-        }
-    }
-
     InputActions* actions = InputActions::Get();
     InputActions::Mapping mapping = actions->GetMapping(scancode);
 
     PlayerSubsystem* player = PlayerSubsystem::Get();
-
-    switch (mapping.type)
+    
+    if (is_pressed)
     {
-    case KeyType::kAction:
-        break;
-    case KeyType::kItem:
-        if (is_pressed) player->UseItem(mapping.action);
-        break;
-    case KeyType::kSkill:
-        break;
+        if (scancode == static_cast<uint32_t>(Scancode::kKeyEnter))
+        {
+            char_bar_->FocusInput();
+            is_handled = true;
+        }
+        else
+        {
+            switch (mapping.type)
+            {
+            case static_cast<uint8_t>(KeyType::kItem):
+                player->UseItem(mapping.action);
+                is_handled = true;
+                break;
+            case static_cast<uint8_t>(KeyType::kSkill):
+                player->UseSkill(mapping.action);
+                is_handled = true;
+                break;
+            case static_cast<uint8_t>(KeyType::kMenu):
+                switch (mapping.action)
+                {
+            case static_cast<uint8_t>(KeyAction::kItems):
+                    inventory_->SetActive(!inventory_->IsActive());
+                    is_handled = true;
+                    break;
+            case static_cast<uint8_t>(KeyAction::kEquipment):
+                    equipment_->SetActive(!equipment_->IsActive());
+                    is_handled = true;
+                    break;
+            case static_cast<uint8_t>(KeyAction::kSkills):
+                    skill_window_->SetActive(!skill_window_->IsActive());
+                    is_handled = true;
+                    break;
+            // case static_cast<uint8_t>(KeyAction::kParty):
+            //         party_window_->SetActive(!party_window_->IsActive());
+            //         is_handled = true;
+            //         break;
+            case static_cast<uint8_t>(KeyAction::kMainMenu):
+                    menu_->SetActive(!menu_->IsActive());
+                    is_handled = true;
+                    break;
+                }
+                break;
+            }
+        }
     }
     
     return is_handled;

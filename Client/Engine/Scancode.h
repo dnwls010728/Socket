@@ -59,4 +59,25 @@ enum class Scancode : uint32_t
     kKeyDelete = 339,
     kKeyHome = 327,
     kKeyEnd = 335,
+
+    kKeyLeftShift = 42,
+    kKeyRightShift = 28,
+
+    kKeyLeftAlt = 56,
+    kKeyRightAlt = 312,
+
+    kKeyLeftCtrl = 29,
+    kKeyRightCtrl = 285,
 };
+
+std::wstring ScancodeToKeyName(Scancode scancode, bool is_extended = false);
+
+inline std::wstring ScancodeToKeyName(Scancode scancode, bool is_extended)
+{
+    LONG lParam = static_cast<LONG>(scancode) << 16;
+    if (is_extended) lParam |= (1 << 24);
+
+    wchar_t buffer[64] = { 0 };
+    int32_t n = GetKeyNameTextW(lParam, buffer, 64);
+    return (n > 0) ? std::wstring(buffer, n) : L"";
+}

@@ -10,6 +10,8 @@ UINameTag::UINameTag(const std::wstring& name) :
     text_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     text_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     text_->SetColor(Math::Color::White);
+    
+    SetIgnoreRayCast(true);
 }
 
 void UINameTag::SetText(const std::wstring& text)

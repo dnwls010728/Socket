@@ -24,6 +24,7 @@ public:
 
     FORCEINLINE void SetScrollStep(float step) { scroll_step_ = step; }
 
+    void UpdateLayout();
 protected:
     virtual void Tick(float delta_time) override;
     virtual void Render() override;
@@ -31,8 +32,6 @@ protected:
     virtual bool OnScroll(const Math::Vector2& position, const Math::Vector2& delta) override;
 
 private:
-    void UpdateLayout();
-    
     UIContainer* content_;
 
     VerticalAlignment vertical_alignment_;

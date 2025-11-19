@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Actors/NetworkActor.h"
+#include "Actors/ServerActor.h"
 
 class UIChatBalloon;
 class UINameTag;
@@ -8,10 +8,10 @@ class AnimatorComponent;
 class Controller2DComponent;
 class StateMachineComponent;
 
-class CharacterBase : public NetworkActor
+class CharacterBase : public ServerActor
 {
     SHADER_CLASS_HELPER(CharacterBase)
-    GENERATED_BODY(CharacterBase, NetworkActor)
+    GENERATED_BODY(CharacterBase, ServerActor)
     
 public:
     CharacterBase(const std::wstring& kName);
@@ -42,10 +42,7 @@ protected:
     virtual void OnSpeakEnd();
     
 #pragma region 컴포넌트
-    std::shared_ptr<BoxColliderComponent> collider_;
     std::shared_ptr<Controller2DComponent> controller_;
-    std::shared_ptr<SpriteRendererComponent> renderer_;
-    std::shared_ptr<AnimatorComponent> animator_;
     std::shared_ptr<StateMachineComponent> state_machine_;
 #pragma endregion
 

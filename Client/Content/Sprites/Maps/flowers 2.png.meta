@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: flowers 2_0
+    rect:
+      x: 0.0122070322
+      y: 0.0219726581
+      width: 0.480957061
+      height: 0.424804717
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: flowers 2_1
+    rect:
+      x: 0.600000024
+      y: 0.217999995
+      width: 0.390999973
+      height: 0.459734499
+    pivot:
+      x: 0.620000005
+      y: 0.00999999978
+  - name: flowers 2_2
+    rect:
+      x: 0.0769999996
+      y: 0.532000005
+      width: 0.383205116
+      height: 0.465314507
+    pivot:
+      x: 0.479999989
+      y: 0.00999999978

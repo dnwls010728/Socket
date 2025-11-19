@@ -2,16 +2,21 @@
 #include <mutex>
 #include <unordered_map>
 #include <memory>
+#include <vector>
 
 #include "KeyMapping.h"
 #include "Buff/BuffManager.h"
+#include "IDamageable.h"
 #include "MapObject.h"
 #include "../../../Client/Engine/Misc/EnumClassFlags.h"
+#include "Card/CardManager.h"
 #include "Session/Player.h"
 #include "Session/Player/Inventory/Inventory.h"
+#include "Shop/Shop.h"
 #include "Utils/TimedBool.h"
 #include "Skill/SkillManager.h"
 
+class Shop;
 class EquipItem;
 class Portal;
 
@@ -27,7 +32,7 @@ class SkillManager;
 
 ENUM_CLASS_FLAGS(PlayerStat)
 
-class PlayerCharacter : public MapObject
+class PlayerCharacter : public MapObject, public IDamageable
 {
 public:
     struct EquipStat
@@ -66,10 +71,17 @@ public:
     
     void SendPacket(const Net::IPacket& packet) const;
     void ReceivePacket(Net::IPacket* packet);
-    void TakeDamage(int32_t damage_amount);
+    Bounds GetHitBounds() const override;
+    Math::Vector2 GetHitPosition() const override;
+    int32_t GetHitDef() const override;
+
+    void TakeDamage(uint32_t attacker, const DamageHitInfo& damage_amount) override;
+    void TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages) override;
     void ApplyHPDelta(int32_t hp_delta);
 
     bool Disconnect();
+
+    virtual void OnEnterMap();
 
     virtual void SendSpawn(const std::shared_ptr<PlayerCharacter>& player) override;
 
@@ -87,10 +99,13 @@ public:
     inline uint32_t GetMapID() const { return map_id_; }
 
     inline bool IsMapTransitioning() const { return map_transitioning_.load(); }
+    inline bool IsGM() const { return gm_level_ > 0; }
     
     inline Inventory* GetInventory(InventoryType type) const { return inventories_[static_cast<uint8_t>(type)].get(); }
 
     inline const std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)>& GetInventories() const { return inventories_; }
+
+    inline SkillManager& GetSkillManager() { return skill_manager_; }
 
     void SetPartyID(int32_t party_id);
     inline uint32_t GetPartyID() const { return party_id_; }
@@ -103,6 +118,9 @@ public:
     inline int32_t GetDig() const { return effective_dig_; }
     
     inline bool IsFlipped() const { return is_flipped_; }
+    
+    inline void SetShop(Shop* shop) { shop_ = shop; }
+    inline Shop* GetShop() const { return shop_; }
 
 protected:
     friend class ServerManager;
@@ -148,12 +166,13 @@ protected:
 
     bool is_dead_;
     bool is_flipped_;
-    bool is_placing_;
     
     std::atomic_bool map_transitioning_;
     
     std::atomic_int32_t exp_;
     std::atomic_int32_t color_;
+    
+    int8_t gm_level_;
 
     std::array<std::unique_ptr<Inventory>, static_cast<uint8_t>(InventoryType::kCount)> inventories_;
 
@@ -161,6 +180,7 @@ protected:
 
     BuffManager buff_manager_;
     SkillManager skill_manager_;
+    CardManager card_manager_;
     
     TimedBool is_invincible_;
 
@@ -170,4 +190,6 @@ protected:
     std::unordered_map<uint32_t, EquipStat> equip_stats_;
 
     float buff_timer_;
+
+    Shop* shop_;
 };

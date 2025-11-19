@@ -1,0 +1,76 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: clouds 2_0
+    rect:
+      x: 0.0350000001
+      y: 0.0185546912
+      width: 0.297031313
+      height: 0.196289107
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: clouds 2_1
+    rect:
+      x: 0.36500001
+      y: 0.02197266
+      width: 0.60790062
+      height: 0.231933653
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: clouds 2_2
+    rect:
+      x: 0.0354003981
+      y: 0.234999999
+      width: 0.289599597
+      height: 0.170999989
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: clouds 2_3
+    rect:
+      x: 0.556999981
+      y: 0.263671935
+      width: 0.421000004
+      height: 0.189328074
+    pivot:
+      x: 0.469999999
+      y: 0.400000006
+  - name: clouds 2_4
+    rect:
+      x: 0.0579999983
+      y: 0.415039152
+      width: 0.449000031
+      height: 0.258789092
+    pivot:
+      x: 0.469999999
+      y: 0.400000006
+  - name: clouds 2_5
+    rect:
+      x: 0.646000028
+      y: 0.493000001
+      width: 0.330562651
+      height: 0.155193478
+    pivot:
+      x: 0.5
+      y: 0.400000006
+  - name: clouds 2_6
+    rect:
+      x: 0.0504557416
+      y: 0.689999998
+      width: 0.400390714
+      height: 0.27842474
+    pivot:
+      x: 0.479999989
+      y: 0.400000006
+  - name: clouds 2_7
+    rect:
+      x: 0.495999992
+      y: 0.668945491
+      width: 0.476999998
+      height: 0.302734435
+    pivot:
+      x: 0.5
+      y: 0.400000006

@@ -15,9 +15,11 @@
 #include "PlayerCharacter.h"
 #include "SpawnPoint.h"
 #include "jdbc/cppconn/prepared_statement.h"
-#include "MapObjects/Block.h"
 #include "MapObjects/DroppedItem.h"
 #include "MapObjects/Mob/Mob.h"
+#include "MapObjects/ProjectileObject.h"
+#include "IDamageable.h"
+#include "MapObjects/NPC.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/Player/Inventory/EquipItem.h"
@@ -29,6 +31,7 @@ Map::Map(uint32_t map_id) :
     map_id_(map_id),
     return_map_id_(0),
     map_bounds_(),
+    is_safe_zone_(false),
     player_mutex_(),
     object_mutex_(),
     next_object_id_(1000),
@@ -76,6 +79,7 @@ void Map::AddPlayers()
     
         player->SetMapID(map_id_);
         player->SetMap(this);
+        player->OnEnterMap();
         
         {
             for (const auto& player_weak : players_ | std::views::values)
@@ -180,11 +184,52 @@ void Map::SpawnMob(const std::shared_ptr<MapObject>& object)
     number_spawned_mobs_.fetch_add(1);
 }
 
+void Map::SpawnProjectile(const std::shared_ptr<ProjectileObject>& projectile)
+{
+    if (!projectile) return;
+
+    projectile->SetObjectID(next_object_id_.fetch_add(1));
+    projectile->SetMap(this);
+
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        AddObject(projectile);
+    }
+
+    ObjectSpawnPacket packet;
+    packet.object_info.type = ObjectType::kProjectile;
+    packet.object_info.object_id = projectile->GetObjectID();
+    packet.object_info.position_x = projectile->GetPosition().x;
+    packet.object_info.position_y = projectile->GetPosition().y;
+
+    ProjectileInfo& info = packet.object_info.info.projectile;
+    info.projectile_id = projectile->GetProjectileID();
+
+    if (auto owner = projectile->GetOwner())
+        info.owner_id = owner->GetObjectID();
+    else
+        info.owner_id = 0;
+
+    info.velocity_x = projectile->GetVelocity().x;
+    info.velocity_y = projectile->GetVelocity().y;
+    info.size_x = projectile->GetSize().x;
+    info.size_y = projectile->GetSize().y;
+    info.max_lifetime = projectile->GetMaxLifetime();
+    info.is_flipped = projectile->IsFlipped();
+    wcscpy_s(info.animation_name, projectile->GetAnimation().c_str());
+
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(packet);
+    }
+}
+
 void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetColor(color);
+    dropped_item->SetDroppedTime(Net::GetClientTime() + 60.);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
@@ -219,9 +264,12 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
 
 void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position)
 {
+    if (!item) return;
+    
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetItem(item);
+    dropped_item->SetDroppedTime(Net::GetClientTime() + 60.);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
@@ -254,37 +302,6 @@ void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr
     }
 }
 
-void Map::SpawnBlock(const std::wstring& color, int32_t hp, const Math::Vector2& position)
-{
-    std::shared_ptr<Block> block = std::make_shared<Block>(color, hp);
-    block->SetObjectID(next_object_id_.fetch_add(1));
-    block->SetMap(this);
-    block->SetPosition(position);
-    
-    {
-        std::lock_guard<std::mutex> lock(object_mutex_);
-        AddObject(block);
-    }
-
-    BlockInfo block_info;
-    wcscpy_s(block_info.color, color.c_str());
-    
-    ObjectInfo info;
-    info.type = ObjectType::kBlock;
-    info.object_id = block->GetObjectID();
-    info.position_x = position.x;
-    info.position_y = position.y;
-    info.info.block = block_info;
-    
-    ObjectSpawnPacket packet;
-    packet.object_info = info;
-    
-    {
-        std::lock_guard<std::mutex> lock(player_mutex_);
-        SendPacket(packet);
-    }
-}
-
 void Map::DestroyMob(uint32_t object_id)
 {
     ObjectDestroyInfo info;
@@ -299,6 +316,26 @@ void Map::DestroyMob(uint32_t object_id)
         SendPacket(object_destroy_packet);
     }
     
+    {
+        std::lock_guard<std::mutex> lock(object_mutex_);
+        RemoveObject(object_id);
+    }
+}
+
+void Map::DestroyProjectile(uint32_t object_id)
+{
+    ObjectDestroyInfo info;
+    info.type = ObjectType::kProjectile;
+    info.object_id = object_id;
+
+    ObjectDestroyPacket object_destroy_packet;
+    object_destroy_packet.object_info = info;
+
+    {
+        std::lock_guard<std::mutex> lock(player_mutex_);
+        SendPacket(object_destroy_packet);
+    }
+
     {
         std::lock_guard<std::mutex> lock(object_mutex_);
         RemoveObject(object_id);
@@ -348,32 +385,6 @@ void Map::SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerChara
     }
 }
 
-void Map::OnAttack(uint32_t attacker, uint32_t defender)
-{
-    // std::lock_guard<std::mutex> lock(object_mutex_);
-    
-    int32_t value = 0;
-    
-    {
-        auto it = players_.find(attacker);
-        if (it != players_.end())
-        {
-            auto player = it->second.lock();
-            if (player) value = player->GetAtk();
-        }
-    }
-
-    auto it = map_objects_.find(defender);
-    if (it != map_objects_.end())
-    {
-        Mob* mob = dynamic_cast<Mob*>(it->second.get());
-        if (mob)
-        {
-            mob->TakeDamage(attacker, 1000 + value);
-        }
-    }
-}
-
 void Map::PhysicsTick(float delta_time)
 {
     for (const auto& player_weak : std::views::values(players_))
@@ -416,7 +427,7 @@ void Map::Tick(float delta_time)
         for (const auto& player_weak : players_ | std::views::values)
         {
             auto player = player_weak.lock();
-            if (!player) continue;
+            if (!player || player->IsGM()) continue;
 
             for (const auto& map_object : map_objects_ | std::views::values)
             {
@@ -426,7 +437,11 @@ void Map::Tick(float delta_time)
                 float distance = Math::Vector2::Distance(player->GetPosition(), mob->GetPosition());
                 if (distance < 1.f && !player->IsInvincible())
                 {
-                    player->TakeDamage(mob->damage_);
+                    DamageHitInfo damage;
+                    damage.damage_amount = mob->damage_;
+                    Bounds player_bounds = player->GetHitBounds();
+                    damage.position = player_bounds.center;
+                    player->TakeDamage(mob->GetObjectID(), damage);
                     break;
                 }
             }
@@ -469,16 +484,35 @@ std::vector<std::weak_ptr<PlayerCharacter>> Map::GetPlayers()
 
 void Map::GetOverlappingObjects(const Bounds& bounds, std::vector<std::shared_ptr<MapObject>>& result)
 {
-    std::lock_guard<std::mutex> lock(object_mutex_);
-     
-    for (const auto& [id, obj] : map_objects_)
     {
-        // 임시 사이즈
-        Bounds target_bounds(obj->GetPosition(), {3.f, 2.f});
+        std::lock_guard<std::mutex> lock(object_mutex_);
+
+        for (const auto& [id, obj] : map_objects_)
+        {
+            if (!obj) continue;
+            
+            auto damageable = std::dynamic_pointer_cast<IDamageable>(obj);
+            if (!damageable) continue;
+            
+            Bounds target_bounds = damageable->GetHitBounds();
+            Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
+
+            if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
+                result.push_back(obj);
+        }
+    }
+
+    std::lock_guard<std::mutex> player_lock(player_mutex_);
+    for (const auto& player_weak : players_ | std::views::values)
+    {
+        auto player = player_weak.lock();
+        if (!player || player->IsGM() || IsSafeZone()) continue;
+        
+        Bounds target_bounds = player->GetHitBounds();
         Bounds intersect_bounds = Bounds::Intersect(bounds, target_bounds);
 
         if (intersect_bounds.size.x >= 0 && intersect_bounds.size.y >= 0)
-            result.push_back(obj);
+            result.push_back(player);
     }
 }
 
@@ -503,6 +537,7 @@ bool Map::LoadMapData()
 
     float ppu = properties[2].getFloatValue();
     return_map_id_ = properties[3].getIntValue();
+    is_safe_zone_ = properties[4].getBoolValue();
 
     tmx::FloatRect local_bounds = map_data.getBounds();
     float world_width = local_bounds.width / ppu;
@@ -587,44 +622,37 @@ bool Map::LoadMapData()
                     portals_.insert_or_assign(id, std::make_unique<Portal>(id, to_id, to_map, position));
                 }
             }
+            else if (layer->getName() == "NPC")
+            {
+                const auto& objects = object_group.getObjects();
+                for (const auto& object : objects)
+                {
+                    if (object.getShape() != tmx::Object::Shape::Point) continue;
+                    
+                    Math::Vector2 position = {
+                        object.getPosition().x / ppu - map_data.getTileCount().x / 2.f,
+                        -1 * object.getPosition().y / ppu + map_data.getTileCount().y / 2.f
+                    };
+                    
+                    const auto& properties = object.getProperties();
+                    if (properties.empty()) continue;
+                    
+                    int32_t id = properties[0].getIntValue();
+                    
+                    std::shared_ptr<NPC> npc = std::make_shared<NPC>(id);
+                    npc->SetObjectID(next_object_id_.fetch_add(1));
+                    npc->SetMap(this);
+                    npc->SetPosition(position);
+                    
+                    npc->BeginPlay();
+                    
+                    {
+                        std::scoped_lock lock(object_mutex_);
+                        map_objects_.emplace(npc->GetObjectID(), npc);
+                    }
+                }
+            }
         }
-    }
-
-    // 맵에 배치된 블럭 정보 조회
-    sql::Connection* connection = MySQLManager::Get()->GetConnection();
-    if (!connection) return false;
-
-    try
-    {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM block_info WHERE map_id = ?"));
-        statement->setUInt(1, map_id_);
-
-        std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
-        while (result->next())
-        {
-            std::wstring color = StringHelper::UTF8ToUTF16(result->getString("color"));
-            int32_t hp = result->getInt("hp");
-            
-            Math::Vector2 position;
-            position.x = static_cast<float>(result->getDouble("position_x"));
-            position.y = static_cast<float>(result->getDouble("position_y"));
-            
-            SpawnBlock(color, hp, position);
-        }
-    }
-    catch (sql::SQLException& e)
-    {
-        std::cerr << "SQLException: " << e.what() << std::endl;
-        std::cerr << "Error Code: " << e.getErrorCode() << std::endl;
-        std::cerr << "SQL State: " << e.getSQLState() << std::endl;
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-    catch (...)
-    {
-        std::cerr << "Unknown Exception" << std::endl;
     }
 
     return true;
@@ -748,6 +776,24 @@ void Map::KillAllMobs()
             
             ObjectDestroyInfo info;
             info.type = ObjectType::kMob;
+            info.object_id = object_id;
+    
+            ObjectDestroyPacket object_destroy_packet;
+            object_destroy_packet.object_info = info;
+    
+            {
+                // std::lock_guard<std::mutex> player_lock(player_mutex_);
+                SendPacket(object_destroy_packet);
+            }
+            
+            RemoveObject(object_id);
+        }
+        else if (const auto& droppedItem = std::dynamic_pointer_cast<DroppedItem>(map_object))
+        {
+            uint32_t object_id = droppedItem->GetObjectID();
+            
+            ObjectDestroyInfo info;
+            info.type = ObjectType::kDroppedItem;
             info.object_id = object_id;
     
             ObjectDestroyPacket object_destroy_packet;

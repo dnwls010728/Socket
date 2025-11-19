@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: dragonfly_0
+    rect:
+      x: 0.0120000001
+      y: 0.061999999
+      width: 0.972000003
+      height: 0.881000042
+    pivot:
+      x: 0.379999995
+      y: 0.319999993

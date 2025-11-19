@@ -144,7 +144,7 @@ void UILogin::OnLogin()
 
 void UILogin::OnRegister()
 {
-    ShellExecute(nullptr, nullptr, L"http://58.79.118.105:9102", nullptr, nullptr, SW_SHOW);
+    ShellExecute(nullptr, nullptr, L"http://124.61.139.139:9102", nullptr, nullptr, SW_SHOW);
 }
 
 RTTR_REGISTRATION

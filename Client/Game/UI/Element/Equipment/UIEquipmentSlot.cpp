@@ -5,9 +5,11 @@
 
 #include "UIEquipment.h"
 #include "Asset/AssetManager.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/Element/UIImage.h"
+#include "Windows/DX/Sprite.h"
 #include "Windows/DX/UISprite.h"
 
 UIEquipmentSlot::UIEquipmentSlot(const std::wstring& name) :
@@ -26,7 +28,8 @@ UIEquipmentSlot::UIEquipmentSlot(const std::wstring& name) :
     background_->SetIgnoreRayCast(true);
 
     icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"Icon");
-    icon_->SetSize(GetSize());
+    icon_->SetRelativePosition(Math::Vector2(4.f, 4.f));
+    icon_->SetSize(GetSize() - Math::Vector2(8.f, 8.f));
     icon_->SetIgnoreRayCast(true);
 }
 
@@ -34,15 +37,22 @@ void UIEquipmentSlot::UpdateSlot(uint32_t item_id)
 {
     item_id_ = item_id;
     if (item_id <= 0) return;
-
-    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-    if (!ui_sprite)
+    
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
+    
+    AssetManager::Get()->LoadAsync<UISprite>(item_data->ui_icon.path, [this, item_data](UISprite* ui_sprite)
     {
-        static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
-        ui_sprite = kMissing;
-    }
-
-    icon_->SetSprite(ui_sprite);
+        int32_t frame_index = item_data->ui_icon.index;
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+            frame_index = 0;
+        }
+        
+        icon_->SetSprite(ui_sprite, frame_index);
+    });
 }
 
 void UIEquipmentSlot::ResetSlot()

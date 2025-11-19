@@ -22,6 +22,7 @@ namespace Math
     int32_t Clamp(int32_t value, int32_t min, int32_t max);
     int32_t Clamp01(int32_t value);
     int32_t Abs(int32_t a);
+    int32_t Pow(int32_t f, int32_t p);
     int32_t RandRange(int32_t min, int32_t max);
     
     bool IsEqual(float a, float b);

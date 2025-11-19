@@ -4,10 +4,11 @@
 #include <CustomPacket.h>
 
 #include "Actor/Component/TransformComponent.h"
-#include "Actors/Block.h"
 #include "Actors/DroppedItem.h"
 #include "Actors/Characters/Player/PlayerCharacter.h"
 #include "Actors/Mobs/MobBase.h"
+#include "Actors/Projectile.h"
+#include "Actors/Characters/NPC.h"
 #include "Asset/AssetManager.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioManager.h"
@@ -29,7 +30,7 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             std::shared_ptr<PlayerCharacter> player_character = network_subsystem->SpawnNetworkActor<PlayerCharacter>(PlayerCharacter::StaticClass(), object_info.object_id);
             if (IsValid(player_character))
             {
-                player_character->Init(object_info.info.player.name, object_info.info.player.body_color, {object_info.position_x, object_info.position_y});
+                player_character->Init(object_info.info.player.name, object_info.info.player.body_color, {object_info.position_x, object_info.position_y}, object_info.info.player.gm_level);
                 network_subsystem->other_players_.emplace_back(player_character);
             }
         }
@@ -66,11 +67,11 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\moneydrop.mp3");
                     AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 }
-                
+
                 DroppedItemInfo info = object_info.info.dropped_item;
 
-                Math::Vector2 offset = Math::Vector2::Up() * .5f;
-                
+                Math::Vector2 offset = Math::Vector2::Up() * .25f;
+
                 dropped_item->SetObjectID(object_info.object_id);
                 dropped_item->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y + offset.y });
 
@@ -78,22 +79,31 @@ bool ObjectSpawnHandler::Handle(Net::IPacket* packet)
             }
         }
         break;
-
-    case ObjectType::kBlock:
+    case ObjectType::kProjectile:
         {
             std::shared_ptr<Actor> out_actor = nullptr;
-            if (!ObjectPoolSubsystem::Get()->GetFromPool(Block::StaticClass(), out_actor)) return false;
-
-            if (auto block = std::dynamic_pointer_cast<Block>(out_actor))
+            if (!ObjectPoolSubsystem::Get()->GetFromPool(Projectile::StaticClass(), out_actor)) return false;
+            if (auto projectile = std::dynamic_pointer_cast<Projectile>(out_actor))
             {
-                BlockInfo info = object_info.info.block;
-                
-                block->SetObjectID(object_info.object_id);
-                block->Init(info.color, {object_info.position_x, object_info.position_y});
+                projectile->SetObjectID(object_info.object_id);
+                projectile->GetTransform()->SetPosition({ object_info.position_x, object_info.position_y });
+
+                projectile->Init(object_info.info.projectile.projectile_id);
+                projectile->SetFlip(object_info.info.projectile.is_flipped);
+                projectile->PlayAnimation(object_info.info.projectile.animation_name);
             }
         }
         break;
+    case ObjectType::kNPC:
+        {
+            NPCInfo npc_info = object_info.info.npc;
+            
+            NetworkSubsystem* network_subsystem = NetworkSubsystem::Get();
+            std::shared_ptr<NPC> npc = network_subsystem->SpawnNetworkActor<NPC>(NPC::StaticClass(), object_info.object_id);
+            if (IsValid(npc)) npc->Init(npc_info.npc_id, {object_info.position_x, object_info.position_y});
+        }
+        break;
     }
-    
+
     return true;
 }

@@ -51,6 +51,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -120,6 +121,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +144,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +162,7 @@
     <ClCompile Include="Engine\Buff\Buff.cpp" />
     <ClCompile Include="Engine\Buff\BuffManager.cpp" />
     <ClCompile Include="Engine\Buff\BuffStatBlock.cpp" />
+    <ClCompile Include="Engine\Card\CardManager.cpp" />
     <ClCompile Include="Engine\DataManager.cpp" />
     <ClCompile Include="Engine\FSM\Condition.cpp" />
     <ClCompile Include="Engine\FSM\StateMachine.cpp" />
@@ -165,8 +170,9 @@
     <ClCompile Include="Engine\Map\Foothold.cpp" />
     <ClCompile Include="Engine\Map\Map.cpp" />
     <ClCompile Include="Engine\Map\MapObject.cpp" />
-    <ClCompile Include="Engine\Map\MapObjects\Block.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\DroppedItem.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\NPC.cpp" />
+    <ClCompile Include="Engine\Map\MapObjects\ProjectileObject.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\Mob.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobHitState.cpp" />
     <ClCompile Include="Engine\Map\MapObjects\Mob\States\MobIdleState.cpp" />
@@ -190,11 +196,17 @@
     <ClCompile Include="Engine\Session\Player\Inventory\Item.cpp" />
     <ClCompile Include="Engine\Session\Session.cpp" />
     <ClCompile Include="Engine\Session\SessionManager.cpp" />
+    <ClCompile Include="Engine\Shop\Shop.cpp" />
+    <ClCompile Include="Engine\Shop\ShopItem.cpp" />
+    <ClCompile Include="Engine\Shop\ShopManager.cpp" />
     <ClCompile Include="Engine\Skill\AttackChain.cpp" />
     <ClCompile Include="Engine\Skill\AttackEffect.cpp" />
     <ClCompile Include="Engine\Skill\AttackEffect\DamageEffect.cpp" />
+    <ClCompile Include="Engine\Skill\SkillFactory.cpp" />
     <ClCompile Include="Engine\Skill\SkillType\ActiveSkill.cpp" />
-    <ClCompile Include="Engine\Skill\SkillType\PasiveSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\ComboActiveSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\GeneralAttackSkill.cpp" />
+    <ClCompile Include="Engine\Skill\SkillType\PassiveSkill.cpp" />
     <ClCompile Include="Engine\Skill\Skill.cpp" />
     <ClCompile Include="Engine\Skill\SkillManager.cpp" />
     <ClCompile Include="Engine\Utils\TimedBool.cpp" />
@@ -211,6 +223,7 @@
     <ClInclude Include="Engine\Buff\Buff.h" />
     <ClInclude Include="Engine\Buff\BuffManager.h" />
     <ClInclude Include="Engine\Buff\BuffStatBlock.h" />
+    <ClInclude Include="Engine\Card\CardManager.h" />
     <ClInclude Include="Engine\DataManager.h" />
     <ClInclude Include="Engine\FSM\Condition.h" />
     <ClInclude Include="Engine\FSM\IState.h" />
@@ -219,10 +232,12 @@
     <ClInclude Include="Engine\FunctionMacros.h" />
     <ClInclude Include="Engine\KeyMapping.h" />
     <ClInclude Include="Engine\Map\Foothold.h" />
+    <ClInclude Include="Engine\Map\IDamageable.h" />
     <ClInclude Include="Engine\Map\Map.h" />
     <ClInclude Include="Engine\Map\MapObject.h" />
-    <ClInclude Include="Engine\Map\MapObjects\Block.h" />
     <ClInclude Include="Engine\Map\MapObjects\DroppedItem.h" />
+    <ClInclude Include="Engine\Map\MapObjects\NPC.h" />
+    <ClInclude Include="Engine\Map\MapObjects\ProjectileObject.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\Mob.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobHitState.h" />
     <ClInclude Include="Engine\Map\MapObjects\Mob\States\MobIdleState.h" />
@@ -250,17 +265,24 @@
     <ClInclude Include="Engine\Session\Player\Inventory\Item.h" />
     <ClInclude Include="Engine\Session\Session.h" />
     <ClInclude Include="Engine\Session\SessionManager.h" />
+    <ClInclude Include="Engine\Shop\Shop.h" />
+    <ClInclude Include="Engine\Shop\ShopItem.h" />
+    <ClInclude Include="Engine\Shop\ShopManager.h" />
     <ClInclude Include="Engine\Singleton.h" />
     <ClInclude Include="Engine\Skill\AttackChain.h" />
     <ClInclude Include="Engine\Skill\AttackEffect.h" />
     <ClInclude Include="Engine\Skill\AttackEffect\DamageEffect.h" />
+    <ClInclude Include="Engine\Skill\SkillFactory.h" />
     <ClInclude Include="Engine\Skill\SkillType\ActiveSkill.h" />
-    <ClInclude Include="Engine\Skill\SkillType\PasiveSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\ComboActiveSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\GeneralAttackSkill.h" />
+    <ClInclude Include="Engine\Skill\SkillType\PassiveSkill.h" />
     <ClInclude Include="Engine\Skill\Skill.h" />
     <ClInclude Include="Engine\Skill\SkillManager.h" />
     <ClInclude Include="Engine\Utils\TimedBool.h" />
     <ClInclude Include="Game\ServerManager.h" />
     <ClInclude Include="Helper\StringHelper.h" />
+    <ClInclude Include="Include\exprtk.hpp" />
     <ClInclude Include="Include\jdbc\cppconn\build_config.h" />
     <ClInclude Include="Include\jdbc\cppconn\callback.h" />
     <ClInclude Include="Include\jdbc\cppconn\config.h" />
@@ -326,6 +348,7 @@
     <ClInclude Include="Include\tmxlite\Tileset.hpp" />
     <ClInclude Include="Include\tmxlite\Types.hpp" />
     <ClInclude Include="Include\tmxlite\Types.inl" />
+    <ClInclude Include="Include\uuid.h" />
     <ClInclude Include="Include\yaml-cpp\anchor.h" />
     <ClInclude Include="Include\yaml-cpp\binary.h" />
     <ClInclude Include="Include\yaml-cpp\contrib\anchordict.h" />

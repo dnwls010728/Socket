@@ -3,6 +3,7 @@
 
 #include <CommonObject.h>
 
+#include "DebugDrawHelper.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
@@ -31,7 +32,13 @@ MobBase::MobBase(const std::wstring& name) :
 
 void MobBase::OnActivate()
 {
-    if (HasBegunPlay()) SetActive(true);
+    if (HasBegunPlay())
+    {
+        movement_snapshots_.clear();
+        animation_snapshots_.clear();
+        pending_damages_.clear();
+        SetActive(true);
+    }
 }
 
 void MobBase::OnDeactivate()
@@ -48,10 +55,12 @@ void MobBase::OnDeath()
     fade_timer_ = 0.f;
 }
 
-void MobBase::Init(uint32_t mob_id) const
+void MobBase::Init(uint32_t mob_id)
 {
     const MobData* mob_data = DataSubsystem::Get()->GetMob(mob_id);
     if (!mob_data) return;
+
+    hitbox_ = mob_data->hitbox;
     
     AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(mob_data->animation_pack);
     if (animation_pack) animator_->SetAnimationPack(animation_pack);
@@ -105,6 +114,9 @@ void MobBase::Tick(float delta_time)
             fade_timer_ = 0.f;
         }
     }
+
+    // Math::Vector2 position = GetTransform()->GetPosition();
+    // DebugDrawHelper::Get()->DrawBox(position + hitbox_.center, hitbox_.size, Math::Color::Red);
 }
 
 RTTR_REGISTRATION

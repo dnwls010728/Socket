@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: star_0
+    rect:
+      x: 0
+      y: 0.028125003
+      width: 0.987500072
+      height: 0.937500119
+    pivot:
+      x: 0.50999999
+      y: 0.430000007

@@ -5,6 +5,8 @@
 
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/InputActions/InputActions.h"
+#include "Subsystems/Publisher/PublisherSubsystem.h"
 
 bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 {
@@ -15,6 +17,8 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
 
     player_subsystem->name_ = response->name;
     player_subsystem->body_color_ = response->body_color;
+    
+    player_subsystem->gm_level_ = response->gm_level;
 
     player_subsystem->character_id_ = response->character_id;
 
@@ -44,6 +48,21 @@ bool SelectCharacterHandler::Handle(Net::IPacket* packet)
     }
     
     inventory->SetColor(response->color);
+
+    for (const auto& skill : response->skills)
+    {
+        player_subsystem->GetSkillManager()->AddOrUpdateSkill(skill.skill_id, skill.level, skill.cooldown);
+    }
+
+    SkillListUpdatedData data;
+    data.skills = player_subsystem->GetSkillManager()->GetSkillList();
+    PublisherSubsystem::Get()->Publish(PublisherSubsystem::EventType::kSkillsUpdated, data);
+
+    InputActions* input_actions = InputActions::Get();
+    for (const auto& key : response->key_bindings)
+    {
+        input_actions->Bind(key.scancode, key.type, key.action);
+    }
     
     SessionSubsystem::Get()->SetState(SessionState::kInGame);
     World::Get()->OpenLevel(L"Game");

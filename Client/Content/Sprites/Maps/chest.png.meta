@@ -1,0 +1,40 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: chest_0
+    rect:
+      x: 0.129999995
+      y: 0.100000001
+      width: 0.263999999
+      height: 0.289999992
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: chest_1
+    rect:
+      x: 0.474000007
+      y: 0.129999995
+      width: 0.243999988
+      height: 0.255742282
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: chest_2
+    rect:
+      x: 0.117187522
+      y: 0.44600001
+      width: 0.354003966
+      height: 0.44511345
+    pivot:
+      x: 0.360000014
+      y: 0.00999999978
+  - name: chest_3
+    rect:
+      x: 0.522000015
+      y: 0.5
+      width: 0.332492352
+      height: 0.388000011
+    pivot:
+      x: 0.360000014
+      y: 0.00999999978

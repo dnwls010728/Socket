@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: magical tree 2_0
+    rect:
+      x: 0.0903320536
+      y: 0.0317382887
+      width: 0.876465023
+      height: 0.815429866
+    pivot:
+      x: 0.419999987
+      y: 0.0199999996

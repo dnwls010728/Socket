@@ -1,0 +1,121 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: foliage_0
+    rect:
+      x: 0.239633396
+      y: 0.226862967
+      width: 0.17728366
+      height: 0.144230753
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: foliage_1
+    rect:
+      x: 0.444999993
+      y: 0.240652889
+      width: 0.161166251
+      height: 0.132533461
+    pivot:
+      x: 0.469999999
+      y: 0.00999999978
+  - name: foliage_2
+    rect:
+      x: 0.629000008
+      y: 0.224999994
+      width: 0.16899997
+      height: 0.159999996
+    pivot:
+      x: 0.419999987
+      y: 0.100000001
+  - name: foliage_3
+    rect:
+      x: 0.823000014
+      y: 0.262974322
+      width: 0.131999969
+      height: 0.108119398
+    pivot:
+      x: 0.519999981
+      y: 0.00999999978
+  - name: foliage_4
+    rect:
+      x: 0.0469999984
+      y: 0.389999986
+      width: 0.140800476
+      height: 0.168894231
+    pivot:
+      x: 0.469999999
+      y: 0.00999999978
+  - name: foliage_5
+    rect:
+      x: 0.238000005
+      y: 0.407902628
+      width: 0.154127389
+      height: 0.141977161
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: foliage_6
+    rect:
+      x: 0.442999989
+      y: 0.405000001
+      width: 0.134674281
+      height: 0.158000022
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: foliage_7
+    rect:
+      x: 0.637019217
+      y: 0.419999987
+      width: 0.122445881
+      height: 0.13889423
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: foliage_8
+    rect:
+      x: 0.816556454
+      y: 0.430438668
+      width: 0.139723539
+      height: 0.129561335
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: foliage_9
+    rect:
+      x: 0.786132812
+      y: 0.618164062
+      width: 0.1484375
+      height: 0.134765625
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: foliage_10
+    rect:
+      x: 0.51953125
+      y: 0.620117188
+      width: 0.166992188
+      height: 0.133789062
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: foliage_11
+    rect:
+      x: 0.270507812
+      y: 0.60799998
+      width: 0.15234375
+      height: 0.143999994
+    pivot:
+      x: 0.430000007
+      y: 0.00999999978
+  - name: foliage_12
+    rect:
+      x: 0.0399999991
+      y: 0.569999993
+      width: 0.157265633
+      height: 0.180000007
+    pivot:
+      x: 0.529999971
+      y: 0.00999999978

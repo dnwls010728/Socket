@@ -120,10 +120,12 @@ struct SelectCharacterResponse : public Net::IPacket
     int32_t hp;
     int32_t max_hp;
     int32_t exp;
-    int32_t color;
     int32_t atk;
     int32_t def;
     int32_t dig;
+    int32_t color;
+    
+    int8_t gm_level;
 
     struct
     {
@@ -136,8 +138,10 @@ struct SelectCharacterResponse : public Net::IPacket
     uint32_t etc_slot_capacity;
 
     std::vector<ItemInfo> inventory;
-    
-    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory)
+    std::vector<SkillInfo> skills;
+    std::vector<KeyBindingInfo> key_bindings;
+
+    SERIALIZABLE_FIELDS(name, body_color, character_id, lv, hp, max_hp, exp, color, gm_level, atk, def, dig, map_id, spawn_position, equip_slot_capacity, use_slot_capacity, etc_slot_capacity, inventory, skills, key_bindings)
     REGISTER_PACKET(SelectCharacterResponse, 211)
 };
 
@@ -167,31 +171,6 @@ struct MapLoadCompletePacket : public Net::IPacket
 {
     SERIALIZABLE_FIELDS()
     REGISTER_PACKET(MapLoadCompletePacket, 214)
-};
-
-struct MovePlayerPacket : public Net::IPacket
-{
-    uint32_t unique_id;
-    float position_x;
-    float position_y;
-    float velocity_x;
-    float velocity_y;
-    float server_time;
-    bool time_update;
-    
-    SERIALIZABLE_FIELDS(unique_id, position_x, position_y, velocity_x, velocity_y, server_time, time_update)
-    REGISTER_PACKET(MovePlayerPacket, 215)
-};
-
-struct PlayerAnimationPacket : public Net::IPacket
-{
-    uint32_t unique_id;
-    bool is_flipped;
-    std::wstring animation;
-    float server_time;
-    
-    SERIALIZABLE_FIELDS(unique_id, is_flipped, animation, server_time)
-    REGISTER_PACKET(PlayerAnimationPacket, 216)
 };
 
 struct ChatMessagePacket : public Net::IPacket
@@ -248,9 +227,10 @@ struct ObjectAnimationPacket : public Net::IPacket
 struct ObjectTakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;
-    std::vector<int32_t> damage_amount;
-    
-    SERIALIZABLE_FIELDS(object_id, damage_amount)
+    std::vector<DamageInfo> damage_amount;
+    float server_time;
+
+    SERIALIZABLE_FIELDS(object_id, damage_amount, server_time)
     REGISTER_PACKET(ObjectTakeDamagePacket, 234)
 };
 
@@ -337,14 +317,6 @@ struct UnequipItemPacket : public Net::IPacket
     REGISTER_PACKET(UnequipItemPacket, 308)
 };
 
-struct AttackRequest : public Net::IPacket
-{
-    uint32_t object_id;
-    
-    SERIALIZABLE_FIELDS(object_id)
-    REGISTER_PACKET(AttackRequest, 400)
-};
-
 struct TakeDamagePacket : public Net::IPacket
 {
     uint32_t object_id;
@@ -379,9 +351,28 @@ struct SkillCastPacket : public Net::IPacket
 {
     uint32_t owner_id;;
     uint32_t skill_id;
+    float cooldown_expired_time;
 
-    SERIALIZABLE_FIELDS(owner_id, skill_id)
+    SERIALIZABLE_FIELDS(owner_id, skill_id, cooldown_expired_time)
     REGISTER_PACKET(SkillCastPacket, 405)
+};
+
+struct SkillUpdatePacket : public Net::IPacket
+{
+    SkillInfo skill;
+
+    SERIALIZABLE_FIELDS(skill)
+    REGISTER_PACKET(SkillUpdatePacket, 406)
+};
+
+struct ComboSkillStateChangedPacket : public Net::IPacket
+{
+    uint32_t skill_id;
+    float cooldown_expired_time;
+    int32_t combo_idx;
+
+    SERIALIZABLE_FIELDS(skill_id, cooldown_expired_time, combo_idx)
+    REGISTER_PACKET(ComboSkillStateChangedPacket, 407)
 };
 
 struct PlayerStatsUpdatePacket : public Net::IPacket
@@ -409,6 +400,24 @@ struct PlayerBuffPacket : public Net::IPacket
     
     SERIALIZABLE_FIELDS(effect_id, duration, server_time, stat_changes)
     REGISTER_PACKET(PlayerBuffPacket, 501)
+};
+
+struct KeyBindRequest : public Net::IPacket
+{
+    uint32_t scancode;
+    uint8_t type;
+    int32_t action;
+
+    SERIALIZABLE_FIELDS(scancode, type, action)
+    REGISTER_PACKET(KeyBindRequest, 502)
+};
+
+struct KeyUnbindRequest : public Net::IPacket
+{
+    uint32_t scancode;
+
+    SERIALIZABLE_FIELDS(scancode)
+    REGISTER_PACKET(KeyUnbindRequest, 504)
 };
 
 struct PartyInviteRequest : public Net::IPacket
@@ -509,32 +518,109 @@ struct PartyInfoChangedPacket :  public Net::IPacket
     REGISTER_PACKET(PartyInfoChangedPacket, 611)
 };
 
-struct PlacementStartPacket : public Net::IPacket
+struct DoSelectCardPacket : public Net::IPacket
 {
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStartPacket, 900)
+    std::vector<CardSelectInfo> cards;
+
+    SERIALIZABLE_FIELDS(cards)
+    REGISTER_PACKET(DoSelectCardPacket, 612)
 };
 
-struct PlacementStopRequest : public Net::IPacket
+struct SelectCardResult : public Net::IPacket
 {
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStopRequest, 901)
+    CardSelectInfo card;
+
+    SERIALIZABLE_FIELDS(card)
+    REGISTER_PACKET(SelectCardResult, 613)
 };
 
-struct PlacementStopResponse : public Net::IPacket
+struct ShopOpenRequest : public Net::IPacket
 {
-    SERIALIZABLE_FIELDS()
-    REGISTER_PACKET(PlacementStopResponse, 902)
+    uint32_t object_id;
+    
+    SERIALIZABLE_FIELDS(object_id)
+    REGISTER_PACKET(ShopOpenRequest, 700)
 };
 
-struct PlacementBlockPacket : public Net::IPacket
+struct ShopOpenResponse : public Net::IPacket
 {
-    struct
-    {
-        float x;
-        float y;
-    } position;
+    uint32_t npc_id;
+    std::vector<ShopItemInfo> items;
+    
+    SERIALIZABLE_FIELDS(npc_id, items)
+    REGISTER_PACKET(ShopOpenResponse, 701)
+};
 
-    SERIALIZABLE_FIELDS(position)
-    REGISTER_PACKET(PlacementBlockPacket, 903)
+struct ShopClosePacket : public Net::IPacket
+{
+    SERIALIZABLE_FIELDS()
+    REGISTER_PACKET(ShopClosePacket, 702)
+};
+
+struct ShopSellPriceRequest : public Net::IPacket
+{
+    uint8_t inventory_type;
+    uint32_t slot_id;
+    int32_t count;
+
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
+    REGISTER_PACKET(ShopSellPriceRequest, 703)
+};
+
+struct ShopSellPriceResponse : public Net::IPacket
+{
+    bool success;
+    uint8_t inventory_type;
+    uint32_t slot_id;
+    uint32_t item_id;
+    int32_t price;
+    int32_t count;
+
+    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price, count)
+    REGISTER_PACKET(ShopSellPriceResponse, 704)
+};
+
+struct ShopSellRequest : public Net::IPacket
+{
+    uint8_t inventory_type;
+    uint32_t slot_id;
+    int32_t count;
+
+    SERIALIZABLE_FIELDS(inventory_type, slot_id, count)
+    REGISTER_PACKET(ShopSellRequest, 705)
+};
+
+struct ShopSellResponse : public Net::IPacket
+{
+    bool success;
+    uint8_t inventory_type;
+    uint32_t slot_id;
+    uint32_t item_id;
+    int32_t price;
+    int32_t color;
+    int32_t count;
+
+    SERIALIZABLE_FIELDS(success, inventory_type, slot_id, item_id, price, color, count)
+    REGISTER_PACKET(ShopSellResponse, 706)
+};
+
+struct ShopBuyRequest : public Net::IPacket
+{
+    uint32_t npc_id;
+    uint32_t item_id;
+    int32_t count;
+
+    SERIALIZABLE_FIELDS(npc_id, item_id, count)
+    REGISTER_PACKET(ShopBuyRequest, 707)
+};
+
+struct ShopBuyResponse : public Net::IPacket
+{
+    bool success;
+    uint32_t item_id;
+    int32_t count;
+    int32_t color;
+
+    SERIALIZABLE_FIELDS(success, item_id, count, color)
+    REGISTER_PACKET(ShopBuyResponse, 708)
 };

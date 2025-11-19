@@ -8,7 +8,7 @@
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
-#include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
 #include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 #include "Windows/DX/Sprite.h"
@@ -29,8 +29,10 @@ DroppedItem::DroppedItem(const std::wstring& name) :
 
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     collider_->SetOffset({ 0.f, 0.f });
-    collider_->SetSize({ 1.f, 1.f });
+    collider_->SetSize({ .5f, .5f });
     collider_->SetTrigger(true);
+
+    GetTransform()->SetScale({ .5f, .5f });
     
 }
 
@@ -62,15 +64,22 @@ void DroppedItem::Init(uint32_t item_id, int32_t color, const Math::Vector2& dro
         is_color_ = true;
         return;
     }
+
+    const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
     
-    Sprite* sprite = AssetManager::Get()->Load<Sprite>(L"Sprites\\" + std::to_wstring(item_id) + L".png");
-    if (!sprite)
+    AssetManager::Get()->LoadAsync<Sprite>(item_data->icon.path, [this, item_data](Sprite* sprite)
     {
-        static Sprite* kMissing = AssetManager::Get()->Load<Sprite>(L"Sprites\\Missing.png");
-        sprite = kMissing;
-    }
-    
-    if (sprite) renderer_->SetSprite(sprite);
+        int32_t frame_index = item_data->icon.index;
+        if (!sprite)
+        {
+            static Sprite* kMissing = AssetManager::Get()->Load<Sprite>(L"Sprites\\Missing.png");
+            sprite = kMissing;
+            frame_index = 0;
+        }
+        
+        if (sprite) renderer_->SetSprite(sprite, frame_index);
+    });
 }
 
 

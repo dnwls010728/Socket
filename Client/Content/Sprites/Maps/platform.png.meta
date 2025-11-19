@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: platform_0
+    rect:
+      x: 0.151999995
+      y: 0.0469999984
+      width: 0.681999981
+      height: 0.215044349
+    pivot:
+      x: 0.5
+      y: 0.0579999983
+  - name: platform_1
+    rect:
+      x: 0.147
+      y: 0.344000012
+      width: 0.673312604
+      height: 0.204502672
+    pivot:
+      x: 0.5
+      y: 0.100000001
+  - name: platform_2
+    rect:
+      x: 0.169
+      y: 0.601999998
+      width: 0.63499999
+      height: 0.35869354
+    pivot:
+      x: 0.5
+      y: 0.0500000007

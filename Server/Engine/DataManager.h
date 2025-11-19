@@ -4,6 +4,12 @@
 #include "Math/Bounds.h"
 #include "yaml-cpp/node/convert.h"
 
+struct FrameData
+{
+    std::wstring path;
+    int32_t index;
+};
+
 struct MobStats
 {
     int32_t lv;
@@ -18,6 +24,7 @@ struct MobData
 {
     uint32_t id;
     MobStats stats;
+    Bounds hitbox;
     std::wstring animation_pack;
 };
 
@@ -51,6 +58,9 @@ struct ItemData
     std::wstring name;
     std::wstring desc;
 
+    FrameData icon;
+    FrameData ui_icon;
+
     int32_t price;
     int32_t max_count;
 
@@ -64,20 +74,39 @@ struct ItemData
 struct HitFrame
 {
     Bounds hitbox;
-    
+
     int32_t damage;
     int32_t hit_count;
     int32_t max_targets;
-    
+
     float time_offset;
+
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
 };
 
+enum class SkillType : uint8_t
+{
+    kNone            = 0,
+    kGeneralAttack   = 1,
+    kProjectile      = 2,
+    kComboAttack     = 3
+    
+};
 struct SkillData
 {
     uint32_t id;
-    
+
+    SkillType type;
     std::wstring name;
     std::wstring desc;
+    std::wstring icon;
+    std::wstring animation_pack;
+    std::wstring animation;
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
+    std::wstring sound;
+    std::wstring hit_sound;
 
     int32_t max_hp;
     int32_t atk;
@@ -86,7 +115,32 @@ struct SkillData
     int32_t duration;
     int32_t cooldown;
 
+    float reset_time;
+
+    uint32_t projectile_id;
+
     std::vector<HitFrame> hit_frames;
+    std::vector<uint32_t> combo_skills;
+};
+
+struct ProjectileData
+{
+    uint32_t id;
+
+    Math::Vector2 size;
+    float speed;
+    float max_lifetime;
+
+    int32_t damage;
+    int32_t damage_count;
+    int32_t max_targets;
+
+    std::wstring animation;
+    std::wstring animation_pack;
+
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
+    std::wstring hit_sound;
 };
 
 struct MobDropData
@@ -98,8 +152,32 @@ struct MobDropData
     int32_t chance;
 };
 
+struct CardData
+{
+    uint32_t id;
+
+    uint32_t skill_id;
+    
+    int32_t max_hp;
+    int32_t atk;
+    int32_t def;
+    int32_t dig;
+};
+
 namespace YAML
 {
+    template<>
+    struct convert<FrameData>
+    {
+        static bool decode(const Node& node, FrameData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.path = StringHelper::UTF8ToUTF16(node["path"].as<std::string>(""));
+            data.index = node["index"].as<int32_t>(0);
+            return true;
+        }
+    };
+    
     template<>
     struct convert<MobStats>
     {
@@ -123,6 +201,7 @@ namespace YAML
         {
             if (!node.IsMap()) return false;
             data.stats = node["stats"].as<MobStats>();
+            data.hitbox = node["hitbox"].as<Bounds>();
             data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
             return true;
         }
@@ -170,9 +249,10 @@ namespace YAML
         static bool decode(const Node& node, ItemData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<uint32_t>(0);
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.icon = node["icon"].as<FrameData>();
+            data.ui_icon = node["ui_icon"].as<FrameData>();
             data.price = node["price"].as<int32_t>(0);
             data.max_count = node["max_count"].as<int32_t>(0);
             return true;
@@ -215,6 +295,8 @@ namespace YAML
             data.hit_count = node["hit_count"].as<int32_t>(0);
             data.max_targets = node["max_targets"].as<int32_t>(0);
             data.time_offset = node["time_offset"].as<float>(0.f);
+            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
+            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
             return true;
         }
     };
@@ -225,19 +307,78 @@ namespace YAML
         static bool decode(const Node& node, SkillData& data)
         {
             if (!node.IsMap()) return false;
-            data.id = node["id"].as<uint32_t>(0);
+            data.hit_frames.clear();
+            data.combo_skills.clear();
+            
+            data.type = static_cast<SkillType>(node["type"].as<uint32_t>(0)); 
             data.name = StringHelper::UTF8ToUTF16(node["name"].as<std::string>(""));
             data.desc = StringHelper::UTF8ToUTF16(node["desc"].as<std::string>(""));
+            data.icon = StringHelper::UTF8ToUTF16(node["icon"].as<std::string>(""));
+            data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+            data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>(""));
+            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
+            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
+            data.sound = StringHelper::UTF8ToUTF16(node["sound"].as<std::string>(""));
+            data.hit_sound = StringHelper::UTF8ToUTF16(node["hit_sound"].as<std::string>(""));
             data.max_hp = node["max_hp"].as<int32_t>(0);
             data.atk = node["atk"].as<int32_t>(0);
             data.def = node["def"].as<int32_t>(0);
             data.dig = node["dig"].as<int32_t>(0);
             data.duration = node["duration"].as<int32_t>(0);
             data.cooldown = node["cooldown"].as<int32_t>(0);
-            
-            for (const auto& frame : node["hit_frames"])
-                data.hit_frames.push_back(frame.as<HitFrame>());
-            
+            if (auto frames = node["hit_frames"]; frames)
+            {
+                for (const auto& frame : frames)
+                    data.hit_frames.push_back(frame.as<HitFrame>());
+            }
+            data.projectile_id = node["projectile"].as<uint32_t>(0);
+            data.reset_time = node["reset_time"].as<float>(0.f);
+            if (auto combo_list = node["combo_skills"]; combo_list && combo_list.IsSequence())
+            {
+                for (const auto& combo_skill : combo_list)
+                    data.combo_skills.push_back(combo_skill.as<uint32_t>(0));
+            }
+
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<ProjectileData>
+    {
+        static bool decode(const Node& node, ProjectileData& data)
+        {
+            if (!node.IsMap()) return false;
+
+            data.size = Math::Vector2::One();
+            if (auto size_node = node["size"]; size_node)
+                data.size = size_node.as<Math::Vector2>();
+            data.speed = node["speed"].as<float>(0.f);
+            data.max_lifetime = node["max_lifetime"].as<float>(0.f);
+            data.damage = node["damage"].as<int32_t>(0);
+            data.damage_count = node["damage_count"].as<int32_t>(1);
+            data.max_targets = node["max_targets"].as<int32_t>(0);
+            data.animation = StringHelper::UTF8ToUTF16(node["animation"].as<std::string>("Idle"));
+            data.animation_pack = StringHelper::UTF8ToUTF16(node["animation_pack"].as<std::string>(""));
+            data.hit_effect_pack = StringHelper::UTF8ToUTF16(node["hit_effect_pack"].as<std::string>(""));
+            data.hit_effect_animation = StringHelper::UTF8ToUTF16(node["hit_effect_animation"].as<std::string>(""));
+            data.hit_sound = StringHelper::UTF8ToUTF16(node["hit_sound"].as<std::string>(""));
+
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<CardData>
+    {
+        static bool decode(const Node& node, CardData& data)
+        {
+            if (!node.IsMap()) return false;
+            data.skill_id = node["skill_id"].as<uint32_t>(0);
+            data.max_hp = node["max_hp"].as<int32_t>(0);
+            data.atk = node["atk"].as<int32_t>(0);
+            data.def = node["def"].as<int32_t>(0);
+            data.dig = node["dig"].as<int32_t>(0);
             return true;
         }
     };
@@ -254,6 +395,10 @@ public:
     const MobData* GetMob(uint32_t id) const;
     const ItemData* GetItem(uint32_t id) const;
     const SkillData* GetSkill(uint32_t id) const;
+    const ProjectileData* GetProjectile(uint32_t id) const;
+    const CardData* GetCard(uint32_t id) const;
+    const std::unordered_map<uint32_t, CardData>* GetCards() const;
+    const std::vector<uint32_t>* GetCardIDs() const;
     
     const std::vector<MobDropData>* GetDrop(uint32_t id);
     
@@ -264,10 +409,15 @@ private:
     std::unordered_map<uint32_t, MobData> mob_map_;
     std::unordered_map<uint32_t, ItemData> item_map_;
     std::unordered_map<uint32_t, SkillData> skill_map_;
+    std::unordered_map<uint32_t, ProjectileData> projectile_map_;
+    std::unordered_map<uint32_t, CardData> card_map_;
 
     // Database
     std::unordered_map<uint32_t, std::vector<MobDropData>> mob_drop_map_;
 
     std::array<int32_t, 51> exp_table_;
+
+    // cache
+    std::vector<uint32_t> card_ids_cache_;
     
 };

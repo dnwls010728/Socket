@@ -3,6 +3,6 @@
 
 struct KeyMapping
 {
-    uint32_t type;
+    uint8_t type;
     int32_t action;
 };

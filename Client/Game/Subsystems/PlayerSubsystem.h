@@ -1,8 +1,10 @@
 ﻿#pragma once
+#include "CommonObject.h"
 #include "Subsystem/GameInstanceSubsystem.h"
 
 #include "Inventory/Inventory.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
+#include "Subsystems/Player/SkillManager.h"
 
 class PlayerSubsystem : public GameInstanceSubsystem
 {
@@ -16,7 +18,9 @@ public:
     void AddProfile(const CharacterProfile& profile);
     void DeleteProfile(uint32_t character_id);
     void UseItem(uint32_t item_id) const;
+    void UseSkill(uint32_t skill_id);
 
+    FORCEINLINE SkillManager* GetSkillManager() { return &skill_manager_; }
     FORCEINLINE uint32_t GetAccountID() const { return account_id_; }
     FORCEINLINE uint32_t GetCharacterID() const { return character_id_; }
     
@@ -30,6 +34,8 @@ public:
 
     FORCEINLINE const std::wstring& GetName() const { return name_; }
     FORCEINLINE const std::wstring& GetBodyColor() const { return body_color_; }
+    
+    FORCEINLINE bool IsGM() const { return gm_level_ > 0; }
 
     FORCEINLINE const std::vector<CharacterProfile>& GetProfiles() const { return profiles_; }
     
@@ -38,6 +44,9 @@ public:
     FORCEINLINE void SetPortalCooldown(float value) { portal_cooldown_ = value; }
     FORCEINLINE float GetPortalCooldown() const { return portal_cooldown_; }
 
+    FORCEINLINE void SetPickupCooldown(float value) { pickup_cooldown_ = value; }
+    FORCEINLINE float GetPickupCooldown() const { return pickup_cooldown_; }
+
     static PlayerSubsystem* Get();
 
 private:
@@ -45,7 +54,8 @@ private:
     friend class SelectCharacterHandler;
     friend class MapLoadHandler;
     friend class GameMap;
-    
+    friend class SkillUpdateHandler;
+
     uint32_t account_id_;
     uint32_t character_id_;
     uint32_t map_id_;
@@ -62,11 +72,18 @@ private:
 
     std::wstring name_;
     std::wstring body_color_;
+    
+    int8_t gm_level_;
 
     std::vector<CharacterProfile> profiles_;
     
     std::unique_ptr<Inventory> inventory_;
 
+    SkillManager skill_manager_;
+
     float portal_cooldown_;
-    
+    float pickup_cooldown_;
+
+    void PublishSkills() const;
+
 };

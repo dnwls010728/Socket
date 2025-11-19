@@ -11,6 +11,7 @@
 #include "Math/Bounds.h"
 #include "Math/Vector2.h"
 
+class NPC;
 class Item;
 class SpawnPoint;
 class PlayerCharacter;
@@ -22,6 +23,7 @@ namespace Net
 
 class MapObject;
 class Mob;
+class ProjectileObject;
 
 class Map
 {
@@ -37,17 +39,16 @@ public:
     void AddObject(const std::shared_ptr<MapObject>& object);
     void RemoveObject(uint32_t object_id);
     void SpawnMob(const std::shared_ptr<MapObject>& object);
+    void SpawnProjectile(const std::shared_ptr<ProjectileObject>& projectile);
     void SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
     void SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr<MapObject>& dropper, const Math::Vector2& drop_position);
-    void SpawnBlock(const std::wstring& color, int32_t hp, const Math::Vector2& position);
 
     void DestroyMob(uint32_t object_id);
+    void DestroyProjectile(uint32_t object_id);
     void DestroyDroppedItem(uint32_t object_id, uint32_t character_id);
 
     void SendPacket(const Net::IPacket& packet);
     void SendPacket(const Net::IPacket& packet, const std::weak_ptr<PlayerCharacter>& excluded_player_weak);
-
-    void OnAttack(uint32_t attacker, uint32_t defender);
 
     void PhysicsTick(float delta_time);
     void Tick(float delta_time);
@@ -73,6 +74,7 @@ public:
     inline uint32_t GetMapID() const { return map_id_; }
     inline uint32_t GetReturnMapID() const { return return_map_id_; }
     inline const Bounds& GetMapBounds() const { return map_bounds_; }
+    inline bool IsSafeZone() const { return is_safe_zone_; }
 
 private:
     void AddObjects();
@@ -86,6 +88,8 @@ private:
     uint32_t return_map_id_;
 
     Bounds map_bounds_;
+    
+    bool is_safe_zone_;
 
     std::mutex player_mutex_;
     std::mutex object_mutex_;

@@ -3,6 +3,7 @@
 #include "UI/Element/UIPopup.h"
 #include "UI/UIState.h"
 
+class UIEquipTooltip;
 class UIMiniMap;
 class UIMenu;
 class UIContextMenu;
@@ -11,6 +12,9 @@ class UIItemTooltip;
 class UIInventory;
 class UIPartyPanel;
 class UIPartyWindow;
+class UICardSelectPanel;
+class UISkillWindow;
+class UIShop;
 
 class UIInGameState : public UIState
 {
@@ -21,9 +25,12 @@ public:
     virtual ~UIInGameState() override = default;
 
     FORCEINLINE UIItemTooltip* GetItemTooltip() const { return item_tooltip_; }
+    FORCEINLINE UIEquipTooltip* GetEquipTooltip() const { return equip_tooltip_; }
     FORCEINLINE UIContextMenu* GetContextMenu() const { return context_menu_; }
     FORCEINLINE UIPartyPanel* GetPartyPanel() const { return party_panel_; }
     FORCEINLINE UIPartyWindow* GetPartyWindow() const { return party_window_; }
+    FORCEINLINE UICardSelectPanel* GetCardSelectPanel() const { return card_select_panel_; }
+    FORCEINLINE UIShop* GetShop() const { return shop_; }
 
 protected:
     virtual void Tick(float delta_time) override;
@@ -35,11 +42,15 @@ private:
     UIChatBar* char_bar_;
     UIInventory* inventory_;
     UIEquipment* equipment_;
+    UISkillWindow* skill_window_;
     UIItemTooltip* item_tooltip_;
+    UIEquipTooltip* equip_tooltip_;
     UIMenu* menu_;
     UIContextMenu* context_menu_;
     UIPartyPanel* party_panel_;
     UIPartyWindow* party_window_;
+    UICardSelectPanel* card_select_panel_;
+    UIShop* shop_;
 
     bool show_post_process_;
 };

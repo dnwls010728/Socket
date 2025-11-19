@@ -14,17 +14,19 @@ public:
     bool PollEvent(Event& event);
     bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, uint32_t handler_result);
 
-    FORCEINLINE void SetMessageTick(DWORD tick) { message_tick_ = tick; }
+    FORCEINLINE void SetMessageTick(uint32_t tick) { message_tick_.store(tick); }
 
-    double GetEventTimestamp();
+    double GetEventTimestamp() const;
 
 private:
     friend class Core;
     
     void Clear();
+
+    std::mutex mutex_;
     
     std::queue<Event> events_;
 
-    DWORD message_tick_;
+    std::atomic_uint32_t message_tick_;
     
 };

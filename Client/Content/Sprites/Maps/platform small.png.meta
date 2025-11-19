@@ -1,0 +1,40 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: platform small_0
+    rect:
+      x: 0.129999995
+      y: 0.00122070312
+      width: 0.381474614
+      height: 0.411376953
+    pivot:
+      x: 0.5
+      y: 0.449999988
+  - name: platform small_1
+    rect:
+      x: 0.569999993
+      y: 0.0341796875
+      width: 0.275336921
+      height: 0.364990234
+    pivot:
+      x: 0.5
+      y: 0.0199999996
+  - name: platform small_2
+    rect:
+      x: 0.136000007
+      y: 0.765380859
+      width: 0.315660149
+      height: 0.218505859
+    pivot:
+      x: 0.579999983
+      y: 0.0299999993
+  - name: platform small_3
+    rect:
+      x: 0.485000014
+      y: 0.441894501
+      width: 0.382919848
+      height: 0.554199219
+    pivot:
+      x: 0.499000013
+      y: 0.129999995

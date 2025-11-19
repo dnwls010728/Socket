@@ -3,6 +3,7 @@
 
 #include <CustomPacket.h>
 #include <optional>
+#include <random>
 #include <ranges>
 #include <unordered_set>
 
@@ -12,6 +13,7 @@
 #include "Helper/StringHelper.h"
 #include "jdbc/cppconn/prepared_statement.h"
 #include "MapObjects/DroppedItem.h"
+#include "MapObjects/NPC.h"
 #include "Math/Math.h"
 #include "MySQL/MySQLManager.h"
 #include "Session/PartyManager.h"
@@ -19,7 +21,9 @@
 #include "Session/Player.h"
 #include "Session/Player/Inventory/EquipItem.h"
 #include "Session/Player/Inventory/Item.h"
+#include "Shop/ShopManager.h"
 #include "Skill/SkillManager.h"
+#include "Shop/ShopItem.h"
 
 
 PlayerCharacter::PlayerCharacter() :
@@ -31,8 +35,8 @@ PlayerCharacter::PlayerCharacter() :
     current_animation_(L"Idle"),
     map_id_(0),
     lv_(1),
-    hp_(350),
-    base_max_hp_(350),
+    hp_(2000),
+    base_max_hp_(2000),
     total_equip_stats_(),
     effective_max_hp_(0),
     effective_atk_(0),
@@ -40,22 +44,22 @@ PlayerCharacter::PlayerCharacter() :
     effective_dig_(0),
     is_dead_(false),
     is_flipped_(false),
-    is_placing_(false),
     map_transitioning_(false),
     exp_(0),
     color_(0),
+    gm_level_(0),
     inventories_(),
     key_map_(),
     buff_manager_(this),
     skill_manager_(this),
+    card_manager_(this),
     is_invincible_(),
     dropped_item_mutex_(),
     effect_mutex_(),
     equip_stats_(),
-    buff_timer_(0.f)
+    buff_timer_(0.f),
+    shop_(nullptr)
 {
-    // 테스트
-    skill_manager_.AddSkill(100000,1);
 }
 
 PlayerCharacter::~PlayerCharacter()
@@ -98,6 +102,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
                 character->position_.x = static_cast<float>(result->getDouble("last_position_x"));
                 character->position_.y = static_cast<float>(result->getDouble("last_position_y"));
                 character->color_.store(result->getInt("color"));
+                character->gm_level_ = result->getInt("gm");
             }
         }
 
@@ -107,7 +112,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             inventories[i] = std::make_unique<Inventory>(character.get(), static_cast<InventoryType>(i));
             inventories[i]->SetCapacity(128);
         }
-
+        
         {
             std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM inventory_item_info WHERE character_id = ?"));
             statement->setUInt(1, character->object_id_);
@@ -135,13 +140,37 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
             while (result->next())
             {
-                uint32_t scancode = result->getUInt("Scancode");
-                uint32_t type = result->getUInt("Type");
-                int32_t action = result->getInt("Action");
+                uint32_t scancode = result->getUInt("scancode");
+                uint32_t type = result->getUInt("type");
+                int32_t action = result->getInt("action");
 
-                character->key_map_[scancode] = { type, action };
+                character->key_map_[scancode] = { static_cast<uint8_t>(type), action };
             }
         }
+
+        {
+            std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("SELECT * FROM skill_info WHERE character_id = ?"));
+            statement->setUInt(1, character->object_id_);
+
+            std::unique_ptr<sql::ResultSet> result(statement->executeQuery());
+            while (result->next())
+            {
+                int32_t skill_id = result->getInt("skill_id");
+                int32_t skill_level = result->getInt("skill_level");
+                character->skill_manager_.AddSkill(skill_id, skill_level);
+                character->skill_manager_.GetSkill(skill_id, [&result](Skill* skill)
+                {
+                    std::time_t now = std::time(nullptr);
+                    int start_time = result->getInt("start_time");
+                    float elapsed = static_cast<float>(now - start_time);
+                    float remain  = skill->GetCoolDown() - elapsed;
+                    
+                    float cooldown_left = Math::Max(remain, 0.f);
+                   skill->SetCoolDownLeft(cooldown_left);
+                });
+            }
+        }
+        
 
         character->map_ = World::Get()->GetMap(character->map_id_);
 
@@ -152,6 +181,8 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
             if (!item) continue;
             character->AddEquipStats(it.first, item);
         }
+
+        character->card_manager_.OnLoadCharacter();
 
         character->ComputeStats();
         character->hp_ = Math::Clamp(character->hp_, 1, character->effective_max_hp_);
@@ -174,7 +205,7 @@ std::shared_ptr<PlayerCharacter> PlayerCharacter::LoadCharacter(uint32_t charact
         std::cerr << "Unknown Exception" << std::endl;
         return nullptr;
     }
-
+    
     return character;
 }
 
@@ -202,11 +233,7 @@ bool PlayerCharacter::DeleteCharacter(uint32_t character_id)
 
     try
     {
-        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM inventory_item_info WHERE character_id = ?"));
-        statement->setUInt(1, character_id);
-        statement->executeUpdate();
-        
-        statement.reset(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
+        std::unique_ptr<sql::PreparedStatement> statement(connection->prepareStatement("DELETE FROM character_info WHERE character_id = ?"));
         statement->setUInt(1, character_id);
         statement->executeUpdate();
     }
@@ -255,8 +282,6 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
             Portal* to_portal = to_map->FindPortal(portal->GetToID());
             if (!to_portal) break;
 
-            is_placing_ = false;
-
             ChangeMap(to_map, to_portal);
         }
         break;
@@ -268,43 +293,44 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case MovePlayerPacket::StaticPacketID:
+    case ObjectPositionPacket::StaticPacketID:
         {
-            MovePlayerPacket* move_player_packet = static_cast<MovePlayerPacket*>(packet);
+            ObjectPositionPacket* object_position_packet = static_cast<ObjectPositionPacket*>(packet);
             if (map_)
             {
-                float position_x = move_player_packet->position_x;
-                float position_y = move_player_packet->position_y;
-                
+                float position_x = object_position_packet->position_x;
+                float position_y = object_position_packet->position_y;
+
                 SetPosition({position_x, position_y});
-                
-                MovePlayerPacket move_player_broadcast_packet;
-                move_player_broadcast_packet.unique_id = object_id_;
-                move_player_broadcast_packet.position_x = position_x;
-                move_player_broadcast_packet.position_y = position_y;
-                move_player_broadcast_packet.velocity_x = move_player_packet->velocity_x;
-                move_player_broadcast_packet.velocity_y = move_player_packet->velocity_y;
-                move_player_broadcast_packet.server_time = Net::GetClientTime();
-                move_player_broadcast_packet.time_update = move_player_packet->time_update;
-                map_->SendPacket(move_player_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+
+                ObjectPositionPacket position_broadcast_packet;
+                position_broadcast_packet.object_id = object_id_;
+                position_broadcast_packet.position_x = position_x;
+                position_broadcast_packet.position_y = position_y;
+                position_broadcast_packet.velocity_x = object_position_packet->velocity_x;
+                position_broadcast_packet.velocity_y = object_position_packet->velocity_y;
+                position_broadcast_packet.server_time = Net::GetClientTime();
+                position_broadcast_packet.time_update = object_position_packet->time_update;
+                map_->SendPacket(position_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
             }
         }
         break;
 
-    case PlayerAnimationPacket::StaticPacketID:
+    case ObjectAnimationPacket::StaticPacketID:
         {
-            PlayerAnimationPacket* player_animation_packet = static_cast<PlayerAnimationPacket*>(packet);
+            ObjectAnimationPacket* object_animation_packet = static_cast<ObjectAnimationPacket*>(packet);
             if (map_)
             {
-                current_animation_ = player_animation_packet->animation;
-                is_flipped_ = player_animation_packet->is_flipped;
-                
-                PlayerAnimationPacket player_animation_broadcast_packet;
-                player_animation_broadcast_packet.unique_id = object_id_;
-                player_animation_broadcast_packet.server_time = Net::GetClientTime();
-                player_animation_broadcast_packet.animation = player_animation_packet->animation;
-                player_animation_broadcast_packet.is_flipped =  player_animation_packet->is_flipped;
-                map_->SendPacket(player_animation_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+                current_animation_ = object_animation_packet->animation;
+                is_flipped_ = object_animation_packet->is_flipped;
+
+                ObjectAnimationPacket animation_broadcast_packet;
+                animation_broadcast_packet.object_id = object_id_;
+                animation_broadcast_packet.server_time = Net::GetClientTime();
+                animation_broadcast_packet.animation = object_animation_packet->animation;
+                animation_broadcast_packet.is_flipped = object_animation_packet->is_flipped;
+                animation_broadcast_packet.instant_play = object_animation_packet->instant_play;
+                map_->SendPacket(animation_broadcast_packet, std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
             }
         }
         break;
@@ -403,40 +429,31 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
                 
                 if (!item || item->GetCount() <= 0) break;
 
-                if (item->GetID() == 290000)
+                item->SetCount(item->GetCount() - 1);
+
+                InventoryUpdatePacket inventory_update_packet;
+                
+                if (item->GetCount() <= 0)
                 {
-                    if (is_placing_) break;
-                    is_placing_ = true;
-                    
-                    PlacementStartPacket placement_start_packet;
-                    SendPacket(placement_start_packet);
+                    inventory->EraseItem(slot_id);
+
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = slot_id;
+                    inventory_update_packet.changes.push_back(change);
                 }
                 else
                 {
-                    item->SetCount(item->GetCount() - 1);
-
-                    InventoryUpdatePacket inventory_update_packet;
-                
-                    if (item->GetCount() <= 0)
-                    {
-                        InventoryChange change;
-                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                        change.action = InventoryAction::kRemove;
-                        change.remove.slot_id = slot_id;
-                        inventory_update_packet.changes.push_back(change);
-                    }
-                    else
-                    {
-                        InventoryChange change;
-                        change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                        change.action = InventoryAction::kChangeCount;
-                        change.change_count.slot_id = slot_id;
-                        change.change_count.count = item->GetCount();
-                        inventory_update_packet.changes.push_back(change);
-                    }
-                    
-                    SendPacket(inventory_update_packet);
+                    InventoryChange change;
+                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.action = InventoryAction::kChangeCount;
+                    change.change_count.slot_id = slot_id;
+                    change.change_count.count = item->GetCount();
+                    inventory_update_packet.changes.push_back(change);
                 }
+                    
+                SendPacket(inventory_update_packet);
 
                 bool is_update = buff_manager_.UseBuff(-static_cast<int32_t>(item->GetID()));
                 if (is_update) SendStatUpdateIfNeeded();
@@ -630,12 +647,20 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case AttackRequest::StaticPacketID:
+    case KeyBindRequest::StaticPacketID:
         {
-            AttackRequest* attack_request = static_cast<AttackRequest*>(packet);
-            if (!map_) return;
+            auto* request = static_cast<KeyBindRequest*>(packet);
+            if (request->type == 0)
+                key_map_.erase(request->scancode);
+            else
+                key_map_[request->scancode] = { request->type, request->action };
+        }
+        break;
 
-            map_->OnAttack(object_id_, attack_request->object_id);
+    case KeyUnbindRequest::StaticPacketID:
+        {
+            auto* request = static_cast<KeyUnbindRequest*>(packet);
+            key_map_.erase(request->scancode);
         }
         break;
 
@@ -802,69 +827,249 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
         }
         break;
 
-    case PlacementStopRequest::StaticPacketID:
+    case SkillCastRequest::StaticPacketID:
         {
-            is_placing_ = false;
+            SkillCastRequest* skill_request = static_cast<SkillCastRequest*>(packet);
 
-            PlacementStopResponse response;
+            if (is_dead_) break;
+            skill_manager_.UseSkill(skill_request->skill_id);
+        }
+        break;
+
+    case SelectCardResult::StaticPacketID:
+        {
+            SelectCardResult* card_result = static_cast<SelectCardResult*>(packet);
+            card_manager_.OnCardSelected(card_result->card);
+            SendStatUpdateIfNeeded();
+        }
+        break;
+        
+    case ShopOpenRequest::StaticPacketID:
+        {
+            ShopOpenRequest* shop_open_request = static_cast<ShopOpenRequest*>(packet);
+
+            std::shared_ptr<NPC> npc = std::dynamic_pointer_cast<NPC>(map_->FindMapObject(shop_open_request->object_id));
+            if (!npc) break;
+
+            if (!npc->HasShop()) break;
+            npc->SendShop(std::static_pointer_cast<PlayerCharacter>(shared_from_this()));
+        }
+        break;
+
+    case ShopClosePacket::StaticPacketID:
+        {
+            ShopClosePacket* shop_close_packet = static_cast<ShopClosePacket*>(packet);
+            shop_ = nullptr;
+        }
+        break;
+
+    case ShopSellPriceRequest::StaticPacketID:
+        {
+            ShopSellPriceRequest* request = static_cast<ShopSellPriceRequest*>(packet);
+
+            ShopSellPriceResponse response{};
+            response.success = false;
+            response.inventory_type = request->inventory_type;
+            response.slot_id = request->slot_id;
+            response.item_id = 0;
+            response.price = 0;
+            response.count = 0;
+            
+            if (!shop_)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            uint8_t type_index = request->inventory_type;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> item = nullptr;
+            {
+                auto lock = inventory->Lock();
+                item = inventory->FindItem(request->slot_id);
+            }
+
+            if (!item || item->GetCount() < request->count)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t price;
+            bool calculate_price_res = shop_->CalculateSellPrice(item->GetID(), request->count, price);
+            if (!calculate_price_res)
+            {
+                SendPacket(response);
+                break;           
+            }
+            
+            response.success = true;
+            response.item_id = item->GetID();
+            response.price = price;
+            response.count = request->count;
+
             SendPacket(response);
         }
         break;
 
-    case PlacementBlockPacket::StaticPacketID:
+    case ShopSellRequest::StaticPacketID:
         {
-            PlacementBlockPacket* placement_start_packet = static_cast<PlacementBlockPacket*>(packet);
+            ShopSellRequest* request = static_cast<ShopSellRequest*>(packet);
 
-            auto& inventory = inventories_[static_cast<uint8_t>(InventoryType::kUse)];
-            
+            ShopSellResponse response{};
+            response.success = false;
+            response.inventory_type = request->inventory_type;
+            response.slot_id = request->slot_id;
+            response.item_id = 0;
+            response.price = 0;
+            response.color = color_.load();
+            response.count = 0;
+
+            if (!shop_)
             {
-                inventory->Lock();
-                auto items = inventory->FindItems(290000);
-                if (items.empty()) break;
+                SendPacket(response);
+                break;
+            }
 
-                Math::Vector2 position;
-                position.x = placement_start_packet->position.x;
-                position.y = placement_start_packet->position.y;
-            
-                map_->SpawnBlock(L"FFFFFF", 0, position);
+            uint8_t type_index = request->inventory_type;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
 
-                auto item = items.front();
-                item->SetCount(item->GetCount() - 1);
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> sold_item = nullptr;
+            InventoryUpdatePacket update_packet;
 
-                InventoryUpdatePacket inventory_update_packet;
-            
-                if (item->GetCount() <= 0)
+            {
+                auto lock = inventory->Lock();
+                sold_item = inventory->FindItem(request->slot_id);
+                if (!sold_item)
                 {
-                    InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
-                    change.action = InventoryAction::kRemove;
-                    change.remove.slot_id = item->GetSlot();
-                    inventory_update_packet.changes.push_back(change);
-                
-                    is_placing_ = false;
+                    SendPacket(response);
+                    break;
+                }
 
-                    PlacementStopResponse placement_stop_response;
-                    SendPacket(placement_stop_response);
+                int32_t left_count = sold_item->GetCount() - request->count;
+                if (left_count < 0)
+                {
+                    SendPacket(response);
+                    break;
+                }
+                else if (left_count == 0)
+                {
+                    inventory->EraseItem(sold_item->GetSlot());
+                    InventoryChange change;
+                    change.inventory_type = type_index;
+                    change.action = InventoryAction::kRemove;
+                    change.remove.slot_id = request->slot_id;
+                    update_packet.changes.push_back(change);
                 }
                 else
                 {
+                    sold_item->SetCount(sold_item->GetCount() - request->count);
                     InventoryChange change;
-                    change.inventory_type = static_cast<uint8_t>(InventoryType::kUse);
+                    change.inventory_type = type_index;
                     change.action = InventoryAction::kChangeCount;
-                    change.change_count.slot_id = item->GetSlot();
-                    change.change_count.count = item->GetCount();
-                    inventory_update_packet.changes.push_back(change);
+                    change.change_count.slot_id = request->slot_id;
+                    change.change_count.count = left_count;
+                    update_packet.changes.push_back(change);
                 }
-
-                SendPacket(inventory_update_packet);
             }
+
+            if (!update_packet.changes.empty())
+                SendPacket(update_packet);
+
+            int32_t price;
+            bool calculate_price_res = shop_->CalculateSellPrice(sold_item->GetID(), sold_item->GetCount(), price);
+            int32_t new_color = color_.fetch_add(price) + price;
+
+            if (!calculate_price_res)
+            {
+                SendPacket(response);
+                break;           
+            }
+
+            response.success = true;
+            response.item_id = sold_item->GetID();
+            response.price = price;
+            response.color = new_color;
+            SendPacket(response);
         }
         break;
 
-    case SkillCastRequest::StaticPacketID:
+    case ShopBuyRequest::StaticPacketID:
         {
-            SkillCastRequest* skill_request = static_cast<SkillCastRequest*>(packet);
-            skill_manager_.UseSkill(skill_request->skill_id);
+            ShopBuyRequest* request = static_cast<ShopBuyRequest*>(packet);
+
+            ShopBuyResponse response{};
+            response.success = false;
+            response.item_id = request->item_id;
+            response.count = request->count;
+            response.color = color_.load();
+
+            if (!shop_ || request->npc_id != shop_->GetNPCID())
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto shop_item = shop_->FindItem(request->item_id);
+            if (!shop_item)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t count = request->count > 0 ? request->count : 1;
+            int32_t total_price = shop_item->GetPrice() * count;
+
+            if (color_.load() < total_price)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            uint32_t type_index = request->item_id / 100000;
+            if (type_index == 0 || type_index >= static_cast<uint8_t>(InventoryType::kEquipped))
+            {
+                SendPacket(response);
+                break;
+            }
+
+            auto& inventory = inventories_[type_index];
+            std::shared_ptr<Item> item_to_add = nullptr;
+            if (type_index == static_cast<uint8_t>(InventoryType::kEquip))
+                item_to_add = EquipItem::Create(request->item_id);
+            else
+                item_to_add = Item::Create(request->item_id, count);
+
+            if (!item_to_add)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            bool added = inventory->AddItem(item_to_add);
+            if (!added)
+            {
+                SendPacket(response);
+                break;
+            }
+
+            int32_t new_color = color_.fetch_sub(total_price) - total_price;
+            response.success = true;
+            response.count = count;
+            response.color = new_color;
+
+            SendPacket(response);
         }
         break;
 
@@ -873,19 +1078,59 @@ void PlayerCharacter::ReceivePacket(Net::IPacket* packet)
     }
 }
 
-void PlayerCharacter::TakeDamage(int32_t damage_amount)
+Bounds PlayerCharacter::GetHitBounds() const
 {
+    return {position_, {2.f, 2.f}};
+}
+
+Math::Vector2 PlayerCharacter::GetHitPosition() const
+{
+    return position_;
+}
+
+int32_t PlayerCharacter::GetHitDef() const
+{
+    return effective_def_;
+}
+
+void PlayerCharacter::TakeDamage(uint32_t attacker, const DamageHitInfo& damage)
+{
+    TakeMultiDamage(attacker, {damage});
+}
+
+void PlayerCharacter::TakeMultiDamage(uint32_t attacker, const std::vector<DamageHitInfo>& damages)
+{
+    if (hp_ <= 0) return;
+    if (damages.empty()) return;
     if (is_dead_ || is_invincible_) return;
-    hp_ = std::clamp(hp_ - damage_amount, 0, effective_max_hp_);
+
+    int32_t total_damage = 0;
+    for (const auto& damage_amount : damages)
+    {
+        total_damage += damage_amount.damage_amount;
+    }
+
+    hp_ = std::clamp(hp_ - total_damage, 0, effective_max_hp_);
 
     PlayerStatsUpdatePacket stats_update_packet;
     stats_update_packet.mask |= PlayerStat::kHP;
     stats_update_packet.hp = hp_;
     SendPacket(stats_update_packet);
 
-    TakeDamagePacket packet;
+    ObjectTakeDamagePacket packet;
     packet.object_id = object_id_;
-    packet.damage_amount = damage_amount;
+    packet.damage_amount.reserve(damages.size());
+    for (const auto& damage_info : damages)
+    {
+        DamageInfo info;
+        info.damage_amount = damage_info.damage_amount;
+        info.hit_effect_position_x = damage_info.position.x;
+        info.hit_effect_position_y = damage_info.position.y;
+        info.attacker_direction = damage_info.attacker_direction;
+        info.source_type = damage_info.source_type;
+        info.source_id = damage_info.source_id;
+        packet.damage_amount.push_back(info);
+    }
     packet.server_time = Net::GetClientTime();
     map_->SendPacket(packet);
 
@@ -925,6 +1170,11 @@ bool PlayerCharacter::Disconnect()
     return false;
 }
 
+void PlayerCharacter::OnEnterMap()
+{
+    card_manager_.OnEnterMap();
+}
+
 void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
 {
     MapObject::SendSpawn(player);
@@ -938,20 +1188,24 @@ void PlayerCharacter::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     PlayerInfo& info = packet.object_info.info.player;
     wcscpy_s(info.name, name_.c_str());
     wcscpy_s(info.body_color, body_color_.c_str());
+    info.gm_level = gm_level_;
 
     player->SendPacket(packet);
 
-    PlayerAnimationPacket animation_packet;
-    animation_packet.unique_id = object_id_;
+    ObjectAnimationPacket animation_packet;
+    animation_packet.object_id = object_id_;
     animation_packet.animation =  current_animation_;
     animation_packet.is_flipped = is_flipped_;
     animation_packet.server_time = Net::GetClientTime();
+    animation_packet.instant_play = true;
     player->SendPacket(animation_packet);
 }
 
 void PlayerCharacter::ChangeMap(Map* to, Portal* to_portal)
 {
     map_transitioning_.store(true);
+    
+    shop_ = nullptr;
 
     map_->RemovePlayer(GetObjectID());
     map_ = to;
@@ -993,15 +1247,23 @@ void PlayerCharacter::UpdateDatabase()
     
     if (is_dead_)
     {
-        hp_ = 50;
-
-        if (Map* return_map = World::Get()->GetMap(map_->GetReturnMapID()))
+        if (IsGM())
         {
-            if (Portal* return_portal = return_map->FindPortal(0))
+            hp_ = 50;
+        
+            if (Map* return_map = World::Get()->GetMap(map_->GetReturnMapID()))
             {
-                map_id = return_map->GetMapID();
-                position_ = return_portal->GetPosition() + Math::Vector2::Up();
+                if (Portal* return_portal = return_map->FindPortal(0))
+                {
+                    map_id = return_map->GetMapID();
+                    position_ = return_portal->GetPosition() + Math::Vector2::Up();
+                }
             }
+        }
+        else
+        {
+            DeleteCharacter(object_id_);
+            return;
         }
     }
     
@@ -1046,7 +1308,44 @@ void PlayerCharacter::UpdateDatabase()
             statement->setInt(8, color_.load());
             statement->setUInt(9, object_id_);
             statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("DELETE FROM key_map_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO key_map_info (character_id, scancode, type, action) VALUES (?, ?, ?, ?)"));
+            for (const auto& it : key_map_)
+            {
+                statement->setUInt(1, object_id_);
+                statement->setUInt(2, it.first);
+                statement->setUInt(3, it.second.type);
+                statement->setInt(4, it.second.action);
+                statement->executeUpdate();
+            }
+
+            statement.reset(connection->prepareStatement("DELETE FROM skill_info WHERE character_id = ?"));
+            statement->setUInt(1, object_id_);
+            statement->executeUpdate();
+
+            statement.reset(connection->prepareStatement("INSERT INTO skill_info (character_id, skill_id, skill_level, duration, start_time) VALUES (?, ?, ?, ?, ?)"));
+
+            skill_manager_.EnumSkills([&](Skill* skill)
+            {
+                float elapsed = skill->GetCoolDownElapsed();
+
+                std::time_t now = std::time(nullptr);
+                std::time_t start_time = now - static_cast<std::time_t>(elapsed);
+
+                statement->setUInt(1, object_id_);
+                statement->setUInt(2, skill->GetID());
+                statement->setInt(3,skill->GetLevel());
+                statement->setInt(4, skill->GetDuration());
+                statement->setInt(5, start_time);
+                statement->executeUpdate();
+            });
         }
+
+        card_manager_.OnUpdateDatabase();
     }
     catch (sql::SQLException& e)
     {
@@ -1075,6 +1374,7 @@ void PlayerCharacter::GainExp(int32_t amount)
     int32_t new_exp = exp_.load();
     new_exp += amount;
 
+    int level_up_count = 0;
     while (lv_ < 50)
     {
         int32_t need = DataManager::Get()->GetExp(lv_);
@@ -1083,6 +1383,7 @@ void PlayerCharacter::GainExp(int32_t amount)
         new_exp -= need;
 
         ++lv_;
+        ++level_up_count;
         changed_lv = true;
 
         base_max_hp_ += 25;
@@ -1113,6 +1414,11 @@ void PlayerCharacter::GainExp(int32_t amount)
 
     if (changed_lv)
     {
+        for (int i = 0; i < level_up_count; ++i)
+        {
+            card_manager_.OnLevelUp();
+        }
+        
         NotifyPartyStatChange(PartyStatType::kLv, lv_);
         NotifyPartyStatChange(PartyStatType::kHP, hp_);
         NotifyPartyStatChange(PartyStatType::kMaxHP, effective_max_hp_);
@@ -1140,10 +1446,10 @@ void PlayerCharacter::ComputeStats()
     std::lock_guard<std::mutex> lock(effect_mutex_);
 
     const auto& total_buff_stats = buff_manager_.GetTotalStats();
-    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp;
-    effective_atk_ = total_equip_stats_.atk + total_buff_stats.atk;
-    effective_def_ = total_equip_stats_.def + total_buff_stats.def;
-    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig;
+    effective_max_hp_ = base_max_hp_ + total_equip_stats_.max_hp + total_buff_stats.max_hp + card_manager_.GetMaxHP();
+    effective_atk_ = 100 + total_equip_stats_.atk + total_buff_stats.atk + card_manager_.GetATK();
+    effective_def_ = total_equip_stats_.def + total_buff_stats.def + card_manager_.GetDEF();
+    effective_dig_ = total_equip_stats_.dig + total_buff_stats.dig + card_manager_.GetDIG();
 }
 
 void PlayerCharacter::SendStatUpdateIfNeeded()

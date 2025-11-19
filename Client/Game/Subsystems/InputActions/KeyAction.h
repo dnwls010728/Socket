@@ -1,8 +1,12 @@
 ﻿#pragma once
 
-enum class KeyAction
+enum class KeyAction : uint8_t
 {
-    kLeft,
-    kRight,
+    kItems = 0,
+    kEquipment,
+    kSkills,
+    kParty,
+    kMainMenu,
+    kJump,
     kCount
 };

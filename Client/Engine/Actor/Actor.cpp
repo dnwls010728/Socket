@@ -15,7 +15,9 @@ Actor::Actor(const std::wstring& kName) :
     is_active_(true),
     is_pending_destroy_(false),
     is_persistent_(false),
-    components_()
+    components_(),
+    owner_(nullptr),
+    instigator_(nullptr)
 {
     transform_ = AddComponent<TransformComponent>(L"Transform");
     CHECK(transform_);

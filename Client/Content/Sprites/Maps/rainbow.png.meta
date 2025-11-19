@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: rainbow_0
+    rect:
+      x: 0.0850000009
+      y: 0.319999993
+      width: 0.836000025
+      height: 0.64191395
+    pivot:
+      x: 0.5
+      y: 0.579999983

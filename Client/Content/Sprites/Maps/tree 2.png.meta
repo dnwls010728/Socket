@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: tree 2_0
+    rect:
+      x: 0.0850000009
+      y: 0.0500000007
+      width: 0.850058556
+      height: 0.826999962
+    pivot:
+      x: 0.400000006
+      y: 0.0199999996

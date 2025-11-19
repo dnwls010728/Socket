@@ -1,0 +1,40 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: grass_0
+    rect:
+      x: 0.252000004
+      y: 0.151367188
+      width: 0.728000045
+      height: 0.32421875
+    pivot:
+      x: 0.5
+      y: 0.129999995
+  - name: grass_1
+    rect:
+      x: 0.00999999978
+      y: 0.377929688
+      width: 0.262460947
+      height: 0.223632812
+    pivot:
+      x: 0.5
+      y: 0.100000001
+  - name: grass_2
+    rect:
+      x: 0.123000003
+      y: 0.662
+      width: 0.231166631
+      height: 0.188911378
+    pivot:
+      x: 0.5
+      y: 0.100000001
+  - name: grass_3
+    rect:
+      x: 0.5
+      y: 0.620999992
+      width: 0.453480065
+      height: 0.268559635
+    pivot:
+      x: 0.5
+      y: 0.100000001

@@ -6,6 +6,7 @@
 
 #include "GameInstance.h"
 #include "NetworkManager.h"
+#include "Asset/AssetManager.h"
 #include "PacketHandlers/ChatMessageHandler.h"
 #include "PacketHandlers/CheckNameHandler.h"
 #include "PacketHandlers/ColorGainHandler.h"
@@ -15,8 +16,6 @@
 #include "PacketHandlers/InventoryUpdateHandler.h"
 #include "PacketHandlers/LoginHandler.h"
 #include "PacketHandlers/MapLoadHandler.h"
-#include "PacketHandlers/MovePlayerHandler.h"
-#include "PacketHandlers/PlayerAnimationHandler.h"
 #include "PacketHandlers/ObjectPositionHandler.h"
 #include "PacketHandlers/ObjectAnimationHandler.h"
 #include "PacketHandlers/PlayerStatsUpdateHandler.h"
@@ -31,11 +30,16 @@
 #include "PacketHandlers/PartyMemberStatChangedHandler.h"
 #include "PacketHandlers/PlayerDeathHandler.h"
 #include "PacketHandlers/PartyInfoChangedHandler.h"
-#include "PacketHandlers/PlacementStartHandler.h"
-#include "PacketHandlers/PlacementStopHandler.h"
 #include "PacketHandlers/PlayerBuffHandler.h"
 #include "PacketHandlers/PopupHandler.h"
 #include "PacketHandlers/SkillCastHandler.h"
+#include "PacketHandlers/SkillUpdateHandler.h"
+#include "PacketHandlers/ComboSkillStateChangedHandler.h"
+#include "PacketHandlers/DoSelectCardHandler.h"
+#include "PacketHandlers/ShopOpenHandler.h"
+#include "PacketHandlers/ShopBuyResponseHandler.h"
+#include "PacketHandlers/ShopSellPriceResponseHandler.h"
+#include "PacketHandlers/ShopSellResponseHandler.h"
 #include "UI/UILoginState.h"
 #include "Windows/WindowsApplication.h"
 
@@ -54,7 +58,7 @@ void SessionSubsystem::Init()
 #ifdef _DEBUG
     bool result = Connect({"127.0.0.1", 9101});
 #else
-    bool result = Connect({"58.79.118.105", 9101});
+    bool result = Connect({"124.61.139.139", 9101});
 #endif
     if (!result)
     {
@@ -106,18 +110,18 @@ void SessionSubsystem::Init()
     );
 
     handlers_.emplace(
-        MovePlayerPacket::StaticPacketID,
-        std::make_unique<MovePlayerHandler>()
-    );
-
-    handlers_.emplace(
-        PlayerAnimationPacket::StaticPacketID,
-        std::make_unique<PlayerAnimationHandler>()
-    );
-
-    handlers_.emplace(
         SkillCastPacket::StaticPacketID,
         std::make_unique<SkillCastHandler>()
+    );
+
+    handlers_.emplace(
+        SkillUpdatePacket::StaticPacketID,
+        std::make_unique<SkillUpdateHandler>()
+    );
+
+    handlers_.emplace(
+        ComboSkillStateChangedPacket::StaticPacketID,
+        std::make_unique<ComboSkillStateChangedHandler>()
     );
 
     handlers_.emplace(
@@ -209,15 +213,30 @@ void SessionSubsystem::Init()
         PartyInfoChangedPacket::StaticPacketID,
         std::make_unique<PartyInfoChangedHandler>()
     );
-
+    
     handlers_.emplace(
-        PlacementStartPacket::StaticPacketID,
-        std::make_unique<PlacementStartHandler>()
+        DoSelectCardPacket::StaticPacketID,
+        std::make_unique<DoSelectCardHandler>()
+    );
+    
+    handlers_.emplace(
+        ShopOpenResponse::StaticPacketID,
+        std::make_unique<ShopOpenHandler>()
     );
 
     handlers_.emplace(
-        PlacementStopResponse::StaticPacketID,
-        std::make_unique<PlacementStopHandler>()
+        ShopSellPriceResponse::StaticPacketID,
+        std::make_unique<ShopSellPriceResponseHandler>()
+    );
+
+    handlers_.emplace(
+        ShopSellResponse::StaticPacketID,
+        std::make_unique<ShopSellResponseHandler>()
+    );
+
+    handlers_.emplace(
+        ShopBuyResponse::StaticPacketID,
+        std::make_unique<ShopBuyResponseHandler>()
     );
 #pragma endregion
 
@@ -236,7 +255,6 @@ void SessionSubsystem::ProcessPackets()
     client_socket_.ProcessPacketsFromQueue([&](Net::TCP::ReceivedPacketInfo& received_packet)
     {
         std::shared_ptr<Net::IPacket> packet = std::move(received_packet.packet);
-        packet_handler.Execute(packet);
 
         auto it = handlers_.find(packet->GetPacketID());
         if (it != handlers_.end())

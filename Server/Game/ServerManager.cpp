@@ -60,7 +60,8 @@ bool ServerManager::Execute()
     // if (!mysql_manager->Connect("localhost", "root", "12345"))
 
 #ifdef _DEBUG
-    if (!mysql_manager->Connect("58.79.118.105", "y_eternal", "@eternal12345"))
+    if (!mysql_manager->Connect("poroserver.iptime.org", "y_eternal", "@eternal12345"))
+    // if (!mysql_manager->Connect("localhost", "root", "12345"))
 #else
     if (!mysql_manager->Connect("localhost", "y_eternal", "@eternal12345"))
 #endif
@@ -260,6 +261,8 @@ void ServerManager::OnPacketReceived(const Net::TCPConnectionState& state, std::
                         profile.stats.max_hp = character->base_max_hp_;
                         profile.stats.exp = character->exp_.load();
                         profile.stats.lv = character->lv_;
+                        
+                        profile.gm_level = character->gm_level_;
                         
                         profiles.push_back(profile);
                     }

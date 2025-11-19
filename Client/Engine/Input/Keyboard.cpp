@@ -64,4 +64,10 @@ void Keyboard::OnEvent(const Event& kEvent)
 			key_state.is_down = kType == static_cast<uint32_t>(EventType::kKeyPressed);
 		}
 	}
+
+	if (kType == static_cast<uint32_t>(EventType::kKeyPressed) ||
+		kType == static_cast<uint32_t>(EventType::kKeyReleased))
+	{
+		key_event.Execute(kEvent.key.scancode, kEvent.key.is_repeat);
+	}
 }

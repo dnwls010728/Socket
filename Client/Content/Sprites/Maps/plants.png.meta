@@ -1,0 +1,31 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: plants_0
+    rect:
+      x: 0.0398763083
+      y: 0.126527071
+      width: 0.285644561
+      height: 0.767888427
+    pivot:
+      x: 0.529999971
+      y: 0.0120000001
+  - name: plants_1
+    rect:
+      x: 0.341796935
+      y: 0.252000004
+      width: 0.305175841
+      height: 0.662048936
+    pivot:
+      x: 0.460000008
+      y: 0.0529999994
+  - name: plants_2
+    rect:
+      x: 0.657999992
+      y: 0.137434572
+      width: 0.316935062
+      height: 0.719895363
+    pivot:
+      x: 0.5
+      y: 0.0120000001

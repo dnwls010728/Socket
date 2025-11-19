@@ -61,7 +61,7 @@ void UIBuffList::UpdateLayout()
     }
 
     SetSize({ width, 32.f });
-    SetAbsolutePosition({1366.f - width - 10.f, 716.f});
+    SetAbsolutePosition({1366.f - width - 10.f, 10.f});
 }
 
 RTTR_REGISTRATION

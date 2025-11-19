@@ -1,0 +1,13 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: rocks 3_0
+    rect:
+      x: 0.0219726562
+      y: 0.119999997
+      width: 0.9765625
+      height: 0.849238276
+    pivot:
+      x: 0.5
+      y: 0.00999999978

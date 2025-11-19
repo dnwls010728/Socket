@@ -55,12 +55,12 @@ void FSM::StateMachine::ChangeState(const std::shared_ptr<IState>& kState)
 
 void FSM::StateMachine::AddTransition(const std::shared_ptr<IState>& kFrom, const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition)
 {
-    GetOrAddNode(kFrom)->AddTransition(kTo, kCondition);
+    GetOrAddNode(kFrom)->AddTransition(GetOrAddNode(kTo)->GetState(), kCondition);
 }
 
 void FSM::StateMachine::AddAnyTransition(const std::shared_ptr<IState>& kTo, const std::shared_ptr<Condition>& kCondition)
 {
-    any_transitions_.emplace(std::make_shared<Transition>(kTo, kCondition));
+    any_transitions_.emplace(std::make_shared<Transition>(GetOrAddNode(kTo)->GetState(), kCondition));
 }
 
 std::shared_ptr<FSM::Transition> FSM::StateMachine::GetTransition() const

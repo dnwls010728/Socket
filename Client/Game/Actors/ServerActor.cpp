@@ -3,17 +3,25 @@
 
 #include <CustomPacket.h>
 
+#include "Damage.h"
+#include "Effect.h"
 #include "IPacket.h"
 #include "Actor/Component/BoxColliderComponent.h"
 #include "Actor/Component/SpriteRendererComponent.h"
 #include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
+#include "Asset/AssetManager.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioManager.h"
 #include "Math/Math.h"
+#include "Subsystems/DataSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
+#include "Subsystems/ObjectPool/ObjectPoolSubsystem.h"
 
 ServerActor::ServerActor(const std::wstring& name) :
     NetworkActor(name),
-    prev_animation{0,}
+    prev_animation{0,},
+    last_damage_spawn_time_(0.f)
 {
     collider_ = AddComponent<BoxColliderComponent>(L"BoxCollider");
     
@@ -39,8 +47,27 @@ void ServerActor::PlayAnimation(const std::wstring& animation)
     animation_snapshots_.push_back(snapshot);
 }
 
+void ServerActor::TakeDamage(const std::vector<DamageInfo>& damage_amount, float server_time)
+{
+    for (int i = 0; i < damage_amount.size(); ++i)
+    {
+        const DamageInfo &damage_info = damage_amount[i];
+        
+        DamageSnapshot snapshot;
+        snapshot.damage_amount = damage_info.damage_amount;
+        snapshot.damage_effect_position = GetTransform()->GetPosition() + Math::Vector2::Up() * 2.f;
+        snapshot.damage_effect_position.y += i * 0.5f;
+        snapshot.hit_effect_position = {damage_info.hit_effect_position_x, damage_info.hit_effect_position_y};
+        snapshot.attacker_direction = damage_info.attacker_direction;
+        snapshot.source_type = static_cast<DamageSourceType>(damage_info.source_type);
+        snapshot.source_id = damage_info.source_id;
+        pending_damages_.push_back(snapshot);
+    }
+}
+
 void ServerActor::PhysicsTick(float delta_time)
 {
+    NetworkActor::PhysicsTick(delta_time);
     float server_now = SessionSubsystem::Get()->GetServerTime();
     float interpolation_time = server_now - EngineSettings::Get()->GetObjectInterpolationDelay();
 
@@ -94,6 +121,23 @@ void ServerActor::PhysicsTick(float delta_time)
     }
 }
 
+void ServerActor::Tick(float delta_time)
+{
+    NetworkActor::Tick(delta_time);
+
+    float now = Net::GetClientTime();
+
+    if (!pending_damages_.empty())
+    {
+        if (now - last_damage_spawn_time_ >= 0.1f)
+        {
+            const auto& damage_snapshot = pending_damages_.front();
+            OnShowDamage(damage_snapshot);
+            pending_damages_.pop_front();
+        }
+    }
+}
+
 void ServerActor::ReceivePacket(Net::IPacket* packet)
 {
     NetworkActor::ReceivePacket(packet);
@@ -128,6 +172,64 @@ void ServerActor::ReceivePacket(Net::IPacket* packet)
             animation_snapshots_.push_back(snapshot);
         }
         break;
+    }
+}
+
+void ServerActor::OnShowDamage(const DamageSnapshot& damage_snapshot)
+{
+    float now = Net::GetClientTime();
+    std::shared_ptr<Damage> damage = World::Get()->SpawnActor<Damage>(Damage::StaticClass());
+    if (IsValid(damage))
+    {
+        damage->SetDamage(damage_snapshot.damage_amount);
+        damage->GetTransform()->SetPosition(damage_snapshot.damage_effect_position);
+        last_damage_spawn_time_ = now;
+    }
+
+    std::wstring hit_effect_pack;
+    std::wstring hit_effect_animation;
+    std::wstring hit_sound;
+
+    switch (damage_snapshot.source_type)
+    {
+    case DamageSourceType::kSkill:
+        if (const SkillData* skill_data = DataSubsystem::Get()->GetSkill(damage_snapshot.source_id))
+        {
+            hit_effect_pack = skill_data->hit_effect_pack;
+            hit_effect_animation = skill_data->hit_effect_animation;
+            hit_sound = skill_data->hit_sound;
+        }
+        break;
+    case DamageSourceType::kProjectile:
+        if (const ProjectileData* projectile_data = DataSubsystem::Get()->GetProjectile(damage_snapshot.source_id))
+        {
+            hit_effect_pack = projectile_data->hit_effect_pack;
+            hit_effect_animation = projectile_data->hit_effect_animation;
+            hit_sound = projectile_data->hit_sound;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (!hit_effect_pack.empty() && !hit_effect_animation.empty())
+    {
+        auto effect = World::Get()->SpawnActor<Effect>(Effect::StaticClass(), L"Effect");
+        if (IsValid(effect))
+        {
+            effect->GetTransform()->SetPosition(damage_snapshot.hit_effect_position);
+            effect->SetAnimationPack(hit_effect_pack);
+            effect->SetAnimation(hit_effect_animation);
+            effect->SetFlipX(damage_snapshot.attacker_direction > 0.f);
+        }
+    }
+
+    if (!hit_sound.empty())
+    {
+        if (Audio* audio = AssetManager::Get()->Load<Audio>(hit_sound))
+        {
+            AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSkillSE);
+        }
     }
 }
 

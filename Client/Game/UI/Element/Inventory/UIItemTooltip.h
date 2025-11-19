@@ -1,18 +1,18 @@
 ﻿#pragma once
-#include "UI/UIContainer.h"
-#include "UI/Element/UIText.h"
+#include "UITooltip.h"
 
 class UIImage;
+class UIText;
 
-class UIItemTooltip : public UIContainer
+class UIItemTooltip : public UITooltip
 {
-    GENERATED_BODY(UIItemTooltip, UIContainer)
+    GENERATED_BODY(UIItemTooltip, UITooltip)
     
 public:
     UIItemTooltip(const std::wstring& name);
     virtual ~UIItemTooltip() override = default;
 
-    void Set(uint32_t item_id);
+    virtual void Set(uint32_t item_id) override;
 
 protected:
     virtual void Init() override;

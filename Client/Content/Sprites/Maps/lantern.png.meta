@@ -1,0 +1,22 @@
+wrap_mode: 1
+filter_mode: 1
+ppu: 256
+frames:
+  - name: lantern_0
+    rect:
+      x: 0.0320000015
+      y: 0.268110782
+      width: 0.393000007
+      height: 0.580610752
+    pivot:
+      x: 0.5
+      y: 0.00999999978
+  - name: lantern_1
+    rect:
+      x: 0.557528377
+      y: 0.340000004
+      width: 0.408380687
+      height: 0.54778409
+    pivot:
+      x: 0.5
+      y: 0.00999999978

@@ -13,7 +13,6 @@
 #include "Level/CameraManager.h"
 #include "Subsystems/GameSubsystem.h"
 #include "Subsystems/NetworkSubsystem.h"
-#include "Subsystems/PlacementSubsystem.h"
 #include "Subsystems/PlayerSubsystem.h"
 #include "Subsystems/SessionSubsystem.h"
 #include "UI/UI.h"
@@ -54,7 +53,6 @@ void GameMap::Load()
             }
 
             GameSubsystem::Get()->PlayBGM(tilemap->GetBGM());
-            PlacementSubsystem::Get()->SetTilemapComponent(tilemap_loader->GetTilemapComponent());
         }
     }
 #pragma endregion
@@ -64,7 +62,7 @@ void GameMap::Load()
     if (IsValid(player_character))
     {
         player_character->SetObjectID(player_subsystem->GetCharacterID());
-        player_character->Init(player_subsystem->name_, player_subsystem->body_color_, player_subsystem->spawn_position);
+        player_character->Init(player_subsystem->name_, player_subsystem->body_color_, player_subsystem->spawn_position, player_subsystem->IsGM() ? 1 : 0);
 
         camera_manager->SetTarget(player_character);
         NetworkSubsystem::Get()->SetPlayerCharacter(player_character);

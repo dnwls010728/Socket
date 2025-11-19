@@ -2,6 +2,7 @@
 #include "Effect.h"
 
 #include "Actor/Component/SpriteRendererComponent.h"
+#include "Actor/Component/TransformComponent.h"
 #include "Actor/Component/Animator/AnimatorComponent.h"
 #include "Asset/AssetManager.h"
 
@@ -23,12 +24,12 @@ void Effect::SetFlipX(bool flipX)
 void Effect::BeginPlay()
 {
     NetworkActor::BeginPlay();
-
-    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(L"Sprites\\Effects\\EffectSheet.png.apack");
+    
+    AnimationPack* animation_pack = AssetManager::Get()->Load<AnimationPack>(animation_pack_);
     if (animation_pack)
     {
         animator_->SetAnimationPack(animation_pack);
-        animator_->PlayAnimation(L"Idle");
+        animator_->PlayAnimation(animation_);
     }
 }
 
@@ -37,6 +38,13 @@ void Effect::Tick(float DeltaTime)
     NetworkActor::Tick(DeltaTime);
 
     if (!animator_->IsPlaying()) Destroy();
+
+    Actor* owner = GetOwner();
+    if (IsValid(owner))
+    {
+        Math::Vector2 position = owner->GetTransform()->GetPosition();
+        GetTransform()->SetPosition(position);
+    }
 }
 
 RTTR_REGISTRATION

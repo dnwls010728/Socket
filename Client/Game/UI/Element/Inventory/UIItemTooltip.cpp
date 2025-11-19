@@ -4,10 +4,11 @@
 #include "Asset/AssetManager.h"
 #include "Subsystems/DataSubsystem.h"
 #include "UI/Element/UIImage.h"
+#include "UI/Element/UIText.h"
 #include "Windows/DX/UISprite.h"
 
 UIItemTooltip::UIItemTooltip(const std::wstring& name) :
-    UIContainer(name)
+    UITooltip(name)
 {
     UISprite* panel_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Panel.png");
     
@@ -22,8 +23,8 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
     icon_slot_->SetDrawMode(UIImage::DrawMode::kSliced);
     
     item_icon_ = AddChild<UIImage>(UIImage::StaticClass(), L"ItemIcon");
-    item_icon_->SetRelativePosition({ 10.f, 30.f });
-    item_icon_->SetSize({ 82.f, 82.f });
+    item_icon_->SetRelativePosition({ 20.f, 40.f });
+    item_icon_->SetSize({ 62.f, 62.f });
 
     item_name_ = AddChild<UIText>(UIText::StaticClass(), L"ItemName");
     item_name_->SetRelativePosition({ 10.f, 0.f });
@@ -39,16 +40,24 @@ UIItemTooltip::UIItemTooltip(const std::wstring& name) :
 
 void UIItemTooltip::Set(uint32_t item_id)
 {
-    UISprite* ui_sprite = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\" + std::to_wstring(item_id) + L".png");
-    if (!ui_sprite)
-    {
-        static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
-        ui_sprite = kMissing;
-    }
+    UITooltip::Set(item_id);
     
-    item_icon_->SetSprite(ui_sprite);
-
     const ItemData* item_data = DataSubsystem::Get()->GetItem(item_id);
+    if (!item_data) return;
+    
+    AssetManager::Get()->LoadAsync<UISprite>(item_data->ui_icon.path, [this, item_data](UISprite* ui_sprite)
+    {
+        int32_t frame_index = item_data->ui_icon.index;
+        if (!ui_sprite)
+        {
+            static UISprite* kMissing = AssetManager::Get()->Load<UISprite>(L"UI\\Item\\Missing.png");
+            ui_sprite = kMissing;
+            frame_index = 0;
+        }
+        
+        item_icon_->SetSprite(ui_sprite, frame_index);
+    });
+
     if (item_data)
     {
         item_name_->SetText(item_data->name);

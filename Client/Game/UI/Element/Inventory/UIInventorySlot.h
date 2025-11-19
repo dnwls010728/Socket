@@ -3,7 +3,7 @@
 #include "UI/UIContainer.h"
 #include "UI/Element/UIText.h"
 
-class UIItemTooltip;
+class UITooltip;
 class UIInventory;
 class Inventory;
 class UIImage;
@@ -41,7 +41,7 @@ protected:
 
 private:
     UIInventory* ui_inventory_;
-    UIItemTooltip* tooltip_;
+    UITooltip* tooltip_;
 
     UIImage* background_;
     UIImage* icon_;

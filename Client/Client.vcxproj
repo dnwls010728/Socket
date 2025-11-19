@@ -128,6 +128,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,6 +160,7 @@
     <ClInclude Include="Engine\Actor\Component\Tilemap\TilemapLayer.h" />
     <ClInclude Include="Engine\Actor\Component\TransformComponent.h" />
     <ClInclude Include="Engine\Actor\Portal.h" />
+    <ClInclude Include="Engine\Actor\Prop.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Audio\AudioManager.h" />
     <ClInclude Include="Engine\Audio\ChannelGroup.h" />
@@ -234,11 +236,9 @@
     <ClInclude Include="Engine\Windows\WindowsApplication.h" />
     <ClInclude Include="Engine\Windows\WindowsWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Game\Actors\Block.h" />
-    <ClInclude Include="Game\Actors\BlockPreview.h" />
     <ClInclude Include="Game\Actors\Characters\CharacterBase.h" />
     <ClInclude Include="Game\Actors\Characters\Components\Controller2DComponent.h" />
-    <ClInclude Include="Game\Actors\Characters\Npc.h" />
+    <ClInclude Include="Game\Actors\Characters\NPC.h" />
     <ClInclude Include="Game\Actors\Characters\Player\PlayerCharacter.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerDeathState.h" />
     <ClInclude Include="Game\Actors\Characters\Player\State\PlayerFallState.h" />
@@ -254,6 +254,7 @@
     <ClInclude Include="Game\Actors\DroppedItem.h" />
     <ClInclude Include="Game\Actors\Editor\Editor.h" />
     <ClInclude Include="Game\Actors\Mobs\MobBase.h" />
+    <ClInclude Include="Game\Actors\Projectile.h" />
     <ClInclude Include="Game\Actors\NetworkActor.h" />
     <ClInclude Include="Game\Actors\ServerActor.h" />
     <ClInclude Include="Game\Actors\TilemapLoader.h" />
@@ -292,13 +293,13 @@
     <ClInclude Include="Game\PacketHandlers\ChatMessageHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CheckNameHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ColorGainHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ComboSkillStateChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\CreateCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\DeleteCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\InventoryUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectDestroyHandler.h" />
     <ClInclude Include="Game\PacketHandlers\LoginHandler.h" />
     <ClInclude Include="Game\PacketHandlers\MapLoadHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\MovePlayerHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectAnimationHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectPositionHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectTakeDamageHandler.h" />
@@ -308,16 +309,19 @@
     <ClInclude Include="Game\PacketHandlers\PartyMemberChangedHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyLeaveHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PartyMemberStatChangedHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlacementStartHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlacementStopHandler.h" />
-    <ClInclude Include="Game\PacketHandlers\PlayerAnimationHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\DoSelectCardHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerBuffHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerDeathHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PlayerStatsUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\PopupHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SelectCharacterHandler.h" />
     <ClInclude Include="Game\PacketHandlers\ObjectSpawnHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopOpenHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopBuyResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellPriceResponseHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\ShopSellResponseHandler.h" />
     <ClInclude Include="Game\PacketHandlers\SkillCastHandler.h" />
+    <ClInclude Include="Game\PacketHandlers\SkillUpdateHandler.h" />
     <ClInclude Include="Game\PacketHandlers\TakeDamageHandler.h" />
     <ClInclude Include="Game\ProjectSettings.h" />
     <ClInclude Include="Game\Subsystems\DataSubsystem.h" />
@@ -327,8 +331,8 @@
     <ClInclude Include="Game\Subsystems\InputActions\KeyType.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\IPoolable.h" />
     <ClInclude Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.h" />
-    <ClInclude Include="Game\Subsystems\PlacementSubsystem.h" />
     <ClInclude Include="Game\Subsystems\PlayerSubsystem.h" />
+    <ClInclude Include="Game\Subsystems\Player\SkillManager.h" />
     <ClInclude Include="Game\Subsystems\Publisher\EventData.h" />
     <ClInclude Include="Game\Subsystems\Publisher\ISubscriber.h" />
     <ClInclude Include="Game\Subsystems\Publisher\PublisherSubsystem.h" />
@@ -341,9 +345,18 @@
     <ClInclude Include="Game\UI\Element\CharacterSelect\UICharacterSlot.h" />
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipment.h" />
     <ClInclude Include="Game\UI\Element\Equipment\UIEquipmentSlot.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UIEquipTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIItemTooltip.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventory.h" />
     <ClInclude Include="Game\UI\Element\Inventory\UIInventorySlot.h" />
+    <ClInclude Include="Game\UI\Element\Inventory\UITooltip.h" />
+    <ClInclude Include="Game\UI\Element\Shop\UIShop.h" />
+    <ClInclude Include="Game\UI\Element\Shop\UIShopItemRow.h" />
+    <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickBar.h" />
+    <ClInclude Include="Game\UI\Element\QuickSlot\UIQuickSlot.h" />
+    <ClInclude Include="Game\UI\Element\Skill\UISkillSlot.h" />
+    <ClInclude Include="Game\UI\Element\Skill\UISkillTooltip.h" />
+    <ClInclude Include="Game\UI\Element\Skill\UISkillWindow.h" />
     <ClInclude Include="Game\UI\Element\UICharacterCreate.h" />
     <ClInclude Include="Game\UI\Element\UIChatBalloon.h" />
     <ClInclude Include="Game\UI\Element\UIChatBar.h" />
@@ -353,6 +366,8 @@
     <ClInclude Include="Game\UI\Element\UIMiniMap.h" />
     <ClInclude Include="Game\UI\Element\UINameTag.h" />
     <ClInclude Include="Game\UI\Element\UIPopup.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSelectPanel.h" />
+    <ClInclude Include="Game\UI\Element\Card\UICardSlot.h" />
     <ClInclude Include="Game\UI\Element\UIPartyPanel.h" />
     <ClInclude Include="Game\UI\Element\UIPartyMemberRow.h" />
     <ClInclude Include="Game\UI\Element\UIPartyWindow.h" />
@@ -618,6 +633,7 @@
     <ClCompile Include="Engine\Actor\Component\Tilemap\TilemapLayer.cpp" />
     <ClCompile Include="Engine\Actor\Component\TransformComponent.cpp" />
     <ClCompile Include="Engine\Actor\Portal.cpp" />
+    <ClCompile Include="Engine\Actor\Prop.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="Engine\Audio\ChannelGroup.cpp" />
@@ -680,11 +696,9 @@
     <ClCompile Include="Engine\Windows\DX\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Windows\WindowsApplication.cpp" />
     <ClCompile Include="Engine\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Game\Actors\Block.cpp" />
-    <ClCompile Include="Game\Actors\BlockPreview.cpp" />
     <ClCompile Include="Game\Actors\Characters\CharacterBase.cpp" />
     <ClCompile Include="Game\Actors\Characters\Components\Controller2DComponent.cpp" />
-    <ClCompile Include="Game\Actors\Characters\Npc.cpp" />
+    <ClCompile Include="Game\Actors\Characters\NPC.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\PlayerCharacter.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerDeathState.cpp" />
     <ClCompile Include="Game\Actors\Characters\Player\State\PlayerFallState.cpp" />
@@ -699,6 +713,7 @@
     <ClCompile Include="Game\Actors\Effect.cpp" />
     <ClCompile Include="Game\Actors\Grid.cpp" />
     <ClCompile Include="Game\Actors\Mobs\MobBase.cpp" />
+    <ClCompile Include="Game\Actors\Projectile.cpp" />
     <ClCompile Include="Game\Actors\NetworkActor.cpp" />
     <ClCompile Include="Game\Actors\ServerActor.cpp" />
     <ClCompile Include="Game\Actors\TilemapLoader.cpp" />
@@ -735,13 +750,13 @@
     <ClCompile Include="Game\PacketHandlers\ChatMessageHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CheckNameHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ColorGainHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ComboSkillStateChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\CreateCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\DeleteCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\InventoryUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectDestroyHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\LoginHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\MapLoadHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\MovePlayerHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectPositionHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectTakeDamageHandler.cpp" />
@@ -751,16 +766,19 @@
     <ClCompile Include="Game\PacketHandlers\PartyMemberChangedHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyLeaveHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PartyMemberStatChangedHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlacementStartHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlacementStopHandler.cpp" />
-    <ClCompile Include="Game\PacketHandlers\PlayerAnimationHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerBuffHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerDeathHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PlayerStatsUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\PopupHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\DoSelectCardHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SelectCharacterHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\ObjectSpawnHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopOpenHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopBuyResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellPriceResponseHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\ShopSellResponseHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\SkillCastHandler.cpp" />
+    <ClCompile Include="Game\PacketHandlers\SkillUpdateHandler.cpp" />
     <ClCompile Include="Game\PacketHandlers\TakeDamageHandler.cpp" />
     <ClCompile Include="Game\ProjectSettings.cpp" />
     <ClCompile Include="Game\Subsystems\DataSubsystem.cpp" />
@@ -768,8 +786,8 @@
     <ClCompile Include="Game\Subsystems\InputActions\InputActions.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\IPoolable.cpp" />
     <ClCompile Include="Game\Subsystems\ObjectPool\ObjectPoolSubsystem.cpp" />
-    <ClCompile Include="Game\Subsystems\PlacementSubsystem.cpp" />
     <ClCompile Include="Game\Subsystems\PlayerSubsystem.cpp" />
+    <ClCompile Include="Game\Subsystems\Player\SkillManager.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\EventData.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\ISubscriber.cpp" />
     <ClCompile Include="Game\Subsystems\Publisher\PublisherSubsystem.cpp" />
@@ -782,9 +800,18 @@
     <ClCompile Include="Game\UI\Element\CharacterSelect\UICharacterSlot.cpp" />
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipment.cpp" />
     <ClCompile Include="Game\UI\Element\Equipment\UIEquipmentSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UIEquipTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIItemTooltip.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventory.cpp" />
     <ClCompile Include="Game\UI\Element\Inventory\UIInventorySlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Inventory\UITooltip.cpp" />
+    <ClCompile Include="Game\UI\Element\Shop\UIShop.cpp" />
+    <ClCompile Include="Game\UI\Element\Shop\UIShopItemRow.cpp" />
+    <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickBar.cpp" />
+    <ClCompile Include="Game\UI\Element\QuickSlot\UIQuickSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Skill\UISkillSlot.cpp" />
+    <ClCompile Include="Game\UI\Element\Skill\UISkillTooltip.cpp" />
+    <ClCompile Include="Game\UI\Element\Skill\UISkillWindow.cpp" />
     <ClCompile Include="Game\UI\Element\UICharacterCreate.cpp" />
     <ClCompile Include="Game\UI\Element\UIChatBalloon.cpp" />
     <ClCompile Include="Game\UI\Element\UIChatBar.cpp" />
@@ -794,6 +821,8 @@
     <ClCompile Include="Game\UI\Element\UIMiniMap.cpp" />
     <ClCompile Include="Game\UI\Element\UINameTag.cpp" />
     <ClCompile Include="Game\UI\Element\UIPopup.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSelectPanel.cpp" />
+    <ClCompile Include="Game\UI\Element\Card\UICardSlot.cpp" />
     <ClCompile Include="Game\UI\Element\UIStatusBar.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyPanel.cpp" />
     <ClCompile Include="Game\UI\Element\UIPartyMemberRow.cpp" />

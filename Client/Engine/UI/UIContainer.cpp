@@ -78,8 +78,10 @@ bool UIContainer::OnMouseMotion(const Math::Vector2& position, const Math::Vecto
         bool is_in_range = child->IsInRange(position);
         bool was_in_range = child->IsInRange(position - delta);
 
-        if (!is_in_range && was_in_range) leave |= child->OnMouseLeave();
-        if (is_in_range && !was_in_range) result |= child->OnMouseEnter();
+        if (!is_in_range && was_in_range)
+            leave |= child->OnMouseLeave();
+        if (is_in_range && !was_in_range)
+            result |= child->OnMouseEnter();
 
         if (is_in_range || was_in_range)
             result |= child->OnMouseMotion(position, delta);

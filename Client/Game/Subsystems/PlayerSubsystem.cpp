@@ -9,6 +9,7 @@
 #include "Audio/AudioManager.h"
 #include "Math/Math.h"
 #include "Publisher/PublisherSubsystem.h"
+#include "Subsystems/DataSubsystem.h"
 
 PlayerSubsystem::PlayerSubsystem() :
     account_id_(0),
@@ -20,9 +21,11 @@ PlayerSubsystem::PlayerSubsystem() :
     exp_(0),
     name_(L"Unknown"),
     body_color_(L"FFFFFF"),
+    gm_level_(0),
     profiles_(),
     inventory_(nullptr),
-    portal_cooldown_(0.f)
+    portal_cooldown_(0.f),
+    pickup_cooldown_(0.f)
 {
 }
 
@@ -146,6 +149,16 @@ void PlayerSubsystem::UseItem(uint32_t item_id) const
     UseItemPacket packet;
     packet.slot_id = slot_id;
     SessionSubsystem::Get()->SendPacket(packet);
+}
+
+void PlayerSubsystem::UseSkill(uint32_t skill_id)
+{
+    if (!skill_manager_.HasSkill(skill_id) || !skill_manager_.CanUseSkill(skill_id))
+        return;
+
+    SkillCastRequest request;
+    request.skill_id = skill_id;
+    SessionSubsystem::Get()->SendPacket(request);
 }
 
 PlayerSubsystem* PlayerSubsystem::Get()
