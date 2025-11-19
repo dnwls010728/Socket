@@ -228,6 +228,7 @@ void Map::SpawnColorDrop(int32_t color, const std::shared_ptr<MapObject>& droppe
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetColor(color);
+    dropped_item->SetDroppedTime(Net::GetClientTime() + 60.);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);
@@ -267,6 +268,7 @@ void Map::SpawnItemDrop(const std::shared_ptr<Item>& item, const std::shared_ptr
     std::shared_ptr<DroppedItem> dropped_item = std::make_shared<DroppedItem>();
     dropped_item->SetDropper(dropper);
     dropped_item->SetItem(item);
+    dropped_item->SetDroppedTime(Net::GetClientTime() + 60.);
 
     dropped_item->SetObjectID(next_object_id_.fetch_add(1));
     dropped_item->SetMap(this);

@@ -21,6 +21,12 @@ public:
     inline int32_t GetColor() const { return color_; }
 
     inline bool IsColor() const { return color_ > 0; }
+    
+    inline void SetDroppedTime(double time) { dropped_time_ = time; }
+    inline double GetDroppedTime() const { return dropped_time_; }
+    
+protected:
+    virtual void Tick(float delta_time) override;
 
 private:
     std::weak_ptr<MapObject> dropper_;
@@ -28,5 +34,7 @@ private:
     std::shared_ptr<Item> item_;
 
     int32_t color_;
+    
+    double dropped_time_;
     
 };

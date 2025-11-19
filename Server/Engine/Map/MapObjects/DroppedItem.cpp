@@ -2,14 +2,18 @@
 #include "DroppedItem.h"
 
 #include <CustomPacket.h>
+#include <iostream>
 
+#include "NetDef.h"
+#include "Map/Map.h"
 #include "Map/PlayerCharacter.h"
 #include "Session/Player/Inventory/Item.h"
 
 DroppedItem::DroppedItem() :
     dropper_(),
     item_(nullptr),
-    color_(0)
+    color_(0),
+    dropped_time_(0.)
 {
 }
 
@@ -31,4 +35,16 @@ void DroppedItem::SendSpawn(const std::shared_ptr<PlayerCharacter>& player)
     info.color = color_;
     
     player->SendPacket(packet);
+}
+
+void DroppedItem::Tick(float delta_time)
+{
+    MapObject::Tick(delta_time);
+    
+    if (!map_) return;
+    if (dropped_time_ < Net::GetClientTime())
+    {
+        map_->DestroyDroppedItem(object_id_, 0);
+        return;
+    }
 }
