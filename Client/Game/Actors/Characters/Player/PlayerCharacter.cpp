@@ -277,7 +277,7 @@ void PlayerCharacter::Tick(float delta_time)
                 Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\jump.mp3");
                 AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 
-                velocity_.y = 8.f;
+                velocity_.y = 10.f;
             }
 
             if (keyboard->GetKeyDown(Scancode::kKeyLeftAlt) && !collisions.is_below)
@@ -287,7 +287,7 @@ void PlayerCharacter::Tick(float delta_time)
                     Audio* audio = AssetManager::Get()->Load<Audio>(L"Audio\\SE\\doublejump.mp3");
                     AudioManager::Get()->PlaySound2D(audio, ChannelGroup::kSE);
                 
-                    velocity_.y = 8.f;
+                    velocity_.y = 10.f;
                     --bonus_jumps_;
                 }
             }
