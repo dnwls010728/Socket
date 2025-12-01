@@ -37,6 +37,9 @@
 * drop_info - 몬스터 별 아이템 드랍 정보 테이블
 * shop_info, shop_item_info - NPC 상점 아이템 데이터 테이블
 
+## 생명주기
+<image src="./Images_README/LifeCycle.png"></impage>
+
 ## 결과물
 
 ## 기여자
